@@ -55,3 +55,5 @@ sqlex3.c
 
 {!xhb}-hbx=sqlrdd.hbx
 {!xhb}sqlrdd.hbx
+
+{allmingw}-cflag=-fpermissive
