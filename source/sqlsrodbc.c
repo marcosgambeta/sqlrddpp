@@ -477,7 +477,7 @@ void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLen
             {
 //                hb_itemPutCL( pItem, bBuffer,  lLenBuff );
                long lJulian, lMilliSec;
-               hb_dateTimeStampStrGet( bBuffer, &lJulian, &lMilliSec );
+               hb_timeStampStrRawGet( bBuffer, &lJulian, &lMilliSec ); // TOCHECK:
                hb_itemPutTDT( pItem, lJulian, lMilliSec );
 
                break;
@@ -503,12 +503,12 @@ void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLen
 //                dt1[14] = '\0';
 //                hb_itemPutDTS( pItem, dt1 );
                long lJulian, lMilliSec;
-               hb_dateTimeStampStrGet( bBuffer, &lJulian, &lMilliSec );
+               hb_timeStampStrRawGet( bBuffer, &lJulian, &lMilliSec ); // TOCHECK:
                hb_itemPutTDT( pItem, lJulian, lMilliSec );
 
 #else
             long lJulian, lMilliSec;
-            hb_dateTimeStampStrGet( bBuffer, &lJulian, &lMilliSec );
+            hb_timeStampStrRawGet( bBuffer, &lJulian, &lMilliSec ); // TOCHECK:
             hb_itemPutTDT( pItem, lJulian, lMilliSec );               
 #endif
                break;

@@ -382,7 +382,7 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
          {
 #ifdef __XHARBOUR__
             long lJulian, lMilliSec;
-            hb_dateTimeStampStrGet( bBuffer, &lJulian, &lMilliSec );
+            hb_timeStampStrRawGet( bBuffer, &lJulian, &lMilliSec ); // TOCHECK:
             hb_itemPutTDT( pItem, lJulian, lMilliSec );
 #else
             long lJulian, lMilliSec;
