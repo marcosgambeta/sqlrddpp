@@ -248,19 +248,19 @@ METHOD End() CLASS SR_FIREBIRD
    ::Commit()
    FBClose( ::hEnv )
 
-return Super:End()
+return ::Super:End()
 
 /*------------------------------------------------------------------------*/
 
 METHOD Commit() CLASS SR_FIREBIRD
-   Super:Commit()
+   ::Super:Commit()
    ::nRetCode := FBCOMMITTRANSACTION(::hEnv )  
 Return ( ::nRetCode := FBBeginTransaction( ::hEnv ) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_FIREBIRD
-   Super:RollBack()
+   ::Super:RollBack()
 Return ( ::nRetCode := FBRollBackTransaction( ::hEnv ) )
 
 /*------------------------------------------------------------------------*/

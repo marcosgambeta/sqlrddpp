@@ -302,13 +302,13 @@ return nil
 /*------------------------------------------------------------------------*/
 
 METHOD Commit( lNoLog ) CLASS SR_ORACLE
-   Super:Commit( lNoLog )
+   ::Super:Commit( lNoLog )
 RETURN (::nRetcode := SQLO_COMMIT( ::hdbc ) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_ORACLE
-   Super:RollBack()
+   ::Super:RollBack()
 Return ( ::nRetCode := SQLO_ROLLBACK( ::hDbc ) )
 
 /*------------------------------------------------------------------------*/

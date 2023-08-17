@@ -248,18 +248,18 @@ METHOD End() CLASS SR_MYSQL
       MYSFinish( ::hDbc )
    EndIf
 
-return Super:End()
+return ::Super:End()
 
 /*------------------------------------------------------------------------*/
 
 METHOD Commit( lNoLog ) CLASS SR_MYSQL
-   Super:Commit( lNoLog )
+   ::Super:Commit( lNoLog )
 Return ( ::nRetCode := MYSCommit( ::hDbc ) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_MYSQL
-   Super:RollBack()
+   ::Super:RollBack()
 Return ( ::nRetCode := MYSRollBack( ::hDbc ) )
 
 /*------------------------------------------------------------------------*/

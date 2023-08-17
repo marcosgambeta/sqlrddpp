@@ -441,7 +441,7 @@ METHOD End() CLASS SR_ODBC
       EndIf
    EndIf
 
-return Super:End()
+return ::Super:End()
 
 /*------------------------------------------------------------------------*/
 
@@ -477,13 +477,13 @@ Return ( ::nRetCode := SR_SetStmtOption( ::hStmt, nType, uBuffer ) )
 /*------------------------------------------------------------------------*/
 
 METHOD Commit( lNoLog ) CLASS SR_ODBC
-   Super:Commit( lNoLog )
+   ::Super:Commit( lNoLog )
 Return ( ::nRetCode := SR_Commit( ::hEnv, ::hDbc ) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_ODBC
-   Super:RollBack()
+   ::Super:RollBack()
 Return ( ::nRetCode := SR_RollBack( ::hEnv, ::hDbc ) )
 
 /*------------------------------------------------------------------------*/

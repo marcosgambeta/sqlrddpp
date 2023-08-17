@@ -286,13 +286,13 @@ return nil
 /*------------------------------------------------------------------------*/
 
 METHOD Commit( lNoLog ) CLASS SR_PGS
-   Super:Commit( lNoLog )
+   ::Super:Commit( lNoLog )
 Return ( ::nRetCode := ::exec( "COMMIT;BEGIN",.f. ) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_PGS
-   Super:RollBack()
+   ::Super:RollBack()
    ::nRetCode := PGSRollBack( ::hDbc )
    ::exec( "BEGIN",.f. )
 Return ::nRetCode
