@@ -811,7 +811,7 @@ HB_FUNC( FBGETDATA3 )    // FBGetData( hEnv, nField, @uData )
                   ( int ) ( ( *( ( ISC_TIME * ) var->sqldata ) ) % 10000 ) );
 //             hb_storc( date_s, 3 );
 
-            lMilliSec = hb_timeEncStr( date_s );         
+            lMilliSec = hb_timeUnformat( date_s, nullptr ); // TOCHECK:        
 //             hb_itemPutTDT( pItem, 0, lMilliSec );    
             hb_stordtl(0,lMilliSec,3);
 }
@@ -1292,7 +1292,7 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          case SQL_TIME:
          {
 	        long  lMilliSec;
-            lMilliSec = hb_timeEncStr( bBuffer );         
+            lMilliSec = hb_timeUnformat( bBuffer, nullptr ); // TOCHECK:         
             hb_itemPutTDT( pItem, 0, lMilliSec );    
             break;
          }

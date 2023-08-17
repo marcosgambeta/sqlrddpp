@@ -878,7 +878,7 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          case SQL_TIME:
          {
 	        long  lMilliSec;
-            lMilliSec = hb_timeEncStr( bBuffer );         
+            lMilliSec = hb_timeUnformat( bBuffer, nullptr ); // TOCHECK:
             hb_itemPutTDT( pItem, 0, lMilliSec );    
             break;
          }
