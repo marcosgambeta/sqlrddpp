@@ -35,7 +35,8 @@ CLASS SR_CONNECTION
    DATA sSiteName, cSQLError, cResult, uSid, cLockWait
 
    DATA cTargetDB, cSystemName, nSystemID, cSystemVers   READONLY
-   DATA nFields, aFields, hEnv, hDbc, nRetCode, nVersion READONLY
+   DATA nFields, aFields, hEnv, hDbc, /*nRetCode,*/ nVersion READONLY
+   DATA nRetCode
    // CULIK 18/10/2010 Adicionado para indicar se o indice contem cluster
    DATA lClustered AS LOGICAL INIT .F. READONLY
    //culik 30/12/2011 adicionado para indicar se e  sqlserver versao 2008 ou superior
