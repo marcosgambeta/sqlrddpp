@@ -1447,14 +1447,14 @@ static HB_ERRCODE sqlPutValue( SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value 
    pField = thiswa->area.lpFields + fieldNum - 1;
 
    /* test compatible datatypes */
-   //if  ( HB_IS_TIMEFLAG( value ) )//|| HB_IS_DATE( pDest ))
+   //if  ( HB_IS_TIMESTAMP( value ) )//|| HB_IS_DATE( pDest ))
    //{
        //bOk = FALSE;
        //hb_arraySet( thiswa->aBuffer, fieldindex, value );
    //}
    if( (HB_IS_NUMBER( pDest ) && HB_IS_NUMBER( value )) || (HB_IS_STRING( pDest ) && HB_IS_STRING( value )) ||
        (HB_IS_LOGICAL( pDest ) && HB_IS_LOGICAL( value )) || (HB_IS_DATE( pDest ) && HB_IS_DATE( value )) ||
-       (HB_IS_TIMEFLAG( pDest ) && HB_IS_DATETIME( value )) ||
+       (HB_IS_TIMESTAMP( pDest ) && HB_IS_DATETIME( value )) ||
        (HB_IS_DATETIME( pDest ) && HB_IS_DATETIME( value )))
    {
 
