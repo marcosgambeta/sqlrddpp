@@ -737,7 +737,7 @@ HB_FUNC( FBGETDATA )    // FBGetData( hEnv, nField, @uData )
             long lJulian, lMilliSec;
             hb_dateTimeStampStrGet(  date_s, &lJulian, &lMilliSec );
 //             hb_itemPutTDT( pItem, lJulian, lMilliSec );
-            hb_stordtl( lJulian, lMilliSec, 3 );
+            hb_stortdt( lJulian, lMilliSec, 3 ); // TOCHECK:
 }	            
 
 #else
@@ -762,7 +762,7 @@ HB_FUNC( FBGETDATA )    // FBGetData( hEnv, nField, @uData )
 
             lMilliSec = hb_timeUnformat( date_s, nullptr ); // TOCHECK:         
 //             hb_itemPutTDT( pItem, 0, lMilliSec );    
-            hb_stordtl(0,lMilliSec,3);
+            hb_stortdt(0,lMilliSec,3); // TOCHECK:
 }
             break;
 
@@ -1239,7 +1239,7 @@ void FBFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
          case SQL_TIME:
          {
 	        long  lMilliSec;
-            lMilliSec = hb_timeUnformat( bBuffer, nullptr ); // TOCHECK:         
+            lMilliSec = hb_timeUnformat( bBuffer, nullptr ); // TOCHECK:
             hb_itemPutTDT( pItem, 0, lMilliSec );    
             break;
          }
