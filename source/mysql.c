@@ -42,7 +42,7 @@ typedef struct _MYSQL_SESSION
    int ifetch;                   // Fetch position in result set
    MYSQL * dbh;                  // Connection handler
    MYSQL_RES * stmt;             // Current statement handler
-   ULONGLONG ulAffected_rows;    // Number of affected rows
+   HB_ULONGLONG ulAffected_rows;    // Number of affected rows
 } MYSQL_SESSION;
 
 typedef MYSQL_SESSION * PMYSQL_SESSION;
