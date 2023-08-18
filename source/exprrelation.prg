@@ -417,7 +417,7 @@ function ExtendWorkarea()
 		
 	extend class SR_WORKAREA with data cFilterExpression	
 		
-	override method ParseForClause in class SR_WORKAREA with NewParseForClause 		
+	override method ParseForClause in class SR_WORKAREA with NewParseForClause
 return Nil
 	
 function GetIndexes(lOrdered)
@@ -426,7 +426,7 @@ function GetIndexes(lOrdered)
 	if (::aIndexes == nil)
 		::aIndexes = {}
 		for i:=1 to len(::aIndex)
-			if(::aIndex[i,10] like "^\w+$")	
+			if (::aIndex[i,10] like "^\w+$")
 				aadd(::aIndexes, DbIndex():new(self, ::aIndex[i,10]))
 			endif
 		next i

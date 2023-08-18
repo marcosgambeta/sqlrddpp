@@ -53,7 +53,7 @@ return aArray[1]
 function aDistinct(aArray, bSelector)	
 	local newArray := {}, ids := {}, i, id
 	for i:=1 to len(aArray)
-		if(!(id := eval(bSelector, aArray[i])) in ids)
+		if (!(id := eval(bSelector, aArray[i])) in ids)
 			aadd(ids, id)
 			aadd(newArray, aArray[i])
 		endif
@@ -144,7 +144,7 @@ endclass
 //nMode = 3 : If the key exist, the value is replaced
 method aAdd(xKey, xValue, nMode) class Dictionary
 	local lContainsKey := ::lContainsKey(xKey)
-	if(!nMode in {1,2,3})
+	if (!nMode in {1,2,3})
 		nMode = 1
 	endif
 	do case

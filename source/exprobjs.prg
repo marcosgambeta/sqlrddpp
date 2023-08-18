@@ -318,7 +318,7 @@ method new(pContext, pValue)
 	
 	if(aScan(::oWorkArea:aNames, {|x| x == upper(pValue)} ) > 0)
 		::ValueType := "field"
-	elseif((pValue like "\w+") .and. (!pValue like "\d+") .and. !lower(pValue) == "nil")
+	elseif ((pValue like "\w+") .and. (!pValue like "\d+") .and. !lower(pValue) == "nil")
 		::ValueType := "variable"
 	else
 		::ValueType := "value"
@@ -337,11 +337,11 @@ method GetType() class ValueExpression
 		elseif(::ValueType == "variable")
 			::cType = ::super:GetType()
 		elseif(::ValueType == "value")
-			if(::Value like "\d+")
+			if (::Value like "\d+")
 				::cType = "N"
-			elseif(::Value like "'.*'")
+			elseif (::Value like "'.*'")
 				::cType = "C"
-			elseif(upper(::Value) in {".T.", ".F."})
+			elseif (upper(::Value) in {".T.", ".F."})
 				::cType = "L"
 			endif
 		else
@@ -409,7 +409,7 @@ method GetType()
 	local cOperand1Type	
 	if(::cType == nil)
 		cOperand1Type := ::oOperand1:GetType()
-		if(::oOperator:cName in {"plus", "minus"} .and. cOperand1Type == "N") //date + numeric
+		if (::oOperator:cName in {"plus", "minus"} .and. cOperand1Type == "N") //date + numeric
 			::cType = ::oOperand2:GetType()
 		else
 			::cType = cOperand1Type
