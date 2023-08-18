@@ -71,7 +71,7 @@ const double divider[19] = { 1, 1E1, 1E2, 1E3, 1E4,   1E5, 1E6, 1E7, 1E8, 1E9, 1
 
 /*------------------------------------------------------------------------*/
 
-void fb_log_status( PFB_SESSION session, char * from )
+void fb_log_status( PFB_SESSION session, const char * from )
 {
    const ISC_STATUS * pVect = session->status;
    SCHAR s[1024] = {0};
