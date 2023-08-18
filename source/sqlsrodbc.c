@@ -58,7 +58,7 @@
 #define LOGFILE               "odbc.log"
 static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
 static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
-void odbcErrorDiagRTE( SQLHSTMT hStmt, char * routine, char * szSql, SQLRETURN res, int line, char * module );
+void odbcErrorDiagRTE( SQLHSTMT hStmt, const char * routine, const char * szSql, SQLRETURN res, int line, const char * module );
 void odbcGetData( SQLHSTMT hStmt, PHB_ITEM pField,PHB_ITEM pItem,  BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate,USHORT ui  );
 //-----------------------------------------------------------------------------//
 
@@ -867,20 +867,20 @@ HB_FUNC( SR_NUMRES )
 {
     SQLSMALLINT nCols;
     SQLHSTMT      hstmt = ( SQLHSTMT ) hb_parptr( 1 );
-    
+
     RETCODE wResult = SQLNumResultCols( hstmt , &nCols );
-    hb_stornl( ( LONG ) nCols, 2 );    
+    hb_stornl( ( LONG ) nCols, 2 );
     hb_retni( wResult );
 
 
 // Execute the SQL statement and return any errors or warnings.
 
-    
+
 }
 
 //-----------------------------------------------------------------------------//
 
-void odbcErrorDiagRTE( SQLHSTMT hStmt, char * routine, char * szSql, SQLRETURN res, int line, char * module )
+void odbcErrorDiagRTE( SQLHSTMT hStmt, const char * routine, const char * szSql, SQLRETURN res, int line, const char * module )
 {
    PHB_ITEM pArg;
    PHB_ITEM pError = hb_errNew();
@@ -947,7 +947,7 @@ void odbcErrorDiagRTE( SQLHSTMT hStmt, char * routine, char * szSql, SQLRETURN r
 
 HB_FUNC( SR_DESCRIB )
 {
-    SQLSMALLINT      lLen      = ( SQLSMALLINT ) hb_parni( 4 );   
+    SQLSMALLINT      lLen      = ( SQLSMALLINT ) hb_parni( 4 );
     SQLSMALLINT wBufLen   = ( SQLSMALLINT)hb_parni( 5 );
     SQLSMALLINT wDataType = ( SQLSMALLINT)hb_parni( 6 );
     SQLULEN     wColSize =  ( SQLULEN )hb_parnint( 7 );
