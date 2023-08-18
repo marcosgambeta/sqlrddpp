@@ -1484,7 +1484,7 @@ DEFUN(_get_stmt_state, (stp),
 static int
 DEFUN(_find_free_dbv_entry, (free_idx), unsigned int * free_idxp)
 {
-  register unsigned int dbv_idx;
+  /* register */ unsigned int dbv_idx;
   int first_null_idx;                       /* first null slot */
   bool_t found_unused;
   int status;
@@ -1797,10 +1797,10 @@ DEFUN(_thread_id_equal, (id1, id2),
 static sqlo_stmt_struct_ptr_t
 DEFUN(_get_stmt_ptr, (dbp), const_sqlo_db_struct_ptr_t dbp)
 {
-  register unsigned stmt_idx;
+  /* register */ unsigned stmt_idx;
   bool_t found_free;
 
-  register sqlo_stmt_struct_ptr_t stp;
+  /* register */ sqlo_stmt_struct_ptr_t stp;
 
   TRACE(4, fprintf(_get_trace_fp(dbp),
                    "_get_stmt_ptr: stmtv_size=%d\n", dbp->stmtv_size););
@@ -1906,7 +1906,7 @@ DEFUN(_stmt_new, (dbp, stmt, stpp),
       const char *               stmt   AND
       sqlo_stmt_struct_ptr_t *   stpp )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
 
   stp = _get_stmt_ptr(dbp);
 
@@ -1966,7 +1966,7 @@ DEFUN(_alloc_bindp, (stp, size),
       sqlo_stmt_struct_ptr_t  stp    AND
       unsigned int            size )
 {
-  register int num_new;
+  /* register */ int num_new;
   sqlo_db_struct_ptr_t dbp;
 
   assert( stp->dbp != NULL );
@@ -2083,7 +2083,7 @@ DEFUN(_alloc_definep, (stp, size),
       sqlo_stmt_struct_ptr_t     stp    AND
       unsigned int               size )
 {
-  register int num_new;   /* number of new elements in the arrays */
+  /* register */ int num_new;   /* number of new elements in the arrays */
   sqlo_db_struct_ptr_t dbp;
 
   assert( stp->dbp != NULL );
@@ -2252,7 +2252,7 @@ DEFUN(_dealloc_definep, ( stp ),
 static int
 DEFUN_VOID(_sqlo_getenv)
 {
-  register int i;
+  /* register */ int i;
   char * ep;
   char vname[MAX_VNAME_LEN+1];
 
@@ -2788,7 +2788,7 @@ DEFUN(_strip_string, (s, len),
       char *        s   AND
       unsigned int  len )
 {
-  register char *p;
+  /* register */ char *p;
 
   for ( p = &s[len - 1]; len > 0 && ' ' == *p ; --len)
      *p = '\0';
@@ -2849,7 +2849,7 @@ DEFUN(_bind_by_pos,
       int                         is_array )
 {
   sqlo_db_struct_ptr_t dbp;
-  register OCIBind ** bindp_addr;
+  /* register */ OCIBind ** bindp_addr;
 
   TRACE(3,
         fprintf( _get_trace_fp(stp->dbp),
@@ -2944,7 +2944,7 @@ DEFUN(_bind_by_pos2,
       unsigned short *              rcode_addr  AND
       unsigned int                  skip_size )
 {
-  register OCIBind ** bindp_addr;
+  /* register */ OCIBind ** bindp_addr;
   sqlo_db_struct_ptr_t dbp;
 
   TRACE(3,
@@ -3211,10 +3211,10 @@ DEFUN(_bind_argv, (stp, argc, argv),
        const char **              argv )
 {
   sqlo_db_struct_ptr_t dbp;
-  register unsigned int arg_idx;
-  register const char ** arg;
+  /* register */ unsigned int arg_idx;
+  /* register */ const char ** arg;
   unsigned int size;
-  register short * ind_ptr;
+  /* register */ short * ind_ptr;
 
   assert( stp->dbp != NULL );
   dbp = stp->dbp;
@@ -3697,7 +3697,7 @@ DEFUN(_set_ocol_name, (stp, colp, pos),
   char * col_name;
   unsigned int col_name_len;
   unsigned int cur_col_name_len;
-  register unsigned int col_idx;     /* the index into our arrays */
+  /* register */ unsigned int col_idx;     /* the index into our arrays */
   OCIParam* paramd;
 
   assert( stp->dbp != NULL );
@@ -3938,7 +3938,7 @@ DEFUN(_define_ocol_by_pos, (stp, colp, pos),
 {
   sqlo_db_struct_ptr_t  dbp;
   unsigned int buffer_size;
-  register unsigned int col_idx;     /* the index into our arrays */
+  /* register */ unsigned int col_idx;     /* the index into our arrays */
 
   assert( pos > 0 );
   assert( stp->dbp != NULL );
@@ -4043,9 +4043,9 @@ DEFUN(_sth2stp, (sth, func_name),
       int             sth        AND
       const char *    func_name )
 {
-  register ub4 real_sth;
-  register ub4 dbh;
-  register sqlo_db_struct_ptr_t dbp;
+  /* register */ ub4 real_sth;
+  /* register */ ub4 dbh;
+  /* register */ sqlo_db_struct_ptr_t dbp;
 
   real_sth = DECODE_STH(sth);
   dbh = DECODE_DBH(sth);
@@ -4080,7 +4080,7 @@ DEFUN(_sth2stp, (sth, func_name),
 static int
 DEFUN(_define_output, (stp), sqlo_stmt_struct_ptr_t  stp)
 {
-  register unsigned int col_pos; /* The column position (1based) */
+  /* register */ unsigned int col_pos; /* The column position (1based) */
   ub4 num_cols;                 /* number of columns in the select list */
   sqlo_col_struct_ptr_t colp;
   sqlo_db_struct_ptr_t  dbp;
@@ -5467,7 +5467,7 @@ DEFUN(sqlo_fetch, (sth, nrows),
 {
   sqlo_stmt_struct_ptr_t  stp;
   sqlo_db_struct_ptr_t  dbp;
-  register unsigned int col_idx;
+  /* register */ unsigned int col_idx;
   int localStatus;
 
   CHECK_STHANDLE(stp, sth, "sqlo_fetch", SQLO_INVALID_STMT_HANDLE);
@@ -5831,7 +5831,7 @@ int
 DEFUN(sqlo_print, (sth), sqlo_stmt_handle_t sth )
 {
   sqlo_stmt_struct_ptr_t  stp;
-  register unsigned int col_idx;
+  /* register */ unsigned int col_idx;
 
   CHECK_STHANDLE(stp, sth, "sqlo_print", SQLO_INVALID_STMT_HANDLE);
 
@@ -6501,7 +6501,7 @@ DEFUN(sqlo_freeall, (), )
 {
   if( _dbv )
   {
-    register unsigned int dbv_idx;
+    /* register */ unsigned int dbv_idx;
 
     for (dbv_idx = 0; dbv_idx < _dbv_size; ++dbv_idx)
     {
@@ -6590,7 +6590,7 @@ DEFUN(sqlo_rollback, (dbh), sqlo_db_handle_t dbh )
 int
 DEFUN(sqlo_isopen, (sth), sqlo_stmt_handle_t sth)
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_isopen", SQLO_INVALID_STMT_HANDLE);
 
@@ -6653,8 +6653,8 @@ DEFUN(sqlo_bind_by_name,
       short *                     ind_addr     AND
       int                         is_array )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
-  register OCIBind ** bindp_addr;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
+  /* register */ OCIBind ** bindp_addr;
   sqlo_db_struct_ptr_t dbp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_bind_by_name", SQLO_INVALID_STMT_HANDLE);
@@ -6740,10 +6740,10 @@ DEFUN(sqlo_bind_ref_cursor, (sth, cursor_name, sth2p),
       const char *           cursor_name  AND
       sqlo_stmt_handle_t *   sth2p )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
   sqlo_stmt_struct_ptr_t st2p;
-  register OCIBind ** bindp_addr;
-  register int status = SQLO_SUCCESS;
+  /* register */ OCIBind ** bindp_addr;
+  /* register */ int status = SQLO_SUCCESS;
 
   CHECK_STHANDLE(stp, sth, "sqlo_bind_ref_cursor", SQLO_INVALID_STMT_HANDLE);
 
@@ -6805,7 +6805,7 @@ DEFUN(sqlo_define_ntable, (sth, pos, sth2p),
       unsigned int            pos     AND
       sqlo_stmt_handle_t *    sth2p )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
   sqlo_stmt_struct_ptr_t st2p;
   sqlo_db_struct_ptr_t dbp;
 
@@ -6872,7 +6872,7 @@ DEFUN(sqlo_bind_by_pos,
       short *               ind_addr    AND
       int                   is_array )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_bind_by_pos", SQLO_INVALID_STMT_HANDLE);
 
@@ -6905,7 +6905,7 @@ DEFUN(sqlo_bind_by_pos2,
        unsigned int               skip_size
       )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_bind_by_pos2", SQLO_INVALID_STMT_HANDLE);
 
@@ -6939,7 +6939,7 @@ DEFUN(sqlo_define_by_pos,
       int                   is_array
       )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_define_by_pos", SQLO_INVALID_STMT_HANDLE);
 
@@ -6992,7 +6992,7 @@ DEFUN(sqlo_define_by_pos2,
        unsigned int              skip_size
        )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_define_by_pos2", SQLO_INVALID_STMT_HANDLE);
   assert( stp->dbp != NULL );
@@ -7027,7 +7027,7 @@ DEFUN(sqlo_execute, (sth, iterations),
       sqlo_stmt_handle_t     sth          AND
       unsigned int           iterations )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
   sqlo_db_struct_ptr_t dbp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_execute", SQLO_INVALID_STMT_HANDLE);
@@ -7101,7 +7101,7 @@ DEFUN(sqlo_executeselect, (sth, iterations),
       sqlo_stmt_handle_t     sth          AND
       unsigned int           iterations )
 {
-  register sqlo_stmt_struct_ptr_t  stp;
+  /* register */ sqlo_stmt_struct_ptr_t  stp;
   sqlo_db_struct_ptr_t dbp;
 //   int Ret;
 
@@ -8288,11 +8288,11 @@ DEFUN(_terminate_ocols, (stp, do_strip_string),
       sqlo_stmt_struct_ptr_t stp  AND
       int do_strip_string)
 {
-  register sqlo_col_struct_ptr_t colp;  /* points to the metadata of the column */
-  register char ** outpp;
-  register unsigned int col_idx;
-  register ub4 * lenp;
-  register short * indp;
+  /* register */ sqlo_col_struct_ptr_t colp;  /* points to the metadata of the column */
+  /* register */ char ** outpp;
+  /* register */ unsigned int col_idx;
+  /* register */ ub4 * lenp;
+  /* register */ short * indp;
 
   colp  = stp->ocolsv;
   assert( colp != NULL );
@@ -8346,7 +8346,7 @@ DEFUN(_terminate_ocols, (stp, do_strip_string),
         else
         {
           /* Strip leading blanks for numbers */
-          register char *p;
+          /* register */ char *p;
           unsigned int l;
           l = *lenp + 1;
           for (p = *outpp; *p == ' '; ++p)
