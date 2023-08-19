@@ -30,8 +30,7 @@ HB_FUNC( SR_SQLPARSE )     /* SqlParse( cCommand, @nError, @nErrorPos ) */
 {
    HB_SIZE uLenPhrase = hb_parclen( 1 );
 
-   if( uLenPhrase )
-   {
+   if( uLenPhrase ) {
 //       sql_stmt * stmt = (sql_stmt *) hb_xgrab( sizeof( sql_stmt ) );
       sql_stmt * stmt  = (sql_stmt *) hb_xgrabz( sizeof( sql_stmt ) );
 
@@ -41,21 +40,16 @@ HB_FUNC( SR_SQLPARSE )     /* SqlParse( cCommand, @nError, @nErrorPos ) */
 //       memset( stmt, 0, sizeof( sql_stmt ) );
       sqlIniPos = sqlPhrase = hb_parc( 1 );
 
-      if( SqlParse( stmt, sqlPhrase, PARSE_ALL_QUERY ) )
-      {
+      if( SqlParse( stmt, sqlPhrase, PARSE_ALL_QUERY ) ) {
          // printf("Parse OK. Retornado array de %i posicoes.\n", stmt->pArray->item.asArray.value->ulLen );
-      }
-      else
-      {
+      } else {
          stmt->pArray = hb_itemArrayNew( 0 );
          // printf("Parse ERROR. Retornado array de %i posicoes.\n", stmt->pArray->item.asArray.value->ulLen );
 
-         if( ISBYREF( 2 ) )
-         {
+         if( ISBYREF( 2 ) ) {
             hb_itemPutNI( (PHB_ITEM) hb_param( 2, HB_IT_ANY ), stmt->errMsg );
          }
-         if( ISBYREF( 3 ) )
-         {
+         if( ISBYREF( 3 ) ) {
             hb_itemPutNI( (PHB_ITEM) hb_param( 3, HB_IT_ANY ), ( int ) ( stmt->queryPtr - sqlIniPos ) );
          }
       }
@@ -86,11 +80,9 @@ int SqlParse( sql_stmt* stmt, const char* query, int queryLen )
    stmt->queryPtr = stmt->errPtr = query;
    stmt->errMsg = 0;
 
-   if( sql_yyparse( (void*) stmt ) || stmt->errMsg || stmt->command == -1 )
-   {
+   if( sql_yyparse( (void*) stmt ) || stmt->errMsg || stmt->command == -1 ) {
       // printf( "parse error in sql_yyparse\n" );
-      if (!stmt->errMsg)
-      {
+      if( !stmt->errMsg ) {
          stmt->errMsg = SQL_PARSER_ERROR_PARSE;
       }
       return 0;
@@ -160,13 +152,11 @@ PHB_ITEM SQLpCodeGenArrayJoin( PHB_ITEM pArray1, PHB_ITEM pArray2 )
 {
    HB_SIZE nLen, n;
 
-   if( !HB_IS_ARRAY( pArray1 ) )
-   {
+   if( !HB_IS_ARRAY( pArray1 ) ) {
       printf( "SQLpCodeGenArrayJoin Invalid param 1\n" );
    }
 
-   if( !HB_IS_ARRAY( pArray2 ) )
-   {
+   if( !HB_IS_ARRAY( pArray2 ) ) {
       printf( "SQLpCodeGenArrayJoin Invalid param 2\n" );
    }
 
@@ -232,8 +222,7 @@ HB_FUNC( SR_STRTOHEX )
    int i, len;
    int iCipher;
 
-   if( ! ISCHAR(1) )
-   {
+   if( ! ISCHAR(1) ) {
       hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, "SR_STRTOHEX", 1, hb_param(1,HB_IT_ANY) );
       return;
    }
@@ -351,8 +340,7 @@ HB_FUNC( SR_HEXTOSTR )
    char *outbuff;
    int nalloc;
 
-   if( ! ISCHAR(1) )
-   {
+   if( ! ISCHAR(1) ) {
       hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, "SR_HEXTOSTR", 1, hb_param(1,HB_IT_ANY) );
       return;
    }
@@ -533,8 +521,7 @@ HB_FUNC( SR_ESCAPESTRING )
    iSize= hb_parclen(1);
    idatabase = hb_parni(2);
 
-   if( ! (ISCHAR(1) && ISNUM(2)) )
-   {
+   if( ! (ISCHAR(1) && ISNUM(2)) ) {
       hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, "SR_ESCAPESTRING", 2, hb_param(1,HB_IT_ANY), hb_param(2,HB_IT_ANY) );
       return;
    }
@@ -654,8 +641,7 @@ HB_FUNC( SR_ESCAPENUM )
    iSize= hb_parclen(1);
    FromBuffer = hb_parc( 1 );
 
-   if( ! (ISCHAR(1) && ISNUM(2)  && ISNUM(3)) )
-   {
+   if( ! (ISCHAR(1) && ISNUM(2)  && ISNUM(3)) ) {
       hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, "SR_ESCAPENUM", 3, hb_param(1,HB_IT_ANY), hb_param(2,HB_IT_ANY), hb_param(3,HB_IT_ANY) );
       return;
    }
@@ -695,21 +681,16 @@ HB_FUNC( SR_ESCAPENUM )
       if (ToBuffer[iPos] == 'E' && (iPos+2) <= iSize)    // 1928773.3663E+003
       {
          bInteger = FALSE;
-         if( FromBuffer[iPos+1] == '-' )
-         {
+         if( FromBuffer[iPos+1] == '-' ) {
             SciNot[0] = FromBuffer[iPos+1];
-         }
-         else
-         {
+         } else {
             SciNot[0] = '0';
          }
          SciNot[1] = FromBuffer[iPos+2];
 
-         if( (iPos+3) <= iSize )
-         {
+         if( (iPos+3) <= iSize ) {
             SciNot[2] = FromBuffer[iPos+3];
-            if( (iPos+4) <= iSize )
-            {
+            if( (iPos+4) <= iSize ) {
                SciNot[3] = FromBuffer[iPos+4];
             }
          }
@@ -725,35 +706,28 @@ HB_FUNC( SR_ESCAPENUM )
 
    ToBuffer[iSize] = '\0';
 
-   if( dMultpl > 0 )
-   {
+   if( dMultpl > 0 ) {
       for( iPos=iDecPos;iPos<iSize+32;iPos++ )
       {
-         if( ToBuffer[iPos] == '.' && dMultpl > 0 && (iPos+1) <= iSize+32 )
-         {
+         if( ToBuffer[iPos] == '.' && dMultpl > 0 && (iPos+1) <= iSize+32 ) {
             ToBuffer[iPos]   = ToBuffer[iPos+1];
             ToBuffer[iPos+1] = '.';
             dMultpl--;
-            if( ToBuffer[iPos] == '\0' || iPos > iSize )
-            {
+            if( ToBuffer[iPos] == '\0' || iPos > iSize ) {
                ToBuffer[iPos] = '0';
             }
-            if( dMultpl == 0 && ToBuffer[iPos+2] == '\0' )
-            {
+            if( dMultpl == 0 && ToBuffer[iPos+2] == '\0' ) {
                ToBuffer[iPos+1] = '\0';
                break;
             }
          }
       }
       iSize = strlen( ToBuffer );
-   }
-   else if( dMultpl < 0 )
-   {
+   } else if( dMultpl < 0 ) {
       // Not implemented
    }
 
-   if( bInteger )
-   {
+   if( bInteger ) {
 #ifndef HB_LONG_LONG_OFF
       LONGLONG lValue;
 #else
@@ -762,19 +736,14 @@ HB_FUNC( SR_ESCAPENUM )
       int iOverflow;
       lValue = hb_strValInt( ToBuffer, &iOverflow );
 
-      if( !iOverflow )
-      {
+      if( !iOverflow ) {
          double dValue = (double) lValue;
          hb_retnlen( dValue, len, dec );
-      }
-      else
-      {
+      } else {
          double dValue = hb_strVal( ToBuffer, iSize );
          hb_retnlen( dValue, len, dec );
       }
-   }
-   else
-   {
+   } else {
       double dValue = hb_strVal( ToBuffer, iSize );
       hb_retnlen( dValue, len, dec );
    }
@@ -823,21 +792,16 @@ PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
       if (ToBuffer[iPos] == 'E' && (iPos+2) <= iSize)    // 1928773.3663E+003
       {
          bInteger = FALSE;
-         if( FromBuffer[iPos+1] == '-' )
-         {
+         if( FromBuffer[iPos+1] == '-' ) {
             SciNot[0] = FromBuffer[iPos+1];
-         }
-         else
-         {
+         } else {
             SciNot[0] = '0';
          }
          SciNot[1] = FromBuffer[iPos+2];
 
-         if( (iPos+3) <= iSize )
-         {
+         if( (iPos+3) <= iSize ) {
             SciNot[2] = FromBuffer[iPos+3];
-            if( (iPos+4) <= iSize )
-            {
+            if( (iPos+4) <= iSize ) {
                SciNot[3] = FromBuffer[iPos+4];
             }
          }
@@ -853,35 +817,28 @@ PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
 
    ToBuffer[iSize] = '\0';
 
-   if( dMultpl > 0 )
-   {
+   if( dMultpl > 0 ) {
       for( iPos=iDecPos;iPos<iSize+32;iPos++ )
       {
-         if( ToBuffer[iPos] == '.' && dMultpl > 0 && (iPos+1) <= iSize+32 )
-         {
+         if( ToBuffer[iPos] == '.' && dMultpl > 0 && (iPos+1) <= iSize+32 ) {
             ToBuffer[iPos]   = ToBuffer[iPos+1];
             ToBuffer[iPos+1] = '.';
             dMultpl--;
-            if( ToBuffer[iPos] == '\0' || iPos > iSize )
-            {
+            if( ToBuffer[iPos] == '\0' || iPos > iSize ) {
                ToBuffer[iPos] = '0';
             }
-            if( dMultpl == 0 && ToBuffer[iPos+2] == '\0' )
-            {
+            if( dMultpl == 0 && ToBuffer[iPos+2] == '\0' ) {
                ToBuffer[iPos+1] = '\0';
                break;
             }
          }
       }
       iSize = strlen( ToBuffer );
-   }
-   else if( dMultpl < 0 )
-   {
+   } else if( dMultpl < 0 ) {
       // Not implemented
    }
 
-   if( bInteger )
-   {
+   if( bInteger ) {
 #ifndef HB_LONG_LONG_OFF
       LONGLONG lValue;
 #else
@@ -890,19 +847,14 @@ PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
       int iOverflow;
       lValue = hb_strValInt( ToBuffer, &iOverflow );
 
-      if( !iOverflow )
-      {
+      if( !iOverflow ) {
          double dValue = (double) lValue;
          hb_itemPutNLen( pRet, dValue, len, dec );
-      }
-      else
-      {
+      } else {
          double dValue = hb_strVal( ToBuffer, iSize );
          hb_itemPutNLen( pRet, dValue, len, dec );
       }
-   }
-   else
-   {
+   } else {
       double dValue = hb_strVal( ToBuffer, iSize );
       hb_itemPutNLen( pRet, dValue, len, dec );
    }
@@ -915,8 +867,7 @@ HB_FUNC( SR_DBQUALIFY )
    PHB_ITEM pText = hb_param( 1, HB_IT_STRING );
    int ulDb = hb_parni(2);
 
-   if( pText )
-   {
+   if( pText ) {
       char * szOut;
       const char * pszBuffer;
       HB_SIZE ulLen, i;
@@ -1077,9 +1028,9 @@ BOOL SR_itemEmpty( PHB_ITEM pItem )
       case HB_IT_SYMBOL:
       {
          PHB_SYMB pSym = hb_itemGetSymbol( pItem );
-         if( pSym && ( pSym->scope.value & HB_FS_DEFERRED ) && \
-             pSym->pDynSym )
+         if( pSym && ( pSym->scope.value & HB_FS_DEFERRED ) && pSym->pDynSym ) {
             pSym = hb_dynsymSymbol( pSym->pDynSym );
+         }
          return pSym == NULL || pSym->value.pFunPtr == NULL;
       }
 #endif
@@ -1103,10 +1054,8 @@ char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, 
                                          || HB_IS_OBJECT( pFieldData )
                                          || HB_IS_HASH( pFieldData ) ))
                                   && (      ( (nSystemID == SYSTEMID_POSTGR) && HB_IS_DATE( pFieldData ) )
-                                         || ( (nSystemID != SYSTEMID_POSTGR) && ( !HB_IS_LOGICAL( pFieldData ) ) ) ) )
-   {
-      if( bNullable || HB_IS_DATE( pFieldData ) )
-      {
+                                         || ( (nSystemID != SYSTEMID_POSTGR) && ( !HB_IS_LOGICAL( pFieldData ) ) ) ) ) {
+      if( bNullable || HB_IS_DATE( pFieldData ) ) {
          sValue = (char *) hb_xgrab( 5 );
          sValue[0] = 'N';
          sValue[1] = 'U';
@@ -1119,24 +1068,19 @@ char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, 
       }
       else
       {
-         if( HB_IS_STRING( pFieldData ) && bTCCompat )
-         {
+         if( HB_IS_STRING( pFieldData ) && bTCCompat ) {
             sValue = QuoteTrimEscapeString( hb_itemGetCPtr( pFieldData ),
                                             hb_itemGetCLen( pFieldData ),
                                             nSystemID, FALSE, &iSizeOut );
             return (sValue);
-         }
-         else if( HB_IS_STRING( pFieldData ) )
-         {
+         } else if( HB_IS_STRING( pFieldData ) ) {
             sValue = (char *) hb_xgrab( 4 );
             sValue[0] = '\'';
             sValue[1] = ' ';
             sValue[2] = '\'';
             sValue[3] = '\0';
             return (sValue);
-         }
-         else if( HB_IS_NUMBER( pFieldData ) )
-         {
+         } else if( HB_IS_NUMBER( pFieldData ) ) {
             sValue = (char *) hb_xgrab( 2 );
             sValue[0] = '0';
             sValue[1] = '\0';
@@ -1145,14 +1089,11 @@ char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, 
       }
    }
 
-   if( HB_IS_STRING( pFieldData ) )
-   {
+   if( HB_IS_STRING( pFieldData ) ) {
       sValue = QuoteTrimEscapeString( hb_itemGetCPtr( pFieldData ),
                                       hb_itemGetCLen( pFieldData ),
                                       nSystemID, !bTCCompat, &iSizeOut );
-   }
-   else if( HB_IS_NUMBER( pFieldData ) )
-   {
+   } else if( HB_IS_NUMBER( pFieldData ) ) {
       sValue = hb_itemStr( pFieldData, pFieldLen, pFieldDec );
       iTrim = 0;
       iSize = 15;
@@ -1160,85 +1101,65 @@ char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, 
       {
          iTrim++;
       }
-      if( iTrim > 0 )
-      {
+      if( iTrim > 0 ) {
          for ( iPos = 0; iPos + iTrim < iSize; iPos++ )
          {
             sValue[iPos] = sValue[iPos + iTrim];
          }
          sValue[iPos] = '\0';
       }
-   }
-   else if( HB_IS_DATE( pFieldData ) )
-   {
+   } else if( HB_IS_DATE( pFieldData ) ) {
       hb_dateDecStr( sDate, hb_itemGetDL( pFieldData ) );
       sValue = (char *) hb_xgrab( 30 );
       switch( nSystemID )
       {
          case SYSTEMID_ORACLE:
          {
-            if( !bMemo )
-            {
+            if( !bMemo ) {
                sprintf( sValue, "TO_DATE(\'%s\',\'YYYYMMDD\')", sDate );
                return (sValue);
             }
          }
          default:
          {
-            if (!bMemo)
-            {
+            if (!bMemo) {
                sprintf( sValue, "\'%s\'", sDate );
                return (sValue);
             }
          }
       }
-   }
-   else if( HB_IS_LOGICAL( pFieldData ) )
-   {
+   } else if( HB_IS_LOGICAL( pFieldData ) ) {
       sValue = (char *) hb_xgrab( 6 );
-      if( hb_itemGetL( pFieldData ) )
-      {
-         if( nSystemID == SYSTEMID_POSTGR )
-         {
+      if( hb_itemGetL( pFieldData ) ) {
+         if( nSystemID == SYSTEMID_POSTGR ) {
             sValue[0] = 't';
             sValue[1] = 'r';
             sValue[2] = 'u';
             sValue[3] = 'e';
             sValue[4] = '\0';
-         }
-         else if( nSystemID == SYSTEMID_INFORM )
-         {
+         } else if( nSystemID == SYSTEMID_INFORM ) {
             sValue[0] = '\'';
             sValue[1] = 't';
             sValue[2] = '\'';
             sValue[3] = '\0';
-         }
-         else
-         {
+         } else {
             sValue[0] = '1';
             sValue[1] = '\0';
          }
-      }
-      else
-      {
-         if( nSystemID == SYSTEMID_POSTGR )
-         {
+      } else {
+         if( nSystemID == SYSTEMID_POSTGR ) {
             sValue[0] = 'f';
             sValue[1] = 'a';
             sValue[2] = 'l';
             sValue[3] = 's';
             sValue[4] = 'e';
             sValue[5] = '\0';
-         }
-         else if( nSystemID == SYSTEMID_INFORM )
-         {
+         } else if( nSystemID == SYSTEMID_INFORM ) {
             sValue[0] = '\'';
             sValue[1] = 'f';
             sValue[2] = '\'';
             sValue[3] = '\0';
-         }
-         else
-         {
+         } else {
             sValue[0] = '0';
             sValue[1] = '\0';
          }

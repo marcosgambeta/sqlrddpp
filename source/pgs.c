@@ -71,12 +71,9 @@ HB_FUNC( PGSSTATUS )       /* PGSStatus( ConnHandle ) => nStatus */
    PPSQL_SESSION session  = ( PPSQL_SESSION ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
    assert( session->dbh != NULL );   
 
-   if( PQstatus( session->dbh ) == CONNECTION_OK )
-   {
+   if( PQstatus( session->dbh ) == CONNECTION_OK ) {
       hb_retni( SQL_SUCCESS );
-   }
-   else
-   {
+   } else {
       hb_retni( SQL_ERROR );
    }
 }
@@ -194,8 +191,7 @@ HB_FUNC( PGSCLEAR )        /* PGSClear( ResultSet ) */
 {
    PPSQL_SESSION session  = ( PPSQL_SESSION ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
    assert( session->dbh  != NULL );
-   if( session->stmt )
-   {
+   if( session->stmt ) {
       PQclear( session->stmt );
       session->stmt   = NULL;
       session->ifetch = -2;
@@ -647,8 +643,7 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
    
 	   
 
-   if( lLenBuff <= 0 )     // database content is NULL
-   {
+   if( lLenBuff <= 0 ) {   // database content is NULL
       switch( lType )
       {
          case SQL_CHAR:
@@ -754,14 +749,14 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          case SQL_LONGVARCHAR:
          {
 
-            if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) )
-            {
-               if (s_pSym_SR_FROMJSON == NULL )
-               {
+            if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) ) {
+               if( s_pSym_SR_FROMJSON == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName( "HB_JSONDECODE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_FROMJSON  == NULL ) printf( "Could not find Symbol HB_JSONDECODE\n" );            
+                  if( s_pSym_SR_FROMJSON  == NULL ) {
+                     printf( "Could not find Symbol HB_JSONDECODE\n" );
+                  }
                }
                hb_vmPushDynSym( s_pSym_SR_FROMJSON );
                hb_vmPushNil();
@@ -773,16 +768,14 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
                hb_itemForwardValue( pItem, pTemp );
                hb_itemRelease( pTemp );
 
-            }
-
-            else if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) )
-            {
-               if( s_pSym_SR_DESERIALIZE == NULL )
-               {
+            } else if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) ) {
+               if( s_pSym_SR_DESERIALIZE == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName( "SR_DESERIALIZE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_DESERIALIZE  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  if( s_pSym_SR_DESERIALIZE  == NULL ) {
+                     printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  }   
                }
                hb_vmPushDynSym( s_pSym_SR_DESERIALIZE );
                hb_vmPushNil();
@@ -793,27 +786,20 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
                pTemp = hb_itemNew( NULL );
                hb_itemForwardValue( pTemp, hb_stackReturnItem() );
 
-               if( HB_IS_HASH( pTemp ) && sr_isMultilang() && bTranslate )
-               {
+               if( HB_IS_HASH( pTemp ) && sr_isMultilang() && bTranslate ) {
                   PHB_ITEM pLangItem = hb_itemNew( NULL );
                   HB_SIZE ulPos;
-                  if( hb_hashScan( pTemp, sr_getBaseLang( pLangItem ), &ulPos ) ||
-                      hb_hashScan( pTemp, sr_getSecondLang( pLangItem ), &ulPos ) ||
-                      hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) )
-                  {
+                  if(    hb_hashScan( pTemp, sr_getBaseLang( pLangItem ), &ulPos )
+                      || hb_hashScan( pTemp, sr_getSecondLang( pLangItem ), &ulPos )
+                      || hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) ) {
                      hb_itemCopy( pItem, hb_hashGetValueAt( pTemp, ulPos ) );
                   }
                   hb_itemRelease( pLangItem );
-               }
-               else
-               {
+               } else {
                   hb_itemForwardValue( pItem, pTemp );
                }
                hb_itemRelease( pTemp );
-            }
-
-            else
-            {
+            } else {
                hb_itemPutCL( pItem, bBuffer,  lLenBuff );
             }
             break;
@@ -822,12 +808,13 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          case SQL_LONGVARCHARXML:
          {
 
-               if( s_pSym_SR_FROMXML == NULL )
-               {
+               if( s_pSym_SR_FROMXML == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_FROMXML = hb_dynsymFindName( "SR_FROMXML" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_FROMXML  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  if( s_pSym_SR_FROMXML  == NULL ) {
+                     printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  }
                }
                pTemp1 = hb_itemArrayNew(0);
                hb_vmPushDynSym( s_pSym_SR_FROMXML );
@@ -907,8 +894,7 @@ HB_FUNC( PGSLINEPROCESSED )
    assert( session->dbh  != NULL );
    assert( session->stmt != NULL );
 
-   if( session )
-   {
+   if( session ) {
       cols = hb_arrayLen( pFields );
 
       for( i=0; i < cols; i++ )
@@ -916,8 +902,7 @@ HB_FUNC( PGSLINEPROCESSED )
          temp = hb_itemNew( NULL );
          lIndex  = hb_arrayGetNL( hb_arrayGetItemPtr( pFields, i+1 ), FIELD_ENUM );
 
-         if( lIndex != 0 )
-         {
+         if( lIndex != 0 ) {
             col = PQgetvalue( session->stmt, session->ifetch, lIndex - 1 );
             PGSFieldGet( hb_arrayGetItemPtr( pFields, i+1 ), temp, (char * ) col, strlen( col ), bQueryOnly, ulSystemID, bTranslate );
          }
@@ -931,8 +916,7 @@ HB_FUNC( PGSLINEPROCESSED )
 HB_FUNC( PGSAFFECTEDROWS )
 {
    PPSQL_SESSION session  = ( PPSQL_SESSION ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
-   if( session )
-   {
+   if( session ) {
       hb_retni( session->iAffectedRows) ;
       return;
    }   

@@ -94,15 +94,11 @@ void fb_log_status( PFB_SESSION session, const char * from )
    session->errorcode = session->status[1];
    HB_SYMBOL_UNUSED( from );
 
-   if( session->transac )
-   {
+   if( session->transac ) {
       isc_rollback_transaction( session->status, &(session->transac) );
-      if( CHECK_ERROR(session) )
-      {
+      if( CHECK_ERROR(session) ) {
          ERRORLOGANDEXIT( session, "FBROLLBACKTRANSACTION ON ERROR" );
-      }
-      else
-      {
+      } else {
          session->transac = 0;
          session->transactionPending = 0;
       }
@@ -661,19 +657,13 @@ HB_FUNC( FBFETCH )   // FBFetch( hEnv )
 {
    PFB_SESSION session  = ( PFB_SESSION ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
 
-   if ( session )
-   {
-      if( isc_dsql_fetch( session->status, &(session->stmt), session->sqlda->version, session->sqlda ) )
-      {
+   if( session ) {
+      if( isc_dsql_fetch( session->status, &(session->stmt), session->sqlda->version, session->sqlda ) ) {
          hb_retni( SQL_NO_DATA_FOUND );
-      }
-      else
-      {
+      } else {
          hb_retni( SQL_SUCCESS );
       }
-   }
-   else
-   {
+   } else {
       hb_retni( SQL_ERROR );
    }
 }
@@ -705,12 +695,9 @@ HB_FUNC( FBGETDATA )    // FBGetData( hEnv, nField, @uData )
       var = session->sqlda->sqlvar;
       for ( i = 0; i < icol-1; i++, var++ ){}
 
-      if( ( var->sqltype & 1 ) && ( *var->sqlind < 0 ) )
-      {
+      if( ( var->sqltype & 1 ) && ( *var->sqlind < 0 ) ) {
          hb_storc( " ", 3 );
-      }
-      else
-      {
+      } else {
          dtype = ( ( (XSQLVAR *) var )->sqltype & ~1 );
          switch ( dtype )
          {
@@ -958,41 +945,30 @@ HB_FUNC( FBCREATEDB )
       dialect = 3;
    }
 
-   if (charset && page)
-   {
+   if( charset && page ) {
       hb_snprintf( create_db, sizeof( create_db ),
          "CREATE DATABASE '%s' USER '%s' PASSWORD '%s' PAGE_SIZE = %i DEFAULT CHARACTER SET %s",
          db_name, username, passwd, page, charset );
-   }
-   else if( charset )
-   {
+   } else if( charset ) {
       hb_snprintf( create_db, sizeof( create_db ),
          "CREATE DATABASE '%s' USER '%s' PASSWORD '%s' DEFAULT CHARACTER SET %s",
          db_name, username, passwd, charset );
-   }
-   else if( page )
-   {
+   } else if( page ) {
       hb_snprintf( create_db, sizeof( create_db ),
          "CREATE DATABASE '%s' USER '%s' PASSWORD '%s' PAGE_SIZE = %i",
          db_name, username, passwd, page /*, charset*/ );
-   }
-   else
-   {
+   } else {
       hb_snprintf( create_db, sizeof( create_db ), "CREATE DATABASE '%s' USER '%s' PASSWORD '%s'", db_name, username, passwd /*, page, charset*/ );
    }
 
-   if (isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, dialect, NULL))
-   {
+   if( isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, dialect, NULL) ) {
       hb_retni( SQL_ERROR );
       TraceLog( LOGFILE, "FireBird Error: %s - code: %i (see iberr.h)\n", "create database", status[1] );
-   }
-   else
-   {
-     if ( isc_detach_database ( (ISC_STATUS *)status, &newdb ) )
-	 {
-		 hb_retni( SQL_ERROR );
-		 return ;
-     }
+   } else {
+      if( isc_detach_database ( (ISC_STATUS *)status, &newdb ) ) {
+         hb_retni( SQL_ERROR );
+         return;
+      }
 
       hb_retni( SQL_SUCCESS );
    }
@@ -1002,13 +978,10 @@ HB_FUNC( FBCREATEDB )
 
 static void firebird_info_cb(void *arg, char const *s)
 {
-   if(*(char*)arg)
-   {
+   if( *(char*) arg ) {
       strcat((char*)arg, " ");
 //      strcat((char*)arg, s);
-   }
-   else
-   {
+   } else {
       strcpy((char*)arg, s);
    }
 }
@@ -1045,8 +1018,7 @@ void FBFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
    lLen  =  hb_arrayGetNL( pField, 3 );
    lDec  =  hb_arrayGetNL( pField, 4 );
 
-   if( lLenBuff <= 0 )     // database content is NULL
-   {
+   if( lLenBuff <= 0 ) {   // database content is NULL
       switch( lType )
       {
          case SQL_CHAR:
@@ -1154,14 +1126,14 @@ void FBFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
          }
          case SQL_LONGVARCHAR:
          {
-            if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) )
-            {
-               if (s_pSym_SR_FROMJSON == NULL )
-               {
+            if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) ) {
+               if (s_pSym_SR_FROMJSON == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName( "HB_JSONDECODE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_FROMJSON  == NULL ) printf( "Could not find Symbol HB_JSONDECODE\n" );
+                  if( s_pSym_SR_FROMJSON == NULL ) {
+                     printf( "Could not find Symbol HB_JSONDECODE\n" );
+                  }
                }
                hb_vmPushDynSym( s_pSym_SR_FROMJSON );
                hb_vmPushNil();
@@ -1176,16 +1148,14 @@ void FBFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
                hb_itemForwardValue( pItem, pTemp );
                hb_itemRelease( pTemp );
 
-            }
-
-            else if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) )
-            {
-               if( s_pSym_SR_DESERIALIZE == NULL )
-               {
+            } else if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) ) {
+               if( s_pSym_SR_DESERIALIZE == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName( "SR_DESERIALIZE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_DESERIALIZE  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  if( s_pSym_SR_DESERIALIZE  == NULL ) {
+                     printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  }
                }
                hb_vmPushDynSym( s_pSym_SR_DESERIALIZE );
                hb_vmPushNil();
@@ -1195,27 +1165,20 @@ void FBFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
                pTemp = hb_itemNew( NULL );
                hb_itemForwardValue( pTemp, hb_stackReturnItem() );
 
-               if( HB_IS_HASH( pTemp ) && sr_isMultilang() && bTranslate )
-               {
+               if( HB_IS_HASH( pTemp ) && sr_isMultilang() && bTranslate ) {
                   PHB_ITEM pLangItem = hb_itemNew( NULL );
                   HB_SIZE ulPos;
                   if( hb_hashScan( pTemp, sr_getBaseLang( pLangItem ), &ulPos ) ||
                       hb_hashScan( pTemp, sr_getSecondLang( pLangItem ), &ulPos ) ||
-                      hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) )
-                  {
+                      hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) ) {
                      hb_itemCopy( pItem, hb_hashGetValueAt( pTemp, ulPos ) );
                   }
                   hb_itemRelease( pLangItem );
-               }
-               else
-               {
+               } else {
                   hb_itemForwardValue( pItem, pTemp );
                }
                hb_itemRelease( pTemp );
-            }
-
-            else
-            {
+            } else {
                hb_itemPutCL( pItem, bBuffer, lLenBuff );
             }
             break;
@@ -1319,8 +1282,7 @@ HB_FUNC( FBLINEPROCESSED )
    HB_SIZE lLen, lDec;
    
 
-   if( session )
-   {
+   if( session ) {
       cols = hb_arrayLen( pFields );
 
       for( icol = 1; icol <= cols; icol++ )
@@ -1334,21 +1296,15 @@ HB_FUNC( FBLINEPROCESSED )
          lDec  =  hb_arrayGetNL( hb_arrayGetItemPtr( pFields, icol ), 4 );
          
 
-         if( lIndex == 0 )
-         {
+         if( lIndex == 0 ) {
             hb_arraySetForward( pRet, icol, temp );
-         }
-         else
-         {
+         } else {
             for ( i = 0; i < lIndex-1; i++, var++ ){}
 
-            if( ( var->sqltype & 1 ) && ( *var->sqlind < 0 ) )
-            {
+            if( ( var->sqltype & 1 ) && ( *var->sqlind < 0 ) ) {
                FBFieldGet( hb_arrayGetItemPtr( pFields, icol ), temp, (char * ) "", 0, bQueryOnly, ulSystemID, bTranslate );
                hb_arraySetForward( pRet, icol , temp );
-            }
-            else
-            {
+            } else {
                dtype = ( ( (XSQLVAR *) var )->sqltype & ~1 );
                switch ( dtype )
                {

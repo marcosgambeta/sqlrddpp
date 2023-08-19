@@ -200,8 +200,7 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
    lLen  = hb_arrayGetNL( pField, FIELD_LEN );
    lDec  = hb_arrayGetNL( pField, FIELD_DEC );
 
-   if( lLenBuff <= 0 )     // database content is NULL
-   {
+   if( lLenBuff <= 0 ) {   // database content is NULL
       switch( lType )
       {
          case SQL_CHAR:
@@ -303,14 +302,14 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
          }
          case SQL_LONGVARCHAR:
          {
-            if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) )
-            {
-               if (s_pSym_SR_FROMJSON == NULL )
-               {
+            if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) ) {
+               if (s_pSym_SR_FROMJSON == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName( "HB_JSONDECODE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_FROMJSON  == NULL ) printf( "Could not find Symbol HB_JSONDECODE\n" );            
+                  if ( s_pSym_SR_FROMJSON  == NULL ) {
+                     printf( "Could not find Symbol HB_JSONDECODE\n" );
+                  }   
                }
                hb_vmPushDynSym( s_pSym_SR_FROMJSON );
                hb_vmPushNil();
@@ -321,16 +320,14 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                hb_itemForwardValue( pItem, pTemp );              
                hb_itemRelease( pTemp );
 
-            }
-
-            else if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) )
-            {
-               if( s_pSym_SR_DESERIALIZE == NULL )
-               {
+            } else if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) ) {
+               if( s_pSym_SR_DESERIALIZE == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName( "SR_DESERIALIZE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_DESERIALIZE  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  if ( s_pSym_SR_DESERIALIZE  == NULL ) {
+                     printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  }   
                }
                hb_vmPushDynSym( s_pSym_SR_DESERIALIZE );
                hb_vmPushNil();
@@ -340,27 +337,20 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                pTemp = hb_itemNew( NULL );
                hb_itemForwardValue( pTemp, hb_stackReturnItem() );
 
-               if( HB_IS_HASH( pTemp ) && sr_isMultilang() && bTranslate )
-               {
+               if( HB_IS_HASH( pTemp ) && sr_isMultilang() && bTranslate ) {
                   PHB_ITEM pLangItem = hb_itemNew( NULL );
                   HB_SIZE ulPos;
-                  if( hb_hashScan( pTemp, sr_getBaseLang( pLangItem ), &ulPos ) ||
-                      hb_hashScan( pTemp, sr_getSecondLang( pLangItem ), &ulPos ) ||
-                      hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) )
-                  {
+                  if(    hb_hashScan( pTemp, sr_getBaseLang( pLangItem ), &ulPos )
+                      || hb_hashScan( pTemp, sr_getSecondLang( pLangItem ), &ulPos )
+                      || hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) ) {
                      hb_itemCopy( pItem, hb_hashGetValueAt( pTemp, ulPos ) );
                   }
                   hb_itemRelease( pLangItem );
-               }
-               else
-               {
+               } else {
                   hb_itemForwardValue( pItem, pTemp );
                }
                hb_itemRelease( pTemp );
-            }
-
-            else
-            {
+            } else {
                hb_itemPutCL( pItem, bBuffer,  lLenBuff );
             }
             break;
@@ -447,14 +437,10 @@ HB_FUNC( MYSLINEPROCESSED )
             temp    = hb_itemNew( NULL );
             lIndex  = hb_arrayGetNL( hb_arrayGetItemPtr( pFields, col+1 ), FIELD_ENUM );
 
-            if( lIndex != 0 )
-            {
-               if( thisrow[lIndex-1] )
-               {
+            if( lIndex != 0 ) {
+               if( thisrow[lIndex-1] ) {
                   MSQLFieldGet( hb_arrayGetItemPtr( pFields, col+1 ), temp, (char * ) thisrow[lIndex-1], lens[lIndex-1], bQueryOnly, ulSystemID, bTranslate );
-               }
-               else
-               {
+               } else {
                   MSQLFieldGet( hb_arrayGetItemPtr( pFields, col+1 ), temp, "", 0, bQueryOnly, ulSystemID, bTranslate );
                }
             }
@@ -462,9 +448,7 @@ HB_FUNC( MYSLINEPROCESSED )
             hb_itemRelease( temp );
          }
          hb_retni( SQL_SUCCESS );
-      }
-      else
-      {
+      } else {
          hb_retni( SQL_INVALID_HANDLE );
       }
    }
@@ -533,8 +517,7 @@ HB_FUNC( MYSCLEAR )
    assert( session != NULL );
    assert( session->dbh != NULL );
 
-   if( session->stmt )
-   {
+   if( session->stmt ) {
       mysql_free_result( session->stmt );
       session->stmt   = NULL;
       session->ifetch = -2;
@@ -573,12 +556,9 @@ HB_FUNC( MYSCOMMIT )
    assert( session != NULL );
    assert( session->dbh != NULL );
 
-   if( mysql_commit( session->dbh ) )
-   {
+   if( mysql_commit( session->dbh ) ) {
       hb_retni( SQL_SUCCESS );
-   }
-   else
-   {
+   } else {
       hb_retni( SQL_ERROR );
    }
 }
@@ -590,12 +570,9 @@ HB_FUNC( MYSROLLBACK )
    assert( session != NULL );
    assert( session->dbh != NULL );
 
-   if( mysql_rollback( session->dbh ) )
-   {
+   if( mysql_rollback( session->dbh ) ) {
       hb_retni( SQL_SUCCESS );
-   }
-   else
-   {
+   } else {
       hb_retni( SQL_ERROR );
    }
 }
@@ -607,8 +584,7 @@ HB_FUNC( MYSQUERYATTR )
    PMYSQL_SESSION session;
    MYSQL_FIELD * field;
 
-   if (hb_pcount() != 1)
-   {
+   if (hb_pcount() != 1) {
       hb_retnl( -2 );
    }
 
@@ -878,8 +854,7 @@ HB_FUNC( MYSTABLEATTR )
 HB_FUNC( MYSAFFECTEDROWS )
 {
    PMYSQL_SESSION session  = ( PMYSQL_SESSION ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
-   if( session )
-   {
+   if( session ) {
       hb_retnll( session->ulAffected_rows) ;
       return;
    }   
