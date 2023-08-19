@@ -561,7 +561,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
       if( !BindStructure->isArgumentNull ) {
          // Corrigido 27/12/2013 09:53 - lpereira
          // Estava atribuindo o valor de SYSTEMID_ORACLE para thiswa->nSystemID.
-         //if ( thiswa->nSystemID = SYSTEMID_ORACLE )
+         //if( thiswa->nSystemID = SYSTEMID_ORACLE )
          if( thiswa->nSystemID == SYSTEMID_ORACLE ) {
             if( BindStructure->iCType == SQL_C_TYPE_DATE ) {
                BindStructure->iCType = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP

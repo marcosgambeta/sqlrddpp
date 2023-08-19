@@ -152,7 +152,7 @@ HB_ERRCODE prepareSeekQueryOra( SQLEXORAAREAP thiswa, INDEXBINDORAP SeekBind )
       }
    }
 
-//    if ( hPrep == NULL )
+//    if( hPrep == NULL )
 //    {
 //       return (HB_FAILURE);
 //    }
@@ -465,7 +465,7 @@ HB_ERRCODE FeedSeekKeyToBindingsOra( SQLEXORAAREAP thiswa, PHB_ITEM pKey, int * 
             // To Do: Raise RT error
             return (HB_FAILURE);
          }
-         if (BindStructure->iCType == SQL_C_NUMERIC) {
+         if( BindStructure->iCType == SQL_C_NUMERIC ) {
             BindStructure->asNumeric = (HB_LONG) hb_itemGetNInt( pKey );
          } else {
             BindStructure->asDouble = (double) hb_itemGetND( pKey );
@@ -508,8 +508,8 @@ void BindSeekStmtora( SQLEXORAAREAP thiswa, int queryLevel )
       BindStructure   = GetBindStructOra( thiswa, SeekBindParam );
       if( !BindStructure->isArgumentNull ) {
 
-//        if ( thiswa->nSystemID = SYSTEMID_ORACLE )
-//           if ( BindStructure->iCType == SQL_C_TYPE_DATE )
+//        if( thiswa->nSystemID = SYSTEMID_ORACLE )
+//           if( BindStructure->iCType == SQL_C_TYPE_DATE )
 //               BindStructure->iCType = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP
 
          switch (BindStructure->iCType)

@@ -66,12 +66,12 @@ HB_FUNC( SR_SQLPARSE )     /* SqlParse( cCommand, @nError, @nErrorPos ) */
 
 int SqlParse( sql_stmt* stmt, const char* query, int queryLen )
 {
-   if (!query) {
+   if( !query ) {
       stmt->errMsg = SQL_PARSER_ERROR_PARSE;
       stmt->errPtr = "";
       return 0;
    }
-   if (!queryLen) {
+   if( !queryLen ) {
       queryLen = strlen( query )+1;
    }
 
@@ -241,7 +241,7 @@ HB_FUNC( SR_STRTOHEX )
 
       iCipher = (int) (iNum % 16);
 
-      if ( iCipher < 10 )
+      if( iCipher < 10 )
       {
          c[1] = '0' + iCipher;
       }
@@ -252,7 +252,7 @@ HB_FUNC( SR_STRTOHEX )
       iNum >>=4;
 
       iCipher = iNum % 16;
-      if ( iCipher < 10 )
+      if( iCipher < 10 )
       {
          c[0] = '0' + iCipher;
       }
@@ -288,15 +288,15 @@ char * sr_Hex2Str( const char * cStr, int len, int * lenOut )
       iNum <<= 4;
       iCipher = 0;
 
-      if ( c >= '0' && c <= '9' )
+      if( c >= '0' && c <= '9' )
       {
          iCipher = (ULONG) ( c - '0' );
       }
-      else if ( c >= 'A' && c <= 'F' )
+      else if( c >= 'A' && c <= 'F' )
       {
          iCipher = (ULONG) ( c - 'A' )+10;
       }
-      else if ( c >= 'a' && c <= 'f' )
+      else if( c >= 'a' && c <= 'f' )
       {
          iCipher = (ULONG) ( c - 'a' )+10;
       }
@@ -310,15 +310,15 @@ char * sr_Hex2Str( const char * cStr, int len, int * lenOut )
       iNum <<= 4;
       iCipher = 0;
 
-      if ( c >= '0' && c <= '9' )
+      if( c >= '0' && c <= '9' )
       {
          iCipher = (ULONG) ( c - '0' );
       }
-      else if ( c >= 'A' && c <= 'F' )
+      else if( c >= 'A' && c <= 'F' )
       {
          iCipher = (ULONG) ( c - 'A' )+10;
       }
-      else if ( c >= 'a' && c <= 'f' )
+      else if( c >= 'a' && c <= 'f' )
       {
          iCipher = (ULONG) ( c - 'a' )+10;
       }
@@ -526,11 +526,11 @@ HB_FUNC( SR_ESCAPESTRING )
       return;
    }
 
-   if ( iSize )
+   if( iSize )
    {
       FromBuffer = hb_parc( 1 );
       ToBuffer = ( char *) hb_xgrab( ( iSize*2 ) + 1 );
-      if ( ToBuffer )
+      if( ToBuffer )
       {
          switch (idatabase)
          {
@@ -652,7 +652,7 @@ HB_FUNC( SR_ESCAPENUM )
    len = hb_parnl( 2 );
    dec = hb_parnl( 3 );
 
-   if ( dec > 0 )
+   if( dec > 0 )
    {
       len -= (dec + 1);
    }
@@ -662,7 +662,7 @@ HB_FUNC( SR_ESCAPENUM )
 
    for( iPos=0;iPos<iSize;iPos++ )
    {
-      if (FromBuffer[iPos] == ',')
+      if( FromBuffer[iPos] == ',' )
       {
          ToBuffer[iPos] = '.';
          iDecPos = iPos;
@@ -672,13 +672,13 @@ HB_FUNC( SR_ESCAPENUM )
          ToBuffer[iPos] = FromBuffer[iPos];
       }
 
-      if (ToBuffer[iPos] == '.')
+      if( ToBuffer[iPos] == '.' )
       {
          bInteger = FALSE;
          iDecPos = iPos;
       }
 
-      if (ToBuffer[iPos] == 'E' && (iPos+2) <= iSize)    // 1928773.3663E+003
+      if( ToBuffer[iPos] == 'E' && (iPos+2) <= iSize )    // 1928773.3663E+003
       {
          bInteger = FALSE;
          if( FromBuffer[iPos+1] == '-' ) {
@@ -763,7 +763,7 @@ PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
    ToBuffer = ( char *) hb_xgrab( ( iSize ) + 33 );
    memset( ToBuffer, 0, ( iSize ) + 33 );
 
-   if ( dec > 0 )
+   if( dec > 0 )
    {
       len -= (dec + 1);
    }
@@ -773,7 +773,7 @@ PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
 
    for( iPos=0;iPos<iSize;iPos++ )
    {
-      if (FromBuffer[iPos] == ',')
+      if( FromBuffer[iPos] == ',' )
       {
          ToBuffer[iPos] = '.';
          iDecPos = iPos;
@@ -783,13 +783,13 @@ PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
          ToBuffer[iPos] = FromBuffer[iPos];
       }
 
-      if (ToBuffer[iPos] == '.')
+      if( ToBuffer[iPos] == '.' )
       {
          bInteger = FALSE;
          iDecPos = iPos;
       }
 
-      if (ToBuffer[iPos] == 'E' && (iPos+2) <= iSize)    // 1928773.3663E+003
+      if( ToBuffer[iPos] == 'E' && (iPos+2) <= iSize )    // 1928773.3663E+003
       {
          bInteger = FALSE;
          if( FromBuffer[iPos+1] == '-' ) {
@@ -1122,7 +1122,7 @@ char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, 
          }
          default:
          {
-            if (!bMemo) {
+            if( !bMemo ) {
                sprintf( sValue, "\'%s\'", sDate );
                return (sValue);
             }

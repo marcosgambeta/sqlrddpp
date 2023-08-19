@@ -283,7 +283,7 @@ void CreateInsertStmt( SQLEXAREAP thiswa )
          {
            // Corrigido 27/12/2013 09:53 - lpereira
            // Estava atribuindo o valor de SYSTEMID_ORACLE para thiswa->nSystemID.
-           //if ( thiswa->nSystemID = SYSTEMID_ORACLE )
+           //if( thiswa->nSystemID = SYSTEMID_ORACLE )
 	        if( thiswa->nSystemID == SYSTEMID_ORACLE ) {
 	           InsertRecord->iCType          = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP
 	        } else {
@@ -303,7 +303,7 @@ void CreateInsertStmt( SQLEXAREAP thiswa )
             break;
          }
       }
-      //if (InsertRecord->isMultiLang) // culik, se e multiplang, binda como binario
+      //if( InsertRecord->isMultiLang ) // culik, se e multiplang, binda como binario
       // InsertRecord->iCType            = SQL_C_BINARY;
       InsertRecord++;
    }
@@ -820,7 +820,7 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
                                                    CLOSE_QUALIFIER( thiswa ) );
          hb_xfree( temp );
 
-         if ( CHECK_SQL_N_OK( res ) )
+         if( CHECK_SQL_N_OK( res ) )
          {
             odbcErrorDiagRTE( thiswa->hStmtUpdate, "BindUpdateColumns", thiswa->sSql, res, __LINE__, __FILE__ );
             return HB_FAILURE;
@@ -832,14 +832,14 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
    sprintf( thiswa->sSql, "%s\n WHERE %c%s%c = ?", temp, OPEN_QUALIFIER( thiswa ), thiswa->sRecnoName, CLOSE_QUALIFIER( thiswa ) );
    hb_xfree( temp );
    res = SQLBindParameter( thiswa->hStmtUpdate, ++iBind, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 15, 0, &(thiswa->lUpdatedRecord), 0, NULL );
-   if ( CHECK_SQL_N_OK( res ) )
+   if( CHECK_SQL_N_OK( res ) )
    {
       odbcErrorDiagRTE( thiswa->hStmtUpdate, "BindUpdateColumns", thiswa->sSql, res, __LINE__, __FILE__ );
       return HB_FAILURE;
    }
 
    res = SQLPrepare( thiswa->hStmtUpdate, (SQLCHAR *) (thiswa->sSql), SQL_NTS );
-   if ( CHECK_SQL_N_OK( res ) )
+   if( CHECK_SQL_N_OK( res ) )
    {
       odbcErrorDiagRTE( thiswa->hStmtUpdate, "CreateUpdateStmt", thiswa->sSql, res, __LINE__, __FILE__ );
       return HB_FAILURE;

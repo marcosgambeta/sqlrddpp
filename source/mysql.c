@@ -64,11 +64,11 @@ HB_FUNC( MYSCONNECT )
    session->dbh    = mysql_init( ( MYSQL * ) 0 );
    session->ifetch = -2;
 
-   if (  session->dbh != NULL )
+   if( session->dbh != NULL )
    {
 	  iConnectionCount ++ ; 
       mysql_options( session->dbh, MYSQL_OPT_CONNECT_TIMEOUT, (const char *) &uiTimeout );
-      if (lCompress)
+      if( lCompress )
          mysql_real_connect( session->dbh, szHost, szUser, szPass, szDb, uiPort, NULL, CLIENT_ALL_FLAGS );
       else
          mysql_real_connect( session->dbh, szHost, szUser, szPass, szDb, uiPort, NULL, CLIENT_ALL_FLAGS2 );
@@ -78,7 +78,7 @@ HB_FUNC( MYSCONNECT )
    {
       
       mysql_close( NULL );
-      if ( iConnectionCount == 0 ) 
+      if( iConnectionCount == 0 )
          mysql_library_end();
 
       hb_retptr( NULL );
@@ -93,9 +93,9 @@ HB_FUNC( MYSFINISH )
    mysql_close( session->dbh );
 
    hb_xfree( session );
-   if (iConnectionCount >  0)
+   if( iConnectionCount >  0 )
       iConnectionCount -- ;    
-   if ( iConnectionCount == 0 ) 
+   if( iConnectionCount == 0 )
       mysql_library_end();
    hb_ret();
 }
@@ -135,7 +135,7 @@ HB_FUNC( MYSEXEC )
    mysql_real_query( session->dbh, szQuery, hb_parclen( 2 ) );
    session->stmt = mysql_store_result( session->dbh );
    session->ulAffected_rows = mysql_affected_rows(session->dbh) ;
-   if ( session->stmt )
+   if( session->stmt )
    {
 	   session->numcols = mysql_num_fields( session->stmt );
    }
@@ -158,18 +158,18 @@ HB_FUNC( MYSFETCH )     /* MYSFetch( ConnHandle,ResultSet ) => nStatus */
 
    session->status =  mysql_errno( session->dbh ) ;
 
-   if ( session->status != MYSQL_OK )
+   if( session->status != MYSQL_OK )
    {
       hb_retni( SQL_INVALID_HANDLE );
    }
    else
    {
-      if ( session->ifetch >= -1 )
+      if( session->ifetch >= -1 )
       {
          session->ifetch++;
          rows = (int) ( mysql_num_rows( session->stmt ) -1 );
 
-         if ( session->ifetch > rows )
+         if( session->ifetch > rows )
          {
             hb_retni( SQL_NO_DATA_FOUND );
          }
@@ -303,11 +303,11 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
          case SQL_LONGVARCHAR:
          {
             if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) ) {
-               if (s_pSym_SR_FROMJSON == NULL ) {
+               if( s_pSym_SR_FROMJSON == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName( "HB_JSONDECODE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_FROMJSON  == NULL ) {
+                  if( s_pSym_SR_FROMJSON  == NULL ) {
                      printf( "Could not find Symbol HB_JSONDECODE\n" );
                   }   
                }
@@ -325,7 +325,7 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                   hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName( "SR_DESERIALIZE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_DESERIALIZE  == NULL ) {
+                  if( s_pSym_SR_DESERIALIZE  == NULL ) {
                      printf( "Could not find Symbol SR_DESERIALIZE\n" );
                   }   
                }
@@ -418,13 +418,13 @@ HB_FUNC( MYSLINEPROCESSED )
 
    session->status =  mysql_errno( session->dbh ) ;
 
-   if ( session->status != MYSQL_OK )
+   if( session->status != MYSQL_OK )
    {
       hb_retni( SQL_INVALID_HANDLE );
    }
    else
    {
-      if ( session->ifetch >= -1 )
+      if( session->ifetch >= -1 )
       {
          cols = hb_arrayLen( pFields );
 
@@ -464,7 +464,7 @@ HB_FUNC( MYSSTATUS )
 
    ret = mysql_errno( session->dbh );
 
-   if (ret ==MYSQL_OK)
+   if( ret ==MYSQL_OK )
    {
       ret = SQL_SUCCESS;
    }
@@ -584,7 +584,7 @@ HB_FUNC( MYSQUERYATTR )
    PMYSQL_SESSION session;
    MYSQL_FIELD * field;
 
-   if (hb_pcount() != 1) {
+   if( hb_pcount() != 1 ) {
       hb_retnl( -2 );
    }
 
@@ -712,7 +712,7 @@ HB_FUNC( MYSTABLEATTR )
 
    MYSQL_FIELD * field;
 
-   if (hb_pcount() != 2)
+   if( hb_pcount() != 2 )
    {
       hb_retnl( -2 );
    }
@@ -726,7 +726,7 @@ HB_FUNC( MYSTABLEATTR )
    mysql_real_query( session->dbh, attcmm, strlen(attcmm) );
    session->stmt = mysql_store_result( session->dbh );
 
-   if ( !session->stmt )
+   if( !session->stmt )
    {
       TraceLog( LOGFILE, "Query error : %i - %s\n", mysql_errno( session->dbh ), mysql_error( session->dbh ) );
    }

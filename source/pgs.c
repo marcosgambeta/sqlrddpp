@@ -151,17 +151,17 @@ HB_FUNC( PGSFETCH )     /* PGSFetch( ResultSet ) => nStatus */
 
    iTpl = PQresultStatus( session->stmt );
    session->iAffectedRows = 0;
-   if (iTpl != PGRES_TUPLES_OK)
+   if( iTpl != PGRES_TUPLES_OK )
    {
       hb_retni( SQL_INVALID_HANDLE );
    }
    else
    {
-      if ( session->ifetch >= -1 )
+      if( session->ifetch >= -1 )
       {
          session->ifetch++;
          iTpl = PQntuples( session->stmt )-1;
-         if (session->ifetch > iTpl)
+         if( session->ifetch > iTpl )
          {
 	        
             hb_retni( SQL_NO_DATA_FOUND );
@@ -226,7 +226,7 @@ HB_FUNC( PGSCOMMIT )       /* PGSCommit( ConnHandle ) => nError */
    PGresult * res;
    assert( session->dbh  != NULL );
    res = PQexec( session->dbh, "COMMIT" );
-   if (PQresultStatus(res) == PGRES_COMMAND_OK)
+   if( PQresultStatus(res) == PGRES_COMMAND_OK )
       hb_retni( SQL_SUCCESS );
    else
       hb_retni( SQL_ERROR );
@@ -238,7 +238,7 @@ HB_FUNC( PGSROLLBACK )     /* PGSRollBack( ConnHandle ) => nError */
    PGresult * res;
    assert( session->dbh  != NULL );
    res = PQexec( session->dbh, "ROLLBACK" );
-   if (PQresultStatus(res) == PGRES_COMMAND_OK)
+   if( PQresultStatus(res) == PGRES_COMMAND_OK )
       hb_retni( SQL_SUCCESS );
    else
       hb_retni( SQL_ERROR );
@@ -255,7 +255,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
    assert( session->dbh  != NULL );
    assert( session->stmt != NULL );
 
-   if (hb_pcount() != 1)
+   if( hb_pcount() != 1 )
    {
       hb_retnl( -2 );
       return;
@@ -284,12 +284,12 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
 
 //       nullable = PQgetisnull( session->stmt, row,PQfnumber( session->stmt,PQfname( session->stmt, row ) ) ) ;
       
-      if (typmod < 0L)
+      if( typmod < 0L )
       {
          typmod = (LONG) PQfsize( session->stmt, row );
       }
 /*
-      if (typmod < 0L)
+      if( typmod < 0L )
       {
          typmod = 20L;
       }
@@ -327,7 +327,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
          case NUMERICOID:
             hb_itemPutC( temp, "N" );
             hb_arraySetForward( atemp, FIELD_TYPE, temp );
-            if (typmod > 0)
+            if( typmod > 0 )
             {
                hb_arraySetForward( atemp, FIELD_LEN, hb_itemPutNI( temp, ((typmod - 4L) >> 16L ) ) );
                hb_arraySetForward( atemp, FIELD_DEC, hb_itemPutNI( temp, ((typmod - 4L) & 0xffff ) ) );
@@ -440,7 +440,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
 
    assert( session->dbh  != NULL );
 
-   if (hb_pcount() < 3)
+   if( hb_pcount() < 3 ) 
    {
       hb_retnl( -2 );
       return;
@@ -450,7 +450,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
 
    stmtTemp = PQexec( session->dbh, attcmm );
 
-   if (PQresultStatus( stmtTemp ) != PGRES_TUPLES_OK)
+   if( PQresultStatus( stmtTemp ) != PGRES_TUPLES_OK )
    {
       TraceLog( LOGFILE, "Query error : %i - %s\n", PQresultStatus( stmtTemp ), PQresStatus(PQresultStatus( stmtTemp )) );
       PQclear( stmtTemp );
@@ -479,13 +479,13 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
 
       type   = atoi( PQgetvalue( stmtTemp, row, 1 ) );
       typmod = atol( PQgetvalue( stmtTemp, row, 2 ) );
-      if ( sr_iOldPgsBehavior() ) 
+      if( sr_iOldPgsBehavior() )
       {
          nullable = 0;
       }    
       else
       {
-         if ( strcmp( PQgetvalue( stmtTemp, row, 3 ), "f")  == 0 ) 
+         if( strcmp( PQgetvalue( stmtTemp, row, 3 ), "f")  == 0 )
          {
             nullable = 1 ;
          }   

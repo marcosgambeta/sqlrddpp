@@ -372,7 +372,7 @@ static HB_ERRCODE sqlEof( SQLAREAP thiswa, BOOL * eof )
    if( thiswa->lpdbPendingRel )
       SELF_FORCEREL( &thiswa->area );
 
-   if (hb_arrayGetL( thiswa->aInfo, AINFO_ISINSERT ) && hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) )
+   if( hb_arrayGetL( thiswa->aInfo, AINFO_ISINSERT ) && hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) )
    {
       *eof = FALSE;
    }
@@ -419,14 +419,14 @@ static HB_ERRCODE sqlGoBottom( SQLAREAP thiswa )
    thiswa->firstinteract  = 0;
    thiswa->wasdel         = 0;
 
-   if (hb_arrayGetL( thiswa->aInfo, AINFO_HOT ))
+   if( hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) )
    {
       hb_objSendMessage( thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0 );
    }
 
    leof = hb_arrayGetNL( thiswa->aInfo, AINFO_EOF_AT );
 
-   if (hb_arrayGetNL( thiswa->aInfo, AINFO_EOF_AT ))
+   if( hb_arrayGetNL( thiswa->aInfo, AINFO_EOF_AT ) )
    {
       hb_itemPutNL( eofat, leof );
       hb_objSendMessage( thiswa->oWorkArea, s_pSym_SQLGOTO, 1, eofat );
@@ -499,7 +499,7 @@ static HB_ERRCODE sqlGoToId( SQLAREAP thiswa, PHB_ITEM pItem )
    }
    else
    {
-      if (hb_arrayGetL( thiswa->aInfo, AINFO_HOT ))
+      if( hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) )
       {
          hb_objSendMessage( thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0 );
       }
@@ -525,14 +525,14 @@ static HB_ERRCODE sqlGoTop( SQLAREAP thiswa )
    thiswa->firstinteract = 0;
    thiswa->wasdel = 0;
 
-   if (hb_arrayGetL( thiswa->aInfo, AINFO_HOT ))
+   if( hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) )
    {
       hb_objSendMessage( thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0 );
    }
 
    lbof = hb_arrayGetNL( thiswa->aInfo, AINFO_BOF_AT );
 
-   if ( lbof )
+   if( lbof )
    {
       PHB_ITEM pBOF = hb_itemPutNL( NULL, lbof );
       hb_objSendMessage( thiswa->oWorkArea, s_pSym_SQLGOTO, 1, pBOF );
@@ -582,7 +582,7 @@ int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact )
          ((SQLAREAP)thiswa)->firstinteract = 0;
       }
       itemTemp = hb_itemArrayGet( pTag, INDEX_KEY_CODEBLOCK );
-      if ( HB_IS_NUMBER( itemTemp ) )
+      if( HB_IS_NUMBER( itemTemp ) )
       {
          pKeyVal = hb_itemArrayGet( ((SQLAREAP)thiswa)->aBuffer, hb_arrayGetNL( pTag, INDEX_KEY_CODEBLOCK ) );
          len1 = hb_strRTrimLen( hb_itemGetCPtr( pKeyVal ), hb_itemGetCLen( pKeyVal ), FALSE ) - 15;
@@ -629,16 +629,16 @@ int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact )
 
    iLimit = (len1 > len2) ? len2 : len1;
 
-   if ( HB_IS_STRING( pKeyVal ) )
+   if( HB_IS_STRING( pKeyVal ) )
    {
-      if ( iLimit > 0 )
+      if( iLimit > 0 )
          iResult = memcmp( val1, val2, iLimit );
 
-      if ( iResult == 0 )
+      if( iResult == 0 )
       {
-         if ( len1 >= len2 )
+         if( len1 >= len2 )
             iResult = 1;
-         else if ( len1 < len2 && fExact )
+         else if( len1 < len2 && fExact )
             iResult = -1;
       }
       else
@@ -646,11 +646,11 @@ int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact )
    }
    else
    {
-      if ( iLimit == 0 || (iResult = memcmp( val1, val2, iLimit )) == 0 )
+      if( iLimit == 0 || (iResult = memcmp( val1, val2, iLimit )) == 0 )
       {
-         if ( len1 >= len2 )
+         if( len1 >= len2 )
             iResult = 1;
-         else if ( len1 < len2 )
+         else if( len1 < len2 )
             iResult = -1;
       }
    }
@@ -699,11 +699,11 @@ static HB_ERRCODE sqlSeek( SQLAREAP thiswa, BOOL bSoftSeek, PHB_ITEM pKey, BOOL 
    thiswa->area.fBof   = hb_arrayGetL( thiswa->aInfo, AINFO_BOF );
    thiswa->area.fEof   = hb_arrayGetL( thiswa->aInfo, AINFO_EOF );
 
-   if (( hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != NULL ) && !thiswa->area.fEof )
+   if( ( hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != NULL ) && !thiswa->area.fEof )
    {
       retvalue = SELF_SKIPFILTER( &thiswa->area, ( bFindLast ? -1 : 1 ) );
 
-      if ( thiswa->area.fEof )
+      if( thiswa->area.fEof )
       {
          thiswa->area.fFound = FALSE;
          hb_itemPutL( pItem, thiswa->area.fFound );
@@ -711,7 +711,7 @@ static HB_ERRCODE sqlSeek( SQLAREAP thiswa, BOOL bSoftSeek, PHB_ITEM pKey, BOOL 
       }
       else
       {
-         if ( sqlKeyCompare( &thiswa->area, pKey, FALSE ) != 0 )
+         if( sqlKeyCompare( &thiswa->area, pKey, FALSE ) != 0 )
          {
             thiswa->area.fFound = TRUE;
             hb_itemPutL( pItem, thiswa->area.fFound );
@@ -758,7 +758,7 @@ static HB_ERRCODE sqlSkip( SQLAREAP thiswa, LONG lToSkip )
    {
       SELF_FORCEREL( &thiswa->area );
    }
-   else if ( thiswa->firstinteract )
+   else if( thiswa->firstinteract )
    {
       SELF_GOTOP( &thiswa->area );
       thiswa->firstinteract = 0;
@@ -921,8 +921,8 @@ static HB_ERRCODE sqlSkipRaw( SQLAREAP thiswa, LONG lToSkip )
          {
             return HB_SUCCESS;               // <===========| RETURNING
          }
-         if ( iTemCompEqual( hb_arrayGetItemPtr( thiswa->aInfo, AINFO_EOF_AT ),
-                             hb_arrayGetItemPtr( thiswa->aInfo, AINFO_RECNO ) ) )
+         if( iTemCompEqual( hb_arrayGetItemPtr( thiswa->aInfo, AINFO_EOF_AT ),
+                            hb_arrayGetItemPtr( thiswa->aInfo, AINFO_RECNO ) ) )
          {
             hb_arraySetL( thiswa->aInfo, AINFO_EOF, TRUE );
             thiswa->area.fEof = TRUE;
@@ -1174,7 +1174,7 @@ static HB_ERRCODE sqlDeleteRec( SQLAREAP thiswa )
       SELF_FORCEREL( &thiswa->area );
    }
 
-   if (hb_arrayGetL( thiswa->aInfo, AINFO_HOT ))
+   if( hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) )
    {
       hb_objSendMessage( thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0 );
    }
@@ -1273,7 +1273,7 @@ static HB_ERRCODE sqlGetValue( SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value 
       thiswa->iFieldListStatus          = FIELD_LIST_NEW_VALUE_READ;
    }
 
-   if (HB_IS_ARRAY( itemTemp ))
+   if( HB_IS_ARRAY( itemTemp ) )
    {
 #ifdef __XHARBOUR__
       itemTemp3 = hb_arrayClone( itemTemp, NULL );
@@ -1376,7 +1376,7 @@ static HB_ERRCODE sqlGetValue( SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value 
 
 static HB_ERRCODE sqlGoCold( SQLAREAP thiswa )
 {
-   if (hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) && (!hb_arrayGetL( thiswa->aInfo, AINFO_DELETED )))
+   if( hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) && (!hb_arrayGetL( thiswa->aInfo, AINFO_DELETED )) )
    {
       hb_objSendMessage( thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0 );  // GoCold
    }
@@ -1420,7 +1420,7 @@ static HB_ERRCODE sqlPutValue( SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value 
 //                   hb_dynsymLock();
 //                   s_pSym_SR_FROMXML = hb_dynsymFindName( "ESCREVE" );
 //                   hb_dynsymUnlock();
-//                   if ( s_pSym_SR_FROMXML  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
+//                   if( s_pSym_SR_FROMXML  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
 //                }
 //
 //                hb_vmPushDynSym( s_pSym_SR_FROMXML );
@@ -1560,7 +1560,7 @@ static HB_ERRCODE sqlRecCount( SQLAREAP thiswa, ULONG * recCount )
       SELF_FORCEREL( &thiswa->area );
    }
 
-   if (hb_arrayGetL( thiswa->aInfo, AINFO_ISINSERT ) && hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) )
+   if( hb_arrayGetL( thiswa->aInfo, AINFO_ISINSERT ) && hb_arrayGetL( thiswa->aInfo, AINFO_HOT ) )
    {
       *recCount = (ULONG) (hb_arrayGetNL( thiswa->aInfo, AINFO_RCOUNT ) + 1);
    }
@@ -1620,7 +1620,7 @@ static HB_ERRCODE sqlRecId( SQLAREAP thiswa, PHB_ITEM recno )
       thiswa->firstinteract = 0;
    }
 
-   if ( thiswa->initialized )
+   if( thiswa->initialized )
    {
       hb_arrayGet( thiswa->aInfo, AINFO_RECNO, recno );
    }
@@ -1975,10 +1975,10 @@ static HB_ERRCODE sqlInfo( SQLAREAP thiswa, USHORT uiIndex, PHB_ITEM pItem )
          if( HB_IS_STRING( pItem ) )
          {
             PHB_CODEPAGE cdpage = hb_cdpFind( hb_itemGetCPtr( pItem ) );
-            if ( cdpage )
+            if( cdpage )
                thiswa->cdPageCnv = cdpage;
          }
-         if ( thiswa->cdPageCnv )
+         if( thiswa->cdPageCnv )
             hb_itemPutC( pItem, ( char * ) thiswa->cdPageCnv->id );
          else
             hb_itemPutC( pItem, "" );
@@ -1991,7 +1991,7 @@ static HB_ERRCODE sqlInfo( SQLAREAP thiswa, USHORT uiIndex, PHB_ITEM pItem )
 
 void startSQLRDDSymbols()
 {
-   if (s_pSym_WORKAREA == NULL)
+   if( s_pSym_WORKAREA == NULL )
    {
 #ifdef __XHARBOUR__
       HB_THREAD_STUB
@@ -2037,43 +2037,43 @@ void startSQLRDDSymbols()
       s_pSym_SQLCLEARFILTER      = hb_dynsymFindName( "SQLCLEARFILTER" );
       s_pSym_SQLFILTERTEXT       = hb_dynsymFindName( "SQLFILTERTEXT" );
 
-      if ( s_pSym_WORKAREA            == NULL ) printf( "Could not find Symbol %s\n", WORKAREA_CLASS );
+      if( s_pSym_WORKAREA            == NULL ) printf( "Could not find Symbol %s\n", WORKAREA_CLASS );
 
-      if ( s_pSym_SQLGOBOTTOM         == NULL ) printf( "Could not find Symbol %s\n", "SQLGOBOTTOM" );
-      if ( s_pSym_SQLGOTO             == NULL ) printf( "Could not find Symbol %s\n", "SQLGOTO" );
-      if ( s_pSym_SQLGOTOP            == NULL ) printf( "Could not find Symbol %s\n", "SQLGOTOP" );
-      if ( s_pSym_SQLSEEK             == NULL ) printf( "Could not find Symbol %s\n", "SQLSEEK" );
-      if ( s_pSym_SETBOF              == NULL ) printf( "Could not find Symbol %s\n", "SETBOF" );
-      if ( s_pSym_SQLDELETEREC        == NULL ) printf( "Could not find Symbol %s\n", "SQLDELETEREC" );
-      if ( s_pSym_SQLFLUSH            == NULL ) printf( "Could not find Symbol %s\n", "SQLFLUSH" );
-      if ( s_pSym_SQLRECALL           == NULL ) printf( "Could not find Symbol %s\n", "SQLRECALL" );
-      if ( s_pSym_SQLCLOSE            == NULL ) printf( "Could not find Symbol %s\n", "SQLCLOSE" );
-      if ( s_pSym_SQLCREATE           == NULL ) printf( "Could not find Symbol %s\n", "SQLCREATE" );
-      if ( s_pSym_SQLOPEN             == NULL ) printf( "Could not find Symbol %s\n", "SQLOPENAREA" );
-      if ( s_pSym_SQLOPENALLINDEXES   == NULL ) printf( "Could not find Symbol %s\n", "SQLOPENALLINDEXES" );
-      if ( s_pSym_SQLPACK             == NULL ) printf( "Could not find Symbol %s\n", "SQLPACK" );
-      if ( s_pSym_SQLZAP              == NULL ) printf( "Could not find Symbol %s\n", "SQLZAP" );
-      if ( s_pSym_SQLORDERLISTADD     == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERLISTADD" );
-      if ( s_pSym_SQLORDERLISTCLEAR   == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERLISTCLEAR" );
-      if ( s_pSym_SQLORDERLISTFOCUS   == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERLISTFOCUS" );
-      if ( s_pSym_SQLORDERCREATE      == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERCREATE" );
-      if ( s_pSym_SQLORDERDESTROY     == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERDESTROY" );
-      if ( s_pSym_SQLORDERCONDITION   == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERCONDITION" );
-      if ( s_pSym_SQLORDERLISTNUM     == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERLISTNUM" );
-      if ( s_pSym_SQLSETSCOPE         == NULL ) printf( "Could not find Symbol %s\n", "SQLSETSCOPE" );
-      if ( s_pSym_SQLLOCK             == NULL ) printf( "Could not find Symbol %s\n", "SQLLOCK" );
-      if ( s_pSym_SQLUNLOCK           == NULL ) printf( "Could not find Symbol %s\n", "SQLUNLOCK" );
-      if ( s_pSym_SQLDROP             == NULL ) printf( "Could not find Symbol %s\n", "SQLDROP" );
-      if ( s_pSym_SQLEXISTS           == NULL ) printf( "Could not find Symbol %s\n", "SQLEXISTS" );
-      if ( s_pSym_SQLKEYCOUNT         == NULL ) printf( "Could not find Symbol %s\n", "SQLKEYCOUNT" );
-      if ( s_pSym_WRITEBUFFER         == NULL ) printf( "Could not find Symbol %s\n", "WRITEBUFFER" );
-      if ( s_pSym_READPAGE            == NULL ) printf( "Could not find Symbol %s\n", "READPAGE" );
-      if ( s_pSym_STABILIZE           == NULL ) printf( "Could not find Symbol %s\n", "STABILIZE" );
-      if ( s_pSym_NORMALIZE           == NULL ) printf( "Could not find Symbol %s\n", "NORMALIZE" );
-      if ( s_pSym_SQLGETVALUE         == NULL ) printf( "Could not find Symbol %s\n", "SQLGETVALUE" );
-      if ( s_pSym_SQLSETFILTER        == NULL ) printf( "Could not find Symbol %s\n", "SQLSETFILTER" );
-      if ( s_pSym_SQLCLEARFILTER      == NULL ) printf( "Could not find Symbol %s\n", "SQLCLEARFILTER" );
-      if ( s_pSym_SQLFILTERTEXT       == NULL ) printf( "Could not find Symbol %s\n", "SQLFILTERTEXT" );
+      if( s_pSym_SQLGOBOTTOM         == NULL ) printf( "Could not find Symbol %s\n", "SQLGOBOTTOM" );
+      if( s_pSym_SQLGOTO             == NULL ) printf( "Could not find Symbol %s\n", "SQLGOTO" );
+      if( s_pSym_SQLGOTOP            == NULL ) printf( "Could not find Symbol %s\n", "SQLGOTOP" );
+      if( s_pSym_SQLSEEK             == NULL ) printf( "Could not find Symbol %s\n", "SQLSEEK" );
+      if( s_pSym_SETBOF              == NULL ) printf( "Could not find Symbol %s\n", "SETBOF" );
+      if( s_pSym_SQLDELETEREC        == NULL ) printf( "Could not find Symbol %s\n", "SQLDELETEREC" );
+      if( s_pSym_SQLFLUSH            == NULL ) printf( "Could not find Symbol %s\n", "SQLFLUSH" );
+      if( s_pSym_SQLRECALL           == NULL ) printf( "Could not find Symbol %s\n", "SQLRECALL" );
+      if( s_pSym_SQLCLOSE            == NULL ) printf( "Could not find Symbol %s\n", "SQLCLOSE" );
+      if( s_pSym_SQLCREATE           == NULL ) printf( "Could not find Symbol %s\n", "SQLCREATE" );
+      if( s_pSym_SQLOPEN             == NULL ) printf( "Could not find Symbol %s\n", "SQLOPENAREA" );
+      if( s_pSym_SQLOPENALLINDEXES   == NULL ) printf( "Could not find Symbol %s\n", "SQLOPENALLINDEXES" );
+      if( s_pSym_SQLPACK             == NULL ) printf( "Could not find Symbol %s\n", "SQLPACK" );
+      if( s_pSym_SQLZAP              == NULL ) printf( "Could not find Symbol %s\n", "SQLZAP" );
+      if( s_pSym_SQLORDERLISTADD     == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERLISTADD" );
+      if( s_pSym_SQLORDERLISTCLEAR   == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERLISTCLEAR" );
+      if( s_pSym_SQLORDERLISTFOCUS   == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERLISTFOCUS" );
+      if( s_pSym_SQLORDERCREATE      == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERCREATE" );
+      if( s_pSym_SQLORDERDESTROY     == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERDESTROY" );
+      if( s_pSym_SQLORDERCONDITION   == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERCONDITION" );
+      if( s_pSym_SQLORDERLISTNUM     == NULL ) printf( "Could not find Symbol %s\n", "SQLORDERLISTNUM" );
+      if( s_pSym_SQLSETSCOPE         == NULL ) printf( "Could not find Symbol %s\n", "SQLSETSCOPE" );
+      if( s_pSym_SQLLOCK             == NULL ) printf( "Could not find Symbol %s\n", "SQLLOCK" );
+      if( s_pSym_SQLUNLOCK           == NULL ) printf( "Could not find Symbol %s\n", "SQLUNLOCK" );
+      if( s_pSym_SQLDROP             == NULL ) printf( "Could not find Symbol %s\n", "SQLDROP" );
+      if( s_pSym_SQLEXISTS           == NULL ) printf( "Could not find Symbol %s\n", "SQLEXISTS" );
+      if( s_pSym_SQLKEYCOUNT         == NULL ) printf( "Could not find Symbol %s\n", "SQLKEYCOUNT" );
+      if( s_pSym_WRITEBUFFER         == NULL ) printf( "Could not find Symbol %s\n", "WRITEBUFFER" );
+      if( s_pSym_READPAGE            == NULL ) printf( "Could not find Symbol %s\n", "READPAGE" );
+      if( s_pSym_STABILIZE           == NULL ) printf( "Could not find Symbol %s\n", "STABILIZE" );
+      if( s_pSym_NORMALIZE           == NULL ) printf( "Could not find Symbol %s\n", "NORMALIZE" );
+      if( s_pSym_SQLGETVALUE         == NULL ) printf( "Could not find Symbol %s\n", "SQLGETVALUE" );
+      if( s_pSym_SQLSETFILTER        == NULL ) printf( "Could not find Symbol %s\n", "SQLSETFILTER" );
+      if( s_pSym_SQLCLEARFILTER      == NULL ) printf( "Could not find Symbol %s\n", "SQLCLEARFILTER" );
+      if( s_pSym_SQLFILTERTEXT       == NULL ) printf( "Could not find Symbol %s\n", "SQLFILTERTEXT" );
 
 #ifdef __XHARBOUR__
       hb_dynsymUnlock();
@@ -2631,7 +2631,7 @@ static PHB_ITEM loadTag( SQLAREAP thiswa, LPDBORDERINFO pInfo, LONG * lorder )
 {
    PHB_ITEM pTag = NULL;
 
-   if (pInfo && pInfo->itmOrder )
+   if( pInfo && pInfo->itmOrder )
    {
       if( HB_IS_OBJECT( thiswa->oWorkArea ) )
       {
@@ -2730,7 +2730,7 @@ static HB_ERRCODE sqlSetServerSideIndexScope( SQLAREAP thiswa, int nScope, PHB_I
    hb_itemRelease( scopetype );
    hb_itemRelease( scopeval );
 
-   if ((!res) && sr_GoTopOnScope() )
+   if( (!res) && sr_GoTopOnScope() )
    {
       thiswa->firstinteract = 1;
    }
@@ -2864,7 +2864,7 @@ static HB_ERRCODE sqlOrderInfo( SQLAREAP thiswa, USHORT uiIndex, LPDBORDERINFO p
             {
                hb_itemPutL( pInfo->itmResult, hb_arrayGetL( pTag, DESCEND_INDEX_ORDER ) );
 
-               if ( pInfo->itmNewVal && HB_IS_LOGICAL( pInfo->itmNewVal ) )
+               if( pInfo->itmNewVal && HB_IS_LOGICAL( pInfo->itmNewVal ) )
                {
                   hb_itemPutL( pInfo->itmResult, hb_arrayGetL( thiswa->aInfo, AINFO_REVERSE_INDEX ) );
                   hb_itemPutL( hb_arrayGetItemPtr( pTag, DESCEND_INDEX_ORDER ), hb_itemGetL( pInfo->itmNewVal ) );
@@ -3206,7 +3206,7 @@ static HB_ERRCODE sqlSetScope( SQLAREAP thiswa, LPDBORDSCOPEINFO sInfo )
    hb_itemRelease( scopetype );
    hb_itemRelease( scopeval );
 
-   if ((!res) && sr_GoTopOnScope() )
+   if( (!res) && sr_GoTopOnScope() )
    {
       thiswa->firstinteract = 1;
    }
@@ -3307,7 +3307,7 @@ static HB_ERRCODE sqlUnLock( SQLAREAP thiswa, PHB_ITEM pRecNo )
       thiswa->firstinteract = 0;
    }
 
-   if (pRecNo)
+   if( pRecNo )
    {
       hb_objSendMessage( thiswa->oWorkArea, s_pSym_SQLUNLOCK, 1, pRecNo );
    }
@@ -3451,7 +3451,7 @@ static BOOL ProcessFields( SQLAREAP thiswa )
    USHORT         i;
    PHB_ITEM       thisfield;
 
-   if (hb_itemType( thiswa->aStruct ) != HB_IT_ARRAY )
+   if( hb_itemType( thiswa->aStruct ) != HB_IT_ARRAY )
    {
       HB_TRACE(HB_TR_ALWAYS, ("SQLRDD: Invalid structure array"));
       return (FALSE);
@@ -3459,7 +3459,7 @@ static BOOL ProcessFields( SQLAREAP thiswa )
 
    numFields = hb_itemSize( thiswa->aStruct );
 
-   if (!numFields)
+   if( !numFields )
    {
       HB_TRACE(HB_TR_ALWAYS, ("SQLRDD: Empty structure array"));
       return(FALSE);
@@ -3471,7 +3471,7 @@ static BOOL ProcessFields( SQLAREAP thiswa )
    {
       thisfield = hb_itemArrayGet( thiswa->aStruct, i );
 
-      if (hb_itemType( thisfield ) != HB_IT_ARRAY )
+      if( hb_itemType( thisfield ) != HB_IT_ARRAY )
       {
          HB_TRACE(HB_TR_ALWAYS, ("SQLRDD: Empty structure field array: %i", i));
          return(FALSE);
@@ -3539,7 +3539,7 @@ static BOOL ProcessFields( SQLAREAP thiswa )
          break;
       }
 
-      if ( field.uiType == HB_IT_NIL)
+      if( field.uiType == HB_IT_NIL )
       {
          HB_TRACE( HB_TR_ALWAYS, ("SQLRDD: Unsuported datatype on field: %i", i));
          return(FALSE);
@@ -3547,7 +3547,7 @@ static BOOL ProcessFields( SQLAREAP thiswa )
 
       // Add the field
 
-      if ( SELF_ADDFIELD( &thiswa->area, (LPDBFIELDINFO)&field ) != HB_SUCCESS )
+      if( SELF_ADDFIELD( &thiswa->area, (LPDBFIELDINFO)&field ) != HB_SUCCESS )
       {
          HB_TRACE( HB_TR_ALWAYS, ("SQLRDD: Could not add field: %i", i));
       }
@@ -3565,7 +3565,7 @@ static BOOL SetFields( SQLAREAP thiswa )
    USHORT         i;
    PHB_ITEM       thisfield;
 
-   if (hb_itemType( thiswa->aStruct ) != HB_IT_ARRAY )
+   if( hb_itemType( thiswa->aStruct ) != HB_IT_ARRAY )
    {
       HB_TRACE(HB_TR_ALWAYS, ("SQLRDD: Invalid structure array"));
       return (FALSE);
@@ -3573,7 +3573,7 @@ static BOOL SetFields( SQLAREAP thiswa )
 
    numFields = hb_itemSize( thiswa->aStruct );
 
-   if (!numFields)
+   if( !numFields )
    {
       HB_TRACE(HB_TR_ALWAYS, ("SQLRDD: Empty structure array"));
       return(FALSE);
@@ -3583,7 +3583,7 @@ static BOOL SetFields( SQLAREAP thiswa )
    {
       thisfield = hb_itemArrayGet( thiswa->aStruct, i );
 
-      if (hb_itemType( thisfield ) != HB_IT_ARRAY )
+      if( hb_itemType( thisfield ) != HB_IT_ARRAY )
       {
          HB_TRACE(HB_TR_ALWAYS, ("SQLRDD: Empty structure field array: %i", i));
          return(FALSE);
@@ -3847,7 +3847,7 @@ HB_FUNC( SQLRDD_GETFUNCTABLE )
    {
       HB_ERRCODE errCode;
 
-      if ( uiCount )
+      if( uiCount )
          * uiCount = RDDFUNCSCOUNT;
       errCode = hb_rddInherit( pTable, &sqlTable, &sqlrddSuper, NULL );
       hb_retni( errCode );

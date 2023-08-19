@@ -72,7 +72,7 @@ HB_FUNC( SQLO_CONNECT )
 {
    POCI_SESSION session = (POCI_SESSION) hb_xgrab( sizeof( OCI_SESSION ) );
 
-   if (!OCI_initilized)
+   if( !OCI_initilized )
    {
 #if defined(ENABLE_PTHREADS)  && defined(HAVE_PTHREAD_H)
       session->status = sqlo_init(1, MAX_CONNECTIONS, MAX_CURSORS );
@@ -87,7 +87,7 @@ HB_FUNC( SQLO_CONNECT )
 
    OCI_initilized ++;
 
-   if (SQLO_SUCCESS != session->status)
+   if( SQLO_SUCCESS != session->status )
    {
 
       hb_retni( SQL_ERROR );
@@ -95,7 +95,7 @@ HB_FUNC( SQLO_CONNECT )
 
    session->status = sqlo_connect( &(session->dbh), hb_parcx(1) );
 
-   if (SQLO_SUCCESS != session->status)
+   if( SQLO_SUCCESS != session->status )
    {
       hb_retni( SQL_ERROR );
    }
@@ -220,7 +220,7 @@ HB_FUNC( SQLO_EXECUTE )
    {
 
 
-      if (lStmt )
+      if( lStmt )
       {
 
          while (SQLO_STILL_EXECUTING == (session->status = sqlo_executeselect( session->stmt , 1 )))
@@ -352,7 +352,7 @@ HB_FUNC( SQLO_DESCRIBECOL ) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nD
       type = sqlo_sqldtype( dType );
       hb_storni( type, 4 );
 
-      if (dType == SQLOT_RDD)
+      if( dType == SQLOT_RDD )
       {
 	      dbsize = 18 ;
       }
@@ -361,7 +361,7 @@ HB_FUNC( SQLO_DESCRIBECOL ) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nD
          hb_storni( 0, 6 );
          hb_storni( dbsize, 5 );
       }      
-      else if ( type == SQL_NUMERIC )
+      else if( type == SQL_NUMERIC )
       {
          if( prec == 0 )
          {
@@ -374,7 +374,7 @@ HB_FUNC( SQLO_DESCRIBECOL ) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nD
             hb_storni( scale, 6 );
          }
       }
-      else if ( type == SQL_DATETIME )       
+      else if( type == SQL_DATETIME )
       {
 	     hb_storni( 0, 6 );
          hb_storni( 8, 5 );
@@ -486,7 +486,7 @@ HB_FUNC( SQLO_CLOSESTMT )
    if( session )
    {
 
-      if ( session->stmtParamRes  != -1)    
+      if( session->stmtParamRes  != -1 )
       {
          session->status = sqlo_close( session->stmtParamRes );
          session->stmtParamRes= SQLO_STH_INIT;
@@ -614,12 +614,12 @@ void SQLO_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLe
          {
             if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) )
             {
-               if (s_pSym_SR_FROMJSON == NULL )
+               if( s_pSym_SR_FROMJSON == NULL )
                {
                   hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName( "HB_JSONDECODE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_FROMJSON  == NULL ) printf( "Could not find Symbol HB_JSONDECODE\n" );            
+                  if( s_pSym_SR_FROMJSON  == NULL ) printf( "Could not find Symbol HB_JSONDECODE\n" );            
                }
                hb_vmPushDynSym( s_pSym_SR_FROMJSON );
                hb_vmPushNil();
@@ -640,7 +640,7 @@ void SQLO_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLe
                   hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName( "SR_DESERIALIZE" );
                   hb_dynsymUnlock();
-                  if ( s_pSym_SR_DESERIALIZE  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  if( s_pSym_SR_DESERIALIZE  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
                }
                hb_vmPushDynSym( s_pSym_SR_DESERIALIZE );
                hb_vmPushNil();
@@ -817,7 +817,7 @@ HB_FUNC( ORACLEWRITEMEMO )
 
    uiLen = hb_arrayLen( pArray );
 
-   if (( !session ) || uiLen == 0 )
+   if( ( !session ) || uiLen == 0 )
    {
       hb_retni( 0 );
       return;
@@ -837,7 +837,7 @@ HB_FUNC( ORACLEWRITEMEMO )
          sqlo_bind_by_pos(sth, 1, SQLOT_CLOB, &loblp, 0, NULL, 0);
          status = sqlo_execute(sth, 1);
 
-         if (SQLO_SUCCESS != status)
+         if( SQLO_SUCCESS != status )
          {
             sqlo_free_lob_desc(session->dbh, &loblp);
 	         sqlo_close(sth);
@@ -847,7 +847,7 @@ HB_FUNC( ORACLEWRITEMEMO )
 
          status = sqlo_lob_write_buffer(session->dbh, loblp, strlen(sMemo), sMemo, strlen(sMemo), SQLO_ONE_PIECE );
 
-         if (status < 0)
+         if( status < 0 )
          {
             sqlo_free_lob_desc(session->dbh, &loblp);
 	         sqlo_close(sth);
@@ -867,12 +867,12 @@ void OracleFreeLink( int num_recs, POCI_SESSION p )
 {
    int  i;
 
-   if ( p->pLink )
+   if( p->pLink )
    {
 
       for ( i =0 ; i < num_recs; i++ )
       {
-         if ( p->pLink[ i ].col_name )
+         if( p->pLink[ i ].col_name )
          {
             hb_xfree( p->pLink[ i ].col_name );
          }
@@ -915,7 +915,7 @@ HB_FUNC( ORACLEINBINDPARAM )
   
 
 
-   if ( Stmt)
+   if( Stmt )
    {
 
    
@@ -930,7 +930,7 @@ HB_FUNC( ORACLEINBINDPARAM )
          break;	 
       case  4 :
       {
-         if (ISNUM( 6 ) )
+         if( ISNUM( 6 ) )
             Stmt->pLink[ iPos ].dValue = hb_parnd( 6 );
 
       ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt : Stmt->stmtParam,
@@ -944,7 +944,7 @@ HB_FUNC( ORACLEINBINDPARAM )
                           break;
      case 2 :
      {
-         if (ISNUM( 6 ) )
+         if( ISNUM( 6 ) )
             Stmt->pLink[ iPos ].ulValue = hb_parnl( 6 );
 
          ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,
@@ -958,7 +958,7 @@ HB_FUNC( ORACLEINBINDPARAM )
       break;
      case 3 :
      {
-         if (ISNUM( 6 ) )
+         if( ISNUM( 6 ) )
             Stmt->pLink[ iPos ].iValue = hb_parl( 6 );
 
          ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,
@@ -975,9 +975,9 @@ HB_FUNC( ORACLEINBINDPARAM )
      {
 #ifdef __XHARBOUR__	     
 	     
-          if ( ISDATE( 6 ) )
+          if( ISDATE( 6 ) )
 #else
-          if ( HB_ISDATE( 6 ) )
+          if( HB_ISDATE( 6 ) )
 #endif          
       {
 	     int iYear, iMonth, iDay; 
@@ -1006,9 +1006,9 @@ HB_FUNC( ORACLEINBINDPARAM )
       case 9 :
      {
 #ifdef __XHARBOUR__	     
-          if ( ISDATETIME( 6 ) )
+          if( ISDATETIME( 6 ) )
 #else
-          if ( HB_ISDATETIME( 6 ) )
+          if( HB_ISDATETIME( 6 ) )
 #endif          
       {
 	     int iYear, iMonth, iDay; 
@@ -1057,7 +1057,7 @@ HB_FUNC( ORACLEINBINDPARAM )
      case 1:
      {
 	     
-        if ( ISCHAR( 6 ) )
+        if( ISCHAR( 6 ) )
         {
            sprintf(Stmt->pLink[ iPos ].sValue,hb_parcx(6),hb_parclen( 6 ));          
         }
@@ -1075,7 +1075,7 @@ HB_FUNC( ORACLEINBINDPARAM )
 
       default :
       {
-      if (iFieldSize  == 0 )
+      if( iFieldSize  == 0 )
       {
          iFieldSize = 1;
       }
@@ -1083,7 +1083,7 @@ HB_FUNC( ORACLEINBINDPARAM )
          memset(Stmt->pLink[iPos].col_name,'\0',(iFieldSize+1) * sizeof(char));
 
       
-      if ( ISCHAR( 6 ) )
+      if( ISCHAR( 6 ) )
       {
          hb_xmemcpy(Stmt->pLink[ iPos ].col_name, hb_parc( 6 ),hb_parclen( 6 ) ) ;
       }
@@ -1117,7 +1117,7 @@ HB_FUNC( ORACLEGETBINDDATA)
 
    PHB_ITEM p1 = hb_param( 2, HB_IT_ANY );
 
-   if ( HB_IS_NUMBER( p1 ) &&   p )
+   if( HB_IS_NUMBER( p1 ) &&   p )
    {
 
       iPos = hb_itemGetNI( p1 );
@@ -1129,7 +1129,7 @@ HB_FUNC( ORACLEGETBINDDATA)
       {
          hb_retnint(p->pLink[ iPos - 1 ].ulValue);
       }
-      else if ( p->pLink[ iPos - 1 ].iType == 8 ||   p->pLink[ iPos - 1 ].iType == 9)
+      else if( p->pLink[ iPos - 1 ].iType == 8 ||   p->pLink[ iPos - 1 ].iType == 9 )
       {
           int century = p->pLink[ iPos - 1 ].sDate[0];
           if(century >= 100)
@@ -1146,7 +1146,7 @@ HB_FUNC( ORACLEGETBINDDATA)
              hour  = p->pLink[ iPos - 1 ].sDate[4] - 1;
              min   = p->pLink[ iPos - 1 ].sDate[5] - 1;
              sec   = p->pLink[ iPos - 1 ].sDate[6] - 1;
-             if ( p->pLink[ iPos - 1 ].iType == 8) 
+             if( p->pLink[ iPos - 1 ].iType == 8 )
                hb_retd( year, month,day ); /* returns a date */
             else
             #ifdef __XHARBOUR__            
@@ -1181,7 +1181,7 @@ ORACLEFREEBIND(nOrahandle)
 HB_FUNC(ORACLEFREEBIND)
 {
    POCI_SESSION Stmt= (POCI_SESSION) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
-   if ( Stmt->pLink )
+   if( Stmt->pLink )
    {
       OracleFreeLink( Stmt->ubBindNum, Stmt );
    }
@@ -1197,9 +1197,9 @@ HB_FUNC(ORACLEPREPARE)
    const char * szSql = hb_parc( 2 ) ;
    BOOL lStmt = ISLOG( 3 ) ? hb_parl( 3 ) : 0;
 
-   if ( session )
+   if( session )
    {
-	  if ( lStmt ) 
+	  if( lStmt )
 	  {
 	     session->stmt  = sqlo_prepare( session->dbh, szSql );
       }
@@ -1224,7 +1224,7 @@ HB_FUNC(ORACLEEXECDIR)
 {
    POCI_SESSION session= (POCI_SESSION) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
    int ret = SQL_ERROR ;
-   if ( session )
+   if( session )
    {
       ret = sqlo_execute( session->stmtParam , 1 )     ;
       session->status = sqlo_close( session->stmtParam );
@@ -1244,17 +1244,17 @@ HB_FUNC( ORACLE_PROCCURSOR )
   const char * stmt = hb_parc( 2 );
   const char * parc = hb_parc( 3 );
   
-  if ( session )
+  if( session )
    { 
    /* parse the statement */
    ret = sqlo_prepare(session->dbh, stmt);
      
-   if (ret >= SQLO_SUCCESS )
+   if( ret >= SQLO_SUCCESS )
       {       
-       if ( 0 <= ( sth = ret )) 
+       if( 0 <= ( sth = ret ) )
        {
         /* bind all variables */
-         if (SQLO_SUCCESS != sqlo_bind_ref_cursor(sth, parc, &st2h) )
+         if( SQLO_SUCCESS != sqlo_bind_ref_cursor(sth, parc, &st2h) )
            {            
            hb_retni( SQL_ERROR );
            return ;
@@ -1265,12 +1265,12 @@ HB_FUNC( ORACLE_PROCCURSOR )
       session->stmtParamRes = st2h;
       
       /* execute the PL/SQL block */
-      if (SQLO_SUCCESS != sqlo_execute(sth, 1)) {
+      if( SQLO_SUCCESS != sqlo_execute(sth, 1) ) {
          hb_retni( SQL_ERROR );          
          return;
       }
        /* execute the refcursor */
-       if (SQLO_SUCCESS != sqlo_execute(st2h, 1)) {         
+       if( SQLO_SUCCESS != sqlo_execute(st2h, 1) ) {
          hb_retni( SQL_ERROR );
          return ;
        }
@@ -1290,7 +1290,7 @@ HB_FUNC( ORACLE_PROCCURSOR )
 HB_FUNC( ORACLE_SAVE_HANDLE_ST )     
 {
   POCI_SESSION session= (POCI_SESSION) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
-  if (session){
+  if( session ) {
   hb_retptr( (void * )session->stmtParam );
   }
 }
@@ -1299,12 +1299,12 @@ HB_FUNC( ORACLE_CLOSE_FCURSOR )
 { 
    POCI_SESSION session= (POCI_SESSION) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
       
-   if (SQLO_SUCCESS != sqlo_close(session->stmtParamRes)) {
+   if( SQLO_SUCCESS != sqlo_close(session->stmtParamRes) ) {
        session->stmtParamRes= SQLO_STH_INIT;
        hb_retni( SQL_ERROR );
        return; }
  
- /* if (SQLO_SUCCESS != sqlo_close(session->stmtParam)) {
+ /* if( SQLO_SUCCESS != sqlo_close(session->stmtParam) ) {
      hb_retni( SQL_ERROR );
      return; }
  */
@@ -1331,10 +1331,10 @@ HB_FUNC(ORACLEEXECDIRCURSOR)
 {
    POCI_SESSION session= (POCI_SESSION) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
    int ret = SQL_ERROR ;
-   if ( session )
+   if( session )
    {
       ret = sqlo_execute( session->stmtParam , 1 );
-      if (ret == SQLO_SUCCESS )
+      if( ret == SQLO_SUCCESS )
       {
             ret = sqlo_execute( session->stmtParamRes , 1 );    
             session->numcols = sqlo_ncols( session->stmtParamRes, 0 );
@@ -1358,7 +1358,7 @@ HB_FUNC( ORACLEBINDALLOC )
    POCI_SESSION session= (POCI_SESSION) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
    int iBind ;
 
-   if ( session )
+   if( session )
    {
       iBind = hb_parni( 2 ) ;
 //       session->pLink = ( ORA_BIND_COLS * ) hb_xgrab( sizeof( ORA_BIND_COLS ) * iBind );
@@ -1381,16 +1381,16 @@ HB_FUNC( ORACLE_BINDCURSOR )
   const char * stmt = hb_parc( 2 );
   const char * parc = hb_parc( 3 );
   
-  if ( session )
+  if( session )
    { 
    /* parse the statement */
    ret = sqlo_prepare(session->dbh,stmt );
-   if (ret == SQLO_SUCCESS )
+   if( ret == SQLO_SUCCESS )
       {
-       if ( 0 <= (sth = ret )) 
+       if( 0 <= (sth = ret ) )
        {
         /* bind all variables */
-         if (SQLO_SUCCESS != sqlo_bind_ref_cursor(sth, parc, &st2h) )
+         if( SQLO_SUCCESS != sqlo_bind_ref_cursor(sth, parc, &st2h) )
            {
            hb_retni( SQL_ERROR );
            return ;
@@ -1411,13 +1411,13 @@ HB_FUNC( ORACLE_EXECCURSOR )
   POCI_SESSION session= (POCI_SESSION) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
   int ret = 1 ; 
    /* execute the PL/SQL block */
-   if (SQLO_SUCCESS != sqlo_execute(session->stmtParam, 1)) {
+   if( SQLO_SUCCESS != sqlo_execute(session->stmtParam, 1) ) {
 
       hb_retni( SQL_ERROR );
       return;
    }
    /* execute the refcursor */
-   if (SQLO_SUCCESS != sqlo_execute(session->stmtParamRes, 1)) {
+   if( SQLO_SUCCESS != sqlo_execute(session->stmtParamRes, 1) ) {
 
      hb_retni( SQL_ERROR );
      return ;
@@ -1448,7 +1448,7 @@ HB_FUNC( CLOSECURSOR )
 HB_FUNC( GETAFFECTROWS) 
 {
    OCI_SESSION * session  = ( OCI_SESSION* ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
-   if ( session ) 
+   if( session )
       hb_retnl( session->uRows ) ;
    else
       hb_retnl(0);                      
@@ -1459,7 +1459,7 @@ HB_FUNC( GETAFFECTROWS)
 HB_FUNC( GETORAHANDLE)
 {
    OCI_SESSION* p  = ( OCI_SESSION* ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
-   if ( p )
+   if( p )
       hb_retni(p->stmt);
 }
 
@@ -1467,7 +1467,7 @@ HB_FUNC( SETORAHANDLE)
 {
    OCI_SESSION* p  = ( OCI_SESSION* ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
 
-   if ( p )
+   if( p )
    {
       p->stmt = hb_parni(2);
    }

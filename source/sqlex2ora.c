@@ -312,9 +312,9 @@ void CreateInsertStmtOra( SQLEXORAAREAP thiswa )
    default:
       ident[0] = '\0';
    }
-   if ( thiswa->sSql ) 
+   if( thiswa->sSql )
    memset( thiswa->sSql, 0,  MAX_SQL_QUERY_LEN * sizeof( char ) );
-   if (thiswa->nSystemID ==  SYSTEMID_MSSQL7 )
+   if( thiswa->nSystemID ==  SYSTEMID_MSSQL7 )
    {
 		 sprintf( thiswa->sSql, "%s INSERT INTO %s (%s ) OUTPUT Inserted.%s INTO @InsertedData VALUES (%s );%s", declare, thiswa->sTable, sFields, thiswa->sRecnoName, sParams ,ident);
    }   
@@ -337,7 +337,7 @@ HB_ERRCODE PrepareInsertStmtOra( SQLEXORAAREAP thiswa )
 //    res = SQLAllocHandle( SQL_HANDLE_STMT, (HDBC) thiswa->hDbc, &(thiswa->hStmtInsert) );
    thiswa->hStmtInsert =  OCI_StatementCreate(GetConnection(thiswa->hDbc));
 
-   if ( thiswa->hStmtInsert == NULL )
+   if( thiswa->hStmtInsert == NULL )
    {
       OraErrorDiagRTE( thiswa->hStmtInsert, "PrepareInsertStmtOra/SQLAllocStmt", thiswa->sSql, 0, __LINE__, __FILE__ );
       return HB_FAILURE;
@@ -345,7 +345,7 @@ HB_ERRCODE PrepareInsertStmtOra( SQLEXORAAREAP thiswa )
    OCI_AllowRebinding(thiswa->hStmtInsert,1);
 //    res = SQLPrepare( thiswa->hStmtInsert, (char *) (thiswa->sSql), SQL_NTS );
 
-   if ( !OCI_Prepare( thiswa->hStmtInsert, (thiswa->sSql) ) ) //    if ( CHECK_SQL_N_OK( res ) )
+   if( !OCI_Prepare( thiswa->hStmtInsert, (thiswa->sSql) ) ) //    if( CHECK_SQL_N_OK( res ) )
    {
       OraErrorDiagRTE( thiswa->hStmtInsert, "PrepareInsertStmtOra", thiswa->sSql, 0, __LINE__, __FILE__ );
       return HB_FAILURE;
@@ -462,11 +462,11 @@ HB_ERRCODE BindInsertColumnsOra( SQLEXORAAREAP thiswa )
                break;
             }
          }
-         if (InsertRecord->lIndPtr == (unsigned int )SQL_NULL_DATA)
+         if( InsertRecord->lIndPtr == (unsigned int )SQL_NULL_DATA )
             OCI_BindSetNull(  OCI_GetBind(thiswa->hStmtInsert, iCol ) );
          InsertRecord->iParNum = iBind;
 
-         if ( !res  )
+         if( !res )
          {
             OraErrorDiagRTE( thiswa->hStmtInsert, "BindInsertColumnsOra", thiswa->sSql, 0, __LINE__, __FILE__ );
             return HB_FAILURE;
@@ -568,7 +568,7 @@ HB_ERRCODE ExecuteInsertStmtOra( SQLEXORAAREAP thiswa )
 //    res = SQLExecute( thiswa->hStmtInsert );
    res = OCI_Execute(thiswa->hStmtInsert );
 
-   if (!res  ) {
+   if( !res ) {
       OraErrorDiagRTE( thiswa->hStmtInsert, "ExecuteInsertStmtOra/SQLExecute", thiswa->sSql, res, __LINE__, __FILE__ );
 //       OCI_StatementFree( thiswa->hStmtInsert );
       return (HB_FAILURE);
@@ -629,7 +629,7 @@ HB_ERRCODE ExecuteInsertStmtOra( SQLEXORAAREAP thiswa )
          return (HB_FAILURE);
       }
 //       res = SQLFetch( thiswa->hStmtNextval );
-//       if ( CHECK_SQL_N_OK( res ) )
+//       if( CHECK_SQL_N_OK( res ) )
 
       rs = OCI_GetResultset( thiswa->hStmtNextval);
       if( rs == NULL ) {
@@ -870,7 +870,7 @@ iBind++;
 
 //    res = SQLPrepare( thiswa->hStmtUpdate, (char *) (thiswa->sSql), SQL_NTS );
 //    res = OCI_Prepare( thiswa->hStmtUpdate, (char *) (thiswa->sSql));
-//    if ( !res )
+//    if( !res )
 //    {
 //       OraErrorDiagRTE( thiswa->hStmtUpdate, "CreateUpdateStmtOra", thiswa->sSql, res, __LINE__, __FILE__ );
 //       return HB_FAILURE;
