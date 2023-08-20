@@ -2,6 +2,7 @@
 * SQLEX Main File
 * Copyright (c) 2008 - Marcelo Lombardo  <lombardo@uol.com.br>
 * All Rights Reserved
+*/
 
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -45,6 +46,7 @@
  *
  */
 
+/*
 Quick to do list, 2009 feb 23:
 
     4.4 - Review all filter functionalities in WHERE clauses and fully
