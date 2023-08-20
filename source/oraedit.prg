@@ -110,7 +110,7 @@ Static TRACE_STRUCT   := { ;
 #ifndef DE_APPEND
 #define DE_APPEND  3
 #endif
-#define 	HB_COMPAT_C53
+#define    HB_COMPAT_C53
 static nAliasTmp := 0
      
 FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop,;
@@ -126,7 +126,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop,;
                  acFootingSep,;        
                  acColumnFootings,;    
                  bPreBlock,;           
-                 bPostBlock )          
+                 bPostBlock )
 
 LOCAL oTBR,;
       oTBC,;
@@ -190,7 +190,7 @@ SR_SetRDDTemp("ADT")
      
      For EACH cTmp in aPk
         if At( Upper( cTmp ), Upper( cCols ) ) == 0
-           cCols += cTmp+"," 
+           cCols += cTmp+","
         EndIf
      Next
      
@@ -462,10 +462,10 @@ nLowerBound +=nHigerBound
           bFunc := IIf(HB_ISBLOCK(i[1]), i[1], &("{||" + i[1] + '}'))
        Else
           if !Empty( cTmp )
-          	bFunc := IIf(HB_ISBLOCK(cTmp), cTmp, &("{||" + cTmp + '}'))
+             bFunc := IIf(HB_ISBLOCK(cTmp), cTmp, &("{||" + cTmp + '}'))
           Else
           bFunc := IIf(HB_ISBLOCK(i), i, &("{||" + i + '}'))
-          EndIf 	
+          EndIf    
        End
 
        If ValType(Eval(bFunc)) == 'M'  // HB_ISMEMO() returns .T. for strings :(
@@ -606,7 +606,7 @@ nLowerBound +=nHigerBound
      if len(aRet) >0    
          if (calias)->(lastrec()) < aret[1,1]
          nHigerBound += nStep        
-         refreshFullData(csql,cAlias,cfile,nHigerBound,nLowerBound,nStep)   
+         refreshFullData(csql,cAlias,cfile,nHigerBound,nLowerBound,nStep)
          nLowerBound += nStep     
          otbr:refreshall()
          dbgoto(nrecno)
@@ -798,18 +798,18 @@ Local aValues :={}
      GETREFRESHCURVALUE( cAlias,ctable )
      aValues := GetCurValue( calias )
   endif
-  SR_StartLog()  
+  SR_StartLog()
   nRet := dbe_return( Eval(bFunc, nMode, nColPos,  aValues,oTBR) )
   SR_StopLog()                            
 
   if nRet == DE_REFRESH
 
      if nKey == K_DEL 
-	    if IsPrimaryKeyDeleted( cAlias ,cTable)
+       if IsPrimaryKeyDeleted( cAlias ,cTable)
            (calias)->( rlock() )
            (calias)->( dbdelete() )
            (calias)->( dbunlock() )
-		endif
+      endif
         sr_getconnection():Exec(cCount,,.t.,@aret)
      elseif  nKey == K_INS
 
@@ -819,33 +819,33 @@ Local aValues :={}
     //    nLastRec := ( cAlias )->( LastRec() )
         insertupdated(cAlias ,cTable)
         otbr:refreshall()
-* 		cSql := sr_getconnection():cLastcomm
-* 		if upper(ctable) in upper(cSql) .and. "INSERT" in upper(cSql )
-* 		   cValues := substr(cSql,at("VALUES",upper(cSql)))
-* 		   cSql := strtran(csql,cvalues,'')
-* 		   cvalues := alltrim(values)
-* 		   cSql := alltrim(cSql)
-* 		   cSql := substr(csql,at('(',csql)+1)
-* 		   csql :=strtran(csql,')','')
-* 		   cvalues := alltrim(cvalues)
-* 		   cvalues := substr(cvalues,at('(',cvalues)+1)
-* 		   cvalues :=strtran(cvalues,')','')
-* 		   aField := hb_atokens(csql,',')
+*       cSql := sr_getconnection():cLastcomm
+*       if upper(ctable) in upper(cSql) .and. "INSERT" in upper(cSql )
+*          cValues := substr(cSql,at("VALUES",upper(cSql)))
+*          cSql := strtran(csql,cvalues,'')
+*          cvalues := alltrim(values)
+*          cSql := alltrim(cSql)
+*          cSql := substr(csql,at('(',csql)+1)
+*          csql :=strtran(csql,')','')
+*          cvalues := alltrim(cvalues)
+*          cvalues := substr(cvalues,at('(',cvalues)+1)
+*          cvalues :=strtran(cvalues,')','')
+*          aField := hb_atokens(csql,',')
 *            aVal := hb_atokens(cvalues,',')
-* 		   (calias)->(dbappend())
-* 		   for i := 1 to len(afield)
-* 		      try
-* 		        (calias)->(fieldput( (calias)->(fieldpos(aField[i])),aval[i]))
-* 		      catch
-* 		      end
-* 		   next
-* 		   endif
-* 		   
-*  		   
+*          (calias)->(dbappend())
+*          for i := 1 to len(afield)
+*             try
+*               (calias)->(fieldput( (calias)->(fieldpos(aField[i])),aval[i]))
+*             catch
+*             end
+*          next
+*          endif
+*          
+*           
          sr_getconnection():Exec(cCount,,.t.,@aret)
-* 		
+*       
      else  
-	    if nKey == K_ENTER
+       if nKey == K_ENTER
            GETREFRESHCURVALUE(cAlias,cTable)
          //  aValues := GetCurValue(calias)
         endif
@@ -926,7 +926,7 @@ Local aValues :={}
 * *         dbgobottom()
 //culik comentado para teste
 *          nHigerBound += nStep        
-*          refreshFullData(csql,cAlias,cfile,nHigerBound,nLowerBound,nStep)   
+*          refreshFullData(csql,cAlias,cfile,nHigerBound,nLowerBound,nStep)
 *          nLowerBound += nStep
      endif
 
@@ -1246,7 +1246,7 @@ if len( aFields  )>0
       endif
       cSql += " AND "
    NEXT
-   cSql := substr(cSql,1,len(csql)-4)  
+   cSql := substr(cSql,1,len(csql)-4)
 
    sr_getconnection():exec(cSql,,.t.,@aret)
    aFields2 := sr_getconnection():aFields
@@ -1309,8 +1309,8 @@ if len( aFields  )>0
          FOR each aTmpField in aFields2
             cField := aTmpField[1]
             nposf := (cAlias2)->(fieldpos( cField ))
-         	(cAlias2)->( fieldput(  nposf  , aTemp[ i ] ) )
-         	++i
+            (cAlias2)->( fieldput(  nposf  , aTemp[ i ] ) )
+            ++i
          NEXT
          (calias2)->(dbcommit())
          (calias2)->(dbunlock())
@@ -1392,28 +1392,28 @@ if len(aFields) > 0
    cSql :=GetLastInsertCommand(cTable)
 
    if !empty(cSql)
-		   cValues := substr(cSql,at("VALUES",upper(cSql)))
-		   cSql := strtran(csql,cvalues,'')
-		   cvalues := alltrim(cvalues)
-		   cSql := alltrim(cSql)
-		   cSql := substr(csql,at('(',csql)+1)
-		   csql :=strtran(csql,')','')
-		  
-		   cSql := alltrim(cSql)
-		   cvalues := alltrim(cvalues)
-		   cvalues := substr(cvalues,at('(',cvalues)+1)
-		   cvalues :=strtran(cvalues,')','')
-* 		   cvalues :=strtran(cvalues,"'",'')
-		   aField := hb_atokens(csql,',')
+         cValues := substr(cSql,at("VALUES",upper(cSql)))
+         cSql := strtran(csql,cvalues,'')
+         cvalues := alltrim(cvalues)
+         cSql := alltrim(cSql)
+         cSql := substr(csql,at('(',csql)+1)
+         csql :=strtran(csql,')','')
+        
+         cSql := alltrim(cSql)
+         cvalues := alltrim(cvalues)
+         cvalues := substr(cvalues,at('(',cvalues)+1)
+         cvalues :=strtran(cvalues,')','')
+*          cvalues :=strtran(cvalues,"'",'')
+         aField := hb_atokens(csql,',')
            aVal := hb_atokens(cvalues,',')
-* 		   (calias)->(dbappend())
-* 		   for i := 1 to len(afield)
-* 		      try
-* 		        (calias)->(fieldput( (calias)->(fieldpos(aField[i])),aval[i]))
-* 		      catch
-* 		      end
-* 		   next
-		         
+*          (calias)->(dbappend())
+*          for i := 1 to len(afield)
+*             try
+*               (calias)->(fieldput( (calias)->(fieldpos(aField[i])),aval[i]))
+*             catch
+*             end
+*          next
+               
     cSql := "select " + cfields + " from " + cTable  + " where "
       for each aTemp in aFields
       nPos := ascan( afield,{|x| upper(x) == upper(aTemp)})
@@ -1480,13 +1480,13 @@ select(calias)
 return nil   
          
       
-* 		   (calias)->(dbappend())
-* 		   for i := 1 to len(afield)
-* 		      try
-* 		        (calias)->(fieldput( (calias)->(fieldpos(aField[i])),aval[i]))
-* 		      catch
-* 		      end
-* 		   next
+*          (calias)->(dbappend())
+*          for i := 1 to len(afield)
+*             try
+*               (calias)->(fieldput( (calias)->(fieldpos(aField[i])),aval[i]))
+*             catch
+*             end
+*          next
       
    
       

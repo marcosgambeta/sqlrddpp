@@ -1393,7 +1393,7 @@ while lRet
    end switch       
        
 enddo
-	
+   
 return 0
 
 
@@ -1432,9 +1432,9 @@ static function mySQLLen( nType, nLen, nDec )
          nLen := 20
          nDec := 6
       EndIf
-	  
-	  If nDec >3 .and. !( nLen = 38 .and. nDec = 0 )
-	     nLen :=14
+     
+     If nDec >3 .and. !( nLen = 38 .and. nDec = 0 )
+        nLen :=14
       endif
       If !( nLen = 38 .and. nDec = 0 )
          nLen := min( nLen, 20 )

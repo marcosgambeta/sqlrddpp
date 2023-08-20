@@ -1361,14 +1361,14 @@ Return 0
 
 Function SR_GetStack()
 
-	Local i := 1, cErrorLog := ""
+   Local i := 1, cErrorLog := ""
 
-	while ( i < 70 )
-		 If ! Empty( ProcName( i ) )
+   while ( i < 70 )
+       If ! Empty( ProcName( i ) )
           cErrorLog += CRLF + Trim( ProcName( i ) ) + "     Linha : " + alltrim(str(ProcLine(i)))
-		 EndIf
-		 i++
-	end
+       EndIf
+       i++
+   end
 
 Return  cErrorLog
 

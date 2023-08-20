@@ -530,8 +530,8 @@ METHOD ExecSP( cComm, aReturn, nParam, aType )  CLASS SR_ORACLE2
       ::RunTimeErr("", str( SQLO2_GETERRORCODE( ::hDbc ), 4 ) + " - " + SQLO2_GETERRORDESCR( ::hDbc ) ) 
    Else
    //If nError >= 0
-   	  
-   	  
+        
+
       For i:=1 to nParam
         AADD( aReturn, ORACLEGETBINDDATA( ::hdbc, i ) )          
       Next
