@@ -64,8 +64,7 @@ HB_FUNC( MYSCONNECT )
    session->dbh    = mysql_init( ( MYSQL * ) 0 );
    session->ifetch = -2;
 
-   if( session->dbh != NULL )
-   {
+   if( session->dbh != NULL ) {
 	  iConnectionCount ++ ; 
       mysql_options( session->dbh, MYSQL_OPT_CONNECT_TIMEOUT, (const char *) &uiTimeout );
       if( lCompress )
@@ -73,9 +72,7 @@ HB_FUNC( MYSCONNECT )
       else
          mysql_real_connect( session->dbh, szHost, szUser, szPass, szDb, uiPort, NULL, CLIENT_ALL_FLAGS2 );
       hb_retptr( (void *) session );
-   }
-   else
-   {
+   } else {
       
       mysql_close( NULL );
       if( iConnectionCount == 0 )
@@ -135,12 +132,9 @@ HB_FUNC( MYSEXEC )
    mysql_real_query( session->dbh, szQuery, hb_parclen( 2 ) );
    session->stmt = mysql_store_result( session->dbh );
    session->ulAffected_rows = mysql_affected_rows(session->dbh) ;
-   if( session->stmt )
-   {
+   if( session->stmt ) {
 	   session->numcols = mysql_num_fields( session->stmt );
-   }
-   else
-   {
+   } else {
 	   session->numcols = 0;
    }
    hb_retptr( (void *) session->stmt );
@@ -158,28 +152,19 @@ HB_FUNC( MYSFETCH )     /* MYSFetch( ConnHandle,ResultSet ) => nStatus */
 
    session->status =  mysql_errno( session->dbh ) ;
 
-   if( session->status != MYSQL_OK )
-   {
+   if( session->status != MYSQL_OK ) {
       hb_retni( SQL_INVALID_HANDLE );
-   }
-   else
-   {
-      if( session->ifetch >= -1 )
-      {
+   } else {
+      if( session->ifetch >= -1 ) {
          session->ifetch++;
          rows = (int) ( mysql_num_rows( session->stmt ) -1 );
 
-         if( session->ifetch > rows )
-         {
+         if( session->ifetch > rows ) {
             hb_retni( SQL_NO_DATA_FOUND );
-         }
-         else
-         {
+         } else {
             hb_retni( SQL_SUCCESS );
          }
-      }
-      else
-      {
+      } else {
          hb_retni( SQL_INVALID_HANDLE );
       }
    }
@@ -201,10 +186,8 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
    lDec  = hb_arrayGetNL( pField, FIELD_DEC );
 
    if( lLenBuff <= 0 ) {   // database content is NULL
-      switch( lType )
-      {
-         case SQL_CHAR:
-         {
+      switch( lType ) {
+         case SQL_CHAR: {
             char * szResult = ( char * ) hb_xgrab( lLen + 1 );
             hb_xmemset( szResult, ' ', lLen );
             szResult[ lLen ] =  '\0';
@@ -212,38 +195,32 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
             break;
          }
          case SQL_NUMERIC:
-         case SQL_FAKE_NUM:
-         {
+         case SQL_FAKE_NUM: {
             char szResult[2] = { ' ', '\0' };
             sr_escapeNumber( szResult, lLen, lDec, pItem );
             break;
          }
-         case SQL_DATE:
-         {
+         case SQL_DATE: {
             char dt[9] = {' ',' ',' ',' ',' ',' ',' ',' ','\0'};
             hb_itemPutDS( pItem, dt );
             break;
          }
-         case SQL_LONGVARCHAR:
-         {
+         case SQL_LONGVARCHAR: {
             hb_itemPutCL( pItem, bBuffer, 0 );
             break;
          }
-         case SQL_BIT:
-         {
+         case SQL_BIT: {
             hb_itemPutL( pItem, FALSE );
             break;
          }
 
 #ifdef SQLRDD_TOPCONN
-         case SQL_FAKE_DATE:
-         {
+         case SQL_FAKE_DATE: {
             hb_itemPutDS( pItem, bBuffer );
             break;
          }
 #endif
-         case SQL_DATETIME:
-         {
+         case SQL_DATETIME: {
 // #ifdef __XHARBOUR__
 //             hb_itemPutDT( pItem, 0, 0, 0, 0, 0, 0, 0 );
 // #else
@@ -251,8 +228,7 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
 // #endif
             break;
          }
-         case SQL_TIME:
-         {
+         case SQL_TIME: {
 	         hb_itemPutTDT( pItem, 0, 0 );
 	         break;
          }         
@@ -260,33 +236,26 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
          default:
             TraceLog( LOGFILE, "Invalid data type detected: %i\n", lType );
       }
-   }
-   else
-   {
-      switch( lType )
-      {
-         case SQL_CHAR:
-         {
+   } else {
+      switch( lType ) {
+         case SQL_CHAR: {
             HB_SIZE lPos;
             char * szResult = ( char * ) hb_xgrab( lLen + 1 );
             memset( szResult, ' ',   lLen  );
             hb_xmemcpy( szResult, bBuffer,  (lLen < lLenBuff ? lLen : lLenBuff ) );
 
-            for( lPos =  lLenBuff; lPos < lLen; lPos++ )
-            {
+            for( lPos =  lLenBuff; lPos < lLen; lPos++ ) {
                szResult[ lPos ] = ' ';
             }
             szResult[ lLen ] =  '\0';
             hb_itemPutCLPtr( pItem, szResult, lLen );
             break;
          }
-         case SQL_NUMERIC:
-         {
+         case SQL_NUMERIC: {
             sr_escapeNumber( bBuffer,  lLen,  lDec, pItem );
             break;
          }
-         case SQL_DATE:
-         {
+         case SQL_DATE: {
             char dt[9];
             dt[0] = bBuffer[0];
             dt[1] = bBuffer[1];
@@ -300,8 +269,7 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
             hb_itemPutDS( pItem, dt );
             break;
          }
-         case SQL_LONGVARCHAR:
-         {
+         case SQL_LONGVARCHAR: {
             if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) ) {
                if( s_pSym_SR_FROMJSON == NULL ) {
                   hb_dynsymLock();
@@ -355,21 +323,18 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
             }
             break;
          }
-         case SQL_BIT:
-         {
+         case SQL_BIT: {
             hb_itemPutL( pItem, bBuffer[0] == '1' ? TRUE : FALSE );
             break;
          }
 
 #ifdef SQLRDD_TOPCONN
-         case SQL_FAKE_DATE:
-         {
+         case SQL_FAKE_DATE: {
             hb_itemPutDS( pItem, bBuffer );
             break;
          }
 #endif
-         case SQL_DATETIME:
-         {
+         case SQL_DATETIME: {
 #ifdef __XHARBOUR__
             long lJulian, lMilliSec;
             hb_timeStampStrRawGet( bBuffer, &lJulian, &lMilliSec ); // TOCHECK:
@@ -381,8 +346,7 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
 #endif
             break;
          }
-         case SQL_TIME:
-         {
+         case SQL_TIME: {
 	        long  lMilliSec;
             lMilliSec = hb_timeUnformat( bBuffer, nullptr ); // TOCHECK:
             hb_itemPutTDT( pItem, 0, lMilliSec );    
@@ -418,22 +382,17 @@ HB_FUNC( MYSLINEPROCESSED )
 
    session->status =  mysql_errno( session->dbh ) ;
 
-   if( session->status != MYSQL_OK )
-   {
+   if( session->status != MYSQL_OK ) {
       hb_retni( SQL_INVALID_HANDLE );
-   }
-   else
-   {
-      if( session->ifetch >= -1 )
-      {
+   } else {
+      if( session->ifetch >= -1 ) {
          cols = hb_arrayLen( pFields );
 
          mysql_data_seek( session->stmt, session->ifetch );
          thisrow = mysql_fetch_row( session->stmt );
          lens    = mysql_fetch_lengths( session->stmt );
 
-         for( col = 0; col < cols; col++ )
-         {
+         for( col = 0; col < cols; col++ ) {
             temp    = hb_itemNew( NULL );
             lIndex  = hb_arrayGetNL( hb_arrayGetItemPtr( pFields, col+1 ), FIELD_ENUM );
 
@@ -464,12 +423,9 @@ HB_FUNC( MYSSTATUS )
 
    ret = mysql_errno( session->dbh );
 
-   if( ret ==MYSQL_OK )
-   {
+   if( ret ==MYSQL_OK ) {
       ret = SQL_SUCCESS;
-   }
-   else
-   {
+   } else {
       ret = SQL_ERROR;
    }
    hb_retni( ret );
@@ -485,8 +441,7 @@ HB_FUNC( MYSRESULTSTATUS )
 
    ret = (UINT) mysql_errno( session->dbh );
 
-   switch (ret)
-   {
+   switch (ret) {
    case MYSQL_OK:
       ret = SQL_SUCCESS;
       break;
@@ -599,8 +554,7 @@ HB_FUNC( MYSQUERYATTR )
 
    hb_arrayNew( ret, rows );
 
-   for ( row = 0; row < rows; row++ )
-   {
+   for( row = 0; row < rows; row++ ) {
 
       /* Column name */
       field = mysql_fetch_field_direct( session->stmt, row );
@@ -609,8 +563,7 @@ HB_FUNC( MYSQUERYATTR )
 
       /* Data type, len, dec */
       type   =  field->type;
-      switch (type)
-      {
+      switch (type) {
       case MYSQL_STRING_TYPE:
       case MYSQL_VAR_STRING_TYPE:
       //case MYSQL_DATETIME_TYPE:
@@ -712,8 +665,7 @@ HB_FUNC( MYSTABLEATTR )
 
    MYSQL_FIELD * field;
 
-   if( hb_pcount() != 2 )
-   {
+   if( hb_pcount() != 2 ) {
       hb_retnl( -2 );
    }
 
@@ -726,8 +678,7 @@ HB_FUNC( MYSTABLEATTR )
    mysql_real_query( session->dbh, attcmm, strlen(attcmm) );
    session->stmt = mysql_store_result( session->dbh );
 
-   if( !session->stmt )
-   {
+   if( !session->stmt ) {
       TraceLog( LOGFILE, "Query error : %i - %s\n", mysql_errno( session->dbh ), mysql_error( session->dbh ) );
    }
 
@@ -738,8 +689,7 @@ HB_FUNC( MYSTABLEATTR )
    rows = mysql_num_fields( session->stmt );
    hb_arrayNew( ret, rows );
 
-   for ( row = 0; row < rows; row++ )
-   {
+   for( row = 0; row < rows; row++ ) {
      field = mysql_fetch_field_direct( session->stmt, row );
       /* Column name */
       hb_arrayNew( atemp, 6 );
@@ -749,8 +699,7 @@ HB_FUNC( MYSTABLEATTR )
       /* Data type, len, dec */
       type   =  field->type;
 
-      switch (type)
-      {
+      switch (type) {
       case MYSQL_STRING_TYPE:
       case MYSQL_VAR_STRING_TYPE:
       //case MYSQL_DATETIME_TYPE:      

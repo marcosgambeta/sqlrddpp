@@ -161,8 +161,7 @@ PHB_ITEM SQLpCodeGenArrayJoin( PHB_ITEM pArray1, PHB_ITEM pArray2 )
    }
 
    nLen = hb_arrayLen( pArray2 );
-   for( n = 1; n <= nLen; n++ )
-   {
+   for( n = 1; n <= nLen; n++ ) {
       hb_arrayAddForward( pArray1, hb_arrayGetItemPtr( pArray2, n ) );
    }
    hb_itemRelease( pArray2 );
@@ -232,8 +231,7 @@ HB_FUNC( SR_STRTOHEX )
    outbuff = (char *) hb_xgrab( (len * 2) + 1 );
    c = outbuff;
 
-   for( i = 0; i < len; i++ )
-   {
+   for( i = 0; i < len; i++ ) {
 
       iNum = (int) cStr[i];
       c[0] = '0';
@@ -241,23 +239,17 @@ HB_FUNC( SR_STRTOHEX )
 
       iCipher = (int) (iNum % 16);
 
-      if( iCipher < 10 )
-      {
+      if( iCipher < 10 ) {
          c[1] = '0' + iCipher;
-      }
-      else
-      {
+      } else {
          c[1] = 'A' + (iCipher - 10 );
       }
       iNum >>=4;
 
       iCipher = iNum % 16;
-      if( iCipher < 10 )
-      {
+      if( iCipher < 10 ) {
          c[0] = '0' + iCipher;
-      }
-      else
-      {
+      } else {
          c[0] = 'A' + (iCipher - 10 );
       }
 
@@ -279,8 +271,7 @@ char * sr_Hex2Str( const char * cStr, int len, int * lenOut )
    nalloc = (int) (len/2);
    outbuff = (char *) hb_xgrab( nalloc + 1 );
 
-   for( i = 0; i < nalloc; i++ )
-   {
+   for( i = 0; i < nalloc; i++ ) {
       // First byte
 
       c = *cStr;
@@ -288,16 +279,11 @@ char * sr_Hex2Str( const char * cStr, int len, int * lenOut )
       iNum <<= 4;
       iCipher = 0;
 
-      if( c >= '0' && c <= '9' )
-      {
+      if( c >= '0' && c <= '9' ) {
          iCipher = (ULONG) ( c - '0' );
-      }
-      else if( c >= 'A' && c <= 'F' )
-      {
+      } else if( c >= 'A' && c <= 'F' ) {
          iCipher = (ULONG) ( c - 'A' )+10;
-      }
-      else if( c >= 'a' && c <= 'f' )
-      {
+      } else if( c >= 'a' && c <= 'f' ) {
          iCipher = (ULONG) ( c - 'a' )+10;
       }
 
@@ -310,16 +296,11 @@ char * sr_Hex2Str( const char * cStr, int len, int * lenOut )
       iNum <<= 4;
       iCipher = 0;
 
-      if( c >= '0' && c <= '9' )
-      {
+      if( c >= '0' && c <= '9' ) {
          iCipher = (ULONG) ( c - '0' );
-      }
-      else if( c >= 'A' && c <= 'F' )
-      {
+      } else if( c >= 'A' && c <= 'F' ) {
          iCipher = (ULONG) ( c - 'A' )+10;
-      }
-      else if( c >= 'a' && c <= 'f' )
-      {
+      } else if( c >= 'a' && c <= 'f' ) {
          iCipher = (ULONG) ( c - 'a' )+10;
       }
 
@@ -355,10 +336,9 @@ static HB_SIZE escape_mysql( char *to, const char *from, HB_SIZE length )
 {
   const char *to_start=to;
   const char *end;
-  for (end=from+length; from != end ; from++)
+  for( end=from+length; from != end ; from++ )
   {
-    switch (*from)
-    {
+    switch (*from) {
     case 0:            /* Must be escaped for 'mysql' */
       *to++= '\\';
       *to++= '0';
@@ -399,10 +379,9 @@ static HB_SIZE escape_single( char *to, const char *from, HB_SIZE length )
 {
   const char *to_start=to;
   const char *end;
-  for (end=from+length; from != end ; from++)
+  for( end=from+length; from != end ; from++ )
   {
-    switch (*from)
-    {
+    switch (*from) {
     case '\'':
       *to++= '\'';
       *to++= '\'';
@@ -419,10 +398,9 @@ static HB_SIZE escape_firebird( char *to, const char *from, HB_SIZE length )
 {
   const char *to_start=to;
   const char *end;
-  for (end=from+length; from != end ; from++)
+  for( end=from+length; from != end ; from++ )
   {
-    switch (*from)
-    {
+    switch (*from) {
     case '\'':
       *to++= '\'';
       *to++= '\'';
@@ -442,10 +420,9 @@ static HB_SIZE escape_db2( char *to, const char *from, HB_SIZE length )
 {
   const char *to_start=to;
   const char *end;
-  for (end=from+length; from != end ; from++)
+  for( end=from+length; from != end ; from++ )
   {
-    switch (*from)
-    {
+    switch (*from) {
     case '\'':
       *to++= '\'';
       *to++= '\'';
@@ -465,10 +442,9 @@ static HB_SIZE escape_pgs( char *to, const char *from, HB_SIZE length )
 {
   const char *to_start=to;
   const char *end;
-  for (end=from+length; from != end ; from++)
+  for( end=from+length; from != end ; from++ )
   {
-    switch (*from)
-    {
+    switch (*from) {
     case '\'':
       *to++= '\'';
       *to++= '\'';
@@ -491,10 +467,9 @@ static HB_SIZE escape_oci( char *to, const char *from, HB_SIZE length )
 {
   const char *to_start=to;
   const char *end;
-  for (end=from+length; from != end ; from++)
+  for( end=from+length; from != end ; from++ )
   {
-    switch (*from)
-    {
+    switch (*from) {
     case '\'':
       *to++= '\'';
       *to++= '\'';
@@ -526,14 +501,11 @@ HB_FUNC( SR_ESCAPESTRING )
       return;
    }
 
-   if( iSize )
-   {
+   if( iSize ) {
       FromBuffer = hb_parc( 1 );
       ToBuffer = ( char *) hb_xgrab( ( iSize*2 ) + 1 );
-      if( ToBuffer )
-      {
-         switch (idatabase)
-         {
+      if( ToBuffer ) {
+         switch (idatabase) {
          case SYSTEMID_MYSQL:
          case SYSTEMID_MARIADB:
             iSize = escape_mysql( ToBuffer, FromBuffer, iSize );
@@ -564,9 +536,7 @@ HB_FUNC( SR_ESCAPESTRING )
          }
       }
       hb_retclenAdopt( ( char *) ToBuffer, iSize );
-   }
-   else
-   {
+   } else {
       hb_retc( "" );
    }
 }
@@ -580,8 +550,7 @@ char * QuoteTrimEscapeString( const char * FromBuffer, HB_SIZE iSize, int idatab
    ToBuffer[0] = '\'';
    ToBuffer++;
 
-   switch (idatabase)
-   {
+   switch (idatabase) {
    case SYSTEMID_MYSQL:
    case SYSTEMID_MARIADB:
       iSize = escape_mysql( ToBuffer, FromBuffer, iSize );
@@ -614,8 +583,7 @@ char * QuoteTrimEscapeString( const char * FromBuffer, HB_SIZE iSize, int idatab
    iSize++;
    ToBuffer--;
 
-   while (bRTrim && iSize > 1 && ToBuffer[iSize-1] == ' ')
-   {
+   while( bRTrim && iSize > 1 && ToBuffer[iSize-1] == ' ' ) {
       iSize--;
    }
 
@@ -652,34 +620,27 @@ HB_FUNC( SR_ESCAPENUM )
    len = hb_parnl( 2 );
    dec = hb_parnl( 3 );
 
-   if( dec > 0 )
-   {
+   if( dec > 0 ) {
       len -= (dec + 1);
    }
 
    dMultpl = 0;
    iDecPos = 0;
 
-   for( iPos=0;iPos<iSize;iPos++ )
-   {
-      if( FromBuffer[iPos] == ',' )
-      {
+   for( iPos=0;iPos<iSize;iPos++ ) {
+      if( FromBuffer[iPos] == ',' ) {
          ToBuffer[iPos] = '.';
          iDecPos = iPos;
-      }
-      else
-      {
+      } else {
          ToBuffer[iPos] = FromBuffer[iPos];
       }
 
-      if( ToBuffer[iPos] == '.' )
-      {
+      if( ToBuffer[iPos] == '.' ) {
          bInteger = FALSE;
          iDecPos = iPos;
       }
 
-      if( ToBuffer[iPos] == 'E' && (iPos+2) <= iSize )    // 1928773.3663E+003
-      {
+      if( ToBuffer[iPos] == 'E' && (iPos+2) <= iSize ) {  // 1928773.3663E+003
          bInteger = FALSE;
          if( FromBuffer[iPos+1] == '-' ) {
             SciNot[0] = FromBuffer[iPos+1];
@@ -707,8 +668,7 @@ HB_FUNC( SR_ESCAPENUM )
    ToBuffer[iSize] = '\0';
 
    if( dMultpl > 0 ) {
-      for( iPos=iDecPos;iPos<iSize+32;iPos++ )
-      {
+      for( iPos=iDecPos;iPos<iSize+32;iPos++ ) {
          if( ToBuffer[iPos] == '.' && dMultpl > 0 && (iPos+1) <= iSize+32 ) {
             ToBuffer[iPos]   = ToBuffer[iPos+1];
             ToBuffer[iPos+1] = '.';
@@ -763,34 +723,27 @@ PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
    ToBuffer = ( char *) hb_xgrab( ( iSize ) + 33 );
    memset( ToBuffer, 0, ( iSize ) + 33 );
 
-   if( dec > 0 )
-   {
+   if( dec > 0 ) {
       len -= (dec + 1);
    }
 
    dMultpl = 0;
    iDecPos = 0;
 
-   for( iPos=0;iPos<iSize;iPos++ )
-   {
-      if( FromBuffer[iPos] == ',' )
-      {
+   for( iPos=0;iPos<iSize;iPos++ ) {
+      if( FromBuffer[iPos] == ',' ) {
          ToBuffer[iPos] = '.';
          iDecPos = iPos;
-      }
-      else
-      {
+      } else {
          ToBuffer[iPos] = FromBuffer[iPos];
       }
 
-      if( ToBuffer[iPos] == '.' )
-      {
+      if( ToBuffer[iPos] == '.' ) {
          bInteger = FALSE;
          iDecPos = iPos;
       }
 
-      if( ToBuffer[iPos] == 'E' && (iPos+2) <= iSize )    // 1928773.3663E+003
-      {
+      if( ToBuffer[iPos] == 'E' && (iPos+2) <= iSize ) {  // 1928773.3663E+003
          bInteger = FALSE;
          if( FromBuffer[iPos+1] == '-' ) {
             SciNot[0] = FromBuffer[iPos+1];
@@ -818,8 +771,7 @@ PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
    ToBuffer[iSize] = '\0';
 
    if( dMultpl > 0 ) {
-      for( iPos=iDecPos;iPos<iSize+32;iPos++ )
-      {
+      for( iPos=iDecPos;iPos<iSize+32;iPos++ ) {
          if( ToBuffer[iPos] == '.' && dMultpl > 0 && (iPos+1) <= iSize+32 ) {
             ToBuffer[iPos]   = ToBuffer[iPos+1];
             ToBuffer[iPos+1] = '.';
@@ -880,16 +832,14 @@ HB_FUNC( SR_DBQUALIFY )
       // Postgres, MySQL and Ingres must be lowercase
       // Others, doesn't matter column case
 
-      switch (ulDb)
-      {
+      switch (ulDb) {
       case SYSTEMID_ORACLE:
       case SYSTEMID_FIREBR:
       case SYSTEMID_FIREBR3:
       case SYSTEMID_IBMDB2:
       case SYSTEMID_ADABAS:
          szOut[0] = '"';
-         for( i = 0; i < ulLen; i++ )
-         {
+         for( i = 0; i < ulLen; i++ ) {
             szOut[ i+1 ] = toupper( (BYTE) pszBuffer[ i ] );
          }
          szOut[i+1] = '"';
@@ -897,16 +847,14 @@ HB_FUNC( SR_DBQUALIFY )
       case SYSTEMID_INGRES:
       case SYSTEMID_POSTGR:      
          szOut[0] = '"';
-         for( i = 0; i < ulLen; i++ )
-         {
+         for( i = 0; i < ulLen; i++ ) {
             szOut[ i+1 ] = tolower( (BYTE) pszBuffer[ i ] );
          }
          szOut[i+1] = '"';
          break;
       case SYSTEMID_MSSQL7:
          szOut[0] = '[';
-         for( i = 0; i < ulLen; i++ )
-         {
+         for( i = 0; i < ulLen; i++ ) {
             szOut[ i+1 ] = (BYTE) pszBuffer[ i ];
          }
          szOut[i+1] = ']';
@@ -915,31 +863,26 @@ HB_FUNC( SR_DBQUALIFY )
       case SYSTEMID_OTERRO:
       case SYSTEMID_MARIADB:
          szOut[0] = '`';
-         for( i = 0; i < ulLen; i++ )
-         {
+         for( i = 0; i < ulLen; i++ ) {
             szOut[ i+1 ] = tolower( (BYTE) pszBuffer[ i ] );
          }
          szOut[i+1] = '`';
          break;
       case SYSTEMID_INFORM:
-         for( i = 0; i < ulLen; i++ )
-         {
+         for( i = 0; i < ulLen; i++ ) {
             szOut[ i ] = tolower( (BYTE) pszBuffer[ i ] );
          }
          ulLen -=2;
          break;
       default:
          szOut[0] = '"';
-         for( i = 0; i < ulLen; i++ )
-         {
+         for( i = 0; i < ulLen; i++ ) {
             szOut[ i+1 ] = (BYTE) pszBuffer[ i ];
          }
          szOut[i+1] = '"';
       }
       hb_retclenAdopt( szOut, ulLen + 2 );
-   }
-   else
-   {
+   } else {
       hb_errRT_BASE_SubstR( EG_ARG, 1102, NULL, "SR_DBQUALIFY", 1, hb_paramError( 1 ) );
    }
 }
@@ -976,8 +919,7 @@ BOOL hb_arraySetL( PHB_ITEM pArray, ULONG ulIndex, BOOL lVal )
 
 BOOL SR_itemEmpty( PHB_ITEM pItem )
 {
-   switch( hb_itemType( pItem ) )
-   {
+   switch( hb_itemType( pItem ) ) {
       case HB_IT_ARRAY:
          return hb_arrayLen( pItem ) == 0;
 
@@ -1009,8 +951,7 @@ BOOL SR_itemEmpty( PHB_ITEM pItem )
       case HB_IT_DATE:
          return hb_itemGetDL( pItem ) == 0;
 
-      case HB_IT_TIMESTAMP:
-      {
+      case HB_IT_TIMESTAMP: {
          long lDate, lTime;
          hb_itemGetTDT( pItem, &lDate, &lTime );
          return lDate == 0 && lTime == 0;
@@ -1025,8 +966,7 @@ BOOL SR_itemEmpty( PHB_ITEM pItem )
       case HB_IT_POINTER:
          return hb_itemGetPtr( pItem ) == NULL;
 #ifndef __XHARBOUR__
-      case HB_IT_SYMBOL:
-      {
+      case HB_IT_SYMBOL: {
          PHB_SYMB pSym = hb_itemGetSymbol( pItem );
          if( pSym && ( pSym->scope.value & HB_FS_DEFERRED ) && pSym->pDynSym ) {
             pSym = hb_dynsymSymbol( pSym->pDynSym );
@@ -1065,9 +1005,7 @@ char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, 
          * bNullArgument = TRUE;
 
          return (sValue);
-      }
-      else
-      {
+      } else {
          if( HB_IS_STRING( pFieldData ) && bTCCompat ) {
             sValue = QuoteTrimEscapeString( hb_itemGetCPtr( pFieldData ),
                                             hb_itemGetCLen( pFieldData ),
@@ -1097,13 +1035,11 @@ char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, 
       sValue = hb_itemStr( pFieldData, pFieldLen, pFieldDec );
       iTrim = 0;
       iSize = 15;
-      while ( sValue[iTrim] == ' ' )
-      {
+      while( sValue[iTrim] == ' ' ) {
          iTrim++;
       }
       if( iTrim > 0 ) {
-         for ( iPos = 0; iPos + iTrim < iSize; iPos++ )
-         {
+         for( iPos = 0; iPos + iTrim < iSize; iPos++ ) {
             sValue[iPos] = sValue[iPos + iTrim];
          }
          sValue[iPos] = '\0';
@@ -1111,17 +1047,14 @@ char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, 
    } else if( HB_IS_DATE( pFieldData ) ) {
       hb_dateDecStr( sDate, hb_itemGetDL( pFieldData ) );
       sValue = (char *) hb_xgrab( 30 );
-      switch( nSystemID )
-      {
-         case SYSTEMID_ORACLE:
-         {
+      switch( nSystemID ) {
+         case SYSTEMID_ORACLE: {
             if( !bMemo ) {
                sprintf( sValue, "TO_DATE(\'%s\',\'YYYYMMDD\')", sDate );
                return (sValue);
             }
          }
-         default:
-         {
+         default: {
             if( !bMemo ) {
                sprintf( sValue, "\'%s\'", sDate );
                return (sValue);

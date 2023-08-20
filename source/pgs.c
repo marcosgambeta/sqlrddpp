@@ -92,8 +92,7 @@ HB_FUNC( PGSRESULTSTATUS )    /* PGSResultStatus( ResultSet ) => nStatus */
    assert( res != NULL );
    ret = (int) PQresultStatus( res );
 
-   switch (ret)
-   {
+   switch (ret) {
    case PGRES_EMPTY_QUERY:
       ret = SQL_ERROR;
       break;
@@ -131,8 +130,7 @@ HB_FUNC( PGSEXEC )      /* PGSExec( ConnHandle, cCommand ) => ResultSet */
    session->numcols = PQnfields( session->stmt );
    ret = (int) PQresultStatus( session->stmt );
 
-   switch (ret)
-   {
+   switch (ret) {
    case PGRES_COMMAND_OK:
       session->iAffectedRows =(int) atoi(PQcmdTuples( session->stmt ));
    break;
@@ -151,29 +149,19 @@ HB_FUNC( PGSFETCH )     /* PGSFetch( ResultSet ) => nStatus */
 
    iTpl = PQresultStatus( session->stmt );
    session->iAffectedRows = 0;
-   if( iTpl != PGRES_TUPLES_OK )
-   {
+   if( iTpl != PGRES_TUPLES_OK ) {
       hb_retni( SQL_INVALID_HANDLE );
-   }
-   else
-   {
-      if( session->ifetch >= -1 )
-      {
+   } else {
+      if( session->ifetch >= -1 ) {
          session->ifetch++;
          iTpl = PQntuples( session->stmt )-1;
-         if( session->ifetch > iTpl )
-         {
-	        
+         if( session->ifetch > iTpl ) {
             hb_retni( SQL_NO_DATA_FOUND );
-         }
-         else
-         {
-            session->iAffectedRows =(int) iTpl;	         
+         } else {
+            session->iAffectedRows =(int) iTpl;
             hb_retni( SQL_SUCCESS );
          }
-      }
-      else
-      {
+      } else {
          hb_retni( SQL_INVALID_HANDLE );
       }
    }
@@ -255,8 +243,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
    assert( session->dbh  != NULL );
    assert( session->stmt != NULL );
 
-   if( hb_pcount() != 1 )
-   {
+   if( hb_pcount() != 1 ) {
       hb_retnl( -2 );
       return;
    }
@@ -268,8 +255,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
 
    hb_arrayNew( ret, rows );
 
-   for ( row = 0; row < rows; row++ )
-   {
+   for( row = 0; row < rows; row++ ) {
 // 	  long nullable;
       /* Column name */
       hb_arrayNew( atemp, 11 );
@@ -284,18 +270,15 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
 
 //       nullable = PQgetisnull( session->stmt, row,PQfnumber( session->stmt,PQfname( session->stmt, row ) ) ) ;
       
-      if( typmod < 0L )
-      {
+      if( typmod < 0L ) {
          typmod = (LONG) PQfsize( session->stmt, row );
       }
 /*
-      if( typmod < 0L )
-      {
+      if( typmod < 0L ) {
          typmod = 20L;
       }
 */
-      switch (type)
-      {
+      switch (type) {
          case CHAROID:
          case NAMEOID:
          case BPCHAROID:
@@ -327,13 +310,10 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
          case NUMERICOID:
             hb_itemPutC( temp, "N" );
             hb_arraySetForward( atemp, FIELD_TYPE, temp );
-            if( typmod > 0 )
-            {
+            if( typmod > 0 ) {
                hb_arraySetForward( atemp, FIELD_LEN, hb_itemPutNI( temp, ((typmod - 4L) >> 16L ) ) );
                hb_arraySetForward( atemp, FIELD_DEC, hb_itemPutNI( temp, ((typmod - 4L) & 0xffff ) ) );
-            }
-            else
-            {
+            } else {
                hb_arraySetForward( atemp, FIELD_LEN, hb_itemPutNI( temp, 18 ) );
                hb_arraySetForward( atemp, FIELD_DEC, hb_itemPutNI( temp, 6 ) );
             }
@@ -440,8 +420,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
 
    assert( session->dbh  != NULL );
 
-   if( hb_pcount() < 3 ) 
-   {
+   if( hb_pcount() < 3 ) {
       hb_retnl( -2 );
       return;
    }
@@ -450,8 +429,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
 
    stmtTemp = PQexec( session->dbh, attcmm );
 
-   if( PQresultStatus( stmtTemp ) != PGRES_TUPLES_OK )
-   {
+   if( PQresultStatus( stmtTemp ) != PGRES_TUPLES_OK ) {
       TraceLog( LOGFILE, "Query error : %i - %s\n", PQresultStatus( stmtTemp ), PQresStatus(PQresultStatus( stmtTemp )) );
       PQclear( stmtTemp );
    }
@@ -463,8 +441,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
 
    hb_arrayNew( ret, rows );
 
-   for (row=0; row < rows; row++ )
-   {
+   for( row=0; row < rows; row++ ) {
       long typmod;
       long nullable;
       int type;
@@ -479,24 +456,17 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
 
       type   = atoi( PQgetvalue( stmtTemp, row, 1 ) );
       typmod = atol( PQgetvalue( stmtTemp, row, 2 ) );
-      if( sr_iOldPgsBehavior() )
-      {
+      if( sr_iOldPgsBehavior() ) {
          nullable = 0;
-      }    
-      else
-      {
-         if( strcmp( PQgetvalue( stmtTemp, row, 3 ), "f")  == 0 )
-         {
+      } else {
+         if( strcmp( PQgetvalue( stmtTemp, row, 3 ), "f")  == 0 ) {
             nullable = 1 ;
-         }   
-         else
-         {
+         } else {
             nullable = 0;
-         }   
+         }
       }
 
-      switch (type)
-      {
+      switch (type) {
          case CHAROID:
          case NAMEOID:
          case BPCHAROID:
@@ -644,50 +614,41 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
 	   
 
    if( lLenBuff <= 0 ) {   // database content is NULL
-      switch( lType )
-      {
-         case SQL_CHAR:
-         {
+      switch( lType ) {
+         case SQL_CHAR: {
             char * szResult = ( char * ) hb_xgrab( lLen + 1 );
             hb_xmemset( szResult, ' ', lLen );
             szResult[ lLen ] =  '\0';
             hb_itemPutCLPtr( pItem, szResult, lLen );
-            
             break;
          }
          case SQL_NUMERIC:
-         case SQL_FAKE_NUM:
-         {
+         case SQL_FAKE_NUM: {
             char szResult[2] = { ' ', '\0' };
             sr_escapeNumber( szResult, lLen, lDec, pItem );
             break;
          }
-         case SQL_DATE:
-         {
+         case SQL_DATE: {
             char dt[9] = {' ',' ',' ',' ',' ',' ',' ',' ','\0'};
             hb_itemPutDS( pItem, dt );
             break;
          }
-         case SQL_LONGVARCHAR:
-         {
+         case SQL_LONGVARCHAR: {
             hb_itemPutCL( pItem, bBuffer, 0 );
             break;
          }
-         case SQL_BIT:
-         {
+         case SQL_BIT: {
             hb_itemPutL( pItem, FALSE );
             break;
          }
 
 #ifdef SQLRDD_TOPCONN
-         case SQL_FAKE_DATE:
-         {
+         case SQL_FAKE_DATE: {
             hb_itemPutDS( pItem, bBuffer );
             break;
          }
 #endif
-         case SQL_DATETIME:
-         {
+         case SQL_DATETIME: {
 //#ifdef __XHARBOUR__
 //            hb_itemPutDT( pItem, 0, 0, 0, 0, 0, 0, 0 );
 //#else
@@ -695,43 +656,34 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
 //#endif
             break;
          }
-         case SQL_TIME:
-         {
+         case SQL_TIME: {
 	         hb_itemPutTDT( pItem, 0, 0 );
 	         break;
          }
-         
+
 
          default:
             TraceLog( LOGFILE, "Invalid data type detected: %i\n", lType );
       }
-   }
-   else
-   {
-      switch( lType )
-      {
-         case SQL_CHAR:
-         {
+   } else {
+      switch( lType ) {
+         case SQL_CHAR: {
             HB_SIZE lPos;
             char * szResult = ( char * ) hb_xgrab( lLen + 1 );
             hb_xmemcpy( szResult, bBuffer,  (lLen < lLenBuff ? lLen : lLenBuff ) );
 
-            for( lPos =  lLenBuff; lPos < lLen; lPos++ )
-            {
+            for( lPos =  lLenBuff; lPos < lLen; lPos++ ) {
                szResult[ lPos ] = ' ';
             }
             szResult[ lLen ] =  '\0';
             hb_itemPutCLPtr( pItem, szResult, lLen );
-            
             break;
          }
-         case SQL_NUMERIC:
-         {
+         case SQL_NUMERIC: {
             sr_escapeNumber( bBuffer, lLen, lDec, pItem );
             break;
          }
-         case SQL_DATE:
-         {
+         case SQL_DATE: {
             char dt[9];
             dt[0] = bBuffer[0];
             dt[1] = bBuffer[1];
@@ -745,9 +697,8 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             hb_itemPutDS( pItem, dt );
             break;
          }
-         
-         case SQL_LONGVARCHAR:
-         {
+
+         case SQL_LONGVARCHAR: {
 
             if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) ) {
                if( s_pSym_SR_FROMJSON == NULL ) {
@@ -805,8 +756,7 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             break;
          }
          // xmltoarray
-         case SQL_LONGVARCHARXML:
-         {
+         case SQL_LONGVARCHARXML: {
 
                if( s_pSym_SR_FROMXML == NULL ) {
                   hb_dynsymLock();
@@ -835,22 +785,19 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             break;
          }
 
-         case SQL_BIT:
-         {
+         case SQL_BIT: {
             hb_itemPutL( pItem, bBuffer[0] == 't' ? TRUE : FALSE );
 
             break;
          }
 
 #ifdef SQLRDD_TOPCONN
-         case SQL_FAKE_DATE:
-         {
+         case SQL_FAKE_DATE: {
             hb_itemPutDS( pItem, bBuffer );
             break;
          }
 #endif
-         case SQL_DATETIME:
-         {
+         case SQL_DATETIME: {
 #ifdef __XHARBOUR__
             long lJulian, lMilliSec;
             hb_timeStampStrRawGet( bBuffer, &lJulian, &lMilliSec ); // TOCHECK:
@@ -862,8 +809,7 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
 #endif
             break;
          }
-         case SQL_TIME:
-         {
+         case SQL_TIME: {
 	        long  lMilliSec;
             lMilliSec = hb_timeUnformat( bBuffer, nullptr ); // TOCHECK:
             hb_itemPutTDT( pItem, 0, lMilliSec );    
@@ -897,8 +843,7 @@ HB_FUNC( PGSLINEPROCESSED )
    if( session ) {
       cols = hb_arrayLen( pFields );
 
-      for( i=0; i < cols; i++ )
-      {
+      for( i=0; i < cols; i++ ) {
          temp = hb_itemNew( NULL );
          lIndex  = hb_arrayGetNL( hb_arrayGetItemPtr( pFields, i+1 ), FIELD_ENUM );
 

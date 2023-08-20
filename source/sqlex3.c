@@ -89,8 +89,7 @@ static HB_ERRCODE getSeekWhereExpression( SQLEXAREAP thiswa, int iListType, int 
       bDirectionFWD = !bDirectionFWD;
    }
 
-   for (iCol = 1; iCol <= queryLevel; iCol++)
-   {
+   for( iCol = 1; iCol <= queryLevel; iCol++ ) {
       BindStructure   = GetBindStruct( thiswa, SeekBind );
 
       if( BindStructure->isArgumentNull ) {
@@ -158,8 +157,7 @@ static HB_ERRCODE getSeekWhereExpression( SQLEXAREAP thiswa, int iListType, int 
       bDirectionFWD = !bDirectionFWD;
    }
 
-   for (iCol = 1; iCol <= queryLevel; iCol++)
-   {
+   for( iCol = 1; iCol <= queryLevel; iCol++ ) {
       BindStructure   = GetBindStruct( thiswa, SeekBind );
 
       if( BindStructure->isArgumentNull ) {
@@ -309,8 +307,7 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
       thiswa->bConditionChanged2 = TRUE;                 // Force SEEK query to be rebuilt
       SeekBind->hIndexOrder      = thiswa->hOrdCurrent;  // Store latest prepared index order query
 
-      for (iCol = 1; iCol <= thiswa->indexColumns; iCol++)
-      {
+      for( iCol = 1; iCol <= thiswa->indexColumns; iCol++ ) {
          BindStructure   = GetBindStruct( thiswa, SeekBind );
 
          if( ! thiswa->uiFieldList[(BindStructure->lFieldPosDB)-1] ) {
@@ -350,23 +347,19 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
       szKey   = hb_itemGetCPtr( pKey );
       * queryLevel = thiswa->indexColumns;
 
-      for( i=1; i <= thiswa->indexColumns; i++ )
-      {
+      for( i=1; i <= thiswa->indexColumns; i++ ) {
          BindStructure   = GetBindStruct( thiswa, SeekBind );
          size = 0;
 
-         switch ( BindStructure->iCType )
-         {
-            case SQL_C_CHAR:
-            {
+         switch ( BindStructure->iCType ) {
+            case SQL_C_CHAR: {
                int nTrim, i;
                size  = lenKey > (int)(BindStructure->ColumnSize) ? ((int) (BindStructure->ColumnSize)) : lenKey;
                nTrim = size;
 
                // RTrim() the string value
 
-               for (i = (size -1); i >= 0; i-- )
-               {
+               for( i = (size -1); i >= 0; i-- ) {
                   if( szKey[i] == '\0' || szKey[i] != ' ' ) {
                      nTrim = i+1;
                      break;
@@ -403,14 +396,12 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
                }
                break;
             }
-            case SQL_C_DOUBLE:
-            {
+            case SQL_C_DOUBLE: {
                size = BindStructure->ColumnSize;
                BindStructure->asNumeric = (SQLDOUBLE) hb_strVal( szKey, BindStructure->ColumnSize );
                break;
             }
-            case SQL_C_TYPE_TIMESTAMP:
-            {
+            case SQL_C_TYPE_TIMESTAMP: {
                int iPos;
                HB_MAXINT lVal;
                double dVal;
@@ -421,8 +412,7 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
                size  = lenKey > (int)(BindStructure->ColumnSize) ? ((int) (BindStructure->ColumnSize)) : lenKey;
 
                // Must fix partial date seek
-               for( iPos=0; iPos < size; iPos++ )
-               {
+               for( iPos=0; iPos < size; iPos++ ) {
                   datemask[iPos] = szKey[iPos];
                }
 
@@ -440,8 +430,7 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
                BindStructure->asTimestamp.fraction = 0;
                break;
             }
-            case SQL_C_TYPE_DATE:
-            {
+            case SQL_C_TYPE_DATE: {
                int iPos;
                HB_MAXINT lVal;
                double dVal;
@@ -452,8 +441,7 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
                size  = lenKey > (int)(BindStructure->ColumnSize) ? ((int) (BindStructure->ColumnSize)) : lenKey;
 
                // Must fix partial date seek
-               for( iPos=0; iPos < size; iPos++ )
-               {
+               for( iPos=0; iPos < size; iPos++ ) {
                   datemask[iPos] = szKey[iPos];
                }
 
@@ -555,8 +543,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
    SeekBindParam  = thiswa->IndexBindings[ thiswa->hOrdCurrent ];
    iBind          = 1;
 
-   for (iLoop = 1; iLoop <= queryLevel; iLoop++ )
-   {
+   for( iLoop = 1; iLoop <= queryLevel; iLoop++ ) {
       BindStructure   = GetBindStruct( thiswa, SeekBindParam );
       if( !BindStructure->isArgumentNull ) {
          // Corrigido 27/12/2013 09:53 - lpereira
@@ -567,10 +554,8 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                BindStructure->iCType = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP
             }
          }
-         switch (BindStructure->iCType)
-         {
-            case SQL_C_CHAR:
-            {
+         switch (BindStructure->iCType) {
+            case SQL_C_CHAR: {
                res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
                                        BindStructure->iCType,
                                        BindStructure->iSQLType,
@@ -579,8 +564,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                                        BindStructure->asChar.value, 0, NULL );
                break;
             }
-            case SQL_C_DOUBLE:
-            {
+            case SQL_C_DOUBLE: {
                res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
                                        BindStructure->iCType,
                                        BindStructure->iSQLType,
@@ -589,8 +573,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                                        &(BindStructure->asNumeric), 0, NULL );
                break;
             }
-            case SQL_C_TYPE_TIMESTAMP:
-            {
+            case SQL_C_TYPE_TIMESTAMP: {
 	            //DebugBreak();
                //res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
                //                        SQL_C_TYPE_DATE,
@@ -606,8 +589,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                                        &(BindStructure->asTimestamp), 0, 0 );
                break;
             }
-            case SQL_C_TYPE_DATE:
-            {
+            case SQL_C_TYPE_DATE: {
                res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
                                        SQL_C_TYPE_DATE,
                                        SQL_TYPE_DATE,
@@ -616,8 +598,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                                        &(BindStructure->asDate), 0, NULL );
                break;
             }
-            case SQL_C_BIT:
-            {
+            case SQL_C_BIT: {
                res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
                                        BindStructure->iCType,
                                        BindStructure->iSQLType,

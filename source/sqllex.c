@@ -49,7 +49,7 @@ int sqlyylex(YYSTYPE* lvalp, void* s) {
 
    /* Remove starting spaces */
 
-   while (queryEnd > queryPtr  && ( isspace(*queryPtr) || *queryPtr == '\n' || *queryPtr == '\r' || *queryPtr == '\t' )) {
+   while( queryEnd > queryPtr  && ( isspace(*queryPtr) || *queryPtr == '\n' || *queryPtr == '\r' || *queryPtr == '\t' ) ) {
       ++queryPtr;
    }
 
@@ -64,14 +64,14 @@ int sqlyylex(YYSTYPE* lvalp, void* s) {
 
    if( ( *queryPtr == '-' && ((*(queryPtr+1)) >= '0'  &&  (*(queryPtr+1)) <= '9'))  ||  ( *queryPtr == '.' && ((*(queryPtr+1)) >= '0'  &&  (*(queryPtr+1)) <= '9') )  || (*queryPtr >= '0'  &&  *queryPtr <= '9') ) {
       int minus = 0;
-      while (*queryPtr == '-') {
+      while( *queryPtr == '-' ) {
          minus = !minus;
          if( ++queryPtr == queryEnd ) {
             stmt->errMsg = SQL_PARSER_ERROR_NUMBER_NEGATIVE;
             return ERRORVAL;
          }
       }
-      while (isspace(*queryPtr) && ( isspace(*queryPtr) || *queryPtr == '\n' || *queryPtr == '\r' || *queryPtr == '\t' )) {
+      while( isspace(*queryPtr) && ( isspace(*queryPtr) || *queryPtr == '\n' || *queryPtr == '\r' || *queryPtr == '\t' ) ) {
          if( ++queryPtr == queryEnd ) {
             stmt->errMsg = SQL_PARSER_ERROR_NUMBER_EOF;
             return ERRORVAL;
@@ -81,7 +81,7 @@ int sqlyylex(YYSTYPE* lvalp, void* s) {
          stmt->errMsg = SQL_PARSER_ERROR_NUMBER;
          return ERRORVAL;
       }
-      while (*queryPtr >= '0'  &&  *queryPtr <= '9') {
+      while( *queryPtr >= '0'  &&  *queryPtr <= '9' ) {
          if( ++queryPtr == queryEnd ) {
             break;
          }
@@ -124,7 +124,7 @@ int sqlyylex(YYSTYPE* lvalp, void* s) {
       char quoteChar = *queryPtr++;
       char c;
       /* int stringLen = 0; */
-      while (queryPtr < queryEnd) {
+      while( queryPtr < queryEnd ) {
          c = *queryPtr++;
          if( c == '\\' ) {
             if( queryPtr == queryEnd ) {
@@ -156,10 +156,9 @@ int sqlyylex(YYSTYPE* lvalp, void* s) {
       /*  This is a string  */
       char quoteChar = *queryPtr++;
       char c;
-      while (queryPtr < queryEnd) {
+      while( queryPtr < queryEnd ) {
          c = *queryPtr++;
-         if( c == quoteChar )
-         {
+         if( c == quoteChar ) {
             lvalp->item_val = hb_itemNew( NULL );
             hb_itemPutCL( lvalp->item_val, stmt->queryPtr + 1, ( queryPtr - stmt->queryPtr - 2 ) );
             stmt->queryPtr = queryPtr;
@@ -730,7 +729,7 @@ int sqlyylex(YYSTYPE* lvalp, void* s) {
          break;
       }
 
-      while (queryPtr < queryEnd  &&  isalnum_(*queryPtr)) {
+      while( queryPtr < queryEnd  &&  isalnum_(*queryPtr) ) {
         ++queryPtr;
       }
 
