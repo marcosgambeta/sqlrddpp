@@ -65,7 +65,7 @@ HB_FUNC( MYSCONNECT )
    session->ifetch = -2;
 
    if( session->dbh != NULL ) {
-	  iConnectionCount ++ ; 
+     iConnectionCount ++ ; 
       mysql_options( session->dbh, MYSQL_OPT_CONNECT_TIMEOUT, (const char *) &uiTimeout );
       if( lCompress )
          mysql_real_connect( session->dbh, szHost, szUser, szPass, szDb, uiPort, NULL, CLIENT_ALL_FLAGS );
@@ -133,9 +133,9 @@ HB_FUNC( MYSEXEC )
    session->stmt = mysql_store_result( session->dbh );
    session->ulAffected_rows = mysql_affected_rows(session->dbh) ;
    if( session->stmt ) {
-	   session->numcols = mysql_num_fields( session->stmt );
+      session->numcols = mysql_num_fields( session->stmt );
    } else {
-	   session->numcols = 0;
+      session->numcols = 0;
    }
    hb_retptr( (void *) session->stmt );
    session->ifetch = -1;
@@ -229,8 +229,8 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
             break;
          }
          case SQL_TIME: {
-	         hb_itemPutTDT( pItem, 0, 0 );
-	         break;
+            hb_itemPutTDT( pItem, 0, 0 );
+            break;
          }         
 
          default:
@@ -347,7 +347,7 @@ void MSQLFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
             break;
          }
          case SQL_TIME: {
-	        long  lMilliSec;
+           long  lMilliSec;
             lMilliSec = hb_timeUnformat( bBuffer, nullptr ); // TOCHECK:
             hb_itemPutTDT( pItem, 0, lMilliSec );    
             break;

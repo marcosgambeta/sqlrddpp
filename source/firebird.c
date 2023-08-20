@@ -389,7 +389,7 @@ HB_FUNC( FBEXECUTE ) // FBExecute( hEnv, cCmd, nDialect )
    session->transactionPending = 1;
 
    if( !session->sqlda->sqld ) {
-// 	       ISC_STATUS r;
+//           ISC_STATUS r;
 //      if( isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL ) )
       isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL );
       if( CHECK_ERROR(session) ) {
@@ -482,7 +482,7 @@ HB_FUNC( FBDESCRIBECOL )   // FBDescribeCol( hStmt, nCol, @cName, @nType, @nLen,
             rettype = SQL_NUMERIC;
             hb_storni( 5, 1 );
             hb_storni( var->sqlscale, 0 );
-	         
+            
          }
          break;
 
@@ -877,7 +877,7 @@ HB_FUNC( FBVERSION )
    *tmp = 0;
 
    if( !isc_version( &(session->db), firebird_info_cb, (void*)tmp) ) {
-   	isc_vax_integer( tmp, 100 );
+      isc_vax_integer( tmp, 100 );
       hb_retnl( num_version );
    }
    hb_retc( tmp );
@@ -938,9 +938,9 @@ void FBFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
          }
 #endif
          case SQL_TIME: {
-	         hb_itemPutTDT( pItem, 0, 0 );
-	         break;	         
-	         }
+            hb_itemPutTDT( pItem, 0, 0 );
+            break;            
+            }
          case SQL_DATETIME: {
 //#ifdef __XHARBOUR__
 //            hb_itemPutDT( pItem, 0, 0, 0, 0, 0, 0, 0 );
@@ -1145,7 +1145,7 @@ HB_FUNC( FBLINEPROCESSED )
       cols = hb_arrayLen( pFields );
 
       for( icol = 1; icol <= cols; icol++ ) {
-//	     LONG lType;
+//        LONG lType;
          temp = hb_itemNew( NULL );
          var = session->sqlda->sqlvar;
          lIndex  = hb_arrayGetNL( hb_arrayGetItemPtr( pFields, icol ), FIELD_ENUM );
@@ -1314,7 +1314,7 @@ HB_FUNC( FBLINEPROCESSED )
                      item = *resp++;
                      length = (short)isc_vax_integer( resp, 2 );
                      resp += 2;
-                     switch( item ) {	
+                     switch( item ) {
                      case isc_info_blob_total_length:
                         blob_size = isc_vax_integer( resp, length );
                         break;

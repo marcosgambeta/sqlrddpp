@@ -226,8 +226,8 @@ void CreateInsertStmt( SQLEXAREAP thiswa )
       InsertRecord->isBoundNULL     = FALSE;
       InsertRecord->lFieldPosDB     = i;
       InsertRecord->lFieldPosWA     = lFieldPosWA;
-		InsertRecord->ColumnSize      = (SQLUINTEGER) hb_itemGetNI( pFieldLen );
-		InsertRecord->DecimalDigits   = (SQLSMALLINT) hb_itemGetNI( pFieldDec );
+      InsertRecord->ColumnSize      = (SQLUINTEGER) hb_itemGetNI( pFieldLen );
+      InsertRecord->DecimalDigits   = (SQLSMALLINT) hb_itemGetNI( pFieldDec );
       InsertRecord->isArgumentNull  = FALSE;
       InsertRecord->isMemo          = bIsMemo;
       InsertRecord->isMultiLang     = bMultiLang;
@@ -272,15 +272,15 @@ void CreateInsertStmt( SQLEXAREAP thiswa )
            // Corrigido 27/12/2013 09:53 - lpereira
            // Estava atribuindo o valor de SYSTEMID_ORACLE para thiswa->nSystemID.
            //if( thiswa->nSystemID = SYSTEMID_ORACLE )
-	        if( thiswa->nSystemID == SYSTEMID_ORACLE ) {
-	           InsertRecord->iCType          = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP
-	        } else {
+           if( thiswa->nSystemID == SYSTEMID_ORACLE ) {
+              InsertRecord->iCType          = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP
+           } else {
                   InsertRecord->iCType          = lType;        // May be DATE or TIMESTAMP
                 }
             break;
          }
          case 'T': {
-	         //DebugBreak();
+            //DebugBreak();
             InsertRecord->iCType          = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP
             break;
          }
@@ -737,7 +737,7 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
                break;
             }
             case SQL_C_TYPE_TIMESTAMP: {
-	           //DebugBreak();
+              //DebugBreak();
                CurrRecord->lIndPtr = 0;
                res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
                                        SQL_C_TYPE_TIMESTAMP,

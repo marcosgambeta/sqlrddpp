@@ -352,8 +352,8 @@ static HB_ERRCODE getMissingColumn( SQLEXORAAREAP thiswa, PHB_ITEM pFieldData, H
       colName      = QualifyName2( hb_arrayGetC( pFieldStruct, FIELD_NAME ), thiswa );
 
       if( thiswa->bIsSelect )
-	  {
-	     sprintf( sSql, "SELECT %c%s%c FROM (%s) WHERE %c%s%c = :sz001", OPEN_QUALIFIER( thiswa ), colName, CLOSE_QUALIFIER( thiswa ),
+     {
+        sprintf( sSql, "SELECT %c%s%c FROM (%s) WHERE %c%s%c = :sz001", OPEN_QUALIFIER( thiswa ), colName, CLOSE_QUALIFIER( thiswa ),
                                                                thiswa->sqlarea.szDataFileName,
                                                                OPEN_QUALIFIER( thiswa ), thiswa->sRecnoName, CLOSE_QUALIFIER( thiswa ) );
 
@@ -739,7 +739,7 @@ void ReleaseColStatementsOra( SQLEXORAAREAP thiswa, int iCols )
       }
 
       for( i = 0; i < iCols; i++ ) {
-// 	     OCI_Statement *hStmt = (OCI_Statement*)thiswa->colStmt;
+//         OCI_Statement *hStmt = (OCI_Statement*)thiswa->colStmt;
          if( thiswa->colStmt[i].pStmt ) {
             OCI_StatementFree(thiswa->colStmt[i].pStmt);
 //             thiswa->colStmt = NULL;
@@ -857,8 +857,8 @@ static void BindAllIndexStmts( SQLEXORAAREAP thiswa )
                      break;
                   }
                   case SQL_C_NUMERIC: {
-	                 res = OCI_BindUnsignedBigInt(hStmt, BindStructure->szBindName, &BindStructure->asNumeric) ;
-	                 break;
+                    res = OCI_BindUnsignedBigInt(hStmt, BindStructure->szBindName, &BindStructure->asNumeric) ;
+                    break;
                   }                      
                   case SQL_C_DOUBLE: {
 //                      res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
@@ -1140,8 +1140,8 @@ void SetCurrRecordStructureOra( SQLEXORAAREAP thiswa )
       BindStructure->isArgumentNull  = FALSE;
       BindStructure->lFieldPosDB     = i;
       BindStructure->lFieldPosWA     = hb_arrayGetNL( pFieldStruct, FIELD_WAOFFSET );
-	  BindStructure->ColumnSize      = (unsigned int) hb_itemGetNI( pFieldLen );
-	  BindStructure->DecimalDigits   = (unsigned short) hb_itemGetNI( pFieldDec );
+     BindStructure->ColumnSize      = (unsigned int) hb_itemGetNI( pFieldLen );
+     BindStructure->DecimalDigits   = (unsigned short) hb_itemGetNI( pFieldDec );
       BindStructure->colName         = QualifyName2( hb_arrayGetC( pFieldStruct, FIELD_NAME ), thiswa );
       sprintf(BindStructure->szBindName,":%s",hb_arrayGetCPtr( pFieldStruct, FIELD_NAME ));
 
@@ -1178,7 +1178,7 @@ void SetCurrRecordStructureOra( SQLEXORAAREAP thiswa )
             break;
          }
          case 'N': {
-	        if( BindStructure->DecimalDigits  > 0 )
+           if( BindStructure->DecimalDigits  > 0 )
             BindStructure->iCType          = SQL_C_DOUBLE;
             else
             BindStructure->iCType          = SQL_C_DOUBLE; 
@@ -1361,7 +1361,7 @@ HB_ERRCODE getWorkareaParamsOra( SQLEXORAAREAP thiswa )
       if( !(lCnnType == CONNECT_ORACLE || lCnnType == CONNECT_ORACLE_QUERY_ONLY) ) {
          commonError( &thiswa->sqlarea.area, EG_OPEN, ESQLRDD_OPEN, "sqlExOra supports only ODBC connections." );
          return HB_FAILURE;
-	      }
+         }
       thiswa->bConnVerified = TRUE;
    }
    thiswa->bIsSelect        = getMessageL( thiswa->sqlarea.oWorkArea, "LTABLEISSELECT" );
@@ -1783,12 +1783,12 @@ static HB_ERRCODE updateRecordBuffer( SQLEXORAAREAP thiswa, BOOL bUpdateDeleted 
 //       iEnd = ( USHORT ) strlen( thiswa->sSqlBuffer );
 //       for( i = 20; i < (MAX_SQL_QUERY_LEN/5); i++ ) {
 //          if( thiswa->sSqlBuffer[i] == '?' ) {
-// 	        thiswa->sSqlBuffer[i]  = ":";
-// 	        thiswa->sSqlBuffer[++i]  = "s";
-// 	        thiswa->sSqlBuffer[++i]  = "z";
-// 	        thiswa->sSqlBuffer[++i]  = "0";
-// 	        thiswa->sSqlBuffer[++i]  = "0";
-// 	        thiswa->sSqlBuffer[++i]  = "1";
+//            thiswa->sSqlBuffer[i]  = ":";
+//            thiswa->sSqlBuffer[++i]  = "s";
+//            thiswa->sSqlBuffer[++i]  = "z";
+//            thiswa->sSqlBuffer[++i]  = "0";
+//            thiswa->sSqlBuffer[++i]  = "0";
+//            thiswa->sSqlBuffer[++i]  = "1";
 //             iEnd = i;
 //             break;
 //          }
@@ -1796,7 +1796,7 @@ static HB_ERRCODE updateRecordBuffer( SQLEXORAAREAP thiswa, BOOL bUpdateDeleted 
 //       iEnd = ( USHORT ) strlen( thiswa->sSqlBuffer );
 //       for( i = 20; i < (MAX_SQL_QUERY_LEN/5); i++ ) {
 //          if( thiswa->sSqlBuffer[i] == '?' ) {
-// 	        thiswa->sSqlBuffer[i]  = ' ';
+//            thiswa->sSqlBuffer[i]  = ' ';
 //             iEnd = i;
 //             break;
 //          }
@@ -1806,11 +1806,11 @@ static HB_ERRCODE updateRecordBuffer( SQLEXORAAREAP thiswa, BOOL bUpdateDeleted 
       // Adjust SQL to 'pageReadSize' params
 
       for( i = 1; i < pageReadSize; i++ ) {
-	     char *temp = hb_strdup( (const char *) thiswa->sSqlBuffer );
-	     sprintf(thiswa->sSqlBuffer,"%s,:%i",temp,i+1);
-	     iEnd = (HB_SIZE)strlen(thiswa->sSqlBuffer);
-	     //TraceLog("aaa.log","montando 	thiswa->sSqlBuffer %s\n",thiswa->sSqlBuffer);
-	     hb_xfree(temp);
+        char *temp = hb_strdup( (const char *) thiswa->sSqlBuffer );
+        sprintf(thiswa->sSqlBuffer,"%s,:%i",temp,i+1);
+        iEnd = (HB_SIZE)strlen(thiswa->sSqlBuffer);
+        //TraceLog("aaa.log","montando    thiswa->sSqlBuffer %s\n",thiswa->sSqlBuffer);
+        hb_xfree(temp);
       }
 //TraceLog("aaa.log","thiswa->sSqlBuffer %s\n",thiswa->sSqlBuffer);
       szEnd=hb_strdup( (const char *) thiswa->sSqlBuffer );
@@ -1851,7 +1851,7 @@ static HB_ERRCODE updateRecordBuffer( SQLEXORAAREAP thiswa, BOOL bUpdateDeleted 
 //          ////TraceLog("aaa.log" , "bindando registro %lu\n",thiswa->lRecordToRetrieve[i]);
          res  = OCI_BindUnsignedBigInt(thiswa->hStmtBuffer, szBind, &thiswa->lRecordToRetrieve[i]);
          if( !res ) {
-	        //thiswa->hStmtBuffer =NULL;
+           //thiswa->hStmtBuffer =NULL;
 
             return (HB_FAILURE);
          }
@@ -1916,7 +1916,7 @@ static HB_ERRCODE updateRecordBuffer( SQLEXORAAREAP thiswa, BOOL bUpdateDeleted 
             char szValue[2];
             unsigned int uiLen;
             if( OCI_GetString(rs,2 ) == NULL ) {
-	           OCI_StatementFree( thiswa->hStmtBuffer );
+              OCI_StatementFree( thiswa->hStmtBuffer );
             } else {
                uiLen = OCI_GetDataLength(rs,2);
                hb_xmemcpy( szValue,(char*)OCI_GetString(rs,2 ),uiLen ) ;
@@ -2404,7 +2404,7 @@ static HB_ERRCODE sqlExOraGoTop( SQLEXORAAREAP thiswa )
    if( thiswa->lBofAt ) {
       SELF_GOTO( &thiswa->sqlarea.area, (LONG) thiswa->lBofAt );
       if( thiswa->bReverseIndex  !=  bOldReverseIndex ) {
-	     thiswa->recordListDirection = LIST_FORWARD;
+        thiswa->recordListDirection = LIST_FORWARD;
          getOrderByExpressionOra( thiswa, FALSE );
          getWhereExpressionOra( thiswa, LIST_FROM_TOP );
          setResultSetLimitOra( thiswa, RECORD_LIST_SIZE / 10 );
@@ -2540,7 +2540,7 @@ static HB_ERRCODE sqlExOraSeek( SQLEXORAAREAP thiswa, BOOL bSoftSeek, PHB_ITEM p
       bTranslate = FALSE;
 
       for( i=1; i <= thiswa->sqlarea.area.uiFieldCount; i++ ) {
-// 	     PHB_ITEM pF = hb_arrayGetItemPtr( thiswa->aFields, thiswa->sqlarea.uiBufferIndex[i-1]  );
+//         PHB_ITEM pF = hb_arrayGetItemPtr( thiswa->aFields, thiswa->sqlarea.uiBufferIndex[i-1]  );
          temp=hb_itemNew(NULL) ;
          //temp.type = HB_IT_NIL;        // I know this is not a good practice, but we save tons of allocs.
                                        // please keep as is. ML.
@@ -2549,7 +2549,7 @@ static HB_ERRCODE sqlExOraSeek( SQLEXORAAREAP thiswa, BOOL bSoftSeek, PHB_ITEM p
 //            hb_arraySetForward( aRecord, i, temp );     // Field is temporaly NIL since it's have never
 //                                                         // been needed in current WA. Will be filled on demand
 //         } else {
-// 	         PHB_ITEM pF = hb_arrayGetItemPtr( thiswa->aFields, thiswa->sqlarea.uiBufferIndex[i-1]  );
+//             PHB_ITEM pF = hb_arrayGetItemPtr( thiswa->aFields, thiswa->sqlarea.uiBufferIndex[i-1]  );
 
 //                if( s_pSym_TODATA  == NULL ) {
 //                   hb_dynsymLock();
@@ -2872,7 +2872,7 @@ static HB_ERRCODE sqlExOraSkipRaw( SQLEXORAAREAP thiswa, LONG lToSkip )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraAddField						NULL
+#define sqlExOraAddField                  NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -2899,7 +2899,7 @@ static HB_ERRCODE sqlExOraAppend( SQLEXORAAREAP thiswa )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraCreateFields				NULL
+#define sqlExOraCreateFields            NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -2989,10 +2989,10 @@ static HB_ERRCODE sqlExOraDeleted( SQLEXORAAREAP thiswa, BOOL * isDeleted )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraFieldCount					NULL
-#define sqlExOraFieldDisplay				NULL
-#define sqlExOraFieldInfo					NULL
-#define sqlExOraFieldName					NULL
+#define sqlExOraFieldCount               NULL
+#define sqlExOraFieldDisplay            NULL
+#define sqlExOraFieldInfo               NULL
+#define sqlExOraFieldName               NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3003,7 +3003,7 @@ static HB_ERRCODE sqlExOraFlush( SQLEXORAAREAP thiswa )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraGetRec						NULL
+#define sqlExOraGetRec                  NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3100,7 +3100,7 @@ static HB_ERRCODE sqlExOraGetValue( SQLEXORAAREAP thiswa, USHORT fieldNum, PHB_I
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraGetVarLen					NULL
+#define sqlExOraGetVarLen               NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3168,8 +3168,8 @@ static HB_ERRCODE sqlExOraGoCold( SQLEXORAAREAP thiswa )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraGoHot						NULL
-#define sqlExOraPutRec						NULL
+#define sqlExOraGoHot                  NULL
+#define sqlExOraPutRec                  NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3340,7 +3340,7 @@ static HB_ERRCODE sqlExOraRecCount( SQLEXORAAREAP thiswa, ULONG * recCount )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraRecInfo						NULL
+#define sqlExOraRecInfo                  NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3390,8 +3390,8 @@ static HB_ERRCODE sqlExOraRecId( SQLEXORAAREAP thiswa, PHB_ITEM recno )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraSetFieldExtent				NULL
-#define sqlExOraAlias							NULL
+#define sqlExOraSetFieldExtent            NULL
+#define sqlExOraAlias                     NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3496,7 +3496,7 @@ static HB_ERRCODE sqlExOraCreate( SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraInfo							NULL
+#define sqlExOraInfo                     NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3597,7 +3597,7 @@ static HB_ERRCODE sqlExOraOpen( SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraRelease						NULL
+#define sqlExOraRelease                  NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3610,24 +3610,24 @@ static HB_ERRCODE sqlExOraStructSize( SQLEXORAAREAP thiswa, USHORT * StructSize 
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraSysName						NULL
-#define sqlExOraEval							NULL
-#define sqlExOraPack							NULL
-#define sqlExOraPackRec						NULL
-#define sqlExOraSort							NULL
-#define sqlExOraTrans						NULL
-#define sqlExOraTransRec					NULL
-#define sqlExOraZap							NULL
-#define sqlExOraChildEnd					NULL
-#define sqlExOraChildStart					NULL
-#define sqlExOraChildSync					NULL
-#define sqlExOraSyncChildren				NULL
-#define sqlExOraClearRel					NULL
-#define sqlExOraForceRel					NULL
-#define sqlExOraRelArea						NULL
-#define sqlExOraRelEval						NULL
-#define sqlExOraRelText						NULL
-#define sqlExOraSetRel						NULL
+#define sqlExOraSysName                  NULL
+#define sqlExOraEval                     NULL
+#define sqlExOraPack                     NULL
+#define sqlExOraPackRec                  NULL
+#define sqlExOraSort                     NULL
+#define sqlExOraTrans                  NULL
+#define sqlExOraTransRec               NULL
+#define sqlExOraZap                     NULL
+#define sqlExOraChildEnd               NULL
+#define sqlExOraChildStart               NULL
+#define sqlExOraChildSync               NULL
+#define sqlExOraSyncChildren            NULL
+#define sqlExOraClearRel               NULL
+#define sqlExOraForceRel               NULL
+#define sqlExOraRelArea                  NULL
+#define sqlExOraRelEval                  NULL
+#define sqlExOraRelText                  NULL
+#define sqlExOraSetRel                  NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3666,7 +3666,7 @@ static HB_ERRCODE sqlExOraOrderListClear( SQLEXORAAREAP thiswa )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraOrderListDelete			NULL
+#define sqlExOraOrderListDelete         NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3700,8 +3700,8 @@ static HB_ERRCODE sqlExOraOrderListFocus( SQLEXORAAREAP thiswa, LPDBORDERINFO pO
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraOrderListRebuild			NULL
-#define sqlExOraOrderCondition			NULL
+#define sqlExOraOrderListRebuild         NULL
+#define sqlExOraOrderCondition         NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3825,10 +3825,10 @@ static HB_ERRCODE sqlExOraClearFilter( SQLEXORAAREAP thiswa )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraClearLocate				NULL
-#define sqlExOraClearScope					NULL
-#define sqlExOraCountScope					NULL
-#define sqlExOraFilterText					NULL
+#define sqlExOraClearLocate            NULL
+#define sqlExOraClearScope               NULL
+#define sqlExOraCountScope               NULL
+#define sqlExOraFilterText               NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3843,7 +3843,7 @@ static HB_ERRCODE sqlExOraScopeInfo( SQLEXORAAREAP thiswa, USHORT nScope, PHB_IT
 
 /*------------------------------------------------------------------------*/
 
-//#define sqlExOraSetFilter					NULL     // Must be written to update thiswa->bConditionChanged
+//#define sqlExOraSetFilter               NULL     // Must be written to update thiswa->bConditionChanged
 //culik 2010/07/07 implemented sqlExOraSetFilter
 static HB_ERRCODE sqlExOraSetFilter( SQLEXORAAREAP thiswa, LPDBFILTERINFO pFilterInfo )
 {
@@ -3856,7 +3856,7 @@ static HB_ERRCODE sqlExOraSetFilter( SQLEXORAAREAP thiswa, LPDBFILTERINFO pFilte
    return ret;
 
 }
-#define sqlExOraSetLocate					NULL
+#define sqlExOraSetLocate               NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3871,12 +3871,12 @@ static HB_ERRCODE sqlExOraSetScope( SQLEXORAAREAP thiswa, LPDBORDSCOPEINFO sInfo
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraSkipScope					NULL
-#define sqlExOraLocate						NULL
-#define sqlExOraCompile						NULL
-#define sqlExOraError						NULL
-#define sqlExOraEvalBlock					NULL
-#define sqlExOraRawLock						NULL
+#define sqlExOraSkipScope               NULL
+#define sqlExOraLocate                  NULL
+#define sqlExOraCompile                  NULL
+#define sqlExOraError                  NULL
+#define sqlExOraEvalBlock               NULL
+#define sqlExOraRawLock                  NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -3914,19 +3914,19 @@ static HB_ERRCODE sqlExOraUnLock( SQLEXORAAREAP thiswa, PHB_ITEM pRecNo )
 
 /*------------------------------------------------------------------------*/
 
-#define sqlExOraCloseMemFile				NULL
-#define sqlExOraCreateMemFile				NULL
-#define sqlExOraGetValueFile				NULL
-#define sqlExOraOpenMemFile				NULL
-#define sqlExOraPutValueFile				NULL
-#define sqlExOraReadDBHeader				NULL
-#define sqlExOraWriteDBHeader				NULL
-#define sqlExOraInit							NULL
-#define sqlExOraExit							NULL
-#define sqlExOraDrop							NULL
-#define sqlExOraExists						NULL
-#define sqlExOraInfo							NULL
-#define sqlExOraWhoCares					NULL
+#define sqlExOraCloseMemFile            NULL
+#define sqlExOraCreateMemFile            NULL
+#define sqlExOraGetValueFile            NULL
+#define sqlExOraOpenMemFile            NULL
+#define sqlExOraPutValueFile            NULL
+#define sqlExOraReadDBHeader            NULL
+#define sqlExOraWriteDBHeader            NULL
+#define sqlExOraInit                     NULL
+#define sqlExOraExit                     NULL
+#define sqlExOraDrop                     NULL
+#define sqlExOraExists                  NULL
+#define sqlExOraInfo                     NULL
+#define sqlExOraWhoCares               NULL
 
 /*------------------------------------------------------------------------*/
 
@@ -4356,7 +4356,7 @@ void SQLO_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, BOOL bQueryOnly
             break;
          }
          case SQL_NUMERIC: {
-	         char * bBuffer = (char*)OCI_GetString( rs, iField );
+            char * bBuffer = (char*)OCI_GetString( rs, iField );
             sr_escapeNumber( bBuffer, (HB_SIZE) lLen, (HB_SIZE) lDec, pItem );
             break;
          }

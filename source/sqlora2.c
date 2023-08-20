@@ -75,7 +75,7 @@ static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
 //} OCI_ORASESSION;
 // typedef struct _OCI_ORASESSION
 // {
-// 	OCI_Connection *cn;    
+//    OCI_Connection *cn;    
 //     OCI_Statement *stmt ;
 //     OCI_Statement *stmtParamRes;
 //     OCI_Resultset *rs;
@@ -85,7 +85,7 @@ static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
 // 
 //    ORA_BIND_COLS *  pLink;
 //    unsigned int   ubBindNum;
-// } OCI_ORASESSION;	
+// } OCI_ORASESSION;   
 // typedef OCI_ORASESSION * POCI_ORASESSION;
 
 static USHORT OCI_initilized = 0;
@@ -118,8 +118,8 @@ HB_FUNC( SQLO2_CONNECT )
 //    memset( session, 0, sizeof( OCI_ORASESSION ) );
    if( !OCI_initilized ) {
    if( !OCI_Initialize(NULL, NULL,  OCI_ENV_DEFAULT | OCI_ENV_CONTEXT | OCI_ENV_THREADED  ) ) //  OCI_ENV_CONTEXT))
-	      session->iStatus = SQLO2_ERROR;
-	   else {
+         session->iStatus = SQLO2_ERROR;
+      else {
           session->iStatus = SQLO2_SUCCESS ;
       }
    } else {
@@ -150,7 +150,7 @@ HB_FUNC( SQLO2_CONNECT )
    //}
    
    if( session->cn != NULL ) {
-	    session->iStatus=SQLO_SUCCESS ;
+       session->iStatus=SQLO_SUCCESS ;
    }    
   
 
@@ -191,8 +191,8 @@ HB_FUNC( SQLO2_DISCONNECT )
 
       OCI_initilized--;
       if( OCI_initilized == 0 ) {
-	// 	      if( pool )
-	// 	         OCI_PoolFree(pool);
+   //          if( pool )
+   //             OCI_PoolFree(pool);
          OCI_Cleanup();
       }
       hb_xfree( session );
@@ -409,7 +409,7 @@ HB_FUNC( ORACLEINBINDPARAM2 )
          }
          break;
          case 8 : {
-	        Stmt->pLink[ iPos ].date = OCI_DateCreate(Stmt->cn);
+           Stmt->pLink[ iPos ].date = OCI_DateCreate(Stmt->cn);
             if( ISDATE( 6 ) ) {
                int iYear, iMonth, iDay;
                PHB_ITEM pFieldData = hb_param(6,HB_IT_DATE);
@@ -424,14 +424,14 @@ HB_FUNC( ORACLEINBINDPARAM2 )
          break;
 
          case 9 : {
-	         Stmt->pLink[ iPos ].date = OCI_DateCreate(Stmt->cn);
+            Stmt->pLink[ iPos ].date = OCI_DateCreate(Stmt->cn);
          #ifdef __XHARBOUR__
             if( ISDATETIME( 6 ) )
          #else
             if( HB_ISDATETIME( 6 ) )
          #endif
             {
-	           int iYear, iMonth, iDay;
+              int iYear, iMonth, iDay;
                int  iHour,  iMin;
                #ifdef __XHARBOUR__
                double  dSec;
@@ -439,8 +439,8 @@ HB_FUNC( ORACLEINBINDPARAM2 )
                int mSec;
                int iSeconds;
                #endif
-	           PHB_ITEM pFieldData = hb_param(6,HB_IT_DATETIME);
-	           #ifdef __XHARBOUR__
+              PHB_ITEM pFieldData = hb_param(6,HB_IT_DATETIME);
+              #ifdef __XHARBOUR__
                   hb_dateDecode( hb_itemGetDL( pFieldData ), &iYear, &iMonth, &iDay );
                   hb_timeDecode( hb_itemGetT(  pFieldData) , &iHour, &iMin, &dSec );
                #else
@@ -486,7 +486,7 @@ HB_FUNC( ORACLEINBINDPARAM2 )
    }
 
    if( Stmt->pLink[iPos].sVal == -1 ) {
-	   OCI_BindSetNull(  OCI_GetBind( Stmt->stmt , iParamNum ) );
+      OCI_BindSetNull(  OCI_GetBind( Stmt->stmt , iParamNum ) );
    }
    ret = ret ? 1 : SQL_ERROR ;
    hb_retni( ret );
@@ -518,12 +518,12 @@ HB_FUNC( ORACLEGETBINDDATA2)
 
          hb_retnll(p->pLink[ iPos - 1 ].lValue);
       } else if( p->pLink[ iPos - 1 ].iType == 8) {
-	    int iYear, iMonth, iDay;
-// 	    p->pLink[ iPos -1 ].date   = OCI_GetDate(  p->rs,iPos) ;
-	    OCI_DateGetDate(p->pLink[ iPos -1 ].date, &iYear, &iMonth, &iDay);
+       int iYear, iMonth, iDay;
+//        p->pLink[ iPos -1 ].date   = OCI_GetDate(  p->rs,iPos) ;
+       OCI_DateGetDate(p->pLink[ iPos -1 ].date, &iYear, &iMonth, &iDay);
         hb_retd( iYear, iMonth, iDay );
       } else if( p->pLink[ iPos - 1 ].iType == 9 ) {
-	    int iYear, iMonth, iDay;
+       int iYear, iMonth, iDay;
         int  iHour,  iMin;
         int iSeconds;
 
@@ -531,12 +531,12 @@ HB_FUNC( ORACLEGETBINDDATA2)
         long lTime ;
 
 
-// 	    p->pLink[ iPos -1 ].date   = OCI_GetDate(  p->rs,iPos) ;
-	    OCI_DateGetDateTime(p->pLink[ iPos -1 ].date, &iYear, &iMonth, &iDay,&iHour,&iMin,&iSeconds);
-	    lDate = hb_dateEncode( iYear, iMonth, iDay );
+//        p->pLink[ iPos -1 ].date   = OCI_GetDate(  p->rs,iPos) ;
+       OCI_DateGetDateTime(p->pLink[ iPos -1 ].date, &iYear, &iMonth, &iDay,&iHour,&iMin,&iSeconds);
+       lDate = hb_dateEncode( iYear, iMonth, iDay );
         lTime =hb_timeEncode(  iHour, iMin, (double) iSeconds );
 
-	    hb_retdtl ( lDate,lTime ) ;
+       hb_retdtl ( lDate,lTime ) ;
 
       } else {
          hb_retc( p->pLink[ iPos - 1 ].col_name );
@@ -577,16 +577,16 @@ HB_FUNC(ORACLEPREPARE2)
    int ret = -1 ;
 
    if( session ) {
-	   if( lStmt ) {
+      if( lStmt ) {
          session->stmt = OCI_StatementCreate(session->cn);
-	      ret=  OCI_Prepare(session->stmt,szSql);
+         ret=  OCI_Prepare(session->stmt,szSql);
 
       } else {
          session->stmt = OCI_StatementCreate(session->cn);
-	      ret=  OCI_Prepare(session->stmt,szSql);
+         ret=  OCI_Prepare(session->stmt,szSql);
       }
-	   if( ret )
-	      OCI_SetBindMode( session->stmt,OCI_BIND_BY_POS ) ;      
+      if( ret )
+         OCI_SetBindMode( session->stmt,OCI_BIND_BY_POS ) ;      
       hb_retni( ret == 1 ? 1 : -1  );
       return;
    }
@@ -622,7 +622,7 @@ void OracleFreeLink2( int num_recs, POCI_ORASESSION p )
             hb_xfree( p->pLink[ i ].bindname );
          }
          if( p->pLink[i].date ) {
-	         OCI_DateFree(p->pLink[i].date);
+            OCI_DateFree(p->pLink[i].date);
          }    
       }
 
@@ -679,8 +679,8 @@ void SQLO2_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, BOOL bQueryOnl
             if( lDec > 0 ) {
                hb_itemPutNDLen( pItem,0,lLen,lDec ) ;
             } else {
-	            hb_itemPutNIntLen(pItem,0,lLen);
-	         }
+               hb_itemPutNIntLen(pItem,0,lLen);
+            }
             break;
          }
          case SQL_DATE: {
@@ -729,8 +729,8 @@ void SQLO2_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, BOOL bQueryOnl
                lLen -= (lDec + 1);
                hb_itemPutNDLen( pItem,    OCI_GetDouble(rs, iField ) ,lLen,lDec ) ;
             } else {
-	            hb_itemPutNIntLen(pItem,OCI_GetBigInt(rs,iField),lLen);
-	         }
+               hb_itemPutNIntLen(pItem,OCI_GetBigInt(rs,iField),lLen);
+            }
             break;
          }
          case SQL_DATE: {
@@ -808,7 +808,7 @@ void SQLO2_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, BOOL bQueryOnl
 //         }
 //#endif
          case SQL_DATETIME: {
-	        OCI_Timestamp * pTime =     OCI_GetTimestamp( rs, iField );
+           OCI_Timestamp * pTime =     OCI_GetTimestamp( rs, iField );
 
 
             //hb_retdts(bBuffer);
@@ -1073,8 +1073,8 @@ HB_FUNC( ORACLEWRITEMEMO2 )
 
          if( !OCI_Execute(stmt) ) {
             //SQLO2_free_lob_desc(session->dbh, &loblp);
-	         //SQLO2_close(sth);
-	         hb_retni( -1 );
+            //SQLO2_close(sth);
+            hb_retni( -1 );
             return;
          }
          rs = OCI_GetResultset(stmt);
@@ -1086,10 +1086,10 @@ HB_FUNC( ORACLEWRITEMEMO2 )
 
          if( status < 0 ) {
             //SQLO2_free_lob_desc(session->dbh, &loblp);
-	         //SQLO2_close(sth);
+            //SQLO2_close(sth);
             OCI_LobFree(lob1);
             OCI_StatementFree(stmt ) ;
-	         hb_retni( -2 );
+            hb_retni( -2 );
             return;
          }
 
@@ -1118,7 +1118,7 @@ HB_FUNC( ORACLE_PROCCURSOR2 )
    //ret = SQLO2_prepare(session->dbh, stmt);
    session->stmt = OCI_StatementCreate(session->cn);
    session->stmtParamRes = OCI_StatementCreate(session->cn);
-	ret=  OCI_Prepare(session->stmt,stmt) ? 0 : -1;
+   ret=  OCI_Prepare(session->stmt,stmt) ? 0 : -1;
 
    if( ret >= SQLO_SUCCESS ) {
        //if( 0 <= ( sth = ret ) )

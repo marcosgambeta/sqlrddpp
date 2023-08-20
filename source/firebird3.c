@@ -273,7 +273,7 @@ HB_FUNC( FBBEGINTRANSACTION3 )  // FBBeginTransaction( hEnv )
       if( CHECK_ERROR(session) ) {
          ERRORLOGANDEXIT( session, "FBBEGINTRANSACTION3" );
       } else {
-	 session->transactionPending = 0;
+    session->transactionPending = 0;
          hb_retni( SQL_SUCCESS );
       }
    }
@@ -390,7 +390,7 @@ HB_FUNC( FBEXECUTE3 ) // FBExecute( hEnv, cCmd, nDialect )
          break;
          
       case IB_SQL_TIMESTAMP:
-	         var->sqldata = (ISC_SCHAR *) hb_xgrab( sizeof ( ISC_TIMESTAMP )  );
+            var->sqldata = (ISC_SCHAR *) hb_xgrab( sizeof ( ISC_TIMESTAMP )  );
          break;
       case IB_SQL_ARRAY:
       case IB_SQL_QUAD:
@@ -416,21 +416,21 @@ HB_FUNC( FBEXECUTE3 ) // FBExecute( hEnv, cCmd, nDialect )
    session->transactionPending = 1;
 
    if( !session->sqlda->sqld ) {
-// 	       ISC_STATUS r;
+//           ISC_STATUS r;
 //      if( isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL ) )
       if( session->queryType == isc_info_sql_stmt_exec_procedure ) {
          isc_dsql_execute2( session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL, NULL );
       }
       else{
-	      isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL );
-	      }
+         isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL );
+         }
 
       if( CHECK_ERROR(session) ) {
          ERRORLOGANDEXIT( session, "FBEXECUTE4" );
       }
 
    } else {
-	   
+      
       //if( isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), session->sqlda ) )
 //          ISC_STATUS r;             ,
 
@@ -438,7 +438,7 @@ HB_FUNC( FBEXECUTE3 ) // FBExecute( hEnv, cCmd, nDialect )
          isc_dsql_execute2( session->status, &(session->transac), &(session->stmt), hb_parni(3),NULL, session->sqlda ) ;
       }
       else{
-	     isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), session->sqlda ) ;
+        isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), session->sqlda ) ;
       }   
       
       if( CHECK_ERROR(session) ) {
@@ -459,9 +459,9 @@ HB_FUNC( FBEXECUTEIMMEDIATE3 ) // FBExecuteImmediate( hEnv, cCmd, nDialect )
 //    ISC_STATUS r;
 
    if( !session->transac ) {
-	  //if( isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short) sizeof(isc_tpb), isc_tpb) )
-	  isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short) sizeof(isc_tpb), isc_tpb);
-	  if( CHECK_ERROR(session) ) {
+     //if( isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short) sizeof(isc_tpb), isc_tpb) )
+     isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short) sizeof(isc_tpb), isc_tpb);
+     if( CHECK_ERROR(session) ) {
          ERRORLOGANDEXIT( session, "FBBEGINTRANSACTION1_4" );
       } else {
          hb_retni( SQL_SUCCESS );
@@ -526,7 +526,7 @@ HB_FUNC( FBDESCRIBECOL3 )   // FBDescribeCol( hStmt, nCol, @cName, @nType, @nLen
             rettype = SQL_NUMERIC;
             hb_storni( 5, 1 );
             hb_storni( var->sqlscale, 0 );
-	         
+            
          }
          break;
 
@@ -626,9 +626,9 @@ HB_FUNC( FBFETCH3 )   // FBFetch( hEnv )
    PFB_SESSION session  = ( PFB_SESSION ) hb_itemGetPtr( hb_param( 1, HB_IT_POINTER ) );
 
    if( session ) {
-	  ISC_STATUS stat = 0; 
-	  stat =isc_dsql_fetch( session->status, &(session->stmt), session->sqlda->version, session->sqlda ); 
-	  
+     ISC_STATUS stat = 0; 
+     stat =isc_dsql_fetch( session->status, &(session->stmt), session->sqlda->version, session->sqlda ); 
+     
       //if( isc_dsql_fetch( session->status, &(session->stmt), session->sqlda->version, session->sqlda ) )
       if( stat == 100 ) {
          hb_retni( SQL_NO_DATA_FOUND );
@@ -699,7 +699,7 @@ HB_FUNC( FBGETDATA3 )    // FBGetData( hEnv, nField, @uData )
             hb_timeStampStrRawGet(  date_s, &lJulian, &lMilliSec ); // TOCHECK:
 //             hb_itemPutTDT( pItem, lJulian, lMilliSec );
             hb_stortdt( lJulian, lMilliSec, 3 ); // TOCHECK:
-}	            
+}               
 
 #else
             {
@@ -711,7 +711,7 @@ HB_FUNC( FBGETDATA3 )    // FBGetData( hEnv, nField, @uData )
             break;
 
          case IB_SQL_TYPE_TIME: {
-         	long  lMilliSec;
+            long  lMilliSec;
             isc_decode_sql_time( ( ISC_TIME ISC_FAR * ) var->sqldata, &times );
             hb_snprintf( date_s, sizeof( date_s ), "%02d:%02d:%02d.%04d",
                   times.tm_hour,
@@ -946,7 +946,7 @@ HB_FUNC( FBVERSION3 )
    *tmp = 0;
 
    if( !isc_version( &(session->db), firebird_info_cb, (void*)tmp) ) {
-   	isc_vax_integer( tmp, 100 );
+      isc_vax_integer( tmp, 100 );
       hb_retnl( num_version );
    }
    hb_retc( tmp );
@@ -1007,9 +1007,9 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          }
 #endif
          case SQL_TIME: {
-	         hb_itemPutTDT( pItem, 0, 0 );
-	         break;	         
-	         }
+            hb_itemPutTDT( pItem, 0, 0 );
+            break;            
+            }
          case SQL_DATETIME: {
 //#ifdef __XHARBOUR__
 //            hb_itemPutDT( pItem, 0, 0, 0, 0, 0, 0, 0 );
@@ -1215,7 +1215,7 @@ HB_FUNC( FBLINEPROCESSED3 )
       cols = hb_arrayLen( pFields );
 
       for( icol = 1; icol <= cols; icol++ ) {
-//	     LONG lType;
+//        LONG lType;
          temp = hb_itemNew( NULL );
          var = session->sqlda->sqlvar;
          lIndex  = hb_arrayGetNL( hb_arrayGetItemPtr( pFields, icol ), FIELD_ENUM );

@@ -3955,7 +3955,7 @@ DEFUN(_define_ocol_by_pos, (stp, colp, pos),
 
        // TraceLog( LOGFILE, "_define_by_pos col %i, IN length %i, buffer %i, allocated %u\n", col_idx, stp->outv_size[ col_idx ], buffer_size, stp->rlenv[ col_idx ]);
 
-	    dbp->status = _define_by_pos(stp,
+       dbp->status = _define_by_pos(stp,
                                    pos,
                                    SQLT_STR,
                                    stp->outv[ col_idx ],
@@ -8245,7 +8245,7 @@ DEFUN(_terminate_ocols, (stp, do_strip_string),
         **outpp = '\0';
         *lenp = 0;
       } else if( lenp ) {
-      	*lenp = 0;
+         *lenp = 0;
       }
     } else {
       /* NOT NULL terminate the output */

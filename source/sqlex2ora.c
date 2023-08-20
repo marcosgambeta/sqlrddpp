@@ -224,8 +224,8 @@ void CreateInsertStmtOra( SQLEXORAAREAP thiswa )
       InsertRecord->isBoundNULL     = FALSE;
       InsertRecord->lFieldPosDB     = i;
       InsertRecord->lFieldPosWA     = lFieldPosWA;
-	  InsertRecord->ColumnSize      = (unsigned int) hb_itemGetNI( pFieldLen );
-	  InsertRecord->DecimalDigits   = (unsigned short) hb_itemGetNI( pFieldDec );
+     InsertRecord->ColumnSize      = (unsigned int) hb_itemGetNI( pFieldLen );
+     InsertRecord->DecimalDigits   = (unsigned short) hb_itemGetNI( pFieldDec );
       InsertRecord->isArgumentNull  = FALSE;
       InsertRecord->isMemo          = bIsMemo;
       InsertRecord->isMultiLang     = bMultiLang;
@@ -272,7 +272,7 @@ void CreateInsertStmtOra( SQLEXORAAREAP thiswa )
             break;
          }
          case 'T': {
-	         
+            
             InsertRecord->iCType          = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP
             break;
          }
@@ -299,7 +299,7 @@ void CreateInsertStmtOra( SQLEXORAAREAP thiswa )
    if( thiswa->sSql )
    memset( thiswa->sSql, 0,  MAX_SQL_QUERY_LEN * sizeof( char ) );
    if( thiswa->nSystemID ==  SYSTEMID_MSSQL7 ) {
-		 sprintf( thiswa->sSql, "%s INSERT INTO %s (%s ) OUTPUT Inserted.%s INTO @InsertedData VALUES (%s );%s", declare, thiswa->sTable, sFields, thiswa->sRecnoName, sParams ,ident);
+       sprintf( thiswa->sSql, "%s INSERT INTO %s (%s ) OUTPUT Inserted.%s INTO @InsertedData VALUES (%s );%s", declare, thiswa->sTable, sFields, thiswa->sRecnoName, sParams ,ident);
    } else {
    sprintf( thiswa->sSql, "INSERT INTO %s (%s ) VALUES (%s )%s", thiswa->sTable, sFields, sParams, ident );
    }   
@@ -380,8 +380,8 @@ HB_ERRCODE BindInsertColumnsOra( SQLEXORAAREAP thiswa )
                break;
             }
             case SQL_C_NUMERIC: {
-	            res = OCI_BindUnsignedBigInt(thiswa->hStmtInsert, InsertRecord->szBindName, &InsertRecord->asNumeric) ;
-	            break;
+               res = OCI_BindUnsignedBigInt(thiswa->hStmtInsert, InsertRecord->szBindName, &InsertRecord->asNumeric) ;
+               break;
             } 
             case SQL_C_DOUBLE: {
                InsertRecord->lIndPtr = 0;
@@ -522,9 +522,9 @@ HB_ERRCODE ExecuteInsertStmtOra( SQLEXORAAREAP thiswa )
    for( i=1; i <= iCols; i++ ) {
       if( InsertRecord->iCType == SQL_C_BINARY ) {
 
-// 	      TraceLog("ccc.log" , "escrevendo lob  InsertRecord->asChar.value %s InsertRecord->asChar.size %lu \n " ,InsertRecord->asChar.value,InsertRecord->asChar.size);
-	      res = OCI_LobSeek(InsertRecord->lob1, 0, OCI_SEEK_SET);
-	      res =OCI_LobWrite(InsertRecord->lob1, (void*)InsertRecord->asChar.value,  InsertRecord->asChar.size  );
+//          TraceLog("ccc.log" , "escrevendo lob  InsertRecord->asChar.value %s InsertRecord->asChar.size %lu \n " ,InsertRecord->asChar.value,InsertRecord->asChar.size);
+         res = OCI_LobSeek(InsertRecord->lob1, 0, OCI_SEEK_SET);
+         res =OCI_LobWrite(InsertRecord->lob1, (void*)InsertRecord->asChar.value,  InsertRecord->asChar.size  );
       }
       if( InsertRecord->lIndPtr     == SQL_NULL_DATA ) {
             OCI_BindSetNull(  OCI_GetBind(thiswa->hStmtInsert, i ) );
@@ -714,7 +714,7 @@ iBind++;
          iBind++;
          switch (CurrRecord->iCType) {
             case SQL_C_CHAR: {
-	           sprintf(szBindName,":%i",iBind );
+              sprintf(szBindName,":%i",iBind );
 //                CurrRecord->lIndPtr = SQL_NTS;
 //                res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
 //                                        CurrRecord->iCType,
@@ -742,12 +742,12 @@ iBind++;
                break;
             }
             case SQL_C_NUMERIC: {
-	            sprintf(szBindName,":%i",iBind );
-	            res = OCI_BindUnsignedBigInt(thiswa->hStmtUpdate, CurrRecord->szBindName, &CurrRecord->asNumeric) ;
-	            break;
+               sprintf(szBindName,":%i",iBind );
+               res = OCI_BindUnsignedBigInt(thiswa->hStmtUpdate, CurrRecord->szBindName, &CurrRecord->asNumeric) ;
+               break;
             }
             case SQL_C_DOUBLE: {
-	            sprintf(szBindName,":%i",iBind );
+               sprintf(szBindName,":%i",iBind );
                CurrRecord->lIndPtr = 0;
 //                res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
 //                                        CurrRecord->iCType,
@@ -760,7 +760,7 @@ iBind++;
             }
             case SQL_C_TYPE_TIMESTAMP: {
 
-	           sprintf(szBindName,":%i",iBind );
+              sprintf(szBindName,":%i",iBind );
 //                CurrRecord->lIndPtr = 0;
 //                res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
 //                                        SQL_C_TYPE_TIMESTAMP,
@@ -774,7 +774,7 @@ iBind++;
                break;
             }
             case SQL_C_TYPE_DATE: {
-	           sprintf(szBindName,":%i",iBind );
+              sprintf(szBindName,":%i",iBind );
                CurrRecord->lIndPtr = 0;
 //                res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
 //                                        SQL_C_TYPE_DATE,
@@ -788,7 +788,7 @@ iBind++;
                break;
             }
             case SQL_C_BIT: {
-	            sprintf(szBindName,":%i",iBind );
+               sprintf(szBindName,":%i",iBind );
 //                res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
 //                                        CurrRecord->iCType,
 //                                        CurrRecord->iSQLType,

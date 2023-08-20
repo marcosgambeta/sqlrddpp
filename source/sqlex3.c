@@ -574,7 +574,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                break;
             }
             case SQL_C_TYPE_TIMESTAMP: {
-	            //DebugBreak();
+               //DebugBreak();
                //res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
                //                        SQL_C_TYPE_DATE,
                //                        SQL_TYPE_DATE,

@@ -3138,7 +3138,7 @@ static BOOL ProcessFields( SQLAREAP thiswa )
 #else
          field.uiType = HB_FT_TIMESTAMP;
 #endif
-	 }
+    }
 
          break;
       default:

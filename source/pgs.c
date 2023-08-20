@@ -256,7 +256,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
    hb_arrayNew( ret, rows );
 
    for( row = 0; row < rows; row++ ) {
-// 	  long nullable;
+//      long nullable;
       /* Column name */
       hb_arrayNew( atemp, 11 );
       hb_itemPutC( temp, hb_strupr( PQfname( session->stmt, row ) ) );
@@ -445,7 +445,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
       long typmod;
       long nullable;
       int type;
-	   
+      
       /* Column name */
       hb_arrayNew( atemp, 11 );
       hb_itemPutC( temp, hb_strupr( PQgetvalue( stmtTemp, row, 0 ) ) );
@@ -611,7 +611,7 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
 
    
    
-	   
+      
 
    if( lLenBuff <= 0 ) {   // database content is NULL
       switch( lType ) {
@@ -657,8 +657,8 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             break;
          }
          case SQL_TIME: {
-	         hb_itemPutTDT( pItem, 0, 0 );
-	         break;
+            hb_itemPutTDT( pItem, 0, 0 );
+            break;
          }
 
 
@@ -810,7 +810,7 @@ void PGSFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             break;
          }
          case SQL_TIME: {
-	        long  lMilliSec;
+           long  lMilliSec;
             lMilliSec = hb_timeUnformat( bBuffer, nullptr ); // TOCHECK:
             hb_itemPutTDT( pItem, 0, lMilliSec );    
             break;
