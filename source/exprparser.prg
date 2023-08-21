@@ -42,363 +42,429 @@
 
 #include "compat.ch"
 #include "hbclass.ch"
-      
+
 **************************************************
-class ParserBase
+CLASS ParserBase
+
    HIDDEN:
-   data _SortedOperators
+   DATA _SortedOperators
 
    PROTECTED:
-   data _Operators
-   
+   DATA _Operators
+
    PROTECTED:
-   data _cDefaultContext
+   DATA _cDefaultContext
 
    EXPORTED:
-   method Parse(cExpression)
-   
-   PROTECTED:
-   method InternParse(cExpression)   
-   
-   PROTECTED:
-   method GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) virtual   
-   
-   PROTECTED:
-   method GetOperators() virtual
-   
-   PROTECTED:
-   access SortedOperators
+   METHOD Parse(cExpression)
 
    PROTECTED:
-   method GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
-   
+   METHOD InternParse(cExpression)
+
    PROTECTED:
-   method RestoreParenthesis(cExpression)   
-   
+   METHOD GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) VIRTUAL
+
    PROTECTED:
-   method ResolveParenthesis(cExpression)
-   
+   METHOD GetOperators() VIRTUAL
+
    PROTECTED:
-   method ExtractAlias1(cExpression)   
-   
+   ACCESS SortedOperators
+
    PROTECTED:
-   method ExtractAlias2(cExpression)   
-   
+   METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
+
    PROTECTED:
-   method ExtractAlias3(cExpression)   
-   
+   METHOD RestoreParenthesis(cExpression)
+
+   PROTECTED:
+   METHOD ResolveParenthesis(cExpression)
+
+   PROTECTED:
+   METHOD ExtractAlias1(cExpression)
+
+   PROTECTED:
+   METHOD ExtractAlias2(cExpression)
+
+   PROTECTED:
+   METHOD ExtractAlias3(cExpression)
+
    HIDDEN:
-   method ExtractAlias(cExpression, cRegex)
-   
+   METHOD ExtractAlias(cExpression, cRegex)
+
    EXPORTED:
-   method new(pWorkarea)      
-endclass
+   METHOD new(pWorkarea)
 
-method new(pWorkarea)
-   ::_cDefaultContext = pWorkarea
-return self
+ENDCLASS
 
-method SortedOperators class ParserBase
-   if(::_SortedOperators == nil)
-      ::_SortedOperators = asort(::GetOperators(),,, {|x,y| x:nPriority < y:nPriority})
-   endif
-return ::_SortedOperators
+METHOD new(pWorkarea)
 
-method Parse(cExpression) class ParserBase
-return ::InternParse("?"+AtRepl('"', cExpression, "'")+"?", ::_cDefaultContext)
+   ::_cDefaultContext := pWorkarea
 
-method InternParse(cExpression, cAlias) class ParserBase
-   local oOperand1, oOperand2, oConnector
-   
+RETURN SELF
+
+METHOD SortedOperators CLASS ParserBase
+
+   IF ::_SortedOperators == NIL
+      ::_SortedOperators := asort(::GetOperators(),,, {|x,y|x:nPriority < y:nPriority})
+   ENDIF
+
+RETURN ::_SortedOperators
+
+METHOD Parse(cExpression) CLASS ParserBase
+RETURN ::InternParse("?" + AtRepl('"', cExpression, "'") + "?", ::_cDefaultContext)
+
+METHOD InternParse(cExpression, cAlias) CLASS ParserBase
+
+   LOCAL oOperand1
+   LOCAL oOperand2
+   LOCAL oConnector
+
    ::GetOperands(@cExpression, @cAlias, @oOperand1, @oConnector, @oOperand2)
-   
-   if (oOperand2 != nil)
-       return ::GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
-   endif
-return oOperand1
 
-method GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) class ParserBase
-   local o, aGroups, i, cNewAlias, cRegO
-   cExpression = alltrim(cExpression)
-   
-   cAlias = iif((cNewAlias := ::ExtractAlias1(@cExpression)) != nil, cNewAlias, cAlias) 
-      
-   do while (cExpression like "^\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*\?$")
-       cExpression = alltrim(substr(cExpression, 2, len(cExpression) - 2))
-       cAlias = iif((cNewAlias := ::ExtractAlias2(@cExpression)) != nil, cNewAlias, cAlias) 
-      ::ResolveParenthesis(@cExpression)   
-   enddo
-   
-   for i:=1 to len(::SortedOperators)
-      o := ::SortedOperators[i]
-       cRegO = "^((?:[^\'\?]*(?:\'[^\']*\'|\?(?:[^\'\?]*(?:\'[^\']*\'))*[^\'\?]*\?))*?[^\'\?]*?)(" + o:cPattern + ")(\s*[^>].*)$"
-       if (HB_RegExMatch(cRegO, cExpression, .F.))
-          aGroups = HB_RegExAtX(cRegO, cExpression)
-           oOperand1 = ::InternParse(aGroups[2,1], cAlias)
-           oConnector = o
-           oOperand2 = ::InternParse(aGroups[4,1], cAlias)
-         exit
-      endif
-   next i
+   IF oOperand2 != NIL
+       RETURN ::GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
+   ENDIF
 
-   cAlias = iif((cNewAlias := ::ExtractAlias3(@cExpression)) != nil, cNewAlias, cAlias)
-return  Nil
+RETURN oOperand1
 
-METHOD ResolveParenthesis(cExpression) class ParserBase
-   LOCAL i
-   LOCAL nParenthesisDeep := 0 
-   
-   FOR i := 1 to len(cExpression)
-      do case
-         case (cExpression[i] == "'")
-             do while (cExpression[++i] != "'")
-             enddo
-         case (cExpression[i] == "(")
-                if (nParenthesisDeep == 0)
-                    cExpression[i] = "?"
-                endif
-                nParenthesisDeep++
-         case (cExpression[i] == ")")
-                nParenthesisDeep--
-                if (nParenthesisDeep == 0)
-                    cExpression[i] = "?"
-                endif
-      endcase
-   next i
-RETURN Nil
-      
-method RestoreParenthesis(cExpression) class ParserBase
-    local cParenthesis := "(", i
-    for i:=1 to len(cExpression)
-       if(cExpression[i] == "'")
-          do while (cExpression[++i] != "'")
-          enddo
-       elseif(cExpression[i] == "?")
-          cExpression[i] = cParenthesis
-          cParenthesis = iif(cParenthesis == "(", ")", "(")
-       endif
-    next i
+METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS ParserBase
 
-return cExpression
-
-method ExtractAlias1(cExpression) class ParserBase
-   static regex := "^(\w+)\s*->\s*(\?.+\?)$"
-return ::ExtractAlias(@cExpression, regex);
-
-method ExtractAlias2(cExpression) class ParserBase
-   static regex := "^(\w+)\s*->\s*(\(.+\))$"
-return ::ExtractAlias(@cExpression, regex);
-
-method ExtractAlias3(cExpression) class ParserBase
-   static regex := "^(\w+)\s*->\s*(\w+)$"
-return ::ExtractAlias(@cExpression, regex);
-
-method ExtractAlias(cExpression, cRegex) class ParserBase
+   LOCAL o
    LOCAL aGroups
-   
+   LOCAL i
+   LOCAL cNewAlias
+   LOCAL cRegO
+
+   cExpression := alltrim(cExpression)
+
+   cAlias := iif((cNewAlias := ::ExtractAlias1(@cExpression)) != NIL, cNewAlias, cAlias)
+
+   DO WHILE (cExpression LIKE "^\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*\?$")
+      cExpression := alltrim(substr(cExpression, 2, len(cExpression) - 2))
+      cAlias := iif((cNewAlias := ::ExtractAlias2(@cExpression)) != NIL, cNewAlias, cAlias)
+      ::ResolveParenthesis(@cExpression)
+   ENDDO
+
+   FOR i := 1 TO len(::SortedOperators)
+      o := ::SortedOperators[i]
+      cRegO := "^((?:[^\'\?]*(?:\'[^\']*\'|\?(?:[^\'\?]*(?:\'[^\']*\'))*[^\'\?]*\?))*?[^\'\?]*?)(" + o:cPattern + ")(\s*[^>].*)$"
+      IF (HB_RegExMatch(cRegO, cExpression, .F.))
+         aGroups := HB_RegExAtX(cRegO, cExpression)
+         oOperand1 := ::InternParse(aGroups[2,1], cAlias)
+         oConnector := o
+         oOperand2 := ::InternParse(aGroups[4,1], cAlias)
+         exit
+      ENDIF
+   NEXT i
+
+   cAlias := iif((cNewAlias := ::ExtractAlias3(@cExpression)) != NIL, cNewAlias, cAlias)
+
+RETURN NIL
+
+METHOD ResolveParenthesis(cExpression) CLASS ParserBase
+
+   LOCAL i
+   LOCAL nParenthesisDeep := 0
+
+   FOR i := 1 TO len(cExpression)
+      DO CASE
+      CASE cExpression[i] == "'"
+         DO WHILE cExpression[++i] != "'"
+         ENDDO
+      CASE cExpression[i] == "("
+         IF nParenthesisDeep == 0
+            cExpression[i] := "?"
+         ENDIF
+         nParenthesisDeep++
+      CASE cExpression[i] == ")"
+         nParenthesisDeep--
+         IF nParenthesisDeep == 0
+            cExpression[i] := "?"
+         ENDIF
+      ENDCASE
+   NEXT i
+
+RETURN NIL
+
+METHOD RestoreParenthesis(cExpression) CLASS ParserBase
+
+   LOCAL cParenthesis := "("
+   LOCAL i
+
+   FOR i := 1 TO len(cExpression)
+      IF cExpression[i] == "'"
+         DO WHILE cExpression[++i] != "'"
+         ENDDO
+      ELSEIF cExpression[i] == "?"
+         cExpression[i] := cParenthesis
+         cParenthesis := iif(cParenthesis == "(", ")", "(")
+      ENDIF
+   NEXT i
+
+RETURN cExpression
+
+METHOD ExtractAlias1(cExpression) CLASS ParserBase
+
+   STATIC regex := "^(\w+)\s*->\s*(\?.+\?)$"
+
+RETURN ::ExtractAlias(@cExpression, regex)
+
+METHOD ExtractAlias2(cExpression) CLASS ParserBase
+
+   STATIC regex := "^(\w+)\s*->\s*(\(.+\))$"
+
+RETURN ::ExtractAlias(@cExpression, regex)
+
+METHOD ExtractAlias3(cExpression) CLASS ParserBase
+
+   STATIC regex := "^(\w+)\s*->\s*(\w+)$"
+
+RETURN ::ExtractAlias(@cExpression, regex)
+
+METHOD ExtractAlias(cExpression, cRegex) CLASS ParserBase
+
+   LOCAL aGroups
+
    IF HB_RegExMatch(cRegex, cExpression, .F.)
-       aGroups = HB_RegExAtX(cRegex, cExpression)
-        cExpression = aGroups[3,1]
-        return aGroups[2,1]
-    endif
-return nil
+      aGroups := HB_RegExAtX(cRegex, cExpression)
+      cExpression := aGroups[3, 1]
+      RETURN aGroups[2, 1]
+   ENDIF
+
+RETURN NIL
 
 /**************************************************/
-class ExpressionParser from ParserBase      
+CLASS ExpressionParser FROM ParserBase
+
    PROTECTED:
-   method GetOperators()
-   
+   METHOD GetOperators()
+
    PROTECTED:
-   method GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)   
-      
+   METHOD GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
+
    PROTECTED:
-   method GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
-   
+   METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
+
    PROTECTED:
-   method GetParameter(cExpression, cAlias)
-   
+   METHOD GetParameter(cExpression, cAlias)
+
    EXPORTED:
-   method new(pWorkarea) inline ::super:new(pWorkarea)
-endclass
+   METHOD new(pWorkarea) INLINE ::super:new(pWorkarea)
 
-method GetOperators() class ExpressionParser
-   if(::_Operators == nil)   
-      ::_Operators =    {                                                               ;
-                      ArithmeticOperator():new("plus", {"+"}),                    ;
-                      ArithmeticOperator():new("minus", {"-"}),                   ;
-                      ArithmeticOperator():new("multiplied", {"*"}),              ;
-                      ArithmeticOperator():new("divided", {"/"}),                 ;
-                      ArithmeticOperator():new("exponent", {"^"})                 ;
-                  }  
-   endif
-return ::_Operators
+ENDCLASS
 
-method GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) class ExpressionParser
-return ComposedExpression():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
+METHOD GetOperators() CLASS ExpressionParser
 
-method GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) class ExpressionParser
-   LOCAL aGroups, aParamGroups, cFunctionName, cParameters, aParameters := {}
-   
+   IF ::_Operators == NIL
+      ::_Operators := {                                                   ;
+                         ArithmeticOperator():new("plus", {"+"}),         ;
+                         ArithmeticOperator():new("minus", {"-"}),        ;
+                         ArithmeticOperator():new("multiplied", {"*"}),   ;
+                         ArithmeticOperator():new("divided", {"/"}),      ;
+                         ArithmeticOperator():new("exponent", {"^"})      ;
+                      }
+   ENDIF
+
+RETURN ::_Operators
+
+METHOD GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) CLASS ExpressionParser
+RETURN ComposedExpression():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
+
+METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS ExpressionParser
+
+   LOCAL aGroups
+   LOCAL aParamGroups
+   LOCAL cFunctionName
+   LOCAL cParameters
+   LOCAL aParameters := {}
+
    STATIC cRegFunction := "^(\w+)\s*\?\s*(.*?)\s*\?$"
    STATIC cRegParams := "^((?:[^\'\?,]*?(?:\'[^\']*\'|\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*?\?))*[^\'\?,]*?),(.*)$"
    STATIC cRegMacro := "^&\s*(\w+)$"
-   
-   ::super:GetOperands( @cExpression, @cAlias, @oOperand1, @oConnector, @oOperand2 )
 
-    if (oOperand1 == nil)
-        if (HB_RegExMatch(cRegFunction, cExpression, .F.))
-          aGroups = HB_RegExAtX(cRegFunction, cExpression)
-            cFunctionName = aGroups[2,1]
-            cParameters = aGroups[3,1]
-            ::ResolveParenthesis(@cParameters)
-            
-            do while (HB_RegExMatch(cRegParams, cParameters, .F.))
-             aParamGroups = HB_RegExAtX(cRegParams, cParameters)
-                aadd(aParameters, ::GetParameter(aParamGroups[2,1], cAlias))
-                cParameters = aParamGroups[3,1]
-            enddo
-            
-            if(!cParameters == "")
-               aadd(aParameters, ::GetParameter(cParameters, cAlias))
-            endif
-             
-            oOperand1 = FunctionExpression():new(cAlias, ::RestoreParenthesis(cExpression), cFunctionName, aParameters)
-        elseif(HB_RegExMatch(cRegMacro, cExpression, .F.))
-           oOperand1 = ::InternParse(&(HB_RegExAtX(cRegMacro, cExpression)[2,1]))
-        else
-            oOperand1 = ValueExpression():new(cAlias, ::RestoreParenthesis(cExpression), ::RestoreParenthesis(cExpression))
-        endif
-   endif
-return Nil
+   ::super:GetOperands(@cExpression, @cAlias, @oOperand1, @oConnector, @oOperand2)
 
-method GetParameter(cExpression, cAlias) class ExpressionParser
-   static cRegParam := "^(@?)(.*)$"
-   local aGroups, lByRef, oExpression
-   if (cExpression like "^\s*$")
-      lByRef = .F.
-      oExpression = ValueExpression():new(cAlias, "nil")  
-   else
+   IF oOperand1 == NIL
+      IF HB_RegExMatch(cRegFunction, cExpression, .F.)
+         aGroups := HB_RegExAtX(cRegFunction, cExpression)
+         cFunctionName := aGroups[2, 1]
+         cParameters := aGroups[3, 1]
+         ::ResolveParenthesis(@cParameters)
+
+         DO WHILE HB_RegExMatch(cRegParams, cParameters, .F.)
+            aParamGroups := HB_RegExAtX(cRegParams, cParameters)
+            aadd(aParameters, ::GetParameter(aParamGroups[2, 1], cAlias))
+            cParameters := aParamGroups[3, 1]
+         ENDDO
+
+         IF !cParameters == ""
+            aadd(aParameters, ::GetParameter(cParameters, cAlias))
+         ENDIF
+
+         oOperand1 := FunctionExpression():new(cAlias, ::RestoreParenthesis(cExpression), cFunctionName, aParameters)
+      ELSEIF HB_RegExMatch(cRegMacro, cExpression, .F.)
+         oOperand1 := ::InternParse(&(HB_RegExAtX(cRegMacro, cExpression)[2, 1]))
+      ELSE
+         oOperand1 := ValueExpression():new(cAlias, ::RestoreParenthesis(cExpression), ::RestoreParenthesis(cExpression))
+      ENDIF
+   ENDIF
+
+RETURN NIL
+
+METHOD GetParameter(cExpression, cAlias) CLASS ExpressionParser
+
+   STATIC cRegParam := "^(@?)(.*)$"
+
+   LOCAL aGroups
+   LOCAL lByRef
+   LOCAL oExpression
+
+   IF (cExpression LIKE "^\s*$")
+      lByRef := .F.
+      oExpression := ValueExpression():new(cAlias, "nil")
+   ELSE
       aGroups := HB_RegExAtX(cRegParam, cExpression)
-      lByRef := aGroups[2,1] != ""
-      oExpression := GetConditionOrExpression(::RestoreParenthesis(aGroups[3,1]), cAlias)
-   endif
-return Parameter():new(oExpression, lByRef)
-   
-**************************************************
-class ConditionParser from ParserBase   
-   HIDDEN:
-   data _cRegOperator
-   data _cRegNegative1
-   data _cRegNegative2
-   data _cNegativesPattern init "!|\.not\."
-   
-   EXPORTED:
-   data aClipperComparisonOperators   
-   
-   PROTECTED:
-   method GetOperators()
-   
-   PROTECTED:
-   method GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)   
-      
-   PROTECTED:
-   method GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
-      
-   EXPORTED:
-   method new(pWorkarea) 
-endclass
+      lByRef := aGroups[2, 1] != ""
+      oExpression := GetConditionOrExpression(::RestoreParenthesis(aGroups[3, 1]), cAlias)
+   ENDIF
 
-method new(pWorkarea)
-   LOCAL cOperatorsChoice, cOperatorsChars
-   
+RETURN Parameter():new(oExpression, lByRef)
+
+**************************************************
+CLASS ConditionParser FROM ParserBase
+
+   HIDDEN:
+   DATA _cRegOperator
+   DATA _cRegNegative1
+   DATA _cRegNegative2
+   DATA _cNegativesPattern INIT "!|\.not\."
+
+   EXPORTED:
+   DATA aClipperComparisonOperators
+
+   PROTECTED:
+   METHOD GetOperators()
+
+   PROTECTED:
+   METHOD GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
+
+   PROTECTED:
+   METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
+
+   EXPORTED:
+   METHOD new(pWorkarea)
+
+ENDCLASS
+
+METHOD new(pWorkarea)
+
+   LOCAL cOperatorsChoice
+   LOCAL cOperatorsChars
+
    ::super:new(pWorkarea)
-   ::aClipperComparisonOperators :=                            ;
-   {                                                ;
-       ComparisonOperator():new("equal", {"="}),                   ;
-       ComparisonOperator():new("equalEqual", {"=="}),               ;
-       ComparisonOperator():new("different", {"!=", "<>", "#"}),   ;
-       ComparisonOperator():new("lower", {"<"}),                   ;
-       ComparisonOperator():new("higher", {">"}),                  ;
-       ComparisonOperator():new("lowerOrEqual", {"<="}),           ;
-       ComparisonOperator():new("higherOrEqual", {">="}),          ;
-       ComparisonOperator():new("included", {"$"})                 ;
-   }   
-   
+   ::aClipperComparisonOperators :=                                  ;
+      {                                                              ;
+         ComparisonOperator():new("equal", {"="}),                   ;
+         ComparisonOperator():new("equalEqual", {"=="}),             ;
+         ComparisonOperator():new("different", {"!=", "<>", "#"}),   ;
+         ComparisonOperator():new("lower", {"<"}),                   ;
+         ComparisonOperator():new("higher", {">"}),                  ;
+         ComparisonOperator():new("lowerOrEqual", {"<="}),           ;
+         ComparisonOperator():new("higherOrEqual", {">="}),          ;
+         ComparisonOperator():new("included", {"$"})                 ;
+      }
+
    cOperatorsChoice := cJoin(xSelect(::aClipperComparisonOperators, {|x| x:cPattern}), "|")
    cOperatorsChars := cPattern(CharList(cJoin(xSelectMany(::aClipperComparisonOperators, {|x| x:aSymbols}), "")))
 
-    ::_cRegOperator = HB_RegExComp("^((?:[^\'\?]*?(?:\'[^\']*\'|\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*?\?))*(?:[^\'\?]*?[^-"+cOperatorsChars+"\s])?\s*)("+cOperatorsChoice+")([^"+cOperatorsChars+"].*)$", .F.)
-   ::_cRegNegative1 = HB_RegExComp("^("+::_cNegativesPattern+")\s*(\?.*\?)$", .F.)
-   ::_cRegNegative2 = HB_RegExComp("^("+::_cNegativesPattern+")\s*(.+)$", .F.)
-return self
+   ::_cRegOperator := HB_RegExComp("^((?:[^\'\?]*?(?:\'[^\']*\'|\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*?\?))*(?:[^\'\?]*?[^-"+cOperatorsChars+"\s])?\s*)("+cOperatorsChoice+")([^"+cOperatorsChars+"].*)$", .F.)
+   ::_cRegNegative1 := HB_RegExComp("^("+::_cNegativesPattern+")\s*(\?.*\?)$", .F.)
+   ::_cRegNegative2 := HB_RegExComp("^("+::_cNegativesPattern+")\s*(.+)$", .F.)
 
-method GetOperators() class ConditionParser
-   if(::_Operators == nil)   
-      ::_Operators =    {                                                               ;
-                      LogicalOperator():new("and", {".and."}),                    ;
-                      LogicalOperator():new("or", {".or."})                       ;
-                  }  
-   endif
-return ::_Operators
+RETURN SELF
 
-method GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) class ConditionParser
-return ComposedCondition():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
+METHOD GetOperators() CLASS ConditionParser
 
-method GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) class ConditionParser
-   local aGroups, oComparisonOperator, oExpressionParser, lDenied, cNewAlias, cExpression2
+   IF ::_Operators == NIL
+      ::_Operators := {                                             ;
+                         LogicalOperator():new("and", {".and."}),   ;
+                         LogicalOperator():new("or", {".or."})      ;
+                      }
+   ENDIF
+
+RETURN ::_Operators
+
+METHOD GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) CLASS ConditionParser
+RETURN ComposedCondition():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
+
+METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS ConditionParser
+
+   LOCAL aGroups
+   LOCAL oComparisonOperator
+   LOCAL oExpressionParser
+   LOCAL lDenied
+   LOCAL cNewAlias
+   LOCAL cExpression2
+
    ::super:GetOperands(@cExpression, @cAlias, @oOperand1, @oConnector, @oOperand2)
 
-    if (oOperand1 == nil)
-        if (HB_RegExMatch(::_cRegNegative1, cExpression, .F.))
-          aGroups = HB_RegExAtX(::_cRegNegative1, cExpression)
-            oOperand1 = ::InternParse(aGroups[3,1], cAlias)
-            oOperand1:lDenied = .T.
-        else
-         cAlias = iif((cNewAlias := ::ExtractAlias3(@cExpression)) != nil, cNewAlias, cAlias)
+   IF oOperand1 == NIL
+      IF HB_RegExMatch(::_cRegNegative1, cExpression, .F.)
+         aGroups := HB_RegExAtX(::_cRegNegative1, cExpression)
+         oOperand1 := ::InternParse(aGroups[3, 1], cAlias)
+         oOperand1:lDenied := .T.
+      ELSE
+         cAlias := iif((cNewAlias := ::ExtractAlias3(@cExpression)) != NIL, cNewAlias, cAlias)
 
          oExpressionParser := ExpressionParser():new(cAlias)
-         
-            if (HB_RegExMatch(::_cRegOperator, cExpression, .F.))
-             aGroups = HB_RegExAtX(::_cRegOperator, cExpression)
-             
-                oComparisonOperator = xFirst(::aClipperComparisonOperators, {|y| aGroups[3,1] $ y:aSymbols})
-            
-                oOperand1 = Comparison():new(cAlias, ::RestoreParenthesis(cExpression), oExpressionParser:Parse(::RestoreParenthesis(aGroups[2,1])),;
-                                            oComparisonOperator,;
-                                            oExpressionParser:Parse(::RestoreParenthesis(aGroups[4,1])))
-            else
-               lDenied = HB_RegExMatch(::_cRegNegative2, cExpression, .F.)
-               cExpression2 = cExpression
-              if (lDenied)
-                aGroups = HB_RegExAtX(::_cRegNegative2, cExpression)
-                cExpression2 = aGroups[3,1]
-               endif
-                oOperand1 = BooleanExpression():new2(cAlias, ::RestoreParenthesis(cExpression), lDenied, oExpressionParser:Parse(::RestoreParenthesis(cExpression2)))
-            endif
-        endif
-   endif
-return Nil
-   
+
+         IF HB_RegExMatch(::_cRegOperator, cExpression, .F.)
+            aGroups := HB_RegExAtX(::_cRegOperator, cExpression)
+
+            oComparisonOperator := xFirst(::aClipperComparisonOperators, {|y| aGroups[3, 1] $ y:aSymbols})
+
+            oOperand1 := Comparison():new(cAlias, ;
+                                          ::RestoreParenthesis(cExpression), ;
+                                          oExpressionParser:Parse(::RestoreParenthesis(aGroups[2, 1])), ;
+                                          oComparisonOperator, ;
+                                          oExpressionParser:Parse(::RestoreParenthesis(aGroups[4, 1])))
+            ELSE
+               lDenied := HB_RegExMatch(::_cRegNegative2, cExpression, .F.)
+               cExpression2 := cExpression
+               IF lDenied
+                  aGroups := HB_RegExAtX(::_cRegNegative2, cExpression)
+                  cExpression2 := aGroups[3, 1]
+               ENDIF
+               oOperand1 := BooleanExpression():new2(cAlias, ::RestoreParenthesis(cExpression), lDenied, oExpressionParser:Parse(::RestoreParenthesis(cExpression2)))
+         ENDIF
+      ENDIF
+   ENDIF
+
+RETURN NIL
+
 **************************************************
-static function GetConditionOrExpression(cExpression, cAlias)
+STATIC FUNCTION GetConditionOrExpression(cExpression, cAlias)
+
    LOCAL cContext
-   local oParser := ConditionParser():new(cAlias)
-   local oResult := oParser:Parse(cExpression)
-   
-   if (oResult:isKindOf("BooleanExpression") .and. oResult:oExpression:GetType() != "L")
-       cContext := oResult:cContext
+   LOCAL oParser := ConditionParser():new(cAlias)
+   LOCAL oResult := oParser:Parse(cExpression)
+
+   IF oResult:isKindOf("BooleanExpression") .AND. oResult:oExpression:GetType() != "L"
+      cContext := oResult:cContext
       oResult := oResult:oExpression
-      oResult:cContext = cContext
-   endif
-return oResult
+      oResult:cContext := cContext
+   ENDIF
+
+RETURN oResult
 
 **************************************************
 FUNCTION cPattern(cString)
+
    LOCAL i
    LOCAL aSpecialChars := ".+-*/^$()#"
-   
-   FOR i:=1 to Len( aSpecialChars )
-       cString = StrTran( cString, aSpecialChars[i], "\" + aSpecialChars[i] )
-   NEXT i
-RETURN cString
 
+   FOR i := 1 TO Len(aSpecialChars)
+       cString := StrTran(cString, aSpecialChars[i], "\" + aSpecialChars[i])
+   NEXT i
+
+RETURN cString
