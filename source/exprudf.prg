@@ -44,226 +44,289 @@
 #include "hbclass.ch"
 
 **************************************************
-function cJoin(aArray, cString)
-   local result := "", i
-   if (len(aArray)>0)
-      for i:=1 to len(aArray) - 1 
-         result += aArray[i]   + cString
-      next i
-      result += aArray[len(aArray)]   
-   endif
-return result
+FUNCTION cJoin(aArray, cString)
+
+   LOCAL result := ""
+   LOCAL i
+
+   IF len(aArray) > 0
+      FOR i := 1 TO len(aArray) - 1
+         result += aArray[i] + cString
+      NEXT i
+      result += aArray[len(aArray)]
+   ENDIF
+
+RETURN result
 
 **************************************************
-function xSelect(aArray, bSelector)
-   local newArray := array(len(aArray))
-   aeval(aArray, {|x,n| newArray[n] := eval(bSelector, x)})
-return newArray
-   
+FUNCTION xSelect(aArray, bSelector)
+
+   LOCAL newArray := array(len(aArray))
+
+   aeval(aArray, {|x,n|newArray[n] := eval(bSelector, x)})
+
+RETURN newArray
+
 **************************************************
-function xSelectMany(aArray, bSelector)
-   local newArray := {}
-   aeval(aArray, {|x| aAddRange(newArray, eval(bSelector, x))})
-return newArray   
-   
+FUNCTION xSelectMany(aArray, bSelector)
+
+   LOCAL newArray := {}
+
+   aeval(aArray, {|x|aAddRange(newArray, eval(bSelector, x))})
+
+RETURN newArray
+
 **************************************************
-function aWhere(aArray, bPredicate)   
-   local newArray := {}, i
-   for i:=1 to len(aArray)
-      if(eval(bPredicate, aArray[i]))
+FUNCTION aWhere(aArray, bPredicate)
+
+   LOCAL newArray := {}
+   LOCAL i
+
+   FOR i := 1 TO len(aArray)
+      IF eval(bPredicate, aArray[i])
          aadd(newArray, aArray[i])
-      endif
-   next i
-return newArray   
-   
+      ENDIF
+   NEXT i
+
+RETURN newArray
+
 **************************************************
-function xFirst(aArray, bPredicate)
-   local i := ascan(aArray, bPredicate)
-   if(i==0)
-      return nil
-   endif
-return aArray[i]
-   
+FUNCTION xFirst(aArray, bPredicate)
+
+   LOCAL i := ascan(aArray, bPredicate)
+
+   IF i == 0
+      RETURN NIL
+   ENDIF
+
+RETURN aArray[i]
+
 **************************************************
-function xFirstOrDefault(aArray)
-   if(len(aArray) == 0)
-      return nil
-   endif
-return aArray[1]   
-      
+FUNCTION xFirstOrDefault(aArray)
+
+   IF len(aArray) == 0
+      RETURN NIL
+   ENDIF
+
+RETURN aArray[1]
+
 **************************************************
-function aDistinct(aArray, bSelector)   
-   local newArray := {}, ids := {}, i, id
-   for i:=1 to len(aArray)
-      if (!(id := eval(bSelector, aArray[i])) in ids)
+FUNCTION aDistinct(aArray, bSelector)
+
+   LOCAL newArray := {}
+   LOCAL ids := {}
+   LOCAL i
+   LOCAL id
+
+   FOR i := 1 TO len(aArray)
+      IF (!(id := eval(bSelector, aArray[i])) IN ids)
          aadd(ids, id)
          aadd(newArray, aArray[i])
-      endif
-   next i
-return newArray   
-   
+      ENDIF
+   NEXT i
+
+RETURN newArray
+
 **************************************************
 PROCEDURE aAddRange(aArray1, aArray2)
+
    LOCAL i
-   for i:=1 to len(aArray2)
-      aadd(aArray1, aArray2[i]) 
-   next i
+
+   FOR i := 1 TO len(aArray2)
+      aadd(aArray1, aArray2[i])
+   NEXT i
+
 RETURN
 
 **************************************************
 PROCEDURE aAddDistinct(aArray1, xValue, bSelector)
-   local id
-   if(bSelector == nil)
-      bSelector = {|x| x}
-   endif
+
+   LOCAL id
+
+   IF bSelector == NIL
+      bSelector = {|x|x}
+   ENDIF
    id := eval(bSelector, xValue)
-   if(ascan(aArray1, {|x| id == eval(bSelector, x)})==0)
+   IF ascan(aArray1, {|x|id == eval(bSelector, x)}) == 0
       aadd(aArray1, xValue)
-   endif
-return
-   
+   ENDIF
+
+RETURN
+
 **************************************************
 PROCEDURE aAddRangeDistinct(aArray1, aArray2, bSelector)
+
    LOCAL i
-   for i:=1 to len(aArray2)
+
+   FOR i := 1 TO len(aArray2)
       aAddDistinct(aArray1, aArray2[i], bSelector)
-   next i
-return   
+   NEXT i
+
+RETURN
 
 **************************************************
 PROCEDURE RemoveAll(aArray, bPredicate)
-   local i
-   for i:=1 to len(aArray)
-      if(eval(bPredicate, aArray[i]))
+
+   LOCAL i
+
+   FOR i := 1 TO len(aArray)
+      IF eval(bPredicate, aArray[i])
           adel(aArray, i, .T.)
           i--
-      endif
-   next i      
-return
+      ENDIF
+   NEXT i
+
+RETURN
 
 **************************************************
-function aReplaceNilBy(aArray, xValue)
-return aeval(aArray, {|x,n| if(x == nil, aArray[n] := xValue, )})   
+FUNCTION aReplaceNilBy(aArray, xValue)
+RETURN aeval(aArray, {|x, n|iif(x == NIL, aArray[n] := xValue, NIL)})
 
 **************************************************
-class Dictionary
+CLASS Dictionary
+
    HIDDEN:
-   data aInternArray init {}
-   
-   EXPORTED:
-   method aAdd(xKey, xValue, nMode)
+   DATA aInternArray INIT {}
 
    EXPORTED:
-   method xValue(xKey)
+   METHOD aAdd(xKey, xValue, nMode)
 
    EXPORTED:
-   method Remove(xKey)
+   METHOD xValue(xKey)
 
    EXPORTED:
-   method GetKeyValuePair(xKey)
-         
-   EXPORTED:
-   method At(nIndex)
-      
-   EXPORTED:
-   access nLength inline len(::aInternArray)  
-   
-   EXPORTED:
-   method SetValue(xKey, xValue)
+   METHOD Remove(xKey)
 
    EXPORTED:
-   method nIndexOfKey(xKey)
-   
+   METHOD GetKeyValuePair(xKey)
+
    EXPORTED:
-   method Clear()
-   
+   METHOD At(nIndex)
+
    EXPORTED:
-   method lContainsKey()   
-endclass
+   ACCESS nLength INLINE len(::aInternArray)
 
-//nMode = 1 : If the key exist, an exception is thrown
-//nMode = 2 : If the key exist, the method does nothing
-//nMode = 3 : If the key exist, the value is replaced
-method aAdd(xKey, xValue, nMode) class Dictionary
-   local lContainsKey := ::lContainsKey(xKey)
-   if (!nMode in {1,2,3})
-      nMode = 1
-   endif
-   do case
-      case (!lContainsKey)
-         aadd(::aInternArray, KeyValuePair():new(xKey, xValue))
-      case (nMode == 1 .and. lContainsKey)
-         Throw(ErrorNew(,,,,"The given key already exists in the dictionary"))
-      case (nMode == 3 .and. lContainsKey)
-         ::SetValue(xKey, xValue)
-   endcase
-return Nil
+   EXPORTED:
+   METHOD SetValue(xKey, xValue)
 
-method GetKeyValuePair(xKey)
-   local result := xFirst(::aInternArray, {|y| y:xKey == xKey})
-   if(result == nil)
-      Throw(ErrorNew(,,,,"The key " + cstr(xKey) + " was not found."))
-   endif      
-return result
+   EXPORTED:
+   METHOD nIndexOfKey(xKey)
 
-method At(nIndex)      
-return ::aInternArray[nIndex]
+   EXPORTED:
+   METHOD Clear()
 
-method xValue(xKey) class Dictionary
-return ::GetKeyValuePair(xKey):xValue
+   EXPORTED:
+   METHOD lContainsKey()
 
-method SetValue(xKey, xValue)
-   ::GetKeyValuePair(xKey):xValue = xValue
-return Nil   
-   
-method nIndexOfKey(xKey)
-return ascan(::aInternArray, {|x| x:xKey == xKey})
+ENDCLASS
 
-method Remove(xKey) class Dictionary
-   local nIndex := ::nIndexOfKey(xKey)
-   if(nIndex == 0)
-      Throw(ErrorNew(,,,,"The key " + cstr(xKey) + " was not found."))
-   endif
-return adel(::aInternArray, nIndex, .T.)
+// nMode = 1 : If the key exist, an exception is thrown
+// nMode = 2 : If the key exist, the method does nothing
+// nMode = 3 : If the key exist, the value is replaced
+METHOD aAdd(xKey, xValue, nMode) CLASS Dictionary
 
-method Clear() class Dictionary
-   ::aInternArray = {}
-return Nil
+   LOCAL lContainsKey := ::lContainsKey(xKey)
 
-method lContainsKey(xKey) class Dictionary
-return ::nIndexOfKey(xKey) > 0
+   IF (!nMode IN {1,2,3})
+      nMode := 1
+   ENDIF
+   DO CASE
+   CASE !lContainsKey
+      aadd(::aInternArray, KeyValuePair():new(xKey, xValue))
+   CASE nMode == 1 .AND. lContainsKey
+      Throw(ErrorNew(,,,, "The given key already exists in the dictionary"))
+   CASE nMode == 3 .AND. lContainsKey
+      ::SetValue(xKey, xValue)
+   ENDCASE
+
+RETURN NIL
+
+METHOD GetKeyValuePair(xKey)
+
+   LOCAL result := xFirst(::aInternArray, {|y|y:xKey == xKey})
+
+   IF result == NIL
+      Throw(ErrorNew(,,,, "The key " + cstr(xKey) + " was not found."))
+   ENDIF
+
+RETURN result
+
+METHOD At(nIndex)
+RETURN ::aInternArray[nIndex]
+
+METHOD xValue(xKey) CLASS Dictionary
+RETURN ::GetKeyValuePair(xKey):xValue
+
+METHOD SetValue(xKey, xValue)
+
+   ::GetKeyValuePair(xKey):xValue := xValue
+
+RETURN NIL
+
+METHOD nIndexOfKey(xKey)
+RETURN ascan(::aInternArray, {|x|x:xKey == xKey})
+
+METHOD Remove(xKey) CLASS Dictionary
+
+   LOCAL nIndex := ::nIndexOfKey(xKey)
+
+   IF nIndex == 0
+      Throw(ErrorNew(,,,, "The key " + cstr(xKey) + " was not found."))
+   ENDIF
+
+RETURN adel(::aInternArray, nIndex, .T.)
+
+METHOD Clear() CLASS Dictionary
+
+   ::aInternArray := {}
+
+RETURN NIL
+
+METHOD lContainsKey(xKey) CLASS Dictionary
+RETURN ::nIndexOfKey(xKey) > 0
 
 **************************************************
-class KeyValuePair
-   EXPORTED:
-   data xKey readonly
-   
-   data xValue
-   
-   method new(pKey, pValue)
-endclass
+CLASS KeyValuePair
 
-method new(pKey, pValue)
-   ::xKey = pKey
-   ::xValue = pValue
-return self
+   EXPORTED:
+   DATA xKey readonly
+
+   DATA xValue
+
+   METHOD new(pKey, pValue)
+
+ENDCLASS
+
+METHOD new(pKey, pValue)
+
+   ::xKey := pKey
+   ::xValue := pValue
+
+RETURN SELF
 
 **************************************************
-function ToDictionary(aArray, bKeySelector)
-   local result := Dictionary():new(), i
-   for i:=1 to len(aArray)
+FUNCTION ToDictionary(aArray, bKeySelector)
+
+   LOCAL result := Dictionary():new()
+   LOCAL i
+
+   FOR i := 1 TO len(aArray)
       result:aadd(eval(bKeySelector, aArray[i]), aArray[i])
-   next i
-return result
+   NEXT i
+
+RETURN result
 
 **************************************************
-function GetFileName(cPath)
+FUNCTION GetFileName(cPath)
+
    LOCAL aGroups
    local cRegEx := "^(?:(\w:(?:\\|/)?)((?:.+?(?:\\|/))*))?(\w+?)(\.\w+)?$"
-    if (HB_RegExMatch(cRegEx, cPath, .F.)) 
-       aGroups = HB_RegExAtX(cRegEx, cPath)
-      return aGroups[4,1]
-   else
-      Throw(ErrorNew(,,,, cPath + " is not a valid path"))      
-    endif
-RETURN Nil    
+
+   IF HB_RegExMatch(cRegEx, cPath, .F.)
+      aGroups := HB_RegExAtX(cRegEx, cPath)
+      RETURN aGroups[4,1]
+   ELSE
+      Throw(ErrorNew(,,,, cPath + " is not a valid path"))
+   ENDIF
+
+RETURN NIL
