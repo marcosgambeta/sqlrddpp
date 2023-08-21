@@ -12,7 +12,7 @@ cd source
 hbmk2 sqlrdd.hbp
 ```
 
-### Ubuntu - How to install and compile
+### Ubuntu - How to get and compile
 ```Batch
 sudo apt install bison
 sudo apt install unixodbc-dev
