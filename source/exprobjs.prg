@@ -44,468 +44,549 @@
 #include "hbclass.ch"
 
 **************************************************
-class Operator
-   HIDDEN:
-   data _cPattern
-   
-   EXPORTED:
-   data cName
-   data aSymbols
-      
-   EXPORTED:
-   access cPattern   
-   
-   EXPORTED:
-   method new(pName, pSymbols)
-endclass
+CLASS Operator
 
-method new(pName, pSymbols)
+   HIDDEN:
+   DATA _cPattern
+
+   EXPORTED:
+   DATA cName
+   DATA aSymbols
+
+   EXPORTED:
+   ACCESS cPattern
+
+   EXPORTED:
+   METHOD new(pName, pSymbols)
+
+ENDCLASS
+
+METHOD new(pName, pSymbols)
+
    ::cName := pName
    ::aSymbols := pSymbols
-return self
 
-method cPattern
-    if (::_cPattern == nil)
-       ::_cPattern = cJoin(::aSymbols, "|")
-       ::_cPattern = cPattern(::_cPattern)
-    endif
-return ::_cPattern
+RETURN SELF
+
+METHOD cPattern
+
+   IF ::_cPattern == NIL
+      ::_cPattern := cJoin(::aSymbols, "|")
+      ::_cPattern := cPattern(::_cPattern)
+   ENDIF
+
+RETURN ::_cPattern
 
 **************************************************
-class ComparisonOperator from Operator   
+CLASS ComparisonOperator FROM Operator
+
    EXPORTED:
-   method new(pName, pSymbols)
-endclass
+   METHOD new(pName, pSymbols)
 
-method new(pName, pSymbols)
+ENDCLASS
+
+METHOD new(pName, pSymbols)
+
    ::super:new(pName, pSymbols)
-return self
+
+RETURN SELF
 
 **************************************************
-class SerialOperator from Operator
+CLASS SerialOperator FROM Operator
+
    PROTECTED:
-   data _nPriority 
-   
-   EXPORTED:
-   access nPriority inline ::_nPriority
-      
-   EXPORTED:
-   method new(pName, pSymbols)
-endclass
+   DATA _nPriority
 
-method new(pName, pSymbols)
+   EXPORTED:
+   ACCESS nPriority INLINE ::_nPriority
+
+   EXPORTED:
+   METHOD new(pName, pSymbols)
+
+ENDCLASS
+
+METHOD new(pName, pSymbols)
+
    ::super:new(pName, pSymbols)
-return self
+
+RETURN SELF
 
 **************************************************
-class LogicalOperator from SerialOperator
-   EXPORTED:
-   method new(pName, pSymbols)
-endclass
+CLASS LogicalOperator FROM SerialOperator
 
-method new(pName, pSymbols)
+   EXPORTED:
+   METHOD new(pName, pSymbols)
+
+ENDCLASS
+
+METHOD new(pName, pSymbols)
+
    ::super:new(pName, pSymbols)
-    if (pName == "and")
-        ::_nPriority = 1
-    elseif (pName == "or")
-        ::_nPriority = 0
-      endif   
-return self
+   IF pName == "and"
+      ::_nPriority := 1
+   ELSEIF pName == "or"
+      ::_nPriority := 0
+   ENDIF
+
+RETURN SELF
 
 **************************************************
-class ArithmeticOperator from SerialOperator   
+CLASS ArithmeticOperator FROM SerialOperator
+
    EXPORTED:
-   method new(pName, pSymbols)
-endclass   
-      
-method new(pName, pSymbols)
+   METHOD new(pName, pSymbols)
+
+ENDCLASS
+
+METHOD new(pName, pSymbols)
+
    ::super:new(pName, pSymbols)
-    if (pName == "exponent")
-        ::_nPriority = 2
-    elseif (pName == "multiplied" .or. pName == "divided")
-        ::_nPriority = 1
-    elseif (pName == "plus" .or. pName == "minus")
-        ::_nPriority = 0
-    endif
-return self
+   IF pName == "exponent"
+      ::_nPriority := 2
+   ELSEIF pName == "multiplied" .OR. pName == "divided"
+      ::_nPriority := 1
+   ELSEIF pName == "plus" .OR. pName == "minus"
+      ::_nPriority := 0
+   ENDIF
+
+RETURN SELF
 
 **************************************************
-class AlgebraSet
-   EXPORTED:
-   data oOperator readonly
-   
-   EXPORTED:
-   data cType readonly
+CLASS AlgebraSet
 
    EXPORTED:
-   data cIdentityElement readonly
+   DATA oOperator READONLY
 
    EXPORTED:
-   data cAbsorbentElement readonly
-      
-   EXPORTED:
-   method new(pOperator, pType)
-endclass
+   DATA cType READONLY
 
-method new(pOperator, pType)
-   ::oOperator = pOperator   
-   ::cType = pType
-   
-   do case
-      case (::oOperator:cName in {"plus", "minus"})
-         if(::cType == "C")
-            ::cIdentityElement = "''"
-         elseif(::cType == "N")
-            ::cIdentityElement = "0"
-         elseif(::cType == "D")
-            ::cIdentityElement = "0"
-         endif      
-      case (::oOperator:cName in {"multiplied", "divided", "exponent"})
-         ::cIdentityElement = "1"
-         ::cAbsorbentElement = "0"
-         ::cType = "N"
-      case (::oOperator:cName == "and")
-         ::cIdentityElement = ".T."
-         ::cAbsorbentElement = ".F."
-         ::cType = "L"
-      case (::oOperator:cName == "or")
-         ::cIdentityElement = ".F."
-         ::cAbsorbentElement = ".T."
-         ::cType = "L"
-   endcase
-return self
+   EXPORTED:
+   DATA cIdentityElement READONLY
+
+   EXPORTED:
+   DATA cAbsorbentElement READONLY
+
+   EXPORTED:
+   METHOD new(pOperator, pType)
+
+ENDCLASS
+
+METHOD new(pOperator, pType)
+
+   ::oOperator := pOperator
+   ::cType := pType
+
+   DO CASE
+   CASE (::oOperator:cName IN {"plus", "minus"})
+      IF ::cType == "C"
+         ::cIdentityElement := "''"
+      ELSEIF ::cType == "N"
+         ::cIdentityElement := "0"
+      ELSEIF ::cType == "D"
+         ::cIdentityElement := "0"
+      ENDIF
+   CASE (::oOperator:cName IN {"multiplied", "divided", "exponent"})
+      ::cIdentityElement := "1"
+      ::cAbsorbentElement := "0"
+      ::cType := "N"
+   CASE ::oOperator:cName == "and"
+      ::cIdentityElement := ".T."
+      ::cAbsorbentElement := ".F."
+      ::cType := "L"
+   CASE ::oOperator:cName == "or"
+      ::cIdentityElement := ".F."
+      ::cAbsorbentElement := ".T."
+      ::cType := "L"
+   ENDCASE
+
+RETURN SELF
 
 **************************************************
-class ISerialComposition //just a dummy class that is used as interface
-endclass
+CLASS ISerialComposition //just a dummy class that is used as interface
+ENDCLASS
 
 **************************************************
-class ExpressionBase
+CLASS ExpressionBase
+
    HIDDEN:
-   data _oWorkArea
+   DATA _oWorkArea
 
    EXPORTED:
-   data lSimplified init .F.
-   
-   EXPORTED:
-   data lAssessable
-   
-   EXPORTED:
-   data lIsSimple init .F.   
-   
-   EXPORTED:
-   data oClipperExpression
-   
-   EXPORTED:
-   data cContext
-   
-   EXPORTED:
-   method GetType() virtual   
-   
-   EXPORTED:
-   access oWorkArea
-      
-   EXPORTED:
-   method new(pContext, pClipperString)
-endclass
+   DATA lSimplified INIT .F.
 
-method new(pContext, pClipperString)
-   ::oClipperExpression = ClipperExpression():new(pContext, pClipperString) 
-   ::cContext = upper(pContext)
-return self
+   EXPORTED:
+   DATA lAssessable
 
-method oWorkArea() class ExpressionBase
-   if(::_oWorkArea == nil)
-      ::_oWorkArea = oGetWorkarea(::cContext)
-   endif
-return ::_oWorkArea
+   EXPORTED:
+   DATA lIsSimple INIT .F.
+
+   EXPORTED:
+   DATA oClipperExpression
+
+   EXPORTED:
+   DATA cContext
+
+   EXPORTED:
+   METHOD GetType() VIRTUAL
+
+   EXPORTED:
+   ACCESS oWorkArea
+
+   EXPORTED:
+   METHOD new(pContext, pClipperString)
+
+ENDCLASS
+
+METHOD new(pContext, pClipperString)
+
+   ::oClipperExpression := ClipperExpression():new(pContext, pClipperString)
+   ::cContext := upper(pContext)
+
+RETURN SELF
+
+METHOD oWorkArea() CLASS ExpressionBase
+
+   IF ::_oWorkArea == NIL
+      ::_oWorkArea := oGetWorkarea(::cContext)
+   ENDIF
+
+RETURN ::_oWorkArea
 
 **************************************************
-class ConditionBase from ExpressionBase
+CLASS ConditionBase FROM ExpressionBase
+
    PROTECTED:
-   data lDenied_ init .F. //bug with _lDenied, so I use lDenied_
+   DATA lDenied_ INIT .F. //bug with _lDenied, so I use lDenied_
 
    EXPORTED:
-   access lDenied 
-   assign lDenied(value) inline ::lDenied(value)
+   ACCESS lDenied
+   ASSIGN lDenied(value) INLINE ::lDenied(value)
 
    EXPORTED:
-   method GetType() inline "L"
+   METHOD GetType() INLINE "L"
 
    EXPORTED:
-   method new(pContext, pClipperString) inline ::super:new(pContext, pClipperString)
+   METHOD new(pContext, pClipperString) INLINE ::super:new(pContext, pClipperString)
 
    EXPORTED:
-   method new2(pContext, pClipperString, pDenied)            
-endclass
+   METHOD new2(pContext, pClipperString, pDenied)
 
-method new2(pContext, pClipperString, pDenied)
-   ::lDenied_ = pDenied
-return ::super:new(pContext, pClipperString)      
-   
-method lDenied(value) class ConditionBase
-   if(value != nil .and. value != ::lDenied_)
-      ::lDenied_ = value
-      ::oClipperExpression = ClipperExpression():new(::cContext, "!(" + ::oClipperExpression:cValue + ")")
-   endif
-return ::lDenied_
+ENDCLASS
+
+METHOD new2(pContext, pClipperString, pDenied)
+
+   ::lDenied_ := pDenied
+
+RETURN ::super:new(pContext, pClipperString)
+
+METHOD lDenied(value) CLASS ConditionBase
+
+   IF value != NIL .AND. value != ::lDenied_
+      ::lDenied_ := value
+      ::oClipperExpression := ClipperExpression():new(::cContext, "!(" + ::oClipperExpression:cValue + ")")
+   ENDIF
+
+RETURN ::lDenied_
 
 **************************************************
-class BooleanExpression from ConditionBase
-   EXPORTED:
-   data oExpression
+CLASS BooleanExpression FROM ConditionBase
 
    EXPORTED:
-   access Value inline iif(::lDenied_, iif(upper(::oExpression:Value) == ".T.", ".F.", ".T."), ::oExpression:Value)
-   
-   EXPORTED:
-   access lDenied 
-   assign lDenied(value) inline ::lDenied(value)
-   
-   EXPORTED:
-   method new(pContext, pClipperString, pExpr)
-      
-   EXPORTED:
-   method new2(pContext, pClipperString, pDenied, pExpr)    
-endclass
+   DATA oExpression
 
-method new2(pContext, pClipperString, pDenied, pExpr)
-   ::lDenied_ = pDenied
-return ::new(pContext, pClipperString, pExpr)
+   EXPORTED:
+   ACCESS Value INLINE iif(::lDenied_, iif(upper(::oExpression:Value) == ".T.", ".F.", ".T."), ::oExpression:Value)
 
-method new(pContext, pClipperString, pExpr)
+   EXPORTED:
+   ACCESS lDenied
+   ASSIGN lDenied(value) INLINE ::lDenied(value)
+
+   EXPORTED:
+   METHOD new(pContext, pClipperString, pExpr)
+
+   EXPORTED:
+   METHOD new2(pContext, pClipperString, pDenied, pExpr)
+
+ENDCLASS
+
+METHOD new2(pContext, pClipperString, pDenied, pExpr)
+
+   ::lDenied_ := pDenied
+
+RETURN ::new(pContext, pClipperString, pExpr)
+
+METHOD new(pContext, pClipperString, pExpr)
+
    ::super:new(pContext, pClipperString)
    ::oExpression := pExpr
-   ::lIsSimple = pExpr:lIsSimple
-   ::lSimplified = pExpr:lSimplified 
-return self
+   ::lIsSimple := pExpr:lIsSimple
+   ::lSimplified := pExpr:lSimplified
 
-//not very usefull, but cleaner
-method lDenied(value) class BooleanExpression
-   if(value != nil .and. value != ::lDenied_ .and. ::lIsSimple .and. ::oExpression:ValueType = "value")
-      ::lDenied_ = value
-      ::oClipperExpression = ClipperExpression():new(::cContext, ::Value)
-      return ::lDenied_
-   endif
-return ::super:lDenied(value)
+RETURN SELF
+
+// not very usefull, but cleaner
+METHOD lDenied(value) CLASS BooleanExpression
+
+   IF value != NIL .AND. value != ::lDenied_ .AND. ::lIsSimple .AND. ::oExpression:ValueType = "value"
+      ::lDenied_ := value
+      ::oClipperExpression := ClipperExpression():new(::cContext, ::Value)
+      RETURN ::lDenied_
+   ENDIF
+
+RETURN ::super:lDenied(value)
 
 **************************************************
-class ComposedConditionBase from ConditionBase
-   EXPORTED:
-   data oOperand1
-   data oOperand2
-   data oOperator
-   
-   EXPORTED:
-   method new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
-      
-   EXPORTED:
-   method new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2)    
-endclass
+CLASS ComposedConditionBase FROM ConditionBase
 
-method new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2) CLASS ComposedConditionBase
+   EXPORTED:
+   DATA oOperand1
+   DATA oOperand2
+   DATA oOperator
+
+   EXPORTED:
+   METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
+
+   EXPORTED:
+   METHOD new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2)
+
+ENDCLASS
+
+METHOD new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2) CLASS ComposedConditionBase
+
    ::lDenied_ = pDenied
-return ::new(pContext, pClipperString, /*pExpr,*/ pOperand1, pOperator, pOperand2)
 
-method new(pContext, pClipperString, pOperand1, pOperator, pOperand2) CLASS ComposedConditionBase
+RETURN ::new(pContext, pClipperString, /*pExpr,*/ pOperand1, pOperator, pOperand2)
+
+METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2) CLASS ComposedConditionBase
+
    ::super:new(pContext, pClipperString)
    ::oOperand1 := pOperand1
    ::oOperand2 := pOperand2
    ::oOperator := pOperator
-return self
+
+RETURN SELF
 
 **************************************************
-class Comparison from ComposedConditionBase
-endclass
+CLASS Comparison FROM ComposedConditionBase
+ENDCLASS
 
 **************************************************
-class ComposedCondition from ComposedConditionBase 
-endclass
+CLASS ComposedCondition FROM ComposedConditionBase
+ENDCLASS
 
 **************************************************
-class Expression from ExpressionBase
-   EXPORTED:
-   method GetType() 
-   
-   EXPORTED:
-   method new(pContext, pClipperString) inline ::super:new(pContext, pClipperString)
-endclass
+CLASS Expression FROM ExpressionBase
 
-method GetType() class Expression
-return ::oClipperExpression:cType
+   EXPORTED:
+   METHOD GetType()
+
+   EXPORTED:
+   METHOD new(pContext, pClipperString) inline ::super:new(pContext, pClipperString)
+
+ENDCLASS
+
+METHOD GetType() CLASS Expression
+RETURN ::oClipperExpression:cType
 
 **************************************************
-class ValueExpression from Expression
-   EXPORTED:
-   data Value
+CLASS ValueExpression FROM Expression
 
    EXPORTED:
-   data ValueType
-   
+   DATA Value
+
+   EXPORTED:
+   DATA ValueType
+
    HIDDEN:
-   data cType
-   
-   EXPORTED:
-   method GetType()
-   
-   EXPORTED:
-   access oExpression inline self //usefull to implement the same interface than ValueExpression
+   DATA cType
 
    EXPORTED:
-   method new(pContext, pValue)   
-endclass
+   METHOD GetType()
 
-method new(pContext, pValue)
+   EXPORTED:
+   ACCESS oExpression INLINE self //usefull to implement the same interface than ValueExpression
+
+   EXPORTED:
+   METHOD new(pContext, pValue)
+
+ENDCLASS
+
+METHOD new(pContext, pValue)
+
    ::super:new(pContext, alltrim(pValue))
-   
-   if(aScan(::oWorkArea:aNames, {|x| x == upper(pValue)} ) > 0)
+
+   IF aScan(::oWorkArea:aNames, {|x|x == upper(pValue)}) > 0
       ::ValueType := "field"
-   elseif ((pValue like "\w+") .and. (!pValue like "\d+") .and. !lower(pValue) == "nil")
+   ELSEIF (pValue LIKE "\w+") .AND. (!pValue LIKE "\d+") .AND. !lower(pValue) == "nil"
       ::ValueType := "variable"
-   else
+   ELSE
       ::ValueType := "value"
-      ::lSimplified = .T.
-   endif
+      ::lSimplified := .T.
+   ENDIF
 
    ::Value := ::oClipperExpression:cValue
-   ::lIsSimple = .T.
-return self
+   ::lIsSimple := .T.
 
-//method redefined because it's faster than evaluate the expression.
-method GetType() class ValueExpression
-   if(::cType == nil)
-      if (::ValueType == "field")
-         ::cType = ::oWorkArea:GetFieldByName(::Value):cType
-      elseif(::ValueType == "variable")
-         ::cType = ::super:GetType()
-      elseif(::ValueType == "value")
-         if (::Value like "\d+")
-            ::cType = "N"
-         elseif (::Value like "'.*'")
-            ::cType = "C"
-         elseif (upper(::Value) in {".T.", ".F."})
-            ::cType = "L"
-         endif
-      else
+RETURN SELF
+
+// method redefined because it's faster than evaluate the expression.
+METHOD GetType() CLASS ValueExpression
+
+   IF ::cType == NIL
+      IF ::ValueType == "field"
+         ::cType := ::oWorkArea:GetFieldByName(::Value):cType
+      ELSEIF ::ValueType == "variable"
+         ::cType := ::super:GetType()
+      ELSEIF ::ValueType == "value"
+         IF (::Value LIKE "\d+")
+            ::cType := "N"
+         ELSEIF (::Value LIKE "'.*'")
+            ::cType := "C"
+         ELSEIF (upper(::Value) IN {".T.", ".F."})
+            ::cType := "L"
+         ENDIF
+      ELSE
          ::cType = "U"
-      endif
-   endif
-return ::cType
-      
-**************************************************
-class FunctionExpression from Expression
-   EXPORTED:
-   data cFunctionName
-   data aParameters
-   
-   EXPORTED:
-   method new(pContext, pClipperString, pFunctionName, aParameters)
-endclass
+      ENDIF
+   ENDIF
 
-method new(pContext, pClipperString, pFunctionName, aParameters)
+RETURN ::cType
+
+**************************************************
+CLASS FunctionExpression FROM Expression
+
+   EXPORTED:
+   DATA cFunctionName
+   DATA aParameters
+
+   EXPORTED:
+   METHOD new(pContext, pClipperString, pFunctionName, aParameters)
+
+ENDCLASS
+
+METHOD new(pContext, pClipperString, pFunctionName, aParameters)
+
    ::super:new(pContext, pClipperString)
    ::cFunctionName := lower(pFunctionName)
    ::aParameters := aParameters
-return self
+
+RETURN SELF
 
 **************************************************
-class Parameter
-   EXPORTED:
-   data lIsByRef
-   data oExpression   
-   
-   EXPORTED:
-   method new(pExpression, pIsByRef)
-endclass
+CLASS Parameter
 
-method new(pExpression, pIsByRef)
+   EXPORTED:
+   DATA lIsByRef
+   DATA oExpression
+
+   EXPORTED:
+   METHOD new(pExpression, pIsByRef)
+
+ENDCLASS
+
+METHOD new(pExpression, pIsByRef)
+
    ::oExpression := pExpression
    ::lIsByRef := pIsByRef
-return self
+
+RETURN SELF
 
 **************************************************
-class ComposedExpression from Expression
-   EXPORTED:
-   data oOperand1
-   data oOperand2
-   data oOperator
-   
-   HIDDEN:
-   data cType
-   
-   EXPORTED:
-   method GetType() 
-   
-   EXPORTED:
-   method new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
-endclass
+CLASS ComposedExpression FROM Expression
 
-method new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
+   EXPORTED:
+   DATA oOperand1
+   DATA oOperand2
+   DATA oOperator
+
+   HIDDEN:
+   DATA cType
+
+   EXPORTED:
+   METHOD GetType()
+
+   EXPORTED:
+   METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
+
+ENDCLASS
+
+METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
+
    ::super:new(pContext, pClipperString)
    ::oOperand1 := pOperand1
    ::oOperand2 := pOperand2
    ::oOperator := pOperator
-return self
 
-method GetType()
-   local cOperand1Type   
-   if(::cType == nil)
+RETURN SELF
+
+METHOD GetType()
+
+   LOCAL cOperand1Type
+
+   IF ::cType == NIL
       cOperand1Type := ::oOperand1:GetType()
-      if (::oOperator:cName in {"plus", "minus"} .and. cOperand1Type == "N") //date + numeric
-         ::cType = ::oOperand2:GetType()
-      else
-         ::cType = cOperand1Type
-      endif
-   endif
-return ::cType
+      IF (::oOperator:cName IN {"plus", "minus"}) .AND. cOperand1Type == "N" //date + numeric
+         ::cType := ::oOperand2:GetType()
+      ELSE
+         ::cType := cOperand1Type
+      ENDIF
+   ENDIF
+
+RETURN ::cType
 
 **************************************************
-procedure Visualize(oExpression) //for debuging
-   local i
+PROCEDURE Visualize(oExpression) // for debuging
+
+   LOCAL i
+
    alert(oExpression:className() + " - workarea: " + oExpression:cContext)
-   if(oExpression:isKindOf("ConditionBase"))
-      if(oExpression:lDenied)
+   IF oExpression:isKindOf("ConditionBase")
+      IF oExpression:lDenied
          alert("not")
-      endif
-   endif
-   if(oExpression:isKindOf("BooleanExpression"))
+      ENDIF
+   ENDIF
+   IF oExpression:isKindOf("BooleanExpression")
       Visualize(oExpression:oExpression)
-   elseif(oExpression:isKindOf("Comparison") .or. oExpression:isKindOf("ComposedCondition") .or. oExpression:isKindOf("ComposedExpression"))
+   ELSEIF oExpression:isKindOf("Comparison") .OR. oExpression:isKindOf("ComposedCondition") .OR. oExpression:isKindOf("ComposedExpression")
       Visualize(oExpression:oOperand1)
       alert(oExpression:oOperator:cName)
-      Visualize(oExpression:oOperand2)      
-   elseif(oExpression:isKindOf("ValueExpression"))
+      Visualize(oExpression:oOperand2)
+   ELSEIF oExpression:isKindOf("ValueExpression")
       alert(oExpression:Value)
-   elseif(oExpression:isKindOf("FunctionExpression"))
+   ELSEIF oExpression:isKindOf("FunctionExpression")
       alert(oExpression:cFunctionName)
       alert(cstr(len(oExpression:aParameters)) + " parameter(s) :")
-      for i:=1 to len(oExpression:aParameters)
+      FOR i := 1 TO len(oExpression:aParameters)
          Visualize(oExpression:aParameters[i]:oExpression)
-      next i      
-   endif
-return
+      NEXT i
+   ENDIF
 
-   
+RETURN
+
 **************************************************
+FUNCTION CollectAliases(oExpression, aAliases)
 
-function CollectAliases(oExpression, aAliases)
-   local i
-   aAddDistinct(aAliases, oExpression:cContext, {|x| lower(x)})
-   if(oExpression:isKindOf("BooleanExpression"))
+   LOCAL i
+
+   aAddDistinct(aAliases, oExpression:cContext, {|x|lower(x)})
+   IF oExpression:isKindOf("BooleanExpression")
       CollectAliases(oExpression:oExpression, aAliases)
-   elseif(oExpression:isKindOf("Comparison") .or. oExpression:isKindOf("ComposedCondition") .or. oExpression:isKindOf("ComposedExpression"))
+   ELSEIF oExpression:isKindOf("Comparison") .or. oExpression:isKindOf("ComposedCondition") .or. oExpression:isKindOf("ComposedExpression")
       CollectAliases(oExpression:oOperand1, aAliases)
-      CollectAliases(oExpression:oOperand2, aAliases)      
-   elseif(oExpression:isKindOf("FunctionExpression"))
-      for i:=1 to len(oExpression:aParameters)
+      CollectAliases(oExpression:oOperand2, aAliases)
+   ELSEIF oExpression:isKindOf("FunctionExpression")
+      FOR i := 1 TO len(oExpression:aParameters)
          CollectAliases(oExpression:aParameters[i]:oExpression, aAliases)
-      next i      
-   endif
-return aAliases   
+      NEXT i
+   ENDIF
+
+RETURN aAliases
 
 **************************************************
-function ConvertToCondition(oExpression)
-   if(!oExpression:isKindOf("ComposedExpression") .and. oExpression:GetType() == "L")
-      return BooleanExpression():new(oExpression:cContext, oExpression:oClipperExpression:cValue, oExpression)
-   endif
-return nil
+FUNCTION ConvertToCondition(oExpression)
+
+   IF !oExpression:isKindOf("ComposedExpression") .AND. oExpression:GetType() == "L"
+      RETURN BooleanExpression():new(oExpression:cContext, oExpression:oClipperExpression:cValue, oExpression)
+   ENDIF
+
+RETURN NIL
