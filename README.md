@@ -22,7 +22,7 @@ hbmk2 sqlrdd.hbp
 ```Batch
 sudo apt install unixodbc-dev
 git clone https://github.com/marcosgambeta/sqlrddpp
-cd sqlrdd
+cd sqlrddpp
 hbmk2 sqlrddpp.hbp
 ```
 
@@ -31,7 +31,7 @@ hbmk2 sqlrddpp.hbp
 sudo apt install bison
 sudo apt install unixodbc-dev
 git clone https://github.com/marcosgambeta/sqlrddpp
-cd sqlrdd
+cd sqlrddpp
 cd source
 hbmk2 sqlrdd.hbp
 ```
