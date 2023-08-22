@@ -427,7 +427,7 @@ typedef SQLEXORAAREA * LPSQLEXORAAREA;
 /* prototypes */
 
 int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact );
-void odbcErrorDiag( OCI_Statement  * hStmt, char * routine, char * szSql, int line );
+void odbcErrorDiag( OCI_Statement  * hStmt, const char * routine, const char * szSql, int line );
 // void odbcErrorDiagRTE( OCI_Statement  * hStmt, char * routine, char * szSql, int res, int line, char * module );
 void OraErrorDiagRTE( OCI_Statement *hStmt, char * routine, char * szSql, int res, int line, char * module );
 void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, LONG lLenBuff, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate );

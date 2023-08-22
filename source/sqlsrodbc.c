@@ -1064,7 +1064,7 @@ HB_FUNC( SR_MORERESULTS ) // hEnv, hDbc
 
 //-----------------------------------------------------------------------------//
 
-void odbcErrorDiag( SQLHSTMT hStmt, char * routine, char * szSql, int line )
+void odbcErrorDiag( SQLHSTMT hStmt, const char * routine, const char * szSql, int line )
 {
    SQLTCHAR       SqlState[6]={0}, Msg[2048]={0};
    SQLINTEGER    NativeError = 0;

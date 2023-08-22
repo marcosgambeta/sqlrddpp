@@ -286,7 +286,7 @@ typedef SQLEXAREA * LPSQLEXAREA;
 /* prototypes */
 
 int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact );
-void odbcErrorDiag( HSTMT hStmt, char * routine, char * szSql, int line );
+void odbcErrorDiag( HSTMT hStmt, const char * routine, const char * szSql, int line );
 void odbcErrorDiagRTE( HSTMT hStmt, const char * routine, const char * szSql, SQLRETURN res, int line, const char * module );
 void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenBuff, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate );
 char * QuoteTrimEscapeString( char * FromBuffer, ULONG iSize, int idatabase, BOOL bRTrim, ULONG * iSizeOut );
