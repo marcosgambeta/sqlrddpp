@@ -254,14 +254,14 @@ void setResultSetLimit( SQLEXAREAP thiswa, int iRows )
 
 /*------------------------------------------------------------------------*/
 
-static LONG getMessageNL( PHB_ITEM obj, char * message )
+static LONG getMessageNL( PHB_ITEM obj, const char * message )
 {
    hb_objSendMsg( obj, message, 0 );
    return ( hb_itemGetNL( hb_stackReturnItem() ) );
 
 }
 
-static void * getMessagePtr( PHB_ITEM obj, char * message )
+static void * getMessagePtr( PHB_ITEM obj, const char * message )
 {
 
    hb_objSendMsg( obj, message, 0 );
@@ -270,7 +270,7 @@ static void * getMessagePtr( PHB_ITEM obj, char * message )
 
 /*------------------------------------------------------------------------*/
 
-static LONG getMessageNI( PHB_ITEM obj, char * message )
+static LONG getMessageNI( PHB_ITEM obj, const char * message )
 {
    hb_objSendMsg( obj, message, 0 );
    return ( hb_itemGetNI( hb_stackReturnItem() ) );
@@ -278,7 +278,7 @@ static LONG getMessageNI( PHB_ITEM obj, char * message )
 
 /*------------------------------------------------------------------------*/
 
-static char * getMessageC( PHB_ITEM obj, char * message )
+static char * getMessageC( PHB_ITEM obj, const char * message )
 {
    hb_objSendMsg( obj, message, 0 );
    return ( hb_itemGetC( hb_stackReturnItem() ) );
@@ -286,7 +286,7 @@ static char * getMessageC( PHB_ITEM obj, char * message )
 
 /*------------------------------------------------------------------------*/
 
-static BOOL getMessageL( PHB_ITEM obj, char * message )
+static BOOL getMessageL( PHB_ITEM obj, const char * message )
 {
    hb_objSendMsg( obj, message, 0 );
    return ( hb_itemGetL( hb_stackReturnItem() ) );
@@ -294,7 +294,7 @@ static BOOL getMessageL( PHB_ITEM obj, char * message )
 
 /*------------------------------------------------------------------------*/
 
-static PHB_ITEM getMessageItem( PHB_ITEM obj, char * message )
+static PHB_ITEM getMessageItem( PHB_ITEM obj, const char * message )
 {
    hb_objSendMsg( obj, message, 0 );
    return( hb_itemNew( hb_stackReturnItem() ) );
@@ -1425,7 +1425,7 @@ HB_ERRCODE getWorkareaParams( SQLEXAREAP thiswa )
       }
       thiswa->bConnVerified = TRUE;
    }
-      thiswa->bIsSelect        = getMessageL( thiswa->oWorkArea, "LTABLEISSELECT" ); 
+      thiswa->bIsSelect        = getMessageL( thiswa->oWorkArea, "LTABLEISSELECT" );
     //  if  (!thiswa->hStmtInsert)
      //SQLAllocHandle( SQL_HANDLE_STMT, (HDBC) thiswa->hDbc, &(thiswa->hStmtInsert) );
       
