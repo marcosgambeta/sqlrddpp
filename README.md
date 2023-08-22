@@ -36,6 +36,11 @@ cd source
 hbmk2 sqlrdd.hbp
 ```
 
+### Compiling with SQLRDD and MySQL
+```Batch
+hbmk2 <filename> sqlrddpp.hbc -llibmysql
+```
+
 ## Links
 
 SQLRDD for xHarbour  
