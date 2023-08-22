@@ -95,9 +95,9 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_PGS
    DEFAULT lTranslate := .T.
 
    If aArray == NIL
-      aArray := Array(len( aFields ))
-   ElseIf len( aArray ) != len( aFields )
-      aSize( aArray, len( aFields ) )
+      aArray := Array(len(aFields))
+   ElseIf len(aArray) != len(aFields)
+      aSize( aArray, len(aFields) )
    EndIf
 
    If ::aCurrLine == NIL
@@ -106,7 +106,7 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_PGS
       Return aArray
    EndIf
 
-   For i = 1 to len( aArray )
+   For i = 1 to len(aArray)
       aArray[i] := ::aCurrLine[ i ]
    Next
 
@@ -118,7 +118,7 @@ METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_PGS
 
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
-      ::aCurrLine := array( LEN( aFields ) )
+      ::aCurrLine := array(LEN(aFields))
       PGSLINEPROCESSED( ::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine )
    EndIf
 
@@ -167,9 +167,9 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
 
    If lReSelect
       If !Empty( cCommand )
-         nRet := ::Execute( cCommand + if(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
+         nRet := ::Execute( cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
       Else
-         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + if(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F. )
+         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F. )
       EndIf
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
          return nil
@@ -188,11 +188,11 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
    If (!Empty( cTable )) .and. empty( cCommand )
       cTbl := lower( cTable )
       If "." $ cTbl
-         cOwner := SubStr( cTbl, 1, at(".",cTbl)-1 )
-         cTbl   := SubStr( cTbl, at(".",cTbl)+1 )
+         cOwner := SubStr(cTbl, 1, at(".", cTbl) - 1)
+         cTbl   := SubStr(cTbl, at(".", cTbl) + 1)
       EndIf
       If left( cTbl, 1 ) == ["]     // "
-         cTbl := SubStr( cTbl, 2, len(cTbl)-2 )
+         cTbl := SubStr(cTbl, 2, len(cTbl) - 2)
       EndIf
       aFields := PGSTableAttr( ::hDbc, cTbl, cOwner )
    Else
@@ -212,10 +212,10 @@ return aFields
 METHOD LastError() CLASS SR_PGS
 
    If ::hStmt != NIL
-      Return "(" + alltrim(str( ::nRetCode ) ) + ") " + PGSResStatus( ::hDbc ) + " - " + PGSErrMsg( ::hDbc )
+      Return "(" + alltrim(str(::nRetCode)) + ") " + PGSResStatus(::hDbc) + " - " + PGSErrMsg(::hDbc)
    EndIf
 
-Return "(" + alltrim(str( ::nRetCode ) ) + ") " + PGSErrMsg( ::hDbc )
+Return "(" + alltrim(str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
 
 /*------------------------------------------------------------------------*/
 
@@ -302,7 +302,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    
    ::exec( "select pg_backend_pid()", .T., .T., @aRet )
 
-   If len( aRet ) > 0
+   If len(aRet) > 0
       ::uSid := val(str(aRet[1,1],8,0))
    EndIf
 

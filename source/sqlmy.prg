@@ -101,9 +101,9 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_MYSQL
    DEFAULT lTranslate := .T.
 
    If aArray == NIL
-      aArray := Array(len( aFields ))
-   ElseIf len( aArray ) < len( aFields )
-      aSize( aArray, len( aFields ) )
+      aArray := Array(len(aFields))
+   ElseIf len(aArray) < len(aFields)
+      aSize( aArray, len(aFields) )
    EndIf
 
    If ::aCurrLine == NIL
@@ -112,7 +112,7 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_MYSQL
       Return aArray
    EndIf
 
-   For i = 1 to len( aArray )
+   For i = 1 to len(aArray)
       aArray[i] := ::aCurrLine[ i ]
    Next
 
@@ -123,7 +123,7 @@ Return aArray
 METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_MYSQL
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
-      ::aCurrLine := array( LEN( aFields ) )
+      ::aCurrLine := array(LEN(aFields))
       MYSLINEPROCESSED( ::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine )
    EndIf
 
@@ -172,9 +172,9 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
 
    If lReSelect
       If !Empty( cCommand )
-         nRet := ::Execute( cCommand + if(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
+         nRet := ::Execute( cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
       Else
-         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + if(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F. )
+         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F. )
       EndIf
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
          return nil
@@ -213,10 +213,10 @@ return aFields
 METHOD LastError() CLASS SR_MYSQL
 
    If ::hStmt != NIL
-      Return "(" + alltrim(str( ::nRetCode ) ) + ") " + MYSResStatus( ::hDbc ) + " - " + MYSErrMsg( ::hDbc )
+      Return "(" + alltrim(str(::nRetCode)) + ") " + MYSResStatus( ::hDbc ) + " - " + MYSErrMsg( ::hDbc )
    EndIf
 
-Return "(" + alltrim(str( ::nRetCode ) ) + ") " + MYSErrMsg( ::hDbc )
+Return "(" + alltrim(str(::nRetCode)) + ") " + MYSErrMsg( ::hDbc )
 
 /*------------------------------------------------------------------------*/
 
@@ -257,7 +257,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
       ::hStmt     = NIL
       ::hDbc      = hDbc
       cTargetDB   = "MySql Native"
-      cSystemVers = alltrim( str( MYSVERS( hDbc ) ) )
+      cSystemVers = alltrim(str(MYSVERS(hDbc)))
       nVersionp  := MYSVERS( hDbc )     
 
    EndIf

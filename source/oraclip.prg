@@ -17,8 +17,8 @@ static aDestroyFiles :={}
 function OraExecSql( n,c,adata)
 Local cbind,i
 if aData != nil .and. valtype(adata) == "A"
-for i:= len( aData )  to  1 step -1
-      cBind := ":"+alltrim(str( i))
+for i:= len(aData)  to  1 step -1
+      cBind := ":"+alltrim(str(i))
       c := strtran( c,cBind,   sr_cdbvalue(adata[i]) )
 next
 endif
@@ -145,8 +145,8 @@ if adata == nil
    
 endif
 
-for i:=1 to len( aData ) 
-      cBind := ":"+alltrim(str( i))
+for i:=1 to len(aData) 
+      cBind := ":"+alltrim(str(i))
       cSql := strtran( cSql,cBind,   sr_cdbvalue(adata[i]) )
 next
 *    nError:= sr_getconnection():exec(csql,,.t.,@aret)
@@ -254,8 +254,8 @@ if pCount() == 3
    cSql +=  " where " +  cwhere 
 elseif pCount() == 4
 
-   for i:=1 to len( aData ) 
-      cBind := ":"+alltrim(str( i))
+   for i:=1 to len(aData) 
+      cBind := ":"+alltrim(str(i))
       cwhere := strtran( cwhere ,cBind, sr_cdbvalue(adata[i]) )
    next
    cSql += " where " +  cwhere 
@@ -302,7 +302,7 @@ Local nError,cbind
 Local nPos
 
 nPos := ascan(acols,{|x| upper(x) == "ROWID"})
-for n := 1  to len( aDadosAlt ) 
+for n := 1  to len(aDadosAlt) 
    if nPos >0
       if nPos != n
    cSql += acols[n ] + "=" + sr_cdbvalue( aDadosAlt[n] ) + ","
@@ -311,16 +311,16 @@ for n := 1  to len( aDadosAlt )
    cSql += acols[n ] + "=" + sr_cdbvalue( aDadosAlt[n] ) + ","
    endif
 next
-cSql := substr( csql,1,len(csql)-1)
+cSql := substr(csql, 1, len(csql) - 1)
 
 if pcount() == 5
     csql +=  " where " +  cwhere 
 elseif pcount() == 6
 
 
-   for i:= len( aChave)  to 1 step -1
+   for i:= len(aChave)  to 1 step -1
 
-      cBind := ":"+alltrim(str( i))
+      cBind := ":" + alltrim(str(i))
       cwhere := strtran( cwhere ,cBind, sr_cdbvalue( aChave[i] ) )
    next
    cSql += " where " +  cwhere 
@@ -375,7 +375,7 @@ if nRet >0
    aOraclipHash[cCnxName]["user"] := cUSer
    aOraclipHash[cCnxName]["pwd"] :=  cPwd
 endif
-return if(nRet>0,0,nret)
+return iif(nRet > 0, 0, nret)
 
 function cslogoff(cCnxName) 
 return  OraLogoff(cCnxName) 
@@ -462,7 +462,7 @@ Else
    EndIf      
 EndIf   
 if lReturn
-   for i:=1 to len(  aOraClipCursors[n]["data"] )
+   for i:=1 to len(aOraClipCursors[n]["data"])
        aOraClipCursors[n]["data"][i]:=GerGhost(aOraClipCursors[n]["data"][i])
    next
 endif       
@@ -514,7 +514,7 @@ if adata == nil
 nlasterror :=0
       aOraClipCursors[n]["aFields"] := sr_Getconnection():aFields
       if len(aret) == 1 
-         if len( aRet[1]) == 1
+         if len(aRet[1]) == 1
             return aret[1,1]
          else
             return aret[1]   
@@ -532,8 +532,8 @@ aOraClipCursors[n]["lastsql"] := ''
    
 endif
 
-   for i:=1 to len( aData ) 
-      cBind := ":"+alltrim(str( i))
+   for i:=1 to len(aData) 
+      cBind := ":" + alltrim(str(i))
       cSql := strtran( cSql,cBind, sr_cdbvalue(adata[i]) )
    next
    
@@ -577,7 +577,7 @@ Local osql:=sr_getconnection()
 if len(acols) > 0
 cSql += "( "
 
-for  i:= 1  to len( acols)
+for  i:= 1  to len(acols)
 if upper(aCols[i]) == "SR_DELETED"
    cSql += aCols[i]+","
    cValues += "' ',"
@@ -590,7 +590,7 @@ next
 
 endif
 if len(acols ) == 0 .and. len(adata ) > 0
-for  i:= 1  to len( aData )
+for  i:= 1  to len(aData)
 
    cValues += sr_cdbvalue(aData[i])+","
 next
@@ -640,8 +640,8 @@ elseif pCount() == 3
 cSql := "select count(*) from " +cTabela + " where " + cwhere
 elseif pCount() == 4
    cSql := "select count(*) from " +cTabela 
-   for i:=1 to len( aVarSust) 
-      cBind := ":"+alltrim(str( i))
+   for i:=1 to len(aVarSust)
+      cBind := ":" + alltrim(str(i))
       cwhere := strtran( cwhere ,cBind, sr_cdbvalue( aVarSust[i] ) )
    next
    cSql += " where " +  cwhere 
@@ -692,8 +692,8 @@ Local aItem,nerror,e
 Local oSql
 lReleaseBind := .t.
 if valtype(aVarSust) == "A"
-   for i:=len( aVarSust ) to 1 step -1
-      cBind := ":"+alltrim(str( i))
+   for i:=len(aVarSust) to 1 step -1
+      cBind := ":" + alltrim(str(i))
       cPLSQL := strtran( cPLSQL,cBind,   sr_cdbvalue(aVarSust[i]) )
    next
 endif
@@ -701,7 +701,7 @@ if len(hplVars ) >0
    oSql := sr_getconnection()
    oracleprePARE( osql:hdbc, cPLSQL )
    oraclebindalloc( oSql:hdbc, len(hplVars ))
-   for i:= 1 to len( hplVars ) 
+   for i:= 1 to len(hplVars) 
       aItem := hplVars[ i ]
       if aItem[2] == "VARCHAR" .or. aItem[2] == "CHAR" .or. aItem[2] == "VARCHAR2"
          OracleinBindParam( oSql:hdbc, i, -1, aItem[3], , aItem[5])
@@ -729,7 +729,7 @@ nlasterror  :=0
 nlasterror :=SQLO_GETERRORCODE( sr_getconnection():hDBC )      
    End
    If nerror >= 0
-      for i:= 1 to len( hplVars ) 
+      for i:= 1 to len(hplVars) 
          hplVars[ i ,6] := ORACLEGETBINDDATA( osql:hdbc, i )   
      next 
      Endif
@@ -807,7 +807,7 @@ function oraclosetmp(n)
 
 // culik 8/12/2012 adicionado funcoes nao existente   
    
-function OraMax( nCursor, cTable, cColumn , cWhere , aVarSust )   
+function OraMax(nCursor, cTable, cColumn , cWhere , aVarSust)
 
 Local nlen := 0
 Local aRet := {}
@@ -823,8 +823,8 @@ cSql := "select max( " +cColumn + " ) from " +cTable
 if pCount() == 4
    cSql +=  " where " + cwhere
 elseif pCount() == 5
-   for i:=1 to len( aVarSust) 
-      cBind := ":"+alltrim(str( i))
+   for i:=1 to len(aVarSust) 
+      cBind := ":" + alltrim(str(i))
       cwhere := strtran( cwhere ,cBind, sr_cdbvalue( aVarSust[i] ) )
    next
    cSql += " where " +  cwhere 
@@ -883,7 +883,7 @@ aOraClipCursors[n]["cursoropen"] := .T.
       if nRows > -1
           for nPos :=1 to nRows
              OraFetchSelect(n)
-             IF LEN( aOraClipCursors[n]["data"] ) > 0
+             IF LEN(aOraClipCursors[n]["data"]) > 0
                  aadd(aRet,aOraClipCursors[n]["data"])
             endif   
          next
@@ -929,8 +929,8 @@ aOraClipCursors[n]["cursoropen"] := .T.
    return nError
 endif
 
-   for i:= len( aData ) TO 1 STEP -1 
-   cBind := ":"+alltrim(str( i))
+   for i:= len(aData) TO 1 STEP -1 
+   cBind := ":" + alltrim(str(i))
    cSql := strtran( cSql,cBind,   sr_cdbvalue(adata[i]) )
 next
    nError := ExecuteSql( csql, @cursor, n )//sr_getconnection():exec(csql,,.t.,@aret)
@@ -951,7 +951,7 @@ next
       if nRows > -1
           for nPos :=1 to nRows
              OraFetchSelect(n)
-             IF LEN( aOraClipCursors[n]["data"] ) > 0
+             IF LEN(aOraClipCursors[n]["data"]) > 0
                 aadd(aRet,aOraClipCursors[n]["data"])
             endif   
          next
@@ -1037,8 +1037,8 @@ cSql := "select sum( " +cColumn + " ) from " +cTable
 if pCount() == 4
    cSql +=  " where " + cwhere
 elseif pCount() == 5
-   for i:=1 to len( aVarSust) 
-      cBind := ":"+alltrim(str( i))
+   for i:=1 to len(aVarSust) 
+      cBind := ":" + alltrim(str(i))
       cwhere := strtran( cwhere ,cBind, sr_cdbvalue( aVarSust[i] ) )
    next
    cSql += " where " +  cwhere 
@@ -1065,7 +1065,7 @@ Local oCnn
 
 SR_BeginTransaction()
 oCnn := sr_getconnection()
-return if(oCnn:nTransacCount>0,0,-1)
+return iif(oCnn:nTransacCount > 0, 0, -1)
 
 function CSXCOMMIT()
 sr_committransaction()
@@ -1093,13 +1093,13 @@ try
       if nRows > -1
           for nPos :=1 to nRows
              OraFetchSelect(nCursor)
-             IF LEN( aOraClipCursors[nCursor]["data"] ) > 0
+             IF LEN(aOraClipCursors[nCursor]["data"]) > 0
                  aadd(aDataRet,aOraClipCursors[nCursor]["data"])
             endif   
          next
       else
           while OraFetchSelect(nCursor) == 0
-             IF LEN( aOraClipCursors[nCursor]["data"] ) > 0
+             IF LEN(aOraClipCursors[nCursor]["data"]) > 0
                 aadd(aDataRet,aOraClipCursors[nCursor]["data"])
              ENDIF   
           enddo
@@ -1110,7 +1110,7 @@ try
 
 * 
 *    hData := aOraClipCursors[nCursor]
-*    if len( hData["ret"]) > 0
+*    if len(hData["ret"]) > 0
 *       aRet := hData["ret"]
 *       nStart := hData["curpos"]
 * 
@@ -1159,8 +1159,8 @@ if upper(substr(cSql,6)) =="BEGIN "
    if pCount() == 3
 
       if valtype(aVarSust) == "A"
-         for i := len( aVarSust )  TO 1 STEP -1
-            cBind := ":"+alltrim(str( i) )
+         for i := len(aVarSust)  TO 1 STEP -1
+            cBind := ":" + alltrim(str(i) )
             cSQL := strtran( cSQL,cBind,   sr_cdbvalue(aVarSust[i]) )
          next
       endif
@@ -1276,8 +1276,8 @@ cSql := "select * from " +cTable
 if pCount() == 3
    cSql +=  " where " + cwhere
 elseif pCount() == 4
-   for i:=1 to len( aVarSust) 
-      cBind := ":"+alltrim(str( i))
+   for i:=1 to len(aVarSust) 
+      cBind := ":" + alltrim(str(i))
       cwhere := strtran( cwhere ,cBind, sr_cdbvalue( aVarSust[i] ) )
    next
    cSql += " where " +  cwhere 
@@ -1290,7 +1290,7 @@ endif
 return .f.
 
 
-function OraMin( nCursor, cTable, cColumn , cWhere , aVarSust )   
+function OraMin(nCursor, cTable, cColumn , cWhere , aVarSust)
 
 Local nlen := 0
 Local aRet := {}
@@ -1306,8 +1306,8 @@ cSql := "select mim( " +cColumn + " ) from " +cTable
 if pCount() == 4
    cSql +=  " where " + cwhere
 elseif pCount() == 5
-   for i:=len( aVarSust) TO 1 STEP -1
-      cBind := ":"+alltrim(str( i))
+   for i:=len(aVarSust) TO 1 STEP -1
+      cBind := ":" + alltrim(str(i))
       cwhere := strtran( cwhere ,cBind, sr_cdbvalue( aVarSust[i] ) )
    next
    cSql += " where " +  cwhere 
@@ -1403,7 +1403,7 @@ RETURN NIL
  
 INIT FUNCTION OVERRIDESIZE
    OVERRIDE METHOD SQLLen IN CLASS SR_CONNECTION WITH MySQLLen
-static function mySQLLen( nType, nLen, nDec ) 
+static function mySQLLen(nType, nLen, nDec)
 
    local cType := "U"
    Local Self:=Qself()
@@ -1411,7 +1411,7 @@ static function mySQLLen( nType, nLen, nDec )
    DEFAULT nDec to -1
 
    do case
-   case (nType == SQL_CHAR .or. nType == SQL_VARCHAR .or. nType == SQL_NVARCHAR) .and. If(SR_SetNwgCompat(), nLen != 4000 .and. nLen != 2000, .T. )
+   case (nType == SQL_CHAR .or. nType == SQL_VARCHAR .or. nType == SQL_NVARCHAR) .and. IIf(SR_SetNwgCompat(), nLen != 4000 .and. nLen != 2000, .T.)
 
    Case nType == SQL_SMALLINT .or. nType == SQL_TINYINT
       If ::lQueryOnly
@@ -1437,8 +1437,8 @@ static function mySQLLen( nType, nLen, nDec )
         nLen :=14
       endif
       If !( nLen = 38 .and. nDec = 0 )
-         nLen := min( nLen, 20 )
-         nLen := max( nLen, 1 )
+         nLen := min(nLen, 20)
+         nLen := max(nLen, 1)
       EndIf
 
    case nType == SQL_DATE .or. nType == SQL_TIMESTAMP .or. nType == SQL_TYPE_TIMESTAMP .or. nType == SQL_TYPE_DATE .or. ntype == SQL_DATETIME
@@ -1488,13 +1488,13 @@ return aOraClipCursors[nCursor]["rowaffected"]
 
 function OraFName( n, nPos )
 Local aTmp
-if len( aOraClipCursors[n]["aFields"] ) == 0 .or. nPos <=0
+if len(aOraClipCursors[n]["aFields"]) == 0 .or. nPos <=0
    aOraClipCursors[ n]["errormsg"]  := "vetor vazio ou Posicao <= 0"
    return nil
 endif
-if len( aOraClipCursors[n]["aFields"] ) >1 .and. nPos <= len( aOraClipCursors[n]["aFields"] )
+if len(aOraClipCursors[n]["aFields"]) >1 .and. nPos <= len(aOraClipCursors[n]["aFields"])
    aTmp := aOraClipCursors[n]["aFields"]
-   return Alltrim( aTmp[nPos,1])
+   return Alltrim(aTmp[nPos,1])
 endif
      
    aOraClipCursors[ n]["errormsg"]  := "Indice do campo invalido"
@@ -1580,18 +1580,18 @@ Elseif !aOraClipCursors[n]["completed"]
   aOraClipCursors[n]["data"] := {}  
   If nError == 0
      
-     aArray := Array( Len( aOraClipCursors[n]["aFields"] ) )
+     aArray := Array(Len(aOraClipCursors[n]["aFields"]))
   
      ( cAlias )->( dBAppend() )
-     For i:= 1 to Len( aOraClipCursors[n]["aFields"] )
+     For i:= 1 to Len(aOraClipCursors[n]["aFields"])
         
          ( cAlias )->( FieldPut( i, oSql:FieldGet( i, aOraClipCursors[n]["aFields"] ) ) )
      Next
      ( cAlias )->( dBUnlock() )
   Else 
-*       for i:=1 to len(  aOraClipCursors[n]["data"] )
+*       for i:=1 to len(aOraClipCursors[n]["data"])
        aDb := aOraClipCursors[n]["aFields"]
-       for i:=1 to len( aDb)   
+       for i:=1 to len(aDb)   
          if adb[i,2]=="C"
             aadd(aOraClipCursors[n]["data"],"")
          elseif adb[i,2]=="N"
@@ -1620,7 +1620,7 @@ Else
    ( cAlias )->( dBGoto( aOraClipCursors[n]["curpos"] ) ) 
 EndIf
 if select(aOraClipCursors[n]["aliastmp"])>0
-   For i:= 1 to Len( aOraClipCursors[n]["aFields"] )
+   For i:= 1 to Len(aOraClipCursors[n]["aFields"])
       AADD( aOraClipCursors[n]["data"], ( cAlias )->( FieldGet(i) ) )
    Next
 endif   
@@ -1647,10 +1647,10 @@ SETORAHANDLE(hDBC,hDBCHandle)
    
       aOraClipCursors[n]["data"] := {}
 
-      aArray := Array( Len( aOraClipCursors[n]["aFields"] ) )
+      aArray := Array(Len(aOraClipCursors[n]["aFields"]))
   
      
-     For i:= 1 to Len( aOraClipCursors[n]["aFields"] )
+     For i:= 1 to Len(aOraClipCursors[n]["aFields"])
          aadd(aOraClipCursors[n]["data"],oSql:FieldGet( i, aOraClipCursors[n]["aFields"] ) ) 
      Next
      
@@ -1668,13 +1668,13 @@ Return nError
 
 
 static Function GerGhost( uDat )
-if valtype( uDat ) == "C"
+if valtype(uDat) == "C"
    Return ""
-elseif valtype( uDat ) == "N"   
+elseif valtype(uDat) == "N"   
    return 0
-elseif valtype( uDat ) == "L"   
+elseif valtype(uDat) == "L"   
    return .f.
-elseif valtype( uDat ) == "D"
+elseif valtype(uDat) == "D"
    return ctod("")
 endif
 return ""

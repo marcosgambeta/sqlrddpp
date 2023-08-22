@@ -108,9 +108,9 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_ORACLE
    DEFAULT lTranslate := .T.
 
    If aArray == NIL
-      aArray := Array(len( aFields ))
-   ElseIf len( aArray ) < len( aFields )
-      aSize( aArray, len( aFields ) )
+      aArray := Array(len(aFields))
+   ElseIf len(aArray) < len(aFields)
+      aSize( aArray, len(aFields) )
    EndIf
 
    If ::aCurrLine == NIL
@@ -119,7 +119,7 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_ORACLE
       Return aArray
    EndIf
 
-   For i = 1 to len( aArray )
+   For i = 1 to len(aArray)
       aArray[i] := ::aCurrLine[ i ]
    Next
 
@@ -131,7 +131,7 @@ METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_ORACLE
 
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
-      ::aCurrLine := array( LEN( aFields ) )
+      ::aCurrLine := array(LEN(aFields))
       SQLO_LINEPROCESSED( ::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine )
    EndIf
 
@@ -204,9 +204,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    If lReSelect
       If !Empty( cCommand )
-         nRet := ::Execute( cCommand + if(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
+         nRet := ::Execute( cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
       Else
-         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + if(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F. )
+         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F. )
       EndIf
 
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
@@ -223,7 +223,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       Return NIL
    EndIf
 
-   aFields   := Array( ::nFields )
+   aFields   := Array(::nFields)
 
    For n = 1 to ::nFields
 
@@ -241,7 +241,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
             nType := SQL_FAKE_LOB
          EndIf
 
-         nLenField := ::SQLLen( nType, nLen, @nDec )
+         nLenField := ::SQLLen(nType, nLen, @nDec)
          cType     := ::SQLType( nType, cName, nLen )
 
          If (!::lQueryOnly) .and. cType == "N" .and. nLenField == 38 .and. nDec == 0
@@ -251,7 +251,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          EndIf
 
          If cType == "U"
-            ::RuntimeErr( "", SR_Msg(21) + cName + " : " + str( nType ) )
+            ::RuntimeErr( "", SR_Msg(21) + cName + " : " + str(nType) )
          Else
             aFields[n] := { cName, cType, nLenField, nDec, nNull, nType, , n, , , }
          EndIf
@@ -271,7 +271,7 @@ return aFields
 
 METHOD LastError() CLASS SR_ORACLE
 
-return SQLO_GETERRORDESCR( ::hDBC ) + " retcode: " + sr_val2Char( ::nRetCode) + " - " + AllTrim( str( SQLO_GETERRORCODE( ::hDBC ) ) )
+return SQLO_GETERRORDESCR( ::hDBC ) + " retcode: " + sr_val2Char( ::nRetCode) + " - " + AllTrim(str(SQLO_GETERRORCODE(::hDBC)))
 
 /*------------------------------------------------------------------------*/
 
@@ -316,9 +316,9 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    ::nSystemID    := SYSTEMID_ORACLE
    ::cTargetDB    := Upper( cTargetDB )
 
-   ::exec( "select sid from " + If(::lCluster, "g", "" ) + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet )
+   ::exec( "select sid from " + IIf(::lCluster, "g", "" ) + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet )
 
-   If len( aRet ) > 0
+   If len(aRet) > 0
       ::uSid := val(str(aRet[1,1],8,0))
    EndIf
 
@@ -374,7 +374,7 @@ Return nRet
 
 Static Function ProcessParams( cSql, nBound )
    Local nPos
-   Local cTemp := SubStr( cSql,1, AT( "?" , cSql) -1 )
+   Local cTemp := SubStr(cSql, 1, AT("?" , cSql) - 1)
    Local lHasParen := Rat( ")", cSql ) > 0
    Local lHasPointComma := Rat( ";", cSql ) > 0
    Local aItens
@@ -454,7 +454,7 @@ METHOD ExecSP( cComm, aReturn, nParam, aType )  CLASS SR_ORACLE
    
    For i:= 1 to nParam 
       n := -1
-      If Len( aType ) > 0
+      If Len(aType) > 0
          If aType[i]=="N"
             n  := 5
          EndIf
@@ -469,7 +469,7 @@ METHOD ExecSP( cComm, aReturn, nParam, aType )  CLASS SR_ORACLE
    End
    
    If nError < 0
-      ::RunTimeErr("", str( SQLO_GETERRORCODE( ::hDbc ), 4 ) + " - " + SQLO_GETERRORDESCR( ::hDbc ) ) 
+      ::RunTimeErr("", str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR( ::hDbc ) ) 
    Else
    //If nError >= 0
         
@@ -527,7 +527,7 @@ METHOD ExecSPRC(  cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords,
    If nError < 0
       If lFetch
        //  ::RunTimeErr("", "SQLExecDirect Error Erro na STORE PROCEDURE" ) 
-       ::RunTimeErr("", str( SQLO_GETERRORCODE( ::hDbc ), 4 ) + " - " + SQLO_GETERRORDESCR( ::hDbc ) + ::cLastComm ) 
+       ::RunTimeErr("", str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR( ::hDbc ) + ::cLastComm )
       EndIf  
    EndIf      
     
@@ -552,7 +552,7 @@ METHOD ExecSPRC(  cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords,
          if Select( cAlias ) == 0
             aDb := {}
             If lNoRecno
-               For i = 1 to len( aFields )
+               For i = 1 to len(aFields)
                   If aFields[i,1] != cRecnoName
                      AADD( aDb, aFields[i] )
                   Else
@@ -576,11 +576,11 @@ METHOD ExecSPRC(  cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords,
             Append Blank
 
             If nFieldRec == NIL
-               For i = 1 to len( aFields )
+               For i = 1 to len(aFields)
                   FieldPut( i, ::FieldGet( i, aFields, lTranslate ) )
                Next
             Else
-               For i = 1 to len( aFields )
+               For i = 1 to len(aFields)
                   Do Case
                   Case i = nFieldRec
                      ::FieldGet( i, aFields, lTranslate )
@@ -605,11 +605,11 @@ METHOD ExecSPRC(  cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords,
          aFields   := ::IniFields(.F.,,,,,cRecnoName, cDeletedName,.t.)
  
          For i = 1 to len(aFields)
-            ::cResult += PadR( aFields[i,1], If( aFields[i,2] == "M", Max( len( aFields[i,1] ), if( ::lShowTxtMemo, 79, 30 ) ) , Max( len( aFields[i,1] ), aFields[i,3] ) ), "-" ) + " "
+            ::cResult += PadR(aFields[i,1], IIf(aFields[i,2] == "M", Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i,1]), aFields[i,3])), "-") + " "
          Next
 
          ::cResult += chr(13) + chr(10)
-         aMemo     := Array( len( aFields ) )
+         aMemo     := Array(len(aFields))
 
          While n <= ::nMaxTextLines .and. ((::nRetCode := ::Fetch( ,lTranslate )) == SQL_SUCCESS )
 
@@ -617,15 +617,15 @@ METHOD ExecSPRC(  cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords,
             nLenMemo   := 0
             nLinesMemo := 0
 
-            For i = 1 to len( aFields )
+            For i = 1 to len(aFields)
                cCampo := ::FieldGet( i, aFields, lTranslate )
                If aFields[i,2] == "M"
-                  nLenMemo   := Max( len( aFields[i,1] ), if( ::lShowTxtMemo, 79, 30 ) )
-                  nLinesMemo := Max( mlCount( cCampo, nLenMemo ), nLinesMemo )
+                  nLenMemo   := Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30))
+                  nLinesMemo := Max(mlCount( cCampo, nLenMemo ), nLinesMemo)
                   cEste += memoline(cCampo,nLenMemo,1) + " "
                   aMemo[i] := cCampo
                Else
-                  cEste += PadR( SR_Val2Char( cCampo ), Max( len( aFields[i,1] ), aFields[i,3] ) ) + " "
+                  cEste += PadR( SR_Val2Char( cCampo ), Max(len(aFields[i,1]), aFields[i,3]) ) + " "
                EndIf
             Next
 
@@ -635,11 +635,11 @@ METHOD ExecSPRC(  cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords,
             If ::lShowTxtMemo .and. nLinesMemo > 1
                For j = 2 to nLinesMemo
                   cEste    := ""
-                  For i = 1 to len( aFields )
+                  For i = 1 to len(aFields)
                      If aFields[i,2] == "M"
                         cEste += memoline(aMemo[i],nLenMemo,j) + " "
                      Else
-                        cEste += Space( Max( len( aFields[i,1] ), aFields[i,3] ) ) + " "
+                        cEste += Space( Max(len(aFields[i,1]), aFields[i,3]) ) + " "
                      EndIf
                   Next
                   ::cResult += cEste + chr(13) + chr(10)
@@ -653,12 +653,12 @@ METHOD ExecSPRC(  cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords,
 
          AsizeAlloc( aArray, 300 )
 
-         If valtype( aArray ) == "A"
-            If len( aArray ) = 0
+         If valtype(aArray) == "A"
+            If len(aArray) = 0
                aSize( aArray, ARRAY_BLOCK1 )
                nAllocated := ARRAY_BLOCK1
             Else
-               nAllocated := len( aArray )
+               nAllocated := len(aArray)
             EndIf
          Else
             aArray  := Array(ARRAY_BLOCK1)
@@ -692,8 +692,8 @@ METHOD ExecSPRC(  cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords,
                aSize( aArray, nAllocated )
             EndIf
 
-            aArray[n] := array(len( aFields ))
-            For i = 1 to len( aFields )
+            aArray[n] := array(len(aFields))
+            For i = 1 to len(aFields)
                aArray[n,i] := ::FieldGet( i, aFields, lTranslate )
             Next
             If n > nMaxRecords

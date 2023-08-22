@@ -161,7 +161,7 @@ Local cTmp
 //hHashData :=hash()
 set server local
 SR_SetRDDTemp("ADT")
- IF Empty(axColumns) .OR. ! HB_ISARRAY( axColumns )
+ IF Empty(axColumns) .OR. ! HB_ISARRAY(axColumns)
     cCols := ' * '
   else
      FOR EACH i IN axColumns
@@ -200,10 +200,10 @@ SR_SetRDDTemp("ADT")
  cSql := "Select  " + cCols + "  from " + cTable
  cCount := "select count(*) from " + cTable
 
-if !empty(cWhere) .and. valtype( aVarSust) == "A"
+if !empty(cWhere) .and. valtype(aVarSust) == "A"
 
-for i:=1 to len( aVarSust ) 
-   cBind := ":"+alltrim(str( i))
+for i:=1 to len(aVarSust) 
+   cBind := ":" + alltrim(str(i))
    cWhere := strtran( cWhere,cBind,   sr_cdbvalue(aVarSust[i]) )
 next
 * nat := at
@@ -309,9 +309,9 @@ nLowerBound +=nHigerBound
   DEFAULT acColumnFootings TO ""
 
 
-  IF Empty(axColumns) .OR. ! HB_ISARRAY( axColumns )
+  IF Empty(axColumns) .OR. ! HB_ISARRAY(axColumns)
 
-    axColumns := Array( FCount() )
+    axColumns := Array(FCount())
 
     FOR EACH i IN axColumns
       i := FieldName( HB_EnumIndex() )
@@ -396,13 +396,13 @@ nLowerBound +=nHigerBound
 
   IF HB_ISBLOCK( bPreBlock )
      i := bPreBlock
-     bPreBlock := Array( Len(axColumns) )
+     bPreBlock := Array(Len(axColumns))
      AFill(bPreBlock, i)
   END
 
   IF HB_ISBLOCK( bPostBlock )
      i := bPostBlock
-     bPostBlock := Array( Len(axColumns) )
+     bPostBlock := Array(Len(axColumns))
      aFill(bPostBlock, i)
   END
 
@@ -476,7 +476,7 @@ nLowerBound +=nHigerBound
 
        If HB_ISSTRING( acColumnHeaders )
           cHdr := acColumnHeaders
-       ElseIf HB_ISARRAY( acColumnHeaders ) .and. Len( acColumnHeaders ) >= nIndex .and. acColumnHeaders[ nIndex ] != NIL // handle empty column headers
+       ElseIf HB_ISARRAY(acColumnHeaders) .and. Len(acColumnHeaders) >= nIndex .and. acColumnHeaders[ nIndex ] != NIL // handle empty column headers
           cHdr := acColumnHeaders[ nIndex ]
        End
 
@@ -486,35 +486,35 @@ nLowerBound +=nHigerBound
 
        oTBC := TBColumnNew( cHdr, bFunc )
 
-       If HB_ISARRAY( i )
+       If HB_ISARRAY(i)
           oTBC:colorBlock := i[2]
        End
 
-       If HB_ISARRAY( acColumnSep )
+       If HB_ISARRAY(acColumnSep)
           oTBC:colSep := acColumnSep[ nIndex ]
        End
 
-       If HB_ISARRAY( acHeadingSep )
+       If HB_ISARRAY(acHeadingSep)
           oTBC:headSep := acHeadingSep[ nIndex ]
        End
 
-       If HB_ISARRAY( acFootingSep )
+       If HB_ISARRAY(acFootingSep)
           oTBC:footSep := acFootingSep[ nIndex ]
        End
 
-       If HB_ISARRAY( acColumnFootings )
+       If HB_ISARRAY(acColumnFootings)
           oTBC:footing := acColumnFootings[ nIndex ]
        ElseIf HB_ISSTRING(acColumnFootings)
           oTBC:footing := acColumnFootings
        End
 
-       If HB_ISARRAY( acColumnSayPictures ) .and. Len( acColumnSayPictures ) >= nIndex
+       If HB_ISARRAY(acColumnSayPictures) .and. Len(acColumnSayPictures) >= nIndex
           oTBC:picture := acColumnSayPictures[ nIndex ]
        ElseIf HB_ISSTRING( acColumnSayPictures )
           oTBC:picture := acColumnSayPictures
        End
 
-       If HB_ISARRAY( bPreBlock )
+       If HB_ISARRAY(bPreBlock)
 
          If HB_ISLOGICAL( bPreBlock[ nIndex ] )
             bPreBlock[ nIndex ] := IIf( bPreBlock[ nIndex ], {|| .T.}, {|| .F.} )
@@ -524,7 +524,7 @@ nLowerBound +=nHigerBound
 
        End
 
-       If HB_ISARRAY( bPostBlock )
+       If HB_ISARRAY(bPostBlock)
 
          If HB_ISLOGICAL( bPostBlock[ nIndex ] )
             bPostBlock[ nIndex ] := IIf( bPostBlock[ nIndex ], {|| .T.}, {|| .F.} )
@@ -694,7 +694,7 @@ hHashData[nAliasTmp]["eof"]:=.f.
           EXIT
        endif
 
-       if ValType( SetKey(nKey) ) == 'B'
+       if ValType(SetKey(nKey)) == 'B'
           Eval( SetKey(nKey), ProcName(1), ProcLine(1), "")
        endif
 
@@ -1233,7 +1233,7 @@ Local adb:=(calias)->(dbstruct())
 Local nPos
 Local ckey
 Local aTmp
-if len( aFields  )>0
+if len(aFields) > 0
    cSql := "select * from "+ ctable
    cSql += " where "
     
@@ -1281,7 +1281,7 @@ Local nrec, uDat
 local cfile:=(calias2)->(dbinfo(10))
 Local cfield, aTmpField, nposf
 Local aTmp
-if len( aFields  )>0
+if len(aFields) > 0
    cSql := "select * from "+ ctable
    cSql += " where "
     
@@ -1335,7 +1335,7 @@ Local i :=1
 Local cSql := ""
 Local nFieldPos
 local xVal
-if len( aFields  )>0
+if len(aFields) > 0
    cSql := "select * from "+ ctable
    cSql += " where "
    for each aTemp in aFields
@@ -1534,7 +1534,7 @@ if len(aFields) > 0
       next   
       ckey:=alltrim(ckey)
       if substr(ckey,-1,1)=='+'              
-         cKey := substr( cKey, 1, len( ckey )-1 )
+         cKey := substr(cKey, 1, len(ckey) - 1)
       endif
    endif
    if lDescIndex

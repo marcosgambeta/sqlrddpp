@@ -108,9 +108,9 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_ODBC
    DEFAULT lTranslate := .T.
 
    If aArray == NIL
-      aArray := Array(len( aFields ))
-   ElseIf len( aArray ) < len( aFields )
-      aSize( aArray, len( aFields ) )
+      aArray := Array(len(aFields))
+   ElseIf len(aArray) < len(aFields)
+      aSize( aArray, len(aFields) )
    EndIf
 
    If ::aCurrLine == NIL
@@ -119,7 +119,7 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_ODBC
       Return aArray
    EndIf
 
-   For i = 1 to len( aArray )
+   For i = 1 to len(aArray)
       aArray[i] := ::aCurrLine[ i ]
    Next
 
@@ -195,8 +195,8 @@ METHOD MoreResults( aArray, lTranslate )  CLASS SR_ODBC
       EndIf
 
       While (::nRetCode := ::FetchRaw( lTranslate, aFieldsMore )) = SQL_SUCCESS
-         AADD( aArray, Array(len( aFieldsMore )) )
-         For i = 1 to len( aFieldsMore )
+         AADD( aArray, Array(len(aFieldsMore)) )
+         For i = 1 to len(aFieldsMore)
             aArray[n,i] := ::FieldGet( i, aFieldsMore, lTranslate )
          Next
          n ++
@@ -212,7 +212,7 @@ METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_ODBC
 
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
-      ::aCurrLine := array( LEN( aFields ) )
+      ::aCurrLine := array(LEN(aFields))
       SR_ODBCLINEPROCESSED( ::hStmt, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine )
    EndIf
 
@@ -293,9 +293,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    If lReSelect
       If !Empty( cCommand )
-         nRet := ::Execute( cCommand + if(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
+         nRet := ::Execute( cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
       Else
-         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + if(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F. )
+         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F. )
       EndIf
 
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
@@ -309,7 +309,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       return nil
    endif
 
-   aFields   := Array( nFields )
+   aFields   := Array(nFields)
    ::nFields := nFields
 
    for n = 1 to nFields
@@ -346,9 +346,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          endif   
          endif
 
-         cName     := upper(alltrim( cName ))
+         cName     := upper(alltrim(cName))
          cType     := ::SQLType( nType, cName, nLen )
-         nLenField := ::SQLLen( nType, nLen, @nDec ) + nSoma
+         nLenField := ::SQLLen(nType, nLen, @nDec) + nSoma
          If ::nSystemID == SYSTEMID_ORACLE .and. (!::lQueryOnly) .and. cType == "N" .and. nLenField == 38 .and. nDec == 0
             cType     := "L"
             nLenField := 1
@@ -360,9 +360,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          EndIf
 */
          If cType == "U"
-            ::RuntimeErr( "", SR_Msg(21) + cName + " : " + str( nType ) )
+            ::RuntimeErr( "", SR_Msg(21) + cName + " : " + str(nType) )
          Else
-            aFields[n] := { cName, cType, nLenField, if(cType=="D", 0, nDec), nNull >= 1 , nType, nLen, n, _nDec }
+            aFields[n] := { cName, cType, nLenField, iif(cType=="D", 0, nDec), nNull >= 1 , nType, nLen, n, _nDec }
          EndIf
 
       endif
@@ -384,7 +384,7 @@ METHOD LastError() CLASS SR_ODBC
 
    SR_Error( ::hEnv, ::hDbc, ::hStmt, @cClassError, @nType, @cMsgError, 256, nRealLen )
 
-return SR_Val2Char(cClassError) + " - " + AllTrim( SR_Val2Char( nType ) ) + " - " + SR_Val2Char(cMsgError)
+return SR_Val2Char(cClassError) + " - " + AllTrim(SR_Val2Char(nType)) + " - " + SR_Val2Char(cMsgError)
 
 /*------------------------------------------------------------------------*/
 
@@ -414,7 +414,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
       ::hEnv = hEnv
    else
       ::nRetCode:=nRet
-      SR_MsgLogFile( "SQLALLOCENV Error" + str( nRet ) )
+      SR_MsgLogFile( "SQLALLOCENV Error" + str(nRet) )
       return Self
    endif
 
@@ -422,15 +422,15 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
       ::hDbc = hDbc
    else
       ::nRetCode:=nRet
-      SR_MsgLogFile( "SQLALLOCCONNECT Error" + str( nRet ) )
+      SR_MsgLogFile( "SQLALLOCCONNECT Error" + str(nRet) )
       return Self
    endif
 
    If !Empty( ::cDTB )
-      SR_SetCOnnectAttr( hDbc, SQL_ATTR_CURRENT_CATALOG, ::cDTB, len( ::cDTB ) )
+      SR_SetCOnnectAttr( hDbc, SQL_ATTR_CURRENT_CATALOG, ::cDTB, len(::cDTB) )
    EndIf
 
-   cConnect := alltrim( cConnect )
+   cConnect := alltrim(cConnect)
    nRet := SR_DriverC( hDbc, @cConnect )
 
    if nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
@@ -455,7 +455,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    Case SYSTEMID_MSSQL7
    Case SYSTEMID_AZURE
       ::exec( "select cast( @@spid as numeric )", .T., .T., @aRet )
-      If len( aRet ) > 0
+      If len(aRet) > 0
          ::uSid := val(str(aRet[1,1],8,0))
       EndIf
       Exit

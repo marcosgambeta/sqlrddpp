@@ -60,22 +60,22 @@
 #define cJoinWords( nType, nSystemID )    aJoinWords[nSystemID,nType]
 
 #define  SKIPFWD            nIP++;uData:=apCode[nIP]
-#define  PARAM_SOLV         if(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1])
+#define  PARAM_SOLV         iif(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1])
 #define  RECURSIVE_CALL     nIP++;cSql+=SR_SQLCodeGen2(apCode,aParam,nSystemId,lIdent,@nIP,nContext,@nSpaces,lParseTableName);Exit
-#define  GETPARAM           cSql+=if(uData+1<=len(aParam),PARAM_SOLV,"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_QUOTED    cSql+=if(uData+1<=len(aParam),SR_DBQUALIFY( PARAM_SOLV, nSystemID ),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_VALUE     cSql+=if(uData+1<=len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_VAL_2     uData:=if(uData+1<=len(aParam),SR_DBQUALIFY(PARAM_SOLV,nSystemID),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##")
-#define  GETPARAM_VALNN     cSql+=if(uData+1<=len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID,.T.),"##PARAM_"+strzero(uData+1,3)+"_NOT_NULL_NOT_SUPPLIED##");nIP++;Exit
-#define  FIX_PRE_WHERE      if(nContext==SQL_CONTEXT_SELECT_PRE_WHERE,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" WHERE "),if(nContext==SQL_CONTEXT_SELECT_PRE_WHERE2,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" AND "),))
+#define  GETPARAM           cSql+=iif(uData+1<=len(aParam),PARAM_SOLV,"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define  GETPARAM_QUOTED    cSql+=iif(uData+1<=len(aParam),SR_DBQUALIFY( PARAM_SOLV, nSystemID ),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define  GETPARAM_VALUE     cSql+=iif(uData+1<=len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define  GETPARAM_VAL_2     uData:=iif(uData+1<=len(aParam),SR_DBQUALIFY(PARAM_SOLV,nSystemID),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##")
+#define  GETPARAM_VALNN     cSql+=iif(uData+1<=len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID,.T.),"##PARAM_"+strzero(uData+1,3)+"_NOT_NULL_NOT_SUPPLIED##");nIP++;Exit
+#define  FIX_PRE_WHERE      iif(nContext==SQL_CONTEXT_SELECT_PRE_WHERE,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" WHERE "),iif(nContext==SQL_CONTEXT_SELECT_PRE_WHERE2,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" AND "),))
 #define  PASSTHROUGH        nIP++;Exit
 #define  IDENTSPACE         space(nSpaces)
-//#define  TABLE_OPTIMIZER    if(nSystemId==SYSTEMID_MSSQL7,if(lLocking," WITH (UPDLOCK)", " WITH (NOLOCK)"),"")
-#define  TABLE_OPTIMIZER    if(nSystemId==SYSTEMID_MSSQL7,if(lLocking," WITH (UPDLOCK)", ""),"")
-#define  COMMAND_OPTIMIZER  if(nSystemId==SYSTEMID_SYBASE,if(lLocking,"", " AT ISOLATION READ UNCOMMITTED "),"")
+//#define  TABLE_OPTIMIZER    iif(nSystemId==SYSTEMID_MSSQL7,iif(lLocking," WITH (UPDLOCK)", " WITH (NOLOCK)"),"")
+#define  TABLE_OPTIMIZER    iif(nSystemId==SYSTEMID_MSSQL7,iif(lLocking," WITH (UPDLOCK)", ""),"")
+#define  COMMAND_OPTIMIZER  iif(nSystemId==SYSTEMID_SYBASE,iif(lLocking,"", " AT ISOLATION READ UNCOMMITTED "),"")
 #define  SELECT_OPTIMIZER1  ""
-#define  SELECT_OPTIMIZER2  if(nSystemId==SYSTEMID_ORACLE,if(lLocking," FOR UPDATE", ""),"")
-#define  NEWLINE            if(lIdent,CRLF,"")
+#define  SELECT_OPTIMIZER2  iif(nSystemId==SYSTEMID_ORACLE,iif(lLocking," FOR UPDATE", ""),"")
+#define  NEWLINE            iif(lIdent,CRLF,"")
 
 #xtranslate Default( <Var>, <xVal> ) => IIF( <Var> == NIL, <Var> := <xVal>, )
 
@@ -98,7 +98,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
    local cAtual, cAtual2, nPos, cTbl, outer
    local aFilters  := {}
    local lLocking  := .F.
-   local nLen      := len( apCode )
+   local nLen      := len(apCode)
    local bError    := Errorblock()
    local aLJoins   := {}             /* A, B, Expression */
    local aTables   := {}             /* TableName */
@@ -206,20 +206,20 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
             cSql += [ AS ] + SR_DBQUALIFY( uData, nSystemID )
             PASSTHROUGH
          CASE SQL_PCODE_NO_WHERE
-            If len( aFilters ) > 0
+            If len(aFilters) > 0
                cSql += NEWLINE + IDENTSPACE + "WHERE"
-               For nFlt = 1 to len( aFilters )
-                  cSql +=  NEWLINE + IDENTSPACE + if(nFlt > 1, " AND ", "  ") + aFilters[nFlt]
+               For nFlt = 1 to len(aFilters)
+                  cSql +=  NEWLINE + IDENTSPACE + iif(nFlt > 1, " AND ", "  ") + aFilters[nFlt]
                Next
                cSql += " "
             EndIf
             nContext := SQL_CONTEXT_RESET
             PASSTHROUGH
          CASE SQL_PCODE_WHERE
-            If len( aFilters ) > 0
+            If len(aFilters) > 0
                cSql += NEWLINE + IDENTSPACE + "WHERE "
-               For nFlt = 1 to len( aFilters )
-                  cSql += NEWLINE + IDENTSPACE + if(nFlt > 1, " AND ", "  ") + aFilters[nFlt]
+               For nFlt = 1 to len(aFilters)
+                  cSql += NEWLINE + IDENTSPACE + iif(nFlt > 1, " AND ", "  ") + aFilters[nFlt]
                Next
                nContext := SQL_CONTEXT_SELECT_PRE_WHERE2
             Else
@@ -272,7 +272,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          CASE SQL_PCODE_TABLE_PARAM
             SKIPFWD
             if lParseTableName
-               aRet := eval( bTableInfo, if(uData+1<=len(aParam),if(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##"), nSystemId )
+               aRet := eval( bTableInfo, iif(uData+1<=len(aParam),iif(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##"), nSystemId )
                If nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
                Else
@@ -290,7 +290,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                   cSql +=  NEWLINE + IDENTSPACE + "  "
                EndIf
             Else
-               uData := if(uData+1<=len(aParam),if(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##")
+               uData := iif(uData+1<=len(aParam),iif(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##")
                If nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += uData
                Else
@@ -672,12 +672,12 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
                Next
 
-               If len( aTables ) > 0 .and. len( aOuters ) > 0
+               If len(aTables) > 0 .and. len(aOuters) > 0
                   cSql += ", " + CRLF
                EndIf
 
                For each cTbl in aQualifiedTables
-                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + if(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + if( hb_enumIndex() < len( aTables ), "," + NEWLINE + IDENTSPACE + "  ", "" )
+                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif( hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "" )
                Next
 
                cSql += cTmp + cTrailler
@@ -827,12 +827,12 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
                Next
 
-               If len( aTables ) > 0 .and. len( aOuters ) > 0
+               If len(aTables) > 0 .and. len(aOuters) > 0
                   cSql += ", " + CRLF
                EndIf
 
                For each cTbl in aQualifiedTables
-                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + if(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + if( hb_enumIndex() < len( aTables ), "," + NEWLINE + IDENTSPACE + "  ", "" )
+                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif( hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "" )
                Next
 
                cSql += cTmp + cTrailler
@@ -871,11 +871,11 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                                             apCode[nIP+2] == SQL_PCODE_COLUMN_ALIAS .and.;
                                             apCode[nIP+4] == SQL_PCODE_COLUMN_NAME .and. ;
                                             SR_IsComparOp( apCode[nIP+6] ) .and. ;
-                                            if(!SR_IsComparNullOp( apCode[nIP+6] ), apCode[nIP+7] == SQL_PCODE_COLUMN_BY_VALUE, .T.) .and.;
+                                            iif(!SR_IsComparNullOp( apCode[nIP+6] ), apCode[nIP+7] == SQL_PCODE_COLUMN_BY_VALUE, .T.) .and.;
                                             (nFlt := aScan( aOuters, {|x| upper(x[2]) == upper(apCode[nIP+3])} )) > 0
 
-               aOuters[nFlt,3] += " AND " + SR_DBQUALIFY( apCode[nIP+3], nSystemID ) + "." + SR_DBQUALIFY( apCode[nIP+5], nSystemID ) + SR_ComparOpText(apCode[nIP+6]) + if(!SR_IsComparNullOp( apCode[nIP+6] ), SR_SQLQuotedString( apCode[nIP+8], nSystemID ), "" )
-               nIP += if( SR_IsComparNullOp( apCode[nIP+6] ), 7, 9 )
+               aOuters[nFlt,3] += " AND " + SR_DBQUALIFY( apCode[nIP+3], nSystemID ) + "." + SR_DBQUALIFY( apCode[nIP+5], nSystemID ) + SR_ComparOpText(apCode[nIP+6]) + iif(!SR_IsComparNullOp( apCode[nIP+6] ), SR_SQLQuotedString( apCode[nIP+8], nSystemID ), "" )
+               nIP += iif( SR_IsComparNullOp( apCode[nIP+6] ), 7, 9 )
                Exit
             ElseIf nIP + 1 <= len(apCode) .and. apCode[nIP+1] == SQL_PCODE_OPERATOR_LEFT_OUTER_JOIN
                PASSTHROUGH
@@ -1170,12 +1170,12 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
          Next
 
-         If len( aTables ) > 0 .and. len( aOuters ) > 0
+         If len(aTables) > 0 .and. len(aOuters) > 0
             cSql += ", " + CRLF
          EndIf
 
          For each cTbl in aQualifiedTables
-            cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + if(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + if( hb_enumIndex() < len( aTables ), "," + NEWLINE + IDENTSPACE + "  ", "" )
+            cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif( hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "" )
          Next
 
          cSql += cTmp + cTrailler
@@ -1235,7 +1235,7 @@ Function SR_SQLQuotedString( uData, nSystemID, lNotNull )
    Case cType == "D" .and. (nSystemID == SYSTEMID_FIREBR .or. nSystemID == SYSTEMID_FIREBR3)
       return [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
    Case cType == "D" .and. nSystemID == SYSTEMID_CACHE
-      return [{d ']+transform(DtoS(if(year(uData)<1850,stod("18500101"),uData)) ,'@R 9999-99-99')+['}]
+      return [{d ']+transform(DtoS(iif(year(uData)<1850,stod("18500101"),uData)) ,'@R 9999-99-99')+['}]
    Case cType == "D" .and. ( nSystemID == SYSTEMID_MYSQL .or. nSystemID == SYSTEMID_MARIADB )
       return ([str_to_date( '] + dtos(uData) + [', '%Y%m%d' )])
    Case cType == "D"
@@ -1243,14 +1243,14 @@ Function SR_SQLQuotedString( uData, nSystemID, lNotNull )
    Case cType == "N"
       return ltrim(str(uData))
    Case cType == "L" .and. nSystemID == SYSTEMID_POSTGR
-      return if(uData,"true","false")
+      return iif(uData,"true","false")
    Case cType == "L" .and. nSystemID == SYSTEMID_INFORM
-      return if(uData,"'t'","'f'")
+      return iif(uData,"'t'","'f'")
    Case cType == "L"
-      return if(uData,"1","0")
+      return iif(uData,"1","0")
    Case cType == "A"
       For each uElement in uData
-         cRet += if(empty(cRet),"",", ") + SR_SQLQuotedString( uElement, nSystemID, lNotNull )
+         cRet += iif(empty(cRet),"",", ") + SR_SQLQuotedString( uElement, nSystemID, lNotNull )
       Next
       return cRet
    Case cType == "O"
@@ -1268,7 +1268,7 @@ Function SR_dtosdot( dData )
 
    Local cData := dtos( dData )
 
-Return SubStr( cData,1,4) + "-" + subStr( cData,5,2 ) + "-" + subStr( cData,7,2 )
+Return SubStr(cData, 1, 4) + "-" + subStr(cData, 5, 2) + "-" + subStr(cData, 7, 2)
 
 /*
 *  YYYY.MM.DD
@@ -1278,7 +1278,7 @@ Function SR_dtoDot( dData )
 
    Local cData := dtos( dData )
 
-Return SubStr( cData,1,4) + "." + subStr( cData,5,2 ) + "." + subStr( cData,7,2 )
+Return SubStr(cData, 1, 4) + "." + subStr(cData, 5, 2) + "." + subStr(cData, 7, 2)
 
 /*
 *  MMDDYYYY
@@ -1288,7 +1288,7 @@ Function SR_dtous( dData )
 
    Local cData := dtos( dData )
 
-Return subStr( cData,5,2 ) + subStr( cData,7,2 ) + SubStr( cData,1,4)
+Return subStr(cData, 5, 2) + subStr(cData, 7, 2) + SubStr(cData, 1, 4)
 
 /*
 * Error Handler
@@ -1339,7 +1339,7 @@ Static Function SR_SolveFilters(aFilters,aRet,cAlias,nSystemID)
    Default( nSystemID, SR_GetConnection():nSystemID )
    Default( cAlias, SR_DBQUALIFY( aRet[TABLE_INFO_TABLE_NAME], nSystemID  ) )
 
-   For i = 1 to len( aRet[TABLE_INFO_FILTERS] )
+   For i = 1 to len(aRet[TABLE_INFO_FILTERS])
       If SR_EvalFilters()
          aadd( aFilters, &( StrTran(aRet[TABLE_INFO_FILTERS,i], "<ALIAS>", cAlias ) ) )
       Else
@@ -1357,7 +1357,7 @@ Procedure __SR_StartSQL()
    bTableInfo  := { |cTableName,nSystemID| SR_TableAttr( cTableName, nSystemID ) }
    bIndexInfo  := { |cIndexName,nSystemID| SR_IndexAttr( cIndexName, nSystemID ) }
    bNextRecord := { || ++ nRecordNum }
-   aJoinWords  := Array( SUPPORTED_DATABASES )
+   aJoinWords  := Array(SUPPORTED_DATABASES)
    aFill( aJoinWords, { " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " LEFT JOIN ", " RIGHT JOIN ", " JOIN " } )
 
 Return
@@ -1366,7 +1366,7 @@ Return
 
 Function SR_SetTableInfoBlock( b )
 
-   If valtype( b ) != "B"
+   If valtype(b) != "B"
       Return .F.
    ENdIf
 
@@ -1378,7 +1378,7 @@ Return .T.
 
 Function SR_SetIndexInfoBlock( b )
 
-   If valtype( b ) != "B"
+   If valtype(b) != "B"
       Return .F.
    ENdIf
 
@@ -1402,7 +1402,7 @@ Return bIndexInfo
 
 Function SR_SetNextRecordBlock( b )
 
-   If valtype( b ) != "B"
+   If valtype(b) != "B"
       Return .F.
    ENdIf
 
@@ -1521,7 +1521,7 @@ Function SR_pCodeDescr(nCode)
       { "SQL_PCODE_OPERATOR_RIGHT_OUTER_JOIN",  1102 };
    }
 
-   if valtype( nCode ) != "N"
+   if valtype(nCode) != "N"
       Return nCode
    endif
 
@@ -1543,7 +1543,7 @@ Function SR_TableAttr( cTableName, nSystemID )
 
    if cTableName[2] == ":"
       /* Remove drive letter */
-      cTableName := SubStr( cTableName, 3 )
+      cTableName := SubStr(cTableName, 3)
    endif
 
    if "\" $ cTableName .or. "/" $ cTableName    // This may keep compatible with xHB 1.2
@@ -1552,8 +1552,8 @@ Function SR_TableAttr( cTableName, nSystemID )
       Else
         cSlash := "\"
       EndIf
-      if SubStr( cTableName, 2, rat( cSlash, cTableName )-2 ) == CurDir()
-         cTableName := SubStr( cTableName, Rat( cSlash, cTableName ) + 1 )
+      if SubStr(cTableName, 2, rat(cSlash, cTableName) - 2) == CurDir()
+         cTableName := SubStr(cTableName, Rat(cSlash, cTableName) + 1)
       EndIf
    EndIf
 
@@ -1562,14 +1562,14 @@ Function SR_TableAttr( cTableName, nSystemID )
    cTableName := strtran( cTableName, ".cdx", "" )
    cTableName := strtran( cTableName, "\", "_" )
    if cTableName[1] == "/"
-      cTableName := SubStr( cTableName, 2 )
+      cTableName := SubStr(cTableName, 2)
    endif
    cTableName := strtran( cTableName, "/", "_" )
    cTableName := strtran( cTableName, ".", "_" )
-   cTableName := alltrim( cTableName )
+   cTableName := alltrim(cTableName)
 
-   if len( cTableName ) > 30
-      cTableName := SubStr( cTableName, len( cTableName ) - 30 + 1 )
+   if len(cTableName) > 30
+      cTableName := SubStr(cTableName, len(cTableName) - 30 + 1)
    endif
 
    cOwner := SR_SetGlobalOwner()
@@ -1607,7 +1607,7 @@ Function SR_IndexAttr( cTableName, nSystemID )
 
    if cTableName[2] == ":"
       /* Remove drive letter */
-      cTableName := SubStr( cTableName, 3 )
+      cTableName := SubStr(cTableName, 3)
    endif
 
    if "\" $ cTableName .or. "/" $ cTableName    // This may keep compatible with xHB 1.2
@@ -1616,8 +1616,8 @@ Function SR_IndexAttr( cTableName, nSystemID )
       Else
         cSlash := "\"
       EndIf
-      if SubStr( cTableName, 2, rat( cSlash, cTableName )-2 ) == CurDir()
-         cTableName := SubStr( cTableName, Rat( cSlash, cTableName ) + 1 )
+      if SubStr(cTableName, 2, rat(cSlash, cTableName) - 2) == CurDir()
+         cTableName := SubStr(cTableName, Rat(cSlash, cTableName) + 1)
       EndIf
    EndIf
 
@@ -1626,14 +1626,14 @@ Function SR_IndexAttr( cTableName, nSystemID )
    cTableName := strtran( cTableName, ".cdx", "" )
    cTableName := strtran( cTableName, "\", "_" )
    if cTableName[1] == "/"
-      cTableName := SubStr( cTableName, 2 )
+      cTableName := SubStr(cTableName, 2)
    endif
    cTableName := strtran( cTableName, "/", "_" )
    cTableName := strtran( cTableName, ".", "_" )
-   cTableName := alltrim( cTableName )
+   cTableName := alltrim(cTableName)
 
-   if len( cTableName ) > 30
-      cTableName := SubStr( cTableName, len( cTableName ) - 30 + 1 )
+   if len(cTableName) > 30
+      cTableName := SubStr(cTableName, len(cTableName) - 30 + 1)
    endif
 
    aRet := { upper(cTableName), {}, "", TABLE_INFO_RELATION_TYPE_OUTER_JOIN,;

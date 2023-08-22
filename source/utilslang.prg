@@ -312,7 +312,7 @@ INIT PROCEDURE SR_Init2
 
   s_aMsg := { s_aMsg1, s_aMsg2, s_aMsg3, s_aMsg4, s_aMsg5, s_aMsg6, s_aMsg7 }
 
-  SR_SetMsgCount( len( s_aMsg ) )
+  SR_SetMsgCount( len(s_aMsg) )
 
   SR_SetBaseLang( 1 )
   SR_SetSecondLang( LANG_EN_US )
@@ -325,7 +325,7 @@ RETURN
 Function SR_Msg( nMsg )
    Local nBaseLang := SR_SetBaseLang()
 
-   If nMsg > 0 .and. nMsg <= len( s_aMsg[ nBaseLang ] )
+   If nMsg > 0 .and. nMsg <= len(s_aMsg[ nBaseLang ])
       Return s_aMsg[ nBaseLang, nMsg ]
    EndIf
 

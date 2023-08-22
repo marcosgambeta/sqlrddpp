@@ -88,9 +88,9 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_FIREBIRD
    DEFAULT lTranslate := .T.
 
    If aArray == NIL
-      aArray := Array(len( aFields ))
-   ElseIf len( aArray ) != len( aFields )
-      aSize( aArray, len( aFields ) )
+      aArray := Array(len(aFields))
+   ElseIf len(aArray) != len(aFields)
+      aSize( aArray, len(aFields) )
    EndIf
 
    If ::aCurrLine == NIL
@@ -99,7 +99,7 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_FIREBIRD
       Return aArray
    EndIf
 
-   For i = 1 to len( aArray )
+   For i = 1 to len(aArray)
       aArray[i] := ::aCurrLine[ i ]
    Next
 
@@ -111,7 +111,7 @@ METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_FIREBIRD
 
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
-      ::aCurrLine := array( LEN( aFields ) )
+      ::aCurrLine := array(LEN(aFields))
       FBLINEPROCESSED( ::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine )
    EndIf
 
@@ -166,11 +166,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    If lReSelect
       If !Empty( cCommand )
-         nRet := ::Execute( cCommand + if(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
+         nRet := ::Execute( cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
       Else
          // DOON'T remove "+0"
          ::Exec( [select a.rdb$field_name, b.rdb$field_precision + 0 from rdb$relation_fields a, rdb$fields b where a.rdb$relation_name = '] + StrTran( cTable, ["], [] ) + [' and a.rdb$field_source = b.rdb$field_name] , .F., .T., @aLocalPrecision )
-         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + if(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F. )
+         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F. )
       EndIf
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
          return nil
@@ -183,7 +183,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       return nil
    endif
 
-   aFields   := Array( nFields )
+   aFields   := Array(nFields)
    ::nFields := nFields
 
    for n = 1 to nFields
@@ -198,10 +198,10 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          _nLen := nLen
          _nDec := nDec
 
-         cName     := upper(alltrim( cName ))
+         cName     := upper(alltrim(cName))
          nPos := aScan( aLocalPrecision, { |x| rtrim(x[1]) == cName } )
          cType     := ::SQLType( nType, cName, nLen )
-         nLenField := ::SQLLen( nType, nLen, @nDec )
+         nLenField := ::SQLLen(nType, nLen, @nDec)
          If nPos > 0 .and. aLocalPrecision[nPos,2] > 0
             nLenField := aLocalPrecision[nPos,2]
          ElseIf ( nType == SQL_DOUBLE .or. nType == SQL_FLOAT .or. nType == SQL_NUMERIC )
@@ -209,7 +209,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          EndIf
 
          If cType == "U"
-            ::RuntimeErr( "", SR_Msg(21) + cName + " : " + str( nType ) )
+            ::RuntimeErr( "", SR_Msg(21) + cName + " : " + str(nType) )
          Else
             aFields[n] := { cName, cType, nLenField, nDec, nNull >= 1 , nType,, n, _nDec,, }
          EndIf
@@ -232,7 +232,7 @@ METHOD LastError() CLASS SR_FIREBIRD
    local cMsgError, nType := 0
    cMsgError := FBError( ::hEnv, @nType )
 
-return alltrim(cMsgError) + " - Native error code " + AllTrim( str( nType ) )
+return alltrim(cMsgError) + " - Native error code " + AllTrim(str(nType))
 
 /*------------------------------------------------------------------------*/
 
@@ -264,7 +264,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    else
       ::cConnect  := cConnect
       cTargetDB   := StrTran( FBVERSION(hEnv), "(access method)", "" )
-      cSystemVers := SubStr( cTargetDB, at( "Firebird ", cTargetDB ) + 9, 3 )
+      cSystemVers := SubStr(cTargetDB, at("Firebird ", cTargetDB) + 9, 3)
    EndIf
 
    nRet := FBBeginTransaction( hEnv )

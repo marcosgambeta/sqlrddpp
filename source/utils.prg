@@ -123,7 +123,7 @@ Function SR_Val2Char(a,n1,n2)
    Case HB_ISDATE(a)
       Return dtoc(a)
    Case HB_ISLOGICAL(a) 
-      Return if(a,".T.",".F.")
+      Return iif(a, ".T.", ".F.")
    EndCase
 Return ""
 
@@ -145,7 +145,7 @@ Function SR_LogFile( cFileName, aInfo, lAddDateTime )
 
    Endif
 
-   for n = 1 to Len( aInfo )
+   for n = 1 to Len(aInfo)
       If aInfo[ n ] == NIL
          Exit
       EndIf
@@ -161,7 +161,7 @@ Function SR_LogFile( cFileName, aInfo, lAddDateTime )
    ENDIF
 
    FSeek( hFile, 0, 2 )
-   FWrite( hFile, alltrim( cLine ) )
+   FWrite( hFile, alltrim(cLine) )
    FClose( hFile )
 
 return nil
@@ -212,7 +212,7 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
       SR_RuntimeErr( , "SR_ChengeStructure: Workarea not in use." )
    EndIf
 
-   If len( aNewStruct ) < 1 .or. valtype( aNewStruct) != "A" .or. ValType( aNewStruct[1] ) != "A"
+   If len(aNewStruct) < 1 .or. valtype(aNewStruct) != "A" .or. ValType(aNewStruct[1]) != "A"
       SR_RuntimeErr( , "SR_ChengeStructure: Invalid arguments [2]." )
    EndIf
 
@@ -235,11 +235,11 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
       SR_LogFile( "changestruct.log", { oWA:cFileName, "Original Structure:", e"\r\n" + sr_showVector(oWA:aFields)  } )
       SR_LogFile( "changestruct.log", { oWA:cFileName, "New Structure:", e"\r\n" + sr_showVector(aNewStruct)  } )
 
-      For i = 1 to len( aNewStruct )
+      For i = 1 to len(aNewStruct)
          aNewStruct[i,1] := Upper(alltrim(aNewStruct[i,1]))
          If (n := aScan( oWA:aFields, {|x| x[1] == aNewStruct[i,1] } ) ) > 0
 
-            aSize( aNewStruct[i], max( len(aNewStruct[i] ), 5 ) )
+            aSize( aNewStruct[i], max(len(aNewStruct[i] ), 5) )
 
             If aNewStruct[i, 2] == oWA:aFields[n, 2] .and. aNewStruct[i, 3] == oWA:aFields[n, 3] .and. aNewStruct[i, 4] == oWA:aFields[n, 4]
                // Structure is identical. Only need to check for NOT NULL flag.
@@ -289,7 +289,7 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
          EndIf
       Next
 
-      For i = 1 to len( oWA:aFields )
+      For i = 1 to len(oWA:aFields)
          If (n := aScan( aNewStruct, {|x| x[1] == oWA:aFields[i,1] } ) ) == 0
             If (!oWA:aFields[i,1] == oWA:cRecnoName) .and. (!oWA:aFields[i,1] == oWA:cDeletedName ) .and. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
                aadd( aToDrop, aClone( oWA:aFields[i] ) )
@@ -297,7 +297,7 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
             EndIf
          EndIf
       Next
-      IF Len( aDirect ) > 0 .and.;
+      IF Len(aDirect) > 0 .and.;
        ( oWA:oSql:nSystemID == SYSTEMID_FIREBR .or. ;
          oWA:oSql:nSystemID == SYSTEMID_FIREBR3 .or. ;
          oWA:oSql:nSystemID == SYSTEMID_MYSQL  .or. ;
@@ -311,11 +311,11 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
          oWA:AlterColumnsDirect( aDirect, .T., .F., @aTofix )
       ENDIF
 
-      If len( aToFix ) > 0
+      If len(aToFix) > 0
          oWA:AlterColumns( aToFix, .T. )
       EndIf
 
-      For i = 1 to len( aToDrop )
+      For i = 1 to len(aToDrop)
          If aToDrop[i,1] == "BACKUP_"
             oWA:DropColumn( aToDrop[i,1], .F. )
          Else
@@ -395,7 +395,7 @@ Function SR_SetReverseIndex( nIndex, lSet )
 
    Local lOldSet
 
-   If IS_SQLRDD .and. nIndex > 0 .and. nIndex <= len( (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex )
+   If IS_SQLRDD .and. nIndex > 0 .and. nIndex <= len((Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex)
       lOldSet := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex[ nIndex, DESCEND_INDEX_ORDER ]
       If HB_ISLOGICAL( lSet ) 
          (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex[ nIndex, DESCEND_INDEX_ORDER ] := lSet
@@ -494,7 +494,7 @@ Function SR_cDBValue( uData, nSystemID )
 
    default nSystemID := SR_GetConnection():nSystemID
 
-return SR_SubQuoted( valtype( uData ), uData, nSystemID )
+return SR_SubQuoted( valtype(uData), uData, nSystemID )
 
 /*------------------------------------------------------------------------*/
 
@@ -526,17 +526,17 @@ Static Function SR_SubQuoted( cType, uData, nSystemID )
       return [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
 
    Case cType == "D" .and. nSystemID == SYSTEMID_CACHE
-      return [{d ']+transform(DtoS(if(year(uData)<1850,stod("18500101"),uData)) ,'@R 9999-99-99')+['}]
+      return [{d ']+transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)) ,'@R 9999-99-99')+['}]
    Case cType == "D"
       return ['] + dtos(uData) + [']
    Case cType == "N"   
       return ltrim(str(uData))
    Case cType == "L" .and. (nSystemID == SYSTEMID_POSTGR .or. nSystemID == SYSTEMID_FIREBR3 ) 
-      return if(uData,"true","false")
+      return iif(uData, "true", "false")
    Case cType == "L" .and. nSystemID == SYSTEMID_INFORM
-      return if(uData,"'t'","'f'")      
+      return iif(uData, "'t'", "'f'")      
    Case cType == "L"   
-      return if(uData,"1","0")
+      return iif(uData, "1", "0")
    case ctype == "T"  .and. nSystemID == SYSTEMID_POSTGR  
       IF Empty( uData) 
          RETURN 'NULL'
@@ -694,9 +694,9 @@ Function SR_ShowVector( a )
       For i = 1 to len(a)
 
          If HB_ISARRAY(a[i]) 
-            cRet += SR_showvector(a[i]) + if( i == len(a), "", "," ) + CRLF
+            cRet += SR_showvector(a[i]) + iif(i == len(a), "", ",") + CRLF
          Else
-            cRet += SR_Val2CharQ(a[i]) + if( i == len(a), "", "," )
+            cRet += SR_Val2CharQ(a[i]) + iif(i == len(a), "", ",")
          EndIf
 
       Next
@@ -715,7 +715,7 @@ Return cRet
 
 Function SR_Val2CharQ( uData )
 
-   local cType := valtype( uData )
+   local cType := valtype(uData)
 
    Do Case
    Case cType == "C"
@@ -728,7 +728,7 @@ Function SR_Val2CharQ( uData )
    Case cType == "T"
       Return ttoc(uData)      
    Case cType == "L"
-      Return if(uData,".T.",".F.")
+      Return iif(uData, ".T.", ".F.")
    Case cType == "A"
       Return "{Array}"
    Case cType == "O"
@@ -812,7 +812,7 @@ Function SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
 
    cRet := "SELECT " + cAlias + ".* FROM " + cTable + " " + cAlias + " WHERE " + CRLF
 
-   cRet += "(" + cAlias + ".DT__HIST = (SELECT" + if(n=3," MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
+   cRet += "(" + cAlias + ".DT__HIST = (SELECT" + iif(n = 3, " MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
    cRet += cTable + " " + cAl1 + " WHERE " + cAlias + "." + cPK + "="
    cRet += cAl1 + "." + cPk
 
@@ -845,7 +845,7 @@ Function SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
 
    cRet := ""
 
-   cRet += "(" + cAlias + ".DT__HIST = (SELECT" + if(n=3," MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
+   cRet += "(" + cAlias + ".DT__HIST = (SELECT" + iif(n = 3, " MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
    cRet += cTable + " " + cAl1 + " WHERE " + cAlias + "." + cPK + "="
    cRet += cAl1 + "." + cPk
 
@@ -931,11 +931,11 @@ Function SR_Deserialize( uData )
 * Local ctemp,cdes,chex
 * cTemp := udata
 * altd()
-* cHex := SR_HEXTOSTR(SubStr( uData, 21, val( substr(uData,11,10) ) ) ) 
+* cHex := SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10))))
 * cdes := sr_Deserialize1( cHex)
 * tracelog(udata,chex,cdes)
 * return cdes
-Return SR_Deserialize1( SR_HEXTOSTR(SubStr( uData, 21, val( substr(uData,11,10) ) ) ) )
+Return SR_Deserialize1(SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10)))))
 
 /*------------------------------------------------------------------------*/
 
@@ -1329,7 +1329,7 @@ Function SR_RuntimeErr( cOperation, cErr )
    DEFAULT cOperation := "SQLRDD"
    DEFAULT cErr := "RunTimeError"
 
-   cDescr := alltrim( cErr )
+   cDescr := alltrim(cErr)
 
    oErr:genCode       := 99
    oErr:CanDefault    := .F.
@@ -1365,7 +1365,7 @@ Function SR_GetStack()
 
    while ( i < 70 )
        If ! Empty( ProcName( i ) )
-          cErrorLog += CRLF + Trim( ProcName( i ) ) + "     Linha : " + alltrim(str(ProcLine(i)))
+          cErrorLog += CRLF + Trim(ProcName(i)) + "     Linha : " + alltrim(str(ProcLine(i)))
        EndIf
        i++
    end
@@ -1450,7 +1450,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
    DO WHILE ( nPos := At( ';', xMessage ) ) != 0
       AAdd( aSay, Left( xMessage, nPos - 1 ) )
-      xMessage := SubStr( xMessage, nPos + 1 )
+      xMessage := SubStr(xMessage, nPos + 1)
    ENDDO
    AAdd( aSay, xMessage )
 
@@ -1460,7 +1460,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       RETURN NIL
    ENDIF
 
-   IF ISARRAY( xMessage )
+   IF ISARRAY(xMessage)
 
       FOR EACH cEval IN xMessage
          IF ISCHARACTER( cEval )
@@ -1470,13 +1470,13 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
    ELSE
 
-      SWITCH ValType( xMessage )
+      SWITCH ValType(xMessage)
          CASE "C"
          CASE "M"
             EXIT
 
          CASE "N"
-            xMessage := LTrim( Str( xMessage ) )
+            xMessage := LTrim(Str(xMessage))
             EXIT
 
          CASE "D"
@@ -1488,7 +1488,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
             EXIT
 
          CASE "L"
-            xMessage := iif( xMessage, ".T.", ".F." )
+            xMessage := iif(xMessage, ".T.", ".F.")
             EXIT
 
          CASE "O"
@@ -1505,13 +1505,13 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
       DO WHILE ( nPos := At( ';', xMessage ) ) != 0
          AAdd( aSay, Left( xMessage, nPos - 1 ) )
-         xMessage := SubStr( xMessage, nPos + 1 )
+         xMessage := SubStr(xMessage, nPos + 1)
       ENDDO
       AAdd( aSay, xMessage )
 
       FOR EACH xMessage IN aSay
 
-         IF ( nLen := Len( xMessage ) ) > 58
+         IF ( nLen := Len(xMessage) ) > 58
             FOR nPos := 58 TO 1 STEP -1
                IF xMessage[nPos] $ ( " " + Chr( 9 ) )
                   EXIT
@@ -1523,12 +1523,12 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
             ENDIF
 
             sCopy := xMessage
-            aSay[ HB_EnumIndex() ] := RTrim( Left( xMessage, nPos ) )
+            aSay[ HB_EnumIndex() ] := RTrim(Left(xMessage, nPos))
 
-            IF Len( aSay ) == HB_EnumIndex()
-               aAdd( aSay, SubStr( sCopy, nPos + 1 ) )
+            IF Len(aSay) == HB_EnumIndex()
+               aAdd(aSay, SubStr(sCopy, nPos + 1))
             ELSE
-               aIns( aSay, HB_EnumIndex() + 1, SubStr( sCopy, nPos + 1 ), .T. )
+               aIns( aSay, HB_EnumIndex() + 1, SubStr(sCopy, nPos + 1), .T. )
             ENDIF
         ENDIF
       NEXT
@@ -1537,7 +1537,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
 #endif
 
-   IF !ISARRAY( aOptions )
+   IF !ISARRAY(aOptions)
       aOptions := {}
    ENDIF
 
@@ -1553,12 +1553,12 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
       cColor11 := cColor12 := cColor21 := cColor22 := ""
 
-      cColorStr := alltrim( StrTran( cColorNorm," ","") )
+      cColorStr := alltrim(StrTran(cColorNorm," ",""))
       nCommaSep := At(",",cColorStr)
 
       if nCommaSep > 0 // exist more than one color pair.
-         cColorPair1 := SubStr( cColorStr, 1, nCommaSep - 1 )
-         cColorPair2 := SubStr( cColorStr, nCommaSep + 1 )
+         cColorPair1 := SubStr(cColorStr, 1, nCommaSep - 1)
+         cColorPair2 := SubStr(cColorStr, nCommaSep + 1)
       else
          cColorPair1 := cColorStr
          cColorPair2 := ""
@@ -1567,8 +1567,8 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       nSlash := At("/",cColorPair1)
 
       if nSlash > 1
-         cColor11 := SubStr( cColorPair1,1,nSlash-1)
-         cColor12 := SubStr( cColorPair1,nSlash+1)
+         cColor11 := SubStr(cColorPair1, 1, nSlash - 1)
+         cColor12 := SubStr(cColorPair1, nSlash + 1)
       else
          cColor11 := cColorPair1
          cColor12 := "R"
@@ -1607,8 +1607,8 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
          nSlash := At("/",cColorPair2)
 
          if nSlash > 1
-            cColor21 := SubStr( cColorPair2,1,nSlash-1)
-            cColor22 := SubStr( cColorPair2,nSlash+1)
+            cColor21 := SubStr(cColorPair2, 1, nSlash - 1)
+            cColor22 := SubStr(cColorPair2, nSlash + 1)
          else
             cColor21 := cColorPair2
             cColor22 := "B"
@@ -1658,7 +1658,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
    /* The longest line */
    nWidth := 0
-   AEval( aSay, {| x | nWidth := Max( Len( x ), nWidth ) } )
+   AEval( aSay, {| x | nWidth := Max(Len(x), nWidth) } )
 
    /* Cleanup the button array */
    aOptionsOK := {}
@@ -1668,37 +1668,37 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       ENDIF
    NEXT
 
-   IF Len( aOptionsOK ) == 0
+   IF Len(aOptionsOK) == 0
       aOptionsOK := { 'Ok' }
 #ifdef HB_C52_STRICT
    /* NOTE: Clipper allows only four options [vszakats] */
-   ELSEIF Len( aOptionsOK ) > 4
+   ELSEIF Len(aOptionsOK) > 4
       aSize( aOptionsOK, 4 )
 #endif
    ENDIF
 
    /* Total width of the botton line (the one with choices) */
    nOpWidth := 0
-   AEval( aOptionsOK, {| x | nOpWidth += Len( x ) + 4 } )
+   AEval( aOptionsOK, {| x | nOpWidth += Len(x) + 4 } )
 
    /* what's wider ? */
-   nWidth := Max( nWidth + 2 + iif( Len( aSay ) == 1, 4, 0 ), nOpWidth + 2 )
+   nWidth := Max(nWidth + 2 + iif(Len(aSay) == 1, 4, 0), nOpWidth + 2)
 
    /* box coordinates */
-   nInitRow := Int( ( ( MaxRow() - ( Len( aSay ) + 4 ) ) / 2 ) + .5 )
+   nInitRow := Int( ( ( MaxRow() - ( Len(aSay) + 4 ) ) / 2 ) + .5 )
    nInitCol := Int( ( ( MaxCol() - ( nWidth + 2 ) ) / 2 ) + .5 )
 
    /* detect prompts positions */
    aPos := {}
    aHotkey := {}
    nCurrent := nInitCol + Int( ( nWidth - nOpWidth ) / 2 ) + 2
-   AEval( aOptionsOK, {| x | AAdd( aPos, nCurrent ), AAdd( aHotKey, Upper( Left( x, 1 ) ) ), nCurrent += Len( x ) + 4 } )
+   AEval( aOptionsOK, {| x | AAdd( aPos, nCurrent ), AAdd( aHotKey, Upper( Left( x, 1 ) ) ), nCurrent += Len(x) + 4 } )
 
    nChoice := 1
 
    IF lConsole
 
-      nCount := Len( aSay )
+      nCount := Len(aSay)
       FOR EACH cEval IN aSay
          OutStd( cEval )
          IF HB_EnumIndex() < nCount
@@ -1707,7 +1707,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       NEXT
 
       OutStd( " (" )
-      nCount := Len( aOptionsOK )
+      nCount := Len(aOptionsOK)
       FOR EACH cEval IN aOptionsOK
          OutStd( cEval )
          IF HB_EnumIndex() < nCount
@@ -1758,20 +1758,20 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       nOldRow := Row()
       nOldCol := Col()
       nOldCursor := SetCursor( SC_NONE )
-      cOldScreen := SaveScreen( nInitRow, nInitCol, nInitRow + Len( aSay ) + 3, nInitCol + nWidth + 1 )
+      cOldScreen := SaveScreen( nInitRow, nInitCol, nInitRow + Len(aSay) + 3, nInitCol + nWidth + 1 )
 
       /* draw box */
-      DispBox( nInitRow, nInitCol, nInitRow + Len( aSay ) + 3, nInitCol + nWidth + 1, B_SINGLE + ' ', cColorNorm )
+      DispBox( nInitRow, nInitCol, nInitRow + Len(aSay) + 3, nInitCol + nWidth + 1, B_SINGLE + ' ', cColorNorm )
 
       FOR EACH cEval IN aSay
-         DispOutAt( nInitRow + HB_EnumIndex(), nInitCol + 1 + Int( ( ( nWidth - Len( cEval ) ) / 2 ) + .5 ), cEval, cColorNorm )
+         DispOutAt( nInitRow + HB_EnumIndex(), nInitCol + 1 + Int( ( ( nWidth - Len(cEval) ) / 2 ) + .5 ), cEval, cColorNorm )
       NEXT
 
       /* choice loop */
       lWhile := .T.
       DO WHILE lWhile
 
-         nCount := Len( aSay )
+         nCount := Len(aSay)
          FOR EACH cEval IN aOptionsOK
             DispOutAt( nInitRow + nCount + 2, aPos[ HB_EnumIndex() ], " " + cEval + " ", cColorNorm )
          NEXT
@@ -1798,11 +1798,11 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
                nMRow  := MRow()
                nMCol  := MCol()
                nPos   := 0
-               nCount := Len( aSay )
+               nCount := Len(aSay)
 
                FOR EACH cEval IN aOptionsOK
                   IF nMRow == nInitRow + nCount + 2 .AND. ;
-                       INRANGE( aPos[ HB_EnumIndex() ], nMCol, aPos[ HB_EnumIndex() ] + Len( cEval ) + 2 - 1 )
+                       INRANGE( aPos[ HB_EnumIndex() ], nMCol, aPos[ HB_EnumIndex() ] + Len(cEval) + 2 - 1 )
                      nPos := HB_EnumIndex()
                      EXIT
                   ENDIF
@@ -1819,11 +1819,11 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
             CASE K_LEFT
             CASE K_SH_TAB
-               IF Len( aOptionsOK ) > 1
+               IF Len(aOptionsOK) > 1
 
                   nChoice--
                   IF nChoice == 0
-                     nChoice := Len( aOptionsOK )
+                     nChoice := Len(aOptionsOK)
                   ENDIF
 
                   nDelay := 0
@@ -1832,10 +1832,10 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
             CASE K_RIGHT
             CASE K_TAB
-               IF Len( aOptionsOK ) > 1
+               IF Len(aOptionsOK) > 1
 
                   nChoice++
-                  IF nChoice > Len( aOptionsOK )
+                  IF nChoice > Len(aOptionsOK)
                      nChoice := 1
                   ENDIF
 
@@ -1855,7 +1855,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       ENDDO
 
       /* Restore status */
-      RestScreen( nInitRow, nInitCol, nInitRow + Len( aSay ) + 3, nInitCol + nWidth + 1, cOldScreen )
+      RestScreen( nInitRow, nInitCol, nInitRow + Len(aSay) + 3, nInitCol + nWidth + 1, cOldScreen )
       SetCursor( nOldCursor )
       SetPos( nOldRow, nOldCol )
 
@@ -1987,7 +1987,7 @@ Return .F.
 HB_FUNC( SR_PHFILE )
 {
    PHB_ITEM pFile = hb_param( 1, HB_IT_STRING );
-   hb_retl( ( pFile && hb_itemGetCLen( pFile ) < HB_PATH_MAX - 1 ) ? hb_spFile( hb_itemGetCPtr( pFile ), NULL ) : HB_FALSE );
+   hb_retl( ( pFile && hb_itemGetCLen(pFile) < HB_PATH_MAX - 1 ) ? hb_spFile( hb_itemGetCPtr( pFile ), NULL ) : HB_FALSE );
 }
 
 #PRAGMA ENDDUMP
@@ -2025,7 +2025,7 @@ FUNCTION SR_SetFieldDefault( cTable, cField, cDefault )
    LOCAL cSql := "ALTER TABLE "+ cTable + " ALTER COLUMN " +cField +" SET DEFAULT "
    oCnn := SR_GetConnection(  )
    IF HB_ISNUMERIC( cDefault ) 
-      cSql += Alltrim( str( cDefault ) )
+      cSql += Alltrim(str(cDefault))
    ELSEIF HB_ISSTRING( cDefault )
       IF Empty( cDefault) 
          cSql += "''"
