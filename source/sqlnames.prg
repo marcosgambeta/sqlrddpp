@@ -56,8 +56,8 @@
 
 NAMESPACE SQLRDD
 
-Function File( cFile )
-Return sr_file( cFile )
+Function File(cFile)
+Return sr_file(cFile)
 
 Function dbStruct()
 Return SR_dbStruct()

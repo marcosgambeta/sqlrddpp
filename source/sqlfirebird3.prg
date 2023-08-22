@@ -75,13 +75,13 @@ CLASS SR_FIREBIRD3 FROM SR_CONNECTION
    METHOD AllocStatement()
    METHOD FetchRaw( lTranslate, aFields )
    METHOD FieldGet( nField, aFields, lTranslate )
-   METHOD Getline( aFields, lTranslate, aArray )
+   METHOD Getline(aFields, lTranslate, aArray)
    METHOD MoreResults( aArray, lTranslate )  
 ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_FIREBIRD3
+METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_FIREBIRD3
 
    Local i
 
@@ -90,7 +90,7 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_FIREBIRD3
    If aArray == NIL
       aArray := Array(len(aFields))
    ElseIf len(aArray) != len(aFields)
-      aSize( aArray, len(aFields) )
+      aSize(aArray, len(aFields))
    EndIf
 
    If ::aCurrLine == NIL
@@ -165,11 +165,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    DEFAULT cDeletedName := SR_DeletedName()
 
    If lReSelect
-      If !Empty( cCommand )
-         nRet := ::Execute( cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
+      If !Empty(cCommand)
+         nRet := ::Execute(cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F.)
       Else
          // DOON'T remove "+0"
-         ::Exec( [select a.rdb$field_name, b.rdb$field_precision + 0 from rdb$relation_fields a, rdb$fields b where a.rdb$relation_name = '] + StrTran( cTable, ["], [] ) + [' and a.rdb$field_source = b.rdb$field_name] , .F., .T., @aLocalPrecision )
+         ::Exec([select a.rdb$field_name, b.rdb$field_precision + 0 from rdb$relation_fields a, rdb$fields b where a.rdb$relation_name = '] + StrTran(cTable, ["], []) + [' and a.rdb$field_source = b.rdb$field_name] , .F., .T., @aLocalPrecision)
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F.)
       EndIf
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
@@ -199,8 +199,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          _nDec := nDec
 
          cName     := upper(alltrim(cName))
-         nPos := aScan( aLocalPrecision, { |x| rtrim(x[1]) == cName } )
-         cType     := ::SQLType( nType, cName, nLen )
+         nPos := aScan(aLocalPrecision, { |x| rtrim(x[1]) == cName })
+         cType     := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec)
          If nPos > 0 .and. aLocalPrecision[nPos,2] > 0
             nLenField := aLocalPrecision[nPos,2]
@@ -259,11 +259,11 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
 
    if nRet != SQL_SUCCESS
       ::nRetCode = nRet
-      SR_MsgLogFile( "Connection Error: " + alltrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + " - Username : " + ::cUser + " (Password not shown for security)" )
+      SR_MsgLogFile("Connection Error: " + alltrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + " - Username : " + ::cUser + " (Password not shown for security)")
       Return Self
    else
       ::cConnect  := cConnect
-      cTargetDB   := StrTran( FBVERSION3(hEnv), "(access method)", "" )
+      cTargetDB   := StrTran(FBVERSION3(hEnv), "(access method)", "")
       cSystemVers := SubStr(cTargetDB, at("Firebird ", cTargetDB) + 9, 3)
       tracelog('cTargetDB',cTargetDB,'cSystemVers',cSystemVers)
    EndIf
@@ -272,7 +272,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
 
    if nRet != SQL_SUCCESS
       ::nRetCode = nRet
-      SR_MsgLogFile( "Transaction Start error : " + alltrim(str(nRet)) )
+      SR_MsgLogFile("Transaction Start error : " + alltrim(str(nRet)))
       Return Self
    EndIf
 
@@ -289,7 +289,7 @@ return Self
 METHOD End() CLASS SR_FIREBIRD3
 
    ::Commit()
-   FBClose( ::hEnv )
+   FBClose(::hEnv)
 
 return Super:End()
 
@@ -338,7 +338,7 @@ METHOD MoreResults( aArray, lTranslate )  CLASS SR_FIREBIRD3
       DEFAULT aArray := {}
       n := 1
    
-     AADD( aArray, Array(1) )
+     AADD(aArray, Array(1))
   
      aArray[n,1] := nvalue
     

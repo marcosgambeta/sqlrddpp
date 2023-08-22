@@ -80,7 +80,7 @@ Return NIL
 
 FUNCTION SR_WorkareaFileName()
 
-   if empty( alias() )
+   if empty(alias())
       Return ""
    endif
 
@@ -94,7 +94,7 @@ Return dbInfo( DBI_INTERNAL_OBJECT ):cFileName
 
 FUNCTION SR_dbStruct()
 
-   if empty( alias() )
+   if empty(alias())
       Return {}
    endif
 
@@ -102,12 +102,12 @@ FUNCTION SR_dbStruct()
       Return {}
    endif
 
-Return aclone( dbInfo( DBI_INTERNAL_OBJECT ):aFields )
+Return aclone(dbInfo(DBI_INTERNAL_OBJECT):aFields)
 
 /*------------------------------------------------------------------------*/
 
-Function SR_MsgLogFile( uMsg, p1,p2,p3,p4,p5,p6,p7,p8 )
-   SR_LogFile( "sqlerror.log", { uMsg, p1,p2,p3,p4,p5,p6,p7,p8 } )
+Function SR_MsgLogFile(uMsg, p1, p2, p3, p4, p5, p6, p7, p8)
+   SR_LogFile("sqlerror.log", {uMsg, p1, p2, p3, p4, p5, p6, p7, p8})
 Return NIL
 
 /*------------------------------------------------------------------------*/
@@ -129,7 +129,7 @@ Return ""
 
 /*------------------------------------------------------------------------*/
 
-Function SR_LogFile( cFileName, aInfo, lAddDateTime )
+Function SR_LogFile(cFileName, aInfo, lAddDateTime)
 
    local hFile, cLine, n
 
@@ -137,7 +137,7 @@ Function SR_LogFile( cFileName, aInfo, lAddDateTime )
 
    If lAddDateTime
 
-      cLine := DToC( Date() ) + " " + Time() + ": "
+      cLine := DToC(Date()) + " " + Time() + ": "
 
    Else
 
@@ -149,20 +149,20 @@ Function SR_LogFile( cFileName, aInfo, lAddDateTime )
       If aInfo[ n ] == NIL
          Exit
       EndIf
-      cLine += SR_Val2CharQ( aInfo[ n ] ) + Chr( 9 )
+      cLine += SR_Val2CharQ( aInfo[ n ] ) + Chr(9)
    next
 
    cLine += CRLF
 
-   IF sr_phFile( cFileName )
+   IF sr_phFile(cFileName)
       hFile := FOpen( cFileName, 1 )
    ELSE
-      hFile := FCreate( cFileName )
+      hFile := FCreate(cFileName)
    ENDIF
 
-   FSeek( hFile, 0, 2 )
-   FWrite( hFile, alltrim(cLine) )
-   FClose( hFile )
+   FSeek(hFile, 0, 2)
+   FWrite(hFile, alltrim(cLine))
+   FClose(hFile)
 
 return nil
 
@@ -171,7 +171,7 @@ return nil
 Function SR_FilterStatus(lEnable)
 
    If IS_SQLRDD
-      If HB_ISLOGICAL( lEnable ) 
+      If HB_ISLOGICAL(lEnable) 
          Return (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):lDisableFlts := !lEnable
       Else
          Return (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):lDisableFlts
@@ -182,7 +182,7 @@ Return .F.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_CreateConstraint( aSourceColumns, cTargetTable, aTargetColumns, cConstraintName )
+Function SR_CreateConstraint(aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
 
    If IS_SQLRDD
       Return (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):CreateConstraint(dbInfo( DBI_INTERNAL_OBJECT ):cFileName,aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
@@ -192,7 +192,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_DropConstraint( cConstraintName, lFKs )
+Function SR_DropConstraint(cConstraintName, lFKs)
 
    If IS_SQLRDD
       Return (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):DropConstraint(dbInfo( DBI_INTERNAL_OBJECT ):cFileName,cConstraintName, lFKs)
@@ -232,68 +232,68 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
 
       dbSetOrder(0)
 
-      SR_LogFile( "changestruct.log", { oWA:cFileName, "Original Structure:", e"\r\n" + sr_showVector(oWA:aFields)  } )
-      SR_LogFile( "changestruct.log", { oWA:cFileName, "New Structure:", e"\r\n" + sr_showVector(aNewStruct)  } )
+      SR_LogFile("changestruct.log", { oWA:cFileName, "Original Structure:", e"\r\n" + sr_showVector(oWA:aFields)  })
+      SR_LogFile("changestruct.log", { oWA:cFileName, "New Structure:", e"\r\n" + sr_showVector(aNewStruct)  })
 
       For i = 1 to len(aNewStruct)
          aNewStruct[i,1] := Upper(alltrim(aNewStruct[i,1]))
-         If (n := aScan( oWA:aFields, {|x| x[1] == aNewStruct[i,1] } ) ) > 0
+         If (n := aScan(oWA:aFields, {|x| x[1] == aNewStruct[i,1] }) ) > 0
 
-            aSize( aNewStruct[i], max(len(aNewStruct[i] ), 5) )
+            aSize(aNewStruct[i], max(len(aNewStruct[i] ), 5))
 
             If aNewStruct[i, 2] == oWA:aFields[n, 2] .and. aNewStruct[i, 3] == oWA:aFields[n, 3] .and. aNewStruct[i, 4] == oWA:aFields[n, 4]
                // Structure is identical. Only need to check for NOT NULL flag.
                If aNewStruct[i, FIELD_NULLABLE] != NIL .and. aNewStruct[i, FIELD_NULLABLE] !=  oWA:aFields[n, FIELD_NULLABLE]
                   If aNewStruct[i, FIELD_NULLABLE]
-                     SR_LogFile( "changestruct.log", { oWA:cFileName, "Changing to nullable:", aNewStruct[i,1]} )
-                     oWA:DropRuleNotNull( aNewStruct[i,1] )
+                     SR_LogFile("changestruct.log", { oWA:cFileName, "Changing to nullable:", aNewStruct[i,1]})
+                     oWA:DropRuleNotNull(aNewStruct[i,1])
                   Else
-                     SR_LogFile( "changestruct.log", { oWA:cFileName, "Changing to not null:", aNewStruct[i,1]} )
-                     oWA:AddRuleNotNull( aNewStruct[i,1] )
+                     SR_LogFile("changestruct.log", { oWA:cFileName, "Changing to not null:", aNewStruct[i,1]})
+                     oWA:AddRuleNotNull(aNewStruct[i,1])
                   EndIf
                EndIf
             ElseIf oWA:oSql:nSystemID == SYSTEMID_IBMDB2
-               SR_LogFile( "changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i,1], " - Operation not supported by back end database" } )
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i,1], " - Operation not supported by back end database" })
             ElseIf aNewStruct[i, 2] == "M" .and. oWA:aFields[n, 2] == "C"
-               aadd( aToFix, aClone( aNewStruct[i] ) )
-               SR_LogFile( "changestruct.log", { oWA:cFileName, "Will Change data type of field:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]} )
+               aadd(aToFix, aClone(aNewStruct[i]))
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change data type of field:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ElseIf aNewStruct[i, 2] == "C" .and. oWA:aFields[n, 2] == "M"
-               aadd( aToFix, aClone( aNewStruct[i] ) )
-               SR_LogFile( "changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing data type:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]} )
+               aadd(aToFix, aClone(aNewStruct[i]))
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing data type:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ElseIf aNewStruct[i, 2] != oWA:aFields[n, 2]
                IF aNewStruct[i, 2] $"CN" .and. oWA:aFields[n, 2] $"CN" .and. oWA:oSql:nSystemID == SYSTEMID_POSTGR               
 
 *                   IF "8.4" $ oWA:oSql:cSystemVers .or. "9.0" $ oWA:oSql:cSystemVers
                   IF oWA:oSql:lPostgresql8 .and. !oWA:oSql:lPostgresql83
-                     aadd( aDirect, aClone( aNewStruct[i] ) )
+                     aadd(aDirect, aClone(aNewStruct[i]))
                   else
-                     aadd( aToFix, aClone( aNewStruct[i] ) )
+                     aadd(aToFix, aClone(aNewStruct[i]))
                   ENDIF
-                  SR_LogFile( "changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field types:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]} )
+                  SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field types:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
                ELSE 
-                  SR_LogFile( "changestruct.log", { oWA:cFileName, "ERROR: Cannot convert data type of field:", aNewStruct[i,1], " from", oWA:aFields[n, 2], "to", aNewStruct[i, 2] } )
+                  SR_LogFile("changestruct.log", { oWA:cFileName, "ERROR: Cannot convert data type of field:", aNewStruct[i,1], " from", oWA:aFields[n, 2], "to", aNewStruct[i, 2] })
                ENDIF
             ElseIf aNewStruct[i, 3] >= oWA:aFields[n, 3] .and. oWA:aFields[n, 2] $ "CN"              
                
-               aadd( aDirect, aClone( aNewStruct[i] ) )
-               SR_LogFile( "changestruct.log", { oWA:cFileName, "Will Change field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3] } )
+               aadd(aDirect, aClone(aNewStruct[i]))
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3] })
             ElseIf aNewStruct[i, 3] < oWA:aFields[n, 3] .and. oWA:aFields[n, 2] $ "CN"
-               aadd( aToFix, aClone( aNewStruct[i] ) )
-               SR_LogFile( "changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3]} )
+               aadd(aToFix, aClone(aNewStruct[i]))
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3]})
             Else
-               SR_LogFile( "changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i,1] } )
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i,1] })
             EndIf
          Else
-            aadd( aToFix, aClone( aNewStruct[i] ) )
-            SR_LogFile( "changestruct.log", { oWA:cFileName, "Will add column:", aNewStruct[i,1] } )
+            aadd(aToFix, aClone(aNewStruct[i]))
+            SR_LogFile("changestruct.log", { oWA:cFileName, "Will add column:", aNewStruct[i,1] })
          EndIf
       Next
 
       For i = 1 to len(oWA:aFields)
-         If (n := aScan( aNewStruct, {|x| x[1] == oWA:aFields[i,1] } ) ) == 0
+         If (n := aScan(aNewStruct, {|x| x[1] == oWA:aFields[i,1] }) ) == 0
             If (!oWA:aFields[i,1] == oWA:cRecnoName) .and. (!oWA:aFields[i,1] == oWA:cDeletedName ) .and. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
-               aadd( aToDrop, aClone( oWA:aFields[i] ) )
-               SR_LogFile( "changestruct.log", { oWA:cFileName, "Will drop:", oWA:aFields[i,1] } )
+               aadd(aToDrop, aClone(oWA:aFields[i]))
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Will drop:", oWA:aFields[i,1] })
             EndIf
          EndIf
       Next
@@ -331,7 +331,7 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
       // recover table status
 
       SELECT (nAlias)
-      dbUseArea( .F., "SQLRDD", cTblName, cAlias )
+      dbUseArea(.F., "SQLRDD", cTblName, cAlias)
       If OrdCount() >= nOrd
          dbSetOrder( nOrd )
       EndIf
@@ -348,7 +348,7 @@ Return lOk
 Function SR_SetCurrDate(d)
 
    If IS_SQLRDD
-      d := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):SetCurrDate( d )
+      d := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):SetCurrDate(d)
       If d == NIL
          d := SR_GetActiveDt()
       EndIf
@@ -368,10 +368,10 @@ Return l
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetColPK( cColName )
+Function SR_SetColPK(cColName)
 
    If IS_SQLRDD
-      (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):SetColPK( cColName )
+      (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):SetColPK(cColName)
       If cColName == NIL
          cColName := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):cColPK
       EndIf
@@ -397,7 +397,7 @@ Function SR_SetReverseIndex( nIndex, lSet )
 
    If IS_SQLRDD .and. nIndex > 0 .and. nIndex <= len((Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex)
       lOldSet := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex[ nIndex, DESCEND_INDEX_ORDER ]
-      If HB_ISLOGICAL( lSet ) 
+      If HB_ISLOGICAL(lSet) 
          (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex[ nIndex, DESCEND_INDEX_ORDER ] := lSet
       EndIf
    EndIf
@@ -472,11 +472,11 @@ Return
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetCreateAsHistoric( l )
+Function SR_SetCreateAsHistoric(l)
 
    Local lOld := lCreateAsHistoric
 
-   If HB_ISLOGICAL( l ) 
+   If HB_ISLOGICAL(l) 
       lCreateAsHistoric := l
    EndIf
 
@@ -490,15 +490,15 @@ Return (lHistorico := .t.)
 
 /*------------------------------------------------------------------------*/
 
-Function SR_cDBValue( uData, nSystemID )
+Function SR_cDBValue(uData, nSystemID)
 
    default nSystemID := SR_GetConnection():nSystemID
 
-return SR_SubQuoted( valtype(uData), uData, nSystemID )
+return SR_SubQuoted(valtype(uData), uData, nSystemID)
 
 /*------------------------------------------------------------------------*/
 
-Static Function SR_SubQuoted( cType, uData, nSystemID )
+Static Function SR_SubQuoted(cType, uData, nSystemID)
 
    local cRet
    lOCAL cOldSet := SET(_SET_DATEFORMAT)   
@@ -538,28 +538,28 @@ Static Function SR_SubQuoted( cType, uData, nSystemID )
    Case cType == "L"   
       return iif(uData, "1", "0")
    case ctype == "T"  .and. nSystemID == SYSTEMID_POSTGR  
-      IF Empty( uData) 
+      IF Empty(uData) 
          RETURN 'NULL'
       ENDIF 
 
       return ['] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']      
    case ctype == "T" .and. nSystemID == SYSTEMID_ORACLE
-      IF Empty( uData) 
+      IF Empty(uData) 
          RETURN 'NULL'
       ENDIF       
       return [ TIMESTAMP '] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']        
    Case cType == 'T'
-      IF Empty( uData) 
+      IF Empty(uData) 
          RETURN 'NULL'
       ENDIF 
       Set( _SET_DATEFORMAT,  "yyyy-mm-dd") 
-      cRet := ttoc( uData )
+      cRet := ttoc(uData)
       Set( _SET_DATEFORMAT,cOldSet)
       RETURN [']+cRet+[']
       
    OtherWise
-      cRet := SR_STRTOHEX(HB_Serialize( uData ))
-      return SR_SubQuoted( "C", SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID )
+      cRet := SR_STRTOHEX(HB_Serialize(uData))
+      return SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID)
    EndCase
 
 Return ""
@@ -584,12 +584,12 @@ Function SR_WriteTimeLog(cComm, oCnn, nLimisencos)
 
    Try
 
-      If !sr_PhFile( "long_qry.dbf" )
-         dbCreate( "long_qry.dbf", TRACE_STRUCT, "DBFNTX" )
+      If !sr_PhFile("long_qry.dbf")
+         dbCreate("long_qry.dbf", TRACE_STRUCT, "DBFNTX")
       EndIf
 
       While .t.
-         dbUseArea( .T., "DBFNTX", "long_qry.dbf", "LONG_QRY", .T., .F. )
+         dbUseArea(.T., "DBFNTX", "long_qry.dbf", "LONG_QRY", .T., .F.)
          If !NetErr()
             exit
          EndIf
@@ -607,27 +607,27 @@ Function SR_WriteTimeLog(cComm, oCnn, nLimisencos)
 
    End
 
-   dbSelectArea( nAlAtual )
+   dbSelectArea(nAlAtual)
 
 Return NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_uCharToVal( cVal, cType, nLen )
+Function SR_uCharToVal(cVal, cType, nLen)
 
    Do Case
    Case cType == "C"
       If nLen == NIL
          Return cVal
       Else
-         Return PadR( cVal, nLen )
+         Return PadR(cVal, nLen)
       EndIf
    Case cType == "M"
       Return cVal
    Case cType == "D"
-      Return ctod( cVal )
+      Return ctod(cVal)
    Case cType == "N"
-      Return val( cVal )
+      Return val(cVal)
    Case cType == "L"
       Return cVal $ "1.T.SYsy.t."
    EndCase
@@ -655,12 +655,12 @@ Function SR_WriteDbLog(cComm, oCnn)
 
    Try
 
-      If !sr_phFile( "sqllog.dbf" )
-         dbCreate( "sqllog.dbf", TRACE_STRUCT, "DBFNTX" )
+      If !sr_phFile("sqllog.dbf")
+         dbCreate("sqllog.dbf", TRACE_STRUCT, "DBFNTX")
       EndIf
 
       While .T.
-         dbUseArea( .T., "DBFNTX", "sqllog.dbf", "SQLLOG", .T., .F. )
+         dbUseArea(.T., "DBFNTX", "sqllog.dbf", "SQLLOG", .T., .F.)
          If !NetErr()
             exit
          EndIf
@@ -677,7 +677,7 @@ Function SR_WriteDbLog(cComm, oCnn)
 
    End
 
-   dbSelectArea( nAlAtual )
+   dbSelectArea(nAlAtual)
 
 Return NIL
 
@@ -817,7 +817,7 @@ Function SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
    cRet += cAl1 + "." + cPk
 
    If n = 0
-      cRet += " AND " + cAl1 + ".DT__HIST <= " + SR_cDBValue( CurrDate )
+      cRet += " AND " + cAl1 + ".DT__HIST <= " + SR_cDBValue(CurrDate)
    endif
 
    cRet += "))"
@@ -850,7 +850,7 @@ Function SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
    cRet += cAl1 + "." + cPk
 
    If n = 0
-      cRet += " AND " + cAl1 + ".DT__HIST <= " + SR_cDBValue( CurrDate )
+      cRet += " AND " + cAl1 + ".DT__HIST <= " + SR_cDBValue(CurrDate)
    endif
 
    cRet += "))"
@@ -869,12 +869,12 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GetRddName( nArea )
+Function SR_GetRddName(nArea)
 
    DEFAULT nArea := Select()
 
    Do Case
-   Case Empty( Alias( nArea ) )
+   Case Empty(Alias(nArea))
       Return "    "
    OtherWise
       Return ( nArea )->( RddName() )
@@ -893,7 +893,7 @@ Return "*" + SR_GetRddName() + "*" $ "*SQLRDD*ODBCRDD*SQLEX*"
 Function SR_OrdCondSet( cForSql, cForxBase )
 
    If IS_SQLRDD
-      (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):OrdSetForClause( cForSql, cForxBase )
+      (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):OrdSetForClause(cForSql, cForxBase)
    EndIf
 
 Return NIL
@@ -913,12 +913,12 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_AddRuleNotNull( cCol )
+Function SR_AddRuleNotNull(cCol)
 
    local lRet
 
    If IS_SQLRDD
-      lRet := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):AddRuleNotNull( cCol )
+      lRet := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):AddRuleNotNull(cCol)
       SR_CleanTabInfoCache()
       Return lRet
    EndIf
@@ -927,7 +927,7 @@ Return .F.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_Deserialize( uData )
+Function SR_Deserialize(uData)
 * Local ctemp,cdes,chex
 * cTemp := udata
 * altd()
@@ -939,12 +939,12 @@ Return SR_Deserialize1(SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10)))
 
 /*------------------------------------------------------------------------*/
 
-Function SR_DropRuleNotNull( cCol )
+Function SR_DropRuleNotNull(cCol)
 
    local lRet
 
    If IS_SQLRDD
-      lRet := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):DropRuleNotNull( cCol )
+      lRet := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):DropRuleNotNull(cCol)
       SR_CleanTabInfoCache()
       Return lRet
    EndIf
@@ -970,10 +970,10 @@ Function SR_SetFilter( cFlt )
    If IS_SQLRDD
       oWA := (Select())->(dbInfo( DBI_INTERNAL_OBJECT ))
       uRet := oWA:cFilter
-      If !Empty( cFlt )
+      If !Empty(cFlt)
          oWA:cFilter := cFlt
          oWA:Refresh()
-      ElseIf HB_ISSTRING( cFlt ) 
+      ElseIf HB_ISSTRING(cFlt) 
          oWA:cFilter := ''
       EndIf
    EndIf
@@ -1036,18 +1036,18 @@ CLASS SqlFastHash
 
    METHOD New( nPartSize )
    METHOD Insert( uHashKey, xValue )
-   METHOD Find( uHashKey, nIndex, nPart )    /* nIndex and nPart by ref */
-   METHOD Delete( uHashKey )
-   METHOD Update( uHashKey, uValue )
+   METHOD Find(uHashKey, nIndex, nPart)    /* nIndex and nPart by ref */
+   METHOD Delete(uHashKey)
+   METHOD Update(uHashKey, uValue)
    METHOD UpdateIndex( nPos, nPart, uValue )
-   METHOD Haeval( bExpr )
+   METHOD Haeval(bExpr)
 ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD Haeval( bExpr ) CLASS SqlFastHash
+METHOD Haeval(bExpr) CLASS SqlFastHash
 
-Return Heval( ::hHash, bExpr )
+Return Heval(::hHash, bExpr)
 
 /*------------------------------------------------------------------------*/
 
@@ -1076,7 +1076,7 @@ RETURN .T.
 
 /*------------------------------------------------------------------------*/
 
-METHOD Find( uHashKey, nIndex, nPart ) CLASS SqlFastHash
+METHOD Find(uHashKey, nIndex, nPart) CLASS SqlFastHash
    LOCAL aData
 
    nIndex := HGetPos(::hHash,uHashKey)
@@ -1091,7 +1091,7 @@ RETURN aData
 
 /*------------------------------------------------------------------------*/
 
-METHOD Delete( uHashKey ) CLASS SqlFastHash
+METHOD Delete(uHashKey) CLASS SqlFastHash
    LOCAL nIndex := 0
 
    nIndex := HGetPos(::hHash,uHashKey)
@@ -1105,7 +1105,7 @@ RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-METHOD Update( uHashKey, uValue ) CLASS SqlFastHash
+METHOD Update(uHashKey, uValue) CLASS SqlFastHash
    LOCAL nIndex := 0
 
    nIndex := HGetPos(::hHash,uHashKey)
@@ -1144,8 +1144,8 @@ Function SR_BeginTransaction(nCnn)
       oCnn:nTransacCount ++
 
       If oCnn:nSystemID == SYSTEMID_CACHE
-         oCnn:exec( "START TRANSACTION %COMMITMODE EXPLICIT ISOLATION LEVEL READ COMMITTED" )
-//         oCnn:exec( "START TRANSACTION %COMMITMODE EXPLICIT" )
+         oCnn:exec("START TRANSACTION %COMMITMODE EXPLICIT ISOLATION LEVEL READ COMMITTED")
+//         oCnn:exec("START TRANSACTION %COMMITMODE EXPLICIT")
       EndIf
 
    EndIf
@@ -1177,7 +1177,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetAppSite( nCnn, cSite )
+Function SR_SetAppSite(nCnn, cSite)
 
    local oCnn, cOld
 
@@ -1273,7 +1273,7 @@ Function SR_RollBackTransaction(nCnn)
       If oCnn:nTransacCount >  0
          oCnn:nTransacCount := 0
          // Should CLEAN UP ALL workareas BEFORE issue the ROLLBACK
-         _SR_ScanExecAll( { |y,x| (y), aeval( x, { |z| z:Refresh( .F. ) } ) } )
+         _SR_ScanExecAll({ |y,x| (y), aeval(x, { |z| z:Refresh(.F.) }) })
          oCnn:RollBack()
       EndIf
    EndIf
@@ -1341,7 +1341,7 @@ Function SR_RuntimeErr( cOperation, cErr )
    oErr:operation     := cOperation
    oErr:OsCode        := 0
 
-   SR_LogFile( "sqlerror.log", { cDescr } )
+   SR_LogFile("sqlerror.log", {cDescr})
 
    Throw( oErr )
 
@@ -1364,7 +1364,7 @@ Function SR_GetStack()
    Local i := 1, cErrorLog := ""
 
    while ( i < 70 )
-       If ! Empty( ProcName( i ) )
+       If ! Empty(ProcName(i))
           cErrorLog += CRLF + Trim(ProcName(i)) + "     Linha : " + alltrim(str(ProcLine(i)))
        EndIf
        i++
@@ -1399,10 +1399,10 @@ Alert() copied as SQLBINDBYVAL() -> DEMO banner protection
 
 /* NOTE: nDelay parameter is a Harbour extension. */
 
-#define INRANGE( xLo, xVal, xHi )       ( xVal >= xLo .AND. xVal <= xHi )
+#define INRANGE(xLo, xVal, xHi)       (xVal >= xLo .AND. xVal <= xHi)
 
 
-FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
+FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
    LOCAL nChoice
    LOCAL aSay, nPos, nWidth, nOpWidth, nInitRow, nInitCol
@@ -1432,7 +1432,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
 #ifdef HB_C52_UNDOC
 
-   DEFAULT s_lNoAlert TO hb_argCheck( "NOALERT" )
+   DEFAULT s_lNoAlert TO hb_argCheck("NOALERT")
 
    IF s_lNoAlert
       RETURN NIL
@@ -1449,10 +1449,10 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
    ENDIF
 
    DO WHILE ( nPos := At( ';', xMessage ) ) != 0
-      AAdd( aSay, Left( xMessage, nPos - 1 ) )
+      AAdd(aSay, Left(xMessage, nPos - 1))
       xMessage := SubStr(xMessage, nPos + 1)
    ENDDO
-   AAdd( aSay, xMessage )
+   AAdd(aSay, xMessage)
 
 #else
 
@@ -1464,7 +1464,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
       FOR EACH cEval IN xMessage
          IF ISCHARACTER( cEval )
-            AAdd( aSay, cEval )
+            AAdd(aSay, cEval)
          ENDIF
       NEXT
 
@@ -1480,11 +1480,11 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
             EXIT
 
          CASE "D"
-            xMessage := DToC( xMessage )
+            xMessage := DToC(xMessage)
             EXIT
             
          CASE "T"
-            xMessage := TToC( xMessage )
+            xMessage := TToC(xMessage)
             EXIT
 
          CASE "L"
@@ -1504,16 +1504,16 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       END
 
       DO WHILE ( nPos := At( ';', xMessage ) ) != 0
-         AAdd( aSay, Left( xMessage, nPos - 1 ) )
+         AAdd(aSay, Left(xMessage, nPos - 1))
          xMessage := SubStr(xMessage, nPos + 1)
       ENDDO
-      AAdd( aSay, xMessage )
+      AAdd(aSay, xMessage)
 
       FOR EACH xMessage IN aSay
 
          IF ( nLen := Len(xMessage) ) > 58
             FOR nPos := 58 TO 1 STEP -1
-               IF xMessage[nPos] $ ( " " + Chr( 9 ) )
+               IF xMessage[nPos] $ ( " " + Chr(9) )
                   EXIT
                ENDIF
             NEXT
@@ -1528,7 +1528,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
             IF Len(aSay) == HB_EnumIndex()
                aAdd(aSay, SubStr(sCopy, nPos + 1))
             ELSE
-               aIns( aSay, HB_EnumIndex() + 1, SubStr(sCopy, nPos + 1), .T. )
+               aIns(aSay, HB_EnumIndex() + 1, SubStr(sCopy, nPos + 1), .T.)
             ENDIF
         ENDIF
       NEXT
@@ -1541,7 +1541,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       aOptions := {}
    ENDIF
 
-   IF !ISCHARACTER( cColorNorm ) .or. EMPTY( cColorNorm )
+   IF !ISCHARACTER( cColorNorm ) .or. EMPTY(cColorNorm)
       cColorNorm := "W+/R" // first pair color (Box line and Text)
       cColorHigh := "W+/B" // second pair color (Options buttons)
    ELSE
@@ -1602,7 +1602,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
 
       // if second color pair exist, then xHarbour alert will handle properly.
-      if !empty( cColorPair2 )
+      if !empty(cColorPair2)
 
          nSlash := At("/",cColorPair2)
 
@@ -1629,8 +1629,8 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
                 endif
 
                 // extracting color attributes from background color.
-                cColor22 := StrTran( cColor22, "+", "" )
-                cColor22 := StrTran( cColor22, "*", "" )
+                cColor22 := StrTran(cColor22, "+", "")
+                cColor22 := StrTran(cColor22, "*", "")
                 cColorHigh := cColor21+"/"+cColor22
 
             endif
@@ -1644,8 +1644,8 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
             cColor11 := "B"
             cColor12 := "W+"
          else
-            cColor11 := StrTran( cColor11, "+", "" )
-            cColor11 := StrTran( cColor11, "*", "" )
+            cColor11 := StrTran(cColor11, "+", "")
+            cColor11 := StrTran(cColor11, "*", "")
          endif
          cColorHigh := cColor12+"/"+cColor11
       endif
@@ -1658,13 +1658,13 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
    /* The longest line */
    nWidth := 0
-   AEval( aSay, {| x | nWidth := Max(Len(x), nWidth) } )
+   AEval(aSay, {| x | nWidth := Max(Len(x), nWidth) })
 
    /* Cleanup the button array */
    aOptionsOK := {}
    FOR EACH cEval IN aOptions
-      IF ISCHARACTER( cEval ) .AND. !Empty( cEval )
-         AAdd( aOptionsOK, cEval )
+      IF ISCHARACTER( cEval ) .AND. !Empty(cEval)
+         AAdd(aOptionsOK, cEval)
       ENDIF
    NEXT
 
@@ -1673,26 +1673,26 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 #ifdef HB_C52_STRICT
    /* NOTE: Clipper allows only four options [vszakats] */
    ELSEIF Len(aOptionsOK) > 4
-      aSize( aOptionsOK, 4 )
+      aSize(aOptionsOK, 4)
 #endif
    ENDIF
 
    /* Total width of the botton line (the one with choices) */
    nOpWidth := 0
-   AEval( aOptionsOK, {| x | nOpWidth += Len(x) + 4 } )
+   AEval(aOptionsOK, {| x | nOpWidth += Len(x) + 4 })
 
    /* what's wider ? */
    nWidth := Max(nWidth + 2 + iif(Len(aSay) == 1, 4, 0), nOpWidth + 2)
 
    /* box coordinates */
-   nInitRow := Int( ( ( MaxRow() - ( Len(aSay) + 4 ) ) / 2 ) + .5 )
-   nInitCol := Int( ( ( MaxCol() - ( nWidth + 2 ) ) / 2 ) + .5 )
+   nInitRow := Int(((MaxRow() - (Len(aSay) + 4)) / 2) + .5)
+   nInitCol := Int(((MaxCol() - (nWidth + 2)) / 2) + .5)
 
    /* detect prompts positions */
    aPos := {}
    aHotkey := {}
-   nCurrent := nInitCol + Int( ( nWidth - nOpWidth ) / 2 ) + 2
-   AEval( aOptionsOK, {| x | AAdd( aPos, nCurrent ), AAdd( aHotKey, Upper( Left( x, 1 ) ) ), nCurrent += Len(x) + 4 } )
+   nCurrent := nInitCol + Int((nWidth - nOpWidth) / 2) + 2
+   AEval(aOptionsOK, {| x | AAdd(aPos, nCurrent), AAdd(aHotKey, Upper(Left(x, 1))), nCurrent += Len(x) + 4 })
 
    nChoice := 1
 
@@ -1700,21 +1700,21 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
       nCount := Len(aSay)
       FOR EACH cEval IN aSay
-         OutStd( cEval )
+         OutStd(cEval)
          IF HB_EnumIndex() < nCount
-            OutStd( hb_OSNewLine() )
+            OutStd(hb_OSNewLine())
          ENDIF
       NEXT
 
-      OutStd( " (" )
+      OutStd(" (")
       nCount := Len(aOptionsOK)
       FOR EACH cEval IN aOptionsOK
-         OutStd( cEval )
+         OutStd(cEval)
          IF HB_EnumIndex() < nCount
-            OutStd( ", " )
+            OutStd(", ")
          ENDIF
       NEXT
-      OutStd( ") " )
+      OutStd(") ")
 
       /* choice loop */
       lWhile := .T.
@@ -1734,8 +1734,8 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
                EXIT
 
             DEFAULT
-               IF Upper( Chr( nKey ) ) $ aHotkey
-                  nChoice := aScan( aHotkey, {| x | x == Upper( Chr( nKey ) ) } )
+               IF Upper(Chr(nKey)) $ aHotkey
+                  nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
                   lWhile  := .F.
                ENDIF
 
@@ -1743,7 +1743,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
       ENDDO
 
-      OutStd( Chr( nKey ) )
+      OutStd(Chr(nKey))
 
    ELSE
 
@@ -1764,7 +1764,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
       DispBox( nInitRow, nInitCol, nInitRow + Len(aSay) + 3, nInitCol + nWidth + 1, B_SINGLE + ' ', cColorNorm )
 
       FOR EACH cEval IN aSay
-         DispOutAt( nInitRow + HB_EnumIndex(), nInitCol + 1 + Int( ( ( nWidth - Len(cEval) ) / 2 ) + .5 ), cEval, cColorNorm )
+         DispOutAt( nInitRow + HB_EnumIndex(), nInitCol + 1 + Int(((nWidth - Len(cEval)) / 2) + .5), cEval, cColorNorm )
       NEXT
 
       /* choice loop */
@@ -1802,7 +1802,7 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
 
                FOR EACH cEval IN aOptionsOK
                   IF nMRow == nInitRow + nCount + 2 .AND. ;
-                       INRANGE( aPos[ HB_EnumIndex() ], nMCol, aPos[ HB_EnumIndex() ] + Len(cEval) + 2 - 1 )
+                       INRANGE(aPos[ HB_EnumIndex() ], nMCol, aPos[ HB_EnumIndex() ] + Len(cEval) + 2 - 1)
                      nPos := HB_EnumIndex()
                      EXIT
                   ENDIF
@@ -1844,9 +1844,9 @@ FUNCTION SQLBINDBYVAL( xMessage, aOptions, cColorNorm, nDelay )
                EXIT
 
             DEFAULT
-               IF Upper( Chr( nKey ) ) $ aHotkey
+               IF Upper(Chr(nKey)) $ aHotkey
 
-                  nChoice := aScan( aHotkey, {| x | x == Upper( Chr( nKey ) ) } )
+                  nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
                   lWhile  := .F.
                ENDIF
 
@@ -1879,11 +1879,11 @@ Local nColor
      cColor:=""
   endif
 
-  cColor := StrTran( cColor, " ","")
-  cColor := StrTran( cColor, "*","")
-  cColor := StrTran( cColor, "+","")
+  cColor := StrTran(cColor, " ", "")
+  cColor := StrTran(cColor, "*", "")
+  cColor := StrTran(cColor, "+", "")
 
-  nColor := Abs( Val( cColor ) )
+  nColor := Abs(Val(cColor))
 
 
   if nColor=0
@@ -1927,16 +1927,16 @@ RETURN ( cColor )
 //-----------------------------------//
 // 2004/Setp/15 - Eduardo Fernandes
 // Test vality of the color string
-STATIC FUNCTION COLORVALID( cColor )
+STATIC FUNCTION COLORVALID(cColor)
 
 if !IsCharacter( cColor )
    Return .F.
 endif
 
-cColor := StrTran( cColor, " ","" )
-cColor := StrTran( cColor, "*","" )
-cColor := StrTran( cColor, "+","" )
-cColor := Upper( cColor )
+cColor := StrTran(cColor, " ", "")
+cColor := StrTran(cColor, "*", "")
+cColor := StrTran(cColor, "+", "")
+cColor := Upper(cColor)
 
 if cColor=="0"  .or.;
    cColor=="1"  .or.;
@@ -1986,8 +1986,8 @@ Return .F.
 
 HB_FUNC( SR_PHFILE )
 {
-   PHB_ITEM pFile = hb_param( 1, HB_IT_STRING );
-   hb_retl( ( pFile && hb_itemGetCLen(pFile) < HB_PATH_MAX - 1 ) ? hb_spFile( hb_itemGetCPtr( pFile ), NULL ) : HB_FALSE );
+   PHB_ITEM pFile = hb_param(1, HB_IT_STRING);
+   hb_retl(( pFile && hb_itemGetCLen(pFile) < HB_PATH_MAX - 1 ) ? hb_spFile(hb_itemGetCPtr(pFile), NULL) : HB_FALSE);
 }
 
 #PRAGMA ENDDUMP
@@ -1998,8 +1998,8 @@ function sr_AddToFilter( nRecNo )
    If IS_SQLRDD
       oWA := (Select())->(dbInfo( DBI_INTERNAL_OBJECT ))
       
-      If !Empty( oWA:cFilter )
-         aadd( oWA:aRecnoFilter, nRecno ) 
+      If !Empty(oWA:cFilter)
+         aadd(oWA:aRecnoFilter, nRecno)
          oWA:Refresh()
       EndIf
    EndIf
@@ -2011,7 +2011,7 @@ FUNCTION sr_clearFilter()
    If IS_SQLRDD
       oWA := (Select())->(dbInfo( DBI_INTERNAL_OBJECT ))
       
-      If !Empty( oWA:cFilter )
+      If !Empty(oWA:cFilter)
          oWA:aRecnoFilter := {} 
          oWA:Refresh()
       EndIf
@@ -2024,17 +2024,17 @@ FUNCTION SR_SetFieldDefault( cTable, cField, cDefault )
    LOCAL oCnn
    LOCAL cSql := "ALTER TABLE "+ cTable + " ALTER COLUMN " +cField +" SET DEFAULT "
    oCnn := SR_GetConnection(  )
-   IF HB_ISNUMERIC( cDefault ) 
+   IF HB_ISNUMERIC(cDefault) 
       cSql += Alltrim(str(cDefault))
-   ELSEIF HB_ISSTRING( cDefault )
-      IF Empty( cDefault) 
+   ELSEIF HB_ISSTRING(cDefault)
+      IF Empty(cDefault)
          cSql += "''"
       ELSE
          cSql +="'"+cDefault+"'"
       ENDIF
    ENDIF
    IF oCnn:nSystemId==SYSTEMID_POSTGR
-      oCnn:exec( cSql,,.f.)
+      oCnn:exec(cSql, , .f.)
       oCnn:Commit()
    ENDIF
 RETURN NIL            
@@ -2045,4 +2045,4 @@ RETURN NIL
 
 
 FUNCTION SR_Deserialize1( cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock )
-return HB_Deserialize( cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock )
+return HB_Deserialize(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)

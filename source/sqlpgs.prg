@@ -74,7 +74,7 @@ CLASS SR_PGS FROM SR_CONNECTION
    METHOD FetchRaw( lTranslate, aFields )
    METHOD FieldGet( nField, aFields, lTranslate )
    METHOD MoreResults( aArray, lTranslate )
-   METHOD Getline( aFields, lTranslate, aArray )
+   METHOD Getline(aFields, lTranslate, aArray)
    METHOD GetAffectedRows()
 
 ENDCLASS
@@ -88,7 +88,7 @@ Return -1
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_PGS
+METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_PGS
 
    Local i
 
@@ -97,11 +97,11 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_PGS
    If aArray == NIL
       aArray := Array(len(aFields))
    ElseIf len(aArray) != len(aFields)
-      aSize( aArray, len(aFields) )
+      aSize(aArray, len(aFields))
    EndIf
 
    If ::aCurrLine == NIL
-      PGSLINEPROCESSED( ::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray )
+      PGSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
       ::aCurrLine := aArray
       Return aArray
    EndIf
@@ -119,7 +119,7 @@ METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_PGS
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
       ::aCurrLine := array(LEN(aFields))
-      PGSLINEPROCESSED( ::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine )
+      PGSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
 
 return ::aCurrLine[nField]
@@ -133,7 +133,7 @@ METHOD FetchRaw( lTranslate, aFields ) CLASS SR_PGS
    DEFAULT lTranslate := .T.
 
    If ::hDBC != NIL
-      ::nRetCode := PGSFetch( ::hDbc )
+      ::nRetCode := PGSFetch(::hDbc)
       ::aCurrLine := NIL
    Else
       ::RunTimeErr("", "PGSFetch - Invalid cursor state" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
@@ -166,10 +166,10 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
    DEFAULT cDeletedName := SR_DeletedName()
 
    If lReSelect
-      If !Empty( cCommand )
-         nRet := ::Execute( cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
+      If !Empty(cCommand)
+         nRet := ::Execute(cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F.)
       Else
-         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F. )
+         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F.)
       EndIf
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
          return nil
@@ -185,13 +185,13 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
    nFields   := PGSCols( ::hStmt )
    ::nFields := nFields
 
-   If (!Empty( cTable )) .and. empty( cCommand )
-      cTbl := lower( cTable )
+   If (!Empty(cTable)) .and. empty(cCommand)
+      cTbl := lower(cTable)
       If "." $ cTbl
          cOwner := SubStr(cTbl, 1, at(".", cTbl) - 1)
          cTbl   := SubStr(cTbl, at(".", cTbl) + 1)
       EndIf
-      If left( cTbl, 1 ) == ["]     // "
+      If left(cTbl, 1) == ["]     // "
          cTbl := SubStr(cTbl, 2, len(cTbl) - 2)
       EndIf
       aFields := PGSTableAttr( ::hDbc, cTbl, cOwner )
@@ -248,7 +248,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
 
    cConnect := "host=" + ::cHost + " user=" + ::cUser + " password=" + ::cPassword + " dbname=" + ::cDTB + " port=" + str(::cPort,6)
    
-   IF !Empty( ::sslcert )
+   IF !Empty(::sslcert)
       cConnect += " sslmode=prefer sslcert="+::sslcert +" sslkey="+::sslkey +" sslrootcert="+ ::sslrootcert +" sslcrl="+ ::sslcrl
    ENDIF   
    
@@ -257,14 +257,14 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
 
    if nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
-      SR_MsgLogFile( "Connection Error: " + alltrim(str(PGSStatus2( hDbc ))) + " (see pgs.ch)" )
+      SR_MsgLogFile("Connection Error: " + alltrim(str(PGSStatus2( hDbc ))) + " (see pgs.ch)")
       Return Self
    else
       ::cConnect = cConnect
       ::hStmt    = NIL
       ::hDbc     = hDbc
       cTargetDB  = "PostgreSQL Native"
-      ::exec( "select version()", .t., .t., @aRet )
+      ::exec("select version()", .t., .t., @aRet)
       If len (aRet) > 0
          cSystemVers := aRet[1,1]
          cString := aRet[1,1]          
@@ -283,24 +283,24 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    ::cSystemName := cTargetDB
    ::cSystemVers := cSystemVers
    ::nSystemID   := SYSTEMID_POSTGR
-   ::cTargetDB   := Upper( cTargetDB )
+   ::cTargetDB   := Upper(cTargetDB)
    
 
 *    If ! ("7.3" $ cSystemVers .or. "7.4" $ cSystemVers .or. "8.0" $ cSystemVers .or. "8.1" $ cSystemVers .or. "8.2" $ cSystemVers .or. "8.3" $ cSystemVers .or. "8.4" $ cSystemVers .or. "9.0" $ cSystemVers or. "9.1" $ cSystemVers)
 
-     if !(( Val( aversion[ 1 ] ) == 7 .and. Val( aversion[ 2 ] ) >= 3) .or. ( Val( aversion[ 1 ] ) >= 8 ))
+     if !(( Val(aversion[1]) == 7 .and. Val(aversion[2]) >= 3) .or. ( Val(aversion[1]) >= 8 ))
       ::End()
       ::nRetCode  := SQL_ERROR
       ::nSystemID := NIL
-      SR_MsgLogFile( "Unsupported Postgres version: " + cSystemVers )
+      SR_MsgLogFile("Unsupported Postgres version: " + cSystemVers)
    else
-      ::lPostgresql8 := (( Val( aversion[ 1 ] ) == 8 .and. Val( aversion[ 2 ] ) >= 3) .or. ( Val( aversion[ 1 ] ) >= 9 ))
-      ::lPostgresql83 := ( Val( aversion[ 1 ] ) == 8 .and. Val( aversion[ 2 ] ) == 3) 
+      ::lPostgresql8 := (( Val(aversion[1]) == 8 .and. Val(aversion[2]) >= 3) .or. ( Val(aversion[1]) >= 9 ))
+      ::lPostgresql83 := ( Val(aversion[1]) == 8 .and. Val(aversion[2]) == 3)
    EndIf
    
    
    
-   ::exec( "select pg_backend_pid()", .T., .T., @aRet )
+   ::exec("select pg_backend_pid()", .T., .T., @aRet)
 
    If len(aRet) > 0
       ::uSid := val(str(aRet[1,1],8,0))
@@ -316,8 +316,8 @@ METHOD End() CLASS SR_PGS
 
    ::FreeStatement()
 
-   If !Empty( ::hDbc )
-      PGSFinish( ::hDbc )
+   If !Empty(::hDbc)
+      PGSFinish(::hDbc)
    EndIf
 
    ::hEnv  = 0
@@ -329,14 +329,14 @@ return nil
 
 METHOD Commit( lNoLog ) CLASS SR_PGS
    ::Super:Commit( lNoLog )
-Return ( ::nRetCode := ::exec( "COMMIT;BEGIN",.f. ) )
+Return ( ::nRetCode := ::exec("COMMIT;BEGIN", .f.) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_PGS
    ::Super:RollBack()
-   ::nRetCode := PGSRollBack( ::hDbc )
-   ::exec( "BEGIN",.f. )
+   ::nRetCode := PGSRollBack(::hDbc)
+   ::exec("BEGIN", .f.)
 Return ::nRetCode
 
 /*------------------------------------------------------------------------*/
@@ -349,7 +349,7 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_PGS
       ::lResultSet := .F.
    EndIf
 
-   ::hStmt := PGSExec( ::hDbc, cCommand )
+   ::hStmt := PGSExec(::hDbc, cCommand)
 Return PGSResultStatus( ::hStmt )
 
 /*------------------------------------------------------------------------*/
@@ -360,7 +360,7 @@ METHOD AllocStatement() CLASS SR_PGS
       If ::nSetOpt == SQL_ATTR_QUERY_TIMEOUT
 /*
          Commented 2005/02/04 - It's better to wait forever on a lock than have a corruct transaction
-         PGSExec( ::hDbc, "set statement_timeout=" + str(::nSetValue*1000) )
+         PGSExec(::hDbc, "set statement_timeout=" + str(::nSetValue * 1000))
 */
       EndIf
       ::lSetNext  := .F.

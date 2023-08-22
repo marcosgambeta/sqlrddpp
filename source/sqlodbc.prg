@@ -86,14 +86,14 @@ CLASS SR_ODBC FROM SR_CONNECTION
    METHOD MoreResults( aArray )
    METHOD WriteMemo( cFileName, nRecno, cRecnoName, aColumnsAndData )
    METHOD DriverCatTables()
-   METHOD Getline( aFields, lTranslate, aArray )
-   METHOD FetchMultiple( lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, nBlockPos, hnRecno, lFetchAll, aFetch, uRecord, nPos )
+   METHOD Getline(aFields, lTranslate, aArray)
+   METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, nBlockPos, hnRecno, lFetchAll, aFetch, uRecord, nPos)
 
 ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD FetchMultiple( lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos ) CLASS SR_ODBC
+METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos) CLASS SR_ODBC
 
    DEFAULT lTranslate := .T.
 
@@ -101,7 +101,7 @@ Return SR_ODBCGETLINES( ::hStmt, 4096, aFields, aCache, ::nSystemID, lTranslate,
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_ODBC
+METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_ODBC
 
    Local i
 
@@ -110,11 +110,11 @@ METHOD Getline( aFields, lTranslate, aArray )  CLASS SR_ODBC
    If aArray == NIL
       aArray := Array(len(aFields))
    ElseIf len(aArray) < len(aFields)
-      aSize( aArray, len(aFields) )
+      aSize(aArray, len(aFields))
    EndIf
 
    If ::aCurrLine == NIL
-      SR_ODBCLINEPROCESSED( ::hStmt, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray )
+      SR_ODBCLINEPROCESSED(::hStmt, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
       ::aCurrLine := aArray
       Return aArray
    EndIf
@@ -163,7 +163,7 @@ METHOD DriverCatTables()  CLASS SR_ODBC
                nAllocated += ARRAY_BLOCK5
             End
 
-            aSize( aArray, nAllocated )
+            aSize(aArray, nAllocated)
          EndIf
 
          aArray[n] := { ::FieldGet( 3, aFields, .F. ) }
@@ -171,7 +171,7 @@ METHOD DriverCatTables()  CLASS SR_ODBC
    EndIf
 
    ::FreeStatement()
-   aSize( aArray, n )
+   aSize(aArray, n)
 
 Return aArray
 
@@ -195,7 +195,7 @@ METHOD MoreResults( aArray, lTranslate )  CLASS SR_ODBC
       EndIf
 
       While (::nRetCode := ::FetchRaw( lTranslate, aFieldsMore )) = SQL_SUCCESS
-         AADD( aArray, Array(len(aFieldsMore)) )
+         AADD(aArray, Array(len(aFieldsMore)))
          For i = 1 to len(aFieldsMore)
             aArray[n,i] := ::FieldGet( i, aFieldsMore, lTranslate )
          Next
@@ -213,7 +213,7 @@ METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_ODBC
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
       ::aCurrLine := array(LEN(aFields))
-      SR_ODBCLINEPROCESSED( ::hStmt, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine )
+      SR_ODBCLINEPROCESSED(::hStmt, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
 
 return ::aCurrLine[nField]
@@ -227,7 +227,7 @@ METHOD FetchRaw( lTranslate, aFields ) CLASS SR_ODBC
    DEFAULT lTranslate := .T.
 
    If ::hStmt != NIL
-      ::nRetCode := SR_Fetch( ::hStmt )
+      ::nRetCode := SR_Fetch(::hStmt)
       ::aCurrLine := NIL
    Else
       ::RunTimeErr("", "SQLFetch - Invalid cursor state" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
@@ -239,8 +239,8 @@ Return ::nRetCode
 
 METHOD FreeStatement() CLASS SR_ODBC
 
-   if !empty( ::hStmt ) //  != NIL //!= 0
-      if SR_FreeStm( ::hStmt, SQL_DROP ) != SQL_SUCCESS
+   if !empty(::hStmt) //  != NIL //!= 0
+      if SR_FreeStm(::hStmt, SQL_DROP) != SQL_SUCCESS
          ::RunTimeErr("", "SQLFreeStmt [DROP] error" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
       endif
       ::hStmt := nil
@@ -268,7 +268,7 @@ METHOD AllocStatement() CLASS SR_ODBC
       ::lSetNext  := .F.
       nRet := ::SetStmtOptions( ::nSetOpt, ::nSetValue )
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
-         SR_MsgLogFile( SR_Msg(23) + " (" + alltrim(str(nRet)) + ") : " + ::LastError() )
+         SR_MsgLogFile(SR_Msg(23) + " (" + alltrim(str(nRet)) + ") : " + ::LastError())
       EndIf
    EndIf
 
@@ -292,10 +292,10 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    DEFAULT cDeletedName := SR_DeletedName()
 
    If lReSelect
-      If !Empty( cCommand )
-         nRet := ::Execute( cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F. )
+      If !Empty(cCommand)
+         nRet := ::Execute(cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F.)
       Else
-         nRet := ::Execute( "SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F. )
+         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F.)
       EndIf
 
       If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
@@ -317,7 +317,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       nDec := 0
       nSoma:= 0
 
-      if ( ::nRetCode := SR_Describ( ::hStmt, n, @cName, 255, @nNameLen, @nType, @nLen, @nDec, @nNull,::nSystemID ) ) != SQL_SUCCESS
+      if ( ::nRetCode := SR_Describ(::hStmt, n, @cName, 255, @nNameLen, @nType, @nLen, @nDec, @nNull,::nSystemID) ) != SQL_SUCCESS
          ::RunTimeErr("", "SQLDescribeCol Error" + chr(13)+chr(10)+ ::LastError() + chr(13)+chr(10)+;
                           "Last command sent to database : " + ::cLastComm )
          return nil
@@ -347,7 +347,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          endif
 
          cName     := upper(alltrim(cName))
-         cType     := ::SQLType( nType, cName, nLen )
+         cType     := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec) + nSoma
          If ::nSystemID == SYSTEMID_ORACLE .and. (!::lQueryOnly) .and. cType == "N" .and. nLenField == 38 .and. nDec == 0
             cType     := "L"
@@ -355,7 +355,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          EndIf
 /*
          If ::nSystemID == SYSTEMID_POSTGR
-            nRet := SR_ColAttribute( ::hStmt, n, SQL_DESC_NULLABLE, @cVlr, 64, @nBfLn, @nOut )
+            nRet := SR_ColAttribute(::hStmt, n, SQL_DESC_NULLABLE, @cVlr, 64, @nBfLn, @nOut)
             nNull := nOut
          EndIf
 */
@@ -414,7 +414,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
       ::hEnv = hEnv
    else
       ::nRetCode:=nRet
-      SR_MsgLogFile( "SQLALLOCENV Error" + str(nRet) )
+      SR_MsgLogFile("SQLALLOCENV Error" + str(nRet))
       return Self
    endif
 
@@ -422,20 +422,20 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
       ::hDbc = hDbc
    else
       ::nRetCode:=nRet
-      SR_MsgLogFile( "SQLALLOCCONNECT Error" + str(nRet) )
+      SR_MsgLogFile("SQLALLOCCONNECT Error" + str(nRet))
       return Self
    endif
 
-   If !Empty( ::cDTB )
+   If !Empty(::cDTB)
       SR_SetCOnnectAttr( hDbc, SQL_ATTR_CURRENT_CATALOG, ::cDTB, len(::cDTB) )
    EndIf
 
    cConnect := alltrim(cConnect)
-   nRet := SR_DriverC( hDbc, @cConnect )
+   nRet := SR_DriverC(hDbc, @cConnect)
 
    if nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
-      SR_MsgLogFile( "SQLDriverConnect Error: No ODBC connection established " + ::LastError() )
+      SR_MsgLogFile("SQLDriverConnect Error: No ODBC connection established " + ::LastError())
       Return Self
    else
       ::cConnect = cConnect
@@ -454,7 +454,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
       Exit
    Case SYSTEMID_MSSQL7
    Case SYSTEMID_AZURE
-      ::exec( "select cast( @@spid as numeric )", .T., .T., @aRet )
+      ::exec("select cast( @@spid as numeric )", .T., .T., @aRet)
       If len(aRet) > 0
          ::uSid := val(str(aRet[1,1],8,0))
       EndIf
@@ -472,13 +472,13 @@ METHOD End() CLASS SR_ODBC
    ::Commit( .T. )
 
    If ( nRet := SR_Disconn( ::hDbc )) != SQL_SUCCESS
-      SR_MsgLogFile( "Error disconnecting : " + str(nRet) + CRLF + ::LastError() )
+      SR_MsgLogFile("Error disconnecting : " + str(nRet) + CRLF + ::LastError())
    Else
       If ( nRet := SR_FreeCon( ::hDbc )) != SQL_SUCCESS
-         SR_MsgLogFile( "Error in SR_FreeCon() : " + str(nRet) + CRLF + ::LastError() )
+         SR_MsgLogFile("Error in SR_FreeCon() : " + str(nRet) + CRLF + ::LastError())
       Else
          If ( nRet := SR_FreeEnv( ::hEnv )) != SQL_SUCCESS
-            SR_MsgLogFile( "Error in SR_FreeEnv() : " + str(nRet) + CRLF + ::LastError() )
+            SR_MsgLogFile("Error in SR_FreeEnv() : " + str(nRet) + CRLF + ::LastError())
          EndIf
       EndIf
    EndIf
@@ -489,7 +489,7 @@ return ::Super:End()
 
 METHOD GetInfo( nType ) CLASS SR_ODBC
 
-   local cBuffer := Space( 256 )
+   local cBuffer := Space(256)
    ::nRetCode := SR_GetInfo( ::hDbc, nType, @cBuffer )
 
 return cBuffer
@@ -526,7 +526,7 @@ Return ( ::nRetCode := SR_Commit( ::hEnv, ::hDbc ) )
 
 METHOD RollBack() CLASS SR_ODBC
    ::Super:RollBack()
-Return ( ::nRetCode := SR_RollBack( ::hEnv, ::hDbc ) )
+Return ( ::nRetCode := SR_RollBack(::hEnv, ::hDbc) )
 
 /*------------------------------------------------------------------------*/
 

@@ -77,7 +77,7 @@
 #define  SELECT_OPTIMIZER2  iif(nSystemId==SYSTEMID_ORACLE,iif(lLocking," FOR UPDATE", ""),"")
 #define  NEWLINE            iif(lIdent,CRLF,"")
 
-#xtranslate Default( <Var>, <xVal> ) => IIF( <Var> == NIL, <Var> := <xVal>, )
+#xtranslate Default(<Var>, <xVal>) => IIF(<Var> == NIL, <Var> := <xVal>, NIL)
 
 Static bTableInfo, bIndexInfo
 
@@ -170,7 +170,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          CASE SQL_PCODE_COLUMN_BY_VALUE
             SKIPFWD
             FIX_PRE_WHERE
-            cSql += SR_SQLQuotedString( uData, nSystemID, .t. )
+            cSql += SR_SQLQuotedString(uData, nSystemID, .t.)
             PASSTHROUGH
          CASE SQL_PCODE_COLUMN_PARAM
             SKIPFWD
@@ -187,7 +187,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          CASE SQL_PCODE_COLUMN_BINDVAR
             SKIPFWD
             FIX_PRE_WHERE
-            cSql += SR_SQLQuotedString( &uData, nSystemID, .t. )
+            cSql += SR_SQLQuotedString(&uData, nSystemID, .t.)
             PASSTHROUGH
          CASE SQL_PCODE_COLUMN_NAME_BINDVAR
             SKIPFWD
@@ -229,9 +229,9 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          CASE SQL_PCODE_TABLE_NAME
             SKIPFWD
             if lParseTableName
-               aRet := eval( bTableInfo, uData, nSystemId )
-               aadd( aTables, aRet[TABLE_INFO_TABLE_NAME] )
-               aadd( aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME] )
+               aRet := eval(bTableInfo, uData, nSystemId)
+               aadd(aTables, aRet[TABLE_INFO_TABLE_NAME])
+               aadd(aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME])
                If nContext == SQL_CONTEXT_UPDATE
                   cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
                   SR_SolveFilters(aFilters,aRet,,nSystemID)
@@ -246,8 +246,8 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                   cSql +=  NEWLINE + IDENTSPACE + "  "
                EndIf
             Else
-               aadd( aTables, uData )
-               aadd( aQualifiedTables, uData )
+               aadd(aTables, uData)
+               aadd(aQualifiedTables, uData)
                If nContext == SQL_CONTEXT_UPDATE
                   cSql += uData
                   cSql +=  NEWLINE + " SET" + NEWLINE + "  "
@@ -263,21 +263,21 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
             PASSTHROUGH
          CASE SQL_PCODE_TABLE_NO_ALIAS
-            aadd( aAlias, "" )
+            aadd(aAlias, "")
             PASSTHROUGH
          CASE SQL_PCODE_TABLE_ALIAS
             SKIPFWD
-            aadd( aAlias, SR_DBQUALIFY( uData, nSystemID  ) )
+            aadd(aAlias, SR_DBQUALIFY(uData, nSystemID))
             PASSTHROUGH
          CASE SQL_PCODE_TABLE_PARAM
             SKIPFWD
             if lParseTableName
-               aRet := eval( bTableInfo, iif(uData+1<=len(aParam),iif(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##"), nSystemId )
+               aRet := eval(bTableInfo, iif(uData+1<=len(aParam),iif(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##"), nSystemId)
                If nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
                Else
-                  aadd( aTables, aRet[TABLE_INFO_TABLE_NAME] )
-                  aadd( aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME] )
+                  aadd(aTables, aRet[TABLE_INFO_TABLE_NAME])
+                  aadd(aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME])
                EndIf
                If nContext == SQL_CONTEXT_UPDATE
                   SR_SolveFilters(aFilters,aRet,,nSystemID)
@@ -294,8 +294,8 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                If nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += uData
                Else
-                  aadd( aTables, uData )
-                  aadd( aQualifiedTables, uData )
+                  aadd(aTables, uData)
+                  aadd(aQualifiedTables, uData)
                EndIf
                If nContext == SQL_CONTEXT_UPDATE
                   cSql +=  NEWLINE + " SET" + NEWLINE + "  "
@@ -308,9 +308,9 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          CASE SQL_PCODE_TABLE_BINDVAR
             SKIPFWD
             if lParseTableName
-               aRet := eval( bTableInfo, &uData, nSystemId )
-               aadd( aTables, aRet[TABLE_INFO_TABLE_NAME] )
-               aadd( aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME] )
+               aRet := eval(bTableInfo, &uData, nSystemId)
+               aadd(aTables, aRet[TABLE_INFO_TABLE_NAME])
+               aadd(aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME])
                If nContext == SQL_CONTEXT_UPDATE
                   SR_SolveFilters(aFilters,aRet,,nSystemID)
                   cSql +=  NEWLINE + " SET" + NEWLINE + "  "
@@ -323,8 +323,8 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                EndIf
             Else
                uData := &uData
-               aadd( aTables, uData )
-               aadd( aQualifiedTables, uData )
+               aadd(aTables, uData)
+               aadd(aQualifiedTables, uData)
                If nContext == SQL_CONTEXT_UPDATE
                   cSql +=  NEWLINE + " SET" + NEWLINE + "  "
                EndIf
@@ -346,8 +346,8 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
             Else
                SKIPFWD
                uData := "(" + SR_SQLCodeGen2(apCode,aParam,nSystemId,lIdent,@nIP,nContext,@nSpaces,lParseTableName)
-               aadd( aTables, uData )
-               aadd( aQualifiedTables, uData )
+               aadd(aTables, uData)
+               aadd(aQualifiedTables, uData)
                Exit
             EndIf
          CASE SQL_PCODE_STOP_EXPR
@@ -595,7 +595,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
             /* FROM and JOIN will be included now */
 
-            If !Empty( cSqlCols )
+            If !Empty(cSqlCols)
 
                cTmp := cSql
                cSql := cSqlCols
@@ -616,22 +616,22 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                   EndIf
 
                   If outer[1] != cAtual
-                     nPos := aScan( aAlias, SR_DBQUALIFY( outer[1], nSystemID  ) )
+                     nPos := aScan(aAlias, SR_DBQUALIFY( outer[1], nSystemID  ))
                      If nPos == 0
-                        nPos := aScan( aTables, outer[1] )
+                        nPos := aScan(aTables, outer[1])
                      EndIf
                      cSql += aQualifiedTables[nPos] + " " + aAlias[nPos] + NEWLINE + IDENTSPACE
-                     nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID  ) )
+                     nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID  ))
                      If nPos == 0
-                        nPos := aScan( aTables, outer[2] )
+                        nPos := aScan(aTables, outer[2])
                      EndIf
                      cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                   ElseIf outer[1] = cAtual .and. outer[2] = cAtual2
                      cSql += outer[3]
                   Else
-                     nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID  ) )
+                     nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID  ))
                      If nPos == 0
-                        nPos := aScan( aTables, outer[2] )
+                        nPos := aScan(aTables, outer[2])
                      EndIf
                      cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos]  + " " + aAlias[nPos] + " ON " + outer[3]
                   EndIf
@@ -640,34 +640,34 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                Next
 
                For each outer in aOuters
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID  ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID  ))
 
                   If nPos == 0
-                     nPos := aScan( aTables, outer[2] )
+                     nPos := aScan(aTables, outer[2])
                   EndIf
 
                   If nPos > 0
-                     aDel( aTables, nPos )
-                     aDel( aQualifiedTables, nPos )
-                     aSize( aTables, len(aTables)-1 )
-                     aSize( aQualifiedTables, len(aQualifiedTables)-1 )
-                     aDel( aAlias, nPos )
-                     aSize( aAlias, len(aAlias)-1 )
+                     aDel(aTables, nPos)
+                     aDel(aQualifiedTables, nPos)
+                     aSize(aTables, len(aTables) - 1)
+                     aSize(aQualifiedTables, len(aQualifiedTables) - 1)
+                     aDel(aAlias, nPos)
+                     aSize(aAlias, len(aAlias) - 1)
                   EndIf
 
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[1], nSystemID  ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[1], nSystemID  ))
 
                   If nPos == 0
-                     nPos := aScan( aTables, outer[1] )
+                     nPos := aScan(aTables, outer[1])
                   EndIf
 
                   If nPos > 0
-                     aDel( aTables, nPos )
-                     aSize( aTables, len(aTables)-1 )
-                     aDel( aQualifiedTables, nPos )
-                     aSize( aQualifiedTables, len(aQualifiedTables)-1 )
-                     aDel( aAlias, nPos )
-                     aSize( aAlias, len(aAlias)-1 )
+                     aDel(aTables, nPos)
+                     aSize(aTables, len(aTables) - 1)
+                     aDel(aQualifiedTables, nPos)
+                     aSize(aQualifiedTables, len(aQualifiedTables) - 1)
+                     aDel(aAlias, nPos)
+                     aSize(aAlias, len(aAlias) - 1)
                   EndIf
 
                Next
@@ -677,7 +677,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                EndIf
 
                For each cTbl in aQualifiedTables
-                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif( hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "" )
+                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif(hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
                Next
 
                cSql += cTmp + cTrailler
@@ -701,7 +701,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
             /* FROM and JOIN will be included now */
 
-            If !Empty( cSqlCols )
+            If !Empty(cSqlCols)
 
                If nSystemId == SYSTEMID_ORACLE
 
@@ -725,22 +725,22 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
                      If hb_enumIndex() = 1
       //               If outer[1] != cAtual
-                        nPos := aScan( aAlias, SR_DBQUALIFY( outer[1], nSystemID ) )
+                        nPos := aScan(aAlias, SR_DBQUALIFY( outer[1], nSystemID ))
                         If nPos == 0
-                           nPos := aScan( aTables, outer[1] )
+                           nPos := aScan(aTables, outer[1])
                         EndIf
                         cSql += aQualifiedTables[nPos] + " " + aAlias[nPos] + NEWLINE + IDENTSPACE
-                        nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                        nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
                         If nPos == 0
-                           nPos := aScan( aTables, outer[2] )
+                           nPos := aScan(aTables, outer[2])
                         EndIf
                         cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                      ElseIf outer[1] = cAtual .and. outer[2] = cAtual2
                         cSql += outer[3]
                      Else
-                        nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                        nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
                         If nPos == 0
-                           nPos := aScan( aTables, outer[2] )
+                           nPos := aScan(aTables, outer[2])
                         EndIf
                         cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos]  + " " + aAlias[nPos] + " ON " + outer[3]
                      EndIf
@@ -769,22 +769,22 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                      EndIf
 
                      If outer[1] != cAtual
-                        nPos := aScan( aAlias, SR_DBQUALIFY( outer[1], nSystemID ) )
+                        nPos := aScan(aAlias, SR_DBQUALIFY( outer[1], nSystemID ))
                         If nPos == 0
-                           nPos := aScan( aTables, outer[1] )
+                           nPos := aScan(aTables, outer[1])
                         EndIf
                         cSql += aQualifiedTables[nPos] + " " + aAlias[nPos] + NEWLINE + IDENTSPACE
-                        nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                        nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
                         If nPos == 0
-                           nPos := aScan( aTables, outer[2] )
+                           nPos := aScan(aTables, outer[2])
                         EndIf
                         cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                      ElseIf outer[1] = cAtual .and. outer[2] = cAtual2
                         cSql += outer[3]
                      Else
-                        nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                        nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
                         If nPos == 0
-                           nPos := aScan( aTables, outer[2] )
+                           nPos := aScan(aTables, outer[2])
                         EndIf
                         cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos]  + " " + aAlias[nPos] + " ON " + outer[3]
                      EndIf
@@ -795,34 +795,34 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                EndIf
 
                For each outer in aOuters
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
 
                   If nPos == 0
-                     nPos := aScan( aTables, outer[2] )
+                     nPos := aScan(aTables, outer[2])
                   EndIf
 
                   If nPos > 0
-                     aDel( aTables, nPos )
-                     aDel( aQualifiedTables, nPos )
-                     aSize( aTables, len(aTables)-1 )
-                     aSize( aQualifiedTables, len(aQualifiedTables)-1 )
-                     aDel( aAlias, nPos )
-                     aSize( aAlias, len(aAlias)-1 )
+                     aDel(aTables, nPos)
+                     aDel(aQualifiedTables, nPos)
+                     aSize(aTables, len(aTables) - 1)
+                     aSize(aQualifiedTables, len(aQualifiedTables) - 1)
+                     aDel(aAlias, nPos)
+                     aSize(aAlias, len(aAlias) - 1)
                   EndIf
 
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[1], nSystemID ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[1], nSystemID ))
 
                   If nPos == 0
-                     nPos := aScan( aTables, outer[1] )
+                     nPos := aScan(aTables, outer[1])
                   EndIf
 
                   If nPos > 0
-                     aDel( aTables, nPos )
-                     aSize( aTables, len(aTables)-1 )
-                     aDel( aQualifiedTables, nPos )
-                     aSize( aQualifiedTables, len(aQualifiedTables)-1 )
-                     aDel( aAlias, nPos )
-                     aSize( aAlias, len(aAlias)-1 )
+                     aDel(aTables, nPos)
+                     aSize(aTables, len(aTables) - 1)
+                     aDel(aQualifiedTables, nPos)
+                     aSize(aQualifiedTables, len(aQualifiedTables) - 1)
+                     aDel(aAlias, nPos)
+                     aSize(aAlias, len(aAlias) - 1)
                   EndIf
 
                Next
@@ -832,7 +832,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                EndIf
 
                For each cTbl in aQualifiedTables
-                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif( hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "" )
+                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif(hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
                Next
 
                cSql += cTmp + cTrailler
@@ -872,10 +872,10 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                                             apCode[nIP+4] == SQL_PCODE_COLUMN_NAME .and. ;
                                             SR_IsComparOp( apCode[nIP+6] ) .and. ;
                                             iif(!SR_IsComparNullOp( apCode[nIP+6] ), apCode[nIP+7] == SQL_PCODE_COLUMN_BY_VALUE, .T.) .and.;
-                                            (nFlt := aScan( aOuters, {|x| upper(x[2]) == upper(apCode[nIP+3])} )) > 0
+                                            (nFlt := aScan(aOuters, {|x| upper(x[2]) == upper(apCode[nIP+3])})) > 0
 
-               aOuters[nFlt,3] += " AND " + SR_DBQUALIFY( apCode[nIP+3], nSystemID ) + "." + SR_DBQUALIFY( apCode[nIP+5], nSystemID ) + SR_ComparOpText(apCode[nIP+6]) + iif(!SR_IsComparNullOp( apCode[nIP+6] ), SR_SQLQuotedString( apCode[nIP+8], nSystemID ), "" )
-               nIP += iif( SR_IsComparNullOp( apCode[nIP+6] ), 7, 9 )
+               aOuters[nFlt,3] += " AND " + SR_DBQUALIFY( apCode[nIP+3], nSystemID ) + "." + SR_DBQUALIFY( apCode[nIP+5], nSystemID ) + SR_ComparOpText(apCode[nIP+6]) + iif(!SR_IsComparNullOp( apCode[nIP+6] ), SR_SQLQuotedString(apCode[nIP+8], nSystemID), "" )
+               nIP += iif(SR_IsComparNullOp(apCode[nIP + 6]), 7, 9)
                Exit
             ElseIf nIP + 1 <= len(apCode) .and. apCode[nIP+1] == SQL_PCODE_OPERATOR_LEFT_OUTER_JOIN
                PASSTHROUGH
@@ -962,7 +962,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
             SKIPFWD
             If uData == SQL_PCODE_COLUMN_ALIAS
                SKIPFWD
-               aadd( aOuters, { uData,,,1 } )
+               aadd(aOuters, { uData,,,1 })
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -1000,7 +1000,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
             SKIPFWD
             If uData == SQL_PCODE_COLUMN_ALIAS
                SKIPFWD
-               aadd( aOuters, { uData,,,2 } )
+               aadd(aOuters, { uData,,,2 })
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -1044,7 +1044,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
       /* FROM and JOIN will be included now */
 
-      If !Empty( cSqlCols )
+      If !Empty(cSqlCols)
 
          If nSystemId == SYSTEMID_ORACLE
 
@@ -1068,22 +1068,22 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
                If hb_enumIndex() = 1
 //               If outer[1] != cAtual
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[1], nSystemID ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[1], nSystemID ))
                   If nPos == 0
-                     nPos := aScan( aTables, outer[1] )
+                     nPos := aScan(aTables, outer[1])
                   EndIf
                   cSql += aQualifiedTables[nPos] + " " + aAlias[nPos] + NEWLINE + IDENTSPACE
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
                   If nPos == 0
-                     nPos := aScan( aTables, outer[2] )
+                     nPos := aScan(aTables, outer[2])
                   EndIf
                   cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                ElseIf outer[1] = cAtual .and. outer[2] = cAtual2
                   cSql += outer[3]
                Else
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
                   If nPos == 0
-                     nPos := aScan( aTables, outer[2] )
+                     nPos := aScan(aTables, outer[2])
                   EndIf
                   cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos]  + " " + aAlias[nPos] + " ON " + outer[3]
                EndIf
@@ -1112,22 +1112,22 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                EndIf
 
                If outer[1] != cAtual
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[1], nSystemID ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[1], nSystemID ))
                   If nPos == 0
-                     nPos := aScan( aTables, outer[1] )
+                     nPos := aScan(aTables, outer[1])
                   EndIf
                   cSql += aQualifiedTables[nPos] + " " + aAlias[nPos] + NEWLINE + IDENTSPACE
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
                   If nPos == 0
-                     nPos := aScan( aTables, outer[2] )
+                     nPos := aScan(aTables, outer[2])
                   EndIf
                   cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                ElseIf outer[1] = cAtual .and. outer[2] = cAtual2
                   cSql += outer[3]
                Else
-                  nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+                  nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
                   If nPos == 0
-                     nPos := aScan( aTables, outer[2] )
+                     nPos := aScan(aTables, outer[2])
                   EndIf
                   cSql += cJoinWords( outer[4], nSystemID ) + aQualifiedTables[nPos]  + " " + aAlias[nPos] + " ON " + outer[3]
                EndIf
@@ -1138,34 +1138,34 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          EndIf
 
          For each outer in aOuters
-            nPos := aScan( aAlias, SR_DBQUALIFY( outer[2], nSystemID ) )
+            nPos := aScan(aAlias, SR_DBQUALIFY( outer[2], nSystemID ))
 
             If nPos == 0
-               nPos := aScan( aTables, outer[2] )
+               nPos := aScan(aTables, outer[2])
             EndIf
 
             If nPos > 0
-               aDel( aTables, nPos )
-               aSize( aTables, len(aTables)-1 )
-               aDel( aQualifiedTables, nPos )
-               aSize( aQualifiedTables, len(aQualifiedTables)-1 )
-               aDel( aAlias, nPos )
-               aSize( aAlias, len(aAlias)-1 )
+               aDel(aTables, nPos)
+               aSize(aTables, len(aTables) - 1)
+               aDel(aQualifiedTables, nPos)
+               aSize(aQualifiedTables, len(aQualifiedTables) - 1)
+               aDel(aAlias, nPos)
+               aSize(aAlias, len(aAlias) - 1)
             EndIf
 
-            nPos := aScan( aAlias, SR_DBQUALIFY( outer[1], nSystemID ) )
+            nPos := aScan(aAlias, SR_DBQUALIFY( outer[1], nSystemID ))
 
             If nPos == 0
-               nPos := aScan( aTables, outer[1] )
+               nPos := aScan(aTables, outer[1])
             EndIf
 
             If nPos > 0
-               aDel( aTables, nPos )
-               aSize( aTables, len(aTables)-1 )
-               aDel( aQualifiedTables, nPos )
-               aSize( aQualifiedTables, len(aQualifiedTables)-1 )
-               aDel( aAlias, nPos )
-               aSize( aAlias, len(aAlias)-1 )
+               aDel(aTables, nPos)
+               aSize(aTables, len(aTables) - 1)
+               aDel(aQualifiedTables, nPos)
+               aSize(aQualifiedTables, len(aQualifiedTables) - 1)
+               aDel(aAlias, nPos)
+               aSize(aAlias, len(aAlias) - 1)
             EndIf
 
          Next
@@ -1175,7 +1175,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          EndIf
 
          For each cTbl in aQualifiedTables
-            cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif( hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "" )
+            cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif(hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
          Next
 
          cSql += cTmp + cTrailler
@@ -1186,7 +1186,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
    RECOVER USING nErrorId
 
       If valtype(nErrorId) == "O"
-         Eval( bError, nErrorId )
+         Eval(bError, nErrorId)
       Else
          SR_SQLParseError( , , "", nErrorId,,bError )
       EndIf
@@ -1203,17 +1203,17 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 * Quoting xBase DataTypes
 */
 
-Function SR_SQLQuotedString( uData, nSystemID, lNotNull )
+Function SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
    local cType := valtype(uData), uElement, cRet := ""
 
    Default( lNotNull, .F. )
 
-   If (!lNotNull) .and. empty( uData )
+   If (!lNotNull) .and. empty(uData)
       Return "NULL"
    Endif
 
-   If lNotNull .and. empty( uData ) .and. cType $ "CM"
+   If lNotNull .and. empty(uData) .and. cType $ "CM"
       Return ['] + " " + [']
    Endif
 
@@ -1250,12 +1250,12 @@ Function SR_SQLQuotedString( uData, nSystemID, lNotNull )
       return iif(uData,"1","0")
    Case cType == "A"
       For each uElement in uData
-         cRet += iif(empty(cRet),"",", ") + SR_SQLQuotedString( uElement, nSystemID, lNotNull )
+         cRet += iif(empty(cRet),"",", ") + SR_SQLQuotedString(uElement, nSystemID, lNotNull)
       Next
       return cRet
    Case cType == "O"
-      cRet := SR_STRTOHEX(HB_Serialize( uData ))
-      Return SR_SQLQuotedString( SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID, lNotNull )
+      cRet := SR_STRTOHEX(HB_Serialize(uData))
+      Return SR_SQLQuotedString(SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID, lNotNull)
    EndCase
 
 Return "NULL"
@@ -1317,7 +1317,7 @@ Static Function SR_SQLParseError( arg1, arg2, cDescr, nCode, cOper, oError )
    oErr:Operation     := cOper
    oErr:OsCode          := 0
 
-   uRet := Eval( oError, oErr )
+   uRet := Eval(oError, oErr)
 
 Return uRet
 
@@ -1341,9 +1341,9 @@ Static Function SR_SolveFilters(aFilters,aRet,cAlias,nSystemID)
 
    For i = 1 to len(aRet[TABLE_INFO_FILTERS])
       If SR_EvalFilters()
-         aadd( aFilters, &( StrTran(aRet[TABLE_INFO_FILTERS,i], "<ALIAS>", cAlias ) ) )
+         aadd(aFilters, &( StrTran(aRet[TABLE_INFO_FILTERS,i], "<ALIAS>", cAlias ) ))
       Else
-         aadd( aFilters, StrTran(aRet[TABLE_INFO_FILTERS,i], "<ALIAS>", cAlias ) )
+         aadd(aFilters, StrTran(aRet[TABLE_INFO_FILTERS,i], "<ALIAS>", cAlias ))
       EndIf
    Next
 
@@ -1358,13 +1358,13 @@ Procedure __SR_StartSQL()
    bIndexInfo  := { |cIndexName,nSystemID| SR_IndexAttr( cIndexName, nSystemID ) }
    bNextRecord := { || ++ nRecordNum }
    aJoinWords  := Array(SUPPORTED_DATABASES)
-   aFill( aJoinWords, { " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " LEFT JOIN ", " RIGHT JOIN ", " JOIN " } )
+   aFill(aJoinWords, { " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " LEFT JOIN ", " RIGHT JOIN ", " JOIN " })
 
 Return
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetTableInfoBlock( b )
+Function SR_SetTableInfoBlock(b)
 
    If valtype(b) != "B"
       Return .F.
@@ -1376,7 +1376,7 @@ Return .T.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetIndexInfoBlock( b )
+Function SR_SetIndexInfoBlock(b)
 
    If valtype(b) != "B"
       Return .F.
@@ -1400,7 +1400,7 @@ Return bIndexInfo
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetNextRecordBlock( b )
+Function SR_SetNextRecordBlock(b)
 
    If valtype(b) != "B"
       Return .F.
@@ -1525,7 +1525,7 @@ Function SR_pCodeDescr(nCode)
       Return nCode
    endif
 
-   nFound := aScan( apCode, {|x| x[2] == nCode } )
+   nFound := aScan(apCode, {|x| x[2] == nCode })
 
    If nFound > 0
       Return apCode[nFound,1]
@@ -1557,15 +1557,15 @@ Function SR_TableAttr( cTableName, nSystemID )
       EndIf
    EndIf
 
-   cTableName := strtran( alltrim(lower(cTableName)), ".dbf", "_dbf" )
-   cTableName := strtran( cTableName, ".ntx", "" )
-   cTableName := strtran( cTableName, ".cdx", "" )
-   cTableName := strtran( cTableName, "\", "_" )
+   cTableName := strtran(alltrim(lower(cTableName)), ".dbf", "_dbf")
+   cTableName := strtran(cTableName, ".ntx", "")
+   cTableName := strtran(cTableName, ".cdx", "")
+   cTableName := strtran(cTableName, "\", "_")
    if cTableName[1] == "/"
       cTableName := SubStr(cTableName, 2)
    endif
-   cTableName := strtran( cTableName, "/", "_" )
-   cTableName := strtran( cTableName, ".", "_" )
+   cTableName := strtran(cTableName, "/", "_")
+   cTableName := strtran(cTableName, ".", "_")
    cTableName := alltrim(cTableName)
 
    if len(cTableName) > 30
@@ -1621,15 +1621,15 @@ Function SR_IndexAttr( cTableName, nSystemID )
       EndIf
    EndIf
 
-   cTableName := strtran( alltrim(lower(cTableName)), ".dbf", "_dbf" )
-   cTableName := strtran( cTableName, ".ntx", "" )
-   cTableName := strtran( cTableName, ".cdx", "" )
-   cTableName := strtran( cTableName, "\", "_" )
+   cTableName := strtran(alltrim(lower(cTableName)), ".dbf", "_dbf")
+   cTableName := strtran(cTableName, ".ntx", "")
+   cTableName := strtran(cTableName, ".cdx", "")
+   cTableName := strtran(cTableName, "\", "_")
    if cTableName[1] == "/"
       cTableName := SubStr(cTableName, 2)
    endif
-   cTableName := strtran( cTableName, "/", "_" )
-   cTableName := strtran( cTableName, ".", "_" )
+   cTableName := strtran(cTableName, "/", "_")
+   cTableName := strtran(cTableName, ".", "_")
    cTableName := alltrim(cTableName)
 
    if len(cTableName) > 30
