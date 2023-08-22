@@ -1,0 +1,10 @@
+incpaths=Include
+
+libpaths=lib/${hb_plat}/${hb_comp}
+
+libs=sqlrddpp
+libs=odbc32
+libs=odbccp32
+libs=xhb.hbc
+
+prgflags=-gc3
