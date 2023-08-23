@@ -1542,21 +1542,21 @@ STATIC Function ExecuteSql(csql, cursor, n)
 * Catch e
 *   nError := -1
 * End
-* If nError > 0  
-   
+* If nError > 0
+
     nError := Sqlo_Execute(SR_GetConnection():hdbc, cSql)
 *   nError :=sr_Getconnection():executeraw(cSql)
-   
+
    cursor := GETORAHANDLE(SR_GetConnection():hdbc)
 
-   
+
 * EndIf
-   
+
 
 Return nError
- 
+
 STATIC Function OraFetch(n)
-Local oSql := sr_getconnection() 
+Local oSql := sr_getconnection()
 Local hDBC := oSql:hdbc, nError
 Local hDBCHandle := aOraClipCursors[n]["cursor"]
 Local i
@@ -1573,63 +1573,63 @@ If aOraClipCursors[n]["curpos"] <= ( cAlias )->( RecCount() ) .AND.;
    aOraClipCursors[n]["curpos"] <> 0
    ( cAlias )->( dBGoto( aOraClipCursors[n]["curpos"] ) )
 Elseif !aOraClipCursors[n]["completed"]
- 
+
   nError := oSql:Fetch(,aOraClipCursors[n]["aFields"] )
-  
+
   aOraClipCursors[n]["eof"] := nError <> 0
-  aOraClipCursors[n]["data"] := {}  
+  aOraClipCursors[n]["data"] := {}
   If nError == 0
-     
+
      aArray := Array(Len(aOraClipCursors[n]["aFields"]))
-  
+
      ( cAlias )->( dBAppend() )
      For i:= 1 to Len(aOraClipCursors[n]["aFields"])
-        
+
          ( cAlias )->( FieldPut( i, oSql:FieldGet( i, aOraClipCursors[n]["aFields"] ) ) )
      Next
      ( cAlias )->( dBUnlock() )
-  Else 
+  Else
 *       for i:=1 to len(aOraClipCursors[n]["data"])
        aDb := aOraClipCursors[n]["aFields"]
-       for i:=1 to len(aDb)   
+       for i:=1 to len(aDb)
          if adb[i,2]=="C"
             aadd(aOraClipCursors[n]["data"],"")
          elseif adb[i,2]=="N"
-            aadd(aOraClipCursors[n]["data"],0)  
+            aadd(aOraClipCursors[n]["data"],0)
          elseif adb[i,2]=="D"
-            aadd(aOraClipCursors[n]["data"],ctod(''))     
+            aadd(aOraClipCursors[n]["data"],ctod(''))
          elseif adb[i,2]=="L"
-            aadd(aOraClipCursors[n]["data"],.F.)        
+            aadd(aOraClipCursors[n]["data"],.F.)
          endif
-       next  
+       next
          aOraClipCursors[n]["completed"] := .T.
          aOraClipCursors[n]["eof"] := .T.
-         
+
 *          oSql:FreeStatement()
       aOraClipCursors[n]["cursoropen"] := .F.
       SQLO_CLOSESTMT( hDBC )
-      
+
       if select(aOraClipCursors[n]["aliastmp"]) >0
          (aOraClipCursors[n]["aliastmp"])->(dbclosearea())
          ferase(aOraClipCursors[n]["tmpfile"])
       endif
-      
-  EndIf   
-  
+
+  EndIf
+
 Else
-   ( cAlias )->( dBGoto( aOraClipCursors[n]["curpos"] ) ) 
+   ( cAlias )->( dBGoto( aOraClipCursors[n]["curpos"] ) )
 EndIf
 if select(aOraClipCursors[n]["aliastmp"])>0
    For i:= 1 to Len(aOraClipCursors[n]["aFields"])
       AADD(aOraClipCursors[n]["data"], (cAlias)->(FieldGet(i)))
    Next
-endif   
+endif
 
-Return nError  
+Return nError
 
 
 static Function OraFetchSelect( n  )
-Local oSql := sr_getconnection() 
+Local oSql := sr_getconnection()
 Local hDBC := oSql:hdbc, nError
 Local hDBCHandle := aOraClipCursors[n]["cursor"]
 Local i
@@ -1672,7 +1672,7 @@ if valtype(uDat) == "C"
    Return ""
 elseif valtype(uDat) == "N"   
    return 0
-elseif valtype(uDat) == "L"   
+elseif HB_ISLOGICAL(uDat)   
    return .F.
 elseif valtype(uDat) == "D"
    return ctod("")

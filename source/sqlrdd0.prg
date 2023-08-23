@@ -217,7 +217,7 @@ Return nOld
 
 Function SR_CheckMgmntInd(nSet)
    Local nOld := lCheckMgmntInd
-   If valtype(nSet) == "L"
+   If HB_ISLOGICAL(nSet)
       lCheckMgmntInd := nSet
    EndIf
 Return nOld
@@ -226,7 +226,7 @@ Return nOld
 
 Function SR_SetSyntheticIndex(lSet)
    Local lOld := lSyntheticInd
-   If valtype(lSet) == "L"
+   If HB_ISLOGICAL(lSet)
       lSyntheticInd := lSet
    EndIf
 Return lOld
@@ -262,7 +262,7 @@ Return cRet
 
 Function SR_SetFastOpen( lSet )
    Local lOld := lFastOpenWA
-   If valtype(lSet) == "L"
+   If HB_ISLOGICAL(lSet)
       lFastOpenWA := lSet
    EndIf
 Return lOld
@@ -271,7 +271,7 @@ Return lOld
 
 Function SR_SetExclusiveManagement( lSet )
    Local lOld := !lFastOpenWA
-   If valtype(lSet) == "L"
+   If HB_ISLOGICAL(lSet)
       lFastOpenWA := !lSet
    EndIf
 Return lOld

@@ -1262,7 +1262,7 @@ Function SR_AllInCache(lSet)
 
    lOld := oSql:lAllInCache
 
-   If valtype(lSet) == "L"
+   If HB_ISLOGICAL(lSet)
       oSql:lAllInCache := lSet
    EndIf
 

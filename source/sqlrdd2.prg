@@ -3826,7 +3826,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
 
          cRet  := " WHERE (( "
 
-         If ::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,1,2 ] == ::hnDeleted .and. valtype(uKey) == "L"
+         If ::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,1,2 ] == ::hnDeleted .and. HB_ISLOGICAL(uKey)
             If ::nTCCompat > 0
                cQot := iif(uKey, "'*'", "' '")
                AADD(::aDat, iif(uKey, '*', ' '))
@@ -5089,7 +5089,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
       aRec[FIELD_NAME] := alltrim(upper(aRec[FIELD_NAME]))
       aRec[FIELD_TYPE] := alltrim(upper(aRec[FIELD_TYPE]))
 
-      If aRec[FIELD_NULLABLE] == NIL .or. valtype(aRec[FIELD_NULLABLE]) != "L"
+      If aRec[FIELD_NULLABLE] == NIL .or. !HB_ISLOGICAL(aRec[FIELD_NULLABLE])
          aRec[FIELD_NULLABLE]    := .T.
       EndIf
       If aRec[FIELD_UNIQUE] == NIL
