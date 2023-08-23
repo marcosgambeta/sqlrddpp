@@ -7619,7 +7619,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                      Else
                      
 *                         IF ::oSql:nSystemID == SYSTEMID_POSTGR
-*                            IF 'INDKEY_' IN UPPER(cNam)
+*                            IF 'INDKEY_' $ UPPER(cNam)
 *                            altd()
 *                               cnam := "substr( " + cNam + ",1,"+str(len(cQot)-3) +")" 
 *                           ENDIF   
@@ -8351,7 +8351,7 @@ METHOD WherePgsMinor( aQuotedCols ) CLASS SR_WORKAREA
                cSep := " IS "
             Case j == nLen
                cSep := " <= "
-*                if 'INDKEY_' IN UPPER(CNAM)
+*                if 'INDKEY_' $ UPPER(CNAM)
 *                altd()
 *                   cnam := "substr( " + cnam + ",1,"+str(len(cQot)-3) +")"
 *                ENDIF   
@@ -8365,7 +8365,7 @@ METHOD WherePgsMinor( aQuotedCols ) CLASS SR_WORKAREA
                   cSep := " IS "
                Else
                   cSep := " <= "
-*                   if 'INDKEY_' IN UPPER(CNAM)
+*                   if 'INDKEY_' $ UPPER(CNAM)
 *                   altd()
 *                      cnam := "substr( " + cnam + ",1,"+str(len(cQot)-3) +")"
 *                   ENDIF   

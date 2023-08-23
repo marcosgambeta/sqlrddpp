@@ -703,9 +703,9 @@ METHOD GetFunctionName(oFunctionExpression) CLASS MSSQLExpressionTranslator
    LOCAL cFunctionName := oFunctionExpression:cFunctionName
 
    DO CASE
-   CASE (cFunctionName IN {"abs", "left", "right", "replicate", "space", "str", "stuff", "upper", "lower", "ltrim", "rtrim", "year", "month", "day", "len", "exp", "log", "round", "sqrt"})
+   CASE ascan({"abs", "left", "right", "replicate", "space", "str", "stuff", "upper", "lower", "ltrim", "rtrim", "year", "month", "day", "len", "exp", "log", "round", "sqrt"}, cFunctionName) > 0
       RETURN cFunctionName
-   CASE (cFunctionName IN ::aUDF)
+   CASE ascan(::aUDF, cFunctionName) > 0
       RETURN "xhb." + cFunctionName
    CASE cFunctionName == "trim"
       RETURN "rtrim"

@@ -1209,7 +1209,7 @@ Local aRet := {}
 Local aFields := {}
 Local aTemp
 Local cSql 
-IF "." IN CTABLE
+IF "." $ CTABLE
    CSQL :=  "SELECT cols.table_name, cols.column_name, cols.position, cons.status, cons.owner FROM all_constraints cons, all_cons_columns cols WHERE cols.table_name = " + sr_cdbvalue(upper(alltrim(SUBSTR(cTable,AT('.',CTABLE)+1))) ) + " AND cons.constraint_type = 'P' AND cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner ORDER BY cols.table_name, cols.position"
 ELSE
    CSQL :=  "SELECT cols.table_name, cols.column_name, cols.position, cons.status, cons.owner FROM all_constraints cons, all_cons_columns cols WHERE cols.table_name = " + sr_cdbvalue(upper(alltrim(cTable)) ) + " AND cons.constraint_type = 'P' AND cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner ORDER BY cols.table_name, cols.position"
@@ -1642,7 +1642,7 @@ Local cPre := hHashData[nAliasTmp]["cFile"]
 
       SQLLOG->( dbgobottom() )
       while !SQLLOG->( BOF() )
-         IF !SQLLOG->PROCESSED .AND. UPPER(CTABLE) IN UPPER(SQLLOG->COMANDO     )
+         IF !SQLLOG->PROCESSED .AND. UPPER(CTABLE) $ UPPER(SQLLOG->COMANDO)
       
             CRET :=  SQLLOG->COMANDO     
             SQLLOG->( RLOCK() )

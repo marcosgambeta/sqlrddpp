@@ -177,7 +177,7 @@ METHOD new(pOperator, pType)
    ::cType := pType
 
    DO CASE
-   CASE (::oOperator:cName IN {"plus", "minus"})
+   CASE ascan({"plus", "minus"}, ::oOperator:cName) > 0
       IF ::cType == "C"
          ::cIdentityElement := "''"
       ELSEIF ::cType == "N"
@@ -185,7 +185,7 @@ METHOD new(pOperator, pType)
       ELSEIF ::cType == "D"
          ::cIdentityElement := "0"
       ENDIF
-   CASE (::oOperator:cName IN {"multiplied", "divided", "exponent"})
+   CASE ascan({"multiplied", "divided", "exponent"}, ::oOperator:cName) > 0
       ::cIdentityElement := "1"
       ::cAbsorbentElement := "0"
       ::cType := "N"
@@ -442,7 +442,7 @@ METHOD GetType() CLASS ValueExpression
             ::cType := "N"
          ELSEIF hb_regexLike("'.*'", ::Value)
             ::cType := "C"
-         ELSEIF (upper(::Value) IN {".T.", ".F."})
+         ELSEIF ascan({".T.", ".F."}, upper(::Value)) > 0
             ::cType := "L"
          ENDIF
       ELSE
@@ -525,7 +525,7 @@ METHOD GetType()
 
    IF ::cType == NIL
       cOperand1Type := ::oOperand1:GetType()
-      IF (::oOperator:cName IN {"plus", "minus"}) .AND. cOperand1Type == "N" //date + numeric
+      IF ascan({"plus", "minus"}, ::oOperator:cName) > 0 .AND. cOperand1Type == "N" //date + numeric
          ::cType := ::oOperand2:GetType()
       ELSE
          ::cType := cOperand1Type

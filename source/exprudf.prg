@@ -119,7 +119,8 @@ FUNCTION aDistinct(aArray, bSelector)
    LOCAL id
 
    FOR i := 1 TO len(aArray)
-      IF (!(id := eval(bSelector, aArray[i])) IN ids)
+      id := eval(bSelector, aArray[i])
+      IF !(ascan(ids, id) > 0)
          aadd(ids, id)
          aadd(newArray, aArray[i])
       ENDIF
@@ -227,7 +228,7 @@ METHOD aAdd(xKey, xValue, nMode) CLASS Dictionary
 
    LOCAL lContainsKey := ::lContainsKey(xKey)
 
-   IF (!nMode IN {1,2,3})
+   IF !(ascan({1,2,3}, nMode) > 0)
       nMode := 1
    ENDIF
    DO CASE
