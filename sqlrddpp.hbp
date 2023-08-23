@@ -48,5 +48,6 @@ source/sqlsrodbc.c
 {!xhb}sqlrddpp.hbx
 
 {allgcc}-cflag=-fpermissive
+{allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
 
 xhb.hbc
