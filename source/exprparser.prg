@@ -139,7 +139,7 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
 
    cAlias := iif((cNewAlias := ::ExtractAlias1(@cExpression)) != NIL, cNewAlias, cAlias)
 
-   DO WHILE (cExpression LIKE "^\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*\?$")
+   DO WHILE hb_regexLike("^\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*\?$", cExpression)
       cExpression := alltrim(substr(cExpression, 2, len(cExpression) - 2))
       cAlias := iif((cNewAlias := ::ExtractAlias2(@cExpression)) != NIL, cNewAlias, cAlias)
       ::ResolveParenthesis(@cExpression)
@@ -319,7 +319,7 @@ METHOD GetParameter(cExpression, cAlias) CLASS ExpressionParser
    LOCAL lByRef
    LOCAL oExpression
 
-   IF (cExpression LIKE "^\s*$")
+   IF hb_regexLike("^\s*$", cExpression)
       lByRef := .F.
       oExpression := ValueExpression():new(cAlias, "nil")
    ELSE

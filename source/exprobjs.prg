@@ -417,7 +417,7 @@ METHOD new(pContext, pValue)
 
    IF aScan(::oWorkArea:aNames, {|x|x == upper(pValue)}) > 0
       ::ValueType := "field"
-   ELSEIF (pValue LIKE "\w+") .AND. (!pValue LIKE "\d+") .AND. !lower(pValue) == "nil"
+   ELSEIF hb_regexLike("\w+", pValue) .AND. hb_regexLike("\d+", !pValue) .AND. !lower(pValue) == "nil"
       ::ValueType := "variable"
    ELSE
       ::ValueType := "value"
@@ -438,9 +438,9 @@ METHOD GetType() CLASS ValueExpression
       ELSEIF ::ValueType == "variable"
          ::cType := ::super:GetType()
       ELSEIF ::ValueType == "value"
-         IF (::Value LIKE "\d+")
+         IF hb_regexLike("\d+", ::Value)
             ::cType := "N"
-         ELSEIF (::Value LIKE "'.*'")
+         ELSEIF hb_regexLike("'.*'", ::Value)
             ::cType := "C"
          ELSEIF (upper(::Value) IN {".T.", ".F."})
             ::cType := "L"

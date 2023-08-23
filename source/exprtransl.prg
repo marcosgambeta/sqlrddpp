@@ -596,7 +596,7 @@ RETURN ::super:new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpressio
 
 METHOD TranslateComparison(oComparison) CLASS MSSQLExpressionTranslator
 
-   LOCAL bLike := {|x|iif((x like "^\'.*\'$"), " like '%" + substr(x, 2, len(x) - 2) + "%'", " like '%'+" + x + "+'")}
+   LOCAL bLike := {|x|iif(hb_regexLike("^\'.*\'$", x), " like '%" + substr(x, 2, len(x) - 2) + "%'", " like '%'+" + x + "+'")}
 
    IF oComparison:oOperator:cName == "included"
       RETURN ::TranslateExpression(oComparison:oOperand2) + eval(bLike, ::TranslateExpression(oComparison:oOperand1))
@@ -675,8 +675,8 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
       RETURN "convert(char, " + ::InternalTranslate(aParamExprs[1]) + ", 112)"
    CASE cFunctionName == "ctod"
       firstParam := ::InternalTranslate(aParamExprs[1])
-      IF (firstParam LIKE "\'.*\'")
-         IF (firstParam LIKE "\'\s*\'")
+      IF hb_regexLike("\'.*\'", firstParam)
+         IF hb_regexLike("\'\s*\'", firstParam)
             RETURN ::cNull
          ENDIF
          cSavedFormat := set(_SET_DATEFORMAT)
