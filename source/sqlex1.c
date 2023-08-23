@@ -126,7 +126,7 @@ static int sqlKeyCompareEx( SQLEXAREAP thiswa, PHB_ITEM pKey, BOOL fExact );
 
 static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
 
-static BOOL _SqlExIsLogFirst = TRUE;
+//static BOOL _SqlExIsLogFirst = TRUE; not used
 static BOOL _SqlExIsLogFile = FALSE;
 
 BOOL SqlExIsLog();
@@ -404,7 +404,7 @@ static HB_ERRCODE getMissingColumn( SQLEXAREAP thiswa, PHB_ITEM pFieldData, LONG
 //    int     iReallocs  = 0;
 //    int iError = 0;
 //    char        buffer[ 2 ];
-   LONG lType;
+   //LONG lType; not used
 
    pFieldStruct = hb_arrayGetItemPtr( thiswa->aFields, lFieldPosDB );
 
@@ -464,7 +464,7 @@ static HB_ERRCODE getMissingColumn( SQLEXAREAP thiswa, PHB_ITEM pFieldData, LONG
       }
    }
 
-   lType = ( LONG ) hb_arrayGetNL(pFieldStruct, FIELD_DOMAIN );
+   //lType = ( LONG ) hb_arrayGetNL(pFieldStruct, FIELD_DOMAIN );
    odbcGetData( ( HSTMT ) ( HSTMT )thiswa->colStmt[lFieldPosDB - 1],hb_arrayGetItemPtr( thiswa->aFields, lFieldPosDB ),pFieldData,  0,  thiswa->nSystemID, FALSE, 1 );
 //   odbcFieldGet(hb_arrayGetItemPtr( thiswa->aFields, lFieldPosDB ), pFieldData, (char * ) bBuffer, lLenOut, 0, thiswa->nSystemID, FALSE );
 
@@ -2968,7 +2968,7 @@ static HB_ERRCODE sqlExGetValue( SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM va
       itemTemp = hb_itemArrayGet( thiswa->aBuffer, thiswa->uiBufferIndex[fieldNum - 1] );
    }
    if( HB_IS_STRING( itemTemp ) ) {
-      char * bBuffer = hb_itemGetCPtr( itemTemp ) ;
+      char * bBuffer = ( char * ) hb_itemGetCPtr( itemTemp ) ; // const char * to char *
       LONG lLenBuff = hb_itemGetCLen(itemTemp ) ;
       PHB_ITEM pTemp;
       if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) ) {
@@ -4215,6 +4215,9 @@ static int sqlKeyCompareEx( SQLEXAREAP thiswa, PHB_ITEM pKey, BOOL fExact )
 
 void SqlExLog( const char * str, int ver )
 {
+   HB_SYMBOL_UNUSED(str);
+   HB_SYMBOL_UNUSED(ver);
+
    /*
    if( SqlExIsLog() ) {
       char date[9];
