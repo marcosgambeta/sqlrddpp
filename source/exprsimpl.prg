@@ -189,7 +189,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
          CASE valtype(newValue) == "N" .OR. HB_ISLOGICAL(newValue) .OR. valtype(newValue) == "U"
             newValue := cstr(newValue)
             result := ValueExpression():new(oExpression:cContext, newValue)
-         CASE valtype(newValue) == "D"
+         CASE HB_ISDATE(newValue)
             newValue := "'" + dtoc(newValue) + "'"
             result := FunctionExpression():new(oExpression:cContext, "ctod(" + newValue + ")", "ctod", {Parameter():new(ValueExpression():new(oExpression:cContext, newValue), .F.)})
          ENDCASE

@@ -1672,9 +1672,9 @@ if valtype(uDat) == "C"
    Return ""
 elseif valtype(uDat) == "N"   
    return 0
-elseif HB_ISLOGICAL(uDat)   
+elseif HB_ISLOGICAL(uDat)
    return .F.
-elseif valtype(uDat) == "D"
+elseif HB_ISDATE(uDat)
    return ctod("")
 endif
 return ""

@@ -391,7 +391,7 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_ORACLE2
           if HB_ISARRAY(::aBindParameters[ i ])
              if valtype(::aBindParameters[i,2]) == "C"
                 ORACLEINBINDPARAM2( ::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)          
-             elseif valtype(::aBindParameters[i,2]) == "D"
+             elseif HB_ISDATE(::aBindParameters[i,2])
                 ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)                          
              elseif HB_ISLOGICAL(::aBindParameters[i])
                 ORACLEINBINDPARAM2( ::hDBC,i,3,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)                                          
@@ -401,7 +401,7 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_ORACLE2
           else
              if valtype(::aBindParameters[i]) == "C"
                 ORACLEINBINDPARAM2( ::hDBC,i,-1,len(::aBindParameters[i]),0,::aBindParameters[i],.T.)          
-             elseif valtype(::aBindParameters[i]) == "D"
+             elseif HB_ISDATE(::aBindParameters[i])
                 ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i],0,::aBindParameters[i],.T.)                          
              elseif HB_ISLOGICAL(::aBindParameters[i])
                 ORACLEINBINDPARAM2( ::hDBC,i,3,::aBindParameters[i],0,::aBindParameters[i],.T.)                                          
