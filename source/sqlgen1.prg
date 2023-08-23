@@ -128,7 +128,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
 
    BEGIN SEQUENCE
 
-      WHILE .t.
+      WHILE .T.
 
          If nIp > nLen .or. nDepht < 0    /* nDepht controls recursivity */
             Exit
@@ -170,7 +170,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          CASE SQL_PCODE_COLUMN_BY_VALUE
             SKIPFWD
             FIX_PRE_WHERE
-            cSql += SR_SQLQuotedString(uData, nSystemID, .t.)
+            cSql += SR_SQLQuotedString(uData, nSystemID, .T.)
             PASSTHROUGH
          CASE SQL_PCODE_COLUMN_PARAM
             SKIPFWD
@@ -187,7 +187,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          CASE SQL_PCODE_COLUMN_BINDVAR
             SKIPFWD
             FIX_PRE_WHERE
-            cSql += SR_SQLQuotedString(&uData, nSystemID, .t.)
+            cSql += SR_SQLQuotedString(&uData, nSystemID, .T.)
             PASSTHROUGH
          CASE SQL_PCODE_COLUMN_NAME_BINDVAR
             SKIPFWD

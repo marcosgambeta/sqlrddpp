@@ -385,33 +385,33 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_ORACLE2
       
          ::lBind := .F.
          
-          ORACLEPREPARE2(::hDBC,::cSqlPrepare,.t.)
+          ORACLEPREPARE2(::hDBC,::cSqlPrepare,.T.)
           ORACLEBINDALLOC2( ::hDBC, len(::aBindParameters)  )
           for i :=1 to len (::aBindParameters )
           if valtype(::aBindParameters[ i ]) == "A"
              if valtype(::aBindParameters[i,2]) == "C"
-                ORACLEINBINDPARAM2( ::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.t.)          
+                ORACLEINBINDPARAM2( ::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)          
              elseif valtype(::aBindParameters[i,2]) == "D"
-                ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i,3],0,::aBindParameters[i,2],.t.)                          
+                ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)                          
              elseif valtype(::aBindParameters[i]) == "L"
-                ORACLEINBINDPARAM2( ::hDBC,i,3,::aBindParameters[i,3],0,::aBindParameters[i,2],.t.)                                          
+                ORACLEINBINDPARAM2( ::hDBC,i,3,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)                                          
              else
-                ORACLEINBINDPARAM2( ::hDBC,i,2,15,0,::aBindParameters[i,2],.t.)          
+                ORACLEINBINDPARAM2( ::hDBC,i,2,15,0,::aBindParameters[i,2],.T.)          
              endif
           else
              if valtype(::aBindParameters[i]) == "C"
-                ORACLEINBINDPARAM2( ::hDBC,i,-1,len(::aBindParameters[i]),0,::aBindParameters[i],.t.)          
+                ORACLEINBINDPARAM2( ::hDBC,i,-1,len(::aBindParameters[i]),0,::aBindParameters[i],.T.)          
              elseif valtype(::aBindParameters[i]) == "D"
-                ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i],0,::aBindParameters[i],.t.)                          
+                ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i],0,::aBindParameters[i],.T.)                          
              elseif valtype(::aBindParameters[i]) == "L"
-                ORACLEINBINDPARAM2( ::hDBC,i,3,::aBindParameters[i],0,::aBindParameters[i],.t.)                                          
+                ORACLEINBINDPARAM2( ::hDBC,i,3,::aBindParameters[i],0,::aBindParameters[i],.T.)                                          
              else
-                ORACLEINBINDPARAM2( ::hDBC,i,2,15,0,::aBindParameters[i],.t.)          
+                ORACLEINBINDPARAM2( ::hDBC,i,2,15,0,::aBindParameters[i],.T.)          
              endif
           
           endif   
           next
-          nRet := SQLO2_EXECUTE(::hDBC, ::cSqlPrepare, .t.)
+          nRet := SQLO2_EXECUTE(::hDBC, ::cSqlPrepare, .T.)
 
           ORACLEFREEBIND2(::hDbc)
           ::aBindParameters :={}
@@ -465,7 +465,7 @@ RETURN cOriginal
 
 METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet)  CLASS SR_ORACLE2
    DEFAULT lIn to .F.
-   DEFAULT lStart to .f.
+   DEFAULT lStart to .F.
    
    (nLen)
    (cRet)
@@ -600,7 +600,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    //   ORACLEBINDALLOC(::hDbc, i)
    //Next
 
-   aFields := ::iniFields(.f.) 
+   aFields := ::iniFields(.F.) 
 
    If lFetch
       If !Empty(cFile)
@@ -622,7 +622,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                dbCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
             EndIf
 
-            dbUseArea(.t., SR_SetRDDTemp(), cFile, cAlias, .F.)
+            dbUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
          else
             dbSelectArea(cAlias)
          EndIf
@@ -660,7 +660,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          ::cResult := ""
          n         := 0
-         aFields   := ::IniFields(.F.,,,,,cRecnoName, cDeletedName,.t.)
+         aFields   := ::IniFields(.F.,,,,,cRecnoName, cDeletedName,.T.)
  
          For i = 1 to len(aFields)
             ::cResult += PadR(aFields[i,1], IIf(aFields[i,2] == "M", Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i,1]), aFields[i,3])), "-") + " "

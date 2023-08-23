@@ -151,9 +151,9 @@ Local cQueryPage := ""
 Local nHigerBound ,nLowerBound,nStep := 100
 Local aRet := {}
 Local cFiletoDelete :=""
-Local lInEof :=.f.
+Local lInEof :=.F.
 Local aTemp,aPk,cdesc:='',nRecno
-local lDescIndex := .f.
+local lDescIndex := .F.
 LOCAL aTempCols :={}
 local nApeStart := 1
 Local acolsadded := {}
@@ -211,7 +211,7 @@ endif
 if !empty(cWhere) 
    IF "ORDER BY" in upper(cwhere)
       if " DESC" in upper(cwhere)
-         lDescIndex := .t.
+         lDescIndex := .T.
       endif   
       nPosOrderBY := AT("ORDER BY" , upper(cwhere))
    
@@ -244,7 +244,7 @@ else
 endif
 
 cSql :=  "select * from ( select a.*, rownum r from ( " + cSql + ") a where rownum <= :HigerBound  ) where r >= :LowerBound"
-sr_getconnection():exec(ccount,,.t.,@aret)
+sr_getconnection():exec(ccount,,.T.,@aret)
 if len(aRet) >0
    if aret[1,1] <100
       nHigerBound := aret[1,1]
@@ -262,7 +262,7 @@ nStep := 100
 endif
   fclose(HB_FTEMPCREATE('.','tmp',,@cFile))
   nRet := DE_CONT
-  lAppend := .f.
+  lAppend := .F.
 hHashData[nAliasTmp]:=hash()
   
 if nAliasTmp ==0 
@@ -276,7 +276,7 @@ else
    hHashData[nAliasTmp]:=hash()
    hHashData[nAliasTmp]["cFile"]:=strtran(cfile,'.tmp','')   
 endif   
-hHashData[nAliasTmp]["eof"] := .f.
+hHashData[nAliasTmp]["eof"] := .F.
 refreshFullData(csql,cAlias,cfile,nHigerBound,nLowerBound,nStep)   
 
 createkeyfrompk(calias,ctable,lDescIndex) //cria o indice temporatio em cima da pk
@@ -568,7 +568,7 @@ nLowerBound +=nHigerBound
 
  nKey := 0
  lAppend := oTBR:Cargo
- lExcept := .f.
+ lExcept := .F.
 
 
  /////////////////////
@@ -602,7 +602,7 @@ nLowerBound +=nHigerBound
 
          nRecno :=recno()
 
-     sr_getconnection():exec(ccount,,.t.,@aret)
+     sr_getconnection():exec(ccount,,.T.,@aret)
      if len(aRet) >0    
          if (calias)->(lastrec()) < aret[1,1]
          nHigerBound += nStep        
@@ -616,7 +616,7 @@ nLowerBound +=nHigerBound
      endif    
 *      oTbr:up():forcestable()
      endif
-hHashData[nAliasTmp]["eof"]:=.f.
+hHashData[nAliasTmp]["eof"]:=.F.
     if nRet = DE_CONT
 
        if ! lExcept
@@ -625,11 +625,11 @@ hHashData[nAliasTmp]["eof"]:=.f.
              nRet := dbe_CallUDF(bFunc, DE_EMPTY, oTBR:colPos,GetCurValue(calias), oTBR,csql,cCount,cfile,calias,@nHigerBound,@nLowerBound,nStep,cTable)
 
           elseif oTBR:HitTop
-             oTBR:HitTop := .f.
+             oTBR:HitTop := .F.
              nRet := dbe_CallUDF(bFunc, DE_HITTOP, oTBR:colPos,GetCurValue(calias), oTBR,csql,cCount,cfile,calias,@nHigerBound,@nLowerBound,nStep,cTable)
 
           elseif oTBR:HitBottom
-             oTBR:HitBottom := .f.
+             oTBR:HitBottom := .F.
              nRet := dbe_CallUDF(bFunc, DE_HITBOTTOM, oTBR:colPos, GetCurValue(calias), oTBR,csql,cCount,cfile,calias,@nHigerBound,@nLowerBound,nStep,cTable)
 
           endif
@@ -637,7 +637,7 @@ hHashData[nAliasTmp]["eof"]:=.f.
        else
 
  //         nRet := dbe_CallUDF(bFunc, DE_EXCEPT, oTBR:colPos, GetCurValue(calias), oTBR,,,,,,,cTable)
-          lExcept := .f.
+          lExcept := .F.
           if lastkey() == K_ENTER
              oTBR:RefreshCurrent()
           endif
@@ -810,7 +810,7 @@ Local aValues :={}
            (calias)->( dbdelete() )
            (calias)->( dbunlock() )
       endif
-        sr_getconnection():Exec(cCount,,.t.,@aret)
+        sr_getconnection():Exec(cCount,,.T.,@aret)
      elseif  nKey == K_INS
 
 *         nHigerBound++        
@@ -842,14 +842,14 @@ Local aValues :={}
 *          endif
 *          
 *           
-         sr_getconnection():Exec(cCount,,.t.,@aret)
+         sr_getconnection():Exec(cCount,,.T.,@aret)
 *       
      else  
        if nKey == K_ENTER
            GETREFRESHCURVALUE(cAlias,cTable)
          //  aValues := GetCurValue(calias)
         endif
-     sr_getconnection():Exec(cCount,,.t.,@aret)
+     sr_getconnection():Exec(cCount,,.T.,@aret)
      endif
      
      
@@ -922,7 +922,7 @@ Local aValues :={}
           dbskip(-1)
           
           oTBR:Up():forceStable()
-*         hHashData[calias]["eof"]:=.f.
+*         hHashData[calias]["eof"]:=.F.
 * *         dbgobottom()
 //culik comentado para teste
 *          nHigerBound += nStep        
@@ -989,7 +989,7 @@ STATIC FUNCTION dbe_Skipper( nSkip, oTb,calias)
          dbskip( 1 )
          i++
          if eof() .and. ! lAppend
-             hHashData[nAliastmp]["eof"] := .t.
+             hHashData[nAliastmp]["eof"] := .T.
             dbskip( -1 )
             i--
             exit
@@ -1120,7 +1120,7 @@ STATIC FUNCTION dbe_syncpos(oTb)
 local nRec := Recno()
 local nKeyNo := 0
 local nDel := 0
-local lDeleted := .f.
+local lDeleted := .F.
 
  if IndexOrd() != 0 
 
@@ -1179,7 +1179,7 @@ default cFile to (calias)->(dbinfo(10))
 *          cSql := strtran(csql,":HigerBound",str(nHigh))
 *          cSql := strtran(csql,":LowerBound",str(nLow))
 * 
-* sr_getconnection():exec(cSql, , .t., , cfile, cAlias)
+* sr_getconnection():exec(cSql, , .T., , cfile, cAlias)
 *       (calias)->(dbgotop())
    nBeforeTotRec := (calias)->(reccount())
 if select(caLias) > 0
@@ -1192,7 +1192,7 @@ endif
    cSql := strtran(csql,":HigerBound",str(nHigh))
    cSql := strtran(csql,":LowerBound",str(nLow))
 
-sr_getconnection():exec(cSql, , .t., , cfile, cAlias)
+sr_getconnection():exec(cSql, , .T., , cfile, cAlias)
    nAfterRec:=(calias)->(reccount())
    
    if nAfterRec > nrecno .and. nBeforeTotRec<nAfterRec
@@ -1214,7 +1214,7 @@ IF "." $ CTABLE
 ELSE
    CSQL :=  "SELECT cols.table_name, cols.column_name, cols.position, cons.status, cons.owner FROM all_constraints cons, all_cons_columns cols WHERE cols.table_name = " + sr_cdbvalue(upper(alltrim(cTable)) ) + " AND cons.constraint_type = 'P' AND cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner ORDER BY cols.table_name, cols.position"
 ENDIF
-sr_getconnection():exec(cSql,,.t.,@aret)
+sr_getconnection():exec(cSql,,.T.,@aret)
 if len(aRet) > 0
    for each aTemp in aRet
    aadd(aFields,alltrim(aTemp[2]))
@@ -1248,7 +1248,7 @@ if len(aFields) > 0
    NEXT
    cSql := substr(cSql,1,len(csql)-4)
 
-   sr_getconnection():exec(cSql,,.t.,@aret)
+   sr_getconnection():exec(cSql,,.T.,@aret)
    aFields2 := sr_getconnection():aFields
    if len(aret) > 0
       (calias)->(rlock())
@@ -1296,7 +1296,7 @@ if len(aFields) > 0
    //(calias2)->(dbgobottom())
 //endif   
 
-   sr_getconnection():exec(cSql,,.t.,@aret)
+   sr_getconnection():exec(cSql,,.T.,@aret)
    aFields2 := sr_getconnection():aFields
    
    if len(aret) > 0
@@ -1350,12 +1350,12 @@ if len(aFields) > 0
    NEXT
    cSql := substr(cSql,1,len(csql)-4)  
 
-   sr_getconnection():exec(cSql,,.t.,@aret)
+   sr_getconnection():exec(cSql,,.T.,@aret)
    if len(aRet ) == 0
-   return .t.
+   return .T.
    endif
 endif
-return .f.   
+return .F.   
 
 
 function insertupdated(calias,ctable)
@@ -1498,11 +1498,11 @@ Local aTemp
 local ckey:=""
 Local i:=1
 local aDb := (calias)->(dbstruct())
-Local lnumtostr:=.f.
-Local lDatetoStr :=.f.
+Local lnumtostr:=.F.
+Local lDatetoStr :=.F.
 local nPos
 Local aTemp2:={}
-default lDescIndex to .f.
+default lDescIndex to .F.
  
 if len(aFields) > 0
    if len(afields) == 1
@@ -1647,7 +1647,7 @@ Local cPre := hHashData[nAliasTmp]["cFile"]
             CRET :=  SQLLOG->COMANDO     
             SQLLOG->( RLOCK() )
       
-            Replace SQLLOg->PROCESSED      with .t.
+            Replace SQLLOg->PROCESSED      with .T.
             SQLLOG->(DBUNLOCK())
             EXIT
       

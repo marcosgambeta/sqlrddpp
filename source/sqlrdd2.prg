@@ -1019,7 +1019,7 @@ METHOD ParseIndexColInfo( cSQL )  CLASS SR_WORKAREA
    aQuot := array(nLen)
 
    For i = 1 to nLen
-      aQuot[i] := ::QuotedNull(::aLocalBuffer[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,i,2 ] ],.t.,,,,::aFields[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,i,2 ],5])
+      aQuot[i] := ::QuotedNull(::aLocalBuffer[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,i,2 ] ],.T.,,,,::aFields[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,i,2 ],5])
    Next
 
    nLen := len(cSql)
@@ -1178,7 +1178,7 @@ METHOD sqlKeyCount( lFilters )  CLASS SR_WORKAREA
       EndIf
 
       cSql += iif(::oSql:lComments, " /* dbCount() */", "")
-      ::oSql:exec(cSql, , .t., @aRet)
+      ::oSql:exec(cSql, , .T., @aRet)
 
       If len(aRet) > 0
          nRet := aRet[1,1]
@@ -1368,20 +1368,20 @@ METHOD LineCount( lMsg ) CLASS SR_WORKAREA
       If nLineCountResult == 0
          Switch ::oSql:nSystemID
          Case SYSTEMID_POSTGR
-            ::oSql:exec("SELECT " + SR_DBQUALIFY( ::cRecnoName, SYSTEMID_POSTGR) + " FROM " + ::cQualifiedTableName + " ORDER BY " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " DESC LIMIT 1" + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .t., @aRet)
+            ::oSql:exec("SELECT " + SR_DBQUALIFY( ::cRecnoName, SYSTEMID_POSTGR) + " FROM " + ::cQualifiedTableName + " ORDER BY " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " DESC LIMIT 1" + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
             Exit
          Case SYSTEMID_FIREBR
             ::oSql:exec("SELECT gen_id("+::cFileName+",0) FROM RDB$DATABASE", .F., .T., @aRet)
             Exit
          Case SYSTEMID_CACHE
-            ::oSql:exec("SELECT TOP 1 " + SR_DBQUALIFY(::cRecnoName, SYSTEMID_CACHE) + " FROM " + ::cOwner + ::cFileName + " ORDER BY " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " DESC", lMsg, .t., @aRet)
+            ::oSql:exec("SELECT TOP 1 " + SR_DBQUALIFY(::cRecnoName, SYSTEMID_CACHE) + " FROM " + ::cOwner + ::cFileName + " ORDER BY " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " DESC", lMsg, .T., @aRet)
             Exit
          Default
-           ::oSql:exec("SELECT MAX( " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " ) FROM " + ::cQualifiedTableName + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .t., @aRet)
+           ::oSql:exec("SELECT MAX( " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " ) FROM " + ::cQualifiedTableName + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
          End
 
          If Len(aRet) > 0 .and. valtype(aRet[1,1]) != "N"
-           ::oSql:exec("SELECT COUNT( " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " ) FROM " + ::cQualifiedTableName + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .t., @aRet)
+           ::oSql:exec("SELECT COUNT( " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " ) FROM " + ::cQualifiedTableName + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
          EndIf
 
          If Len(aRet) > 0
@@ -2024,7 +2024,7 @@ METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic) CLASS SR_WORKAREA
       return ['] + dtos(uData) + [']
    case ctype == "T"  .and. ( ::oSql:nSystemID == SYSTEMID_POSTGR   .or.  ::oSql:nSystemID == SYSTEMID_MYSQL  .or. ::oSql:nSystemID == SYSTEMID_MARIADB )
       if nLen == 4
-         return ['] + HB_TSTOSTR(udata, .t.) + [']
+         return ['] + HB_TSTOSTR(udata, .T.) + [']
       endif
     
       //return ['] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']
@@ -2043,7 +2043,7 @@ METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic) CLASS SR_WORKAREA
       return iif(uData, "1", "0")
    OtherWise
       if HB_ISARRAY(uData)  .and. SR_SetSerializeArrayAsJson()
-         cRet := hb_jsonencode(uData,.f.)
+         cRet := hb_jsonencode(uData,.F.)
          return ::Quoted(cRet, trim, nLen, nDec, nTargetDB)
       ENDIF
       cRet := SR_STRTOHEX(HB_Serialize(uData))
@@ -2132,7 +2132,7 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)   CLASS SR_W
       ENDIF 
 
       if nLen == 4
-         return ['] + HB_TSTOSTR(udata, .t.) + [']
+         return ['] + HB_TSTOSTR(udata, .T.) + [']
       endif
       //return ['] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']      
       return ['] + HB_TSTOSTR(uData) + [']
@@ -2163,12 +2163,12 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)   CLASS SR_W
     
    OtherWise
       if HB_ISARRAY(uData)  .and. SR_SetSerializeArrayAsJson()
-         cRet := hb_jsonencode(uData,.f.)
-         return ::Quoted(cRet, .f., , , nTargetDB)
+         cRet := hb_jsonencode(uData,.F.)
+         return ::Quoted(cRet, .F., , , nTargetDB)
       ENDIF
 
       cRet := SR_STRTOHEX( HB_Serialize(uData) )
-      return ::Quoted(SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, .f., , , nTargetDB)
+      return ::Quoted(SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, .F., , , nTargetDB)
    EndCase
 
 Return ""
@@ -2229,7 +2229,7 @@ METHOD WriteBuffer( lInsert, aBuffer ) CLASS SR_WORKAREA
    Local cRet := "", cVal := "", lFirst := .T., cWh, aRet
    Local nLen, nDec, lNull, lMemo
    Local i, nInd, cKey, nRet
-   Local nThisField, cIdent := "", lML, lMustUPD := .f.
+   Local nThisField, cIdent := "", lML, lMustUPD := .F.
    Local aMemos := {}, cMemo
    Local oXml
 
@@ -2278,7 +2278,7 @@ METHOD WriteBuffer( lInsert, aBuffer ) CLASS SR_WORKAREA
       EndIf
       If !lInsert
          If ::lVers
-            lInsert := .t.
+            lInsert := .T.
             If ((!::oSql:lUseSequences) .or. (!::lUseSequences)) .or. (::oSql:nSystemID == SYSTEMID_FIREBR .or. ::oSql:nSystemID == SYSTEMID_INGRES)
                ::aInfo[ AINFO_RECNO ] := 0
                aBuffer[::hnRecno]     := 0               // This forces NEW recno number
@@ -2334,11 +2334,11 @@ METHOD WriteBuffer( lInsert, aBuffer ) CLASS SR_WORKAREA
                   cRet += iif(!lFirst, ", ", "") + SR_DBQUALIFY( ::aNames[nThisField], ::oSql:nSystemID ) + " = " + str(aBuffer[nThisField], nLen, nDec ) + " "
 #endif
                ElseIf ::aFields[nThisField,6] != SQL_GUID
-                  cRet += iif(!lFirst, ", ", "") + SR_DBQUALIFY( ::aNames[nThisField], ::oSql:nSystemID ) + " = " + ::QuotedNull(aBuffer[nThisField],.t.,iIf(lMemo, NIL, nLen),nDec,,lNull,lMemo) + " "
+                  cRet += iif(!lFirst, ", ", "") + SR_DBQUALIFY( ::aNames[nThisField], ::oSql:nSystemID ) + " = " + ::QuotedNull(aBuffer[nThisField],.T.,iIf(lMemo, NIL, nLen),nDec,,lNull,lMemo) + " "
                ElseIf ::aFields[nThisField,6] ==SQL_LONGVARCHARXML
                   oXml := sr_arraytoXml(aBuffer[nThisField])
                   nlen:=len(oxml:tostring(HBXML_STYLE_NONEWLINE))
-                  cVal := iif(!lFirst, ", ", "") + SR_DBQUALIFY( ::aNames[nThisField], ::oSql:nSystemID ) + " = " + ::QuotedNull(oxml:tostring(HBXML_STYLE_NONEWLINE),.t.,iIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
+                  cVal := iif(!lFirst, ", ", "") + SR_DBQUALIFY( ::aNames[nThisField], ::oSql:nSystemID ) + " = " + ::QuotedNull(oxml:tostring(HBXML_STYLE_NONEWLINE),.T.,iIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
                elseif ::aFields[nthisField,6] == SQL_VARBINARY .and. ::osql:nsystemID ==SYSTEMID_MSSQL7
                   cVal := '0x'+StrtoHex(aBuffer[nThisField])
                Else
@@ -2454,7 +2454,7 @@ METHOD WriteBuffer( lInsert, aBuffer ) CLASS SR_WORKAREA
                   If ::cIns == NIL
                      cRet += iif(!lFirst, ", ", "( ") + SR_DBQUALIFY( ::aNames[i], ::oSql:nSystemID )
                   EndIf
-                  cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(aBuffer[i],.t.,NIL,nDec,,lNull,lMemo)
+                  cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(aBuffer[i],.T.,NIL,nDec,,lNull,lMemo)
                   lFirst := .F.
                ElseIf (!::lQuickAppend) .or. ::oSql:nSystemID == SYSTEMID_INGRES
                   Switch ::oSql:nSystemID
@@ -2528,17 +2528,17 @@ METHOD WriteBuffer( lInsert, aBuffer ) CLASS SR_WORKAREA
                   oXml := sr_arraytoXml(cMemo)
 
                   nlen:=len(oxml:tostring(HBXML_STYLE_NONEWLINE))
-                  cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(oXml:tostring(HBXML_STYLE_NONEWLINE),.t.,IIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
+                  cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(oXml:tostring(HBXML_STYLE_NONEWLINE),.T.,IIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
                   exit   
                Case SQL_VARBINARY
                   if ::osql:nsystemID ==SYSTEMID_MSSQL7
                      cVal += iif(!lFirst, ", ", "( ")+ '0x'+StrtoHex(cmemo)
                   else    
-                     cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(cMemo,.t.,IIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
+                     cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(cMemo,.T.,IIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
                   endif   
                   exit                                  
                Default
-                  cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(cMemo,.t.,IIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
+                  cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(cMemo,.T.,IIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
                End
                lFirst := .F.
             EndIf
@@ -3595,8 +3595,8 @@ METHOD sqlGoTop() CLASS SR_WORKAREA
       EndIf
 
      If ::lEmptyTable .or. ::lNoData
-         ::aInfo[ AINFO_BOF ] := .t.
-         ::aInfo[ AINFO_EOF ] := .t.
+         ::aInfo[ AINFO_BOF ] := .T.
+         ::aInfo[ AINFO_EOF ] := .T.
       else
          ::aInfo[ AINFO_BOF ] := .F.
          ::aInfo[ AINFO_EOF ] := .F.
@@ -3696,7 +3696,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
    EndIf
 
    ::aInfo[ AINFO_SKIPCOUNT ] := 0
-   uSet := Set( _SET_EXACT, .f. )
+   uSet := Set( _SET_EXACT, .F. )
 
    If lSoft .and. ::lISAM .and. ::oSql:nSystemID == SYSTEMID_ORACLE .and. ::aIndex[ ::aInfo[ AINFO_INDEXORD ],VIRTUAL_INDEX_NAME ] != NIL .and. valtype(uKey) == "C"
 
@@ -4230,19 +4230,19 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
 
          If len(aTemp) > 0
             For i = 1 to len(aTemp)
-               //cSql += "SELECT * FROM (" + cTemp + " WHERE " + aTemp[i] + ::OrderBy(NIL,.t.) + eval(::Optmizer_ne, ::nCurrentFetch) + " ) TMP" + alltrim(str(i))
+               //cSql += "SELECT * FROM (" + cTemp + " WHERE " + aTemp[i] + ::OrderBy(NIL,.T.) + eval(::Optmizer_ne, ::nCurrentFetch) + " ) TMP" + alltrim(str(i))
                //test fix for seek last
                cSql += "SELECT * FROM (" + cTemp + " WHERE " + aTemp[i] + ::OrderBy(NIL, iif(lLast, .F., .T.)) + eval(::Optmizer_ne, ::nCurrentFetch) + " ) TMP" + alltrim(str(i))
                If i != len(aTemp)
                   cSql += CRLF + "UNION" + CRLF
                EndIf
             Next
-            //cSql += strtran(::OrderBy(NIL, .t. ), "A.", "" ) + eval(::Optmizer_ne, ::nCurrentFetch)
+            //cSql += strtran(::OrderBy(NIL, .T. ), "A.", "" ) + eval(::Optmizer_ne, ::nCurrentFetch)
             //test fix for seek last
             cSql += strtran(::OrderBy(NIL, iif(lLast, .F., .T.) ), "A.", "" ) + eval(::Optmizer_ne, ::nCurrentFetch)
          Else
             //test fix for seek last
-            //cSql := "SELECT" + eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + ::OrderBy(NIL, .t. ) + eval(::Optmizer_ne, ::nCurrentFetch)
+            //cSql := "SELECT" + eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + ::OrderBy(NIL, .T. ) + eval(::Optmizer_ne, ::nCurrentFetch)
             cSql := "SELECT" + eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + ::OrderBy(NIL, iif(lLast, .F., .T.) ) + eval(::Optmizer_ne, ::nCurrentFetch)
          EndIf
 
@@ -4884,7 +4884,7 @@ METHOD sqlClose() CLASS SR_WORKAREA
             _SR_UnRegister(Self)
          EndIf
          If ::lTableLocked
-            ::UnlockTable(.t.)
+            ::UnlockTable(.T.)
          EndIf
          If ::lSharedLock .and. ::lOpened
             SR_ReleaseLocks( SHARED_TABLE_LOCK_SIGN + UPPER(::cFileName), ::oSql )
@@ -4893,7 +4893,7 @@ METHOD sqlClose() CLASS SR_WORKAREA
    EndIf
 
    If ++nOperat > 100
-      hb_gcAll(.t.)
+      hb_gcAll(.T.)
       nOperat := 0
    EndIf
 
@@ -5485,7 +5485,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
    EndIf
 
    If lRet .and. ::oSql:nSystemID == SYSTEMID_ORACLE .and. ::oSql:lUseSequences  /* Create RECNO Trigger */
-      ::oSql:exec("DROP SEQUENCE " + ::cOwner + LimitLen(::cFileName,3) + "_SQ", .f.)
+      ::oSql:exec("DROP SEQUENCE " + ::cOwner + LimitLen(::cFileName,3) + "_SQ", .F.)
       ::oSql:commit()
       ::oSql:exec("CREATE SEQUENCE " + ::cOwner + LimitLen(::cFileName,3) + "_SQ START WITH 1")
       ::CreateOrclFunctions( ::cOwner, ::cFileName )
@@ -5499,9 +5499,9 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
 
    If lRet .and. ::oSql:nSystemID == SYSTEMID_INGRES .and. ::oSql:lUseSequences  /* Create RECNO Trigger */
       ::oSql:Commit()
-      ::oSql:exec("modify " + ::cOwner + SR_DBQUALIFY( cTblName, ::oSql:nSystemID ) + " to btree with page_size = " + cRowSize, .t.) // + "unique on " + ::cRecnoName
+      ::oSql:exec("modify " + ::cOwner + SR_DBQUALIFY( cTblName, ::oSql:nSystemID ) + " to btree with page_size = " + cRowSize, .T.) // + "unique on " + ::cRecnoName
       ::oSql:Commit()
-      ::oSql:exec("DROP SEQUENCE "  + ::cOwner + "SQ_" + cTblName, .f.)
+      ::oSql:exec("DROP SEQUENCE "  + ::cOwner + "SQ_" + cTblName, .F.)
       ::oSql:Commit()
       ::oSql:exec("CREATE SEQUENCE " + ::cOwner + "SQ_" + cTblName + " AS BIGINT START WITH 1")
       ::oSql:commit()
@@ -5739,13 +5739,13 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
       EndIf
       aRet         := Array(TABLE_INFO_SIZE)
       aRet[ TABLE_INFO_RELATION_TYPE ] := TABLE_INFO_RELATION_TYPE_SELECT
-      aRet[ TABLE_INFO_ALL_IN_CACHE ]  := .t.
+      aRet[ TABLE_INFO_ALL_IN_CACHE ]  := .T.
       aRet[ TABLE_INFO_CUSTOM_SQL ]    := ::cFileName
-      aRet[ TABLE_INFO_HISTORIC ]      := .f.
+      aRet[ TABLE_INFO_HISTORIC ]      := .F.
       aRet[ TABLE_INFO_OWNER_NAME ]    := ""
-      aRet[ TABLE_INFO_CAN_UPDATE ]    := .f.
-      aRet[ TABLE_INFO_CAN_INSERT ]    := .f.
-      aRet[ TABLE_INFO_CAN_DELETE ]    := .f.
+      aRet[ TABLE_INFO_CAN_UPDATE ]    := .F.
+      aRet[ TABLE_INFO_CAN_INSERT ]    := .F.
+      aRet[ TABLE_INFO_CAN_DELETE ]    := .F.
       aRet[ TABLE_INFO_PRIMARY_KEY ]   := ""
       ::oSql:cNextQuery := NIL                     // Reset Next query
    Else
@@ -6133,7 +6133,7 @@ METHOD sqlZap() CLASS SR_WORKAREA
 /*
       If ::oSql:nSystemID == SYSTEMID_ORACLE .and.  .and. ::lUseSequences
          ::oSql:commit()
-         ::oSql:exec("DROP SEQUENCE " + ::cOwner + LimitLen(::cFileName, 3) + "_SQ", .f.)
+         ::oSql:exec("DROP SEQUENCE " + ::cOwner + LimitLen(::cFileName, 3) + "_SQ", .F.)
          ::oSql:commit()
          ::oSql:exec("CREATE SEQUENCE " + ::cOwner + LimitLen(::cFileName, 3) + "_SQ START WITH 1")
          ::oSql:commit()
@@ -7421,7 +7421,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                   EndIf
                EndIf
 
-               AADD(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis, SR_SetGoTopOnScope()),.t.,,,,lNull))  // This SR_SetGoTopOnScope() here is a NewAge issue.
+               AADD(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis, SR_SetGoTopOnScope()),.T.,,,,lNull))  // This SR_SetGoTopOnScope() here is a NewAge issue.
                AADD(::aDat,    ::ConvType(rtrim(cPart), cType, , nThis))
 
                nCons += nThis
@@ -7571,7 +7571,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                      EndIf
                   EndIf
 
-                  AADD(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis), .t., , , , lNull))
+                  AADD(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis), .T., , , , lNull))
                   AADD(::aDat,    ::ConvType(rtrim(cPart), cType, , nThis))
 
                   nCons += nThis
@@ -8024,7 +8024,7 @@ METHOD WhereMajor() CLASS SR_WORKAREA
       If !Empty(cRet2)
          cRet2 := " AND " + cRet2
       EndIf
-      Return " WHERE A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID )+" >= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.t.,,,,.F.) + cRet2
+      Return " WHERE A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID )+" >= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.T.,,,,.F.) + cRet2
    endif
 
    If (!::lOrderValid)
@@ -8087,7 +8087,7 @@ METHOD WhereVMajor( cQot ) CLASS SR_WORKAREA
       If !Empty(cRet2)
          cRet2 := " AND " + cRet2
       EndIf
-      Return " WHERE A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID )+" >= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.t.,,,,.F.) + cRet2
+      Return " WHERE A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID )+" >= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.T.,,,,.F.) + cRet2
    endif
 
    If (!::lOrderValid)
@@ -8122,7 +8122,7 @@ METHOD WherePgsMajor( aQuotedCols, lPartialSeek ) CLASS SR_WORKAREA
       If !Empty(cRet2)
          cRet2 := " AND " + cRet2
       EndIf
-      aRet := { "A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " >= " + ::Quoted(::aLocalBuffer[::hnRecno],.t.,,,,.F.) + cRet2 }
+      aRet := { "A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " >= " + ::Quoted(::aLocalBuffer[::hnRecno],.T.,,,,.F.) + cRet2 }
    Else
 
       If empty(::aInfo[ AINFO_INDEXORD ])
@@ -8136,7 +8136,7 @@ METHOD WherePgsMajor( aQuotedCols, lPartialSeek ) CLASS SR_WORKAREA
       If aQuotedCols == NIL
          nLen  := len(::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS ])
          For i = 1 to nLen
-            AADD(aQuot, ::Quoted(::aLocalBuffer[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,i,2 ] ],.t.,,,,lNull))
+            AADD(aQuot, ::Quoted(::aLocalBuffer[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,i,2 ] ],.T.,,,,lNull))
          Next
       Else
          nLen  := len(aQuotedCols)
@@ -8213,7 +8213,7 @@ METHOD WhereMinor() CLASS SR_WORKAREA
       If !Empty(cRet2)
          cRet2 := " AND " + cRet2
       EndIf
-      Return " WHERE A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID )+" <= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.t.,,,,.F.) + cRet2
+      Return " WHERE A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID )+" <= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.T.,,,,.F.) + cRet2
    endif
 
    If (!::lOrderValid)
@@ -8277,7 +8277,7 @@ METHOD WhereVMinor( cQot ) CLASS SR_WORKAREA
       If !Empty(cRet2)
          cRet2 := " AND " + cRet2
       EndIf
-      Return " WHERE A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID )+" <= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.t.,,,,.F.) + cRet2
+      Return " WHERE A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID )+" <= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.T.,,,,.F.) + cRet2
    endif
 
    If (!::lOrderValid)
@@ -8314,7 +8314,7 @@ METHOD WherePgsMinor( aQuotedCols ) CLASS SR_WORKAREA
       If !Empty(cRet2)
          cRet2 := " AND " + cRet2
       EndIf
-      aRet := { "A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " <= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.t.,,,,.F.) + cRet2 }
+      aRet := { "A." + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " <= " + ::QuotedNull(::aLocalBuffer[::hnRecno],.T.,,,,.F.) + cRet2 }
    Else
 
       If empty(::aInfo[ AINFO_INDEXORD ])
@@ -8328,7 +8328,7 @@ METHOD WherePgsMinor( aQuotedCols ) CLASS SR_WORKAREA
       If aQuotedCols == NIL
          nLen  := len(::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS ])
          For i = 1 to nLen
-            cQot  := ::Quoted(::aLocalBuffer[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,i,2 ] ],.t.,,,,lNull)
+            cQot  := ::Quoted(::aLocalBuffer[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,i,2 ] ],.T.,,,,lNull)
             AADD(aQuot, cQot)
          Next
       Else
@@ -8549,9 +8549,9 @@ METHOD AlterColumns( aCreate, lDisplayErrorMessage, lBakcup ) CLASS SR_WORKAREA
    Local lRet := .T., i, cSql, cField, lPrimary, lNotNull, lRet2, aInfo, aMultilang := {}, aField
    Local nPos_, aBack, lDataInBackup := .F.
    Local cLobs := "", cTblName
-   Local lCurrentIsMultLang := .f.
+   Local lCurrentIsMultLang := .F.
 
-   DEFAULT lBakcup := .t.
+   DEFAULT lBakcup := .T.
 
    // Release any pending transaction before a DML command
 
@@ -8972,12 +8972,12 @@ METHOD AlterColumnsDirect( aCreate, lDisplayErrorMessage, lBakcup,aRemove ) CLAS
    Local lRet := .T., i, cSql, cField, lPrimary, lNotNull, lRet2, aInfo, aMultilang := {}, aField
    Local nPos_, aBack, lDataInBackup := .F.
    Local cLobs := "", cTblName
-   Local lCurrentIsMultLang := .f.
+   Local lCurrentIsMultLang := .F.
    Local nPos
    Local cSql2 := ""
    Local cSql3 := ""
 
-   DEFAULT lBakcup := .t.
+   DEFAULT lBakcup := .T.
 
    // Release any pending transaction before a DML command
 
@@ -10175,8 +10175,8 @@ if HB_ISARRAY(a)
    next   
    nStartId := aFather[ -1 ]
    nPosData := aPos[-1]
-   adel(aFather,len(aFather),.t.)
-   adel(aPos,len(aPos),.t.)
+   adel(aFather,len(aFather),.T.)
+   adel(aPos,len(aPos),.T.)
    oNode:addbelow(oNode1)
 else
    if HB_ISNUMERIC(a)

@@ -275,7 +275,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    ::nSystemID   := SYSTEMID_MARIADB
    ::cTargetDB   := Upper(cTargetDB)
    ::uSid        := MYSGETCONNID(hDbc)
-   ::lMariaDb    :=.t.
+   ::lMariaDb    :=.T.
 
 return Self
 

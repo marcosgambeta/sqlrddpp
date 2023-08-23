@@ -153,7 +153,7 @@ CLASS SR_CONNECTION
    DATA lSqlServer2008 AS LOGICAL INIT .F. 
    DATA lOracle12      AS LOGICAL INIT .F.  // do we have Oracle >= 12.0
    
-   DATA lBind Init .f.
+   DATA lBind Init .F.
    DATA cSqlPrepare INIT ""
    DATA aBindParameters INIT {}
    
@@ -469,7 +469,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                      dbCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
                   EndIf
 
-                  dbUseArea(.t., SR_SetRDDTemp(), cFile, cAlias, .F.)
+                  dbUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
                else
                   dbSelectArea(cAlias)
                EndIf
@@ -999,7 +999,7 @@ METHOD Connect( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
 
    DEFAULT nVersion := 1, lTrace := .F., nPreFetch := 0
    DEFAULT cDSN := ""
-   DEFAULT lCounter    := .f.
+   DEFAULT lCounter    := .F.
    DEFAULT lAutoCommit := .F.  /* by default support transactions */
 
    ::lAutoCommit  = lAutoCommit

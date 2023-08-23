@@ -719,7 +719,7 @@ Static Function SR_SetEnvSQLRDD(oConnect)
 
       Case SYSTEMID_FIREBR
       Case SYSTEMID_FIREBR3
-//         oCnn:exec("SET TERM !@¨§;", .f.)
+//         oCnn:exec("SET TERM !@¨§;", .F.)
          oCnn:Commit()
          Exit
 
@@ -1666,7 +1666,7 @@ Function SR_DropTable(cFileName, cOwner)
 
    /* Drop the table */
 
-   lRet := oCnn:exec("DROP TABLE " + cOwner + SR_DBQUALIFY( cFileName, oCnn:nSystemID ) + iif(oCnn:nSystemID == SYSTEMID_ORACLE, " CASCADE CONSTRAINTS", "") + iif(oCnn:lComments, " /* drop table */", ""), .t.) == SQL_SUCCESS
+   lRet := oCnn:exec("DROP TABLE " + cOwner + SR_DBQUALIFY( cFileName, oCnn:nSystemID ) + iif(oCnn:nSystemID == SYSTEMID_ORACLE, " CASCADE CONSTRAINTS", "") + iif(oCnn:lComments, " /* drop table */", ""), .T.) == SQL_SUCCESS
    oCnn:Commit()
 
    If lRet

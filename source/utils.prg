@@ -486,7 +486,7 @@ Return lCreateAsHistoric
 
 Function SR_HasHistoric()
 
-Return (lHistorico := .t.)
+Return (lHistorico := .T.)
 
 /*------------------------------------------------------------------------*/
 
@@ -588,7 +588,7 @@ Function SR_WriteTimeLog(cComm, oCnn, nLimisencos)
          dbCreate("long_qry.dbf", TRACE_STRUCT, "DBFNTX")
       EndIf
 
-      While .t.
+      While .T.
          dbUseArea(.T., "DBFNTX", "long_qry.dbf", "LONG_QRY", .T., .F.)
          If !NetErr()
             exit
@@ -2034,7 +2034,7 @@ FUNCTION SR_SetFieldDefault( cTable, cField, cDefault )
       ENDIF
    ENDIF
    IF oCnn:nSystemId==SYSTEMID_POSTGR
-      oCnn:exec(cSql, , .f.)
+      oCnn:exec(cSql, , .F.)
       oCnn:Commit()
    ENDIF
 RETURN NIL            
