@@ -613,26 +613,26 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_uCharToVal(cVal, cType, nLen)
+FUNCTION SR_uCharToVal(cVal, cType, nLen)
 
-   Do Case
-   Case cType == "C"
-      If nLen == NIL
-         Return cVal
-      Else
-         Return PadR(cVal, nLen)
-      EndIf
-   Case cType == "M"
-      Return cVal
-   Case cType == "D"
-      Return ctod(cVal)
-   Case cType == "N"
-      Return val(cVal)
-   Case cType == "L"
-      Return cVal $ "1.T.SYsy.t."
-   EndCase
+   SWITCH cType
+   CASE "C"
+      IF nLen == NIL
+         RETURN cVal
+      ELSE
+         RETURN PadR(cVal, nLen)
+      ENDIF
+   CASE "M"
+      RETURN cVal
+   CASE "D"
+      RETURN ctod(cVal)
+   CASE "N"
+      RETURN val(cVal)
+   CASE "L"
+      RETURN cVal $ "1.T.SYsy.t."
+   ENDSWITCH
 
-   Return ""
+RETURN ""
 
 /*------------------------------------------------------------------------*/
 
@@ -713,82 +713,82 @@ Return cRet
 
 /*------------------------------------------------------------------------*/
 
-Function SR_Val2CharQ( uData )
+FUNCTION SR_Val2CharQ(uData)
 
-   local cType := valtype(uData)
+   LOCAL cType := valtype(uData)
 
-   Do Case
-   Case cType == "C"
-      //Return (["] + uData + ["])
-      Return AllTrim(uData)
-   Case cType == "N"
-      Return alltrim(Str(uData))
-   Case cType == "D"
-      Return dtoc(uData)
-   Case cType == "T"
-      Return ttoc(uData)      
-   Case cType == "L"
-      Return iif(uData, ".T.", ".F.")
-   Case cType == "A"
-      Return "{Array}"
-   Case cType == "O"
-      Return "{Object}"
-   Case cType == "B"
-      Return "{||Block}"
-   OtherWise
-      Return "NIL"
-   EndCase
+   SWITCH cType
+   CASE "C"
+      //RETURN (["] + uData + ["])
+      RETURN AllTrim(uData)
+   CASE "N"
+      RETURN alltrim(Str(uData))
+   CASE "D"
+      RETURN dtoc(uData)
+   CASE "T"
+      RETURN ttoc(uData)
+   CASE "L"
+      RETURN iif(uData, ".T.", ".F.")
+   CASE "A"
+      RETURN "{Array}"
+   CASE "O"
+      RETURN "{Object}"
+   CASE "B"
+      RETURN "{||Block}"
+   OTHERWISE
+      RETURN "NIL"
+   ENDSWITCH
 
-Return "NIL"
+RETURN "NIL"
 
 /*------------------------------------------------------------------------*/
 
-Function SR_BlankVar( cType, nLen, nDec )
-Local nVal
+FUNCTION SR_BlankVar(cType, nLen, nDec)
 
-   (nDec) // To remove warning
+   LOCAL nVal
 
-   Do Case
-   Case cType $ "MC"
-      Return Space(nLen)
-   Case cType = "L"
-      Return .F.
-   Case cType = "D"
-      Return ctod('')
-   Case cType = "N"
-      if nDec >0
-         switch ndec
-         case 1
+   HB_SYMBOL_UNUSED(nDec) // To remove warning
+
+   SWITCH cType
+   CASE "C"
+   CASE "M"
+      RETURN Space(nLen)
+   CASE "L"
+      RETURN .F.
+   CASE "D"
+      RETURN ctod("")
+   CASE "N"
+      IF nDec > 0
+         SWITCH ndec
+         CASE 1
             nVal := 0.0
-            exit
-         case 2
-         nVal := 0.00
-         exit
-         case 3
-         nVal :=0.000
-         exit
-         case 4
-         nVal :=0.0000
-         exit
-         case 5
-         nVal :=0.00000
-         exit
-         case 6
-         nVal :=0.000000
-         exit
-         default
+            EXIT
+         CASE 2
+            nVal := 0.00
+            EXIT
+         CASE 3
+            nVal := 0.000
+            EXIT
+         CASE 4
+            nVal := 0.0000
+            EXIT
+         CASE 5
+            nVal := 0.00000
+            EXIT
+         CASE 6
+            nVal := 0.000000
+            EXIT
+         OTHERWISE
+            nVal := 0.00
+         ENDSWITCH
+         RETURN nVal
+      ENDIF
+      RETURN 0
+   CASE "T"
+      RETURN datetime(0, 0, 0, 0, 0, 0, 0)
+   ENDSWITCH
 
-         nVal := 0.00
-         exit
-         end
-         return nVal
-      endif
-      return 0
-   Case cType == 'T'
-      return datetime(0,0,0,0,0,0,0)   
-   EndCase
-
-Return ""
+RETURN ""
 
 /*------------------------------------------------------------------------*/
 
@@ -1471,36 +1471,36 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
    ELSE
 
       SWITCH ValType(xMessage)
-         CASE "C"
-         CASE "M"
-            EXIT
+      CASE "C"
+      CASE "M"
+         EXIT
 
-         CASE "N"
-            xMessage := LTrim(Str(xMessage))
-            EXIT
+      CASE "N"
+         xMessage := LTrim(Str(xMessage))
+         EXIT
 
-         CASE "D"
-            xMessage := DToC(xMessage)
-            EXIT
-            
-         CASE "T"
-            xMessage := TToC(xMessage)
-            EXIT
+      CASE "D"
+         xMessage := DToC(xMessage)
+         EXIT
 
-         CASE "L"
-            xMessage := iif(xMessage, ".T.", ".F.")
-            EXIT
+      CASE "T"
+         xMessage := TToC(xMessage)
+         EXIT
 
-         CASE "O"
-            xMessage := xMessage:className + " Object"
-            EXIT
+      CASE "L"
+         xMessage := iif(xMessage, ".T.", ".F.")
+         EXIT
 
-         CASE "B"
-            xMessage := "{||...}"
-            EXIT
+      CASE "O"
+         xMessage := xMessage:className + " Object"
+         EXIT
 
-         DEFAULT
-            xMessage := "NIL"
+      CASE "B"
+         xMessage := "{||...}"
+         EXIT
+
+      DEFAULT
+         xMessage := "NIL"
       END
 
       DO WHILE ( nPos := At( ';', xMessage ) ) != 0
@@ -1723,21 +1723,20 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          nKey := Inkey( nDelay, INKEY_ALL )
 
          SWITCH nKey
-            CASE 0
-               lWhile := .F.
-               EXIT
+         CASE 0
+            lWhile := .F.
+            EXIT
 
-            CASE K_ESC
+         CASE K_ESC
+            nChoice := 0
+            lWhile  := .F.
+            EXIT
 
-               nChoice := 0
+         DEFAULT
+            IF Upper(Chr(nKey)) $ aHotkey
+               nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
                lWhile  := .F.
-               EXIT
-
-            DEFAULT
-               IF Upper(Chr(nKey)) $ aHotkey
-                  nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
-                  lWhile  := .F.
-               ENDIF
+            ENDIF
 
          END
 
@@ -1780,75 +1779,69 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          nKey := Inkey( nDelay, INKEY_ALL )
 
          SWITCH nKey
-            CASE K_ENTER
-            CASE K_SPACE
-            CASE 0
-               lWhile := .F.
-               EXIT
+         CASE K_ENTER
+         CASE K_SPACE
+         CASE 0
+            lWhile := .F.
+            EXIT
 
-            CASE K_ESC
-               nChoice := 0
-               lWhile  := .F.
-               EXIT
+         CASE K_ESC
+            nChoice := 0
+            lWhile  := .F.
+            EXIT
 
 #ifdef HB_COMPAT_C53
 
-            CASE K_LBUTTONDOWN
+         CASE K_LBUTTONDOWN
+            nMRow  := MRow()
+            nMCol  := MCol()
+            nPos   := 0
+            nCount := Len(aSay)
 
-               nMRow  := MRow()
-               nMCol  := MCol()
-               nPos   := 0
-               nCount := Len(aSay)
-
-               FOR EACH cEval IN aOptionsOK
-                  IF nMRow == nInitRow + nCount + 2 .AND. ;
-                       INRANGE(aPos[ HB_EnumIndex() ], nMCol, aPos[ HB_EnumIndex() ] + Len(cEval) + 2 - 1)
-                     nPos := HB_EnumIndex()
-                     EXIT
-                  ENDIF
-               NEXT
-
-               IF nPos > 0
-                  nChoice := nPos
-                  lWhile := .F.
+            FOR EACH cEval IN aOptionsOK
+               IF nMRow == nInitRow + nCount + 2 .AND. ;
+                  INRANGE(aPos[ HB_EnumIndex() ], nMCol, aPos[ HB_EnumIndex() ] + Len(cEval) + 2 - 1)
+                  nPos := HB_EnumIndex()
+                  EXIT
                ENDIF
+            NEXT
 
-               EXIT
+            IF nPos > 0
+               nChoice := nPos
+               lWhile := .F.
+            ENDIF
+
+            EXIT
 
 #endif
 
-            CASE K_LEFT
-            CASE K_SH_TAB
-               IF Len(aOptionsOK) > 1
-
-                  nChoice--
-                  IF nChoice == 0
-                     nChoice := Len(aOptionsOK)
-                  ENDIF
-
-                  nDelay := 0
+         CASE K_LEFT
+         CASE K_SH_TAB
+            IF Len(aOptionsOK) > 1
+               nChoice--
+               IF nChoice == 0
+                  nChoice := Len(aOptionsOK)
                ENDIF
-               EXIT
+               nDelay := 0
+            ENDIF
+            EXIT
 
-            CASE K_RIGHT
-            CASE K_TAB
-               IF Len(aOptionsOK) > 1
-
-                  nChoice++
-                  IF nChoice > Len(aOptionsOK)
-                     nChoice := 1
-                  ENDIF
-
-                  nDelay := 0
+         CASE K_RIGHT
+         CASE K_TAB
+            IF Len(aOptionsOK) > 1
+               nChoice++
+               IF nChoice > Len(aOptionsOK)
+                  nChoice := 1
                ENDIF
-               EXIT
+               nDelay := 0
+            ENDIF
+            EXIT
 
-            DEFAULT
-               IF Upper(Chr(nKey)) $ aHotkey
-
-                  nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
-                  lWhile  := .F.
-               ENDIF
+         DEFAULT
+            IF Upper(Chr(nKey)) $ aHotkey
+               nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
+               lWhile  := .F.
+            ENDIF
 
          END
 
@@ -2038,11 +2031,6 @@ FUNCTION SR_SetFieldDefault( cTable, cField, cDefault )
       oCnn:Commit()
    ENDIF
 RETURN NIL            
-            
-      
-
-
-
 
 FUNCTION SR_Deserialize1( cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock )
 return HB_Deserialize(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
