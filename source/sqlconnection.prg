@@ -1246,7 +1246,7 @@ Function SR_AutoCommit( nSet )
 
    nOld := oSql:nAutoCommit
 
-   If valtype(nSet) == "N"
+   If HB_ISNUMERIC(nSet)
       oSql:nAutoCommit := nSet
    EndIf
 

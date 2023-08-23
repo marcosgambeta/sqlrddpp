@@ -1521,7 +1521,7 @@ Function SR_pCodeDescr(nCode)
       { "SQL_PCODE_OPERATOR_RIGHT_OUTER_JOIN",  1102 };
    }
 
-   if valtype(nCode) != "N"
+   if !HB_ISNUMERIC(nCode)
       Return nCode
    endif
 

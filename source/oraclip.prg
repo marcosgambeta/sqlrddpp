@@ -1670,7 +1670,7 @@ Return nError
 static Function GerGhost( uDat )
 if valtype(uDat) == "C"
    Return ""
-elseif valtype(uDat) == "N"   
+elseif HB_ISNUMERIC(uDat)   
    return 0
 elseif HB_ISLOGICAL(uDat)
    return .F.

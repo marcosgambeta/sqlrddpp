@@ -1380,7 +1380,7 @@ METHOD LineCount( lMsg ) CLASS SR_WORKAREA
            ::oSql:exec("SELECT MAX( " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " ) FROM " + ::cQualifiedTableName + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
          End
 
-         If Len(aRet) > 0 .and. valtype(aRet[1,1]) != "N"
+         If Len(aRet) > 0 .and. !HB_ISNUMERIC(aRet[1,1])
            ::oSql:exec("SELECT COUNT( " + SR_DBQUALIFY( ::cRecnoName, ::oSql:nSystemID ) + " ) FROM " + ::cQualifiedTableName + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
          EndIf
 
@@ -3491,7 +3491,7 @@ METHOD sqlGoTo( uRecord, lNoOptimize ) CLASS SR_WORKAREA
    ::aInfo[ AINFO_SKIPCOUNT ]     := 0
    ::aInfo[ AINFO_DETECT1_COUNT ] := 0
 
-   If Empty(uRecord) .or. ( valtype(uRecord) == "N" .and. uRecord == LASTREC_POS + 1 )
+   If Empty(uRecord) .or. ( HB_ISNUMERIC(uRecord) .and. uRecord == LASTREC_POS + 1 )
       ::GetBuffer(.T.)
       If ::aInfo[ AINFO_ISINSERT ]
          ::aInfo[ AINFO_RECNO ] := ::GetNextRecordNumber()
@@ -3765,9 +3765,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                Do Case
                Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .and. valtype(::aDat[i]) == "C" .and. (::oSql:nSystemID == SYSTEMID_MSSQL7 .or. ( ::oSql:nSystemID == SYSTEMID_MYSQL .or. ::oSql:nSystemID == SYSTEMID_MARIADB ) .or. ::oSql:nSystemID == SYSTEMID_AZURE)
                   ::aInfo[ AINFO_FOUND ] := ( Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "N" .and. valtype(::aDat[i]) == "C"
+               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .and. valtype(::aDat[i]) == "C"
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = val(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .and. valtype(::aDat[i]) == "N"
+               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .and. HB_ISNUMERIC(::aDat[i])
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = str(::aDat[i]) )
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .and. valtype(::aDat[i]) == "C"
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = stod(::aDat[i]) )
@@ -3835,7 +3835,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                AADD(::aDat, iif(uKey, 'T', ' '))
             EndIf
          Else
-            if "INDKEY_" $ ::aNames[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,1,2 ] ] .and. valtype(uKey) == "N"
+            if "INDKEY_" $ ::aNames[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,1,2 ] ] .and. HB_ISNUMERIC(uKey)
                cField :=  UPPER(::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_KEY ])
                IF "VAL(" $ CFIELD
                
@@ -4041,9 +4041,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                Do Case
                Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .and. valtype(::aDat[i]) == "C" .and. (::oSql:nSystemID == SYSTEMID_MSSQL7 .or. ( ::oSql:nSystemID == SYSTEMID_MYSQL .or. ::oSql:nSystemID == SYSTEMID_MARIADB ) .or. ::oSql:nSystemID == SYSTEMID_AZURE)
                   ::aInfo[ AINFO_FOUND ] := ( Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "N" .and. valtype(::aDat[i]) == "C"
+               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .and. valtype(::aDat[i]) == "C"
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = val(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .and. valtype(::aDat[i]) == "N"
+               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .and. HB_ISNUMERIC(::aDat[i])
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = str(::aDat[i]) )
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .and. valtype(::aDat[i]) == "C"
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = stod(::aDat[i]) )
@@ -4102,7 +4102,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
 
          cRet  := " WHERE (( "
          
-         if "INDKEY_" $ ::aNames[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,1,2 ] ] .and. valtype(uKey) == "N"
+         if "INDKEY_" $ ::aNames[::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_FIELDS,1,2 ] ] .and. HB_ISNUMERIC(uKey)
             cField :=  UPPER(::aIndex[ ::aInfo[ AINFO_INDEXORD ],INDEX_KEY ])
             IF "VAL(" $ CFIELD
             
@@ -4268,9 +4268,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          Else
             For i = 1 to len(::aQuoted)
                Do Case
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "N" .and. valtype(::aDat[i]) == "C"
+               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .and. valtype(::aDat[i]) == "C"
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = val(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .and. valtype(::aDat[i]) == "N"
+               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .and. HB_ISNUMERIC(::aDat[i])
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = str(::aDat[i]) )
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .and. valtype(::aDat[i]) == "C"
                   ::aInfo[ AINFO_FOUND ] := ( ::aLocalBuffer[::aPosition[i]] = stod(::aDat[i]) )
@@ -6457,7 +6457,7 @@ METHOD sqlOrderListFocus( uOrder, cBag ) CLASS SR_WORKAREA
          ::RuntimeErr( "19", SR_Msg(19) + SR_Val2Char( uOrder ) )
          Return 0 /* error exit */
       EndIf
-   ElseIf valtype(uOrder) == "N"
+   ElseIf HB_ISNUMERIC(uOrder)
       nOrder := uOrder
    EndIf
 
@@ -6540,7 +6540,7 @@ METHOD sqlOrderDestroy( uOrder, cBag ) CLASS SR_WORKAREA
          aDel(::aIndex, 12 ,.T.)
          return 0
       EndIf
-   ElseIf valtype(uOrder) == "N"
+   ElseIf HB_ISNUMERIC(uOrder)
       nOrder := uOrder
       If nOrder == 0 .or. nOrder > len(::aIndex)
          ::cFor        := ""
@@ -6619,7 +6619,7 @@ METHOD sqlOrderListNum(uOrder) CLASS SR_WORKAREA
       If nOrder == 0 .or. nOrder > len(::aIndex)
          Return 0 /* error exit */
       EndIf
-   ElseIf valtype(uOrder) == "N"
+   ElseIf HB_ISNUMERIC(uOrder)
       nOrder := uOrder
    Else
       nOrder := ::aInfo[ AINFO_INDEXORD ]
@@ -7373,7 +7373,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
             cRet  := " " + cNam + cSep + cQot + " "
 
             If cQot == "NULL"
-               If valtype(uKey) == "N"
+               If HB_ISNUMERIC(uKey)
                   cRet := "( " + cRet + " OR " + cNam + " = 0 )"
                ElseIf HB_ISDATE(uKey) //valtype(uKey) == "D"
                   cRet := "( " + cRet + " OR " + cNam + " <= " + ::QuotedNull(stod("19000101"),, nFLen, nFDec,, lNull) + " )"
@@ -7499,7 +7499,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                   cRet  := " " + cNam + cSep + cQot + " "
 
                   If cQot == "NULL"
-                     If valtype(uKey) == "N"
+                     If HB_ISNUMERIC(uKey)
                         cRet := "( " + cRet + " OR " + cNam + " >= 0 )"
                      ElseIf HB_ISDATE(uKey) //valtype(uKey) == "D"
                         cRet := "( " + cRet + " OR " + cNam + " >= " + ::QuotedNull(stod("19000101"),, nFLen, nFDec,, lNull) + " )"
@@ -7515,7 +7515,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                   cRet2 := " " + cNam + cSep + cQot + " "
 
                   If cQot == "NULL"
-                     If valtype(uKey) == "N"
+                     If HB_ISNUMERIC(uKey)
                         cRet2 := "( " + cRet2 + " OR " + cNam + " <= 0 )"
                      ElseIf HB_ISDATE(uKey) //valtype(uKey) == "D"
                         cRet2 := "( " + cRet2 + " OR " + cNam + " <= " + ::QuotedNull(stod("19000101"),, nFLen, nFDec,, lNull) + " )"

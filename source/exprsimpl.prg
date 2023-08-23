@@ -186,7 +186,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
          CASE valtype(newValue) == "C"
             newValue := "'" + newValue + "'"
             result := ValueExpression():new(oExpression:cContext, newValue)
-         CASE valtype(newValue) == "N" .OR. HB_ISLOGICAL(newValue) .OR. valtype(newValue) == "U"
+         CASE HB_ISNUMERIC(newValue) .OR. HB_ISLOGICAL(newValue) .OR. valtype(newValue) == "U"
             newValue := cstr(newValue)
             result := ValueExpression():new(oExpression:cContext, newValue)
          CASE HB_ISDATE(newValue)

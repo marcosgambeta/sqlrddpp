@@ -208,7 +208,7 @@ Return nRet
 
 Function SR_SetSyntheticIndexMinimun(nSet)
    Local nOld := nSyntheticIndexMinimun
-   If valtype(nSet) == "N"
+   If HB_ISNUMERIC(nSet)
       nSyntheticIndexMinimun := Min(nSet, 10)
    EndIf
 Return nOld
