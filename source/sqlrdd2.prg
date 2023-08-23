@@ -6653,7 +6653,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
 
    (lEnable)
 
-   If valtype(aTargetColumns) == "A" .and. len(aTargetColumns) > 0 .and. valtype(aTargetColumns[1]) == "A"
+   If HB_ISARRAY(aTargetColumns) .and. len(aTargetColumns) > 0 .and. HB_ISARRAY(aTargetColumns[1])
       aTargetColumns := aTargetColumns[1]
    EndIf
 
@@ -6847,7 +6847,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
       EndIf
    Next
 
-   If valtype(::aLastOrdCond) == "A" .and. len(::aLastOrdCond) > 1
+   If HB_ISARRAY(::aLastOrdCond) .and. len(::aLastOrdCond) > 1
       If ::aLastOrdCond[1] != NIL
          // Try to create an easy xBase => SQL translation
          cFor := ::ParseForClause(::aLastOrdCond[1])
@@ -9723,7 +9723,7 @@ METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColum
    cConstraintName := Upper(AllTrim(cConstraintName))
 
    // You can pass constraint KEY as a list or as array
-   If valtype(aTargetColumns) == "A" .and. len(aTargetColumns) > 0 .and. valtype(aTargetColumns[1]) == "A"
+   If HB_ISARRAY(aTargetColumns) .and. len(aTargetColumns) > 0 .and. HB_ISARRAY(aTargetColumns[1])
       aTargetColumns := aTargetColumns[1]
    EndIf
 

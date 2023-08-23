@@ -653,7 +653,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          AsizeAlloc(aArray, 300)
 
-         If valtype(aArray) == "A"
+         If HB_ISARRAY(aArray)
             If len(aArray) = 0
                aSize(aArray, ARRAY_BLOCK1)
                nAllocated := ARRAY_BLOCK1

@@ -212,7 +212,7 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
       SR_RuntimeErr( , "SR_ChengeStructure: Workarea not in use." )
    EndIf
 
-   If len(aNewStruct) < 1 .or. valtype(aNewStruct) != "A" .or. ValType(aNewStruct[1]) != "A"
+   If len(aNewStruct) < 1 .or. !HB_ISARRAY(aNewStruct) .or. !HB_ISARRAY(aNewStruct[1])
       SR_RuntimeErr( , "SR_ChengeStructure: Invalid arguments [2]." )
    EndIf
 

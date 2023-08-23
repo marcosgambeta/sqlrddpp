@@ -1449,7 +1449,7 @@ Function _SR_UnRegister(oWA)
    Local aActiveWAs, n
    aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
-   If valtype(aActiveWAs) == "A"
+   If HB_ISARRAY(aActiveWAs)
       While (n := aScan(aActiveWAs, { |x| x:nThisArea == oWA:nThisArea }) ) > 0
          aDel(aActiveWAs, n)
          aSize(aActiveWAs, len(aActiveWAs) - 1)
@@ -1466,7 +1466,7 @@ Function _SR_Register(oWA)
 
    aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
-   If valtype(aActiveWAs) == "A"
+   If HB_ISARRAY(aActiveWAs)
       aadd(aActiveWAs, oWA)
    Else
       oWa:oSql:oHashActiveWAs:Insert( oWA:cFileName, { oWA } )
@@ -1480,7 +1480,7 @@ Function _SR_ScanExec(oWA, bExpr)
 
    Local aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
-   If valtype(aActiveWAs) == "A"
+   If HB_ISARRAY(aActiveWAs)
       aEval(aActiveWAs, bExpr)
    EndIf
 
@@ -1914,7 +1914,7 @@ Function SR_SetLocks( uLocks, oCnn, nRetries )
    Do Case
    Case valtype(uLocks) == "C"
       aLocks := { uLocks }
-   Case valtype(uLocks) == "A"
+   Case HB_ISARRAY(uLocks)
       aLocks := uLocks
    OtherWise
       aLocks := { SR_Val2Char( uLocks ) }
@@ -2009,7 +2009,7 @@ Function SR_ReleaseLocks( uLocks, oCnn )
    Do Case
    Case valtype(uLocks) == "C"
       aLocks := { uLocks }
-   Case valtype(uLocks) == "A"
+   Case HB_ISARRAY(uLocks)
       aLocks := uLocks
    OtherWise
       aLocks := { SR_Val2Char( uLocks ) }

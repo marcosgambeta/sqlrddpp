@@ -200,7 +200,7 @@ SR_SetRDDTemp("ADT")
  cSql := "Select  " + cCols + "  from " + cTable
  cCount := "select count(*) from " + cTable
 
-if !empty(cWhere) .and. valtype(aVarSust) == "A"
+if !empty(cWhere) .and. HB_ISARRAY(aVarSust)
 
 for i:=1 to len(aVarSust) 
    cBind := ":" + alltrim(str(i))

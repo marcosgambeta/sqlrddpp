@@ -16,7 +16,7 @@ static aDestroyFiles :={}
 
 function OraExecSql(n, c, adata)
 Local cbind,i
-if aData != nil .and. valtype(adata) == "A"
+if aData != nil .and. HB_ISARRAY(adata)
 for i:= len(aData)  to  1 step -1
       cBind := ":"+alltrim(str(i))
       c := strtran(c, cBind, sr_cdbvalue(adata[i]))
@@ -691,7 +691,7 @@ Local cBind,i
 Local aItem,nerror,e
 Local oSql
 lReleaseBind := .T.
-if valtype(aVarSust) == "A"
+if HB_ISARRAY(aVarSust)
    for i:=len(aVarSust) to 1 step -1
       cBind := ":" + alltrim(str(i))
       cPLSQL := strtran(cPLSQL, cBind, sr_cdbvalue(aVarSust[i]))
@@ -1158,7 +1158,7 @@ osql:=sr_getconnection()
 if upper(substr(cSql,6)) =="BEGIN "
    if pCount() == 3
 
-      if valtype(aVarSust) == "A"
+      if HB_ISARRAY(aVarSust)
          for i := len(aVarSust)  TO 1 STEP -1
             cBind := ":" + alltrim(str(i) )
             cSQL := strtran(cSQL, cBind, sr_cdbvalue(aVarSust[i]))

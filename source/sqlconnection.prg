@@ -325,7 +325,7 @@ Return aRet2
 
 METHOD Fetch(aLine, lTranslate, aFields) CLASS SR_CONNECTION
 
-   Local lResults := valtype(aLine) == "A"
+   Local lResults := HB_ISARRAY(aLine)
    Local i, nRet := ::FetchRaw( lTranslate, aFields )
 
    If nRet == SQL_SUCCESS .and. lResults
@@ -558,7 +558,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
                AsizeAlloc(aArray, 300)
 
-               If valtype(aArray) == "A"
+               If HB_ISARRAY(aArray)
                   If len(aArray) = 0
                      aSize(aArray, ARRAY_BLOCK1)
                      nAllocated := ARRAY_BLOCK1

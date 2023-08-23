@@ -388,7 +388,7 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_ORACLE2
           ORACLEPREPARE2(::hDBC,::cSqlPrepare,.T.)
           ORACLEBINDALLOC2( ::hDBC, len(::aBindParameters)  )
           for i :=1 to len (::aBindParameters )
-          if valtype(::aBindParameters[ i ]) == "A"
+          if HB_ISARRAY(::aBindParameters[ i ])
              if valtype(::aBindParameters[i,2]) == "C"
                 ORACLEINBINDPARAM2( ::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)          
              elseif valtype(::aBindParameters[i,2]) == "D"
@@ -600,7 +600,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    //   ORACLEBINDALLOC(::hDbc, i)
    //Next
 
-   aFields := ::iniFields(.F.) 
+   aFields := ::iniFields(.F.)
 
    If lFetch
       If !Empty(cFile)
@@ -711,7 +711,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          AsizeAlloc(aArray, 300)
 
-         If valtype(aArray) == "A"
+         If HB_ISARRAY(aArray)
             If len(aArray) = 0
                aSize(aArray, ARRAY_BLOCK1)
                nAllocated := ARRAY_BLOCK1

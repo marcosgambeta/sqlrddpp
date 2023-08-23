@@ -1332,7 +1332,7 @@ Static Function SR_SolveFilters(aFilters,aRet,cAlias,nSystemID)
 
    Local i
 
-   If !(valtype(aRet) == "A" .and. len(aRet) >= 2 .and. valtype(aRet[1]) == "C")
+   If !(HB_ISARRAY(aRet) .and. len(aRet) >= 2 .and. valtype(aRet[1]) == "C")
       Return .F.
    EndIf
 
