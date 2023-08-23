@@ -60,7 +60,7 @@
 #define cJoinWords( nType, nSystemID )    aJoinWords[nSystemID,nType]
 
 #define  SKIPFWD            nIP++;uData:=apCode[nIP]
-#define  PARAM_SOLV         iif(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1])
+#define  PARAM_SOLV         iif(HB_ISBLOCK(aParam[uData+1]),eval(aParam[uData+1]),aParam[uData+1])
 #define  RECURSIVE_CALL     nIP++;cSql+=SR_SQLCodeGen2(apCode,aParam,nSystemId,lIdent,@nIP,nContext,@nSpaces,lParseTableName);Exit
 #define  GETPARAM           cSql+=iif(uData+1<=len(aParam),PARAM_SOLV,"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
 #define  GETPARAM_QUOTED    cSql+=iif(uData+1<=len(aParam),SR_DBQUALIFY( PARAM_SOLV, nSystemID ),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
@@ -272,7 +272,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
          CASE SQL_PCODE_TABLE_PARAM
             SKIPFWD
             if lParseTableName
-               aRet := eval(bTableInfo, iif(uData+1<=len(aParam),iif(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##"), nSystemId)
+               aRet := eval(bTableInfo, iif(uData+1<=len(aParam),iif(HB_ISBLOCK(aParam[uData+1]),eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##"), nSystemId)
                If nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
                Else
@@ -290,7 +290,7 @@ Static Function SR_SQLCodeGen2( apCode, aParam, nSystemId, lIdent, nIP, nContext
                   cSql +=  NEWLINE + IDENTSPACE + "  "
                EndIf
             Else
-               uData := iif(uData+1<=len(aParam),iif(valtype(aParam[uData+1])=="B",eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##")
+               uData := iif(uData+1<=len(aParam),iif(HB_ISBLOCK(aParam[uData+1]),eval(aParam[uData+1]),aParam[uData+1]),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##")
                If nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += uData
                Else
@@ -1366,7 +1366,7 @@ Return
 
 Function SR_SetTableInfoBlock(b)
 
-   If valtype(b) != "B"
+   If !HB_ISBLOCK(b)
       Return .F.
    ENdIf
 
@@ -1378,7 +1378,7 @@ Return .T.
 
 Function SR_SetIndexInfoBlock(b)
 
-   If valtype(b) != "B"
+   If !HB_ISBLOCK(b)
       Return .F.
    ENdIf
 
@@ -1402,7 +1402,7 @@ Return bIndexInfo
 
 Function SR_SetNextRecordBlock(b)
 
-   If valtype(b) != "B"
+   If !HB_ISBLOCK(b)
       Return .F.
    ENdIf
 

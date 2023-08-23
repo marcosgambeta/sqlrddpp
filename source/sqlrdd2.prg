@@ -7317,7 +7317,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
 
    If len(::aIndex) > 0 .and. ::aInfo[ AINFO_INDEXORD ] > 0
 
-      If valtype(uValue) == "B"
+      If HB_ISBLOCK(uValue)
          uKey := eval(uValue)
       Else
          uKey := uValue
@@ -7938,7 +7938,7 @@ Static Function aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound)
    Local nRet := 0
    Local first, last, mid, closest, icomp, exec, nRegress
 
-   exec   := valtype(nPos) == "B"
+   exec   := HB_ISBLOCK(nPos)
    first  := 1
    last   := len(aVet)
    mid    := int((first + last) / 2)
