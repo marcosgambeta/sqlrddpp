@@ -85,7 +85,7 @@ ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD MoreResults(aArray, lTranslate)  CLASS SR_MYSQL
+METHOD MoreResults(aArray, lTranslate) CLASS SR_MYSQL
    local nRet
    (aArray)
    (lTranslate)
@@ -94,7 +94,7 @@ Return nRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_MYSQL
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MYSQL
 
    Local i
 

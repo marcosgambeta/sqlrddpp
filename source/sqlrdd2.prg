@@ -364,7 +364,7 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 //
-// PROCEDURE WA_ENDED  CLASS SR_WORKAREA
+// PROCEDURE WA_ENDED CLASS SR_WORKAREA
 //
 //   ? "Cleanup:", "WORKAREA", ::cFileName
 //
@@ -372,7 +372,7 @@ ENDCLASS
 //
 /*------------------------------------------------------------------------*/
 
-METHOD sqlSetFilter(cFilter)    CLASS SR_WORKAREA
+METHOD sqlSetFilter(cFilter) CLASS SR_WORKAREA
 
    Local cExpr
 #ifdef NG_DEVELOPMENT
@@ -410,7 +410,7 @@ Return SQL_ERROR
 
 /*------------------------------------------------------------------------*/
 
-METHOD sqlClearFilter()    CLASS SR_WORKAREA
+METHOD sqlClearFilter() CLASS SR_WORKAREA
 
    ::cFilter := ""
    ::Refresh()
@@ -419,7 +419,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD sqlFilterText()    CLASS SR_WORKAREA
+METHOD sqlFilterText() CLASS SR_WORKAREA
 
    If ::cFilter == NIL
       Return ""
@@ -429,7 +429,7 @@ Return ::cFilter
 
 /*------------------------------------------------------------------------*/
 
-METHOD GetSelectList()    CLASS SR_WORKAREA
+METHOD GetSelectList() CLASS SR_WORKAREA
 
    local i, nLen := len(::aFields), cSelectList := " ", nFeitos := 0
    local aInd
@@ -533,7 +533,7 @@ Return i
 
 /*------------------------------------------------------------------------*/
 
-METHOD SolveRestrictors()  CLASS SR_WORKAREA
+METHOD SolveRestrictors() CLASS SR_WORKAREA
 
    Local cRet := ""
 
@@ -588,7 +588,7 @@ Return cRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD GetSyntheticVirtualExpr(aExpr, cAlias)  CLASS SR_WORKAREA
+METHOD GetSyntheticVirtualExpr(aExpr, cAlias) CLASS SR_WORKAREA
 
    Local cRet := "", cColName, nPos
 
@@ -625,7 +625,7 @@ Return cRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD LoadRegisteredTags()  CLASS SR_WORKAREA
+METHOD LoadRegisteredTags() CLASS SR_WORKAREA
 
    Local aInd, cLast := "##", lCDXCompat := .F., aRet, aThisIndex, aCols, i, cind, nPos, cItem
 
@@ -937,7 +937,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD SetColPK(cColName)  CLASS SR_WORKAREA
+METHOD SetColPK(cColName) CLASS SR_WORKAREA
 
    Local nPos := aScan(::aNames, {|x| x == upper(cColName)})
 
@@ -950,7 +950,7 @@ Return ::cColPK
 
 /*------------------------------------------------------------------------*/
 
-METHOD DisableHistoric()  CLASS SR_WORKAREA
+METHOD DisableHistoric() CLASS SR_WORKAREA
    Local i
    ::lHistEnable := .F.
    For i = 1 to len(::aIndex)
@@ -961,7 +961,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD EnableHistoric()  CLASS SR_WORKAREA
+METHOD EnableHistoric() CLASS SR_WORKAREA
    Local i
    ::lHistEnable := .T.
    For i = 1 to len(::aIndex)
@@ -972,7 +972,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD GetNextRecordNumber()  CLASS SR_WORKAREA
+METHOD GetNextRecordNumber() CLASS SR_WORKAREA
 
    Local nRet, aRet
 
@@ -1007,7 +1007,7 @@ Return nRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD ParseIndexColInfo(cSQL)  CLASS SR_WORKAREA
+METHOD ParseIndexColInfo(cSQL) CLASS SR_WORKAREA
 
    Local i, nLen, aQuot, cOut := "", nIndexCol, cFieldName, cType, lNull
 
@@ -1151,7 +1151,7 @@ Return cSql
 
 /*------------------------------------------------------------------------*/
 
-METHOD sqlKeyCount(lFilters)  CLASS SR_WORKAREA
+METHOD sqlKeyCount(lFilters) CLASS SR_WORKAREA
 
    Local nRet := 0, aRet := {}
    Local lDeleteds, cSql, cRet := ""
@@ -1191,7 +1191,7 @@ Return nRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD IncludeAllMethods()  CLASS SR_WORKAREA
+METHOD IncludeAllMethods() CLASS SR_WORKAREA
 
    /* Any methods referenced by startSQLRDDSymbols() should be added here */
 
@@ -2054,7 +2054,7 @@ Return ""
 
 /*------------------------------------------------------------------------*/
 
-METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)   CLASS SR_WORKAREA
+METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WORKAREA
 
    Local cType := valtype(uData), cRet
    lOCAL cOldSet := SET(_SET_DATEFORMAT)
@@ -2175,7 +2175,7 @@ Return ""
 
 /*------------------------------------------------------------------------*/
 
-METHOD HistExpression(n, cAlias)   CLASS SR_WORKAREA
+METHOD HistExpression(n, cAlias) CLASS SR_WORKAREA
 
    /*
    parameter n +- 0 -> (default) active record at current date
@@ -3633,7 +3633,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD sqlGoPhantom()  CLASS SR_WORKAREA
+METHOD sqlGoPhantom() CLASS SR_WORKAREA
 
    ::sqlGoCold()
    ::GetBuffer(.T.)
@@ -8395,7 +8395,7 @@ Return aRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes)  CLASS SR_WORKAREA
+METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WORKAREA
 
    Local aInd, i, cPhisicalName, aIndexes, nRet := SQL_SUCCESS
    Local cPhysicalVIndexName
@@ -8487,7 +8487,7 @@ Return nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO .OR. nRet == SQL_N
 
 /*------------------------------------------------------------------------*/
 
-METHOD DropColumn(cColumn, lDisplayErrorMessage, lRemoveFromWA)  CLASS SR_WORKAREA
+METHOD DropColumn(cColumn, lDisplayErrorMessage, lRemoveFromWA) CLASS SR_WORKAREA
 
    Local i
    Local nRet := SQL_SUCCESS
@@ -10087,7 +10087,7 @@ Return lOld
 
 /*------------------------------------------------------------------------*/
 
-Function SR_Serialize1( uVal )
+Function SR_Serialize1(uVal)
    Local cMemo := SR_STRTOHEX(HB_Serialize(uVal))
 Return SQL_SERIALIZED_SIGNATURE + str(len(cMemo),10) + cMemo
 

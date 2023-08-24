@@ -81,7 +81,7 @@ ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_FIREBIRD
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD
 
    Local i
 

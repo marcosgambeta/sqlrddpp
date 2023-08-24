@@ -81,14 +81,14 @@ ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD MoreResults(aArray, lTranslate)  CLASS SR_PGS
+METHOD MoreResults(aArray, lTranslate) CLASS SR_PGS
    (aArray)
    (lTranslate)
 Return -1
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_PGS
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
 
    Local i
 
@@ -257,7 +257,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
-      SR_MsgLogFile("Connection Error: " + alltrim(str(PGSStatus2( hDbc ))) + " (see pgs.ch)")
+      SR_MsgLogFile("Connection Error: " + alltrim(str(PGSStatus2(hDbc))) + " (see pgs.ch)")
       Return Self
    else
       ::cConnect = cConnect
@@ -268,7 +268,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       If len (aRet) > 0
          cSystemVers := aRet[1,1]
          cString := aRet[1,1]          
-         cMatch := HB_AtX( s_reEnvVar, cString, , @nStart, @nLen )         
+         cMatch := HB_AtX(s_reEnvVar, cString, , @nStart, @nLen)
          if !empty(cMatch )
             aVersion      := hb_atokens(cMatch, ".")
          else

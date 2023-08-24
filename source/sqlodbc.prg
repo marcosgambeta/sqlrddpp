@@ -101,7 +101,7 @@ Return SR_ODBCGETLINES(::hStmt, 4096, aFields, aCache, ::nSystemID, lTranslate, 
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_ODBC
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ODBC
 
    Local i
 
@@ -127,7 +127,7 @@ Return aArray
 
 /*------------------------------------------------------------------------*/
 
-METHOD DriverCatTables()  CLASS SR_ODBC
+METHOD DriverCatTables() CLASS SR_ODBC
 
    Local nRet, aArray := Array(ARRAY_BLOCK1)
    Local nAllocated, nBlocks, aFields, n := 0
@@ -177,7 +177,7 @@ Return aArray
 
 /*------------------------------------------------------------------------*/
 
-METHOD MoreResults(aArray, lTranslate)  CLASS SR_ODBC
+METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
 
    local nRet, i, n
    Static aFieldsMore
@@ -536,7 +536,7 @@ Return SR_ExecDir(::hStmt, cCommand)
 
 /*------------------------------------------------------------------------*/
 
-METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)  CLASS SR_ODBC
+METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData) CLASS SR_ODBC
 
    ::FreeStatement()
 

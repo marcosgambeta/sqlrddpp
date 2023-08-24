@@ -81,7 +81,7 @@ ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_FIREBIRD3
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD3
 
    Local i
 
@@ -94,7 +94,7 @@ METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_FIREBIRD3
    EndIf
 
    If ::aCurrLine == NIL
-      FBLINEPROCESSED3( ::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray )
+      FBLINEPROCESSED3(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
       ::aCurrLine := aArray
       Return aArray
    EndIf
@@ -112,7 +112,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_FIREBIRD3
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
       ::aCurrLine := array(LEN(aFields))
-      FBLINEPROCESSED3( ::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine )
+      FBLINEPROCESSED3(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
 
 return ::aCurrLine[nField]
@@ -126,7 +126,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_FIREBIRD3
    DEFAULT lTranslate := .T.
 
    If ::hEnv != NIL
-      ::nRetCode := FBFetch3( ::hEnv )
+      ::nRetCode := FBFetch3(::hEnv)
       ::aCurrLine := NIL
    Else
       ::RunTimeErr("", "FBFetch - Invalid cursor state" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
@@ -177,7 +177,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       EndIf
    EndIf
 
-   if ( ::nRetCode := FBNumResultCols3( ::hEnv, @nFields ) ) != SQL_SUCCESS
+   if (::nRetCode := FBNumResultCols3(::hEnv, @nFields)) != SQL_SUCCESS
       ::RunTimeErr("", "FBNumResultCols Error" + chr(13)+chr(10)+ chr(13)+chr(10)+;
                "Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
       return NIL
@@ -190,7 +190,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
       nDec := 0
 
-      if ( ::nRetCode := FBDescribeCol3( ::hEnv, n, @cName, @nType, @nLen, @nDec, @nNull ) ) != SQL_SUCCESS
+      if (::nRetCode := FBDescribeCol3(::hEnv, n, @cName, @nType, @nLen, @nDec, @nNull)) != SQL_SUCCESS
          ::RunTimeErr("", "FBDescribeCol Error" + chr(13)+chr(10)+ ::LastError() + chr(13)+chr(10)+;
                           "Last command sent to database : " + ::cLastComm )
          return NIL
@@ -255,7 +255,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    (lCounter)
    (lAutoCommit)
 
-   nRet := FBConnect3( ::cDtb, ::cUser, ::cPassword, ::cCharSet, @hEnv )
+   nRet := FBConnect3(::cDtb, ::cUser, ::cPassword, ::cCharSet, @hEnv)
 
    if nRet != SQL_SUCCESS
       ::nRetCode = nRet
@@ -268,7 +268,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       tracelog('cTargetDB',cTargetDB,'cSystemVers',cSystemVers)
    EndIf
 
-   nRet := FBBeginTransaction3( hEnv )
+   nRet := FBBeginTransaction3(hEnv)
 
    if nRet != SQL_SUCCESS
       ::nRetCode = nRet
@@ -298,13 +298,13 @@ return Super:End()
 METHOD Commit() CLASS SR_FIREBIRD3
    Super:Commit()
    ::nRetCode := FBCOMMITTRANSACTION3(::hEnv )  
-Return ( ::nRetCode := FBBeginTransaction3( ::hEnv ) )
+Return ( ::nRetCode := FBBeginTransaction3(::hEnv) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_FIREBIRD3
    Super:RollBack()
-Return ( ::nRetCode := FBRollBackTransaction3( ::hEnv ) )
+Return ( ::nRetCode := FBRollBackTransaction3(::hEnv) )
 
 /*------------------------------------------------------------------------*/
 
@@ -312,10 +312,10 @@ METHOD ExecuteRaw(cCommand) CLASS SR_FIREBIRD3
    local nRet
  
    If upper(left(ltrim(cCommand), 6)) == "SELECT" .OR. "RETURNING" in upper(alltrim(cCommand))
-      nRet := FBExecute3( ::hEnv, cCommand, IB_DIALECT_CURRENT )
+      nRet := FBExecute3(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .T.
    Else
-      nRet := FBExecuteImmediate3( ::hEnv, cCommand, IB_DIALECT_CURRENT )
+      nRet := FBExecuteImmediate3(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .F.
    EndIf
 
@@ -324,7 +324,7 @@ Return nRet
 /*------------------------------------------------------------------------*/
 
 
-METHOD MoreResults(aArray, lTranslate)  CLASS SR_FIREBIRD3
+METHOD MoreResults(aArray, lTranslate) CLASS SR_FIREBIRD3
 
    local nRet, i, n,nvalue := -1
    Static aFieldsMore

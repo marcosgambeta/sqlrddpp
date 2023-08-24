@@ -85,7 +85,7 @@ ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD MoreResults(aArray, lTranslate)  CLASS SR_MARIA
+METHOD MoreResults(aArray, lTranslate) CLASS SR_MARIA
    local nRet
    (aArray)
    (lTranslate)
@@ -94,7 +94,7 @@ Return nRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_MARIA
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MARIA
 
    Local i
 

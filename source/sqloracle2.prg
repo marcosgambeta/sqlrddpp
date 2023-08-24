@@ -101,7 +101,7 @@ Return -1
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_ORACLE2
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ORACLE2
 
    Local i
 
@@ -326,7 +326,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::cTargetDB    := Upper(cTargetDB)
 
    aRet :={{cSystemVers}}
-   cMatch := HB_AtX( s_reEnvVar, cSystemVers, , @nStart, @nLen )         
+   cMatch := HB_AtX(s_reEnvVar, cSystemVers, , @nStart, @nLen)
    if !empty(cMatch )
       aVersion      := hb_atokens(cMatch, ".")
    else
@@ -386,27 +386,27 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
          ::lBind := .F.
          
           ORACLEPREPARE2(::hDBC,::cSqlPrepare,.T.)
-          ORACLEBINDALLOC2( ::hDBC, len(::aBindParameters)  )
+          ORACLEBINDALLOC2(::hDBC, len(::aBindParameters))
           for i :=1 to len (::aBindParameters )
           if HB_ISARRAY(::aBindParameters[i])
              if HB_ISCHAR(::aBindParameters[i,2])
-                ORACLEINBINDPARAM2( ::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)          
+                ORACLEINBINDPARAM2(::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)
              elseif HB_ISDATE(::aBindParameters[i,2])
-                ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)                          
+                ORACLEINBINDPARAM2(::hDBC,i,8,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)
              elseif HB_ISLOGICAL(::aBindParameters[i])
-                ORACLEINBINDPARAM2( ::hDBC,i,3,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)                                          
+                ORACLEINBINDPARAM2(::hDBC,i,3,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)                                          
              else
-                ORACLEINBINDPARAM2( ::hDBC,i,2,15,0,::aBindParameters[i,2],.T.)          
+                ORACLEINBINDPARAM2(::hDBC,i,2,15,0,::aBindParameters[i,2],.T.)          
              endif
           else
              if HB_ISCHAR(::aBindParameters[i])
-                ORACLEINBINDPARAM2( ::hDBC,i,-1,len(::aBindParameters[i]),0,::aBindParameters[i],.T.)          
+                ORACLEINBINDPARAM2(::hDBC,i,-1,len(::aBindParameters[i]),0,::aBindParameters[i],.T.)          
              elseif HB_ISDATE(::aBindParameters[i])
-                ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i],0,::aBindParameters[i],.T.)                          
+                ORACLEINBINDPARAM2(::hDBC,i,8,::aBindParameters[i],0,::aBindParameters[i],.T.)                          
              elseif HB_ISLOGICAL(::aBindParameters[i])
-                ORACLEINBINDPARAM2( ::hDBC,i,3,::aBindParameters[i],0,::aBindParameters[i],.T.)                                          
+                ORACLEINBINDPARAM2(::hDBC,i,3,::aBindParameters[i],0,::aBindParameters[i],.T.)                                          
              else
-                ORACLEINBINDPARAM2( ::hDBC,i,2,15,0,::aBindParameters[i],.T.)          
+                ORACLEINBINDPARAM2(::hDBC,i,2,15,0,::aBindParameters[i],.T.)          
              endif
           
           endif   
@@ -463,7 +463,7 @@ RETURN cOriginal
 
 /*------------------------------------------------------------------------*/
 
-METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet)  CLASS SR_ORACLE2
+METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet) CLASS SR_ORACLE2
    DEFAULT lIn to .F.
    DEFAULT lStart to .F.
    
@@ -484,21 +484,21 @@ Return self
 
 /*------------------------------------------------------------------------*/
 
-METHOD ConvertParams(c)  CLASS SR_ORACLE2
+METHOD ConvertParams(c) CLASS SR_ORACLE2
    Local nBound
    local cRet := ProcessParams(c, @nBound)
 RETURN cRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)  CLASS SR_ORACLE2
+METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData) CLASS SR_ORACLE2
 
-Return OracleWriteMemo2( ::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData )
+Return OracleWriteMemo2(::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData)
 
 /*------------------------------------------------------------------------*/
 
 
-METHOD ExecSP(cComm, aReturn, nParam, aType)  CLASS SR_ORACLE2
+METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE2
    Local i, n
    Local nError := 0
    
@@ -575,7 +575,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    DEFAULT cDeletedName  := SR_DeletedName()
    
    TRY
-      nError := ORACLE_PROCCURSOR2( ::hDbc, cComm, cVar )  
+      nError := ORACLE_PROCCURSOR2(::hDbc, cComm, cVar)  
       //nError := ORACLE_BINDCURSOR(::hDbc, cComm, cVar)
       ::cLastComm := cComm
    CATCH  
@@ -775,7 +775,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
  
 return  0  
 
-function  ExecuteSP2( cComm, aReturn  ) 
+function  ExecuteSP2(cComm, aReturn)
 *    Local i, n
    Local nError := 0
    local oConn := SR_GetConnection()

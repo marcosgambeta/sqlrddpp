@@ -201,7 +201,7 @@ CLASS SR_CONNECTION
    METHOD GetConnectionID() INLINE (::uSid)
    METHOD KillConnectionID(nID) VIRTUAL
    METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, lNoRecno, cRecnoName, cDeletedName, lTranslate, nLogMode) VIRTUAL
-   METHOD ExecSP( cComm, aReturn, nParam ) VIRTUAL
+   METHOD ExecSP(cComm, aReturn, nParam) VIRTUAL
    METHOD GetAffectedRows() Virtual
 
    
@@ -209,7 +209,7 @@ ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD LogQuery(cCommand, cType, nLogMode, nCost)    CLASS SR_CONNECTION
+METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
 
    Local cSql, cMode, oSql, cStack
 
@@ -261,7 +261,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD ListCatTables(cOwner)   CLASS SR_CONNECTION
+METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
 
    Local aRet := {}, aRet2 := {}, i
 
@@ -345,7 +345,7 @@ Return ::oSql:IniFields(.T., cTable, , .F.)
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_CONNECTION
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_CONNECTION
    Local i
 
    If aArray == NIL
@@ -362,7 +362,7 @@ Return aArray
 
 /*------------------------------------------------------------------------*/
 
-METHOD SetNextOpt(nSet, nOpt)  CLASS SR_CONNECTION
+METHOD SetNextOpt(nSet, nOpt) CLASS SR_CONNECTION
    ::lSetNext  := .T.
    ::nSetOpt   := nSet
    ::nSetValue := nOpt
@@ -1174,7 +1174,7 @@ return cType
 
 /*------------------------------------------------------------------------*/
 
-METHOD SQLLen(nType, nLen, nDec)  CLASS SR_CONNECTION
+METHOD SQLLen(nType, nLen, nDec) CLASS SR_CONNECTION
 
    local cType := "U"
 

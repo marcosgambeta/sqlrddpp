@@ -87,7 +87,7 @@ CLASS SR_ORACLE FROM SR_CONNECTION
    METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)
    METHOD Getline(aFields, lTranslate, aArray)
    METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, lNoRecno, cRecnoName, cDeletedName, lTranslate, nLogMode)
-   METHOD ExecSP( cComm, aReturn, nParam )
+   METHOD ExecSP(cComm, aReturn, nParam)
    METHOD GetAffectedRows()   
    
 ENDCLASS
@@ -101,7 +101,7 @@ Return -1
 
 /*------------------------------------------------------------------------*/
 
-METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_ORACLE
+METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ORACLE
 
    Local i
 
@@ -405,7 +405,7 @@ RETURN cOriginal
 
 /*------------------------------------------------------------------------*/
 
-METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet)  CLASS SR_ORACLE
+METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet) CLASS SR_ORACLE
    DEFAULT lIn to .F.
    DEFAULT lStart to .F.
    
@@ -426,21 +426,21 @@ Return self
 
 /*------------------------------------------------------------------------*/
 
-METHOD ConvertParams(c)  CLASS SR_ORACLE
+METHOD ConvertParams(c) CLASS SR_ORACLE
    Local nBound
    local cRet := ProcessParams(c, @nBound)
 RETURN cRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)  CLASS SR_ORACLE
+METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData) CLASS SR_ORACLE
 
 Return OracleWriteMemo(::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData)
 
 /*------------------------------------------------------------------------*/
 
 
-METHOD ExecSP( cComm, aReturn, nParam, aType )  CLASS SR_ORACLE
+METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE
    Local i, n
    Local nError := 0
    
@@ -717,7 +717,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
  
 return  0  
 
-function  ExecuteSP( cComm, aReturn  ) 
+function  ExecuteSP(cComm, aReturn)
 
    Local nError := 0
    local oConn := SR_GetConnection()
@@ -746,5 +746,5 @@ function  ExecuteSP( cComm, aReturn  )
     
 Return nError
 
-METHOD GetAffectedRows()   CLASS SR_ORACLE
+METHOD GetAffectedRows() CLASS SR_ORACLE
 return GETAFFECTROWS(::hdbc ) 

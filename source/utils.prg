@@ -149,7 +149,7 @@ Function SR_LogFile(cFileName, aInfo, lAddDateTime)
       If aInfo[n] == NIL
          Exit
       EndIf
-      cLine += SR_Val2CharQ( aInfo[n] ) + Chr(9)
+      cLine += SR_Val2CharQ(aInfo[n]) + Chr(9)
    next
 
    cLine += CRLF
@@ -932,7 +932,7 @@ Function SR_Deserialize(uData)
 * cTemp := udata
 * altd()
 * cHex := SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10))))
-* cdes := sr_Deserialize1( cHex)
+* cdes := sr_Deserialize1(cHex)
 * tracelog(udata,chex,cdes)
 * return cdes
 Return SR_Deserialize1(SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10)))))
@@ -2032,5 +2032,5 @@ FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
    ENDIF
 RETURN NIL            
 
-FUNCTION SR_Deserialize1( cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock )
+FUNCTION SR_Deserialize1(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
 return HB_Deserialize(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
