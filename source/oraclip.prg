@@ -33,8 +33,8 @@ return OraSel1(n,@aret,csql,adata)
 function  OraSeek(nCursor, aData, cTable, cWhere, aVarSust)
 Local cSql := "select * from " + cTable
 Local nRet
-if !empty(cWhere ) 
-cSql += " where " + cWhere 
+if !empty(cWhere )
+cSql += " where " + cWhere
 endif
 aOraClipCursors[nCursor]["oraseek"] := .T.
 nRet := OraSel1(nCursor,@aData,csql,aVarSust)
@@ -52,7 +52,7 @@ Local aDataRet
 Local cursor
 Local lRowId :=.F.
 
-Local cTmpFile  
+Local cTmpFile
 Local nArea := SelecT()
 Local aDb,aTmp
 local ncount :=0
@@ -61,8 +61,8 @@ SR_SetRDDTemp("ADT")
 closecursor(n)
 aOraClipCursors[n]["cursoropen"] := .F.
 if adata == NIL
-   
-   if "ROWID" in csql
+
+   if "ROWID" $ csql
       aOraClipCursors[n]["data"] := {}
       nError := sr_getconnection():exec(csql, , .T., @aret)
       lRowId := .T.
@@ -70,8 +70,8 @@ if adata == NIL
       nError := ExecuteSql(csql, @cursor, n) // sr_getconnection():exec(csql,,.T.,@aret)
       // aOraClipCursors[n]["ret"] := aOraClipCursors[n]["data"]
    endif
-   
-   if nError == 0 
+
+   if nError == 0
       aOraClipCursors[n]["cursoropen"] := .T.   
       aOraClipCursors[n]["cursor"] := cursor
       aOraClipCursors[n]["start"] := 1
@@ -88,11 +88,11 @@ if adata == NIL
          aOraClipCursors[n]["eof"] := .F.
            
          for each atmp in aOraClipCursors[n]["aFields"]
-         /*if "TO_CHAR(" in UPPER(atmp[1])
+         /*if "TO_CHAR(" $ UPPER(atmp[1])
             atmp[1]:=substr(atmp[1],at("TO_DATE(",upper(atmp[1]))+9)
             atmp[1]:=substr(atmp[1],1,at(",",upper(atmp[1]))-1)
          endif
-         if "DECODE(" in UPPER(atmp[1])
+         if "DECODE(" $ UPPER(atmp[1])
             atmp[1]:=substr(atmp[1],at("DECODE(",upper(atmp[1]))+8)
             atmp[1]:=substr(atmp[1],1,at(",",upper(atmp[1]))-1)
             ENDIF
@@ -149,7 +149,7 @@ for i:=1 to len(aData)
       cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
 next
 *    nError:= sr_getconnection():exec(csql,,.T.,@aret)
-   if "ROWID"    in csql
+   if "ROWID" $ csql
       aOraClipCursors[n]["data"]:={}
    nError:= sr_getconnection():exec(csql,,.T.,@aret)
       lRowId :=.T.
@@ -184,11 +184,11 @@ nlasterror :=0
          endif
          for each atmp in aOraClipCursors[n]["aFields"]
          /*
-         if "TO_CHAR(" in atmp[1]
+         if "TO_CHAR(" $ atmp[1]
          atmp[1]:=substr(atmp[1],at("TO_DATE(",upper(atmp[1]))+9)
          atmp[1]:=substr(atmp[1],1,at(",",upper(atmp[1]))-1)
          endif
-            if "DECODE(" in UPPER(atmp[1])
+            if "DECODE(" $ UPPER(atmp[1])
             atmp[1]:=substr(atmp[1],at("DECODE(",upper(atmp[1]))+8)
             atmp[1]:=substr(atmp[1],1,at(",",upper(atmp[1]))-1)
             ENDIF

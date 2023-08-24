@@ -310,8 +310,8 @@ Return ( ::nRetCode := FBRollBackTransaction3(::hEnv) )
 
 METHOD ExecuteRaw(cCommand) CLASS SR_FIREBIRD3
    local nRet
- 
-   If upper(left(ltrim(cCommand), 6)) == "SELECT" .OR. "RETURNING" in upper(alltrim(cCommand))
+
+   If upper(left(ltrim(cCommand), 6)) == "SELECT" .OR. "RETURNING" $ upper(alltrim(cCommand))
       nRet := FBExecute3(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .T.
    Else

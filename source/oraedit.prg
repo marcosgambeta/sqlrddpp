@@ -165,7 +165,7 @@ SR_SetRDDTemp("ADT")
     cCols := ' * '
   else
      FOR EACH i IN axColumns
-        if "||" in I
+        if "||" $ I
             
            cTmp := "TMP"+strzero(nApeStart++,3)
            cCols += i+" as "+cTmp+","          
@@ -209,13 +209,13 @@ next
 * nat := at
 endif
 if !empty(cWhere) 
-   IF "ORDER BY" in upper(cwhere)
-      if " DESC" in upper(cwhere)
+   IF "ORDER BY" $ upper(cwhere)
+      if " DESC" $ upper(cwhere)
          lDescIndex := .T.
       endif   
       nPosOrderBY := AT("ORDER BY" , upper(cwhere))
    
-      if !"WHERE " in upper(cWhere) .AND. nPosOrderBY >1
+      if !"WHERE " $ upper(cWhere) .AND. nPosOrderBY >1
          cSql += " where " + cWhere
          cCount += " where  " + cWhere
 
@@ -451,7 +451,7 @@ nLowerBound +=nHigerBound
 
        nIndex := HB_EnumIndex()
        cTmp := ""
-       if "||" in i
+       if "||" $ i
           n := Ascan(atempcols, { |x| x[3] == i })
           if n > 0
              cTmp := atempcols[n,1]
@@ -820,7 +820,7 @@ Local aValues :={}
         insertupdated(cAlias ,cTable)
         otbr:refreshall()
 *       cSql := sr_getconnection():cLastcomm
-*       if upper(ctable) in upper(cSql) .AND. "INSERT" in upper(cSql )
+*       if upper(ctable) $ upper(cSql) .AND. "INSERT" $ upper(cSql )
 *          cValues := substr(cSql,at("VALUES",upper(cSql)))
 *          cSql := strtran(csql,cvalues,'')
 *          cvalues := alltrim(values)
@@ -1418,7 +1418,7 @@ if len(aFields) > 0
       for each aTemp in aFields
       nPos := ascan(afield,{|x| upper(x) == upper(aTemp)})
       if nPos >0
-         if "TO_DATE(" in upper(aval[npos])
+         if "TO_DATE(" $ upper(aval[npos])
             aval[nPos]:=substr(aval[npos],at("TO_DATE(",upper(aval[nPos]))+8)
             aval[npos] := strtran(aval[npos],"'",'')
             aval[npos] :=stod(aval[npos])
@@ -1608,7 +1608,7 @@ STATIC FUNCTION Skipped(nRecs, lAppend)
          EndIf
          ThreadSleep(500)
       EndDo
-      if "INSERT" in upper(cComm)
+      if "INSERT" $ upper(cComm)
       SQLLOG->( dbAppend() )
       Replace SQLLOG->DATA         with Date()
       Replace SQLLOG->HORA         with Time()

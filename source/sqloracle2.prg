@@ -381,7 +381,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
    If upper(left(ltrim(cCommand), 6)) == "SELECT"
       ::hStmt := ::hDBC
       
-      if !empty(::cSqlPrepare) .AND. len(::aBindParameters) > 0 .AND. ":1" in ::cSqlPrepare
+      if !empty(::cSqlPrepare) .AND. len(::aBindParameters) > 0 .AND. ":1" $ ::cSqlPrepare
       
          ::lBind := .F.
          
