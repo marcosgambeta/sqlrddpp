@@ -1185,7 +1185,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
    RECOVER USING nErrorId
 
-      If valtype(nErrorId) == "O"
+      If HB_ISOBJECT(nErrorId)
          Eval(bError, nErrorId)
       Else
          SR_SQLParseError(, , "", nErrorId, , bError)
@@ -1535,47 +1535,49 @@ Return nCode
 
 /*------------------------------------------------------------------------*/
 
-Function SR_TableAttr(cTableName, nSystemID)
+FUNCTION SR_TableAttr(cTableName, nSystemID)
 
    /* Translates "c:\data\accounts\chart.dbf" to "DATA_ACCONTS_CHART" */
 
-   local aRet, cOwner := "",  cSlash
+   LOCAL aRet
+   LOCAL cOwner := ""
+   LOCAL cSlash
 
-   if cTableName[2] == ":"
+   IF substr(cTableName, 2, 1) == ":"
       /* Remove drive letter */
       cTableName := SubStr(cTableName, 3)
-   endif
+   ENDIF
 
-   if "\" $ cTableName .OR. "/" $ cTableName    // This may keep compatible with xHB 1.2
-      if "/" $ cTableName
+   IF "\" $ cTableName .OR. "/" $ cTableName    // This may keep compatible with xHB 1.2
+      IF "/" $ cTableName
         cSlash := "/"
-      Else
+      ELSE
         cSlash := "\"
-      EndIf
-      if SubStr(cTableName, 2, rat(cSlash, cTableName) - 2) == CurDir()
+      ENDIF
+      IF SubStr(cTableName, 2, rat(cSlash, cTableName) - 2) == CurDir()
          cTableName := SubStr(cTableName, Rat(cSlash, cTableName) + 1)
-      EndIf
-   EndIf
+      ENDIF
+   ENDIF
 
    cTableName := strtran(alltrim(lower(cTableName)), ".dbf", "_dbf")
    cTableName := strtran(cTableName, ".ntx", "")
    cTableName := strtran(cTableName, ".cdx", "")
    cTableName := strtran(cTableName, "\", "_")
-   if cTableName[1] == "/"
+   IF substr(cTableName, 1, 1) == "/"
       cTableName := SubStr(cTableName, 2)
-   endif
+   ENDIF
    cTableName := strtran(cTableName, "/", "_")
    cTableName := strtran(cTableName, ".", "_")
    cTableName := alltrim(cTableName)
 
-   if len(cTableName) > 30
+   IF len(cTableName) > 30
       cTableName := SubStr(cTableName, len(cTableName) - 30 + 1)
-   endif
+   ENDIF
 
    cOwner := SR_SetGlobalOwner()
-   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
+   IF (!Empty(cOwner)) .AND. right(cOwner, 1) != "."
       cOwner += "."
-   EndIf
+   ENDIF
 
    aRet := { upper(cTableName),;
              {},;
@@ -1593,53 +1595,54 @@ Function SR_TableAttr(cTableName, nSystemID)
              ,;
              cOwner + SR_DBQUALIFY(cTableName, nSystemID) }
 
-Return aRet
+RETURN aRet
 
 /*------------------------------------------------------------------------*/
 
-Function SR_IndexAttr(cTableName, nSystemID)
+FUNCTION SR_IndexAttr(cTableName, nSystemID)
 
    /* Translates "c:\data\accounts\chart.dbf" to "DATA_ACCONTS_CHART" */
 
-   local aRet, cSlash
+   LOCAL aRet
+   LOCAL cSlash
 
-   (nSystemID)
+   HB_SYMBOL_UNUSED(nSystemID)
 
-   if cTableName[2] == ":"
+   IF substr(cTableName, 2, 1) == ":"
       /* Remove drive letter */
       cTableName := SubStr(cTableName, 3)
-   endif
+   ENDIF
 
-   if "\" $ cTableName .OR. "/" $ cTableName    // This may keep compatible with xHB 1.2
-      if "/" $ cTableName
+   IF "\" $ cTableName .OR. "/" $ cTableName    // This may keep compatible with xHB 1.2
+      IF "/" $ cTableName
         cSlash := "/"
-      Else
+      ELSE
         cSlash := "\"
-      EndIf
-      if SubStr(cTableName, 2, rat(cSlash, cTableName) - 2) == CurDir()
+      ENDIF
+      IF SubStr(cTableName, 2, rat(cSlash, cTableName) - 2) == CurDir()
          cTableName := SubStr(cTableName, Rat(cSlash, cTableName) + 1)
-      EndIf
-   EndIf
+      ENDIF
+   ENDIF
 
    cTableName := strtran(alltrim(lower(cTableName)), ".dbf", "_dbf")
    cTableName := strtran(cTableName, ".ntx", "")
    cTableName := strtran(cTableName, ".cdx", "")
    cTableName := strtran(cTableName, "\", "_")
-   if cTableName[1] == "/"
+   IF substr(cTableName, 1, 1) == "/"
       cTableName := SubStr(cTableName, 2)
-   endif
+   ENDIF
    cTableName := strtran(cTableName, "/", "_")
    cTableName := strtran(cTableName, ".", "_")
    cTableName := alltrim(cTableName)
 
-   if len(cTableName) > 30
+   IF len(cTableName) > 30
       cTableName := SubStr(cTableName, len(cTableName) - 30 + 1)
-   endif
+   ENDIF
 
    aRet := { upper(cTableName), {}, "", TABLE_INFO_RELATION_TYPE_OUTER_JOIN,;
              SR_SetGlobalOwner(), .F., "", .T., .T., .T., .F.,, }
 
-Return aRet
+RETURN aRet
 
 /*------------------------------------------------------------------------*/
 
