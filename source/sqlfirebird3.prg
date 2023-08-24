@@ -65,18 +65,18 @@ CLASS SR_FIREBIRD3 FROM SR_CONNECTION
 
    Data aCurrLine
 
-   METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit )
+   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
    METHOD End()
    METHOD LastError()
    METHOD Commit()
    METHOD RollBack()
-   METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName )
-   METHOD ExecuteRaw( cCommand )
+   METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
+   METHOD ExecuteRaw(cCommand)
    METHOD AllocStatement()
-   METHOD FetchRaw( lTranslate, aFields )
-   METHOD FieldGet( nField, aFields, lTranslate )
+   METHOD FetchRaw(lTranslate, aFields)
+   METHOD FieldGet(nField, aFields, lTranslate)
    METHOD Getline(aFields, lTranslate, aArray)
-   METHOD MoreResults( aArray, lTranslate )  
+   METHOD MoreResults(aArray, lTranslate)  
 ENDCLASS
 
 /*------------------------------------------------------------------------*/
@@ -100,14 +100,14 @@ METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_FIREBIRD3
    EndIf
 
    For i = 1 to len(aArray)
-      aArray[i] := ::aCurrLine[ i ]
+      aArray[i] := ::aCurrLine[i]
    Next
 
 Return aArray
 
 /*------------------------------------------------------------------------*/
 
-METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_FIREBIRD3
+METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_FIREBIRD3
 
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
@@ -119,7 +119,7 @@ return ::aCurrLine[nField]
 
 /*------------------------------------------------------------------------*/
 
-METHOD FetchRaw( lTranslate, aFields ) CLASS SR_FIREBIRD3
+METHOD FetchRaw(lTranslate, aFields) CLASS SR_FIREBIRD3
 
    ::nRetCode := SQL_ERROR
    DEFAULT aFields    := ::aFields
@@ -173,14 +173,14 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F.)
       EndIf
       If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         return nil
+         return NIL
       EndIf
    EndIf
 
    if ( ::nRetCode := FBNumResultCols3( ::hEnv, @nFields ) ) != SQL_SUCCESS
       ::RunTimeErr("", "FBNumResultCols Error" + chr(13)+chr(10)+ chr(13)+chr(10)+;
                "Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
-      return nil
+      return NIL
    endif
 
    aFields   := Array(nFields)
@@ -193,7 +193,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       if ( ::nRetCode := FBDescribeCol3( ::hEnv, n, @cName, @nType, @nLen, @nDec, @nNull ) ) != SQL_SUCCESS
          ::RunTimeErr("", "FBDescribeCol Error" + chr(13)+chr(10)+ ::LastError() + chr(13)+chr(10)+;
                           "Last command sent to database : " + ::cLastComm )
-         return nil
+         return NIL
       else
          _nLen := nLen
          _nDec := nDec
@@ -209,7 +209,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          EndIf
 
          If cType == "U"
-            ::RuntimeErr( "", SR_Msg(21) + cName + " : " + str(nType) )
+            ::RuntimeErr("", SR_Msg(21) + cName + " : " + str(nType))
          Else
             aFields[n] := { cName, cType, nLenField, nDec, nNull >= 1 , nType,, n, _nDec,, }
          EndIf
@@ -230,14 +230,14 @@ return aFields
 METHOD LastError() CLASS SR_FIREBIRD3
 
    local cMsgError, nType := 0
-   cMsgError := FBError( ::hEnv, @nType )
+   cMsgError := FBError(::hEnv, @nType)
 
 return alltrim(cMsgError) + " - Native error code " + AllTrim(str(nType))
 
 /*------------------------------------------------------------------------*/
 
-METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
-            cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit ) CLASS SR_FIREBIRD3
+METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, ;
+            cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_FIREBIRD3
 
    local nRet, hEnv, cSystemVers
    
@@ -308,7 +308,7 @@ Return ( ::nRetCode := FBRollBackTransaction3( ::hEnv ) )
 
 /*------------------------------------------------------------------------*/
 
-METHOD ExecuteRaw( cCommand ) CLASS SR_FIREBIRD3
+METHOD ExecuteRaw(cCommand) CLASS SR_FIREBIRD3
    local nRet
  
    If upper(left(ltrim(cCommand), 6)) == "SELECT" .OR. "RETURNING" in upper(alltrim(cCommand))
@@ -324,7 +324,7 @@ Return nRet
 /*------------------------------------------------------------------------*/
 
 
-METHOD MoreResults( aArray, lTranslate )  CLASS SR_FIREBIRD3
+METHOD MoreResults(aArray, lTranslate)  CLASS SR_FIREBIRD3
 
    local nRet, i, n,nvalue := -1
    Static aFieldsMore

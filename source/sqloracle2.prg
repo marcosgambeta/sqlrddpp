@@ -70,31 +70,31 @@ CLASS SR_ORACLE2 FROM SR_CONNECTION
    Data aBinds
    Data aCurrLine
 
-   METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit ) CONSTRUCTOR
+   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CONSTRUCTOR
    METHOD End()
    METHOD LastError()
    METHOD Commit()
    METHOD RollBack()
-   METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName )
-   METHOD ExecuteRaw( cCommand )
+   METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
+   METHOD ExecuteRaw(cCommand)
    METHOD AllocStatement()
    METHOD FreeStatement()
-   METHOD FetchRaw( lTranslate, aFields )
-   METHOD FieldGet( nField, aField, lTranslate )
-   METHOD MoreResults( aArray, lTranslate )
+   METHOD FetchRaw(lTranslate, aFields)
+   METHOD FieldGet(nField, aField, lTranslate)
+   METHOD MoreResults(aArray, lTranslate)
    METHOD BINDPARAM(lStart,lIn,cRet,nLen)
-   METHOD ConvertParams( c )
-   METHOD WriteMemo( cFileName, nRecno, cRecnoName, aColumnsAndData )
+   METHOD ConvertParams(c)
+   METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)
    METHOD Getline(aFields, lTranslate, aArray)
    METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, lNoRecno, cRecnoName, cDeletedName, lTranslate, nLogMode)
-   METHOD ExecSP( cComm, aReturn, nParam )
+   METHOD ExecSP(cComm, aReturn, nParam)
    
    
 ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD MoreResults( aArray, lTranslate ) CLASS SR_ORACLE2
+METHOD MoreResults(aArray, lTranslate) CLASS SR_ORACLE2
    (aArray)
    (lTranslate)
 Return -1
@@ -120,14 +120,14 @@ METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_ORACLE2
    EndIf
 
    For i = 1 to len(aArray)
-      aArray[i] := ::aCurrLine[ i ]
+      aArray[i] := ::aCurrLine[i]
    Next
 
 Return aArray
 
 /*------------------------------------------------------------------------*/
 
-METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_ORACLE2
+METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ORACLE2
 
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
@@ -139,7 +139,7 @@ return ::aCurrLine[nField]
 
 /*------------------------------------------------------------------------*/
 
-METHOD FetchRaw( lTranslate, aFields ) CLASS SR_ORACLE2
+METHOD FetchRaw(lTranslate, aFields) CLASS SR_ORACLE2
 
    ::nRetCode := SQL_ERROR
    DEFAULT aFields    := ::aFields
@@ -159,7 +159,7 @@ Return ::nRetCode
 METHOD FreeStatement() CLASS SR_ORACLE2
 
    if ::hDBC != NIL .AND. ::hstmt != NIL
-      if SQLO2_CLOSESTMT( ::hDBC ) != SQL_SUCCESS
+      if SQLO2_CLOSESTMT(::hDBC) != SQL_SUCCESS
          ::RunTimeErr("", "SQLO2_CLOSESTMT error" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
       endif
       ::hstmt := NIL
@@ -177,7 +177,7 @@ METHOD AllocStatement() CLASS SR_ORACLE2
 
    If ::lSetNext
       ::lSetNext  := .F.
-      nRet := ::SetStmtOptions( ::nSetOpt, ::nSetValue )
+      nRet := ::SetStmtOptions(::nSetOpt, ::nSetValue)
       If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          SR_MsgLogFile(SR_Msg(23) + " (" + alltrim(str(nRet)) + ") : " + ::LastError())
       EndIf
@@ -210,11 +210,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       EndIf
 
       If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         return nil
+         return NIL
       EndIf
    EndIf
 
-   ::nFields := SQLO2_NUMCOLS( ::hDBC )
+   ::nFields := SQLO2_NUMCOLS(::hDBC)
 
    If ::nFields < 0
          ::RunTimeErr("", "SQLO2_NUMCOLS Error" + chr(13)+chr(10)+ str(::nFields) + chr(13)+chr(10)+;
@@ -230,7 +230,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       if ( ::nRetCode := SQLO2_DESCRIBECOL(::hDBC, n, @cName, @nType, @nLen, @nDec, @nNull) ) != SQL_SUCCESS
          ::RunTimeErr("", "SQLDescribeCol Error" + chr(13)+chr(10)+ ::LastError() + chr(13)+chr(10)+;
                           "Last command sent to database : " + ::cLastComm )
-        return nil
+        return NIL
       else
 
          _nLen := nLen
@@ -251,7 +251,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          EndIf
 
          If cType == "U"
-            ::RuntimeErr( "", SR_Msg(21) + cName + " : " + str(nType) )
+            ::RuntimeErr("", SR_Msg(21) + cName + " : " + str(nType))
          Else
             aFields[n] := { cName, cType, nLenField, nDec, nNull, nType, , n, , , }
          EndIf
@@ -271,18 +271,18 @@ return aFields
 
 METHOD LastError() CLASS SR_ORACLE2
 
-return SQLO2_GETERRORDESCR( ::hDBC ) + " retcode: " + sr_val2Char( ::nRetCode) + " - " + AllTrim(str(SQLO2_GETERRORCODE(::hDBC)))
+return SQLO2_GETERRORDESCR(::hDBC) + " retcode: " + sr_val2Char(::nRetCode) + " - " + AllTrim(str(SQLO2_GETERRORCODE(::hDBC)))
 
 /*------------------------------------------------------------------------*/
 
-METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
-            cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit ) CLASS SR_ORACLE2
+METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
+            cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_ORACLE2
 
    local hEnv := 0, hDbc := 0
    local nret, cVersion := "", cSystemVers := "", cBuff := ""
    Local aRet := {}
    Local aVersion
-   Local cmatch,nstart,nlen,s_reEnvVar := HB_RegexComp( "(\d+\.\d+\.\d+)" )
+   Local cmatch,nstart,nlen,s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
 //   Local cString
 
 
@@ -302,11 +302,11 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
 
    
    ::hStmt := NIL
-*    nret    :=  SQLO2_CONNECT( ::cUser + "/" + ::cPassWord + "@" + ::cDtb, @hDbc )
+*    nret    :=  SQLO2_CONNECT(::cUser + "/" + ::cPassWord + "@" + ::cDtb, @hDbc)
    if ::cApp != NIL
-      nret    :=  SQLO2_CONNECT( ::cDtb,::cUser , ::cPassWord , @hDbc, .T. )
+      nret    :=  SQLO2_CONNECT(::cDtb,::cUser , ::cPassWord , @hDbc, .T.)
    else
-      nret    :=  SQLO2_CONNECT( ::cDtb,::cUser , ::cPassWord , @hDbc, .F. )
+      nret    :=  SQLO2_CONNECT(::cDtb,::cUser , ::cPassWord , @hDbc, .F.)
    endif
    if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
@@ -328,9 +328,9 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    aRet :={{cSystemVers}}
    cMatch := HB_AtX( s_reEnvVar, cSystemVers, , @nStart, @nLen )         
    if !empty(cMatch )
-      aVersion      := hb_atokens( cMatch, "." )
+      aVersion      := hb_atokens(cMatch, ".")
    else
-      aVersion      := hb_atokens( strtran(Upper(aRet[1,1]),"ORACLE ",""), "." )
+      aVersion      := hb_atokens(strtran(Upper(aRet[1,1]),"ORACLE ",""), ".")
    endif
    
    
@@ -351,7 +351,7 @@ METHOD End() CLASS SR_ORACLE2
    Local nRet
 
    IF !Empty(::hDbc)
-     IF  ( nRet := SQLO2_DISCONNECT( ::hDbc )) != SQL_SUCCESS
+     IF  ( nRet := SQLO2_DISCONNECT(::hDbc)) != SQL_SUCCESS
         SR_MsgLogFile("Error disconnecting : " + str(nRet) + CRLF + ::LastError())
      EndIf
    ENDIF
@@ -359,13 +359,13 @@ METHOD End() CLASS SR_ORACLE2
    ::hEnv  = 0
    ::hDbc  = NIL
 
-return nil
+return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD Commit( lNoLog ) CLASS SR_ORACLE2
-   Super:Commit( lNoLog )
-RETURN (::nRetcode := SQLO2_COMMIT( ::hdbc ) )
+METHOD Commit(lNoLog) CLASS SR_ORACLE2
+   Super:Commit(lNoLog)
+RETURN (::nRetcode := SQLO2_COMMIT(::hdbc) )
 
 /*------------------------------------------------------------------------*/
 
@@ -375,7 +375,7 @@ Return ( ::nRetCode := SQLO2_ROLLBACK(::hDbc) )
 
 /*------------------------------------------------------------------------*/
 
-METHOD ExecuteRaw( cCommand ) CLASS SR_ORACLE2
+METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
    local nRet, i
 
    If upper(left(ltrim(cCommand), 6)) == "SELECT"
@@ -388,7 +388,7 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_ORACLE2
           ORACLEPREPARE2(::hDBC,::cSqlPrepare,.T.)
           ORACLEBINDALLOC2( ::hDBC, len(::aBindParameters)  )
           for i :=1 to len (::aBindParameters )
-          if HB_ISARRAY(::aBindParameters[ i ])
+          if HB_ISARRAY(::aBindParameters[i])
              if valtype(::aBindParameters[i,2]) == "C"
                 ORACLEINBINDPARAM2( ::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)          
              elseif HB_ISDATE(::aBindParameters[i,2])
@@ -422,7 +422,7 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_ORACLE2
       ::lResultSet := .T.
    Else
       ::hStmt := NIL
-      nRet := SQLO2_EXECDIRECT( ::hDBC, cCommand )
+      nRet := SQLO2_EXECDIRECT(::hDBC, cCommand)
       ::lResultSet := .F.
    EndIf
 
@@ -430,11 +430,11 @@ Return nRet
 
 /*------------------------------------------------------------------------*/
 
-Static Function ProcessParams( cSql, nBound )
+Static Function ProcessParams(cSql, nBound)
    Local nPos
    Local cTemp := SubStr(cSql, 1, AT("?", cSql) - 1)
-   Local lHasParen := Rat( ")", cSql ) > 0
-   Local lHasPointComma := Rat( ";", cSql ) > 0
+   Local lHasParen := Rat(")", cSql) > 0
+   Local lHasPointComma := Rat(";", cSql) > 0
    Local aItens
    Local cOriginal := cTemp +" "
    Local xParam
@@ -484,21 +484,21 @@ Return self
 
 /*------------------------------------------------------------------------*/
 
-METHOD ConvertParams( c )  CLASS SR_ORACLE2
+METHOD ConvertParams(c)  CLASS SR_ORACLE2
    Local nBound
-   local cRet := ProcessParams( c ,@nBound)
+   local cRet := ProcessParams(c, @nBound)
 RETURN cRet
 
 /*------------------------------------------------------------------------*/
 
-METHOD WriteMemo( cFileName, nRecno, cRecnoName, aColumnsAndData )  CLASS SR_ORACLE2
+METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)  CLASS SR_ORACLE2
 
 Return OracleWriteMemo2( ::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData )
 
 /*------------------------------------------------------------------------*/
 
 
-METHOD ExecSP( cComm, aReturn, nParam, aType )  CLASS SR_ORACLE2
+METHOD ExecSP(cComm, aReturn, nParam, aType)  CLASS SR_ORACLE2
    Local i, n
    Local nError := 0
    
@@ -521,13 +521,13 @@ METHOD ExecSP( cComm, aReturn, nParam, aType )  CLASS SR_ORACLE2
    Next
     
    TRY
-      nError := OracleExecDir( ::hDbc )
+      nError := OracleExecDir(::hDbc)
    CATCH 
       nerror := - 1
    End
    
    If nError < 0
-      ::RunTimeErr("", str(SQLO2_GETERRORCODE(::hDbc), 4) + " - " + SQLO2_GETERRORDESCR( ::hDbc ) ) 
+      ::RunTimeErr("", str(SQLO2_GETERRORCODE(::hDbc), 4) + " - " + SQLO2_GETERRORDESCR(:hDbc) ) 
    Else
    //If nError >= 0
         
@@ -538,7 +538,7 @@ METHOD ExecSP( cComm, aReturn, nParam, aType )  CLASS SR_ORACLE2
    EndIf      
 
    ORACLEFREEBIND(::hdbc)
-   CLOSECURSOR( ::hDbc )
+   CLOSECURSOR(::hDbc)
    
 Return nError
    
@@ -576,7 +576,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    
    TRY
       nError := ORACLE_PROCCURSOR2( ::hDbc, cComm, cVar )  
-      //nError := ORACLE_BINDCURSOR( ::hDbc, cComm, cVar )
+      //nError := ORACLE_BINDCURSOR(::hDbc, cComm, cVar)
       ::cLastComm := cComm
    CATCH  
       nError := - 1
@@ -585,16 +585,16 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    If nError < 0
       If lFetch
        //  ::RunTimeErr("", "SQLExecDirect Error Erro na STORE PROCEDURE" ) 
-       ::RunTimeErr("", str(SQLO2_GETERRORCODE(::hDbc), 4) + " - " + SQLO2_GETERRORDESCR( ::hDbc ) + ::cLastComm )
+       ::RunTimeErr("", str(SQLO2_GETERRORCODE(::hDbc), 4) + " - " + SQLO2_GETERRORDESCR(::hDbc) + ::cLastComm )
       EndIf  
    EndIf      
     
    If !Empty(cFile)
-      HB_FNameSplit( cFile,, @cFileTemp )
+      HB_FNameSplit(cFile, , @cFileTemp)
       DEFAULT cAlias        := cFileTemp
    EndIf
 
-   //nCols := SQLO2_NUMCOLS( ::hDbc )
+   //nCols := SQLO2_NUMCOLS(::hDbc)
  
    //For i := 1 to nCols
    //   ORACLEBINDALLOC(::hDbc, i)
@@ -607,7 +607,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
        
          aFields := ::IniFields(.F.,,,,,cRecnoName, cDeletedName )
 
-         if Select( cAlias ) == 0
+         if Select(cAlias) == 0
             aDb := {}
             If lNoRecno
                For i = 1 to len(aFields)
@@ -635,17 +635,17 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
             If nFieldRec == NIL
                For i = 1 to len(aFields)
-                  FieldPut( i, ::FieldGet( i, aFields, lTranslate ) )
+                  FieldPut(i, ::FieldGet(i, aFields, lTranslate))
                Next
             Else
                For i = 1 to len(aFields)
                   Do Case
                   Case i = nFieldRec
-                     ::FieldGet( i, aFields, lTranslate )
+                     ::FieldGet(i, aFields, lTranslate)
                   Case i > nFieldRec
-                     FieldPut( i-1, ::FieldGet( i, aFields, lTranslate ) )
+                     FieldPut(i - 1, ::FieldGet(i, aFields, lTranslate))
                   Case i < nFieldRec
-                     FieldPut( i, ::FieldGet( i, aFields, lTranslate ) )
+                     FieldPut(i, ::FieldGet(i, aFields, lTranslate))
                   EndCase
                Next
             EndIf
@@ -676,14 +676,14 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             nLinesMemo := 0
 
             For i = 1 to len(aFields)
-               cCampo := ::FieldGet( i, aFields, lTranslate )
+               cCampo := ::FieldGet(i, aFields, lTranslate)
                If aFields[i,2] == "M"
                   nLenMemo   := Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30))
-                  nLinesMemo := Max(mlCount( cCampo, nLenMemo ), nLinesMemo)
+                  nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
                   cEste += memoline(cCampo,nLenMemo,1) + " "
                   aMemo[i] := cCampo
                Else
-                  cEste += PadR(SR_Val2Char( cCampo ), Max(len(aFields[i,1]), aFields[i,3])) + " "
+                  cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i,1]), aFields[i,3])) + " "
                EndIf
             Next
 
@@ -725,7 +725,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          nBlocks := 1
          n       := 0
-         aFields := ::IniFields( .F.,,,,,cRecnoName, cDeletedName )
+         aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
          While (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
             n ++
@@ -752,7 +752,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
             aArray[n] := array(len(aFields))
             For i = 1 to len(aFields)
-               aArray[n,i] := ::FieldGet( i, aFields, lTranslate )
+               aArray[n,i] := ::FieldGet(i, aFields, lTranslate)
             Next
             If n > nMaxRecords
                Exit
@@ -763,7 +763,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    
    Endif
  
-   nerror:=SQLO2_CLOSESTMT( ::hDbc )
+   nerror:=SQLO2_CLOSESTMT(::hDbc)
    
    If nError < 0
       If lFetch
@@ -789,7 +789,7 @@ function  ExecuteSP2( cComm, aReturn  )
    OracleinBindParam(oConn:hdbc, 1, -1, 12, 0)      
  
    TRY
-      nError := OracleExecDir( oConn:hDbc )
+      nError := OracleExecDir(oConn:hDbc)
    CATCH 
       nerror := - 1
    End
@@ -800,7 +800,7 @@ function  ExecuteSP2( cComm, aReturn  )
    
   
    ORACLEFREEBIND(oConn:hdbc)
-   CLOSECURSOR( oConn:hDbc )
+   CLOSECURSOR(oConn:hDbc)
     
 Return nError
 /*

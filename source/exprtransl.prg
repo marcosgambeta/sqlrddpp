@@ -194,7 +194,7 @@ METHOD new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
    ELSE
       ::_oDefaultContext := pWorkarea
    ENDIF
-   ::lSimplifyCondition := pSimplifyCondition == nil .OR. pSimplifyCondition
+   ::lSimplifyCondition := pSimplifyCondition == NIL .OR. pSimplifyCondition
    ::lFixVariables := pFixVariables != NIL .AND. pFixVariables
    ::lIndexExpression := pIndexExpression == NIL .OR. pIndexExpression
    ::_oExpressionSimplifier := ExpressionSimplifier():new(::lFixVariables, .F., ::_oDefaultContext:cAlias)

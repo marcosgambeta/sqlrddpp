@@ -62,18 +62,18 @@ CLASS SR_PGS FROM SR_CONNECTION
 
    Data aCurrLine
 
-   METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit )
+   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
    METHOD End()
    METHOD LastError()
    METHOD Commit()
    METHOD RollBack()
-   METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName )
-   METHOD ExecuteRaw( cCommand )
+   METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
+   METHOD ExecuteRaw(cCommand)
    METHOD AllocStatement()
    METHOD FreeStatement()
-   METHOD FetchRaw( lTranslate, aFields )
-   METHOD FieldGet( nField, aFields, lTranslate )
-   METHOD MoreResults( aArray, lTranslate )
+   METHOD FetchRaw(lTranslate, aFields)
+   METHOD FieldGet(nField, aFields, lTranslate)
+   METHOD MoreResults(aArray, lTranslate)
    METHOD Getline(aFields, lTranslate, aArray)
    METHOD GetAffectedRows()
 
@@ -81,7 +81,7 @@ ENDCLASS
 
 /*------------------------------------------------------------------------*/
 
-METHOD MoreResults( aArray, lTranslate )  CLASS SR_PGS
+METHOD MoreResults(aArray, lTranslate)  CLASS SR_PGS
    (aArray)
    (lTranslate)
 Return -1
@@ -107,14 +107,14 @@ METHOD Getline(aFields, lTranslate, aArray)  CLASS SR_PGS
    EndIf
 
    For i = 1 to len(aArray)
-      aArray[i] := ::aCurrLine[ i ]
+      aArray[i] := ::aCurrLine[i]
    Next
 
 Return aArray
 
 /*------------------------------------------------------------------------*/
 
-METHOD FieldGet( nField, aFields, lTranslate ) CLASS SR_PGS
+METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_PGS
 
    If ::aCurrLine == NIL
       DEFAULT lTranslate := .T.
@@ -126,7 +126,7 @@ return ::aCurrLine[nField]
 
 /*------------------------------------------------------------------------*/
 
-METHOD FetchRaw( lTranslate, aFields ) CLASS SR_PGS
+METHOD FetchRaw(lTranslate, aFields) CLASS SR_PGS
 
    ::nRetCode := SQL_ERROR
    DEFAULT aFields    := ::aFields
@@ -152,7 +152,7 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName ) CLASS SR_PGS
+METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_PGS
 
    local nFields := 0
    local nType := 0, nLen := 0, nNull := 0
@@ -172,17 +172,17 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F.)
       EndIf
       If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         return nil
+         return NIL
       EndIf
    EndIf
 
-   If PGSResultStatus( ::hStmt ) != SQL_SUCCESS
+   If PGSResultStatus(::hStmt) != SQL_SUCCESS
       ::RunTimeErr("", "SqlNumResultCols Error" + chr(13)+chr(10)+ chr(13)+chr(10)+;
                "Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
-      return nil
+      return NIL
    endif
 
-   nFields   := PGSCols( ::hStmt )
+   nFields   := PGSCols(::hStmt)
    ::nFields := nFields
 
    If (!Empty(cTable)) .AND. empty(cCommand)
@@ -194,9 +194,9 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
       If left(cTbl, 1) == ["]     // "
          cTbl := SubStr(cTbl, 2, len(cTbl) - 2)
       EndIf
-      aFields := PGSTableAttr( ::hDbc, cTbl, cOwner )
+      aFields := PGSTableAttr(::hDbc, cTbl, cOwner)
    Else
-      aFields := PGSQueryAttr( ::hDbc )
+      aFields := PGSQueryAttr(::hDbc)
    EndIf
 
    ::aFields := aFields
@@ -219,14 +219,14 @@ Return "(" + alltrim(str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
 
 /*------------------------------------------------------------------------*/
 
-METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
-            cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit ) CLASS SR_PGS
+METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
+            cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_PGS
 
    local hEnv := 0, hDbc := 0
    local nret, cVersion := "", cSystemVers := "", cBuff := ""
    Local aRet := {}
    Local aVersion
-   Local cmatch,nstart,nlen,s_reEnvVar := HB_RegexComp( "(\d+\.\d+\.\d+)" )
+   Local cmatch,nstart,nlen,s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
    Local cString
    
    
@@ -252,8 +252,8 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
       cConnect += " sslmode=prefer sslcert="+::sslcert +" sslkey="+::sslkey +" sslrootcert="+ ::sslrootcert +" sslcrl="+ ::sslcrl
    ENDIF   
    
-   hDbc := PGSConnect( cConnect )
-   nRet := PGSStatus( hDbc )
+   hDbc := PGSConnect(cConnect)
+   nRet := PGSStatus(hDbc)
 
    if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
@@ -270,9 +270,9 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
          cString := aRet[1,1]          
          cMatch := HB_AtX( s_reEnvVar, cString, , @nStart, @nLen )         
          if !empty(cMatch )
-            aVersion      := hb_atokens( cMatch, "." )
+            aVersion      := hb_atokens(cMatch, ".")
          else
-            aVersion      := hb_atokens( strtran(Upper(aRet[1,1]),"POSTGRESQL ",""), "." )
+            aVersion      := hb_atokens(strtran(Upper(aRet[1,1]),"POSTGRESQL ",""), ".")
          endif
       Else
          cSystemVers= "??"
@@ -312,7 +312,7 @@ return Self
 
 METHOD End() CLASS SR_PGS
 
-   ::Commit( .T. )
+   ::Commit(.T.)
 
    ::FreeStatement()
 
@@ -323,12 +323,12 @@ METHOD End() CLASS SR_PGS
    ::hEnv  = 0
    ::hDbc  = NIL
 
-return nil
+return NIL
 
 /*------------------------------------------------------------------------*/
 
-METHOD Commit( lNoLog ) CLASS SR_PGS
-   ::Super:Commit( lNoLog )
+METHOD Commit(lNoLog) CLASS SR_PGS
+   ::Super:Commit(lNoLog)
 Return ( ::nRetCode := ::exec("COMMIT;BEGIN", .F.) )
 
 /*------------------------------------------------------------------------*/
@@ -341,7 +341,7 @@ Return ::nRetCode
 
 /*------------------------------------------------------------------------*/
 
-METHOD ExecuteRaw( cCommand ) CLASS SR_PGS
+METHOD ExecuteRaw(cCommand) CLASS SR_PGS
 
    If upper(left(ltrim(cCommand), 6)) == "SELECT"
       ::lResultSet := .T.
@@ -350,7 +350,7 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_PGS
    EndIf
 
    ::hStmt := PGSExec(::hDbc, cCommand)
-Return PGSResultStatus( ::hStmt )
+Return PGSResultStatus(::hStmt)
 
 /*------------------------------------------------------------------------*/
 
@@ -369,7 +369,7 @@ METHOD AllocStatement() CLASS SR_PGS
 return SQL_SUCCESS
 
 METHOD GetAffectedRows()
-return PGSAFFECTEDROWS( ::hDbc )
+return PGSAFFECTEDROWS(::hDbc)
 
 /*------------------------------------------------------------------------*/
 
