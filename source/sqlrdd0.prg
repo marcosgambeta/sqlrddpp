@@ -1229,7 +1229,7 @@ Function SR_ExistTable(cTableName, cOwner, oCnn)
       EndIf
    EndIf
 
-   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
+   If (!Empty(cOwner)) .AND. right(cOwner, 1) != "."
       cOwner += "."
    EndIf
 
@@ -1560,7 +1560,7 @@ Function SR_DropIndex(cIndexName, cOwner)
       EndIf
    EndIf
 
-   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
+   If (!Empty(cOwner)) .AND. right(cOwner, 1) != "."
       cOwner += "."
    EndIf
 
@@ -1660,7 +1660,7 @@ Function SR_DropTable(cFileName, cOwner)
       EndIf
    EndIf
 
-   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
+   If (!Empty(cOwner)) .AND. right(cOwner, 1) != "."
       cOwner += "."
    EndIf
 
@@ -1730,7 +1730,7 @@ Function SR_RenameTable(cTable, cNewName, cOwner)
       EndIf
    EndIf
 
-   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
+   If (!Empty(cOwner)) .AND. right(cOwner, 1) != "."
       cOwner += "."
    EndIf
 
@@ -1818,7 +1818,7 @@ Function SR_SetToolsOwner(cOwner)
 
    If cOwner != NIL
       cToolsOwner := cOwner
-      If (!Empty(cOwner)) .AND. cToolsOwner[-1] != "."
+      If (!Empty(cOwner)) .AND. right(cToolsOwner, 1) != "."
          cToolsOwner += "."
       EndIf
    Else
