@@ -970,17 +970,17 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             If uData == SQL_PCODE_COLUMN_NAME
                SKIPFWD
-               aOuters[-1,3] := SR_DBQUALIFY(aOuters[-1,1], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
+               aOuters[len(aOuters),3] := SR_DBQUALIFY(aOuters[len(aOuters),1], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
             EndIf
 
-            aOuters[-1,3] += " = "
+            aOuters[len(aOuters),3] += " = "
 
             If uData == SQL_PCODE_COLUMN_ALIAS
                SKIPFWD
-               aOuters[-1,2] := uData
+               aOuters[len(aOuters),2] := uData
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -988,7 +988,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             If uData == SQL_PCODE_COLUMN_NAME
                SKIPFWD
-               aOuters[-1,3] += SR_DBQUALIFY(aOuters[-1,2], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
+               aOuters[len(aOuters),3] += SR_DBQUALIFY(aOuters[len(aOuters),2], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -1008,17 +1008,17 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             If uData == SQL_PCODE_COLUMN_NAME
                SKIPFWD
-               aOuters[-1,3] := SR_DBQUALIFY(aOuters[-1,1], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
+               aOuters[len(aOuters),3] := SR_DBQUALIFY(aOuters[len(aOuters),1], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
             EndIf
 
-            aOuters[-1,3] += " = "
+            aOuters[len(aOuters),3] += " = "
 
             If uData == SQL_PCODE_COLUMN_ALIAS
                SKIPFWD
-               aOuters[-1,2] := uData
+               aOuters[len(aOuters),2] := uData
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -1026,7 +1026,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             If uData == SQL_PCODE_COLUMN_NAME
                SKIPFWD
-               aOuters[-1,3] += SR_DBQUALIFY(aOuters[-1,2], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
+               aOuters[len(aOuters),3] += SR_DBQUALIFY(aOuters[len(aOuters),2], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
