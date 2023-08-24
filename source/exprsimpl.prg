@@ -183,7 +183,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
       END
       IF lEvaluated
          DO CASE
-         CASE valtype(newValue) == "C"
+         CASE HB_ISCHAR(newValue)
             newValue := "'" + newValue + "'"
             result := ValueExpression():new(oExpression:cContext, newValue)
          CASE HB_ISNUMERIC(newValue) .OR. HB_ISLOGICAL(newValue) .OR. valtype(newValue) == "U"

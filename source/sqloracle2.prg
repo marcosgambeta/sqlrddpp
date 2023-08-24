@@ -389,7 +389,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
           ORACLEBINDALLOC2( ::hDBC, len(::aBindParameters)  )
           for i :=1 to len (::aBindParameters )
           if HB_ISARRAY(::aBindParameters[i])
-             if valtype(::aBindParameters[i,2]) == "C"
+             if HB_ISCHAR(::aBindParameters[i,2])
                 ORACLEINBINDPARAM2( ::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)          
              elseif HB_ISDATE(::aBindParameters[i,2])
                 ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)                          
@@ -399,7 +399,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
                 ORACLEINBINDPARAM2( ::hDBC,i,2,15,0,::aBindParameters[i,2],.T.)          
              endif
           else
-             if valtype(::aBindParameters[i]) == "C"
+             if HB_ISCHAR(::aBindParameters[i])
                 ORACLEINBINDPARAM2( ::hDBC,i,-1,len(::aBindParameters[i]),0,::aBindParameters[i],.T.)          
              elseif HB_ISDATE(::aBindParameters[i])
                 ORACLEINBINDPARAM2( ::hDBC,i,8,::aBindParameters[i],0,::aBindParameters[i],.T.)                          

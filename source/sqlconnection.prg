@@ -1278,7 +1278,7 @@ function SR_SetTraceLog(cLog)
 
    cOld := oSql:cLowLevLogFile
 
-   If valtype(cLog) == "C"
+   If HB_ISCHAR(cLog)
       oSql:cLowLevLogFile := cLog
    EndIf
 

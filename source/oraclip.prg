@@ -1667,7 +1667,7 @@ Return nError
 
 
 static Function GerGhost(uDat)
-if valtype(uDat) == "C"
+if HB_ISCHAR(uDat)
    Return ""
 elseif HB_ISNUMERIC(uDat)   
    return 0

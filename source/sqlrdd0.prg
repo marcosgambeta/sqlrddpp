@@ -241,7 +241,7 @@ Return lSyntheticInd
 
 Function SR_SetSVIndex(cSet)
    Local cOld := cSynthetiVInd
-   If valtype(cSet) == "C"
+   If HB_ISCHAR(cSet)
       If len(cSet) != 3 .OR. " " $ cSet .OR. "." $ cSet
          SR_RuntimeErr("SR_SetSVIndex()", "Invalid parameter: " + cSet)
       EndIf
@@ -282,7 +282,7 @@ Function SR_SetTblSpaceData(cSet)
    Local cOld := cTblSpaceData
    Local oSql
 
-   If valtype(cSet) == "C"
+   If HB_ISCHAR(cSet)
       cTblSpaceData := cSet
    ElseIf Empty(cTblSpaceData)
       oSql := SR_GetConnection()
@@ -299,7 +299,7 @@ Function SR_SetTblSpaceIndx(cSet)
    Local cOld := cTblSpaceIndx
    Local oSql
 
-   If valtype(cSet) == "C"
+   If HB_ISCHAR(cSet)
       cTblSpaceIndx := cSet
    ElseIf Empty(cTblSpaceIndx)
       oSql := SR_GetConnection()
@@ -316,7 +316,7 @@ Function SR_SetTblSpaceLob(cSet)
    Local cOld := cTblSpaceLob
    Local oSql
 
-   If valtype(cSet) == "C"
+   If HB_ISCHAR(cSet)
       cTblSpaceLob := cSet
    ElseIf Empty(cTblSpaceLob)
       oSql := SR_GetConnection()
@@ -331,7 +331,7 @@ Return cOld
 
 Function SR_SetRDDTemp(cSet)
    Local cOld := cRDDTemp
-   If valtype(cSet) == "C"
+   If HB_ISCHAR(cSet)
       cRDDTemp := cSet
    EndIf
 Return cOld
@@ -1528,7 +1528,7 @@ Function SR_SetCollation(cName)
 
    Local cOld := cCollation
 
-   If valtype(cName) == "C"
+   If HB_ISCHAR(cName)
       cCollation := cName
    EndIf
 
@@ -1912,7 +1912,7 @@ Function SR_SetLocks(uLocks, oCnn, nRetries)
    EndIf
 
    Do Case
-   Case valtype(uLocks) == "C"
+   Case HB_ISCHAR(uLocks)
       aLocks := { uLocks }
    Case HB_ISARRAY(uLocks)
       aLocks := uLocks
@@ -2007,7 +2007,7 @@ Function SR_ReleaseLocks(uLocks, oCnn)
    EndIf
 
    Do Case
-   Case valtype(uLocks) == "C"
+   Case HB_ISCHAR(uLocks)
       aLocks := { uLocks }
    Case HB_ISARRAY(uLocks)
       aLocks := uLocks

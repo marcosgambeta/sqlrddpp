@@ -189,7 +189,7 @@ ENDCLASS
 
 METHOD new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
 
-   IF valtype(pWorkarea) == "C"
+   IF HB_ISCHAR(pWorkarea)
       ::_oDefaultContext := oGetWorkarea(pWorkarea)
    ELSE
       ::_oDefaultContext := pWorkarea

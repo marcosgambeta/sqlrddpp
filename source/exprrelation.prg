@@ -138,12 +138,12 @@ ENDCLASS
 
 METHOD new(pWorkarea1, pWorkarea2, pExpression)
 
-   IF valtype(pWorkarea1) == "C"
+   IF HB_ISCHAR(pWorkarea1)
       ::oWorkarea1 := oGetWorkarea(pWorkarea1)
    ELSE
       ::oWorkarea1 := pWorkarea1
    ENDIF
-   IF valtype(pWorkarea2) == "C"
+   IF HB_ISCHAR(pWorkarea2)
       ::oWorkarea2 := oGetWorkarea(pWorkarea2)
    ELSE
       ::oWorkarea2 := pWorkarea2
@@ -345,7 +345,7 @@ ENDCLASS
 
 METHOD new(pWorkarea, pName)
 
-   IF valtype(pWorkarea) == "C"
+   IF HB_ISCHAR(pWorkarea)
       ::oWorkarea := oGetWorkarea(pWorkarea)
    ELSE
       ::oWorkarea := pWorkarea

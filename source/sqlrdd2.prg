@@ -2312,7 +2312,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
             endif
             If lML .OR.;
                (::aOldBuffer[nThisField] == NIL ) .OR.;
-               ( lMemo .AND. (valtype(::aOldBuffer[nThisField]) != "C" .OR. valtype(aBuffer[nThisField]) != "C" )) .OR.;
+               ( lMemo .AND. (!HB_ISCHAR(::aOldBuffer[nThisField]) .OR. !HB_ISCHAR(aBuffer[nThisField]) )) .OR.;
                ( (!::aOldBuffer[nThisField] == aBuffer[nThisField]) .AND. ( nThisField != ::hnRecno ) )
 
                If lML .AND. valtype(aBuffer[nThisField]) $ "CM"
@@ -3698,7 +3698,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
    ::aInfo[AINFO_SKIPCOUNT] := 0
    uSet := Set(_SET_EXACT, .F.)
 
-   If lSoft .AND. ::lISAM .AND. ::oSql:nSystemID == SYSTEMID_ORACLE .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL .AND. valtype(uKey) == "C"
+   If lSoft .AND. ::lISAM .AND. ::oSql:nSystemID == SYSTEMID_ORACLE .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL .AND. HB_ISCHAR(uKey)
 
          nLen      := Max(len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons     := 0
@@ -3758,18 +3758,18 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          ::aInfo[AINFO_FOUND] := .F.
       Else
 
-         If valtype(uKey) == "C" .AND. uKey == ""
+         If HB_ISCHAR(uKey) .AND. uKey == ""
             ::aInfo[AINFO_FOUND] := .T.
          Else
             For i = 1 to len(::aQuoted)
                Do Case
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .AND. valtype(::aDat[i]) == "C" .AND. (::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ( ::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB ) .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
+               Case HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i]) .AND. (::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ( ::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB ) .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
                   ::aInfo[AINFO_FOUND] := ( Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]) )
-               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. valtype(::aDat[i]) == "C"
+               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = val(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .AND. HB_ISNUMERIC(::aDat[i])
+               Case HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISNUMERIC(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = str(::aDat[i]) )
-               Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. valtype(::aDat[i]) == "C"
+               Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = stod(::aDat[i]) )
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := ( Left(dtos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(dtos(::aDat[i]), ::nPartialDateSeek) )
@@ -3875,7 +3875,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
             cRet  += cNam + cSep + cQot + " "
          EndIf
 
-      ElseIf ValType(uKey) == "C"
+      ElseIf HB_ISCHAR(uKey)
 
          nLen      := Max(len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons     := 0
@@ -4034,18 +4034,18 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          ::aInfo[AINFO_FOUND] := .F.
       Else
 
-         If valtype(uKey) == "C" .AND. uKey == ""
+         If HB_ISCHAR(uKey) .AND. uKey == ""
             ::aInfo[AINFO_FOUND] := .T.
          Else
             For i = 1 to len(::aQuoted)
                Do Case
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .AND. valtype(::aDat[i]) == "C" .AND. (::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ( ::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB ) .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
+               Case HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i]) .AND. (::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ( ::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB ) .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
                   ::aInfo[AINFO_FOUND] := ( Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]) )
-               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. valtype(::aDat[i]) == "C"
+               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = val(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .AND. HB_ISNUMERIC(::aDat[i])
+               Case HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISNUMERIC(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = str(::aDat[i]) )
-               Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. valtype(::aDat[i]) == "C"
+               Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = stod(::aDat[i]) )
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := ( Left(dtos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek ) == Left(dtos(::aDat[i]), ::nPartialDateSeek) )
@@ -4169,7 +4169,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
             ::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL,iif(lLast, .F., .T.)) + ::Optmizer_1e + iif(::oSql:lComments, " /* " + iif(lSoft, "Soft", "") + "Seek " + str(::aInfo[AINFO_INDEXORD]) + " */",""))
          EndIf
 
-      ElseIf ValType(uKey) == "C"
+      ElseIf HB_ISCHAR(uKey)
 
          nLen      := Max(len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons     := 0
@@ -4263,18 +4263,18 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          ::aInfo[AINFO_FOUND] := .F.
       Else
 
-         If valtype(uKey) == "C" .AND. uKey == ""
+         If HB_ISCHAR(uKey) .AND. uKey == ""
             ::aInfo[AINFO_FOUND] := .T.
          Else
             For i = 1 to len(::aQuoted)
                Do Case
-               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. valtype(::aDat[i]) == "C"
+               Case HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = val(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "C" .AND. HB_ISNUMERIC(::aDat[i])
+               Case HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISNUMERIC(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = str(::aDat[i]) )
-               Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. valtype(::aDat[i]) == "C"
+               Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = stod(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. valtype(::aDat[i]) == "C"
+               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = stot(::aDat[i]) )                  
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := ( Left(dtos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek ) == Left(dtos(::aDat[i]), ::nPartialDateSeek) )
@@ -4289,7 +4289,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                   Set(_SET_EXACT, uSet)
                   Return NIL
                OtherWise
-                  If valtype(::aLocalBuffer[::aPosition[i]]) == "C"
+                  If HB_ISCHAR(::aLocalBuffer[::aPosition[i]])
                      ::aInfo[AINFO_FOUND] := ( left(::aLocalBuffer[::aPosition[i]],len(::aDat[i])) == ::aDat[i] )
                   Else
                      ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = ::aDat[i] )
@@ -6258,7 +6258,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
       If !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          aCols := { "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS] }
       Else
-         If valtype(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY]) == "C"
+         If HB_ISCHAR(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY])
             aCols := &( "{" + ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY] + "}" )
          Else
             aCols := ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY]
@@ -6449,7 +6449,7 @@ METHOD sqlOrderListFocus(uOrder, cBag) CLASS SR_WORKAREA
 
    (cBag) // to remove warning
 
-   If valtype(uOrder) == "C"      /* TAG order */
+   If HB_ISCHAR(uOrder)      /* TAG order */
       nOrder := aScan(::aIndex, {|x| upper(alltrim(x[ORDER_TAG])) == upper(alltrim(uOrder)) })
       If nOrder == 0 .OR. nOrder > len(::aIndex)
          ::cFor        := ""
@@ -6528,7 +6528,7 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
    //(uOrder)
    
 
-   If valtype(uOrder) == "C"      // TAG order
+   If HB_ISCHAR(uOrder)      // TAG order
       nOrder := aScan(::aIndex, {|x| upper(alltrim(x[ORDER_TAG])) == upper(alltrim(uOrder)) })
       If nOrder == 0 .OR. nOrder > len(::aIndex)
          ::cFor        := ""
@@ -6614,7 +6614,7 @@ METHOD sqlOrderListNum(uOrder) CLASS SR_WORKAREA
 
    Local nOrder := 0
 
-   If valtype(uOrder) == "C"      /* TAG order */
+   If HB_ISCHAR(uOrder)      /* TAG order */
       nOrder := aScan(::aIndex, {|x| upper(alltrim(x[ORDER_TAG])) == upper(alltrim(uOrder)) })
       If nOrder == 0 .OR. nOrder > len(::aIndex)
          Return 0 /* error exit */
@@ -7321,7 +7321,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
          uKey := eval(uValue)
       Else
          uKey := uValue
-         If valtype(uKey) == "C"
+         If HB_ISCHAR(uKey)
             If len(uKey) == 0
                uKey := NIL
             EndIf
@@ -7336,7 +7336,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
          ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
          
          IF ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] == ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE]         
-            IF valtype(uKey) == "C"
+            IF HB_ISCHAR(uKey)
                ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey+"|"
             endif
          endif
@@ -7384,7 +7384,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                ::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR] := " ( " + cRet + " ) "
             EndIf
 
-         ElseIf ValType(uKey) == "C"
+         ElseIf HB_ISCHAR(uKey)
 
             ::aQuoted   := {}
             ::aDat      := {}
