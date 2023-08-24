@@ -204,7 +204,7 @@ CLASS SR_CONNECTION
    METHOD ExecSP(cComm, aReturn, nParam) VIRTUAL
    METHOD GetAffectedRows() Virtual
 
-   
+
 ENDCLASS
 
 /*------------------------------------------------------------------------*/
@@ -226,7 +226,7 @@ METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
          ::cQueryOwner := alltrim(::cOwner)
       EndIf
 
-      If (!Empty(::cQueryOwner)) .AND. ::cQueryOwner[-1] != "."
+      If (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
          ::cQueryOwner += "."
       EndIf
 
@@ -236,13 +236,13 @@ METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
 
    EndIf
 
-   If cMode[4] == "1" .OR. ::oSqlTransact == NIL
+   If substr(cMode, 4, 1) == "1" .OR. ::oSqlTransact == NIL
       oSql := Self
    Else
       oSql := ::oSqlTransact
    EndIf
 
-   If cMode[1] == "1"
+   If substr(cMode, 1, 1) == "1"
       cStack := sr_cDbValue(SR_GetStack(), ::nSystemID)
    Else
       cStack := " NULL"
@@ -253,7 +253,7 @@ METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
    oSql:execute(cSql, , , .T.)
    oSql:FreeStatement()
 
-   If cMode[4] != "1"
+   If substr(cMode, 4, 1) != "1"
       oSql:Commit()
    EndIf
 
@@ -267,7 +267,7 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
 
    DEFAULT cOwner := SR_SetGlobalOwner()
 
-   If cOwner[-1] == "."
+   If right(cOwner, 1) == "."
       cOwner := SubStr(cOwner, 1, len(cOwner) - 1)
    EndIf
 
@@ -861,7 +861,7 @@ METHOD Commit(lNoLog) CLASS SR_CONNECTION
          ElseIf !Empty(::oSql:cOwner)
             ::cQueryOwner := alltrim(::cOwner)
          EndIf
-         If (!Empty(::cQueryOwner)) .AND. ::cQueryOwner[-1] != "."
+         If (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
             ::cQueryOwner += "."
          EndIf
          If Empty(::cQueryOwner)
@@ -903,7 +903,7 @@ METHOD RollBack() CLASS SR_CONNECTION
          ElseIf !Empty(::oSql:cOwner)
             ::cQueryOwner := alltrim(::cOwner)
          EndIf
-         If (!Empty(::cQueryOwner)) .AND. ::cQueryOwner[-1] != "."
+         If (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
             ::cQueryOwner += "."
          EndIf
          If Empty(::cQueryOwner)
@@ -1086,7 +1086,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
             ::lCluster  := Upper(aToken[2]) $ "Y,S,TRUE"
          Case cBuff == "OWNER" //.AND. empty(::cOwner)
             ::cOwner := aToken[2]
-            If !Empty(::cOwner) .AND. ::cOwner[-1] != "."
+            If !Empty(::cOwner) .AND. right(::cOwner, 1) != "."
                ::cOwner += "."
             EndIf
          Case cBuff == "NETWORK" .OR. cBuff == "LIBRARY" .OR. cBuff == "NETLIBRARY"
@@ -1127,50 +1127,50 @@ Return Self
 
 METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
 
-   local cType := "U"
+   LOCAL cType := "U"
 
-   (cName)
+   HB_SYMBOL_UNUSED(cName)
 
    DEFAULT nLen := 0
 
-   do case
-   case (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR .OR. nType == SQL_GUID) .AND. IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
-      cType = "C"
-   Case nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
-      If ::lQueryOnly
+   DO CASE // TODO: switch
+   CASE (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR .OR. nType == SQL_GUID) .AND. IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
+      cType := "C"
+   CASE nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
+      IF ::lQueryOnly
          cType := "N"
-      Else
+      ELSE
          cType := "L"
-      EndIf
-   case nType == SQL_BIT
-      cType = "L"
-   case nType == SQL_NUMERIC .OR. nType == SQL_DECIMAL .OR. ;
+      ENDIF
+   CASE nType == SQL_BIT
+      cType := "L"
+   CASE nType == SQL_NUMERIC .OR. nType == SQL_DECIMAL .OR. ;
       nType == SQL_INTEGER .OR. nType == SQL_BIGINT .OR. ;
       nType == SQL_FLOAT .OR. nType == SQL_REAL .OR. ;
       nType == SQL_DOUBLE
       cType = "N"
    //case nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE
-   case nType == SQL_DATE .OR. nType == SQL_TYPE_DATE
-      cType = "D"
-   case nType == SQL_TIME
-      if (::nSystemID == SYSTEMID_POSTGR .OR. ::nSystemID == SYSTEMID_MYSQL  .OR. ::nSystemID == SYSTEMID_MARIADB .OR. ::nSystemID == SYSTEMID_FIREBR .OR. ::nSystemID == SYSTEMID_FIREBR3  )
+   CASE nType == SQL_DATE .OR. nType == SQL_TYPE_DATE
+      cType := "D"
+   CASE nType == SQL_TIME
+      IF (::nSystemID == SYSTEMID_POSTGR .OR. ::nSystemID == SYSTEMID_MYSQL .OR. ::nSystemID == SYSTEMID_MARIADB .OR. ::nSystemID == SYSTEMID_FIREBR .OR. ::nSystemID == SYSTEMID_FIREBR3)
          cType := "T"
-      else
+      ELSE
          cType := "C"
-      endif
-   case nType == SQL_LONGVARCHAR .OR.  nType == SQL_DB2_CLOB .OR. nType == SQL_FAKE_LOB .OR.  ntype == SQL_LONGVARBINARY .OR. (nType == SQL_VARBINARY .AND. ::nSystemID != SYSTEMID_MSSQL7) 
+      ENDIF
+   CASE nType == SQL_LONGVARCHAR .OR. nType == SQL_DB2_CLOB .OR. nType == SQL_FAKE_LOB .OR. ntype == SQL_LONGVARBINARY .OR. (nType == SQL_VARBINARY .AND. ::nSystemID != SYSTEMID_MSSQL7)
       cType := "M"
-   case nType == SQL_VARBINARY  .AND. ::nSystemID == SYSTEMID_MSSQL7
-      cType := "V"  
-   case nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME
-      cType := 'T'   
-   endcase
+   CASE nType == SQL_VARBINARY .AND. ::nSystemID == SYSTEMID_MSSQL7
+      cType := "V"
+   CASE nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME
+      cType := "T"
+   ENDCASE
 
-   if cType == "U"
+   IF cType == "U"
       SR_MsgLogFile(SR_Msg(2) + SR_Val2CharQ(nType))
-   EndIf
+   ENDIF
 
-return cType
+RETURN cType
 
 /*------------------------------------------------------------------------*/
 
