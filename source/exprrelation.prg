@@ -77,12 +77,12 @@ FUNCTION oGetWorkarea(cAlias)
    LOCAL result
    LOCAL oerr
 
-   TRY
+   BEGIN SEQUENCE
       result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
-   CATCH oErr
+   RECOVER USING oErr
       oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
       throw(oErr)
-   END
+   END SEQUENCE
 
 RETURN result
 
@@ -484,7 +484,7 @@ METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
    // can be very slow with relations...
    nseconds := seconds()
 
-   TRY
+   BEGIN SEQUENCE
       if pcount() == 1 .AND. lIgnoreRelations
          save_slct := select()
          SelectFirstAreaNotInUse()
@@ -495,10 +495,10 @@ METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
       ELSE
          result := &(::cContext)->(&(::cValue))
       ENDIF
-   CATCH oErr
+   RECOVER USING oErr
       oErr:description += ";The value unseccessfully evaluated was : " + ::cValue   + ";"
       throw(oErr)
-   END
+   END SEQUENCE
 
 RETURN result
 

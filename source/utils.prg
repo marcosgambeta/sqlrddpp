@@ -582,7 +582,7 @@ Function SR_WriteTimeLog(cComm, oCnn, nLimisencos)
 
    (oCnn) // to remove warning
 
-   Try
+   BEGIN SEQUENCE
 
       If !sr_PhFile("long_qry.dbf")
          dbCreate("long_qry.dbf", TRACE_STRUCT, "DBFNTX")
@@ -603,9 +603,9 @@ Function SR_WriteTimeLog(cComm, oCnn, nLimisencos)
       Replace LONG_QRY->CUSTO        with nLimisencos
       LONG_QRY->( dbCloseArea() )
 
-   Catch
+   RECOVER
 
-   End
+   END SEQUENCE
 
    dbSelectArea(nAlAtual)
 
@@ -653,7 +653,7 @@ Function SR_WriteDbLog(cComm, oCnn)
 
    DEFAULT cComm := ""
 
-   Try
+   BEGIN SEQUENCE
 
       If !sr_phFile("sqllog.dbf")
          dbCreate("sqllog.dbf", TRACE_STRUCT, "DBFNTX")
@@ -673,9 +673,9 @@ Function SR_WriteDbLog(cComm, oCnn)
       Replace SQLLOG->COMANDO      with cComm
       SQLLOG->( dbCloseArea() )
 
-   Catch
+   RECOVER
 
-   End
+   END SEQUENCE
 
    dbSelectArea(nAlAtual)
 

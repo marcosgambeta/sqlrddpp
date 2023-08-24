@@ -176,11 +176,11 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
    IF oExpression:lSimplified
       RETURN oExpression
    ELSEIF ::Assessable(oExpression)
-      TRY
+      BEGIN SEQUENCE
          newValue := oExpression:oClipperExpression:Evaluate()
          lEvaluated := .T.
-      CATCH
-      END
+      RECOVER
+      END SEQUENCE
       IF lEvaluated
          DO CASE
          CASE HB_ISCHAR(newValue)

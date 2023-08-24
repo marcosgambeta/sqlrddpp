@@ -267,7 +267,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
    LOCAL resultFooter := ""
    LOCAL aFilters := {}
 
-   TRY
+   BEGIN SEQUENCE
       result := iif(pcount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
 
       IF oExpression:isKindOf("ConditionBase")
@@ -325,12 +325,12 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
             result := resultHeader + " where " + result + resultFooter
          ENDIF
       ENDIF
-   CATCH oErr
+   RECOVER USING oErr
       #ifdef DEBUG
          throw(oErr)
       #endif
       result := NIL
-   END
+   END SEQUENCE
 
 RETURN result
 

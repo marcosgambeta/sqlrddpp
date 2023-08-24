@@ -834,10 +834,10 @@ Local aValues :={}
 *            aVal := hb_atokens(cvalues,',')
 *          (calias)->(dbappend())
 *          for i := 1 to len(afield)
-*             try
+*             BEGIN SEQUENCE
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])),aval[i]))
-*             catch
-*             end
+*             RECOVER
+*             END SEQUENCE
 *          next
 *          endif
 *          
@@ -1408,10 +1408,10 @@ if len(aFields) > 0
            aVal := hb_atokens(cvalues,',')
 *          (calias)->(dbappend())
 *          for i := 1 to len(afield)
-*             try
+*             BEGIN SEQUENCE
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])),aval[i]))
-*             catch
-*             end
+*             RECOVER
+*             END SEQUENCE
 *          next
                
     cSql := "select " + cfields + " from " + cTable  + " where "
@@ -1482,10 +1482,10 @@ return NIL
       
 *          (calias)->(dbappend())
 *          for i := 1 to len(afield)
-*             try
+*             BEGIN SEQUENCE
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])),aval[i]))
-*             catch
-*             end
+*             RECOVER
+*             END SEQUENCE
 *          next
       
    
@@ -1595,7 +1595,7 @@ STATIC FUNCTION Skipped(nRecs, lAppend)
    
    DEFAULT cComm to ""
 
-   Try
+   BEGIN SEQUENCE
 
       If !sr_phFile(cpre + "sqllog.dbf")
          dbCreate(cpre + "sqllog.dbf", TRACE_STRUCT, "DBFNTX")
@@ -1614,12 +1614,12 @@ STATIC FUNCTION Skipped(nRecs, lAppend)
       Replace SQLLOG->HORA         with Time()
       Replace SQLLOG->COMANDO      with cComm
       Replace SQLLOg->PROCESSED      with .F.
-      endif 
+      endif
       SQLLOG->( dbCloseArea() )
 
-   Catch
+   RECOVER
 
-   End
+   END SEQUENCE
 
    dbSelectArea(nAlAtual)
 

@@ -462,11 +462,11 @@ METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE
       OracleinBindParam(::hdbc, i, n, 12, 0)      
    Next
     
-   TRY
+   BEGIN SEQUENCE
       nError := OracleExecDir(::hDbc)
-   CATCH 
+   RECOVER
       nerror := - 1
-   End
+   END SEQUENCE
    
    If nError < 0
       ::RunTimeErr("", str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR(::hDbc) ) 
@@ -516,13 +516,13 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    DEFAULT cRecnoName    := SR_RecnoName()
    DEFAULT cDeletedName  := SR_DeletedName()
    
-   TRY
-      nError := ORACLE_PROCCURSOR(::hDbc, cComm, cVar)  
+   BEGIN SEQUENCE
+      nError := ORACLE_PROCCURSOR(::hDbc, cComm, cVar)
       //nError := ORACLE_BINDCURSOR(::hDbc, cComm, cVar)
       ::cLastComm := cComm
-   CATCH  
+   RECOVER
       nError := - 1
-   End               
+   END SEQUENCE
    
    If nError < 0
       If lFetch
@@ -709,7 +709,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    
    If nError < 0
       If lFetch
-         ::RunTimeErr("", "SQLExecDirect Error in close cursor Statement" ) 
+         ::RunTimeErr("", "SQLExecDirect Error in close cursor Statement" )
       EndIf      
    endif   
 
@@ -730,11 +730,11 @@ function  ExecuteSP(cComm, aReturn)
    
    OracleinBindParam(oConn:hdbc, 1, -1, 12, 0)      
  
-   TRY
+   BEGIN SEQUENCE
       nError := OracleExecDir(oConn:hDbc)
-   CATCH 
+   RECOVER
       nerror := - 1
-   End
+   END SEQUENCE
    
    if nError >=0
       AADD(aReturn, ORACLEGETBINDDATA(oConn:hdbc, 1))
