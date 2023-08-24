@@ -734,7 +734,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
 
          For each aInd in aCols
 
-            If asc(alltrim(aInd[2])[-1]) == 0
+            If asc(right(alltrim(aInd[2]), 1)) == 0
                aInd[2] := SubStr(aInd[2], 1, len(alltrim(aInd[2])) - 1)
             EndIf
 
@@ -888,7 +888,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
          ::oSql:exec("sp_helpindex " + ::cFileName, .F., .T., @aRet)
 
          For each aInd in aRet
-            If asc(alltrim(aInd[3])[-1]) == 0
+            If asc(right(alltrim(aInd[3]), 1)) == 0
                aInd[3] := SubStr(aInd[3], 1, len(alltrim(aInd[3])) - 1)
             EndIf
             aCols := hb_atokens(alltrim(aInd[3]), ",")
@@ -2907,7 +2907,7 @@ METHOD SolveSQLFilters(cAliasSQL) CLASS SR_WORKAREA
 
    DEFAULT cAliasSQL := ""
 
-   If !Empty(cAliasSQL) .AND. cAliasSQL[-1] != "."
+   If !Empty(cAliasSQL) .AND. right(cAliasSQL, 1) != "."
       cAliasSQL += "."
    EndIf
    For each cFlt in ::aFilters
@@ -4342,7 +4342,7 @@ Method ConvType(cData, cType, lPartialSeek, nThis, lLike)
 
    Do Case
    Case cType = "C"
-      If len(cData) < nThis //.AND. cData[-1] != " "
+      If len(cData) < nThis //.AND. right(cData, 1) != " "
          lPartialSeek := .T.
       EndIf
    Case cType = "N"
@@ -4993,7 +4993,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
       ::cOwner := alltrim(::oSql:cOwner)
    EndIf
 
-   If (!Empty(::cOwner)) .AND. ::cOwner[-1] != "."
+   If (!Empty(::cOwner)) .AND. right(::cOwner, 1) != "."
       ::cOwner += "."
    EndIf
 
@@ -5823,7 +5823,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
       ::cOwner := alltrim(::oSql:cOwner)
    EndIf
 
-   If (!Empty(::cOwner)) .AND. ::cOwner[-1] != "."
+   If (!Empty(::cOwner)) .AND. right(::cOwner, 1) != "."
       ::cOwner := alltrim(::cOwner) + "."
    EndIf
 
@@ -6422,7 +6422,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
          ::aInfo[AINFO_REVERSE_INDEX] := ::aIndex[1, DESCEND_INDEX_ORDER]
       Else
          ::aInfo[AINFO_INDEXORD] := len(::aIndex)
-         ::aInfo[AINFO_REVERSE_INDEX] := ::aIndex[-1, DESCEND_INDEX_ORDER]
+         ::aInfo[AINFO_REVERSE_INDEX] := ::aIndex[len(::aIndex), DESCEND_INDEX_ORDER]
       EndIf
    EndIf
 
@@ -6880,7 +6880,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
    ::oSql:exec("SELECT TABLE_,SIGNATURE_,IDXNAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + UPPER(::cFileName) + "' ORDER BY IDXNAME_, TAGNUM_", .F., .T., @::aIndexMgmnt)
    ::oSql:Commit()
 
-   cNextTagNum := StrZero(Val(iif(len(::aIndexMgmnt) == 0, "0", ::aIndexMgmnt[-1,INDEXMAN_TAGNUM])) + 1, 6)
+   cNextTagNum := StrZero(Val(iif(len(::aIndexMgmnt) == 0, "0", ::aIndexMgmnt[len(::aIndexMgmnt),INDEXMAN_TAGNUM])) + 1, 6)
 
    /* Create the index */
 
@@ -7480,7 +7480,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
 
             uKey      := ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE + nScoping]
             IF HB_ISSTRING(uKey) //ValType(uKey) == "C"
-               if uKey[-1] == "|" // TODO:
+               if right(uKey, 1) == "|" // TODO:
                   uKey := Left(uKey, len(uKey) - 1)
                endif
             endif      
@@ -8906,11 +8906,11 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
       If nPos_ > 0
          ::aFields[nPos_] := aClone(aCreate[i])
          ::aNames[nPos_]  := aCreate[i,1]
-         ::aEmptyBuffer[nPos_] := SR_BlankVar(::aFields[-1,2], ::aFields[-1,3], ::aFields[-1,4])
+         ::aEmptyBuffer[nPos_] := SR_BlankVar(::aFields[len(::aFields),2], ::aFields[len(::aFields),3], ::aFields[len(::aFields),4])
       Else
          aadd(::aFields, aClone(aCreate[i]))
          aadd(::aNames, aCreate[i,1])
-         aadd(::aEmptyBuffer, SR_BlankVar(::aFields[-1,2], ::aFields[-1,3], ::aFields[-1,4]))
+         aadd(::aEmptyBuffer, SR_BlankVar(::aFields[len(::aFields),2], ::aFields[len(::aFields),3], ::aFields[len(::aFields),4]))
          nPos_ := len(::aFields)
       EndIf
 
@@ -9286,11 +9286,11 @@ METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS
       If nPos_ > 0
          ::aFields[nPos_] := aClone(aCreate[i])
          ::aNames[nPos_]  := aCreate[i,1]
-         ::aEmptyBuffer[nPos_] := SR_BlankVar(::aFields[-1,2], ::aFields[-1,3], ::aFields[-1,4])
+         ::aEmptyBuffer[nPos_] := SR_BlankVar(::aFields[len(::aFields),2], ::aFields[len(::aFields),3], ::aFields[len(::aFields),4])
       Else
          aadd(::aFields, aClone(aCreate[i]))
          aadd(::aNames, aCreate[i,1])
-         aadd(::aEmptyBuffer, SR_BlankVar(::aFields[-1,2], ::aFields[-1,3], ::aFields[-1,4]))
+         aadd(::aEmptyBuffer, SR_BlankVar(::aFields[len(::aFields),2], ::aFields[len(::aFields),3], ::aFields[len(::aFields),4]))
          nPos_ := len(::aFields)
       EndIf
 
@@ -10163,7 +10163,7 @@ if HB_ISARRAY(a)
    aadd(aFather, nStartId)
    ++nStartId   
    hHash['Id']  :=alltrim(str(nStartId))
-   hHash['FatherId']  :=alltrim(str(aFather[-1]))
+   hHash['FatherId']  :=alltrim(str(aFather[len(aFather)]))
    hHash['Pos'] := alltrim(Str(++nPosData))
    aadd(aPos ,nPosData)
 
@@ -10173,8 +10173,8 @@ if HB_ISARRAY(a)
       AddNode(aItem, oNode1)
       //oNode1:addbelow(onode2)
    next   
-   nStartId := aFather[-1] // TODO:
-   nPosData := aPos[-1] // TODO:
+   nStartId := aFather[len(aFather)]
+   nPosData := aPos[len(aPos)]
    adel(aFather,len(aFather),.T.)
    adel(aPos,len(aPos),.T.)
    oNode:addbelow(oNode1)
