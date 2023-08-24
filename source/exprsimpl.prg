@@ -208,7 +208,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
             ELSE
                simplifier := self
             ENDIF
-            IF oParameter:lIsByRef .or. (oSimplifiedExpression := simplifier:Simplify(oParameter:oExpression)) == oParameter:oExpression
+            IF oParameter:lIsByRef .OR. (oSimplifiedExpression := simplifier:Simplify(oParameter:oExpression)) == oParameter:oExpression
                aadd(newParams, oParameter)
             ELSE
                aadd(newParams, Parameter():new(oSimplifiedExpression, .F.))

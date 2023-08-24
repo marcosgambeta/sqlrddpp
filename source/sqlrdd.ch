@@ -225,7 +225,7 @@
 #endif
 
 #ifndef SQLRDD_H
-#define IS_SQLRDD   (Select() > 0 .and. (RddName()=="SQLRDD" .or. RddName()=="SQLEX"))
+#define IS_SQLRDD   (Select() > 0 .AND. (RddName()=="SQLRDD" .OR. RddName()=="SQLEX"))
 #endif
 
 #endif

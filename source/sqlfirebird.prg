@@ -172,7 +172,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          ::Exec([select a.rdb$field_name, b.rdb$field_precision + 0 from rdb$relation_fields a, rdb$fields b where a.rdb$relation_name = '] + StrTran(cTable, ["], []) + [' and a.rdb$field_source = b.rdb$field_name] , .F., .T., @aLocalPrecision)
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F.)
       EndIf
-      If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          return nil
       EndIf
    EndIf
@@ -202,9 +202,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          nPos := aScan(aLocalPrecision, { |x| rtrim(x[1]) == cName })
          cType     := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec)
-         If nPos > 0 .and. aLocalPrecision[nPos,2] > 0
+         If nPos > 0 .AND. aLocalPrecision[nPos,2] > 0
             nLenField := aLocalPrecision[nPos,2]
-         ElseIf ( nType == SQL_DOUBLE .or. nType == SQL_FLOAT .or. nType == SQL_NUMERIC )
+         ElseIf ( nType == SQL_DOUBLE .OR. nType == SQL_FLOAT .OR. nType == SQL_NUMERIC )
             nLenField := 19
          EndIf
 
@@ -219,7 +219,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    ::aFields := aFields
 
-   If lReSelect .and. !lLoadCache
+   If lReSelect .AND. !lLoadCache
       ::FreeStatement()
    EndIf
 

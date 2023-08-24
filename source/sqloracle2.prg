@@ -158,7 +158,7 @@ Return ::nRetCode
 
 METHOD FreeStatement() CLASS SR_ORACLE2
 
-   if ::hDBC != NIL .and. ::hstmt != NIL
+   if ::hDBC != NIL .AND. ::hstmt != NIL
       if SQLO2_CLOSESTMT( ::hDBC ) != SQL_SUCCESS
          ::RunTimeErr("", "SQLO2_CLOSESTMT error" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
       endif
@@ -178,7 +178,7 @@ METHOD AllocStatement() CLASS SR_ORACLE2
    If ::lSetNext
       ::lSetNext  := .F.
       nRet := ::SetStmtOptions( ::nSetOpt, ::nSetValue )
-      If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          SR_MsgLogFile(SR_Msg(23) + " (" + alltrim(str(nRet)) + ") : " + ::LastError())
       EndIf
    EndIf
@@ -209,7 +209,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F.)
       EndIf
 
-      If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          return nil
       EndIf
    EndIf
@@ -237,14 +237,14 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          _nDec := nDec
          cName := Upper(alltrim(cName))
 
-         If (nLen == 2000 .or. nLen == 4000) .and. SR_SetNwgCompat()
+         If (nLen == 2000 .OR. nLen == 4000) .AND. SR_SetNwgCompat()
             nType := SQL_FAKE_LOB
          EndIf
 
          nLenField := ::SQLLen(nType, nLen, @nDec)
          cType     := ::SQLType(nType, cName, nLen)
 
-         If (!::lQueryOnly) .and. cType == "N" .and. nLenField == 38 .and. nDec == 0
+         If (!::lQueryOnly) .AND. cType == "N" .AND. nLenField == 38 .AND. nDec == 0
             cType     := "L"
             nLenField := 1
             nType     := SQL_BIT
@@ -261,7 +261,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    ::aFields := aFields
 
-   If lReSelect .and. !lLoadCache
+   If lReSelect .AND. !lLoadCache
       ::FreeStatement()
    EndIf
 
@@ -308,7 +308,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    else
       nret    :=  SQLO2_CONNECT( ::cDtb,::cUser , ::cPassWord , @hDbc, .F. )
    endif
-   if nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+   if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
       ::hDbc     := hDbc
       SR_MsgLogFile("Connection Error: " + ::lastError() + " - Connection string: " + ::cUser + "/" + Replicate("*", len(::cPassWord) ) + "@" + ::cDtb)
@@ -381,7 +381,7 @@ METHOD ExecuteRaw( cCommand ) CLASS SR_ORACLE2
    If upper(left(ltrim(cCommand), 6)) == "SELECT"
       ::hStmt := ::hDBC
       
-      if !empty(::cSqlPrepare) .and. len(::aBindParameters) > 0 .and. ":1" in ::cSqlPrepare
+      if !empty(::cSqlPrepare) .AND. len(::aBindParameters) > 0 .AND. ":1" in ::cSqlPrepare
       
          ::lBind := .F.
          
@@ -629,7 +629,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          n := 1
 
-         While n <= nMaxRecords .and. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+         While n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
 
             Append Blank
 
@@ -669,7 +669,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          ::cResult += chr(13) + chr(10)
          aMemo     := Array(len(aFields))
 
-         While n <= ::nMaxTextLines .and. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+         While n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
 
             cEste      := ""
             nLenMemo   := 0
@@ -690,7 +690,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             ::cResult += cEste + chr(13) + chr(10)
             n ++
 
-            If ::lShowTxtMemo .and. nLinesMemo > 1
+            If ::lShowTxtMemo .AND. nLinesMemo > 1
                For j = 2 to nLinesMemo
                   cEste    := ""
                   For i = 1 to len(aFields)
@@ -817,12 +817,12 @@ Function SR_AdjustNum(a)
          EndIf
       EndIf
 
-      If b[i,2] = "N" .and. b[i,3] > 18
+      If b[i,2] = "N" .AND. b[i,3] > 18
          b[i,3] := 19
       EndIf
 
       If lNwgOldCompat
-         If b[i,2] = "N" .and. b[i,4] >= (b[i,3] - 1)
+         If b[i,2] = "N" .AND. b[i,4] >= (b[i,3] - 1)
             b[i,4] := abs(b[i,3] - 2)
          EndIf
       EndIf

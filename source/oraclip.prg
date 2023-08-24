@@ -16,7 +16,7 @@ static aDestroyFiles :={}
 
 function OraExecSql(n, c, adata)
 Local cbind,i
-if aData != nil .and. HB_ISARRAY(adata)
+if aData != nil .AND. HB_ISARRAY(adata)
 for i:= len(aData)  to  1 step -1
       cBind := ":"+alltrim(str(i))
       c := strtran(c, cBind, sr_cdbvalue(adata[i]))
@@ -235,7 +235,7 @@ if aOraClipCursors[n]["oraseek"]
    return lret  
 
 endif
-if aOraClipCursors[n]["eof"]  .and. aOraClipCursors[n]["completed"] 
+if aOraClipCursors[n]["eof"]  .AND. aOraClipCursors[n]["completed"] 
 return .F.
 endif
 return len(aOraClipCursors[n]["data"]) >0
@@ -455,7 +455,7 @@ local i
 If aOraClipCursors[n]["completed"]
    lreturn := .T. // ( aOraClipCursors[n]["aliastmp"] )->( eof() ) 
 Else
-   If !aOraClipCursors[n]["completed"] .and. aOraClipCursors[n]["eof"]   
+   If !aOraClipCursors[n]["completed"] .AND. aOraClipCursors[n]["eof"]   
       lreturn:= .T.
    Else
       lreturn:= .F.
@@ -589,7 +589,7 @@ endif
 next
 
 endif
-if len(acols ) == 0 .and. len(adata ) > 0
+if len(acols ) == 0 .AND. len(adata ) > 0
 for  i:= 1  to len(aData)
 
    cValues += sr_cdbvalue(aData[i])+","
@@ -703,7 +703,7 @@ if len(hplVars ) >0
    oraclebindalloc(oSql:hdbc, len(hplVars))
    for i:= 1 to len(hplVars) 
       aItem := hplVars[ i ]
-      if aItem[2] == "VARCHAR" .or. aItem[2] == "CHAR" .or. aItem[2] == "VARCHAR2"
+      if aItem[2] == "VARCHAR" .OR. aItem[2] == "CHAR" .OR. aItem[2] == "VARCHAR2"
          OracleinBindParam(oSql:hdbc, i, -1, aItem[3], , aItem[5])
       elseif aItem[2] == "NUMBER"
          if aItem[4] >0
@@ -711,7 +711,7 @@ if len(hplVars ) >0
          else
             OracleinBindParam(oSql:hdbc, i, 2, 12, , aItem[5])
          endif
-      elseif aItem[2] == "DATE"  .or. aItem[2] == "DATA" 
+      elseif aItem[2] == "DATE"  .OR. aItem[2] == "DATA" 
         OracleinBindParam(oSql:hdbc, i, 8, 12, , aItem[5])
       endif
    next  
@@ -1411,9 +1411,9 @@ static function mySQLLen(nType, nLen, nDec)
    DEFAULT nDec to -1
 
    do case
-   case (nType == SQL_CHAR .or. nType == SQL_VARCHAR .or. nType == SQL_NVARCHAR) .and. IIf(SR_SetNwgCompat(), nLen != 4000 .and. nLen != 2000, .T.)
+   case (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR) .AND. IIf(SR_SetNwgCompat(), nLen != 4000 .AND. nLen != 2000, .T.)
 
-   Case nType == SQL_SMALLINT .or. nType == SQL_TINYINT
+   Case nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
       If ::lQueryOnly
          nLen := 10
       Else
@@ -1423,31 +1423,31 @@ static function mySQLLen(nType, nLen, nDec)
    case nType == SQL_BIT
         nLen := 1
 
-   case nType == SQL_NUMERIC  .or. nType == SQL_DECIMAL  .OR. ;
+   case nType == SQL_NUMERIC  .OR. nType == SQL_DECIMAL  .OR. ;
         nType == SQL_INTEGER  .OR. ;
-        nType == SQL_FLOAT    .or. nType == SQL_REAL     .OR. ;
+        nType == SQL_FLOAT    .OR. nType == SQL_REAL     .OR. ;
         nType == SQL_DOUBLE
 
-      If nLen > 19 .and. nDec > 10 .and. !( nLen = 38 .and. nDec = 0 )
+      If nLen > 19 .AND. nDec > 10 .AND. !( nLen = 38 .AND. nDec = 0 )
          nLen := 20
          nDec := 6
       EndIf
      
-     If nDec >3 .and. !( nLen = 38 .and. nDec = 0 )
+     If nDec >3 .AND. !( nLen = 38 .AND. nDec = 0 )
         nLen :=14
       endif
-      If !( nLen = 38 .and. nDec = 0 )
+      If !( nLen = 38 .AND. nDec = 0 )
          nLen := min(nLen, 20)
          nLen := max(nLen, 1)
       EndIf
 
-   case nType == SQL_DATE .or. nType == SQL_TIMESTAMP .or. nType == SQL_TYPE_TIMESTAMP .or. nType == SQL_TYPE_DATE .or. ntype == SQL_DATETIME
+   case nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE .OR. ntype == SQL_DATETIME
      nLen := 8
 
    case nType == SQL_TIME
      nLen := 8
 
-   case nType == SQL_LONGVARCHAR .or. nType == SQL_LONGVARBINARY .or. nType == SQL_FAKE_LOB
+   case nType == SQL_LONGVARCHAR .OR. nType == SQL_LONGVARBINARY .OR. nType == SQL_FAKE_LOB
      nLen := 10
 
    Case nType == SQL_GUID
@@ -1488,11 +1488,11 @@ return aOraClipCursors[nCursor]["rowaffected"]
 
 function OraFName(n, nPos)
 Local aTmp
-if len(aOraClipCursors[n]["aFields"]) == 0 .or. nPos <=0
+if len(aOraClipCursors[n]["aFields"]) == 0 .OR. nPos <=0
    aOraClipCursors[ n]["errormsg"]  := "vetor vazio ou Posicao <= 0"
    return nil
 endif
-if len(aOraClipCursors[n]["aFields"]) >1 .and. nPos <= len(aOraClipCursors[n]["aFields"])
+if len(aOraClipCursors[n]["aFields"]) >1 .AND. nPos <= len(aOraClipCursors[n]["aFields"])
    aTmp := aOraClipCursors[n]["aFields"]
    return Alltrim(aTmp[nPos,1])
 endif
@@ -1514,16 +1514,16 @@ Function SR_AdjustNum(a)
          EndIf
       //EndIf
 
-      If b[i,2] = "N" .and. b[i,3] > 18
+      If b[i,2] = "N" .AND. b[i,3] > 18
          b[i,3] := 19
       EndIf
 
       If lNwgOldCompat
-         If b[i,2] = "N" .and. b[i,4] >= (b[i,3] - 1)
+         If b[i,2] = "N" .AND. b[i,4] >= (b[i,3] - 1)
             b[i,4] := abs(b[i,3] - 2)
          EndIf
       EndIf
-      if b[i,2] == "N" .and. b[i,4]>=5
+      if b[i,2] == "N" .AND. b[i,4]>=5
          b[i,3] +=4
       endif   
 

@@ -325,7 +325,7 @@ RETURN
 Function SR_Msg(nMsg)
    Local nBaseLang := SR_SetBaseLang()
 
-   If nMsg > 0 .and. nMsg <= len(s_aMsg[ nBaseLang ])
+   If nMsg > 0 .AND. nMsg <= len(s_aMsg[ nBaseLang ])
       Return s_aMsg[ nBaseLang, nMsg ]
    EndIf
 

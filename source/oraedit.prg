@@ -200,7 +200,7 @@ SR_SetRDDTemp("ADT")
  cSql := "Select  " + cCols + "  from " + cTable
  cCount := "select count(*) from " + cTable
 
-if !empty(cWhere) .and. HB_ISARRAY(aVarSust)
+if !empty(cWhere) .AND. HB_ISARRAY(aVarSust)
 
 for i:=1 to len(aVarSust) 
    cBind := ":" + alltrim(str(i))
@@ -215,7 +215,7 @@ if !empty(cWhere)
       endif   
       nPosOrderBY := AT("ORDER BY" , upper(cwhere))
    
-      if !"WHERE " in upper(cWhere) .and. nPosOrderBY >1
+      if !"WHERE " in upper(cWhere) .AND. nPosOrderBY >1
          cSql += " where " + cWhere
          cCount += " where  " + cWhere
 
@@ -290,7 +290,7 @@ nLowerBound +=nHigerBound
      /* Call Errorsys() with error 2001 if not database in use. */
      Throw( ErrorNew( "DBCMD", 0, 2001, procname(), "Workarea not in use" ) )
 #endif
-  elseif eof() .and. Lastrec() > 0
+  elseif eof() .AND. Lastrec() > 0
      /* DbEdit() moves cursor to the bottom record if eof() is reached at init. */
      dbGoBottom()
   endif
@@ -476,7 +476,7 @@ nLowerBound +=nHigerBound
 
        If HB_ISSTRING(acColumnHeaders)
           cHdr := acColumnHeaders
-       ElseIf HB_ISARRAY(acColumnHeaders) .and. Len(acColumnHeaders) >= nIndex .and. acColumnHeaders[ nIndex ] != NIL // handle empty column headers
+       ElseIf HB_ISARRAY(acColumnHeaders) .AND. Len(acColumnHeaders) >= nIndex .AND. acColumnHeaders[ nIndex ] != NIL // handle empty column headers
           cHdr := acColumnHeaders[ nIndex ]
        End
 
@@ -508,7 +508,7 @@ nLowerBound +=nHigerBound
           oTBC:footing := acColumnFootings
        End
 
-       If HB_ISARRAY(acColumnSayPictures) .and. Len(acColumnSayPictures) >= nIndex
+       If HB_ISARRAY(acColumnSayPictures) .AND. Len(acColumnSayPictures) >= nIndex
           oTBC:picture := acColumnSayPictures[ nIndex ]
        ElseIf HB_ISSTRING(acColumnSayPictures)
           oTBC:picture := acColumnSayPictures
@@ -548,7 +548,7 @@ nLowerBound +=nHigerBound
  endif
 
  If Empty(xUserFunc)
-    bFunc := {|| IIf(HB_ISNUMERIC(nKey) .And. (Chr(LastKey()) $ Chr(K_ESC) + Chr(K_ENTER)), DE_ABORT, DE_CONT)}
+    bFunc := {|| IIf(HB_ISNUMERIC(nKey) .AND. (Chr(LastKey()) $ Chr(K_ESC) + Chr(K_ENTER)), DE_ABORT, DE_CONT)}
  ElseIf !HB_IsLogical(xUserFunc)
     bFunc := IIf(HB_ISBLOCK(xUserFunc), xUserFunc, &("{|x, y, z|" + xUserFunc + "(x,y,z)}"))
     oTBR:setKey( K_ESC, nil )
@@ -562,7 +562,7 @@ nLowerBound +=nHigerBound
  oTBR:ForceStable()
  oTBR:DeHilite()
 
- if hb_IsLogical(xUserFunc) .and. xUserFunc = .F.
+ if hb_IsLogical(xUserFunc) .AND. xUserFunc = .F.
     nRet := DE_ABORT
  endif
 
@@ -598,7 +598,7 @@ nLowerBound +=nHigerBound
     endif
 
     oTBR:ForceStable()
-     if (eof() .or. hHashData[nAliasTmp]["eof"])
+     if (eof() .OR. hHashData[nAliasTmp]["eof"])
 
          nRecno :=recno()
 
@@ -659,12 +659,12 @@ hHashData[nAliasTmp]["eof"]:=.F.
     elseif nRet = DE_REFRESH
        LOOP
 
-*     elseif nRet = DE_APPEND .and. ! oTBR:Cargo
+*     elseif nRet = DE_APPEND .AND. ! oTBR:Cargo
 * 
 *        oTBR:Cargo := .T.
 *        lAppend := .T.
 * 
-*        if ! eof() .or. ! dbe_emptydb()
+*        if ! eof() .OR. ! dbe_emptydb()
 *           oTBR:Down()
 *        endif
 * 
@@ -746,7 +746,7 @@ Local aValues :={}
 
      nKey := NextKey()
 
-     if nKey == K_ENTER .or. nKey == K_ESC
+     if nKey == K_ENTER .OR. nKey == K_ESC
         inkey()
         Return DE_ABORT
      endif
@@ -780,7 +780,7 @@ Local aValues :={}
      oTBR:DeHilite()
      oTBR:ColorRect({oTBR:rowpos,oTBR:colpos,oTBR:rowpos,oTBR:colpos},{1,2})
 
-  elseif nMode == DE_IDLE .or. nMode == DE_EMPTY
+  elseif nMode == DE_IDLE .OR. nMode == DE_EMPTY
 
      keyboard chr(0)
      inkey()
@@ -794,7 +794,7 @@ Local aValues :={}
   // Call UDF
   aValues := GetCurValue(calias)
   nkey := lastkey()
-  if nKey == K_ENTER .or. nKey == K_DEL
+  if nKey == K_ENTER .OR. nKey == K_DEL
      GETREFRESHCURVALUE(cAlias, ctable)
      aValues := GetCurValue(calias)
   endif
@@ -820,7 +820,7 @@ Local aValues :={}
         insertupdated(cAlias ,cTable)
         otbr:refreshall()
 *       cSql := sr_getconnection():cLastcomm
-*       if upper(ctable) in upper(cSql) .and. "INSERT" in upper(cSql )
+*       if upper(ctable) in upper(cSql) .AND. "INSERT" in upper(cSql )
 *          cValues := substr(cSql,at("VALUES",upper(cSql)))
 *          cSql := strtran(csql,cvalues,'')
 *          cvalues := alltrim(values)
@@ -856,14 +856,14 @@ Local aValues :={}
      
   endif
   // A change was occurred on UDF (append, delete or skip).
-  lChanged := ( nLastRec != ( cAlias )->( lastrec() ) .or.;
-                Deleted() != lDeleted .or.;
+  lChanged := ( nLastRec != ( cAlias )->( lastrec() ) .OR.;
+                Deleted() != lDeleted .OR.;
                 nRec != Recno() ) 
   
-   if len(aret ) > 0 .and. nRet == DE_REFRESH
-      lChanged := lChanged .or. reccount()!=aret[1,1]
+   if len(aret ) > 0 .AND. nRet == DE_REFRESH
+      lChanged := lChanged .OR. reccount()!=aret[1,1]
    endif
-  if nRet = DE_ABORT .or. nRet = DE_APPEND
+  if nRet = DE_ABORT .OR. nRet = DE_APPEND
      Return nRet
   endif
 
@@ -881,7 +881,7 @@ Local aValues :={}
         *refreshFullData(csql,calias)
 
         
-        if ( nKey != 0 .and. ! dbe_CursorKey(nKey) ) .or.;
+        if ( nKey != 0 .AND. ! dbe_CursorKey(nKey) ) .OR.;
            (calias)->(ordkeyno()) < oTBR:RowPos
            oTBR:Gotop()
         endif
@@ -897,14 +897,14 @@ Local aValues :={}
 *          otbr:forceStable()
 *          
 
-     elseif (calias)->(LastRec()) < nLastRec .or.  aret[1,1] < (calias)->(reccount() )  // pack
+     elseif (calias)->(LastRec()) < nLastRec .OR.  aret[1,1] < (calias)->(reccount() )  // pack
         
         oTBR:RowPos := 1
 
-     elseif (calias)->(Deleted() ).and. ( cAlias )->( LastRec() ) != 0  .or.  aret[1,1]<=(calias)->(reccount() )// deleted
+     elseif (calias)->(Deleted() ).AND. ( cAlias )->( LastRec() ) != 0  .OR.  aret[1,1]<=(calias)->(reccount() )// deleted
         
         if SET( _SET_DELETED )
-           while ! eof() .and. deleted()
+           while ! eof() .AND. deleted()
               dbSkip()
            enddo
         else
@@ -917,7 +917,7 @@ Local aValues :={}
 
      endif
 
-     if (eof() .and. ( cAlias )->( LastRec() ) > 0 ) 
+     if (eof() .AND. ( cAlias )->( LastRec() ) > 0 ) 
 
           dbskip(-1)
           
@@ -981,14 +981,14 @@ STATIC FUNCTION dbe_Skipper( nSkip, oTb,calias)
    LOCAL i       := 0
    lEof := .F.
    do case
-   case ( nSkip = 0 .or. lastrec() = 0 )
+   case ( nSkip = 0 .OR. lastrec() = 0 )
       // Skip 0 (significant on a network)
       dbSkip( 0 )
-   case ( nSkip > 0 .and. !eof() )
+   case ( nSkip > 0 .AND. !eof() )
       while ( i < nSkip )           // Skip Foward
          dbskip( 1 )
          i++
-         if eof() .and. ! lAppend
+         if eof() .AND. ! lAppend
              hHashData[nAliastmp]["eof"] := .T.
             dbskip( -1 )
             i--
@@ -1012,14 +1012,14 @@ RETURN i
 Static Function _MoveCol(oTBR, nKey)
 Local oTBR1, oTBR2
 
-  If nKey = K_CTRL_DOWN .And. oTBR:colPos < oTBR:colCount
+  If nKey = K_CTRL_DOWN .AND. oTBR:colPos < oTBR:colCount
     oTBR1 := oTBR:getColumn(oTBR:colPos)
     oTBR2 := oTBR:getColumn(oTBR:colPos + 1)
     oTBR:setColumn(oTBR:colPos, oTBR2)
     oTBR:SetColumn(oTBR:colPos + 1, oTBR1)
     oTBR:colPos++
     oTBR:invalidate()
-  ElseIf nKey = K_CTRL_UP .And. oTBR:colPos > 1
+  ElseIf nKey = K_CTRL_UP .AND. oTBR:colPos > 1
     oTBR1 := oTBR:getColumn(oTBR:colPos)
     oTBR2 := oTBR:getColumn(oTBR:colPos - 1)
     oTBR:setColumn(oTBR:colPos, oTBR2)
@@ -1042,9 +1042,9 @@ Local lEmpty
  endif
 
  if ! Empty(dbFilter())
-    lEmpty := ( Eof() .or. Recno() > Lastrec() )
+    lEmpty := ( Eof() .OR. Recno() > Lastrec() )
  elseif IndexOrd() = 0
-    lEmpty := ( ( Eof() .or. Recno() > LastRec() ) .and. Bof() )
+    lEmpty := ( ( Eof() .OR. Recno() > LastRec() ) .AND. Bof() )
  else
     //lEmpty := ( OrdKeyCount() = 0  ) // this code decrease dbedit's speed at large table.
     lEmpty := ( OrdKeyNo() = 0 )
@@ -1088,7 +1088,7 @@ STATIC FUNCTION dbe_Return( n )
 *----------------------------------*
 if ! hb_isnumeric(n)
    n := DE_CONT
-elseif n < DE_ABORT .or. n > DE_APPEND
+elseif n < DE_ABORT .OR. n > DE_APPEND
    n := DE_CONT
 endif
 
@@ -1136,7 +1136,7 @@ local lDeleted := .F.
           oTb:RowPos := nKeyNo
        else
           dbGotop()
-          while ! eof() .and. recno() != nRec
+          while ! eof() .AND. recno() != nRec
              if deleted()
                 nDel++
              endif
@@ -1195,7 +1195,7 @@ endif
 sr_getconnection():exec(cSql, , .T., , cfile, cAlias)
    nAfterRec:=(calias)->(reccount())
    
-   if nAfterRec > nrecno .and. nBeforeTotRec<nAfterRec
+   if nAfterRec > nrecno .AND. nBeforeTotRec<nAfterRec
    if nrecno == 0
       (calias)->(dbgotop())
    else
@@ -1426,7 +1426,7 @@ if len(aFields) > 0
       
          if valtype(aval[npos]) == 'C'
             cSql += " " + aTemp  + " = " +  aVal[nPos]
-         elseif  valtype(aval[npos]) == 'N' .or.  valtype(aval[npos]) == 'D' 
+         elseif  valtype(aval[npos]) == 'N' .OR.  valtype(aval[npos]) == 'D' 
             cSql += " " + aTemp  + " = " +  sr_cdbvalue(aVal[nPos])
          endif
       cSql += " AND "

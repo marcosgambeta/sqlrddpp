@@ -143,7 +143,7 @@ Function SR_CheckCnn( nConnection )
    DEFAULT nActiveConnection := 0
    DEFAULT nConnection := nActiveConnection
    DEFAULT aConnections  := {}
-   If nConnection > len(aConnections) .or. nConnection == 0
+   If nConnection > len(aConnections) .OR. nConnection == 0
       Return .F.
    EndIf
 Return .T.
@@ -163,7 +163,7 @@ Function SR_CheckConnection( nConnection )
    DEFAULT nActiveConnection := 0
    DEFAULT nConnection := nActiveConnection
    DEFAULT aConnections  := {}
-   If nConnection > len(aConnections) .or. nConnection == 0 .or. nConnection < 0
+   If nConnection > len(aConnections) .OR. nConnection == 0 .OR. nConnection < 0
       Return SR_RuntimeErr( "SR_CheckConnection()", SR_Msg(7) )
    EndIf
 Return aConnections[ nConnection ]
@@ -242,7 +242,7 @@ Return lSyntheticInd
 Function SR_SetSVIndex(cSet)
    Local cOld := cSynthetiVInd
    If valtype(cSet) == "C"
-      If len(cSet) != 3 .or. " " $ cSet .or. "." $ cSet
+      If len(cSet) != 3 .OR. " " $ cSet .OR. "." $ cSet
          SR_RuntimeErr( "SR_SetSVIndex()", "Invalid parameter: " + cSet )
       EndIf
       cSynthetiVInd := cSet
@@ -357,7 +357,7 @@ Function SR_SetActiveConnection( nCnn )
    DEFAULT nCnn := 1
    DEFAULT aConnections  := {}
 
-   If nCnn != 0 .and. nCnn <= len(aConnections)
+   If nCnn != 0 .AND. nCnn <= len(aConnections)
       nActiveConnection := nCnn
    Else
       Return -1
@@ -510,7 +510,7 @@ Function SR_AddConnection( nType, cDSN, cUser, cPassword, cOwner, lCounter, lAut
       Return -1
    EndIf
 
-   If oConnect:nSystemID != 0 .and. oConnect:nSystemID != NIL
+   If oConnect:nSystemID != 0 .AND. oConnect:nSystemID != NIL
 
       oConnect:nConnectionType := nType
 
@@ -531,7 +531,7 @@ Function SR_AddConnection( nType, cDSN, cUser, cPassword, cOwner, lCounter, lAut
       aadd(aConnections, oConnect)
       nRet := len(aConnections)
 
-      If nActiveConnection == NIL .or. nActiveConnection == 0
+      If nActiveConnection == NIL .OR. nActiveConnection == 0
          nActiveConnection := nRet
       EndIf
 
@@ -626,7 +626,7 @@ Static Function SR_SetEnvSQLRDD(oConnect)
 
       Switch oCnn:nSystemID
       Case SYSTEMID_ORACLE
-         If SR_UseSequences() .and. i == 1
+         If SR_UseSequences() .AND. i == 1
             aRet := {}
             oCnn:exec("SELECT SEQUENCE_NAME FROM USER_SEQUENCES WHERE SEQUENCE_NAME='SQ_NRECNO'", .F., .T., @aRet)
          EndIf
@@ -661,7 +661,7 @@ Static Function SR_SetEnvSQLRDD(oConnect)
 
       Case SYSTEMID_IBMDB2
          /*
-         If SR_UseSequences() .and. i == 1
+         If SR_UseSequences() .AND. i == 1
             aRet := {}
             oCnn:exec("VALUES NEXTVAL FOR N_RECNO", .F., .T., @aRet)
             If len(aRet) == 0
@@ -705,7 +705,7 @@ Static Function SR_SetEnvSQLRDD(oConnect)
          Exit
 
       Case SYSTEMID_POSTGR
-         If SR_UseSequences() .and. i == 1
+         If SR_UseSequences() .AND. i == 1
             aRet := {}
             oCnn:exec("SELECT * FROM SQ_NRECNO", .F., .T., @aRet)
             oCnn:Commit()
@@ -934,7 +934,7 @@ Static Function SR_SetEnvSQLRDD(oConnect)
    EndIf
 
    If cStartingVersion < "MGMNT 1.67"
-      If oConnect:nSystemID == SYSTEMID_MSSQL7 .or. oConnect:nSystemID == SYSTEMID_AZURE
+      If oConnect:nSystemID == SYSTEMID_MSSQL7 .OR. oConnect:nSystemID == SYSTEMID_AZURE
          oConnect:exec("DROP FUNCTION dbo.trim", .F.)
          oConnect:commit()
          oConnect:exec("CREATE FUNCTION dbo.trim( @p1 AS CHAR  ) RETURNS CHAR BEGIN RETURN ltrim(rtrim( @p1 )) END", .F.)
@@ -1229,7 +1229,7 @@ Function SR_ExistTable(cTableName, cOwner, oCnn)
       EndIf
    EndIf
 
-   If (!Empty(cOwner)) .and. cOwner[-1] != "."
+   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
       cOwner += "."
    EndIf
 
@@ -1243,7 +1243,7 @@ Function SR_ExistTable(cTableName, cOwner, oCnn)
       oCnn:oSqlTransact:Commit()
    EndIf
 
-   If nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO .or. nRet == SQL_NO_DATA_FOUND
+   If nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO .OR. nRet == SQL_NO_DATA_FOUND
       Return .T.
    EndIf
 
@@ -1267,7 +1267,7 @@ Function SR_ExistIndex( cIndexName, cOwner )
    aRet := {}
    nRet := oCnn:exec("SELECT * FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE IDXNAME_ = '" + Upper(Alltrim(cIndexName)) + "'", .F., .T., @aRet)
 
-   If (nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO) .and. len(aRet) > 0
+   If (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. len(aRet) > 0
       Return .T.
    EndIf
 
@@ -1280,13 +1280,13 @@ Function SR_File(cTableName)
    Local cTbl := lower(cTableName)
 
    Do Case
-   Case ".dbf" $ cTbl .or. ".dbt" $ cTbl
+   Case ".dbf" $ cTbl .OR. ".dbt" $ cTbl
       Return SR_ExistTable(cTableName)
-   Case ".ntx" $ cTbl .or. ".cdx" $ cTbl
+   Case ".ntx" $ cTbl .OR. ".cdx" $ cTbl
       Return SR_ExistIndex( cTableName )
    EndCase
 
-Return SR_ExistTable(cTableName) .or. SR_ExistIndex( cTableName )
+Return SR_ExistTable(cTableName) .OR. SR_ExistIndex( cTableName )
 
 /*------------------------------------------------------------------------*/
 
@@ -1313,7 +1313,7 @@ Function SR_EndConnection( nConnection )
 
    SR_CheckConnection( nConnection )
 
-   If nConnection > len(aConnections) .or. nConnection == 0 .or. nConnection < 0
+   If nConnection > len(aConnections) .OR. nConnection == 0 .OR. nConnection < 0
       Return NIL
    EndIf
 
@@ -1560,20 +1560,20 @@ Function SR_DropIndex( cIndexName, cOwner )
       EndIf
    EndIf
 
-   If (!Empty(cOwner)) .and. cOwner[-1] != "."
+   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
       cOwner += "."
    EndIf
 
    aRet := {}
    nRet := oCnn:exec("SELECT TABLE_, PHIS_NAME_, IDXNAME_, IDXCOL_, IDXFOR_, IDXKEY_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE IDXNAME_ = '" + Upper(Alltrim(cIndexName)) + "'", .F., .T., @aRet)
-   If (nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO) .and. len(aRet) == 0
+   If (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. len(aRet) == 0
       // Index does not exist
       aRet := {}
       nRet := oCnn:exec("SELECT TABLE_, PHIS_NAME_, IDXNAME_, IDXCOL_, IDXFOR_, IDXKEY_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE PHIS_NAME_ = '" + Upper(Alltrim(cIndexName)) + "'", .F., .T., @aRet)
-      If (nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO) .and. len(aRet) == 0
+      If (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. len(aRet) == 0
           aRet := {}
           nRet := oCnn:exec("SELECT TABLE_, PHIS_NAME_, IDXNAME_, IDXCOL_, IDXFOR_, IDXKEY_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TAG_ = '" + Alltrim(ctempIndex) + "'", .F., .T., @aRet)
-         If (nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO) .and. len(aRet) == 0
+         If (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. len(aRet) == 0
             Return .F.
          ELSE
             lTag := .T.
@@ -1606,7 +1606,7 @@ Function SR_DropIndex( cIndexName, cOwner )
          oCnn:exec("DROP INDEX " + cPhisicalName + " ON " + cOwner + SR_DBQUALIFY( cFileName, oCnn:nSystemID ) + iif(oCnn:lComments, " /* DROP Index */", ""), .F.)
          Exit
       Case SYSTEMID_ORACLE
-         If len(aIndex[6]) > 4 .and. aIndex[6][4] == "@"
+         If len(aIndex[6]) > 4 .AND. aIndex[6][4] == "@"
             oCnn:exec("DROP INDEX " + cOwner + "A$" + SubStr(aIndex[6],1,3) + SubStr(cFileName,1,25) + iif(oCnn:lComments, " /* Drop VIndex */", ""), .F.)
             oCnn:Commit()
             oCnn:exec("DROP INDEX " + cOwner + "D$" + SubStr(aIndex[6],1,3) + SubStr(cFileName,1,25) + iif(oCnn:lComments, " /* Drop VIndex */", ""), .F.)
@@ -1618,7 +1618,7 @@ Function SR_DropIndex( cIndexName, cOwner )
          oCnn:exec("DROP INDEX " + cPhisicalName + iif(oCnn:lComments, " /* DROP Index */", ""), .F.)
       End
 
-      If (!Empty(aIndex[4])) .or. aIndex[5][1] == "#"
+      If (!Empty(aIndex[4])) .OR. aIndex[5][1] == "#"
          USE (cFileName) NEW VIA "SQLRDD" ALIAS "TEMPDROPCO" exclusive
          oWA := TEMPDROPCO->( dbInfo( DBI_INTERNAL_OBJECT ) )
 
@@ -1660,7 +1660,7 @@ Function SR_DropTable(cFileName, cOwner)
       EndIf
    EndIf
 
-   If (!Empty(cOwner)) .and. cOwner[-1] != "."
+   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
       cOwner += "."
    EndIf
 
@@ -1730,7 +1730,7 @@ Function SR_RenameTable(cTable, cNewName, cOwner)
       EndIf
    EndIf
 
-   If (!Empty(cOwner)) .and. cOwner[-1] != "."
+   If (!Empty(cOwner)) .AND. cOwner[-1] != "."
       cOwner += "."
    EndIf
 
@@ -1739,7 +1739,7 @@ Function SR_RenameTable(cTable, cNewName, cOwner)
 
    aRet := {}
    nRet := oCnn:exec("SELECT * FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES WHERE TABLE_ = '" + upper(cTable) + "'", .F., .T., @aRet)
-   If (nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO) .and. len(aRet) == 0
+   If (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. len(aRet) == 0
       // Table does not exist
       Return .F.
    EndIf
@@ -1755,7 +1755,7 @@ Function SR_RenameTable(cTable, cNewName, cOwner)
    Case SYSTEMID_MSSQL7
    Case SYSTEMID_AZURE
       nRet := oCnn:exec("exec sp_rename " + cOwner + cTable + ", " + cOwner + cNewName, .F.)
-      If nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO
+      If nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
          lOk := .T.
       EndIf
       Exit
@@ -1769,7 +1769,7 @@ Function SR_RenameTable(cTable, cNewName, cOwner)
       ENDIF
 
       nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cTable,oCnn:nSystemID) + " RENAME TO " + cOwner + SR_DBQUALIFY(cNewName,oCnn:nSystemID), .F.)
-      If nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO
+      If nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
          lOk := .T.
       EndIf
 
@@ -1818,7 +1818,7 @@ Function SR_SetToolsOwner( cOwner )
 
    If cOwner != NIL
       cToolsOwner := cOwner
-      If (!Empty(cOwner)) .and. cToolsOwner[-1] != "."
+      If (!Empty(cOwner)) .AND. cToolsOwner[-1] != "."
          cToolsOwner += "."
       EndIf
    Else
@@ -1945,20 +1945,20 @@ Function SR_SetLocks( uLocks, oCnn, nRetries )
       nRet := oCnn:oSqlTransact:exec(cIns, .F.)
       oCnn:oSqlTransact:Commit()
 
-      If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          oCnn:oSqlTransact:exec(cDel, .F.)
          oCnn:oSqlTransact:Commit()
          nRet := oCnn:oSqlTransact:exec(cIns, .F.)
          oCnn:oSqlTransact:Commit()
 
-         If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+         If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
             While nRetries > 0
                oCnn:oSqlTransact:exec(cDel, .F.)
                oCnn:oSqlTransact:Commit()
                nRet := oCnn:oSqlTransact:exec(cIns, .F.)
                oCnn:oSqlTransact:Commit()
 
-               If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+               If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
                   Inkey(.5)
                   nRetries--
                Else
@@ -1968,7 +1968,7 @@ Function SR_SetLocks( uLocks, oCnn, nRetries )
          EndIf
       EndIf
 
-      If nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO
+      If nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
          aadd(aAdded, cValue)
       Else
          lRet := .F.
@@ -2102,11 +2102,11 @@ Function SR_DetectDBFromDSN( cConnect )
          Return CONNECT_MYSQL
       Case cBuff == "MARIA"
          Return CONNECT_MARIA
-      Case cBuff == "FB" .or. cBuff == "FIREBIRD" .or. cBuff == "IB"
+      Case cBuff == "FB" .OR. cBuff == "FIREBIRD" .OR. cBuff == "IB"
          Return CONNECT_FIREBIRD
-      Case cBuff == "FB3" .or. cBuff == "FIREBIRD3"
+      Case cBuff == "FB3" .OR. cBuff == "FIREBIRD3"
          Return CONNECT_FIREBIRD3         
-      Case cBuff == "DSN" .or. cBuff == "DRIVER"
+      Case cBuff == "DSN" .OR. cBuff == "DRIVER"
          Return CONNECT_ODBC
       EndCase
    Next

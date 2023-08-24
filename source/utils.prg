@@ -116,7 +116,7 @@ Function SR_Val2Char(a,n1,n2)
    Do Case
    Case HB_ISSTRING(a) 
       Return a
-   Case HB_ISNUMERIC(a) .and. n1 != NIL .and. n2 != NIL
+   Case HB_ISNUMERIC(a) .AND. n1 != NIL .AND. n2 != NIL
       Return Str(a,n1,n2)
    Case HB_ISNUMERIC(a)
       Return Str(a)
@@ -212,7 +212,7 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
       SR_RuntimeErr( , "SR_ChengeStructure: Workarea not in use." )
    EndIf
 
-   If len(aNewStruct) < 1 .or. !HB_ISARRAY(aNewStruct) .or. !HB_ISARRAY(aNewStruct[1])
+   If len(aNewStruct) < 1 .OR. !HB_ISARRAY(aNewStruct) .OR. !HB_ISARRAY(aNewStruct[1])
       SR_RuntimeErr( , "SR_ChengeStructure: Invalid arguments [2]." )
    EndIf
 
@@ -220,7 +220,7 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
 
       oWA := dbInfo( DBI_INTERNAL_OBJECT )
 
-      If (!Empty(cTableName)) .and. oWA:cOriginalFN != upper(alltrim(cTableName))
+      If (!Empty(cTableName)) .AND. oWA:cOriginalFN != upper(alltrim(cTableName))
          SR_RuntimeErr( , "SR_ChengeStructure: Invalid arguments [1]: " + cTableName )
       EndIf
 
@@ -241,9 +241,9 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
 
             aSize(aNewStruct[i], max(len(aNewStruct[i] ), 5))
 
-            If aNewStruct[i, 2] == oWA:aFields[n, 2] .and. aNewStruct[i, 3] == oWA:aFields[n, 3] .and. aNewStruct[i, 4] == oWA:aFields[n, 4]
+            If aNewStruct[i, 2] == oWA:aFields[n, 2] .AND. aNewStruct[i, 3] == oWA:aFields[n, 3] .AND. aNewStruct[i, 4] == oWA:aFields[n, 4]
                // Structure is identical. Only need to check for NOT NULL flag.
-               If aNewStruct[i, FIELD_NULLABLE] != NIL .and. aNewStruct[i, FIELD_NULLABLE] !=  oWA:aFields[n, FIELD_NULLABLE]
+               If aNewStruct[i, FIELD_NULLABLE] != NIL .AND. aNewStruct[i, FIELD_NULLABLE] !=  oWA:aFields[n, FIELD_NULLABLE]
                   If aNewStruct[i, FIELD_NULLABLE]
                      SR_LogFile("changestruct.log", { oWA:cFileName, "Changing to nullable:", aNewStruct[i,1]})
                      oWA:DropRuleNotNull(aNewStruct[i,1])
@@ -254,17 +254,17 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
                EndIf
             ElseIf oWA:oSql:nSystemID == SYSTEMID_IBMDB2
                SR_LogFile("changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i,1], " - Operation not supported by back end database" })
-            ElseIf aNewStruct[i, 2] == "M" .and. oWA:aFields[n, 2] == "C"
+            ElseIf aNewStruct[i, 2] == "M" .AND. oWA:aFields[n, 2] == "C"
                aadd(aToFix, aClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change data type of field:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
-            ElseIf aNewStruct[i, 2] == "C" .and. oWA:aFields[n, 2] == "M"
+            ElseIf aNewStruct[i, 2] == "C" .AND. oWA:aFields[n, 2] == "M"
                aadd(aToFix, aClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing data type:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ElseIf aNewStruct[i, 2] != oWA:aFields[n, 2]
-               IF aNewStruct[i, 2] $"CN" .and. oWA:aFields[n, 2] $"CN" .and. oWA:oSql:nSystemID == SYSTEMID_POSTGR               
+               IF aNewStruct[i, 2] $"CN" .AND. oWA:aFields[n, 2] $"CN" .AND. oWA:oSql:nSystemID == SYSTEMID_POSTGR               
 
-*                   IF "8.4" $ oWA:oSql:cSystemVers .or. "9.0" $ oWA:oSql:cSystemVers
-                  IF oWA:oSql:lPostgresql8 .and. !oWA:oSql:lPostgresql83
+*                   IF "8.4" $ oWA:oSql:cSystemVers .OR. "9.0" $ oWA:oSql:cSystemVers
+                  IF oWA:oSql:lPostgresql8 .AND. !oWA:oSql:lPostgresql83
                      aadd(aDirect, aClone(aNewStruct[i]))
                   else
                      aadd(aToFix, aClone(aNewStruct[i]))
@@ -273,11 +273,11 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
                ELSE 
                   SR_LogFile("changestruct.log", { oWA:cFileName, "ERROR: Cannot convert data type of field:", aNewStruct[i,1], " from", oWA:aFields[n, 2], "to", aNewStruct[i, 2] })
                ENDIF
-            ElseIf aNewStruct[i, 3] >= oWA:aFields[n, 3] .and. oWA:aFields[n, 2] $ "CN"              
+            ElseIf aNewStruct[i, 3] >= oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"              
                
                aadd(aDirect, aClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3] })
-            ElseIf aNewStruct[i, 3] < oWA:aFields[n, 3] .and. oWA:aFields[n, 2] $ "CN"
+            ElseIf aNewStruct[i, 3] < oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"
                aadd(aToFix, aClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3]})
             Else
@@ -291,21 +291,21 @@ Function SR_ChangeStruct( cTableName, aNewStruct )
 
       For i = 1 to len(oWA:aFields)
          If (n := aScan(aNewStruct, {|x| x[1] == oWA:aFields[i,1] }) ) == 0
-            If (!oWA:aFields[i,1] == oWA:cRecnoName) .and. (!oWA:aFields[i,1] == oWA:cDeletedName ) .and. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
+            If (!oWA:aFields[i,1] == oWA:cRecnoName) .AND. (!oWA:aFields[i,1] == oWA:cDeletedName ) .AND. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
                aadd(aToDrop, aClone(oWA:aFields[i]))
                SR_LogFile("changestruct.log", { oWA:cFileName, "Will drop:", oWA:aFields[i,1] })
             EndIf
          EndIf
       Next
-      IF Len(aDirect) > 0 .and.;
-       ( oWA:oSql:nSystemID == SYSTEMID_FIREBR .or. ;
-         oWA:oSql:nSystemID == SYSTEMID_FIREBR3 .or. ;
-         oWA:oSql:nSystemID == SYSTEMID_MYSQL  .or. ;
-         oWA:oSql:nSystemID == SYSTEMID_MARIADB  .or. ;
-         oWA:oSql:nSystemID == SYSTEMID_ORACLE .or. ;
-         oWA:oSql:nSystemID == SYSTEMID_MSSQL6 .or. ;
-         oWA:oSql:nSystemID == SYSTEMID_MSSQL7 .or. ;
-         oWA:oSql:nSystemID == SYSTEMID_CACHE  .or. ;
+      IF Len(aDirect) > 0 .AND.;
+       ( oWA:oSql:nSystemID == SYSTEMID_FIREBR .OR. ;
+         oWA:oSql:nSystemID == SYSTEMID_FIREBR3 .OR. ;
+         oWA:oSql:nSystemID == SYSTEMID_MYSQL  .OR. ;
+         oWA:oSql:nSystemID == SYSTEMID_MARIADB  .OR. ;
+         oWA:oSql:nSystemID == SYSTEMID_ORACLE .OR. ;
+         oWA:oSql:nSystemID == SYSTEMID_MSSQL6 .OR. ;
+         oWA:oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ;
+         oWA:oSql:nSystemID == SYSTEMID_CACHE  .OR. ;
          oWA:oSql:nSystemID == SYSTEMID_POSTGR )
 
          oWA:AlterColumnsDirect( aDirect, .T., .F., @aTofix )
@@ -395,7 +395,7 @@ Function SR_SetReverseIndex( nIndex, lSet )
 
    Local lOldSet
 
-   If IS_SQLRDD .and. nIndex > 0 .and. nIndex <= len((Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex)
+   If IS_SQLRDD .AND. nIndex > 0 .AND. nIndex <= len((Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex)
       lOldSet := (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex[ nIndex, DESCEND_INDEX_ORDER ]
       If HB_ISLOGICAL(lSet) 
          (Select())->(dbInfo( DBI_INTERNAL_OBJECT )):aIndex[ nIndex, DESCEND_INDEX_ORDER ] := lSet
@@ -504,46 +504,46 @@ Static Function SR_SubQuoted(cType, uData, nSystemID)
    lOCAL cOldSet := SET(_SET_DATEFORMAT)   
 
    Do Case
-   Case cType $ "CM" .and. nSystemID == SYSTEMID_ORACLE
+   Case cType $ "CM" .AND. nSystemID == SYSTEMID_ORACLE
       return ['] + rtrim(strtran(uData,"'","'||"+"CHR(39)"+"||'")) + [']
-   Case cType $ "CM" .and. nSystemID == SYSTEMID_MSSQL7
+   Case cType $ "CM" .AND. nSystemID == SYSTEMID_MSSQL7
       return ['] + rtrim(strtran(uData,"'",[']+['])) + [']
-   Case cType $ "CM" .and. nSystemID == SYSTEMID_POSTGR
+   Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
       return [E'] + strtran(rtrim(strtran(uData,"'",[']+['])), "\","\\") + [']
    Case cType $ "CM"
       return ['] + rtrim(strtran(uData,"'","")) + [']
-   Case cType == "D" .and. nSystemID == SYSTEMID_ORACLE
+   Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
       return [TO_DATE('] + rtrim(DtoS(uData)) + [','YYYYMMDD')]
-    Case cType == "D" .and. (nSystemID == SYSTEMID_IBMDB2 .or. nSystemID == SYSTEMID_ADABAS )
+    Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS )
         return [']+transform(DtoS(uData) ,'@R 9999-99-99')+[']
-   Case cType == "D" .and. nSystemID == SYSTEMID_SQLBAS
+   Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
       return ['] + SR_dtosDot(uData) + [']
-   Case cType == "D" .and. nSystemID == SYSTEMID_INFORM
+   Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
       return ['] + SR_dtoUS(uData) + [']
-   Case cType == "D" .and. nSystemID == SYSTEMID_INGRES
+   Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
       return ['] + SR_dtoDot(uData) + [']
-   Case cType == "D" .and. (nSystemID == SYSTEMID_FIREBR .or. nSystemID == SYSTEMID_FIREBR3)
+   Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
       return [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
 
-   Case cType == "D" .and. nSystemID == SYSTEMID_CACHE
+   Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
       return [{d ']+transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)) ,'@R 9999-99-99')+['}]
    Case cType == "D"
       return ['] + dtos(uData) + [']
    Case cType == "N"   
       return ltrim(str(uData))
-   Case cType == "L" .and. (nSystemID == SYSTEMID_POSTGR .or. nSystemID == SYSTEMID_FIREBR3 ) 
+   Case cType == "L" .AND. (nSystemID == SYSTEMID_POSTGR .OR. nSystemID == SYSTEMID_FIREBR3 ) 
       return iif(uData, "true", "false")
-   Case cType == "L" .and. nSystemID == SYSTEMID_INFORM
+   Case cType == "L" .AND. nSystemID == SYSTEMID_INFORM
       return iif(uData, "'t'", "'f'")      
    Case cType == "L"   
       return iif(uData, "1", "0")
-   case ctype == "T"  .and. nSystemID == SYSTEMID_POSTGR  
+   case ctype == "T"  .AND. nSystemID == SYSTEMID_POSTGR  
       IF Empty(uData) 
          RETURN 'NULL'
       ENDIF 
 
       return ['] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']      
-   case ctype == "T" .and. nSystemID == SYSTEMID_ORACLE
+   case ctype == "T" .AND. nSystemID == SYSTEMID_ORACLE
       IF Empty(uData) 
          RETURN 'NULL'
       ENDIF       
@@ -1541,7 +1541,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       aOptions := {}
    ENDIF
 
-   IF !ISCHARACTER( cColorNorm ) .or. EMPTY(cColorNorm)
+   IF !ISCHARACTER( cColorNorm ) .OR. EMPTY(cColorNorm)
       cColorNorm := "W+/R" // first pair color (Box line and Text)
       cColorHigh := "W+/B" // second pair color (Options buttons)
    ELSE
@@ -1574,7 +1574,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          cColor12 := "R"
       endif
 
-      if ColorValid(cColor11) .and. ColorValid(cColor12)
+      if ColorValid(cColor11) .AND. ColorValid(cColor12)
 
         // if color pair is passed in numeric format, then we need to convert for
         // letter format to avoid blinking in some circumstances.
@@ -1614,7 +1614,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             cColor22 := "B"
          endif
 
-         if ColorValid(cColor21) .and. ColorValid(cColor22)
+         if ColorValid(cColor21) .AND. ColorValid(cColor22)
 
             if IsDigit( cColor21 )
                cColor21 := COLORLETTER( cColor21 )
@@ -1640,7 +1640,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          endif
 
       else // if does not exist the second color pair, xHarbour alert will behave like Clipper
-         if empty(cColor11) .or. empty(cColor12)
+         if empty(cColor11) .OR. empty(cColor12)
             cColor11 := "B"
             cColor12 := "W+"
          else
@@ -1931,29 +1931,29 @@ cColor := StrTran(cColor, "*", "")
 cColor := StrTran(cColor, "+", "")
 cColor := Upper(cColor)
 
-if cColor=="0"  .or.;
-   cColor=="1"  .or.;
-   cColor=="2"  .or.;
-   cColor=="3"  .or.;
-   cColor=="4"  .or.;
-   cColor=="5"  .or.;
-   cColor=="6"  .or.;
-   cColor=="7"  .or.;
-   cColor=="8"  .or.;
-   cColor=="9"  .or.;
-   cColor=="10" .or.;
-   cColor=="11" .or.;
-   cColor=="12" .or.;
-   cColor=="13" .or.;
-   cColor=="14" .or.;
-   cColor=="15" .or.;
-   cColor=="B"  .or.;
-   cColor=="BG" .or.;
-   cColor=="G"  .or.;
-   cColor=="GR" .or.;
-   cColor=="N"  .or.;
-   cColor=="R"  .or.;
-   cColor=="RB" .or.;
+if cColor=="0"  .OR.;
+   cColor=="1"  .OR.;
+   cColor=="2"  .OR.;
+   cColor=="3"  .OR.;
+   cColor=="4"  .OR.;
+   cColor=="5"  .OR.;
+   cColor=="6"  .OR.;
+   cColor=="7"  .OR.;
+   cColor=="8"  .OR.;
+   cColor=="9"  .OR.;
+   cColor=="10" .OR.;
+   cColor=="11" .OR.;
+   cColor=="12" .OR.;
+   cColor=="13" .OR.;
+   cColor=="14" .OR.;
+   cColor=="15" .OR.;
+   cColor=="B"  .OR.;
+   cColor=="BG" .OR.;
+   cColor=="G"  .OR.;
+   cColor=="GR" .OR.;
+   cColor=="N"  .OR.;
+   cColor=="R"  .OR.;
+   cColor=="RB" .OR.;
    cColor=="W"
 
    Return .T.

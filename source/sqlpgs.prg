@@ -171,7 +171,7 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
       Else
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F.)
       EndIf
-      If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          return nil
       EndIf
    EndIf
@@ -185,7 +185,7 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
    nFields   := PGSCols( ::hStmt )
    ::nFields := nFields
 
-   If (!Empty(cTable)) .and. empty(cCommand)
+   If (!Empty(cTable)) .AND. empty(cCommand)
       cTbl := lower(cTable)
       If "." $ cTbl
          cOwner := SubStr(cTbl, 1, at(".", cTbl) - 1)
@@ -201,7 +201,7 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
 
    ::aFields := aFields
 
-   If lReSelect .and. !lLoadCache
+   If lReSelect .AND. !lLoadCache
       ::FreeStatement()
    EndIf
 
@@ -255,7 +255,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    hDbc := PGSConnect( cConnect )
    nRet := PGSStatus( hDbc )
 
-   if nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+   if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
       SR_MsgLogFile("Connection Error: " + alltrim(str(PGSStatus2( hDbc ))) + " (see pgs.ch)")
       Return Self
@@ -286,16 +286,16 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    ::cTargetDB   := Upper(cTargetDB)
    
 
-*    If ! ("7.3" $ cSystemVers .or. "7.4" $ cSystemVers .or. "8.0" $ cSystemVers .or. "8.1" $ cSystemVers .or. "8.2" $ cSystemVers .or. "8.3" $ cSystemVers .or. "8.4" $ cSystemVers .or. "9.0" $ cSystemVers or. "9.1" $ cSystemVers)
+*    If ! ("7.3" $ cSystemVers .OR. "7.4" $ cSystemVers .OR. "8.0" $ cSystemVers .OR. "8.1" $ cSystemVers .OR. "8.2" $ cSystemVers .OR. "8.3" $ cSystemVers .OR. "8.4" $ cSystemVers .OR. "9.0" $ cSystemVers or. "9.1" $ cSystemVers)
 
-     if !(( Val(aversion[1]) == 7 .and. Val(aversion[2]) >= 3) .or. ( Val(aversion[1]) >= 8 ))
+     if !(( Val(aversion[1]) == 7 .AND. Val(aversion[2]) >= 3) .OR. ( Val(aversion[1]) >= 8 ))
       ::End()
       ::nRetCode  := SQL_ERROR
       ::nSystemID := NIL
       SR_MsgLogFile("Unsupported Postgres version: " + cSystemVers)
    else
-      ::lPostgresql8 := (( Val(aversion[1]) == 8 .and. Val(aversion[2]) >= 3) .or. ( Val(aversion[1]) >= 9 ))
-      ::lPostgresql83 := ( Val(aversion[1]) == 8 .and. Val(aversion[2]) == 3)
+      ::lPostgresql8 := (( Val(aversion[1]) == 8 .AND. Val(aversion[2]) >= 3) .OR. ( Val(aversion[1]) >= 9 ))
+      ::lPostgresql83 := ( Val(aversion[1]) == 8 .AND. Val(aversion[2]) == 3)
    EndIf
    
    

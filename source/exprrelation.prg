@@ -244,7 +244,7 @@ METHOD GetRelations(cAlias1, cAlias2) CLASS RelationManager
    cAlias1 := upper(cAlias1)
    cAlias2 := upper(cAlias2)
 
-   IF ::oInternDictionary:lContainsKey(cAlias1) .and. (dico2 := ::oInternDictionary:xValue(cAlias1)):lContainsKey(cAlias2)
+   IF ::oInternDictionary:lContainsKey(cAlias1) .AND. (dico2 := ::oInternDictionary:xValue(cAlias1)):lContainsKey(cAlias2)
       result := ::oInternDictionary:xValue(cAlias1):xValue(cAlias2)
    ELSE
       FOR i := 1 TO len(::aDirectRelations)

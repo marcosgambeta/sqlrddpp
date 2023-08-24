@@ -226,7 +226,7 @@ METHOD LogQuery( cCommand, cType, nLogMode, nCost )    CLASS SR_CONNECTION
          ::cQueryOwner := alltrim(::cOwner)
       EndIf
 
-      If (!Empty(::cQueryOwner)) .and. ::cQueryOwner[-1] != "."
+      If (!Empty(::cQueryOwner)) .AND. ::cQueryOwner[-1] != "."
          ::cQueryOwner += "."
       EndIf
 
@@ -236,7 +236,7 @@ METHOD LogQuery( cCommand, cType, nLogMode, nCost )    CLASS SR_CONNECTION
 
    EndIf
 
-   If cMode[4] == "1" .or. ::oSqlTransact == NIL
+   If cMode[4] == "1" .OR. ::oSqlTransact == NIL
       oSql := Self
    Else
       oSql := ::oSqlTransact
@@ -328,7 +328,7 @@ METHOD Fetch(aLine, lTranslate, aFields) CLASS SR_CONNECTION
    Local lResults := HB_ISARRAY(aLine)
    Local i, nRet := ::FetchRaw( lTranslate, aFields )
 
-   If nRet == SQL_SUCCESS .and. lResults
+   If nRet == SQL_SUCCESS .AND. lResults
       aSize(aLine, ::nFields)
       For i = 1 to ::nFields
          aLine[i] := ::FieldGet( i, ::aFields, lTranslate )
@@ -411,7 +411,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
    else
       ::cLastComm := cCommand
 
-      If nLogMode > 0 .and. StrZero( nLogMode, SQLLOGCHANGES_SIZE )[6] == "1" .and. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .or. cType == SQLLOGCHANGES_TYPE_LOCK )
+      If nLogMode > 0 .AND. StrZero( nLogMode, SQLLOGCHANGES_SIZE )[6] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK )
          ::LogQuery( cCommand, cType, nLogMode )
       EndIf
 
@@ -419,13 +419,13 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
       ::nMiliseconds := Seconds() * 100
       nRet := ::ExecuteRaw( cCommand )
 
-      If nLogMode > 0 .and. StrZero( nLogMode, SQLLOGCHANGES_SIZE )[5] == "1" .and. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .or. cType == SQLLOGCHANGES_TYPE_LOCK )
+      If nLogMode > 0 .AND. StrZero( nLogMode, SQLLOGCHANGES_SIZE )[5] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK )
          ::LogQuery( cCommand, cType, nLogMode )
       EndIf
 
-      lFetch := lFetch .and. ::lResultSet
+      lFetch := lFetch .AND. ::lResultSet
 
-      if nRet != SQL_SUCCESS  .and. nRet != SQL_SUCCESS_WITH_INFO .and. (!( ("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand,7)) ) .and. nRet == SQL_NO_DATA_FOUND))
+      if nRet != SQL_SUCCESS  .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!( ("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand,7)) ) .AND. nRet == SQL_NO_DATA_FOUND))
 
          ::nRetCode  = nRet
          ::cSQLError = ''
@@ -476,7 +476,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
                n := 1
 
-               While n <= nMaxRecords .and. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+               While n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
 
                   Append Blank
 
@@ -516,7 +516,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                ::cResult += chr(13) + chr(10)
                aMemo     := Array(len(aFields))
 
-               While n <= ::nMaxTextLines .and. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+               While n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
 
                   cEste      := ""
                   nLenMemo   := 0
@@ -537,7 +537,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   ::cResult += cEste + chr(13) + chr(10)
                   n ++
 
-                  If ::lShowTxtMemo .and. nLinesMemo > 1
+                  If ::lShowTxtMemo .AND. nLinesMemo > 1
                      For j = 2 to nLinesMemo
                         cEste    := ""
                         For i = 1 to len(aFields)
@@ -609,8 +609,8 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
             EndIf
          Endif
 
-         If ::nAutoCommit > 0 .and. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
-            If (++::nIteractions) >= ::nAutoCommit .and. ::nTransacCount == 0
+         If ::nAutoCommit > 0 .AND. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
+            If (++::nIteractions) >= ::nAutoCommit .AND. ::nTransacCount == 0
                ::Commit()
             EndIf
          EndIf
@@ -662,7 +662,7 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
       else
          ::cLastComm := cCommand
 
-         If nLogMode > 0 .and. StrZero( nLogMode, SQLLOGCHANGES_SIZE )[6] == "1" .and. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .or. cType == SQLLOGCHANGES_TYPE_LOCK ) .and. (!lNeverLog)
+         If nLogMode > 0 .AND. StrZero( nLogMode, SQLLOGCHANGES_SIZE )[6] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK ) .AND. (!lNeverLog)
             ::LogQuery( cCommand, cType, nLogMode )
          EndIf
 
@@ -673,7 +673,7 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
          ::nRetCode = nRet
          ::nMiliseconds := (Seconds()*100) - ::nMiliseconds
 
-         If nLogMode > 0 .and. StrZero( nLogMode, SQLLOGCHANGES_SIZE )[5] == "1" .and. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .or. cType == SQLLOGCHANGES_TYPE_LOCK ) .and. (!lNeverLog)
+         If nLogMode > 0 .AND. StrZero( nLogMode, SQLLOGCHANGES_SIZE )[5] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK ) .AND. (!lNeverLog)
             ::LogQuery( cCommand, cType, nLogMode, ::nMiliseconds )
          EndIf
 
@@ -681,7 +681,7 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
             SR_WriteTimeLog(cCommand, Self, ::nMiliseconds)
          EndIf
 
-         if lErrMsg .and. nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO .and. (!( ("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand,7)) ) .and. nRet == SQL_NO_DATA_FOUND))
+         if lErrMsg .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!( ("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand,7)) ) .AND. nRet == SQL_NO_DATA_FOUND))
 
             ::RunTimeErr( "","SQLExecDirect Error" + ;
                      CRLF + ::LastError() + CRLF +;
@@ -689,8 +689,8 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
                      "hStmt   : " + SR_Val2Char( ::hStmt ) )
          endif
 
-         If ::nAutoCommit > 0 .and. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
-            If (++::nIteractions) >= ::nAutoCommit .and. ::nTransacCount == 0
+         If ::nAutoCommit > 0 .AND. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
+            If (++::nIteractions) >= ::nAutoCommit .AND. ::nTransacCount == 0
                ::Commit()
             EndIf
          EndIf
@@ -726,11 +726,11 @@ METHOD DetectTargetDb() CLASS SR_CONNECTION
    Do Case
    Case "ORACLE" $ cTargetDB
       ::nSystemID := SYSTEMID_ORACLE
-   Case ("MICROSOFT" $ cTargetDB .and. "SQL" $ cTargetDB .and. "SERVER" $ cTargetDB .and.( "10.25" $ ::cSystemVers) )
+   Case ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.( "10.25" $ ::cSystemVers) )
       ::nSystemID := SYSTEMID_AZURE
-   Case "MICROSOFT" $ cTargetDB .and. "SQL" $ cTargetDB .and. "SERVER" $ cTargetDB .and. "6.5" $ ::cSystemVers
+   Case "MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND. "6.5" $ ::cSystemVers
       ::nSystemID := SYSTEMID_MSSQL6
-   Case ("SQL Server" $ cTargetDB .and. "00.53.0000" $ ::cSystemVers) .or. ("MICROSOFT SQL SERVER" $ cTargetDB)
+   Case ("SQL Server" $ cTargetDB .AND. "00.53.0000" $ ::cSystemVers) .OR. ("MICROSOFT SQL SERVER" $ cTargetDB)
       ::nSystemID := SYSTEMID_MSSQL7
       aVers := hb_atokens( ::cSystemVers , '.' ) 
       IF val(aVers[1]) >= 8
@@ -741,7 +741,7 @@ METHOD DetectTargetDb() CLASS SR_CONNECTION
          ::lSqlServer2008 := .T.
       ENDIF   
 
-   Case ("MICROSOFT" $ cTargetDB .and. "SQL" $ cTargetDB .and. "SERVER" $ cTargetDB .and.( "7.0" $ ::cSystemVers .or. "8.0" $ ::cSystemVers .or. "9.0" $ ::cSystemVers .or. "10.00" $ ::cSystemVers .or. "10.50" $ ::cSystemVers  .or. "11.00" $ ::cSystemVers   )) //.or. ( "SQL SERVER" $ cTargetDB .and. !("SYBASE" $ cTargetDB))
+   Case ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.( "7.0" $ ::cSystemVers .OR. "8.0" $ ::cSystemVers .OR. "9.0" $ ::cSystemVers .OR. "10.00" $ ::cSystemVers .OR. "10.50" $ ::cSystemVers  .OR. "11.00" $ ::cSystemVers   )) //.OR. ( "SQL SERVER" $ cTargetDB .AND. !("SYBASE" $ cTargetDB))
       ::nSystemID := SYSTEMID_MSSQL7
       aVers := hb_atokens( ::cSystemVers , '.' ) 
       IF val(aVers[1]) >= 8
@@ -749,7 +749,7 @@ METHOD DetectTargetDb() CLASS SR_CONNECTION
       ENDIF         
    Case "ANYWHERE" $ cTargetDB
       ::nSystemID := SYSTEMID_SQLANY
-   Case "SYBASE" $ cTargetDB .or. "SQL SERVER" $ cTargetDB
+   Case "SYBASE" $ cTargetDB .OR. "SQL SERVER" $ cTargetDB
       ::nSystemID := SYSTEMID_SYBASE
    Case "ACCESS" $ cTargetDB
       ::nSystemID := SYSTEMID_ACCESS
@@ -764,18 +764,18 @@ METHOD DetectTargetDb() CLASS SR_CONNECTION
       ::lComments := .F.
    Case "POSTGRESQL" $ cTargetDB
       ::nSystemID := SYSTEMID_POSTGR
-   Case "DB2" $ cTargetDB .or. "SQLDS/VM" $ cTargetDB
+   Case "DB2" $ cTargetDB .OR. "SQLDS/VM" $ cTargetDB
       ::nSystemID := SYSTEMID_IBMDB2
       ::lComments := .F.
       If "05.03" $ ::cSystemVers       // Detects AS/400 from Win98 ODBC
          ::cSystemName := "DB2/400"
          cTargetDB     := "DB2/400"
       EndIf
-   Case "MYSQL" $ cTargetDB .and.  SubStr(alltrim(::cSystemVers), 1, 3) >= "4.1"
+   Case "MYSQL" $ cTargetDB .AND.  SubStr(alltrim(::cSystemVers), 1, 3) >= "4.1"
       ::nSystemID := SYSTEMID_MYSQL
    Case "MARIADB" $ cTargetDB
       ::nSystemID := SYSTEMID_MARIADB
-   Case "FIREBIRD" $ cTargetDb .or. "INTERBASE" $ cTargetdb
+   Case "FIREBIRD" $ cTargetDb .OR. "INTERBASE" $ cTargetdb
       ::nSystemID := SYSTEMID_FIREBR 
       aVers := hb_atokens( ::cSystemVers , '.' ) 
       IF val(aVers[1]) >= 3
@@ -854,14 +854,14 @@ METHOD Commit( lNoLog ) CLASS SR_CONNECTION
 
    ::nIteractions := 0
 
-   If ::nLogMode > 0 .and. StrZero( ::nLogMode, SQLLOGCHANGES_SIZE )[2] == "1" .and. (!lNoLog)
+   If ::nLogMode > 0 .AND. StrZero( ::nLogMode, SQLLOGCHANGES_SIZE )[2] == "1" .AND. (!lNoLog)
       If ::cQueryOwner == NIL
          If !Empty(SR_GetGlobalOwner())
             ::cQueryOwner := alltrim(SR_GetGlobalOwner())
          ElseIf !Empty(::oSql:cOwner)
             ::cQueryOwner := alltrim(::cOwner)
          EndIf
-         If (!Empty(::cQueryOwner)) .and. ::cQueryOwner[-1] != "."
+         If (!Empty(::cQueryOwner)) .AND. ::cQueryOwner[-1] != "."
             ::cQueryOwner += "."
          EndIf
          If Empty(::cQueryOwner)
@@ -869,7 +869,7 @@ METHOD Commit( lNoLog ) CLASS SR_CONNECTION
          EndIf
       EndIf
 
-      If StrZero( ::nLogMode, SQLLOGCHANGES_SIZE )[4] == "1" .or. ::oSqlTransact == NIL
+      If StrZero( ::nLogMode, SQLLOGCHANGES_SIZE )[4] == "1" .OR. ::oSqlTransact == NIL
          Self:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
       Else
          ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
@@ -896,14 +896,14 @@ METHOD RollBack() CLASS SR_CONNECTION
 
    ::nIteractions := 0
 
-   If ::nLogMode > 0 .and. StrZero( ::nLogMode, SQLLOGCHANGES_SIZE )[2] == "1"
+   If ::nLogMode > 0 .AND. StrZero( ::nLogMode, SQLLOGCHANGES_SIZE )[2] == "1"
       If ::cQueryOwner == NIL
          If !Empty(SR_GetGlobalOwner())
             ::cQueryOwner := alltrim(SR_GetGlobalOwner())
          ElseIf !Empty(::oSql:cOwner)
             ::cQueryOwner := alltrim(::cOwner)
          EndIf
-         If (!Empty(::cQueryOwner)) .and. ::cQueryOwner[-1] != "."
+         If (!Empty(::cQueryOwner)) .AND. ::cQueryOwner[-1] != "."
             ::cQueryOwner += "."
          EndIf
          If Empty(::cQueryOwner)
@@ -911,7 +911,7 @@ METHOD RollBack() CLASS SR_CONNECTION
          EndIf
       EndIf
 
-      If StrZero( ::nLogMode, SQLLOGCHANGES_SIZE )[4] == "1" .or. ::oSqlTransact == NIL
+      If StrZero( ::nLogMode, SQLLOGCHANGES_SIZE )[4] == "1" .OR. ::oSqlTransact == NIL
          Self:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
       Else
          ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
@@ -970,12 +970,12 @@ Function SR_AdjustNum(a)
          EndIf
       EndIf
 
-      If b[i,2] = "N" .and. b[i,3] > 18
+      If b[i,2] = "N" .AND. b[i,3] > 18
          b[i,3] := 19
       EndIf
 
       If lNwgOldCompat
-         If b[i,2] = "N" .and. b[i,4] >= (b[i,3] - 1)
+         If b[i,2] = "N" .AND. b[i,4] >= (b[i,3] - 1)
             b[i,4] := abs(b[i,3] - 2)
          EndIf
       EndIf
@@ -1030,14 +1030,14 @@ METHOD Connect( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
    ::lClustered   := .F.   
 
    If ::lCounter
-      ::lLowLevSqlDbg   = (!Empty(GetEnv("QUERYDEBUGCOUNTER"))) .and. upper(GetEnv( "QUERYDEBUGCOUNTER" )) $ "Y,S,TRUE"
+      ::lLowLevSqlDbg   = (!Empty(GetEnv("QUERYDEBUGCOUNTER"))) .AND. upper(GetEnv( "QUERYDEBUGCOUNTER" )) $ "Y,S,TRUE"
    Else
-      ::lLowLevSqlDbg   = (!Empty(GetEnv("QUERYDEBUG"))) .and. upper(GetEnv( "QUERYDEBUG" )) $ "Y,S,TRUE"
+      ::lLowLevSqlDbg   = (!Empty(GetEnv("QUERYDEBUG"))) .AND. upper(GetEnv( "QUERYDEBUG" )) $ "Y,S,TRUE"
    EndIf
 
    ::oHashActiveWAs  = SqlFastHash():new()
 
-   if cConnect == NIL .or. empty(cConnect)
+   if cConnect == NIL .OR. empty(cConnect)
       SR_MsgLogFile("Invalid connection string : " + SR_Val2Char(cConnect))
       ::nRetCode = SQL_ERROR
       Return Self
@@ -1056,7 +1056,7 @@ METHOD Connect( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
             aadd(aToken, "")
          EndIf
          Do Case
-         Case cBuff == "UID" .or. cBuff == "UIID" .or. cBuff == "USR"
+         Case cBuff == "UID" .OR. cBuff == "UIID" .OR. cBuff == "USR"
             ::cUser   += aToken[2]
          Case cBuff == "PWD"
             ::cPassword   += aToken[2]
@@ -1064,17 +1064,17 @@ METHOD Connect( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
             ::cDSN   += aToken[2]
          Case cBuff == "DBS"
             ::cDBS   += aToken[2]
-         Case cBuff == "HST" .or. cBuff == "OCI" .or. cBuff == "MYSQL" .or. cBuff == "PGS" .or. cBuff == "SERVER" .or. cBuff == "MARIA"
+         Case cBuff == "HST" .OR. cBuff == "OCI" .OR. cBuff == "MYSQL" .OR. cBuff == "PGS" .OR. cBuff == "SERVER" .OR. cBuff == "MARIA"
             ::cHost   += aToken[2]
          Case cBuff == "PRT"
             ::cPort   := Val(sr_val2char(aToken[2]))
-         Case cBuff == "DRV" .or. cBuff == "DRIVER"
+         Case cBuff == "DRV" .OR. cBuff == "DRIVER"
             ::cDRV   += aToken[2]
          Case cBuff == "CHARSET"
             ::cCharSet := aToken[2]
          Case cBuff == "AUTOCOMMIT"
             ::nAutoCommit := Val(aToken[2])
-         Case cBuff == "DTB" .or. cBuff == "FB" .or. cBuff == "FIREBIRD" .or. cBuff == "FB3" .or. cBuff == "FIREBIRD3" .or. cBuff == "IB" .or. cBuff == "TNS" .or. cBuff == "DATABASE"
+         Case cBuff == "DTB" .OR. cBuff == "FB" .OR. cBuff == "FIREBIRD" .OR. cBuff == "FB3" .OR. cBuff == "FIREBIRD3" .OR. cBuff == "IB" .OR. cBuff == "TNS" .OR. cBuff == "DATABASE"
             ::cDTB   += aToken[2]
          Case cBuff == "TABLESPACE_DATA"
             ::cDsnTblData := aToken[2]
@@ -1084,12 +1084,12 @@ METHOD Connect( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
             ::cDsnTblLob := aToken[2]
          Case cBuff == "CLUSTER"
             ::lCluster  := Upper(aToken[2]) $ "Y,S,TRUE"
-         Case cBuff == "OWNER" //.and. empty(::cOwner)
+         Case cBuff == "OWNER" //.AND. empty(::cOwner)
             ::cOwner := aToken[2]
-            If !Empty(::cOwner) .and. ::cOwner[-1] != "."
+            If !Empty(::cOwner) .AND. ::cOwner[-1] != "."
                ::cOwner += "."
             EndIf
-         Case cBuff == "NETWORK" .or. cBuff == "LIBRARY" .or. cBuff == "NETLIBRARY"
+         Case cBuff == "NETWORK" .OR. cBuff == "LIBRARY" .OR. cBuff == "NETLIBRARY"
             ::cNetLibrary := aToken[2]
          CASE cBuff == "APP"   
             ::cApp :=  aToken[2]
@@ -1134,9 +1134,9 @@ METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
    DEFAULT nLen := 0
 
    do case
-   case (nType == SQL_CHAR .or. nType == SQL_VARCHAR .or. nType == SQL_NVARCHAR .or. nType == SQL_GUID) .and. IIf(lNwgOldCompat, nLen != 4000 .and. nLen != 2000, .T.)
+   case (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR .OR. nType == SQL_GUID) .AND. IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
       cType = "C"
-   Case nType == SQL_SMALLINT .or. nType == SQL_TINYINT
+   Case nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
       If ::lQueryOnly
          cType := "N"
       Else
@@ -1149,20 +1149,20 @@ METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
       nType == SQL_FLOAT .OR. nType == SQL_REAL .OR. ;
       nType == SQL_DOUBLE
       cType = "N"
-   //case nType == SQL_DATE .or. nType == SQL_TIMESTAMP .or. nType == SQL_TYPE_TIMESTAMP .or. nType == SQL_TYPE_DATE
-   case nType == SQL_DATE .or. nType == SQL_TYPE_DATE
+   //case nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE
+   case nType == SQL_DATE .OR. nType == SQL_TYPE_DATE
       cType = "D"
    case nType == SQL_TIME
-      if (::nSystemID == SYSTEMID_POSTGR .or. ::nSystemID == SYSTEMID_MYSQL  .or. ::nSystemID == SYSTEMID_MARIADB .or. ::nSystemID == SYSTEMID_FIREBR .or. ::nSystemID == SYSTEMID_FIREBR3  )
+      if (::nSystemID == SYSTEMID_POSTGR .OR. ::nSystemID == SYSTEMID_MYSQL  .OR. ::nSystemID == SYSTEMID_MARIADB .OR. ::nSystemID == SYSTEMID_FIREBR .OR. ::nSystemID == SYSTEMID_FIREBR3  )
          cType := "T"
       else
          cType := "C"
       endif
-   case nType == SQL_LONGVARCHAR .or.  nType == SQL_DB2_CLOB .or. nType == SQL_FAKE_LOB .or.  ntype == SQL_LONGVARBINARY .or. (nType == SQL_VARBINARY .and. ::nSystemID != SYSTEMID_MSSQL7) 
+   case nType == SQL_LONGVARCHAR .OR.  nType == SQL_DB2_CLOB .OR. nType == SQL_FAKE_LOB .OR.  ntype == SQL_LONGVARBINARY .OR. (nType == SQL_VARBINARY .AND. ::nSystemID != SYSTEMID_MSSQL7) 
       cType := "M"
-   case nType == SQL_VARBINARY  .and. ::nSystemID == SYSTEMID_MSSQL7
+   case nType == SQL_VARBINARY  .AND. ::nSystemID == SYSTEMID_MSSQL7
       cType := "V"  
-   case nType == SQL_TIMESTAMP .or. nType == SQL_TYPE_TIMESTAMP  .or. nType == SQL_DATETIME
+   case nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME
       cType := 'T'   
    endcase
 
@@ -1181,9 +1181,9 @@ METHOD SQLLen(nType, nLen, nDec)  CLASS SR_CONNECTION
    DEFAULT nDec := -1
 
    do case
-   case (nType == SQL_CHAR .or. nType == SQL_VARCHAR .or. nType == SQL_NVARCHAR) .and. IIf(lNwgOldCompat, nLen != 4000 .and. nLen != 2000, .T.)
+   case (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR) .AND. IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
 
-   Case nType == SQL_SMALLINT .or. nType == SQL_TINYINT
+   Case nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
       If ::lQueryOnly
          nLen := 10
       Else
@@ -1193,28 +1193,28 @@ METHOD SQLLen(nType, nLen, nDec)  CLASS SR_CONNECTION
    case nType == SQL_BIT
         nLen := 1
 
-   case nType == SQL_NUMERIC  .or. nType == SQL_DECIMAL  .OR. ;
+   case nType == SQL_NUMERIC  .OR. nType == SQL_DECIMAL  .OR. ;
         nType == SQL_INTEGER  .OR. ;
-        nType == SQL_FLOAT    .or. nType == SQL_REAL     .OR. ;
+        nType == SQL_FLOAT    .OR. nType == SQL_REAL     .OR. ;
         nType == SQL_DOUBLE
 
-      If nLen > 19 .and. nDec > 10 .and. !( nLen = 38 .and. nDec = 0 )
+      If nLen > 19 .AND. nDec > 10 .AND. !( nLen = 38 .AND. nDec = 0 )
          nLen := 20
          nDec := 6
       EndIf
 
-      If !( nLen = 38 .and. nDec = 0 )
+      If !( nLen = 38 .AND. nDec = 0 )
          nLen := min(nLen, 20)
          nLen := max(nLen, 1)
       EndIf
 
-   case nType == SQL_DATE .or. nType == SQL_TIMESTAMP .or. nType == SQL_TYPE_TIMESTAMP .or. nType == SQL_TYPE_DATE .or. ntype == SQL_DATETIME
+   case nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE .OR. ntype == SQL_DATETIME
      nLen := 8
 
    case nType == SQL_TIME
      nLen := 8
 
-   case nType == SQL_LONGVARCHAR .or. nType == SQL_LONGVARBINARY .or. nType == SQL_FAKE_LOB .or. nType == SQL_VARBINARY
+   case nType == SQL_LONGVARCHAR .OR. nType == SQL_LONGVARBINARY .OR. nType == SQL_FAKE_LOB .OR. nType == SQL_VARBINARY
      nLen := 10
 
    Case nType == SQL_GUID

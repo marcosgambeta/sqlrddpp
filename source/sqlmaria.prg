@@ -176,7 +176,7 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
       Else
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F.)
       EndIf
-      If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          return nil
       EndIf
    EndIf
@@ -189,7 +189,7 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
 
    ::nFields   := MYSCols( ::hDbc )
 
-//   If (!Empty(cTable)) .and. empty(cCommand)
+//   If (!Empty(cTable)) .AND. empty(cCommand)
 //      cTbl := cTable
 //      aFields := MYSTableAttr( ::hDbc, cTbl )
 //   Else
@@ -202,7 +202,7 @@ METHOD IniFields( lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, c
       aFld[ FIELD_ENUM ] = hb_enumIndex()
    Next
 
-   If lReSelect .and. !lLoadCache
+   If lReSelect .AND. !lLoadCache
       ::FreeStatement()
    EndIf
 
@@ -246,7 +246,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    hDbc := MYSConnect( ::cHost,::cUser,::cPassWord,::cDtb,::cPort,::cDtb, nTimeout,::lCompress )
    nRet := MYSStatus( hDbc )
 
-   if nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+   if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
       ::nSystemID := 0
       SR_MsgLogFile("Connection Error")
@@ -262,7 +262,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
                               
    EndIf
 
-   If (!::lQueryOnly) .and. nVersionp < MINIMAL_MYSQL_SUPPORTED
+   If (!::lQueryOnly) .AND. nVersionp < MINIMAL_MYSQL_SUPPORTED
       SR_MsgLogFile("Connection Error: MariaDB version not supported : " + cSystemVers + " / minimun is " + str(MINIMAL_MYSQL_SUPPORTED))
       ::End()
       ::nSystemID := 0
@@ -308,7 +308,7 @@ Return ( ::nRetCode := MYSRollBack(::hDbc) )
 
 METHOD ExecuteRaw( cCommand ) CLASS SR_MARIA
 
-   If upper(left(ltrim(cCommand), 6)) == "SELECT" .or. upper(left(ltrim(cCommand), 5)) == "SHOW "
+   If upper(left(ltrim(cCommand), 6)) == "SELECT" .OR. upper(left(ltrim(cCommand), 5)) == "SHOW "
       ::lResultSet := .T.
    Else
       ::lResultSet := .F.

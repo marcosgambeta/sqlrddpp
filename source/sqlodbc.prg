@@ -135,7 +135,7 @@ METHOD DriverCatTables()  CLASS SR_ODBC
    ::AllocStatement()
    nRet  := SR_Tables( ::hStmt )
 
-   If nRet == SQL_SUCCESS .or. nRet == SQL_SUCCESS_WITH_INFO
+   If nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
 
       nAllocated := ARRAY_BLOCK1
       nBlocks    := 1
@@ -264,10 +264,10 @@ METHOD AllocStatement() CLASS SR_ODBC
       return nil
    endif
 
-   If ::lSetNext .and. nRet == SQL_SUCCESS
+   If ::lSetNext .AND. nRet == SQL_SUCCESS
       ::lSetNext  := .F.
       nRet := ::SetStmtOptions( ::nSetOpt, ::nSetValue )
-      If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          SR_MsgLogFile(SR_Msg(23) + " (" + alltrim(str(nRet)) + ") : " + ::LastError())
       EndIf
    EndIf
@@ -298,7 +298,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F.)
       EndIf
 
-      If nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          return nil
       EndIf
    EndIf
@@ -324,24 +324,24 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       else
          _nLen := nLen
          _nDec := nDec
-         if ( nType == SQL_DOUBLE .or. nType == SQL_FLOAT ) .and. nDec == 0
+         if ( nType == SQL_DOUBLE .OR. nType == SQL_FLOAT ) .AND. nDec == 0
             nDec = 6
             nSoma= 6
          endif
 
-         If (nLen == 2000 .or. nLen == 4000) .and. SR_SetNwgCompat()
+         If (nLen == 2000 .OR. nLen == 4000) .AND. SR_SetNwgCompat()
             nType := SQL_FAKE_LOB
          EndIf
          
-         if  ::nSystemID == SYSTEMID_ORACLE  .and. nLen == 19 .and. (nType == SQL_TIMESTAMP .or. nType == SQL_TYPE_TIMESTAMP  .or. nType == SQL_DATETIME)
+         if  ::nSystemID == SYSTEMID_ORACLE  .AND. nLen == 19 .AND. (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME)
              nType := SQL_DATE
          ENDIF    
          if ::nsystemId ==  SYSTEMID_MSSQL7
-            if ( ntype == SQL_TYPE_DATE ) .and.  SR_GETSQL2008NEWTYPES() .and.  ::lSqlServer2008 
+            if ( ntype == SQL_TYPE_DATE ) .AND.  SR_GETSQL2008NEWTYPES() .AND.  ::lSqlServer2008 
                nType := SQL_DATE
-            elseif ( nType == SQL_TIMESTAMP .or. nType == SQL_TYPE_TIMESTAMP  .or. nType == SQL_DATETIME ) .and.  SR_GETSQL2008NEWTYPES() .and.  ::lSqlServer2008 
+            elseif ( nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME ) .AND.  SR_GETSQL2008NEWTYPES() .AND.  ::lSqlServer2008 
          
-            elseif  (nType == SQL_TIMESTAMP .or. nType == SQL_TYPE_TIMESTAMP  .or. nType == SQL_DATETIME) .and. !SR_GETSQL2008NEWTYPES() //.and.   !::lSqlServer2008 
+            elseif  (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME) .AND. !SR_GETSQL2008NEWTYPES() //.AND.   !::lSqlServer2008 
             nType := SQL_DATE
          endif   
          endif
@@ -349,7 +349,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          cName     := upper(alltrim(cName))
          cType     := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec) + nSoma
-         If ::nSystemID == SYSTEMID_ORACLE .and. (!::lQueryOnly) .and. cType == "N" .and. nLenField == 38 .and. nDec == 0
+         If ::nSystemID == SYSTEMID_ORACLE .AND. (!::lQueryOnly) .AND. cType == "N" .AND. nLenField == 38 .AND. nDec == 0
             cType     := "L"
             nLenField := 1
          EndIf
@@ -370,7 +370,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    ::aFields := aFields
 
-   If lReSelect .and. !lLoadCache
+   If lReSelect .AND. !lLoadCache
       ::FreeStatement()
    EndIf
 
@@ -433,7 +433,7 @@ METHOD ConnectRaw( cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrac
    cConnect := alltrim(cConnect)
    nRet := SR_DriverC(hDbc, @cConnect)
 
-   if nRet != SQL_SUCCESS .and. nRet != SQL_SUCCESS_WITH_INFO
+   if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
       SR_MsgLogFile("SQLDriverConnect Error: No ODBC connection established " + ::LastError())
       Return Self
