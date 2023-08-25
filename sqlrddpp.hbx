@@ -13,11 +13,11 @@
 #ifndef __HBEXTERN_CH__SQLRDDPP__
 #define __HBEXTERN_CH__SQLRDDPP__
 
-#if defined(__HBEXTREQ__) .OR. defined(__HBEXTERN__SQLRDDPP__ANNOUNCE)
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__SQLRDDPP__ANNOUNCE )
    ANNOUNCE __HBEXTERN__SQLRDDPP__
 #endif
 
-#if defined(__HBEXTREQ__) .OR. defined(__HBEXTERN__SQLRDDPP__REQUEST)
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__SQLRDDPP__REQUEST )
    #command DYNAMIC <fncs,...> => EXTERNAL <fncs>
 #endif
 
@@ -426,7 +426,7 @@ DYNAMIC _SR_SCANEXECALL
 DYNAMIC _SR_UNREGISTER
 DYNAMIC __SR_STARTSQL
 
-#if defined(__HBEXTREQ__) .OR. defined(__HBEXTERN__SQLRDDPP__REQUEST)
+#if defined( __HBEXTREQ__ ) .OR. defined( __HBEXTERN__SQLRDDPP__REQUEST )
    #uncommand DYNAMIC <fncs,...> => EXTERNAL <fncs>
 #endif
 
