@@ -92,7 +92,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
 
    Local i
 
-   DEFAULT lTranslate := .T.
+   DEFAULT lTranslate TO .T.
 
    If aArray == NIL
       aArray := Array(len(aFields))
@@ -117,7 +117,7 @@ Return aArray
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_PGS
 
    If ::aCurrLine == NIL
-      DEFAULT lTranslate := .T.
+      DEFAULT lTranslate TO .T.
       ::aCurrLine := array(LEN(aFields))
       PGSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
@@ -129,8 +129,8 @@ return ::aCurrLine[nField]
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_PGS
 
    ::nRetCode := SQL_ERROR
-   DEFAULT aFields    := ::aFields
-   DEFAULT lTranslate := .T.
+   DEFAULT aFields    TO ::aFields
+   DEFAULT lTranslate TO .T.
 
    If ::hDBC != NIL
       ::nRetCode := PGSFetch(::hDbc)
@@ -159,11 +159,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    local aFields := {}
    local nDec := 0, nRet, cVlr := "", cTbl, cOwner := "public"
 
-   DEFAULT lReSelect    := .T.
-   DEFAULT lLoadCache   := .F.
-   DEFAULT cWhere       := ""
-   DEFAULT cRecnoName   := SR_RecnoName()
-   DEFAULT cDeletedName := SR_DeletedName()
+   DEFAULT lReSelect    TO .T.
+   DEFAULT lLoadCache   TO .F.
+   DEFAULT cWhere       TO ""
+   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT cDeletedName TO SR_DeletedName()
 
    If lReSelect
       If !Empty(cCommand)
@@ -244,7 +244,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    (lCounter)
    (lAutoCommit)
 
-   DEFAULT ::cPort := 5432
+   DEFAULT ::cPort TO 5432
 
    cConnect := "host=" + ::cHost + " user=" + ::cUser + " password=" + ::cPassword + " dbname=" + ::cDTB + " port=" + str(::cPort,6)
    

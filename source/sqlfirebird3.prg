@@ -85,7 +85,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD3
 
    Local i
 
-   DEFAULT lTranslate := .T.
+   DEFAULT lTranslate TO .T.
 
    If aArray == NIL
       aArray := Array(len(aFields))
@@ -110,7 +110,7 @@ Return aArray
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_FIREBIRD3
 
    If ::aCurrLine == NIL
-      DEFAULT lTranslate := .T.
+      DEFAULT lTranslate TO .T.
       ::aCurrLine := array(LEN(aFields))
       FBLINEPROCESSED3(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
@@ -122,8 +122,8 @@ return ::aCurrLine[nField]
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_FIREBIRD3
 
    ::nRetCode := SQL_ERROR
-   DEFAULT aFields    := ::aFields
-   DEFAULT lTranslate := .T.
+   DEFAULT aFields    TO ::aFields
+   DEFAULT lTranslate TO .T.
 
    If ::hEnv != NIL
       ::nRetCode := FBFetch3(::hEnv)
@@ -158,11 +158,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    local aFields := {}
    local nDec := 0, nRet, cVlr := "", aLocalPrecision := {}
 
-   DEFAULT lReSelect    := .T.
-   DEFAULT lLoadCache   := .F.
-   DEFAULT cWhere       := ""
-   DEFAULT cRecnoName   := SR_RecnoName()
-   DEFAULT cDeletedName := SR_DeletedName()
+   DEFAULT lReSelect    TO .T.
+   DEFAULT lLoadCache   TO .F.
+   DEFAULT cWhere       TO ""
+   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT cDeletedName TO SR_DeletedName()
 
    If lReSelect
       If !Empty(cCommand)
@@ -329,13 +329,13 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_FIREBIRD3
    local nRet, i, n,nvalue := -1
    Static aFieldsMore
 
-   DEFAULT lTranslate := .T.
+   DEFAULT lTranslate TO .T.
 
    nRet := FB_MoreResults(::hEnv, @nValue)
 
    If nRet == SQL_SUCCESS
 
-      DEFAULT aArray := {}
+      DEFAULT aArray TO {}
       n := 1
    
      AADD(aArray, Array(1))

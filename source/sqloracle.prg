@@ -105,7 +105,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ORACLE
 
    Local i
 
-   DEFAULT lTranslate := .T.
+   DEFAULT lTranslate TO .T.
 
    If aArray == NIL
       aArray := Array(len(aFields))
@@ -130,7 +130,7 @@ Return aArray
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ORACLE
 
    If ::aCurrLine == NIL
-      DEFAULT lTranslate := .T.
+      DEFAULT lTranslate TO .T.
       ::aCurrLine := array(LEN(aFields))
       SQLO_LINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
@@ -142,8 +142,8 @@ return ::aCurrLine[nField]
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_ORACLE
 
    ::nRetCode := SQL_ERROR
-   DEFAULT aFields    := ::aFields
-   DEFAULT lTranslate := .T.
+   DEFAULT aFields    TO ::aFields
+   DEFAULT lTranslate TO .T.
 
    If ::hDBC != NIL
       ::nRetCode := SQLO_FETCH(::hDBC)
@@ -196,11 +196,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    Local aFields := {}
    Local nRet, cVlr := ""
 
-   DEFAULT lReSelect    := .T.
-   DEFAULT lLoadCache   := .F.
-   DEFAULT cWhere       := ""
-   DEFAULT cRecnoName   := SR_RecnoName()
-   DEFAULT cDeletedName := SR_DeletedName()
+   DEFAULT lReSelect    TO .T.
+   DEFAULT lLoadCache   TO .F.
+   DEFAULT cWhere       TO ""
+   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT cDeletedName TO SR_DeletedName()
 
    If lReSelect
       If !Empty(cCommand)
@@ -509,12 +509,12 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
      
    ::AllocStatement()
 
-   DEFAULT lMsg          := .T.
-   DEFAULT lFetch        := .F.
-   DEFAULT nMaxRecords   := 99999999999999
-   DEFAULT lNoRecno      := .F.
-   DEFAULT cRecnoName    := SR_RecnoName()
-   DEFAULT cDeletedName  := SR_DeletedName()
+   DEFAULT lMsg          TO .T.
+   DEFAULT lFetch        TO .F.
+   DEFAULT nMaxRecords   TO 99999999999999
+   DEFAULT lNoRecno      TO .F.
+   DEFAULT cRecnoName    TO SR_RecnoName()
+   DEFAULT cDeletedName  TO SR_DeletedName()
    
    BEGIN SEQUENCE
       nError := ORACLE_PROCCURSOR(::hDbc, cComm, cVar)
@@ -533,7 +533,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
     
    If !Empty(cFile)
       HB_FNameSplit(cFile, , @cFileTemp)
-      DEFAULT cAlias        := cFileTemp
+      DEFAULT cAlias        TO cFileTemp
    EndIf
 
    //nCols := SQLO_NUMCOLS(::hDbc)

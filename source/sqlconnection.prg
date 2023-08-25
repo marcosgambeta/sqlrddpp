@@ -232,9 +232,9 @@ METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
    LOCAL oSql
    LOCAL cStack
 
-   DEFAULT cType    := SQLLOGCHANGES_TYPE_DML
-   DEFAULT nLogMode := ::nLogMode
-   DEFAULT nCost    := 0
+   DEFAULT cType    TO SQLLOGCHANGES_TYPE_DML
+   DEFAULT nLogMode TO ::nLogMode
+   DEFAULT nCost    TO 0
 
    cMode := StrZero(nLogMode, SQLLOGCHANGES_SIZE)
 
@@ -284,7 +284,7 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
    LOCAL aRet2 := {}
    LOCAL i
 
-   DEFAULT cOwner := SR_SetGlobalOwner()
+   DEFAULT cOwner TO SR_SetGlobalOwner()
 
    IF right(cOwner, 1) == "."
       cOwner := SubStr(cOwner, 1, len(cOwner) - 1)
@@ -400,8 +400,8 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
    LOCAL aMemo
    LOCAL cFileTemp
 
-   DEFAULT nLogMode := ::nLogMode
-   DEFAULT cType    := SQLLOGCHANGES_TYPE_DML
+   DEFAULT nLogMode TO ::nLogMode
+   DEFAULT cType    TO SQLLOGCHANGES_TYPE_DML
 
    IF ::lTraceToDBF
       SR_WriteDbLog(cCommand, SELF)
@@ -417,16 +417,16 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
       RETURN SQL_SUCCESS
    ENDIF
 
-   DEFAULT lMsg         := .T.
-   DEFAULT lFetch       := .F.
-   DEFAULT nMaxRecords  := 99999999999999
-   DEFAULT lNoRecno     := .F.
-   DEFAULT cRecnoName   := SR_RecnoName()
-   DEFAULT cDeletedName := SR_DeletedName()
+   DEFAULT lMsg         TO .T.
+   DEFAULT lFetch       TO .F.
+   DEFAULT nMaxRecords  TO 99999999999999
+   DEFAULT lNoRecno     TO .F.
+   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT cDeletedName TO SR_DeletedName()
 
    IF !Empty(cFile)
       HB_FNameSplit(cFile, , @cFileTemp)
-      DEFAULT cAlias := cFileTemp
+      DEFAULT cAlias TO cFileTemp
    ENDIF
 
    IF cCommand == NIL
@@ -653,10 +653,10 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
 
    LOCAL nRet := 0
 
-   DEFAULT lErrMsg   := .T.
-   DEFAULT lNeverLog := .F.
-   DEFAULT nLogMode  := ::nLogMode
-   DEFAULT cType     := SQLLOGCHANGES_TYPE_DML
+   DEFAULT lErrMsg   TO .T.
+   DEFAULT lNeverLog TO .F.
+   DEFAULT nLogMode  TO ::nLogMode
+   DEFAULT cType     TO SQLLOGCHANGES_TYPE_DML
 
    IF ::lTraceToDBF
       SR_WriteDbLog(cCommand, SELF)
@@ -847,7 +847,7 @@ RETURN SQL_SUCCESS
 
 METHOD Commit(lNoLog) CLASS SR_CONNECTION
 
-   DEFAULT lNoLog := .F.
+   DEFAULT lNoLog TO .F.
 
    IF ::lTraceToDBF
       SR_WriteDbLog("COMMIT", SELF)
@@ -932,8 +932,8 @@ METHOD RuntimeErr(cOperation, cErr) CLASS SR_CONNECTION
    LOCAL oErr := ErrorNew()
    LOCAL cDescr
 
-   DEFAULT cOperation := ::ClassName()
-   DEFAULT cErr       := "RunTimeError"
+   DEFAULT cOperation TO ::ClassName()
+   DEFAULT cErr       TO "RunTimeError"
 
    cDescr := alltrim(cErr) + CRLF +;
              "Steatment handle  : " + SR_Val2Char(::hStmt)+CRLF+;
@@ -1000,12 +1000,12 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
    LOCAL aItem
    LOCAL aToken
 
-   DEFAULT nVersion    := 1
-   DEFAULT lTrace      := .F.
-   DEFAULT nPreFetch   := 0
-   DEFAULT cDSN        := ""
-   DEFAULT lCounter    := .F.
-   DEFAULT lAutoCommit := .F.  /* by default support transactions */
+   DEFAULT nVersion    TO 1
+   DEFAULT lTrace      TO .F.
+   DEFAULT nPreFetch   TO 0
+   DEFAULT cDSN        TO ""
+   DEFAULT lCounter    TO .F.
+   DEFAULT lAutoCommit TO .F.  /* by default support transactions */
 
    ::lAutoCommit  := lAutoCommit
    ::nVersion     := nVersion
@@ -1172,7 +1172,7 @@ METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
 
    HB_SYMBOL_UNUSED(cName)
 
-   DEFAULT nLen := 0
+   DEFAULT nLen TO 0
 
    SWITCH nType
    CASE SQL_CHAR
@@ -1252,7 +1252,7 @@ METHOD SQLLen(nType, nLen, nDec) CLASS SR_CONNECTION
 
    LOCAL cType := "U"
 
-   DEFAULT nDec := -1
+   DEFAULT nDec TO -1
 
    SWITCH nType
    CASE SQL_CHAR

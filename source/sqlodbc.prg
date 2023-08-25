@@ -95,7 +95,7 @@ ENDCLASS
 
 METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos) CLASS SR_ODBC
 
-   DEFAULT lTranslate := .T.
+   DEFAULT lTranslate TO .T.
 
 Return SR_ODBCGETLINES(::hStmt, 4096, aFields, aCache, ::nSystemID, lTranslate, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos)
 
@@ -105,7 +105,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ODBC
 
    Local i
 
-   DEFAULT lTranslate := .T.
+   DEFAULT lTranslate TO .T.
 
    If aArray == NIL
       aArray := Array(len(aFields))
@@ -182,13 +182,13 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
    local nRet, i, n
    Static aFieldsMore
 
-   DEFAULT lTranslate := .T.
+   DEFAULT lTranslate TO .T.
 
    nRet := SR_MoreResults(::hStmt)
 
    If nRet == SQL_SUCCESS
 
-      DEFAULT aArray := {}
+      DEFAULT aArray TO {}
       n := 1
       If aFieldsMore == NIL
          aFieldsMore := ::IniFields(.F.,,,,,SR_RecnoName(), SR_DeletedName())
@@ -211,7 +211,7 @@ Return nRet
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ODBC
 
    If ::aCurrLine == NIL
-      DEFAULT lTranslate := .T.
+      DEFAULT lTranslate TO .T.
       ::aCurrLine := array(LEN(aFields))
       SR_ODBCLINEPROCESSED(::hStmt, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
@@ -223,8 +223,8 @@ return ::aCurrLine[nField]
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_ODBC
 
    ::nRetCode := SQL_ERROR
-   DEFAULT aFields    := ::aFields
-   DEFAULT lTranslate := .T.
+   DEFAULT aFields    TO ::aFields
+   DEFAULT lTranslate TO .T.
 
    If ::hStmt != NIL
       ::nRetCode := SR_Fetch(::hStmt)
@@ -285,11 +285,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    local aFields := {}
    local nDec := 0, nSoma, nRet, cVlr := "" /*, nBfLn, nOut*/
 
-   DEFAULT lReSelect    := .T.
-   DEFAULT lLoadCache   := .F.
-   DEFAULT cWhere       := ""
-   DEFAULT cRecnoName   := SR_RecnoName()
-   DEFAULT cDeletedName := SR_DeletedName()
+   DEFAULT lReSelect    TO .T.
+   DEFAULT lLoadCache   TO .F.
+   DEFAULT cWhere       TO ""
+   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT cDeletedName TO SR_DeletedName()
 
    If lReSelect
       If !Empty(cCommand)

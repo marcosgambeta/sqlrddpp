@@ -46,9 +46,11 @@
  *
  */
 
+#if 0
 #xcommand DEFAULT <v1> := <x1> [, <vn> := <xn> ] => ;
                           IF <v1> == NIL ; <v1> := <x1> ; END ;
                           [; IF <vn> == NIL ; <vn> := <xn> ; END ]
+#endif
 
 #define CRLF      ( chr(13) + chr(10) )
 #define CR_LF     ( chr(13) + chr(10) )

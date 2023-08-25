@@ -47,6 +47,7 @@
  *
  */
 
+#include "common.ch"
 #include "hbclass.ch"
 #include "sqlrdd.ch"
 #include "compat.ch"
@@ -593,7 +594,7 @@ METHOD GetSyntheticVirtualExpr(aExpr, cAlias) CLASS SR_WORKAREA
    Local cRet := "", cColName, nPos
 
 
-   DEFAULT cAlias := ""
+   DEFAULT cAlias TO ""
 
    If !Empty(cAlias)
       cAlias += "."
@@ -1156,7 +1157,7 @@ METHOD sqlKeyCount(lFilters) CLASS SR_WORKAREA
    Local nRet := 0, aRet := {}
    Local lDeleteds, cSql, cRet := ""
 
-   DEFAULT lFilters := .T.
+   DEFAULT lFilters TO .T.
 
    If ::lISAM
 
@@ -1248,8 +1249,8 @@ METHOD LockTable(lCheck4ExcLock, lFLock) CLASS SR_WORKAREA
       Return .T.
    EndIf
 
-   DEFAULT lCheck4ExcLock := .T.
-   DEFAULT lFLock := .F.
+   DEFAULT lCheck4ExcLock TO .T.
+   DEFAULT lFLock TO .F.
 
    Switch ::oSql:nSystemID
    Case SYSTEMID_IBMDB2
@@ -1324,7 +1325,7 @@ METHOD UnlockTable(lClosing) CLASS SR_WORKAREA
       Return .T.
    EndIf
 
-   DEFAULT lClosing := .F.
+   DEFAULT lClosing TO .F.
 
    If (!lClosing) .AND. (!::aInfo[AINFO_SHARED])
       Return .F.  // USE EXCLUSIVE cannot be released until file is closed
@@ -1361,7 +1362,7 @@ METHOD LineCount(lMsg) CLASS SR_WORKAREA
 
    Local nRet := 0, aRet := {}
 
-   DEFAULT lMsg := .T.
+   DEFAULT lMsg TO .T.
 
    If ::lISAM
 
@@ -1565,8 +1566,8 @@ Return 0
 
 METHOD OrderBy(nOrder, lAscend, lRec) CLASS SR_WORKAREA
 
-   DEFAULT nOrder := ::aInfo[AINFO_INDEXORD]
-   DEFAULT lRec   := .T.
+   DEFAULT nOrder TO ::aInfo[AINFO_INDEXORD]
+   DEFAULT lRec   TO .T.
 
    lAscend := iif(::aInfo[AINFO_REVERSE_INDEX], !lAscend, lAscend)
 
@@ -1591,7 +1592,7 @@ METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
    Local uRecord, nFecth, nBlockPos := 0, nPos
    Local nOldBg, nOldEnd, lCacheIsEmpty
 
-   DEFAULT nDirection := ORD_INVALID
+   DEFAULT nDirection TO ORD_INVALID
 
    ::oSql:nRetCode := ::oSql:Fetch(, .F., ::aFields)
 
@@ -1741,7 +1742,7 @@ METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
             ::oSql:nRetCode := ::oSql:Fetch(NIL, .F., ::aFields)
             If ::oSql:nRetCode != SQL_SUCCESS
                If ::oSql:nRetCode == SQL_ERROR
-                  DEFAULT ::cLastComm := ::oSql:cLastComm
+                  DEFAULT ::cLastComm TO ::oSql:cLastComm
                   ::RunTimeErr("999", "[FetchLine Failure][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
                EndIf
                If nDirection = ORD_DIR_FWD
@@ -1795,7 +1796,7 @@ METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
       Exit
    Default
       ::lNoData := .T.
-      DEFAULT ::cLastComm := ::oSql:cLastComm
+      DEFAULT ::cLastComm TO ::oSql:cLastComm
       ::RunTimeErr("999", "[Fetch Failure/First][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
    End
 
@@ -1854,7 +1855,7 @@ METHOD Normalize(nDirection) CLASS SR_WORKAREA
    * Returns : 0 - Nothing, 1 Ok, 2 GoOut()
    */
 
-   DEFAULT nDirection := 1
+   DEFAULT nDirection TO 1
 
    /* Can the actual record pass the filters ?_*/
 
@@ -1887,7 +1888,7 @@ METHOD SkipRawCache(nToSkip) CLASS SR_WORKAREA
 
    Local nRet := 0
 
-   DEFAULT nToSkip := 1
+   DEFAULT nToSkip TO 1
 
    Do Case
    Case ::aInfo[AINFO_NPOSCACHE] + nToSkip > 0 .AND. ::aInfo[AINFO_NPOSCACHE] + nToSkip <= len(::aCache).AND. nToSkip != 0
@@ -1910,15 +1911,15 @@ METHOD RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode) CLASS SR_WORKARE
    Local oErr := ErrorNew()
    Local cDescr
 
-   DEFAULT cOperation := RddName()  // ::ClassName()
-   DEFAULT nOSCode    := 0
-   DEFAULT nGenCode   := 99
-   DEFAULT SubCode    := Val(cOperation)
+   DEFAULT cOperation TO RddName()  // ::ClassName()
+   DEFAULT nOSCode    TO 0
+   DEFAULT nGenCode   TO 99
+   DEFAULT SubCode    TO Val(cOperation)
 
    If SubCode > 0 .AND. SubCode <= SR_GetErrMessageMax()
-      DEFAULT cErr       := SR_Msg(SubCode)
+      DEFAULT cErr TO SR_Msg(SubCode)
    Else
-      DEFAULT cErr       := "RunTime Error"
+      DEFAULT cErr TO "RunTime Error"
    EndIf
 
    cDescr := alltrim(cErr)
@@ -1976,9 +1977,9 @@ METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic) CLASS SR_WORKAREA
 
    Local cType := valtype(uData), cRet
 
-   DEFAULT trim := .F.
-   DEFAULT nTargetDB  := ::oSql:cTargetDB
-   DEFAULT lSynthetic := .F.
+   DEFAULT trim TO .F.
+   DEFAULT nTargetDB TO ::oSql:cTargetDB
+   DEFAULT lSynthetic TO .F.
 
    If cType $ "CM" .AND. nLen!=NIL
       uData := Left(uData, nLen)
@@ -2059,10 +2060,10 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
    Local cType := valtype(uData), cRet
    lOCAL cOldSet := SET(_SET_DATEFORMAT)
 
-   DEFAULT trim      := .F.
-   DEFAULT nTargetDB := ::oSql:nSystemID
-   DEFAULT lNull     := .T.
-   DEFAULT lMemo     := .F.
+   DEFAULT trim      TO .F.
+   DEFAULT nTargetDB TO ::oSql:nSystemID
+   DEFAULT lNull     TO .T.
+   DEFAULT lMemo     TO .F.
 
    If empty(uData) .AND. (!cType $ "AOH") .AND. ((nTargetDB = SYSTEMID_POSTGR .AND. cType $ "DCMNT" .AND. cType != "L"  ) .OR. ( nTargetDB != SYSTEMID_POSTGR .AND. cType != "L" ))
 
@@ -2200,15 +2201,15 @@ METHOD HistExpression(n, cAlias) CLASS SR_WORKAREA
       ::nCnt := 1
    EndIf
 
-   DEFAULT cAlias := "A"
+   DEFAULT cAlias TO "A"
 
    If lUseDTHISTAuto
-      DEFAULT ::CurrDate := SR_GetActiveDt()
+      DEFAULT ::CurrDate TO SR_GetActiveDt()
    Else
       ::CurrDate := SR_GetActiveDt()
    EndIf
 
-   DEFAULT n := 0
+   DEFAULT n TO 0
 
    cRet += "(" + cAlias + ".DT__HIST = (SELECT" + iif(n = 3, " MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
    cRet += ::cQualifiedTableName + " " + cAl1 + " WHERE " + cAlias + "." + ::cColPK + "="
@@ -2233,8 +2234,8 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
    Local aMemos := {}, cMemo
    Local oXml
 
-   DEFAULT lInsert := ::aInfo[AINFO_ISINSERT]
-   DEFAULT aBuffer := ::aLocalBuffer
+   DEFAULT lInsert TO ::aInfo[AINFO_ISINSERT]
+   DEFAULT aBuffer TO ::aLocalBuffer
 
    aSize(::aLocalBuffer, ::nFields)
 
@@ -2905,7 +2906,7 @@ METHOD SolveSQLFilters(cAliasSQL) CLASS SR_WORKAREA
 
    Local cRet := "", cFlt
 
-   DEFAULT cAliasSQL := ""
+   DEFAULT cAliasSQL TO ""
 
    If !Empty(cAliasSQL) .AND. right(cAliasSQL, 1) != "."
       cAliasSQL += "."
@@ -2939,7 +2940,7 @@ METHOD Refresh(lGoCold) CLASS SR_WORKAREA
    Local i, nMax := 0
    Local nAllocated, n, lRecnoAdded := .F.
 
-   DEFAULT lGoCold := .T.
+   DEFAULT lGoCold TO .T.
 
    If lGoCold
       ::sqlGoCold()     /* writes any change in the buffer to the database */
@@ -3044,8 +3045,8 @@ Return NIL
 
 METHOD GetBuffer(lClean, nCache) CLASS SR_WORKAREA
 
-   DEFAULT lClean := .F.
-   DEFAULT nCache := ::aInfo[AINFO_NPOSCACHE]
+   DEFAULT lClean TO .F.
+   DEFAULT nCache TO ::aInfo[AINFO_NPOSCACHE]
 
    If len(::aLocalBuffer) < ::nFields
       aSize(::aLocalBuffer, ::nFields)
@@ -3104,7 +3105,7 @@ METHOD IniFields(lReSelect, lLoadCache, aInfo) CLASS SR_WORKAREA
    Local nPos
 #endif
 
-   DEFAULT lLoadCache := .F.
+   DEFAULT lLoadCache TO .F.
 
    lHaveInfoCache := aInfo != NIL .AND. aInfo[CACHEINFO_AFIELDS] != NIL
 
@@ -3467,7 +3468,7 @@ METHOD sqlGoTo(uRecord, lNoOptimize) CLASS SR_WORKAREA
    Local i
    Local cJoin1, cJoin3
 
-   DEFAULT lNoOptimize := .F.
+   DEFAULT lNoOptimize TO .F.
 
    ::aInfo[AINFO_FOUND]  := .F.
 
@@ -3674,7 +3675,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
    ::nPartialDateSeek := 0
    ::sqlGoCold()
 
-   DEFAULT lSoft := .F.
+   DEFAULT lSoft TO .F.
 
    ::aInfo[AINFO_FOUND]   := .F.
    ::aInfo[AINFO_DETECT1_COUNT] := 0
@@ -4338,7 +4339,7 @@ Method ConvType(cData, cType, lPartialSeek, nThis, lLike)
    Local dRet, cD := "19600101"
    Local cD1 := "19600101 000000"
 
-   DEFAULT lLike := .F.
+   DEFAULT lLike TO .F.
 
    Do Case
    Case cType = "C"
@@ -4632,7 +4633,7 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
             ::oSql:nRetCode := ::oSql:Fetch(NIL, .F., ::aFields)
             If ::oSql:nRetCode != SQL_SUCCESS
                If ::oSql:nRetCode == SQL_ERROR
-                  DEFAULT ::cLastComm := ::oSql:cLastComm
+                  DEFAULT ::cLastComm TO ::oSql:cLastComm
                   ::RunTimeErr("999", "[FetchLine Failure][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
                EndIf
                If nDirection = ORD_DIR_FWD
@@ -4685,7 +4686,7 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
       Exit
    Default
       ::lNoData := .T.
-      DEFAULT ::cLastComm := ::oSql:cLastComm
+      DEFAULT ::cLastComm TO ::oSql:cLastComm
       ::RunTimeErr("999", "[Fetch Failure/First][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
    End
 
@@ -4931,7 +4932,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
       ::nCnt := 1
    EndIf
 
-   DEFAULT cAlias := "SQLRDD_SYS_WA_" + StrZero(++::nCnt,3)
+   DEFAULT cAlias TO "SQLRDD_SYS_WA_" + StrZero(++::nCnt,3)
 
    If ::nCnt >= 998
       ::nCnt := 1
@@ -8094,7 +8095,7 @@ METHOD WhereVMajor(cQot) CLASS SR_WORKAREA
       Return ""
    endif
 
-   DEFAULT cQot := (::cAlias)->( &( ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY] ) ) + str(::aInfo[AINFO_RECNO], 15)
+   DEFAULT cQot TO (::cAlias)->( &( ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY] ) ) + str(::aInfo[AINFO_RECNO], 15)
 
    cRet  := ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " >= '" + SR_ESCAPESTRING(cQot, ::oSql:nSystemID) + "'"
    cRet2 := ::SolveRestrictors()
@@ -8115,7 +8116,7 @@ METHOD WherePgsMajor(aQuotedCols, lPartialSeek) CLASS SR_WORKAREA
    Local c1 := "", c2 := "", c3 := "", c4 := "", cRet := "", cRet2 := "", j
    Local aQuot := {}
 
-   DEFAULT lPartialSeek := .T.
+   DEFAULT lPartialSeek TO .T.
 
    If ::aInfo[AINFO_INDEXORD] = 0
       cRet2 := ::SolveRestrictors()
@@ -8284,7 +8285,7 @@ METHOD WhereVMinor(cQot) CLASS SR_WORKAREA
       Return ""
    endif
 
-   DEFAULT cQot := (::cAlias)->(&(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])) + str(::aInfo[AINFO_RECNO], 15)
+   DEFAULT cQot TO (::cAlias)->(&(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])) + str(::aInfo[AINFO_RECNO], 15)
 
    cRet := ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " <= '" + SR_ESCAPESTRING(cQot, ::oSql:nSystemID) + "'"
 
@@ -8492,7 +8493,7 @@ METHOD DropColumn(cColumn, lDisplayErrorMessage, lRemoveFromWA) CLASS SR_WORKARE
    Local i
    Local nRet := SQL_SUCCESS
 
-   DEFAULT lRemoveFromWA := .F.
+   DEFAULT lRemoveFromWA TO .F.
 
    cColumn := Upper(Alltrim(cColumn))
 
@@ -8551,7 +8552,7 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
    Local cLobs := "", cTblName
    Local lCurrentIsMultLang := .F.
 
-   DEFAULT lBakcup := .T.
+   DEFAULT lBakcup TO .T.
 
    // Release any pending transaction before a DML command
 
@@ -8560,7 +8561,7 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
    ::oSql:Commit()
    ::oSql:nTransacCount := 0
 
-   DEFAULT lDisplayErrorMessage := .T.
+   DEFAULT lDisplayErrorMessage TO .T.
 
    /* Check existing column */
 
@@ -8569,9 +8570,9 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
       aSize(aCreate[i], FIELD_INFO_SIZE)
       cLobs := ""
 
-      DEFAULT aCreate[i,FIELD_PRIMARY_KEY] := 0
-      DEFAULT aCreate[i,FIELD_NULLABLE]    := .T.
-      DEFAULT aCreate[i,FIELD_MULTILANG]   := MULTILANG_FIELD_OFF
+      DEFAULT aCreate[i,FIELD_PRIMARY_KEY] TO 0
+      DEFAULT aCreate[i,FIELD_NULLABLE]    TO .T.
+      DEFAULT aCreate[i,FIELD_MULTILANG]   TO MULTILANG_FIELD_OFF
 
       aCreate[i, FIELD_NAME] := Upper(Alltrim(aCreate[i, FIELD_NAME]))
       cField   := aCreate[i, FIELD_NAME]
@@ -8977,7 +8978,7 @@ METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS
    Local cSql2 := ""
    Local cSql3 := ""
 
-   DEFAULT lBakcup := .T.
+   DEFAULT lBakcup TO .T.
 
    // Release any pending transaction before a DML command
 
@@ -8986,7 +8987,7 @@ METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS
    ::oSql:Commit()
    ::oSql:nTransacCount := 0
 
-   DEFAULT lDisplayErrorMessage := .T.
+   DEFAULT lDisplayErrorMessage TO .T.
 
    /* Check existing column */
 
@@ -8995,9 +8996,9 @@ METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS
       aSize(aCreate[i], FIELD_INFO_SIZE)
       cLobs := ""
 
-      DEFAULT aCreate[i,FIELD_PRIMARY_KEY] := 0
-      DEFAULT aCreate[i,FIELD_NULLABLE]    := .T.
-      DEFAULT aCreate[i,FIELD_MULTILANG]   := MULTILANG_FIELD_OFF
+      DEFAULT aCreate[i,FIELD_PRIMARY_KEY] TO 0
+      DEFAULT aCreate[i,FIELD_NULLABLE]    TO .T.
+      DEFAULT aCreate[i,FIELD_MULTILANG]   TO MULTILANG_FIELD_OFF
 
       aCreate[i, FIELD_NAME] := Upper(Alltrim(aCreate[i, FIELD_NAME]))
       cField   := aCreate[i, FIELD_NAME]
@@ -9627,7 +9628,7 @@ METHOD DropConstraint(cTable, cConstraintName, lFKs, cConstrType) CLASS SR_WORKA
    cTable          := Upper(AllTrim(cTable))
    cConstraintName := Upper(AllTrim(cConstraintName))
 
-   DEFAULT lFKs := .T.
+   DEFAULT lFKs TO .T.
 
    If cConstrType == NIL
       cConstrType := ""
@@ -10000,7 +10001,7 @@ Return cOld
 
 Function SR_UseSequences(oCnn)
 
-   DEFAULT oCnn := SR_GetConnection()
+   DEFAULT oCnn TO SR_GetConnection()
 
    If HB_ISOBJECT(oCnn)
       Return oCnn:lUseSequences
@@ -10013,7 +10014,7 @@ Return .T.
 Function SR_SetUseSequences(lOpt, oCnn)
 
    local lOld := .T.
-   DEFAULT oCnn := SR_GetConnection()
+   DEFAULT oCnn TO SR_GetConnection()
 
    If HB_ISOBJECT(oCnn)
       lOld := oCnn:lUseSequences

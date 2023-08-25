@@ -46,6 +46,7 @@
  *
  */
 
+#include "common.ch"
 #include "error.ch"
 #include "rddsys.ch"
 #include "hbclass.ch"
@@ -129,10 +130,10 @@ Return
 /*------------------------------------------------------------------------*/
 
 Function SR_GetCnn(nConnection)
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection := nActiveConnection
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
    If SR_CheckCnn(nConnection)
-      DEFAULT aConnections  := {}
+      DEFAULT aConnections TO {}
       Return aConnections[nConnection]
    EndIf
 Return  NIL
@@ -140,9 +141,9 @@ Return  NIL
 /*------------------------------------------------------------------------*/
 
 Function SR_CheckCnn(nConnection)
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection := nActiveConnection
-   DEFAULT aConnections  := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
    If nConnection > len(aConnections) .OR. nConnection == 0
       Return .F.
    EndIf
@@ -151,18 +152,18 @@ Return .T.
 /*------------------------------------------------------------------------*/
 
 Function SR_GetConnection(nConnection)
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection  := nActiveConnection
-   DEFAULT aConnections := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
    SR_CheckConnection(nConnection)
 Return aConnections[nConnection]
 
 /*------------------------------------------------------------------------*/
 
 Function SR_CheckConnection(nConnection)
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection := nActiveConnection
-   DEFAULT aConnections  := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
    If nConnection > len(aConnections) .OR. nConnection == 0 .OR. nConnection < 0
       Return SR_RuntimeErr("SR_CheckConnection()", SR_Msg(7))
    EndIf
@@ -173,8 +174,8 @@ Return aConnections[nConnection]
 Function SR_SetNextQuery(cSql)
    local cOld
 
-   DEFAULT aConnections  := {}
-   DEFAULT nActiveConnection := 0
+   DEFAULT aConnections TO {}
+   DEFAULT nActiveConnection TO 0
 
    SR_CheckConnection(nActiveConnection)
    cOld := aConnections[nActiveConnection]:cNextQuery
@@ -191,8 +192,8 @@ Function SR_GetSyntheticIndexMinimun()
 
    Local nRet :=  nSyntheticIndexMinimun
 
-   DEFAULT aConnections  := {}
-   DEFAULT nActiveConnection := 0
+   DEFAULT aConnections TO {}
+   DEFAULT nActiveConnection TO 0
 
    Switch aConnections[nActiveConnection]:nSystemID
    Case SYSTEMID_POSTGR
@@ -345,17 +346,17 @@ Return lFastOpenWA
 /*------------------------------------------------------------------------*/
 
 Function SR_GetActiveConnection()
-   DEFAULT nActiveConnection := 0
+   DEFAULT nActiveConnection TO 0
 Return nActiveConnection
 
 /*------------------------------------------------------------------------*/
 
 Function SR_SetActiveConnection(nCnn)
    Local nOld
-   DEFAULT nActiveConnection := 0
+   DEFAULT nActiveConnection TO 0
    nOld := nActiveConnection
-   DEFAULT nCnn := 1
-   DEFAULT aConnections  := {}
+   DEFAULT nCnn TO 1
+   DEFAULT aConnections TO {}
 
    If nCnn != 0 .AND. nCnn <= len(aConnections)
       nActiveConnection := nCnn
@@ -370,13 +371,13 @@ Function SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
 
    Local nRet := -1, oConnect, oConnect2
 
-   DEFAULT nType        := CONNECT_ODBC
-   DEFAULT lAutoCommit  := .F.
-   DEFAULT lCounter     := .F.
-   DEFAULT cOwner       := ""
-   DEFAULT lNoSetEnv    := .F.
-   DEFAULT aConnections  := {}
-   DEFAULT nActiveConnection := 0
+   DEFAULT nType             TO CONNECT_ODBC
+   DEFAULT lAutoCommit       TO .F.
+   DEFAULT lCounter          TO .F.
+   DEFAULT cOwner            TO ""
+   DEFAULT lNoSetEnv         TO .F.
+   DEFAULT aConnections      TO {}
+   DEFAULT nActiveConnection TO 0
 
    #pragma TEXTHIDDEN(1)
 
@@ -1215,7 +1216,7 @@ Function SR_ExistTable(cTableName, cOwner, oCnn)
 
    Local cFileName, nRet, aRet
 
-   DEFAULT oCnn := SR_GetConnection()
+   DEFAULT oCnn TO SR_GetConnection()
    aRet := eval(SR_GetTableInfoBlock(), cTableName)
 
    If cOwner == NIL
@@ -1294,9 +1295,9 @@ Function SR_EndConnection(nConnection)
 
    Local oCnn, uRet
 
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection := nActiveConnection
-   DEFAULT aConnections  := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
 
    #pragma TEXTHIDDEN(1)
 
@@ -1342,8 +1343,8 @@ Return uRet
 Function SR_GetConnectionInfo(nConnection, nInfo)
 
    Local oCnn
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection := nActiveConnection
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
    SR_CheckConnection(nConnection)
    oCnn := SR_GetConnection()
 
@@ -1362,9 +1363,9 @@ Return ""
 
 Function SR_StartLog(nConnection)
 
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection := nActiveConnection
-   DEFAULT aConnections  := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
    SR_CheckConnection(nConnection)
    aConnections[nConnection]:lTraceToDBF := .T.
    If aConnections[nConnection]:oSqlTransact != NIL
@@ -1377,9 +1378,9 @@ Return .T.
 
 Function SR_StartTrace(nConnection)
 
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection := nActiveConnection
-   DEFAULT aConnections  := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
    SR_CheckConnection(nConnection)
    aConnections[nConnection]:lTraceToScreen := .T.
    If aConnections[nConnection]:oSqlTransact != NIL
@@ -1392,9 +1393,9 @@ Return .T.
 
 Function SR_StopLog(nConnection)
 
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection := nActiveConnection
-   DEFAULT aConnections  := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
    SR_CheckConnection(nConnection)
    aConnections[nConnection]:lTraceToDBF := .F.
    If aConnections[nConnection]:oSqlTransact != NIL
@@ -1407,9 +1408,9 @@ Return NIL
 
 Function SR_StopTrace(nConnection)
 
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection   := nActiveConnection
-   DEFAULT aConnections  := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
    SR_CheckConnection(nConnection)
    aConnections[nConnection]:lTraceToScreen := .F.
    If aConnections[nConnection]:oSqlTransact != NIL
@@ -1423,11 +1424,11 @@ Return NIL
 Function SR_SetTimeTrace(nConnection, nMilisseconds)
 
    Local nOld
-   DEFAULT nActiveConnection := 0
-   DEFAULT nConnection   := nActiveConnection
-   DEFAULT aConnections  := {}
+   DEFAULT nActiveConnection TO 0
+   DEFAULT nConnection TO nActiveConnection
+   DEFAULT aConnections TO {}
    SR_CheckConnection(nConnection)
-   DEFAULT nMilisseconds := aConnections[nConnection]:nTimeTraceMin
+   DEFAULT nMilisseconds TO aConnections[nConnection]:nTimeTraceMin
    nOld := aConnections[nConnection]:nTimeTraceMin
    aConnections[nConnection]:nTimeTraceMin := nMilisseconds
 
@@ -1436,7 +1437,7 @@ Return NIL
 /*------------------------------------------------------------------------*/
 
 Procedure SR_End()
-   DEFAULT aConnections  := {}
+   DEFAULT aConnections TO {}
    While len(aConnections) > 0
       SR_EndConnection(len(aConnections))
    EndDo
@@ -1904,8 +1905,8 @@ Function SR_SetLocks(uLocks, oCnn, nRetries)
    Local lRet := .T., aLocks, cSql, cValue, aAdded := {}, nRet
    Local cIns, cDel
 
-   DEFAULT oCnn     := SR_GetConnection()
-   DEFAULT nRetries := 0
+   DEFAULT oCnn     TO SR_GetConnection()
+   DEFAULT nRetries TO 0
 
    If oCnn:oSqlTransact == NIL
       Return .T.
@@ -2000,7 +2001,7 @@ Function SR_ReleaseLocks(uLocks, oCnn)
 
    Local lRet := .T., aLocks, cValue, cSql
 
-   DEFAULT oCnn := SR_GetConnection()
+   DEFAULT oCnn TO SR_GetConnection()
 
    If oCnn:oSqlTransact == NIL
       Return .F.
@@ -2038,8 +2039,8 @@ Return lRet
 Function SR_ListLocks(oCnn, lAll)
    Local aLocks := {}
 
-   DEFAULT oCnn := SR_GetConnection()
-   DEFAULT lAll := .F.
+   DEFAULT oCnn TO SR_GetConnection()
+   DEFAULT lAll TO .F.
 
    If oCnn:oSqlTransact == NIL
       Return {}

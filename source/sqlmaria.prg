@@ -98,7 +98,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MARIA
 
    Local i
 
-   DEFAULT lTranslate := .T.
+   DEFAULT lTranslate TO .T.
 
    If aArray == NIL
       aArray := Array(len(aFields))
@@ -122,7 +122,7 @@ Return aArray
 
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_MARIA
    If ::aCurrLine == NIL
-      DEFAULT lTranslate := .T.
+      DEFAULT lTranslate TO .T.
       ::aCurrLine := array(LEN(aFields))
       MYSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
@@ -134,8 +134,8 @@ return ::aCurrLine[nField]
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_MARIA
 
    ::nRetCode := SQL_ERROR
-   DEFAULT aFields    := ::aFields
-   DEFAULT lTranslate := .T.
+   DEFAULT aFields    TO ::aFields
+   DEFAULT lTranslate TO .T.
 
    If ::hStmt != NIL
       ::nRetCode := MYSFetch(::hDbc)
@@ -164,11 +164,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    local nDec := 0, nRet, cVlr := ""
    local aFld
 
-   DEFAULT lReSelect    := .T.
-   DEFAULT lLoadCache   := .F.
-   DEFAULT cWhere       := ""
-   DEFAULT cRecnoName   := SR_RecnoName()
-   DEFAULT cDeletedName := SR_DeletedName()
+   DEFAULT lReSelect    TO .T.
+   DEFAULT lLoadCache   TO .F.
+   DEFAULT cWhere       TO ""
+   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT cDeletedName TO SR_DeletedName()
 
    If lReSelect
       If !Empty(cCommand)

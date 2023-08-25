@@ -133,7 +133,7 @@ Function SR_LogFile(cFileName, aInfo, lAddDateTime)
 
    local hFile, cLine, n
 
-   Default lAddDatetime := .T.
+   Default lAddDatetime TO .T.
 
    If lAddDateTime
 
@@ -446,7 +446,7 @@ Return DtAtiv
 
 Function SR_SetActiveDt(d)
 
-   DEFAULT d := date()
+   DEFAULT d TO date()
 
 Return DtAtiv := d
 
@@ -492,7 +492,7 @@ Return (lHistorico := .T.)
 
 Function SR_cDBValue(uData, nSystemID)
 
-   default nSystemID := SR_GetConnection():nSystemID
+   default nSystemID TO SR_GetConnection():nSystemID
 
 return SR_SubQuoted(valtype(uData), uData, nSystemID)
 
@@ -651,7 +651,7 @@ Function SR_WriteDbLog(cComm, oCnn)
 
    (oCnn) // To remove warning
 
-   DEFAULT cComm := ""
+   DEFAULT cComm TO ""
 
    BEGIN SEQUENCE
 
@@ -806,9 +806,9 @@ Function SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
       _nCnt := 1
    EndIf
 
-   DEFAULT CurrDate := SR_GetActiveDt()
-   DEFAULT n := 0
-   DEFAULT nSystem := oCnn:nSystemID
+   DEFAULT CurrDate TO SR_GetActiveDt()
+   DEFAULT n TO 0
+   DEFAULT nSystem TO oCnn:nSystemID
 
    cRet := "SELECT " + cAlias + ".* FROM " + cTable + " " + cAlias + " WHERE " + CRLF
 
@@ -839,9 +839,9 @@ Function SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
       _nCnt := 1
    EndIf
 
-   DEFAULT CurrDate := SR_GetActiveDt()
-   DEFAULT n := 0
-   DEFAULT nSystem := oCnn:nSystemID
+   DEFAULT CurrDate TO SR_GetActiveDt()
+   DEFAULT n TO 0
+   DEFAULT nSystem TO oCnn:nSystemID
 
    cRet := ""
 
@@ -871,7 +871,7 @@ Return NIL
 
 Function SR_GetRddName(nArea)
 
-   DEFAULT nArea := Select()
+   DEFAULT nArea TO Select()
 
    Do Case
    Case Empty(Alias(nArea))
@@ -1326,8 +1326,8 @@ Function SR_RuntimeErr(cOperation, cErr)
    Local oErr := ErrorNew()
    Local cDescr
 
-   DEFAULT cOperation := "SQLRDD"
-   DEFAULT cErr := "RunTimeError"
+   DEFAULT cOperation TO "SQLRDD"
+   DEFAULT cErr TO "RunTimeError"
 
    cDescr := alltrim(cErr)
 
