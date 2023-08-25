@@ -3775,9 +3775,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                   ::aInfo[AINFO_FOUND] := ( Left(dtos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(dtos(::aDat[i]), ::nPartialDateSeek) )
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted)  .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (  dtos(::aLocalBuffer[::aPosition[i]]) >= dtos(::aDat[i]))
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. valtype(::aDat[i]) == "T" .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
+               Case HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := ( Left(ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(ttos(::aDat[i]), ::nPartialDateSeek) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. valtype(::aDat[i]) == "T" .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted)     .AND. lsoft
+               Case HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted)     .AND. lsoft
                   ::aInfo[AINFO_FOUND] := ( ttos(::aLocalBuffer[::aPosition[i]]) >=  ttos(::aDat[i]) )                     
                Case valtype(::aLocalBuffer[::aPosition[i]]) != valtype(::aDat[i])
                   ::RuntimeErr("28")
@@ -4051,9 +4051,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                   ::aInfo[AINFO_FOUND] := ( Left(dtos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek ) == Left(dtos(::aDat[i]), ::nPartialDateSeek) )
                 Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted)  .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (  dtos(::aLocalBuffer[::aPosition[i]]) >= dtos(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. valtype(::aDat[i]) == "T" .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
+               Case HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := ( Left(ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek ) == Left(ttos(::aDat[i]), ::nPartialDateSeek) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. valtype(::aDat[i]) == "T" .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted)    .AND. lsoft
+               Case HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted)    .AND. lsoft
                   ::aInfo[AINFO_FOUND] := ( ttos(::aLocalBuffer[::aPosition[i]]) >=  ttos(::aDat[i]) )
                Case valtype(::aLocalBuffer[::aPosition[i]]) != valtype(::aDat[i])
                   ::RuntimeErr("28")
@@ -4274,15 +4274,15 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = str(::aDat[i]) )
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = stod(::aDat[i]) )
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. HB_ISCHAR(::aDat[i])
+               Case HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
                   ::aInfo[AINFO_FOUND] := ( ::aLocalBuffer[::aPosition[i]] = stot(::aDat[i]) )                  
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := ( Left(dtos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek ) == Left(dtos(::aDat[i]), ::nPartialDateSeek) )
                Case HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (  dtos(::aLocalBuffer[::aPosition[i]]) >= dtos(::aDat[i]) )                     
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. valtype(::aDat[i]) == "T" .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
+               Case HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := ( Left(ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek ) == Left(ttos(::aDat[i]), ::nPartialDateSeek) )   
-               Case valtype(::aLocalBuffer[::aPosition[i]]) == "T" .AND. valtype(::aDat[i]) == "T" .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted)  .AND. lsoft  
+               Case HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted)  .AND. lsoft  
                   ::aInfo[AINFO_FOUND] := ( ttos(::aLocalBuffer[::aPosition[i]]) >=  ttos(::aDat[i]) )                                                         
                Case valtype(::aLocalBuffer[::aPosition[i]]) != valtype(::aDat[i])
                   ::RuntimeErr("28")
