@@ -468,7 +468,7 @@ nLowerBound +=nHigerBound
           EndIf    
        End
 
-       If ValType(Eval(bFunc)) == 'M'  // HB_ISMEMO() returns .T. for strings :(
+       If HB_ISMEMO(Eval(bFunc))
           bFunc := {|| "  <Memo>  "}
        End
 
@@ -694,7 +694,7 @@ hHashData[nAliasTmp]["eof"]:=.F.
           EXIT
        endif
 
-       if ValType(SetKey(nKey)) == 'B'
+       if HB_ISBLOCK(SetKey(nKey))
           Eval(SetKey(nKey), ProcName(1), ProcLine(1), "")
        endif
 
@@ -1424,9 +1424,9 @@ if len(aFields) > 0
             aval[npos] :=stod(aval[npos])
          endif  
       
-         if valtype(aval[npos]) == 'C'
+         if HB_ISCHAR(aval[npos])
             cSql += " " + aTemp  + " = " +  aVal[nPos]
-         elseif  valtype(aval[npos]) == 'N' .OR.  valtype(aval[npos]) == 'D'
+         elseif  HB_ISNUMERIC(aval[npos]) .OR.  HB_ISDATE(aval[npos])
             cSql += " " + aTemp  + " = " +  sr_cdbvalue(aVal[nPos])
          endif
       cSql += " AND "

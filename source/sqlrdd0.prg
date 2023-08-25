@@ -500,7 +500,7 @@ Function SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       Return -1
    End
 
-   If valtype(oConnect) == "O"
+   If HB_ISOBJECT(oConnect)
 
       oConnect:Connect("", cUser, cPassword, 1, cOwner, 4000, .F.,;
                      cDSN, 50, "ANSI", 0, 0, 0,;

@@ -2076,13 +2076,13 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
          Case cType $ "CM" .AND. ::nTCCompat > 0
             Return "'" + uData + "'"
          Case cType $ "CM"
-          if nTargetDB = SYSTEMID_POSTGR 
+          if nTargetDB = SYSTEMID_POSTGR
              if SETPGSOLDBEHAVIOR()
                 Return "''"
              else
                 Return "' '"
-             endif   
-          endif   
+             endif
+          endif
             Return "' '"
          Case cType == "N"
             Return "0"
@@ -2315,11 +2315,11 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                ( lMemo .AND. (!HB_ISCHAR(::aOldBuffer[nThisField]) .OR. !HB_ISCHAR(aBuffer[nThisField]) )) .OR.;
                ( (!::aOldBuffer[nThisField] == aBuffer[nThisField]) .AND. ( nThisField != ::hnRecno ) )
 
-               If lML .AND. valtype(aBuffer[nThisField]) $ "CM"
+               If lML .AND. HB_ISSTRING(aBuffer[nThisField])
                   aBuffer[nThisField] := Hash(SR_SetBaseLang(), aBuffer[nThisField])
                EndIf
                If (lMemo .OR. lML) .AND. (::oSql:nSystemID == SYSTEMID_ORACLE .OR. ::oSql:nSystemID == SYSTEMID_ADABAS  .OR. ::oSql:nSystemID == SYSTEMID_IBMDB2 ) .AND. ::aFields[nThisField,6] != SQL_FAKE_LOB  // .OR. ::oSql:nSystemID == SYSTEMID_CACHE
-                  If !valtype(aBuffer[nThisField]) $ "CM"
+                  If !HB_ISSTRING(aBuffer[nThisField])
                      cMemo := SR_STRTOHEX(HB_Serialize(aBuffer[nThisField]))
                      cMemo := SQL_SERIALIZED_SIGNATURE + str(len(cMemo),10) + cMemo
                   Else
@@ -2435,7 +2435,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                lMemo := .F.
             endif
 
-            If lML .AND. valtype(aBuffer[i]) $ "CM"
+            If lML .AND. HB_ISSTRING(aBuffer[i])
                aBuffer[i] := { SR_SetBaseLang() => aBuffer[i] }
             EndIf
 
@@ -2485,7 +2485,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                EndIf
             Else
                If (lMemo .OR. lML)
-                  If !(valtype(aBuffer[i]) $ "CM")
+                  If !HB_ISSTRING(aBuffer[i])
                      cMemo := SR_STRTOHEX(HB_Serialize(aBuffer[i]))
                      cMemo := SQL_SERIALIZED_SIGNATURE + str(len(cMemo),10) + cMemo
                   Else
@@ -2848,7 +2848,7 @@ METHOD UpdateCache(aResultSet) CLASS SR_WORKAREA
    If SR_SetMultiLang()
       If ::aInfo[AINFO_RECNO] == uRecord
          For each uVal in aResultSet[1]
-            If valtype(::aLocalBuffer[hb_enumIndex()]) == "H"
+            If HB_ISHASH(::aLocalBuffer[hb_enumIndex()])
                If ::aFields[hb_enumIndex(), FIELD_TYPE] $ "CM"
                   (::aLocalBuffer[hb_enumIndex()])[SR_SetBaseLang()] := PadR(uVal, ::aFields[hb_enumIndex(), FIELD_LEN])
                Else
@@ -9988,7 +9988,7 @@ Function SR_SetGlobalOwner(cOwner)
    Else
       If Empty(cGlobalOwner)
          oSql := SR_GetCnn()
-         If valtype(oSql) == "O" .AND. (!Empty(oSql:cOwner))
+         If HB_ISOBJECT(oSql) .AND. (!Empty(oSql:cOwner))
             Return oSql:cOwner
          EndIf
       EndIf
