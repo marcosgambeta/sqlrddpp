@@ -16,6 +16,7 @@
 -es2
 
 -I.
+-Ifirebird
 -Imysql
 -Ioci
 -Ipgsql
