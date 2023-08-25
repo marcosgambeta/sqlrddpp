@@ -1052,7 +1052,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
       FOR EACH aItem IN aCon
 
          IF Empty(aItem)
-            Loop
+            LOOP
          ENDIF
 
          aToken := hb_atokens(aItem,"=")
@@ -1060,57 +1060,95 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
          IF len(aToken) = 1
             aadd(aToken, "")
          ENDIF
-         DO CASE
-         CASE cBuff == "UID" .OR. cBuff == "UIID" .OR. cBuff == "USR"
-            ::cUser   += aToken[2]
-         CASE cBuff == "PWD"
-            ::cPassword   += aToken[2]
-         CASE cBuff == "DSN"
-            ::cDSN   += aToken[2]
-         CASE cBuff == "DBS"
-            ::cDBS   += aToken[2]
-         CASE cBuff == "HST" .OR. cBuff == "OCI" .OR. cBuff == "MYSQL" .OR. cBuff == "PGS" .OR. cBuff == "SERVER" .OR. cBuff == "MARIA"
-            ::cHost   += aToken[2]
-         CASE cBuff == "PRT"
-            ::cPort   := Val(sr_val2char(aToken[2]))
-         CASE cBuff == "DRV" .OR. cBuff == "DRIVER"
-            ::cDRV   += aToken[2]
-         CASE cBuff == "CHARSET"
+         SWITCH cBuff
+         CASE "UID"
+         CASE "UIID"
+         CASE "USR"
+            ::cUser += aToken[2]
+            EXIT
+         CASE "PWD"
+            ::cPassword += aToken[2]
+            EXIT
+         CASE "DSN"
+            ::cDSN += aToken[2]
+            EXIT
+         CASE "DBS"
+            ::cDBS += aToken[2]
+            EXIT
+         CASE "HST"
+         CASE "OCI"
+         CASE "MYSQL"
+         CASE "PGS"
+         CASE "SERVER"
+         CASE "MARIA"
+            ::cHost += aToken[2]
+            EXIT
+         CASE "PRT"
+            ::cPort := Val(sr_val2char(aToken[2]))
+            EXIT
+         CASE "DRV"
+         CASE "DRIVER"
+            ::cDRV += aToken[2]
+            EXIT
+         CASE "CHARSET"
             ::cCharSet := aToken[2]
-         CASE cBuff == "AUTOCOMMIT"
+            EXIT
+         CASE "AUTOCOMMIT"
             ::nAutoCommit := Val(aToken[2])
-         CASE cBuff == "DTB" .OR. cBuff == "FB" .OR. cBuff == "FIREBIRD" .OR. cBuff == "FB3" .OR. cBuff == "FIREBIRD3" .OR. cBuff == "IB" .OR. cBuff == "TNS" .OR. cBuff == "DATABASE"
-            ::cDTB   += aToken[2]
-         CASE cBuff == "TABLESPACE_DATA"
+            EXIT
+         CASE "DTB"
+         CASE "FB"
+         CASE "FIREBIRD"
+         CASE "FB3"
+         CASE "FIREBIRD3"
+         CASE "IB"
+         CASE "TNS"
+         CASE "DATABASE"
+            ::cDTB += aToken[2]
+            EXIT
+         CASE "TABLESPACE_DATA"
             ::cDsnTblData := aToken[2]
-         CASE cBuff == "TABLESPACE_INDEX"
+            EXIT
+         CASE "TABLESPACE_INDEX"
             ::cDsnTblIndx := aToken[2]
-         CASE cBuff == "TABLESPACE_LOB"
+            EXIT
+         CASE "TABLESPACE_LOB"
             ::cDsnTblLob := aToken[2]
-         CASE cBuff == "CLUSTER"
-            ::lCluster  := Upper(aToken[2]) $ "Y,S,TRUE"
-         CASE cBuff == "OWNER" //.AND. empty(::cOwner)
+            EXIT
+         CASE "CLUSTER"
+            ::lCluster := Upper(aToken[2]) $ "Y,S,TRUE"
+            EXIT
+         CASE "OWNER" //.AND. empty(::cOwner)
             ::cOwner := aToken[2]
             IF !Empty(::cOwner) .AND. right(::cOwner, 1) != "."
                ::cOwner += "."
             ENDIF
-         CASE cBuff == "NETWORK" .OR. cBuff == "LIBRARY" .OR. cBuff == "NETLIBRARY"
+            EXIT
+         CASE "NETWORK"
+         CASE "LIBRARY"
+         CASE "NETLIBRARY"
             ::cNetLibrary := aToken[2]
-         CASE cBuff == "APP"
-            ::cApp :=  aToken[2]
-         CASE cBuff == "SSLCERT"
+            EXIT
+         CASE "APP"
+            ::cApp := aToken[2]
+            EXIT
+         CASE "SSLCERT"
             ::sslcert := aToken[2]
-         CASE cBuff == "SSLKEY"
+            EXIT
+         CASE "SSLKEY"
             ::sslkey := aToken[2]
-         CASE cBuff == "SSLROOTCERT"
+            EXIT
+         CASE "SSLROOTCERT"
             ::sslrootcert := aToken[2]
-         CASE cBuff == "SSLCRL"
-            ::sslcrl    := aToken[2]
-         CASE cBuff == "COMPRESS"
+            EXIT
+         CASE "SSLCRL"
+            ::sslcrl := aToken[2]
+            EXIT
+         CASE "COMPRESS"
             ::lCompress := Upper(aToken[2]) $ "Y,S,TRUE"
 //         OtherWise
 //            SR_MsgLogFile("Invalid connection string entry : " + cBuff + " = " + SR_Val2Char(aToken[2]))
-         ENDCASE
+         ENDSWITCH
       NEXT
    ENDIF
 
@@ -1136,38 +1174,73 @@ METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
 
    DEFAULT nLen := 0
 
-   DO CASE // TODO: switch
-   CASE (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR .OR. nType == SQL_GUID) .AND. IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
-      cType := "C"
-   CASE nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
+   SWITCH nType
+   CASE SQL_CHAR
+   CASE SQL_VARCHAR
+   CASE SQL_NVARCHAR
+   CASE SQL_GUID
+      IF IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
+         cType := "C"
+      ENDIF
+      EXIT
+   CASE SQL_SMALLINT
+   CASE SQL_TINYINT
       IF ::lQueryOnly
          cType := "N"
       ELSE
          cType := "L"
       ENDIF
-   CASE nType == SQL_BIT
+      EXIT
+   CASE SQL_BIT
       cType := "L"
-   CASE nType == SQL_NUMERIC .OR. nType == SQL_DECIMAL .OR. ;
-      nType == SQL_INTEGER .OR. nType == SQL_BIGINT .OR. ;
-      nType == SQL_FLOAT .OR. nType == SQL_REAL .OR. ;
-      nType == SQL_DOUBLE
+      EXIT
+   CASE SQL_NUMERIC
+   CASE SQL_DECIMAL
+   CASE SQL_INTEGER
+   CASE SQL_BIGINT
+   CASE SQL_FLOAT
+   CASE SQL_REAL
+   CASE SQL_DOUBLE
       cType := "N"
-   //CASE nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE
-   CASE nType == SQL_DATE .OR. nType == SQL_TYPE_DATE
+      EXIT
+   //CASE SQL_DATE
+   //CASE SQL_TIMESTAMP
+   //CASE SQL_TYPE_TIMESTAMP
+   //CASE SQL_TYPE_DATE
+   CASE SQL_DATE
+   CASE SQL_TYPE_DATE
       cType := "D"
-   CASE nType == SQL_TIME
-      IF (::nSystemID == SYSTEMID_POSTGR .OR. ::nSystemID == SYSTEMID_MYSQL .OR. ::nSystemID == SYSTEMID_MARIADB .OR. ::nSystemID == SYSTEMID_FIREBR .OR. ::nSystemID == SYSTEMID_FIREBR3)
+      EXIT
+   CASE SQL_TIME
+      IF      ::nSystemID == SYSTEMID_POSTGR ;
+         .OR. ::nSystemID == SYSTEMID_MYSQL ;
+         .OR. ::nSystemID == SYSTEMID_MARIADB ;
+         .OR. ::nSystemID == SYSTEMID_FIREBR ;
+         .OR. ::nSystemID == SYSTEMID_FIREBR3
          cType := "T"
       ELSE
          cType := "C"
       ENDIF
-   CASE nType == SQL_LONGVARCHAR .OR. nType == SQL_DB2_CLOB .OR. nType == SQL_FAKE_LOB .OR. ntype == SQL_LONGVARBINARY .OR. (nType == SQL_VARBINARY .AND. ::nSystemID != SYSTEMID_MSSQL7)
+      EXIT
+   CASE SQL_LONGVARCHAR
+   CASE SQL_DB2_CLOB
+   CASE SQL_FAKE_LOB
+   CASE SQL_LONGVARBINARY
       cType := "M"
-   CASE nType == SQL_VARBINARY .AND. ::nSystemID == SYSTEMID_MSSQL7
-      cType := "V"
-   CASE nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME
+      EXIT
+   CASE SQL_VARBINARY
+      IF ::nSystemID != SYSTEMID_MSSQL7
+         cType := "M"
+      ENDIF
+      IF ::nSystemID == SYSTEMID_MSSQL7
+         cType := "V"
+      ENDIF
+      EXIT
+   CASE SQL_TIMESTAMP
+   CASE SQL_TYPE_TIMESTAMP
+   CASE SQL_DATETIME
       cType := "T"
-   ENDCASE
+   ENDSWITCH
 
    IF cType == "U"
       SR_MsgLogFile(SR_Msg(2) + SR_Val2CharQ(nType))
@@ -1181,47 +1254,58 @@ METHOD SQLLen(nType, nLen, nDec) CLASS SR_CONNECTION
 
    DEFAULT nDec := -1
 
-   DO CASE
-   CASE (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR) .AND. IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
-
-   CASE nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
+   SWITCH nType
+   CASE SQL_CHAR
+   CASE SQL_VARCHAR
+   CASE SQL_NVARCHAR
+      IF IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
+      ENDIF
+      EXIT
+   CASE SQL_SMALLINT
+   CASE SQL_TINYINT
       IF ::lQueryOnly
          nLen := 10
       ELSE
          nLen := 1
       ENDIF
-
-   CASE nType == SQL_BIT
-        nLen := 1
-
-   CASE nType == SQL_NUMERIC  .OR. nType == SQL_DECIMAL  .OR. ;
-        nType == SQL_INTEGER  .OR. ;
-        nType == SQL_FLOAT    .OR. nType == SQL_REAL     .OR. ;
-        nType == SQL_DOUBLE
-
+      EXIT
+   CASE SQL_BIT
+      nLen := 1
+      EXIT
+   CASE SQL_NUMERIC
+   CASE SQL_DECIMAL
+   CASE SQL_INTEGER
+   CASE SQL_FLOAT
+   CASE SQL_REAL
+   CASE SQL_DOUBLE
       IF nLen > 19 .AND. nDec > 10 .AND. !(nLen = 38 .AND. nDec = 0)
          nLen := 20
          nDec := 6
       ENDIF
-
       IF !(nLen = 38 .AND. nDec = 0)
          nLen := min(nLen, 20)
          nLen := max(nLen, 1)
       ENDIF
-
-   CASE nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE .OR. ntype == SQL_DATETIME
-     nLen := 8
-
-   CASE nType == SQL_TIME
-     nLen := 8
-
-   CASE nType == SQL_LONGVARCHAR .OR. nType == SQL_LONGVARBINARY .OR. nType == SQL_FAKE_LOB .OR. nType == SQL_VARBINARY
-     nLen := 10
-
-   CASE nType == SQL_GUID
+      EXIT
+   CASE SQL_DATE
+   CASE SQL_TIMESTAMP
+   CASE SQL_TYPE_TIMESTAMP
+   CASE SQL_TYPE_DATE
+   CASE SQL_DATETIME
+      nLen := 8
+      EXIT
+   CASE SQL_TIME
+      nLen := 8
+      EXIT
+   CASE SQL_LONGVARCHAR
+   CASE SQL_LONGVARBINARY
+   CASE SQL_FAKE_LOB
+   CASE SQL_VARBINARY
+      nLen := 10
+      EXIT
+   CASE SQL_GUID
       nLen := 36
-
-   ENDCASE
+   ENDSWITCH
 
 RETURN nLen
 
