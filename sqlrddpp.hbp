@@ -8,6 +8,7 @@
 
 -Isource
 -Isource/mysql
+-Isource/oci
 
 source/exprobjs.prg
 source/exprparser.prg

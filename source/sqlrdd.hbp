@@ -17,6 +17,7 @@
 
 -I.
 -Imysql
+-Ioci
 
 sqlodbc.prg
 sqlconnection.prg
