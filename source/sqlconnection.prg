@@ -60,38 +60,50 @@
 
 #define DEBUGSESSION     .F.
 
-Static lNwgOldCompat  := .F.
-
-/*------------------------------------------------------------------------*/
+STATIC lNwgOldCompat := .F.
 
 CLASS SR_CONNECTION
 
-   CLASSDATA lFreezed         AS LOGICAL     INIT .F.
-   DATA cLowLevLogFile   AS CHARACTER   INIT "sqltrace.log"
+   CLASSDATA lFreezed AS LOGICAL INIT .F.
+   DATA cLowLevLogFile AS CHARACTER INIT "sqltrace.log"
 
    DATA nConnectionType
-   DATA nSizeMaxBuff, nPreFetch
-   DATA cOwner, cQueryOwner, lTrace, oSqlTransact
-   DATA oCache, nSelMeth, nEmptyMode, nDateMode
-   DATA oSql, cNextQuery
-   DATA sSiteName, cSQLError, cResult, uSid, cLockWait
+   DATA nSizeMaxBuff
+   DATA nPreFetch
+   DATA cOwner
+   DATA cQueryOwner
+   DATA lTrace
+   DATA oSqlTransact
+   DATA oCache
+   DATA nSelMeth
+   DATA nEmptyMode
+   DATA nDateMode
+   DATA oSql
+   DATA cNextQuery
+   DATA sSiteName
+   DATA cSQLError
+   DATA cResult
+   DATA uSid
+   DATA cLockWait
 
-   DATA cTargetDB, cSystemName, nSystemID, cSystemVers   READONLY
+   DATA cTargetDB, cSystemName, nSystemID, cSystemVers READONLY
    DATA nFields, aFields, hEnv, hDbc, /*nRetCode,*/ nVersion READONLY
    DATA nRetCode
    // CULIK 18/10/2010 Adicionado para indicar se o indice contem cluster
    DATA lClustered AS LOGICAL INIT .F. READONLY
    //culik 30/12/2011 adicionado para indicar se e  sqlserver versao 2008 ou superior
-   DATA lSqlServer2008 AS LOGICAL INIT .F. 
+   DATA lSqlServer2008 AS LOGICAL INIT .F.
    DATA lPostgresql8   AS LOGICAL INIT .F.  // do we have postgressql >= 8.3
    DATA lPostgresql83  AS LOGICAL INIT .F.  // do we have postgressql >= 8.3
-   DATA lMariaDb       AS LOGICAL INIT .F.  // do we have mariadb 
+   DATA lMariaDb       AS LOGICAL INIT .F.  // do we have mariadb
    DATA oHashActiveWAs
 
-   DATA aTableInfo      INIT { => }
+   DATA aTableInfo INIT {=>}
    DATA aFieldModifier
 
-   DATA cDsnTblData, cDsnTblIndx, cDsnTblLob
+   DATA cDsnTblData
+   DATA cDsnTblIndx
+   DATA cDsnTblLob
 
    DATA lNative         AS LOGICAL INIT .T.
    DATA lComments       AS LOGICAL INIT .T.
@@ -137,29 +149,36 @@ CLASS SR_CONNECTION
    DATA nTCCompat        AS NUMERIC    INIT 0      // TopConnect compatibility mode
 
    DATA cTempFile
-   DATA oODBCTemp, oOdbc
-   DATA nSetOpt, nSetValue, nMiliseconds
+   DATA oODBCTemp
+   DATA oOdbc
+   DATA nSetOpt
+   DATA nSetValue
+   DATA nMiliseconds
    DATA cPort, cHost, oSock, cDBS, cDrv, cDTB, cHandle       /* RPC stuff */
-   DATA cCharSet, cNetLibrary
+   DATA cCharSet
+   DATA cNetLibrary
    DATA cApp
    // Culik Added to tell to postgresql use ssl
    DATA sslcert
    DATA sslkey
    DATA sslrootcert
-   DATA sslcrl   
+   DATA sslcrl
    // CULIK 21/3/2011 Adicionado para indicar se o indice contem cluster
    DATA lClustered AS LOGICAL INIT .F. READONLY
    //culik 30/12/2011 adicionado para indicar se e  sqlserver versao 2008 ou superior
-   DATA lSqlServer2008 AS LOGICAL INIT .F. 
+   DATA lSqlServer2008 AS LOGICAL INIT .F.
    DATA lOracle12      AS LOGICAL INIT .F.  // do we have Oracle >= 12.0
-   
-   DATA lBind Init .F.
+
+   DATA lBind INIT .F.
    DATA cSqlPrepare INIT ""
    DATA aBindParameters INIT {}
-   
+
    PROTECTED:
 
-   DATA cConnect, cDSN, cUser, cPassword
+   DATA cConnect
+   DATA cDSN
+   DATA cUser
+   DATA cPassword
 
    EXPORTED:
 
@@ -204,14 +223,14 @@ CLASS SR_CONNECTION
    METHOD ExecSP(cComm, aReturn, nParam) VIRTUAL
    METHOD GetAffectedRows() Virtual
 
-
 ENDCLASS
-
-/*------------------------------------------------------------------------*/
 
 METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
 
-   Local cSql, cMode, oSql, cStack
+   LOCAL cSql
+   LOCAL cMode
+   LOCAL oSql
+   LOCAL cStack
 
    DEFAULT cType    := SQLLOGCHANGES_TYPE_DML
    DEFAULT nLogMode := ::nLogMode
@@ -219,718 +238,702 @@ METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
 
    cMode := StrZero(nLogMode, SQLLOGCHANGES_SIZE)
 
-   If ::cQueryOwner == NIL
-      If !Empty(SR_GetGlobalOwner())
+   IF ::cQueryOwner == NIL
+      IF !Empty(SR_GetGlobalOwner())
          ::cQueryOwner := alltrim(SR_GetGlobalOwner())
-      ElseIf !Empty(::oSql:cOwner)
+      ELSEIF !Empty(::oSql:cOwner)
          ::cQueryOwner := alltrim(::cOwner)
-      EndIf
+      ENDIF
 
-      If (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
+      IF (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
          ::cQueryOwner += "."
-      EndIf
+      ENDIF
 
-      If Empty(::cQueryOwner)
+      IF Empty(::cQueryOwner)
          ::cQueryOwner := ""
-      EndIf
+      ENDIF
 
-   EndIf
+   ENDIF
 
-   If substr(cMode, 4, 1) == "1" .OR. ::oSqlTransact == NIL
-      oSql := Self
-   Else
+   IF substr(cMode, 4, 1) == "1" .OR. ::oSqlTransact == NIL
+      oSql := SELF
+   ELSE
       oSql := ::oSqlTransact
-   EndIf
+   ENDIF
 
-   If substr(cMode, 1, 1) == "1"
+   IF substr(cMode, 1, 1) == "1"
       cStack := sr_cDbValue(SR_GetStack(), ::nSystemID)
-   Else
+   ELSE
       cStack := " NULL"
-   EndIf
+   ENDIF
 
-   cSql := "INSERT INTO " + ::cQueryOwner + "SR_MGMNTLOGCHG (SPID_, WPID_, TYPE_, APPUSER_, TIME_, QUERY_, CALLSTACK_, SITE_, CONTROL_, COST_ ) VALUES ( " +;
+   cSql := "INSERT INTO " + ::cQueryOwner + "SR_MGMNTLOGCHG (SPID_, WPID_, TYPE_, APPUSER_, TIME_, QUERY_, CALLSTACK_, SITE_, CONTROL_, COST_ ) VALUES ( " + ;
            str(::uSid) + "," + str(SR_GetCurrInstanceID()) + ", '" + cType + "','" + ::cAppUser + "','" + dtos(date()) + time() + strzero(seconds() * 1000, 8) + "'," + sr_cDbValue(cCommand, ::nSystemID) + "," + cStack + ",'" + ::cSite + "', NULL, " + str(nCost) + " )"
    oSql:execute(cSql, , , .T.)
    oSql:FreeStatement()
 
-   If substr(cMode, 4, 1) != "1"
+   IF substr(cMode, 4, 1) != "1"
       oSql:Commit()
-   EndIf
+   ENDIF
 
-Return NIL
-
-/*------------------------------------------------------------------------*/
+RETURN NIL
 
 METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
 
-   Local aRet := {}, aRet2 := {}, i
+   LOCAL aRet := {}
+   LOCAL aRet2 := {}
+   LOCAL i
 
    DEFAULT cOwner := SR_SetGlobalOwner()
 
-   If right(cOwner, 1) == "."
+   IF right(cOwner, 1) == "."
       cOwner := SubStr(cOwner, 1, len(cOwner) - 1)
-   EndIf
+   ENDIF
 
-   Switch ::nSystemID
-   Case SYSTEMID_MSSQL7
-   Case SYSTEMID_SYBASE
-      If empty(cOwner)
+   SWITCH ::nSystemID
+   CASE SYSTEMID_MSSQL7
+   CASE SYSTEMID_SYBASE
+      IF empty(cOwner)
          ::exec("select name from sysobjects where type = N'U' order by name", .T., .T., @aRet)
-      Else
+      ELSE
          ::exec("select name from sysobjects where type = N'U' and user_name(uid) = '" + cOwner + "' order by name", .T., .T., @aRet)
-      EndIf
-      Exit
-   Case SYSTEMID_POSTGR
-      If empty(cOwner)
+      ENDIF
+      EXIT
+   CASE SYSTEMID_POSTGR
+      IF empty(cOwner)
          ::exec("select tablename from pg_tables where schemaname = 'public' order by tablename", .T., .T., @aRet)
-      Else
+      ELSE
          ::exec("select tablename from pg_tables where schemaname = '" + cOwner + "' order by tablename", .T., .T., @aRet)
-      EndIf
-      Exit
-   Case SYSTEMID_ORACLE
-      If empty(cOwner)
+      ENDIF
+      EXIT
+   CASE SYSTEMID_ORACLE
+      IF empty(cOwner)
          ::exec("select table_name from user_tables order by TABLE_NAME", .T., .T., @aRet)
-      Else
+      ELSE
          ::exec("select TABLE_NAME from all_tables where owner = '" + cOwner + "' order by TABLE_NAME", .T., .T., @aRet)
-      EndIf
-      Exit
-   Case SYSTEMID_MYSQL
-   Case SYSTEMID_MARIADB
+      ENDIF
+      EXIT
+   CASE SYSTEMID_MYSQL
+   CASE SYSTEMID_MARIADB
       ::exec("show tables", .T., .T., @aRet)
-      Exit
-   Case SYSTEMID_ADABAS
-   Case SYSTEMID_IBMDB2
-   Case SYSTEMID_CACHE
-   Case SYSTEMID_INGRES
+      EXIT
+   CASE SYSTEMID_ADABAS
+   CASE SYSTEMID_IBMDB2
+   CASE SYSTEMID_CACHE
+   CASE SYSTEMID_INGRES
       aRet := ::DriverCatTables()
-      exit
-   Case SYSTEMID_FIREBR
-   Case SYSTEMID_FIREBR3   
-      If empty(cOwner)
+      EXIT
+   CASE SYSTEMID_FIREBR
+   CASE SYSTEMID_FIREBR3
+      IF empty(cOwner)
          ::exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 order by RDB$RELATION_NAME", .T., .T., @aRet)
-      Else
+      ELSE
          ::exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 AND RDB$OWNER_NAME = '" + cOwner + "' order by RDB$RELATION_NAME", .T., .T., @aRet)
-      EndIf
-      Exit
-   End
+      ENDIF
+      EXIT
+   ENDSWITCH
 
    aRet2 := array(len(aRet))
-   For i = 1 to len(aRet)
-      aRet2[i] := upper(rtrim(aRet[i,1]))
-   Next
+   FOR i := 1 TO len(aRet)
+      aRet2[i] := upper(rtrim(aRet[i, 1]))
+   NEXT
 
-Return aRet2
-
-/*------------------------------------------------------------------------*/
+RETURN aRet2
 
 METHOD Fetch(aLine, lTranslate, aFields) CLASS SR_CONNECTION
 
-   Local lResults := HB_ISARRAY(aLine)
-   Local i, nRet := ::FetchRaw(lTranslate, aFields)
+   LOCAL lResults := HB_ISARRAY(aLine)
+   LOCAL i
+   LOCAL nRet := ::FetchRaw(lTranslate, aFields)
 
-   If nRet == SQL_SUCCESS .AND. lResults
+   IF nRet == SQL_SUCCESS .AND. lResults
       aSize(aLine, ::nFields)
-      For i = 1 to ::nFields
+      FOR i := 1 TO ::nFields
          aLine[i] := ::FieldGet(i, ::aFields, lTranslate)
-      Next
-   EndIf
+      NEXT
+   ENDIF
 
-Return nRet
-
-/*------------------------------------------------------------------------*/
+RETURN nRet
 
 METHOD GetStruct(cTable) CLASS SR_CONNECTION
-
-Return ::oSql:IniFields(.T., cTable, , .F.)
-
-/*------------------------------------------------------------------------*/
+RETURN ::oSql:IniFields(.T., cTable, , .F.)
 
 METHOD Getline(aFields, lTranslate, aArray) CLASS SR_CONNECTION
-   Local i
 
-   If aArray == NIL
+   LOCAL i
+
+   IF aArray == NIL
       aArray := Array(len(aFields))
-   ElseIf len(aArray) < len(aFields)
+   ELSEIF len(aArray) < len(aFields)
       aSize(aArray, len(aFields))
-   EndIf
+   ENDIF
 
-   For i = 1 to len(aFields)
+   FOR i := 1 TO len(aFields)
       aArray[i] := ::FieldGet(i, aFields, lTranslate)
-   Next
+   NEXT
 
-Return aArray
-
-/*------------------------------------------------------------------------*/
+RETURN aArray
 
 METHOD SetNextOpt(nSet, nOpt) CLASS SR_CONNECTION
+
    ::lSetNext  := .T.
    ::nSetOpt   := nSet
    ::nSetValue := nOpt
-Return NIL
 
-
-
+RETURN NIL
 
 METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno, cRecnoName, cDeletedName, lTranslate, nLogMode, cType) CLASS SR_CONNECTION
 
-   local nRet := 0, i, j, n, cEste, cCampo, aDb, nFieldRec
-   local aFields, nBlocks, nAllocated := 0, nLenMemo, nLinesMemo, aMemo
-   local cFileTemp
+   LOCAL nRet := 0
+   LOCAL i
+   LOCAL j
+   LOCAL n
+   LOCAL cEste
+   LOCAL cCampo
+   LOCAL aDb
+   LOCAL nFieldRec
+   LOCAL aFields
+   LOCAL nBlocks
+   LOCAL nAllocated := 0
+   LOCAL nLenMemo
+   LOCAL nLinesMemo
+   LOCAL aMemo
+   LOCAL cFileTemp
 
-   DEFAULT nLogMode  := ::nLogMode
-   DEFAULT cType     := SQLLOGCHANGES_TYPE_DML
+   DEFAULT nLogMode := ::nLogMode
+   DEFAULT cType    := SQLLOGCHANGES_TYPE_DML
 
-   If ::lTraceToDBF
-      SR_WriteDbLog(cCommand, Self)
-   EndIf
-   If ::lTraceToScreen
+   IF ::lTraceToDBF
+      SR_WriteDbLog(cCommand, SELF)
+   ENDIF
+   IF ::lTraceToScreen
       Alert(cCommand)
-   EndIf
-   If ::lLowLevSqlDbg
-      SR_LogFile(::cLowLevLogFile, { cCommand }, ::lLogDateTime)
-   EndIf
+   ENDIF
+   IF ::lLowLevSqlDbg
+      SR_LogFile(::cLowLevLogFile, {cCommand}, ::lLogDateTime)
+   ENDIF
 
-   If ::lFreezed
-      Return SQL_SUCCESS
-   EndIf
+   IF ::lFreezed
+      RETURN SQL_SUCCESS
+   ENDIF
 
-   DEFAULT lMsg          := .T.
-   DEFAULT lFetch        := .F.
-   DEFAULT nMaxRecords   := 99999999999999
-   DEFAULT lNoRecno      := .F.
-   DEFAULT cRecnoName    := SR_RecnoName()
-   DEFAULT cDeletedName  := SR_DeletedName()
+   DEFAULT lMsg         := .T.
+   DEFAULT lFetch       := .F.
+   DEFAULT nMaxRecords  := 99999999999999
+   DEFAULT lNoRecno     := .F.
+   DEFAULT cRecnoName   := SR_RecnoName()
+   DEFAULT cDeletedName := SR_DeletedName()
 
-   If !Empty(cFile)
+   IF !Empty(cFile)
       HB_FNameSplit(cFile, , @cFileTemp)
-      DEFAULT cAlias        := cFileTemp
-   EndIf
+      DEFAULT cAlias := cFileTemp
+   ENDIF
 
-   if cCommand == NIL
-      Return SQL_ERROR
-   else
+   IF cCommand == NIL
+      RETURN SQL_ERROR
+   ELSE
       ::cLastComm := cCommand
 
-      If nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[6] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK )
+      IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[6] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK)
          ::LogQuery(cCommand, cType, nLogMode)
-      EndIf
+      ENDIF
 
       ::AllocStatement()
       ::nMiliseconds := Seconds() * 100
       nRet := ::ExecuteRaw(cCommand)
 
-      If nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[5] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK )
+      IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[5] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK)
          ::LogQuery(cCommand, cType, nLogMode)
-      EndIf
+      ENDIF
 
       lFetch := lFetch .AND. ::lResultSet
 
-      if nRet != SQL_SUCCESS  .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!( ("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand,7)) ) .AND. nRet == SQL_NO_DATA_FOUND))
+      IF nRet != SQL_SUCCESS  .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
 
-         ::nRetCode  = nRet
-         ::cSQLError = ''
-         if lMsg
-            If len(cCommand) > 10000
+         ::nRetCode  := nRet
+         ::cSQLError := ''
+         IF lMsg
+            IF len(cCommand) > 10000
                ::RunTimeErr("", "SQLExecDirect Error" + ;
-                        CRLF + ::LastError() + CRLF + "Command sent to database : " + CRLF + SubStr(cCommand,1,2000) + " ... (command too long to display here)" )
-            Else
+                        CRLF + ::LastError() + CRLF + "Command sent to database : " + CRLF + SubStr(cCommand, 1, 2000) + " ... (command too long to display here)")
+            ELSE
                ::RunTimeErr("", "SQLExecDirect Error" + ;
-                        CRLF + ::LastError() + CRLF + "Command sent to database : " + CRLF + cCommand )
-            EndIf
-         Else
+                        CRLF + ::LastError() + CRLF + "Command sent to database : " + CRLF + cCommand)
+            ENDIF
+         ELSE
             ::cSQLError := ::LastError()
-         EndIf
-      Else
+         ENDIF
+      ELSE
 
          ::nRetCode     := nRet
          ::nMiliseconds := (Seconds()*100) - ::nMiliseconds
 
-         If ::nMiliseconds > ::nTimeTraceMin
-            SR_WriteTimeLog(cCommand, Self, ::nMiliseconds)
-         EndIf
+         IF ::nMiliseconds > ::nTimeTraceMin
+            SR_WriteTimeLog(cCommand, SELF, ::nMiliseconds)
+         ENDIF
 
-         If lFetch
-            If !Empty(cFile)
+         IF lFetch
+            IF !Empty(cFile)
 
-               aFields := ::IniFields(.F.,,,,,cRecnoName, cDeletedName)
+               aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
-               if Select(cAlias) == 0
+               IF Select(cAlias) == 0
                   aDb := {}
-                  If lNoRecno
-                     For i = 1 to len(aFields)
-                        If aFields[i,1] != cRecnoName
+                  IF lNoRecno
+                     FOR i := 1 TO len(aFields)
+                        IF aFields[i, 1] != cRecnoName
                            AADD(aDb, aFields[i])
-                        Else
+                        ELSE
                            nFieldRec := i
-                        EndIf
-                     Next
+                        ENDIF
+                     NEXT
                      dbCreate(cFile, SR_AdjustNum(aDb), SR_SetRDDTemp())
-                  Else
+                  ELSE
                      dbCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
-                  EndIf
+                  ENDIF
 
                   dbUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
-               else
+               ELSE
                   dbSelectArea(cAlias)
-               EndIf
+               ENDIF
 
                n := 1
 
-               While n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+               DO WHILE n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
 
-                  Append Blank
+                  APPEND BLANK
 
-                  If nFieldRec == NIL
-                     For i = 1 to len(aFields)
+                  IF nFieldRec == NIL
+                     FOR i := 1 TO len(aFields)
                         FieldPut(i, ::FieldGet(i, aFields, lTranslate))
-                     Next
-                  Else
-                     For i = 1 to len(aFields)
-                        Do Case
-                        Case i = nFieldRec
+                     NEXT
+                  ELSE
+                     FOR i := 1 TO len(aFields)
+                        DO CASE
+                        CASE i = nFieldRec
                            ::FieldGet(i, aFields, lTranslate)
-                        Case i > nFieldRec
+                        CASE i > nFieldRec
                            FieldPut(i - 1, ::FieldGet(i, aFields, lTranslate))
-                        Case i < nFieldRec
+                        CASE i < nFieldRec
                            FieldPut(i, ::FieldGet(i, aFields, lTranslate))
-                        EndCase
-                     Next
-                  EndIf
+                        ENDCASE
+                     NEXT
+                  ENDIF
 
-                  n ++
+                  n++
 
                EndDo
 
                dbGoTop()
 
-            ElseIf aArray == NIL
+            ELSEIF aArray == NIL
 
                ::cResult := ""
                n         := 0
-               aFields   := ::IniFields(.F.,,,,,cRecnoName, cDeletedName)
+               aFields   := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
-               For i = 1 to len(aFields)
-                  ::cResult += PadR(aFields[i,1], IIf(aFields[i,2] == "M", Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30)) , Max(len(aFields[i,1]), aFields[i,3])), "-") + " "
-               Next
+               FOR i := 1 TO len(aFields)
+                  ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)) , Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
+               NEXT
 
                ::cResult += chr(13) + chr(10)
                aMemo     := Array(len(aFields))
 
-               While n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+               DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
 
                   cEste      := ""
                   nLenMemo   := 0
                   nLinesMemo := 0
 
-                  For i = 1 to len(aFields)
+                  FOR i := 1 TO len(aFields)
                      cCampo := ::FieldGet(i, aFields, lTranslate)
-                     If aFields[i,2] == "M"
-                        nLenMemo   := Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30))
+                     IF aFields[i, 2] == "M"
+                        nLenMemo   := Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
                         nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
-                        cEste += memoline(cCampo,nLenMemo,1) + " "
+                        cEste += memoline(cCampo, nLenMemo, 1) + " "
                         aMemo[i] := cCampo
-                     Else
-                        cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i,1]), aFields[i,3])) + " "
-                     EndIf
-                  Next
+                     ELSE
+                        cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i, 1]), aFields[i, 3])) + " "
+                     ENDIF
+                  NEXT
 
                   ::cResult += cEste + chr(13) + chr(10)
-                  n ++
+                  n++
 
-                  If ::lShowTxtMemo .AND. nLinesMemo > 1
-                     For j = 2 to nLinesMemo
-                        cEste    := ""
-                        For i = 1 to len(aFields)
-                           If aFields[i,2] == "M"
-                              cEste += memoline(aMemo[i],nLenMemo,j) + " "
-                           Else
-                              cEste += Space(Max(len(aFields[i,1]), aFields[i,3])) + " "
-                           EndIf
-                        Next
+                  IF ::lShowTxtMemo .AND. nLinesMemo > 1
+                     FOR j := 2 TO nLinesMemo
+                        cEste := ""
+                        FOR i := 1 TO len(aFields)
+                           IF aFields[i, 2] == "M"
+                              cEste += memoline(aMemo[i], nLenMemo, j) + " "
+                           ELSE
+                              cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
+                           ENDIF
+                        NEXT
                         ::cResult += cEste + chr(13) + chr(10)
-                        n ++
-                     Next
-                  EndIf
+                        n++
+                     NEXT
+                  ENDIF
 
                EndDo
 
-            Else      // Retorno deve ser para Array !
+            ELSE      // Retorno deve ser para Array !
 
                AsizeAlloc(aArray, 300)
 
-               If HB_ISARRAY(aArray)
-                  If len(aArray) = 0
+               IF HB_ISARRAY(aArray)
+                  IF len(aArray) = 0
                      aSize(aArray, ARRAY_BLOCK1)
                      nAllocated := ARRAY_BLOCK1
-                  Else
+                  ELSE
                      nAllocated := len(aArray)
-                  EndIf
-               Else
-                  aArray  := Array(ARRAY_BLOCK1)
+                  ENDIF
+               ELSE
+                  aArray := Array(ARRAY_BLOCK1)
                   nAllocated := ARRAY_BLOCK1
-               EndIf
+               ENDIF
 
                nBlocks := 1
                n       := 0
                aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
-               While (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
-                  n ++
-                  If n > nAllocated
-                     Switch nAllocated
-                     Case ARRAY_BLOCK1
+               DO WHILE (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
+                  n++
+                  IF n > nAllocated
+                     SWITCH nAllocated
+                     CASE ARRAY_BLOCK1
                         nAllocated := ARRAY_BLOCK2
-                        Exit
-                     Case ARRAY_BLOCK2
+                        EXIT
+                     CASE ARRAY_BLOCK2
                         nAllocated := ARRAY_BLOCK3
-                        Exit
-                     Case ARRAY_BLOCK3
+                        EXIT
+                     CASE ARRAY_BLOCK3
                         nAllocated := ARRAY_BLOCK4
-                        Exit
-                     Case ARRAY_BLOCK4
+                        EXIT
+                     CASE ARRAY_BLOCK4
                         nAllocated := ARRAY_BLOCK5
-                        Exit
-                     Default
+                        EXIT
+                     OTHERWISE
                         nAllocated += ARRAY_BLOCK5
-                     End
+                     ENDSWITCH
 
                      aSize(aArray, nAllocated)
-                  EndIf
+                  ENDIF
 
                   aArray[n] := array(len(aFields))
-                  For i = 1 to len(aFields)
-                     aArray[n,i] := ::FieldGet(i, aFields, lTranslate)
-                  Next
-                  If n > nMaxRecords
-                     Exit
-                  EndIf
+                  FOR i := 1 TO len(aFields)
+                     aArray[n, i] := ::FieldGet(i, aFields, lTranslate)
+                  NEXT
+                  IF n > nMaxRecords
+                     EXIT
+                  ENDIF
                EndDo
                aSize(aArray, n)
-            EndIf
-         Endif
+            ENDIF
+         ENDIF
 
-         If ::nAutoCommit > 0 .AND. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
-            If (++::nIteractions) >= ::nAutoCommit .AND. ::nTransacCount == 0
+         IF ::nAutoCommit > 0 .AND. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
+            IF (++::nIteractions) >= ::nAutoCommit .AND. ::nTransacCount == 0
                ::Commit()
-            EndIf
-         EndIf
+            ENDIF
+         ENDIF
 
-      EndIf
+      ENDIF
 
       ::FreeStatement()
 
-   endif
+   ENDIF
 
-return nRet
-
-/*------------------------------------------------------------------------*/
+RETURN nRet
 
 METHOD AllocStatement() CLASS SR_CONNECTION
-
-return SQL_SUCCESS
-
-/*------------------------------------------------------------------------*/
+RETURN SQL_SUCCESS
 
 METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTION
 
-   local nRet := 0
+   LOCAL nRet := 0
 
    DEFAULT lErrMsg   := .T.
    DEFAULT lNeverLog := .F.
    DEFAULT nLogMode  := ::nLogMode
    DEFAULT cType     := SQLLOGCHANGES_TYPE_DML
 
-   If ::lTraceToDBF
-      SR_WriteDbLog(cCommand, Self)
-   EndIf
-   If ::lTraceToScreen
+   IF ::lTraceToDBF
+      SR_WriteDbLog(cCommand, SELF)
+   ENDIF
+   IF ::lTraceToScreen
       Alert(cCommand)
-   EndIf
-   If ::lLowLevSqlDbg
-      SR_LogFile(::cLowLevLogFile, { cCommand }, ::lLogDateTime)
-   EndIf
+   ENDIF
+   IF ::lLowLevSqlDbg
+      SR_LogFile(::cLowLevLogFile, {cCommand}, ::lLogDateTime)
+   ENDIF
 
-   If ::lFreezed
-      Return 0
-   EndIf
+   IF ::lFreezed
+      RETURN 0
+   ENDIF
 
-   if cCommand == NIL
+   IF cCommand == NIL
       nRet := SQL_ERROR
-   else
-      if Len(cCommand) < 1
+   ELSE
+      IF Len(cCommand) < 1
          ::nRetCode := nRet := 2
-      else
+      ELSE
          ::cLastComm := cCommand
 
-         If nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[6] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK ) .AND. (!lNeverLog)
+         IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[6] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK) .AND. (!lNeverLog)
             ::LogQuery(cCommand, cType, nLogMode)
-         EndIf
+         ENDIF
 
          ::AllocStatement()
          ::nMiliseconds := Seconds() * 100
 
          nRet := ::ExecuteRaw(cCommand)
-         ::nRetCode = nRet
+         ::nRetCode := nRet
          ::nMiliseconds := (Seconds()*100) - ::nMiliseconds
 
-         If nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[5] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK ) .AND. (!lNeverLog)
+         IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[5] == "1" .AND. ((!Upper(SubStr(ltrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK) .AND. (!lNeverLog)
             ::LogQuery(cCommand, cType, nLogMode, ::nMiliseconds)
-         EndIf
+         ENDIF
 
-         If ::nMiliseconds > ::nTimeTraceMin
-            SR_WriteTimeLog(cCommand, Self, ::nMiliseconds)
-         EndIf
+         IF ::nMiliseconds > ::nTimeTraceMin
+            SR_WriteTimeLog(cCommand, SELF, ::nMiliseconds)
+         ENDIF
 
-         if lErrMsg .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!( ("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand,7)) ) .AND. nRet == SQL_NO_DATA_FOUND))
+         IF lErrMsg .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
 
             ::RunTimeErr("","SQLExecDirect Error" + ;
                      CRLF + ::LastError() + CRLF +;
                      "Command : " + cCommand + CRLF + ;
                      "hStmt   : " + SR_Val2Char(::hStmt))
-         endif
+         ENDIF
 
-         If ::nAutoCommit > 0 .AND. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
-            If (++::nIteractions) >= ::nAutoCommit .AND. ::nTransacCount == 0
+         IF ::nAutoCommit > 0 .AND. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
+            IF (++::nIteractions) >= ::nAutoCommit .AND. ::nTransacCount == 0
                ::Commit()
-            EndIf
-         EndIf
+            ENDIF
+         ENDIF
 
-      endif
-   endif
+      ENDIF
+   ENDIF
 
-return nRet
-
-/*------------------------------------------------------------------------*/
+RETURN nRet
 
 METHOD LastError() CLASS SR_CONNECTION
-
-return ""
-
-/*------------------------------------------------------------------------*/
+RETURN ""
 
 METHOD RPCTalk(cSend) CLASS SR_CONNECTION
 
-   (cSend)
+   HB_SYMBOL_UNUSED(cSend)
 
-Return ""
-
-/*------------------------------------------------------------------------*/
+RETURN ""
 
 METHOD DetectTargetDb() CLASS SR_CONNECTION
 
-   Local cTargetDB   := Upper(::cSystemName)
-   Local aVers
+   LOCAL cTargetDB := Upper(::cSystemName)
+   LOCAL aVers
 
    ::nSystemID := SYSTEMID_UNKNOW
 
-   Do Case
-   Case "ORACLE" $ cTargetDB
+   DO CASE
+   CASE "ORACLE" $ cTargetDB
       ::nSystemID := SYSTEMID_ORACLE
-   Case ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.( "10.25" $ ::cSystemVers) )
+   CASE ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.("10.25" $ ::cSystemVers))
       ::nSystemID := SYSTEMID_AZURE
-   Case "MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND. "6.5" $ ::cSystemVers
+   CASE "MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND. "6.5" $ ::cSystemVers
       ::nSystemID := SYSTEMID_MSSQL6
-   Case ("SQL Server" $ cTargetDB .AND. "00.53.0000" $ ::cSystemVers) .OR. ("MICROSOFT SQL SERVER" $ cTargetDB)
+   CASE ("SQL Server" $ cTargetDB .AND. "00.53.0000" $ ::cSystemVers) .OR. ("MICROSOFT SQL SERVER" $ cTargetDB)
       ::nSystemID := SYSTEMID_MSSQL7
-      aVers := hb_atokens(::cSystemVers, '.') 
+      aVers := hb_atokens(::cSystemVers, '.')
       IF val(aVers[1]) >= 8
          ::lClustered := .T.
-      ENDIF         
+      ENDIF
          //culik 30/12/2011 adicionado para indicar se e  sqlserver versao 2008 ou superior
-      IF val(aVers[1]) >= 10   
+      IF val(aVers[1]) >= 10
          ::lSqlServer2008 := .T.
-      ENDIF   
+      ENDIF
 
-   Case ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.( "7.0" $ ::cSystemVers .OR. "8.0" $ ::cSystemVers .OR. "9.0" $ ::cSystemVers .OR. "10.00" $ ::cSystemVers .OR. "10.50" $ ::cSystemVers  .OR. "11.00" $ ::cSystemVers   )) //.OR. ( "SQL SERVER" $ cTargetDB .AND. !("SYBASE" $ cTargetDB))
+   CASE ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.("7.0" $ ::cSystemVers .OR. "8.0" $ ::cSystemVers .OR. "9.0" $ ::cSystemVers .OR. "10.00" $ ::cSystemVers .OR. "10.50" $ ::cSystemVers .OR. "11.00" $ ::cSystemVers)) //.OR. ( "SQL SERVER" $ cTargetDB .AND. !("SYBASE" $ cTargetDB))
       ::nSystemID := SYSTEMID_MSSQL7
-      aVers := hb_atokens(::cSystemVers, '.') 
+      aVers := hb_atokens(::cSystemVers, '.')
       IF val(aVers[1]) >= 8
          ::lClustered := .T.
-      ENDIF         
-   Case "ANYWHERE" $ cTargetDB
+      ENDIF
+   CASE "ANYWHERE" $ cTargetDB
       ::nSystemID := SYSTEMID_SQLANY
-   Case "SYBASE" $ cTargetDB .OR. "SQL SERVER" $ cTargetDB
+   CASE "SYBASE" $ cTargetDB .OR. "SQL SERVER" $ cTargetDB
       ::nSystemID := SYSTEMID_SYBASE
-   Case "ACCESS" $ cTargetDB
+   CASE "ACCESS" $ cTargetDB
       ::nSystemID := SYSTEMID_ACCESS
-   Case "INGRES" $ cTargetDB
+   CASE "INGRES" $ cTargetDB
       ::nSystemID := SYSTEMID_INGRES
-   Case "SQLBASE" $ cTargetDB
+   CASE "SQLBASE" $ cTargetDB
       ::nSystemID := SYSTEMID_SQLBAS
-   Case "INFORMIX" $ cTargetDB
+   CASE "INFORMIX" $ cTargetDB
       ::nSystemID := SYSTEMID_INFORM
-   Case "ADABAS" $ cTargetDB
+   CASE "ADABAS" $ cTargetDB
       ::nSystemID := SYSTEMID_ADABAS
       ::lComments := .F.
-   Case "POSTGRESQL" $ cTargetDB
+   CASE "POSTGRESQL" $ cTargetDB
       ::nSystemID := SYSTEMID_POSTGR
-   Case "DB2" $ cTargetDB .OR. "SQLDS/VM" $ cTargetDB
+   CASE "DB2" $ cTargetDB .OR. "SQLDS/VM" $ cTargetDB
       ::nSystemID := SYSTEMID_IBMDB2
       ::lComments := .F.
-      If "05.03" $ ::cSystemVers       // Detects AS/400 from Win98 ODBC
+      IF "05.03" $ ::cSystemVers       // Detects AS/400 from Win98 ODBC
          ::cSystemName := "DB2/400"
          cTargetDB     := "DB2/400"
-      EndIf
-   Case "MYSQL" $ cTargetDB .AND.  SubStr(alltrim(::cSystemVers), 1, 3) >= "4.1"
+      ENDIF
+   CASE "MYSQL" $ cTargetDB .AND.  SubStr(alltrim(::cSystemVers), 1, 3) >= "4.1"
       ::nSystemID := SYSTEMID_MYSQL
-   Case "MARIADB" $ cTargetDB
+   CASE "MARIADB" $ cTargetDB
       ::nSystemID := SYSTEMID_MARIADB
-   Case "FIREBIRD" $ cTargetDb .OR. "INTERBASE" $ cTargetdb
-      ::nSystemID := SYSTEMID_FIREBR 
-      aVers := hb_atokens(::cSystemVers, '.') 
+   CASE "FIREBIRD" $ cTargetDb .OR. "INTERBASE" $ cTargetdb
+      ::nSystemID := SYSTEMID_FIREBR
+      aVers := hb_atokens(::cSystemVers, '.')
       IF val(aVers[1]) >= 3
          ::nSystemID := SYSTEMID_FIREBR3
-      Endif
-   Case "INTERSYSTEMS CACHE" $ cTargetDb
+      ENDIF
+   CASE "INTERSYSTEMS CACHE" $ cTargetDb
       ::nSystemID := SYSTEMID_CACHE
       ::lComments := .F.
-   Case "OTERRO" $ cTargetDb
+   CASE "OTERRO" $ cTargetDb
       ::nSystemID := SYSTEMID_OTERRO
       ::lComments := .F.
-   Case "PERVASIVE.SQL" $ cTargetDb
+   CASE "PERVASIVE.SQL" $ cTargetDb
       ::nSystemID := SYSTEMID_PERVASIVE
       ::lComments := .F.
-   OtherWise
-      If !::lQueryOnly
+   OTHERWISE
+      IF !::lQueryOnly
          ::RuntimeErr(, SR_Msg(22) + cTargetDB + " " + ::cSystemVers)
-      EndIf
+      ENDIF
       ::lComments := .F.
-   EndCase
+   ENDCASE
 
-   ::cTargetDB    = cTargetDB
+   ::cTargetDB := cTargetDB
 
-Return NIL
-
-/*------------------------------------------------------------------------*/
+RETURN NIL
 
 METHOD End() CLASS SR_CONNECTION
 
-   ::hEnv  = NIL
-   ::hDbc  = NIL
+   ::hEnv := NIL
+   ::hDbc := NIL
 
-return NIL
-
-/*------------------------------------------------------------------------*/
+RETURN NIL
 
 METHOD GetInfo(nType) CLASS SR_CONNECTION
-   (nType)
-return ""
 
-/*------------------------------------------------------------------------*/
+   HB_SYMBOL_UNUSED(nType)
+
+RETURN ""
 
 METHOD GetOptions(nType) CLASS SR_CONNECTION
-   (nType)
-return ""
 
-/*------------------------------------------------------------------------*/
+   HB_SYMBOL_UNUSED(nType)
+
+RETURN ""
 
 METHOD SetOptions(nType, uBuffer) CLASS SR_CONNECTION
-   (nType)
-   (uBuffer)
-Return SQL_SUCCESS
 
-/*------------------------------------------------------------------------*/
+   HB_SYMBOL_UNUSED(nType)
+   HB_SYMBOL_UNUSED(uBuffer)
+
+RETURN SQL_SUCCESS
 
 METHOD SetStmtOptions(nType, uBuffer) CLASS SR_CONNECTION
-   (nType)
-   (uBuffer)
-Return SQL_SUCCESS
 
-/*------------------------------------------------------------------------*/
+   HB_SYMBOL_UNUSED(nType)
+   HB_SYMBOL_UNUSED(uBuffer)
+
+RETURN SQL_SUCCESS
 
 METHOD Commit(lNoLog) CLASS SR_CONNECTION
 
    DEFAULT lNoLog := .F.
 
-   If ::lTraceToDBF
-      SR_WriteDbLog("COMMIT", Self)
-   EndIf
-   If ::lTraceToScreen
+   IF ::lTraceToDBF
+      SR_WriteDbLog("COMMIT", SELF)
+   ENDIF
+   IF ::lTraceToScreen
       Alert("COMMIT")
-   EndIf
-   If ::lLowLevSqlDbg
-      SR_LogFile(::cLowLevLogFile, { "COMMIT" }, ::lLogDateTime)
-   EndIf
+   ENDIF
+   IF ::lLowLevSqlDbg
+      SR_LogFile(::cLowLevLogFile, {"COMMIT"}, ::lLogDateTime)
+   ENDIF
 
    ::nIteractions := 0
 
-   If ::nLogMode > 0 .AND. StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[2] == "1" .AND. (!lNoLog)
-      If ::cQueryOwner == NIL
-         If !Empty(SR_GetGlobalOwner())
+   IF ::nLogMode > 0 .AND. StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[2] == "1" .AND. (!lNoLog)
+      IF ::cQueryOwner == NIL
+         IF !Empty(SR_GetGlobalOwner())
             ::cQueryOwner := alltrim(SR_GetGlobalOwner())
-         ElseIf !Empty(::oSql:cOwner)
+         ELSEIF !Empty(::oSql:cOwner)
             ::cQueryOwner := alltrim(::cOwner)
-         EndIf
-         If (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
+         ENDIF
+         IF (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
             ::cQueryOwner += "."
-         EndIf
-         If Empty(::cQueryOwner)
+         ENDIF
+         IF Empty(::cQueryOwner)
             ::cQueryOwner := ""
-         EndIf
-      EndIf
+         ENDIF
+      ENDIF
 
-      If StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[4] == "1" .OR. ::oSqlTransact == NIL
-         Self:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
-      Else
+      IF StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[4] == "1" .OR. ::oSqlTransact == NIL
+         SELF:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
+      ELSE
          ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
          ::oSqlTransact:FreeStatement()
          ::oSqlTransact:commit(.T.)
-      EndIf
-   EndIf
+      ENDIF
+   ENDIF
 
-Return SQL_SUCCESS
-
-/*------------------------------------------------------------------------*/
+RETURN SQL_SUCCESS
 
 METHOD RollBack() CLASS SR_CONNECTION
 
-   If ::lTraceToDBF
-      SR_WriteDbLog("ROLLBACK", Self)
-   EndIf
-   If ::lTraceToScreen
+   IF ::lTraceToDBF
+      SR_WriteDbLog("ROLLBACK", SELF)
+   ENDIF
+   IF ::lTraceToScreen
       Alert("ROLLBACK")
-   EndIf
-   If ::lLowLevSqlDbg
-      SR_LogFile(::cLowLevLogFile, { "ROLLBACK" }, ::lLogDateTime)
-   EndIf
+   ENDIF
+   IF ::lLowLevSqlDbg
+      SR_LogFile(::cLowLevLogFile, {"ROLLBACK"}, ::lLogDateTime)
+   ENDIF
 
    ::nIteractions := 0
 
-   If ::nLogMode > 0 .AND. StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[2] == "1"
-      If ::cQueryOwner == NIL
-         If !Empty(SR_GetGlobalOwner())
+   IF ::nLogMode > 0 .AND. StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[2] == "1"
+      IF ::cQueryOwner == NIL
+         IF !Empty(SR_GetGlobalOwner())
             ::cQueryOwner := alltrim(SR_GetGlobalOwner())
-         ElseIf !Empty(::oSql:cOwner)
+         ELSEIF !Empty(::oSql:cOwner)
             ::cQueryOwner := alltrim(::cOwner)
-         EndIf
-         If (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
+         ENDIF
+         IF (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
             ::cQueryOwner += "."
-         EndIf
-         If Empty(::cQueryOwner)
+         ENDIF
+         IF Empty(::cQueryOwner)
             ::cQueryOwner := ""
-         EndIf
-      EndIf
+         ENDIF
+      ENDIF
 
-      If StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[4] == "1" .OR. ::oSqlTransact == NIL
-         Self:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
-      Else
+      IF StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[4] == "1" .OR. ::oSqlTransact == NIL
+         SELF:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
+      ELSE
          ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
          ::oSqlTransact:FreeStatement()
          ::oSqlTransact:commit(.T.)
-      EndIf
-   EndIf
+      ENDIF
+   ENDIF
 
-Return SQL_SUCCESS
-
-/*------------------------------------------------------------------------*/
+RETURN SQL_SUCCESS
 
 METHOD RuntimeErr(cOperation, cErr) CLASS SR_CONNECTION
 
-   Local oErr := ErrorNew()
-   Local cDescr
+   LOCAL oErr := ErrorNew()
+   LOCAL cDescr
 
    DEFAULT cOperation := ::ClassName()
-   DEFAULT cErr := "RunTimeError"
+   DEFAULT cErr       := "RunTimeError"
 
    cDescr := alltrim(cErr) + CRLF +;
              "Steatment handle  : " + SR_Val2Char(::hStmt)+CRLF+;
@@ -939,191 +942,191 @@ METHOD RuntimeErr(cOperation, cErr) CLASS SR_CONNECTION
 
    ::RollBack()
 
-   oErr:genCode      := 99
-   oErr:CanDefault   := .F.
-   oErr:Severity     := ES_ERROR
-   oErr:CanRetry     := .T.
-   oErr:CanSubstitute:= .F.
-   oErr:Description  := cDescr + " - RollBack executed."
-   oErr:subSystem    := ::ClassName()
-   oErr:operation    := cOperation
-   oErr:OsCode       := 0
+   oErr:genCode       := 99
+   oErr:CanDefault    := .F.
+   oErr:Severity      := ES_ERROR
+   oErr:CanRetry      := .T.
+   oErr:CanSubstitute := .F.
+   oErr:Description   := cDescr + " - RollBack executed."
+   oErr:subSystem     := ::ClassName()
+   oErr:operation     := cOperation
+   oErr:OsCode        := 0
 
-   SR_LogFile("sqlerror.log", { cDescr, SR_GetStack() })
+   SR_LogFile("sqlerror.log", {cDescr, SR_GetStack()})
 
    Throw(oErr)
 
-Return NIL
+RETURN NIL
 
-/*------------------------------------------------------------------------*/
+FUNCTION SR_AdjustNum(a)
 
-Function SR_AdjustNum(a)
+   LOCAL b := aClone(a)
+   LOCAL i
 
-   local b := aClone(a)
-   local i
+   FOR i := 1 TO len(b)
 
-   For i = 1 to len(b)
+      IF lNwgOldCompat
+         IF b[i, 2] = "N"
+            b[i, 3]++
+         ENDIF
+      ENDIF
 
-      If lNwgOldCompat
-         If b[i,2] = "N"
-            b[i,3] ++
-         EndIf
-      EndIf
+      IF b[i, 2] = "N" .AND. b[i, 3] > 18
+         b[i, 3] := 19
+      ENDIF
 
-      If b[i,2] = "N" .AND. b[i,3] > 18
-         b[i,3] := 19
-      EndIf
+      IF lNwgOldCompat
+         IF b[i, 2] = "N" .AND. b[i, 4] >= (b[i, 3] - 1)
+            b[i, 4] := abs(b[i, 3] - 2)
+         ENDIF
+      ENDIF
 
-      If lNwgOldCompat
-         If b[i,2] = "N" .AND. b[i,4] >= (b[i,3] - 1)
-            b[i,4] := abs(b[i,3] - 2)
-         EndIf
-      EndIf
+      IF b[i, 2] = "M"
+         b[i, 3] := 10
+      ENDIF
 
-      If b[i,2] = "M"
-         b[i,3] := 10
-      EndIf
+   NEXT
 
-   Next
+RETURN b
 
-Return b
+METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout) CLASS SR_CONNECTION
 
-/*------------------------------------------------------------------------*/
+   LOCAL hEnv := NIL
+   LOCAL hDbc := NIL
+   LOCAL cVersion := ""
+   LOCAL cSystemVers := ""
+   LOCAL cBuff := ""
+   LOCAL aCon
+   LOCAL aItem
+   LOCAL aToken
 
-METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
-            cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout) CLASS SR_CONNECTION
-
-   local hEnv := NIL, hDbc := NIL
-   local cVersion := "", cSystemVers := "", cBuff := ""
-   local aCon, aItem, aToken
-
-   DEFAULT nVersion := 1, lTrace := .F., nPreFetch := 0
-   DEFAULT cDSN := ""
+   DEFAULT nVersion    := 1
+   DEFAULT lTrace      := .F.
+   DEFAULT nPreFetch   := 0
+   DEFAULT cDSN        := ""
    DEFAULT lCounter    := .F.
    DEFAULT lAutoCommit := .F.  /* by default support transactions */
 
-   ::lAutoCommit  = lAutoCommit
-   ::nVersion     = nVersion
-   ::cOwner       = cOwner
-   ::lCounter     = lCounter
-   ::nRetCode     = 0
-   ::nSizeMaxBuff = nSizeMaxBuff
-   ::nPreFetch    = nPrefetch
-   ::lTrace       = lTrace
-   ::nSelMeth     = nSelMeth
-   ::nEmptyMode   = nEmptyMode      // ( 0 = Grava NULLS, 1 = Grava o campo no próprio tamanho )
-   ::nDateMode    = nDateMode       // ( 0 = Utiliza o padrão do banco, como DATETIME ou TIMESTAMP, 1 = grava em Char(8) )
-   ::cDsn         = ""
-   ::cUser        = ""
-   ::cPassword    = ""
-   ::cPort        = NIL
-   ::cHost        = ""
-   ::cDBS         = ""
-   ::cHost        = ""
-   ::cDrv         = ""
-   ::cDTB         = ""
-   ::cNetLibrary  = ""
-   ::oOdbc        = Self            // NewAge backwards compatible...
-   ::oSql         = Self            // NewAge backwards compatible...
-   ::cCharSet     = NIL             // should be NIL or FB does not work
-   ::lCluster     = .F.
-   ::lClustered   := .F.   
+   ::lAutoCommit  := lAutoCommit
+   ::nVersion     := nVersion
+   ::cOwner       := cOwner
+   ::lCounter     := lCounter
+   ::nRetCode     := 0
+   ::nSizeMaxBuff := nSizeMaxBuff
+   ::nPreFetch    := nPrefetch
+   ::lTrace       := lTrace
+   ::nSelMeth     := nSelMeth
+   ::nEmptyMode   := nEmptyMode      // ( 0 = Grava NULLS, 1 = Grava o campo no próprio tamanho )
+   ::nDateMode    := nDateMode       // ( 0 = Utiliza o padrão do banco, como DATETIME ou TIMESTAMP, 1 = grava em Char(8) )
+   ::cDsn         := ""
+   ::cUser        := ""
+   ::cPassword    := ""
+   ::cPort        := NIL
+   ::cHost        := ""
+   ::cDBS         := ""
+   ::cHost        := ""
+   ::cDrv         := ""
+   ::cDTB         := ""
+   ::cNetLibrary  := ""
+   ::oOdbc        := SELF            // NewAge backwards compatible...
+   ::oSql         := SELF            // NewAge backwards compatible...
+   ::cCharSet     := NIL             // should be NIL or FB does not work
+   ::lCluster     := .F.
+   ::lClustered   := .F.
 
-   If ::lCounter
-      ::lLowLevSqlDbg   = (!Empty(GetEnv("QUERYDEBUGCOUNTER"))) .AND. upper(GetEnv("QUERYDEBUGCOUNTER")) $ "Y,S,TRUE"
-   Else
-      ::lLowLevSqlDbg   = (!Empty(GetEnv("QUERYDEBUG"))) .AND. upper(GetEnv("QUERYDEBUG")) $ "Y,S,TRUE"
-   EndIf
+   IF ::lCounter
+      ::lLowLevSqlDbg := (!Empty(GetEnv("QUERYDEBUGCOUNTER"))) .AND. upper(GetEnv("QUERYDEBUGCOUNTER")) $ "Y,S,TRUE"
+   ELSE
+      ::lLowLevSqlDbg := (!Empty(GetEnv("QUERYDEBUG"))) .AND. upper(GetEnv("QUERYDEBUG")) $ "Y,S,TRUE"
+   ENDIF
 
-   ::oHashActiveWAs  = SqlFastHash():new()
+   ::oHashActiveWAs := SqlFastHash():new()
 
-   if cConnect == NIL .OR. empty(cConnect)
+   IF cConnect == NIL .OR. empty(cConnect)
       SR_MsgLogFile("Invalid connection string : " + SR_Val2Char(cConnect))
-      ::nRetCode = SQL_ERROR
-      Return Self
-   Else
+      ::nRetCode := SQL_ERROR
+      RETURN SELF
+   ELSE
       aCon := hb_atokens(cConnect,";")
 
-      For each aItem in aCon
+      FOR EACH aItem IN aCon
 
-         If Empty(aItem)
+         IF Empty(aItem)
             Loop
-         EndIf
+         ENDIF
 
          aToken := hb_atokens(aItem,"=")
-         cBuff = alltrim(Upper(aToken[1]))
-         If len(aToken) = 1
+         cBuff := alltrim(Upper(aToken[1]))
+         IF len(aToken) = 1
             aadd(aToken, "")
-         EndIf
-         Do Case
-         Case cBuff == "UID" .OR. cBuff == "UIID" .OR. cBuff == "USR"
+         ENDIF
+         DO CASE
+         CASE cBuff == "UID" .OR. cBuff == "UIID" .OR. cBuff == "USR"
             ::cUser   += aToken[2]
-         Case cBuff == "PWD"
+         CASE cBuff == "PWD"
             ::cPassword   += aToken[2]
-         Case cBuff == "DSN"
+         CASE cBuff == "DSN"
             ::cDSN   += aToken[2]
-         Case cBuff == "DBS"
+         CASE cBuff == "DBS"
             ::cDBS   += aToken[2]
-         Case cBuff == "HST" .OR. cBuff == "OCI" .OR. cBuff == "MYSQL" .OR. cBuff == "PGS" .OR. cBuff == "SERVER" .OR. cBuff == "MARIA"
+         CASE cBuff == "HST" .OR. cBuff == "OCI" .OR. cBuff == "MYSQL" .OR. cBuff == "PGS" .OR. cBuff == "SERVER" .OR. cBuff == "MARIA"
             ::cHost   += aToken[2]
-         Case cBuff == "PRT"
+         CASE cBuff == "PRT"
             ::cPort   := Val(sr_val2char(aToken[2]))
-         Case cBuff == "DRV" .OR. cBuff == "DRIVER"
+         CASE cBuff == "DRV" .OR. cBuff == "DRIVER"
             ::cDRV   += aToken[2]
-         Case cBuff == "CHARSET"
+         CASE cBuff == "CHARSET"
             ::cCharSet := aToken[2]
-         Case cBuff == "AUTOCOMMIT"
+         CASE cBuff == "AUTOCOMMIT"
             ::nAutoCommit := Val(aToken[2])
-         Case cBuff == "DTB" .OR. cBuff == "FB" .OR. cBuff == "FIREBIRD" .OR. cBuff == "FB3" .OR. cBuff == "FIREBIRD3" .OR. cBuff == "IB" .OR. cBuff == "TNS" .OR. cBuff == "DATABASE"
+         CASE cBuff == "DTB" .OR. cBuff == "FB" .OR. cBuff == "FIREBIRD" .OR. cBuff == "FB3" .OR. cBuff == "FIREBIRD3" .OR. cBuff == "IB" .OR. cBuff == "TNS" .OR. cBuff == "DATABASE"
             ::cDTB   += aToken[2]
-         Case cBuff == "TABLESPACE_DATA"
+         CASE cBuff == "TABLESPACE_DATA"
             ::cDsnTblData := aToken[2]
-         Case cBuff == "TABLESPACE_INDEX"
+         CASE cBuff == "TABLESPACE_INDEX"
             ::cDsnTblIndx := aToken[2]
-         Case cBuff == "TABLESPACE_LOB"
+         CASE cBuff == "TABLESPACE_LOB"
             ::cDsnTblLob := aToken[2]
-         Case cBuff == "CLUSTER"
+         CASE cBuff == "CLUSTER"
             ::lCluster  := Upper(aToken[2]) $ "Y,S,TRUE"
-         Case cBuff == "OWNER" //.AND. empty(::cOwner)
+         CASE cBuff == "OWNER" //.AND. empty(::cOwner)
             ::cOwner := aToken[2]
-            If !Empty(::cOwner) .AND. right(::cOwner, 1) != "."
+            IF !Empty(::cOwner) .AND. right(::cOwner, 1) != "."
                ::cOwner += "."
-            EndIf
-         Case cBuff == "NETWORK" .OR. cBuff == "LIBRARY" .OR. cBuff == "NETLIBRARY"
+            ENDIF
+         CASE cBuff == "NETWORK" .OR. cBuff == "LIBRARY" .OR. cBuff == "NETLIBRARY"
             ::cNetLibrary := aToken[2]
-         CASE cBuff == "APP"   
+         CASE cBuff == "APP"
             ::cApp :=  aToken[2]
-         CASE cBuff == "SSLCERT"      
+         CASE cBuff == "SSLCERT"
             ::sslcert := aToken[2]
-         CASE cBuff == "SSLKEY"      
+         CASE cBuff == "SSLKEY"
             ::sslkey := aToken[2]
-         CASE cBuff == "SSLROOTCERT"      
+         CASE cBuff == "SSLROOTCERT"
             ::sslrootcert := aToken[2]
-         CASE cBuff == "SSLCRL"      
-            ::sslcrl    := aToken[2]   
-         case cBuff == "COMPRESS"
+         CASE cBuff == "SSLCRL"
+            ::sslcrl    := aToken[2]
+         CASE cBuff == "COMPRESS"
             ::lCompress := Upper(aToken[2]) $ "Y,S,TRUE"
 //         OtherWise
 //            SR_MsgLogFile("Invalid connection string entry : " + cBuff + " = " + SR_Val2Char(aToken[2]))
-         EndCase
-      Next
-   EndIf
+         ENDCASE
+      NEXT
+   ENDIF
 
    ::nSystemID := SYSTEMID_UNKNOW
 
    ::ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, alltrim(cConnect), nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
 
-   Switch ::nSystemID
-   Case SYSTEMID_ORACLE
+   SWITCH ::nSystemID
+   CASE SYSTEMID_ORACLE
       ::cLockWait := " WAIT " + str(int(::nLockWaitTime))
-      Exit
-   Default
+      EXIT
+   OTHERWISE
       ::cLockWait := ""
-   End
+   ENDSWITCH
 
-Return Self
-
-/*------------------------------------------------------------------------*/
+RETURN SELF
 
 METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
 
@@ -1148,8 +1151,8 @@ METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
       nType == SQL_INTEGER .OR. nType == SQL_BIGINT .OR. ;
       nType == SQL_FLOAT .OR. nType == SQL_REAL .OR. ;
       nType == SQL_DOUBLE
-      cType = "N"
-   //case nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE
+      cType := "N"
+   //CASE nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE
    CASE nType == SQL_DATE .OR. nType == SQL_TYPE_DATE
       cType := "D"
    CASE nType == SQL_TIME
@@ -1172,115 +1175,107 @@ METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
 
 RETURN cType
 
-/*------------------------------------------------------------------------*/
-
 METHOD SQLLen(nType, nLen, nDec) CLASS SR_CONNECTION
 
-   local cType := "U"
+   LOCAL cType := "U"
 
    DEFAULT nDec := -1
 
-   do case
-   case (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR) .AND. IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
+   DO CASE
+   CASE (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR) .AND. IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
 
-   Case nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
-      If ::lQueryOnly
+   CASE nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
+      IF ::lQueryOnly
          nLen := 10
-      Else
+      ELSE
          nLen := 1
-      EndIf
+      ENDIF
 
-   case nType == SQL_BIT
+   CASE nType == SQL_BIT
         nLen := 1
 
-   case nType == SQL_NUMERIC  .OR. nType == SQL_DECIMAL  .OR. ;
+   CASE nType == SQL_NUMERIC  .OR. nType == SQL_DECIMAL  .OR. ;
         nType == SQL_INTEGER  .OR. ;
         nType == SQL_FLOAT    .OR. nType == SQL_REAL     .OR. ;
         nType == SQL_DOUBLE
 
-      If nLen > 19 .AND. nDec > 10 .AND. !( nLen = 38 .AND. nDec = 0 )
+      IF nLen > 19 .AND. nDec > 10 .AND. !(nLen = 38 .AND. nDec = 0)
          nLen := 20
          nDec := 6
-      EndIf
+      ENDIF
 
-      If !( nLen = 38 .AND. nDec = 0 )
+      IF !(nLen = 38 .AND. nDec = 0)
          nLen := min(nLen, 20)
          nLen := max(nLen, 1)
-      EndIf
+      ENDIF
 
-   case nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE .OR. ntype == SQL_DATETIME
+   CASE nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE .OR. ntype == SQL_DATETIME
      nLen := 8
 
-   case nType == SQL_TIME
+   CASE nType == SQL_TIME
      nLen := 8
 
-   case nType == SQL_LONGVARCHAR .OR. nType == SQL_LONGVARBINARY .OR. nType == SQL_FAKE_LOB .OR. nType == SQL_VARBINARY
+   CASE nType == SQL_LONGVARCHAR .OR. nType == SQL_LONGVARBINARY .OR. nType == SQL_FAKE_LOB .OR. nType == SQL_VARBINARY
      nLen := 10
 
-   Case nType == SQL_GUID
+   CASE nType == SQL_GUID
       nLen := 36
 
-   endcase
+   ENDCASE
 
-return nLen
+RETURN nLen
 
-/*------------------------------------------------------------------------*/
+FUNCTION SR_SetNwgCompat(l)
 
-Function SR_SetNwgCompat(l)
+   LOCAL lOld := lNwgOldCompat
 
-   Local lOld := lNwgOldCompat
-
-   If l != NIL
+   IF l != NIL
       lNwgOldCompat := l
-   EndIf
+   ENDIF
 
-Return lOld
+RETURN lOld
 
-/*------------------------------------------------------------------------*/
+FUNCTION SR_AutoCommit(nSet)
 
-Function SR_AutoCommit(nSet)
-
-   local nOld, oSql
+   LOCAL nOld
+   LOCAL oSql
 
    oSql := SR_GetConnection()
 
    nOld := oSql:nAutoCommit
 
-   If HB_ISNUMERIC(nSet)
+   IF HB_ISNUMERIC(nSet)
       oSql:nAutoCommit := nSet
-   EndIf
+   ENDIF
 
-Return nOld
+RETURN nOld
 
-/*------------------------------------------------------------------------*/
+FUNCTION SR_AllInCache(lSet)
 
-Function SR_AllInCache(lSet)
-
-   local lOld, oSql
+   LOCAL lOld
+   LOCAL oSql
 
    oSql := SR_GetConnection()
 
    lOld := oSql:lAllInCache
 
-   If HB_ISLOGICAL(lSet)
+   IF HB_ISLOGICAL(lSet)
       oSql:lAllInCache := lSet
-   EndIf
+   ENDIF
 
-Return lOld
+RETURN lOld
 
-/*------------------------------------------------------------------------*/
+FUNCTION SR_SetTraceLog(cLog)
 
-
-function SR_SetTraceLog(cLog) 
-   Local cOld, oSql
+   LOCAL cOld
+   LOCAL oSql
 
    oSql := SR_GetConnection()
 
    cOld := oSql:cLowLevLogFile
 
-   If HB_ISCHAR(cLog)
+   IF HB_ISCHAR(cLog)
       oSql:cLowLevLogFile := cLog
-   EndIf
+   ENDIF
 
-Return cOld
-
+RETURN cOld
