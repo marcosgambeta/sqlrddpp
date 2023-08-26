@@ -40,12 +40,12 @@
  *
  */
 
-#include "compat.ch"
+// #include "compat.ch"
 #include "sqlrdd.ch"
 #include "hbclass.ch"
-#ifndef __XHARBOUR__
-   #include "xhbcls.ch"
-#endif
+// #ifndef __XHARBOUR__
+//    #include "xhbcls.ch"
+// #endif
 
 **************************************************
 FUNCTION NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
@@ -520,7 +520,8 @@ RETURN ::_nLength
 
 **************************************************
 
-FUNCTION ExtendWorkarea()
+#if 0
+FUNCTION ExtendWorkarea() // requires xhbcls.ch
 
    EXTEND CLASS SR_WORKAREA WITH DATA aIndexes
    EXTEND CLASS SR_WORKAREA WITH METHOD GetIndexes
@@ -533,6 +534,23 @@ FUNCTION ExtendWorkarea()
    EXTEND CLASS SR_WORKAREA WITH DATA cFilterExpression
 
    OVERRIDE METHOD ParseForClause IN CLASS SR_WORKAREA WITH NewParseForClause
+
+RETURN NIL
+#endif
+
+FUNCTION ExtendWorkarea() // do not requires xhbcls.ch
+
+   __clsAddMsg(SR_WORKAREA():classH, "aIndexes", __cls_IncData(SR_WORKAREA():classH), 32 + 1, NIL,)
+   __clsAddMsg(SR_WORKAREA():classH, "GetIndexes", @GetIndexes(), 0, NIL,)
+   __clsAddMsg(SR_WORKAREA():classH, "GetControllingIndex", @GetControllingIndex(), 0, NIL,)
+
+   __clsAddMsg(SR_WORKAREA():classH, "aDbFields", __cls_IncData(SR_WORKAREA():classH), 32 + 1, NIL,)
+   __clsAddMsg(SR_WORKAREA():classH, "GetFields", @GetFields(), 0, NIL,)
+   __clsAddMsg(SR_WORKAREA():classH, "GetFieldByName", @GetFieldByName(), 0, NIL,)
+
+   __clsAddMsg(SR_WORKAREA():classH, "cFilterExpression", __cls_IncData(SR_WORKAREA():classH), 32 + 1, NIL,)
+
+   __clsModMsg(SR_WORKAREA():classH, "ParseForClause", @NewParseForClause())
 
 RETURN NIL
 
