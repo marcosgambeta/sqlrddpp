@@ -1492,7 +1492,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       CASE "B"
          xMessage := "{||...}"
          EXIT
-      DEFAULT
+      OTHERWISE
          xMessage := "NIL"
       ENDSWITCH
 
@@ -1723,7 +1723,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             nChoice := 0
             lWhile  := .F.
             EXIT
-         DEFAULT
+         OTHERWISE
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
                lWhile  := .F.
@@ -1817,7 +1817,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                nDelay := 0
             ENDIF
             EXIT
-         DEFAULT
+         OTHERWISE
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
                lWhile  := .F.

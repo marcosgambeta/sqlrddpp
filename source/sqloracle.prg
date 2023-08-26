@@ -685,7 +685,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                CASE ARRAY_BLOCK4
                   nAllocated := ARRAY_BLOCK5
                   EXIT
-               DEFAULT
+               OTHERWISE
                   nAllocated += ARRAY_BLOCK5
                ENDSWITCH
 

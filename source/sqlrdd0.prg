@@ -199,7 +199,7 @@ Function SR_GetSyntheticIndexMinimun()
    CASE SYSTEMID_POSTGR
    CASE SYSTEMID_ORACLE
       EXIT
-   DEFAULT
+   OTHERWISE
       nRet := 10
    ENDSWITCH
 
@@ -490,7 +490,7 @@ Function SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       oConnect:lQueryOnly := .T.
 #endif
       EXIT
-   DEFAULT
+   OTHERWISE
       SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + str(nType))
       Return -1
    ENDSWITCH
@@ -872,7 +872,7 @@ Static Function SR_SetEnvSQLRDD(oConnect)
       CASE SYSTEMID_FIREBR3
          oConnect:exec("CREATE TABLE " + SR_GetToolsOwner() + "SR_MGMNTLOCKS (LOCK_ CHAR(250) NOT NULL UNIQUE, WSID_ CHAR(250) NOT NULL, SPID_ DECIMAL(8), LOGIN_TIME_ TIMESTAMP )", .F.)
          EXIT
-      DEFAULT
+      OTHERWISE
          oConnect:exec("CREATE TABLE " + SR_GetToolsOwner() + "SR_MGMNTLOCKS (LOCK_ CHAR(250) NOT NULL UNIQUE, WSID_ CHAR(250) NOT NULL, SPID_ CHAR(10), LOGIN_TIME_ CHAR(50))", .F.)
       ENDSWITCH
 
@@ -1611,7 +1611,7 @@ Function SR_DropIndex(cIndexName, cOwner)
          EndIf
          oCnn:exec("DROP INDEX " + cPhisicalName + iif(oCnn:lComments, " /* DROP Index */", ""), .F.)
          EXIT
-      DEFAULT
+      OTHERWISE
          oCnn:exec("DROP INDEX " + cPhisicalName + iif(oCnn:lComments, " /* DROP Index */", ""), .F.)
       ENDSWITCH
 

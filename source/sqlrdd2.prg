@@ -998,7 +998,7 @@ METHOD GetNextRecordNumber() CLASS SR_WORKAREA
             nRet := aRet[1,1]
          EndIf
          EXIT
-      DEFAULT
+      OTHERWISE
          nRet := ::aInfo[AINFO_RCOUNT] + 1
       ENDSWITCH
    EndIf
@@ -1376,7 +1376,7 @@ METHOD LineCount(lMsg) CLASS SR_WORKAREA
          CASE SYSTEMID_CACHE
             ::oSql:exec("SELECT TOP 1 " + SR_DBQUALIFY(::cRecnoName, SYSTEMID_CACHE) + " FROM " + ::cOwner + ::cFileName + " ORDER BY " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " DESC", lMsg, .T., @aRet)
             EXIT
-         DEFAULT
+         OTHERWISE
            ::oSql:exec("SELECT MAX( " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " ) FROM " + ::cQualifiedTableName + iif(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
          ENDSWITCH
 
@@ -1487,7 +1487,7 @@ METHOD sqlOpenAllIndexes() CLASS SR_WORKAREA
                cSqlD += [ A.] + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + [ DESC,]
             endif
             EXIT
-         DEFAULT
+         OTHERWISE
             cSqlA += [ A.] + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + [,]
             cSqlD += [ A.] + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + [ DESC,]
          ENDSWITCH
@@ -1793,7 +1793,7 @@ METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
       EndIf
 
       EXIT
-   DEFAULT
+   OTHERWISE
       ::lNoData := .T.
       DEFAULT ::cLastComm TO ::oSql:cLastComm
       ::RunTimeErr("999", "[Fetch Failure/First][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
@@ -2537,7 +2537,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                      cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(cMemo,.T.,IIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
                   endif
                   EXIT
-               DEFAULT
+               OTHERWISE
                   cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(cMemo,.T.,IIf(lMemo, NIL, nLen),nDec,,lNull,lMemo)
                ENDSWITCH
                lFirst := .F.
@@ -3000,7 +3000,7 @@ METHOD Refresh(lGoCold) CLASS SR_WORKAREA
             CASE ARRAY_BLOCK4
                nAllocated := ARRAY_BLOCK5
                EXIT
-            DEFAULT
+            OTHERWISE
                nAllocated += ARRAY_BLOCK5
             ENDSWITCH
 
@@ -4478,7 +4478,7 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
          Exit  // Leave this exist HERE !!!!
       EndIf
 
-   DEFAULT
+   OTHERWISE
       if ::aInfo[AINFO_REVERSE_INDEX]
          cTemp := iif(nDirection != ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
       Else
@@ -4681,7 +4681,7 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
       EndIf
 
       EXIT
-   DEFAULT
+   OTHERWISE
       ::lNoData := .T.
       DEFAULT ::cLastComm TO ::oSql:cLastComm
       ::RunTimeErr("999", "[Fetch Failure/First][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
@@ -5910,7 +5910,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
             CASE ARRAY_BLOCK4
                nAllocated := ARRAY_BLOCK5
                EXIT
-            DEFAULT
+            OTHERWISE
                nAllocated += ARRAY_BLOCK5
             ENDSWITCH
 
@@ -6285,7 +6285,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
             cSqlD  := " ORDER BY "
          EndIf
          EXIT
-      DEFAULT
+      OTHERWISE
          cSqlA  := " ORDER BY "
          cSqlD  := " ORDER BY "
       ENDSWITCH
@@ -6329,7 +6329,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
                cSqlD += [ A.] + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + [ DESC,]
             EndIf
             EXIT
-         DEFAULT
+         OTHERWISE
             cSqlA += [ A.] + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + [,]
             cSqlD += [ A.] + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + [ DESC,]
          ENDSWITCH
@@ -6376,7 +6376,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
             cSqlD  := left(cSqlD, len(cSqlD) - 1) + " "
          EndIf
          EXIT
-      DEFAULT
+      OTHERWISE
          cSqlA  := left(cSqlA, len(cSqlA) - 1) + " "
          cSqlD  := left(cSqlD, len(cSqlD) - 1) + " "
       ENDSWITCH
@@ -7087,7 +7087,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          cSql +=  + iif(::oSql:lComments, " /* Create regular Index */", "")
          lRet := ::oSql:exec(cSql, .T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
          EXIT
-      DEFAULT
+      OTHERWISE
          For Each cName in aOldPhisNames
             ::oSql:exec("DROP INDEX " + cName + iif(::oSql:lComments, " /* Create Index */", ""), .F.)
          Next
@@ -7217,7 +7217,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          cSql +=  + iif(::oSql:lComments, " /* Create regular Index */", "")
          lRet := ::oSql:exec(cSql, .T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
          EXIT
-      DEFAULT
+      OTHERWISE
          For Each cName in aOldPhisNames
             ::oSql:exec("DROP INDEX " + cName + iif(::oSql:lComments, " /* Create Index */", ""), .F.)
          Next
@@ -7341,7 +7341,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
          ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE]    := uKey
          ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
          EXIT
-      DEFAULT
+      OTHERWISE
          Return -1         /* Error */
       ENDSWITCH
 
@@ -8448,7 +8448,7 @@ METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WOR
                nRet := ::oSql:exec("DROP INDEX " + cPhisicalName +"R"+ iif(::oSql:lComments, " /* Drop index before drop column */", ""), lDisplayErrorMessage)
                ::oSql:Commit()
                EXIT
-            DEFAULT
+            OTHERWISE
                nRet := ::oSql:exec("DROP INDEX " + cPhisicalName + iif(::oSql:lComments, " /* Drop index before drop column */", ""), lDisplayErrorMessage)
             ENDSWITCH
 
@@ -9485,7 +9485,7 @@ METHOD AddRuleNotNull(cColumn) CLASS SR_WORKAREA
       CASE 'N'
          uVal := '0'
          EXIT
-      DEFAULT
+      OTHERWISE
          lOk := .F.
 //         ::RunTimeErr("", "Cannot change NULL constraint to datatype: " + ::aFields[nCol,2] )
          exit
@@ -9685,7 +9685,7 @@ METHOD DropConstraint(cTable, cConstraintName, lFKs, cConstrType) CLASS SR_WORKA
          CASE SYSTEMID_ORACLE
             cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + iif(::oSql:lComments, " /* Create Constraint */", "")
             EXIT
-         DEFAULT
+         OTHERWISE
             cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + iif(::oSql:lComments, " /* Create Constraint */", "")
          ENDSWITCH
 
@@ -9813,7 +9813,7 @@ METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColum
             cSql := "ALTER TABLE " + ::cOwner + strtran(SR_DBQUALIFY(cSourceTable,::oSql:nSystemID),'"','') + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + strtran(SR_DBQUALIFY(cTargetTable,::oSql:nSystemID),'"','') + " (" + cTargetColumns + ")"
          Endif
          EXIT
-      DEFAULT
+      OTHERWISE
          If lPk
             cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
          Else

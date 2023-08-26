@@ -361,23 +361,23 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             SWITCH nSystemId
             CASE SYSTEMID_MSSQL7
                cSql += "getdate() "
-               Exit
+               EXIT
             CASE SYSTEMID_ORACLE
                cSql += "SYSDATE "
-               Exit
+               EXIT
             CASE SYSTEMID_IBMDB2
             CASE SYSTEMID_FIREBR
             CASE SYSTEMID_FIREBR3
             CASE SYSTEMID_POSTGR
                cSql += "CURRENT_DATE "
-               Exit
+               EXIT
             CASE SYSTEMID_MYSQL
             Case SYSTEMID_MARIADB
                cSql += "CURDATE() "
-               Exit
-            DEFAULT
+               EXIT
+            OTHERWISE
                cSql += "CURRENT_DATE "
-            END
+            ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_FUNC_COUNT
             cSql += "COUNT("
@@ -396,7 +396,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_MSSQL7
                cSql += "AVG("
                EXIT
-            DEFAULT
+            OTHERWISE
                cSql += "AVERAGE("
             ENDSWITCH
             RECURSIVE_CALL
@@ -417,7 +417,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             Case SYSTEMID_MARIADB
                cSql += "COALESCE("
                EXIT
-            DEFAULT
+            OTHERWISE
                cSql += "ISNULL("
             ENDSWITCH
             RECURSIVE_CALL
@@ -444,7 +444,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_SYBASE
                cSql += "SUBSTRING("
                EXIT
-            DEFAULT
+            OTHERWISE
                cSql += "SUBSTR("
             ENDSWITCH
             RECURSIVE_CALL
@@ -455,7 +455,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_SYBASE
                cSql += "SUBSTRING("
                EXIT
-            DEFAULT
+            OTHERWISE
                cSql += "SUBSTR("
             ENDSWITCH
             RECURSIVE_CALL
@@ -469,7 +469,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_MSSQL7
                cSql += "dbo.trim("
                EXIT
-            DEFAULT
+            OTHERWISE
                cSql += "TRIM("
             ENDSWITCH
             RECURSIVE_CALL
@@ -532,7 +532,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql += " NULLS FIRST"
                EndIf
                EXIT
-            DEFAULT
+            OTHERWISE
                SKIPFWD
                cSql += SR_DBQUALIFY(uData, nSystemID) + " ASC"
                If nSystemId == SYSTEMID_ORACLE
@@ -563,7 +563,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql += " NULLS FIRST"
                EndIf
                EXIT
-            DEFAULT
+            OTHERWISE
                SKIPFWD
                cSql += SR_DBQUALIFY(uData, nSystemID) + " DESC"
                If nSystemId == SYSTEMID_ORACLE
@@ -992,7 +992,7 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
             EndIf
 
-            Exit
+            EXIT
 
          CASE SQL_PCODE_OPERATOR_RIGHT_OUTER_JOIN
             SKIPFWD
@@ -1030,11 +1030,11 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
             EndIf
 
-            Exit
+            EXIT
 
-         DEFAULT
+         OTHERWISE
             nIP++
-         END
+         ENDSWITCH
 
       ENDDO
 
