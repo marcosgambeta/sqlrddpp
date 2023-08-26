@@ -40,7 +40,7 @@
  *
  */
 
-#include "compat.ch"
+// #include "compat.ch"
 #include "dbinfo.ch"
 #include "hbclass.ch"
 #include "sqlrdd.ch"
