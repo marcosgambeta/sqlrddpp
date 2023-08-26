@@ -322,20 +322,20 @@ RETURN
 
 /*------------------------------------------------------------------------*/
 
-Function SR_Msg(nMsg)
+FUNCTION SR_Msg(nMsg)
    Local nBaseLang := SR_SetBaseLang()
 
    If nMsg > 0 .AND. nMsg <= len(s_aMsg[nBaseLang])
-      Return s_aMsg[nBaseLang, nMsg]
+      RETURN s_aMsg[nBaseLang, nMsg]
    EndIf
 
-Return ""
+RETURN ""
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GetErrMessageMax()
+FUNCTION SR_GetErrMessageMax()
 
-Return s_nMessages
+RETURN s_nMessages
 
 /*------------------------------------------------------------------------*/
 

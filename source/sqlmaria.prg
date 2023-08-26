@@ -86,17 +86,19 @@ ENDCLASS
 /*------------------------------------------------------------------------*/
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_MARIA
-   local nRet
+
+   LOCAL nRet
+
    (aArray)
    (lTranslate)
    nRet := -1
-Return nRet
+RETURN nRet
 
 /*------------------------------------------------------------------------*/
 
 METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MARIA
 
-   Local i
+   LOCAL i
 
    DEFAULT lTranslate TO .T.
 
@@ -109,14 +111,14 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MARIA
    If ::aCurrLine == NIL
       MYSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
       ::aCurrLine := aArray
-      Return aArray
+      RETURN aArray
    EndIf
 
    For i = 1 to len(aArray)
       aArray[i] := ::aCurrLine[i]
    Next
 
-Return aArray
+RETURN aArray
 
 /*------------------------------------------------------------------------*/
 
@@ -127,7 +129,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_MARIA
       MYSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
 
-return ::aCurrLine[nField]
+RETURN ::aCurrLine[nField]
 
 /*------------------------------------------------------------------------*/
 
@@ -144,7 +146,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_MARIA
       ::RunTimeErr("", "MySQLFetch - Invalid cursor state" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
    EndIf
 
-Return ::nRetCode
+RETURN ::nRetCode
 
 /*------------------------------------------------------------------------*/
 
@@ -153,16 +155,20 @@ METHOD FreeStatement() CLASS SR_MARIA
       MYSClear ( ::hDbc )
    EndIf
    ::hStmt := NIL
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
 METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_MARIA
 
-   local nType := 0, nLen := 0, nNull := 0
-   local aFields := {}
-   local nDec := 0, nRet, cVlr := ""
-   local aFld
+   LOCAL nType := 0
+   LOCAL nLen := 0
+   LOCAL nNull := 0
+   LOCAL aFields := {}
+   LOCAL nDec := 0
+   LOCAL nRet
+   LOCAL cVlr := ""
+   LOCAL aFld
 
    DEFAULT lReSelect    TO .T.
    DEFAULT lLoadCache   TO .F.
@@ -177,14 +183,14 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F.)
       EndIf
       If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         return NIL
+         RETURN NIL
       EndIf
    EndIf
 
    If MYSResultStatus(::hDbc) != SQL_SUCCESS
       ::RunTimeErr("", "SqlNumResultCols Error" + chr(13)+chr(10)+ chr(13)+chr(10)+;
                "Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
-      return NIL
+      RETURN NIL
    endif
 
    ::nFields   := MYSCols(::hDbc)
@@ -206,28 +212,30 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       ::FreeStatement()
    EndIf
 
-return aFields
+RETURN aFields
 
 /*------------------------------------------------------------------------*/
 
 METHOD LastError() CLASS SR_MARIA
 
    If ::hStmt != NIL
-      Return "(" + alltrim(str(::nRetCode)) + ") " + MYSResStatus(::hDbc) + " - " + MYSErrMsg(::hDbc)
+      RETURN "(" + alltrim(str(::nRetCode)) + ") " + MYSResStatus(::hDbc) + " - " + MYSErrMsg(::hDbc)
    EndIf
 
-Return "(" + alltrim(str(::nRetCode)) + ") " + MYSErrMsg(::hDbc)
+RETURN "(" + alltrim(str(::nRetCode)) + ") " + MYSErrMsg(::hDbc)
 
 /*------------------------------------------------------------------------*/
 
 METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
             cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout) CLASS SR_MARIA
 
-   local hEnv := 0, hDbc := 0
-   local nret, cVersion := "", cSystemVers := "", cBuff := ""
-   
-   Local nVersionp
-   
+   LOCAL hEnv := 0
+   LOCAL hDbc := 0
+   LOCAL nret
+   LOCAL cVersion := ""
+   LOCAL cSystemVers := ""
+   LOCAL cBuff := ""
+   LOCAL nVersionp
    
    (cDSN)
    (cUser)
@@ -251,7 +259,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::nSystemID := 0
       SR_MsgLogFile("Connection Error")
       nVersionp := 4      
-      Return Self
+      RETURN Self
    else
       ::cConnect  = cConnect
       ::hStmt     = NIL
@@ -267,7 +275,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::End()
       ::nSystemID := 0
       ::nRetCode  := -1
-      Return Self
+      RETURN Self
    EndIf
 
    ::cSystemName := cTargetDB
@@ -277,7 +285,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::uSid        := MYSGETCONNID(hDbc)
    ::lMariaDb    :=.T.
 
-return Self
+RETURN Self
 
 /*------------------------------------------------------------------------*/
 
@@ -290,19 +298,19 @@ METHOD End() CLASS SR_MARIA
       MYSFinish(::hDbc)
    EndIf
 
-return Super:End()
+RETURN Super:End()
 
 /*------------------------------------------------------------------------*/
 
 METHOD Commit(lNoLog) CLASS SR_MARIA
    Super:Commit(lNoLog)
-Return ( ::nRetCode := MYSCommit(::hDbc) )
+RETURN ( ::nRetCode := MYSCommit(::hDbc) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_MARIA
    Super:RollBack()
-Return ( ::nRetCode := MYSRollBack(::hDbc) )
+RETURN ( ::nRetCode := MYSRollBack(::hDbc) )
 
 /*------------------------------------------------------------------------*/
 
@@ -315,9 +323,9 @@ METHOD ExecuteRaw(cCommand) CLASS SR_MARIA
    EndIf
 
    ::hStmt := MYSExec(::hDbc, cCommand)
-Return MYSResultStatus(::hDbc)
+RETURN MYSResultStatus(::hDbc)
 
 /*------------------------------------------------------------------------*/
 
 METHOD GetAffectedRows() CLASS SR_MARIA
-return MYSAFFECTEDROWS(::hDbc)
+RETURN MYSAFFECTEDROWS(::hDbc)

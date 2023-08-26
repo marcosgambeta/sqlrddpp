@@ -84,13 +84,13 @@ ENDCLASS
 METHOD MoreResults(aArray, lTranslate) CLASS SR_PGS
    (aArray)
    (lTranslate)
-Return -1
+RETURN -1
 
 /*------------------------------------------------------------------------*/
 
 METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
 
-   Local i
+   LOCAL i
 
    DEFAULT lTranslate TO .T.
 
@@ -103,14 +103,14 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
    If ::aCurrLine == NIL
       PGSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
       ::aCurrLine := aArray
-      Return aArray
+      RETURN aArray
    EndIf
 
    For i = 1 to len(aArray)
       aArray[i] := ::aCurrLine[i]
    Next
 
-Return aArray
+RETURN aArray
 
 /*------------------------------------------------------------------------*/
 
@@ -122,7 +122,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_PGS
       PGSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    EndIf
 
-return ::aCurrLine[nField]
+RETURN ::aCurrLine[nField]
 
 /*------------------------------------------------------------------------*/
 
@@ -139,7 +139,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_PGS
       ::RunTimeErr("", "PGSFetch - Invalid cursor state" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
    EndIf
 
-Return ::nRetCode
+RETURN ::nRetCode
 
 /*------------------------------------------------------------------------*/
 
@@ -148,16 +148,22 @@ METHOD FreeStatement() CLASS SR_PGS
       PGSClear ( ::hDbc )
    EndIf
    ::hStmt := NIL
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
 METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_PGS
 
-   local nFields := 0
-   local nType := 0, nLen := 0, nNull := 0
-   local aFields := {}
-   local nDec := 0, nRet, cVlr := "", cTbl, cOwner := "public"
+   LOCAL nFields := 0
+   LOCAL nType := 0
+   LOCAL nLen := 0
+   LOCAL nNull := 0
+   LOCAL aFields := {}
+   LOCAL nDec := 0
+   LOCAL nRet
+   LOCAL cVlr := ""
+   LOCAL cTbl
+   LOCAL cOwner := "public"
 
    DEFAULT lReSelect    TO .T.
    DEFAULT lLoadCache   TO .F.
@@ -172,14 +178,14 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F.)
       EndIf
       If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         return NIL
+         RETURN NIL
       EndIf
    EndIf
 
    If PGSResultStatus(::hStmt) != SQL_SUCCESS
       ::RunTimeErr("", "SqlNumResultCols Error" + chr(13)+chr(10)+ chr(13)+chr(10)+;
                "Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
-      return NIL
+      RETURN NIL
    endif
 
    nFields   := PGSCols(::hStmt)
@@ -205,31 +211,37 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       ::FreeStatement()
    EndIf
 
-return aFields
+RETURN aFields
 
 /*------------------------------------------------------------------------*/
 
 METHOD LastError() CLASS SR_PGS
 
    If ::hStmt != NIL
-      Return "(" + alltrim(str(::nRetCode)) + ") " + PGSResStatus(::hDbc) + " - " + PGSErrMsg(::hDbc)
+      RETURN "(" + alltrim(str(::nRetCode)) + ") " + PGSResStatus(::hDbc) + " - " + PGSErrMsg(::hDbc)
    EndIf
 
-Return "(" + alltrim(str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
+RETURN "(" + alltrim(str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
 
 /*------------------------------------------------------------------------*/
 
 METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace,;
             cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_PGS
 
-   local hEnv := 0, hDbc := 0
-   local nret, cVersion := "", cSystemVers := "", cBuff := ""
-   Local aRet := {}
-   Local aVersion
-   Local cmatch,nstart,nlen,s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
-   Local cString
-   
-   
+   LOCAL hEnv := 0
+   LOCAL hDbc := 0
+   LOCAL nret
+   LOCAL cVersion := ""
+   LOCAL cSystemVers := ""
+   LOCAL cBuff := ""
+   LOCAL aRet := {}
+   LOCAL aVersion
+   LOCAL cmatch
+   LOCAL nstart
+   LOCAL nlen
+   LOCAL s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
+   LOCAL cString
+
    (cDSN)
    (cUser)
    (cPassword)
@@ -247,18 +259,18 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    DEFAULT ::cPort TO 5432
 
    cConnect := "host=" + ::cHost + " user=" + ::cUser + " password=" + ::cPassword + " dbname=" + ::cDTB + " port=" + str(::cPort,6)
-   
+
    IF !Empty(::sslcert)
       cConnect += " sslmode=prefer sslcert="+::sslcert +" sslkey="+::sslkey +" sslrootcert="+ ::sslrootcert +" sslcrl="+ ::sslcrl
-   ENDIF   
-   
+   ENDIF
+
    hDbc := PGSConnect(cConnect)
    nRet := PGSStatus(hDbc)
 
    if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode = nRet
       SR_MsgLogFile("Connection Error: " + alltrim(str(PGSStatus2(hDbc))) + " (see pgs.ch)")
-      Return Self
+      RETURN Self
    else
       ::cConnect = cConnect
       ::hStmt    = NIL
@@ -306,7 +318,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::uSid := val(str(aRet[1,1],8,0))
    EndIf
 
-return Self
+RETURN Self
 
 /*------------------------------------------------------------------------*/
 
@@ -323,13 +335,13 @@ METHOD End() CLASS SR_PGS
    ::hEnv  = 0
    ::hDbc  = NIL
 
-return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
 METHOD Commit(lNoLog) CLASS SR_PGS
    ::Super:Commit(lNoLog)
-Return ( ::nRetCode := ::exec("COMMIT;BEGIN", .F.) )
+RETURN ( ::nRetCode := ::exec("COMMIT;BEGIN", .F.) )
 
 /*------------------------------------------------------------------------*/
 
@@ -337,7 +349,7 @@ METHOD RollBack() CLASS SR_PGS
    ::Super:RollBack()
    ::nRetCode := PGSRollBack(::hDbc)
    ::exec("BEGIN", .F.)
-Return ::nRetCode
+RETURN ::nRetCode
 
 /*------------------------------------------------------------------------*/
 
@@ -350,7 +362,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_PGS
    EndIf
 
    ::hStmt := PGSExec(::hDbc, cCommand)
-Return PGSResultStatus(::hStmt)
+RETURN PGSResultStatus(::hStmt)
 
 /*------------------------------------------------------------------------*/
 
@@ -366,10 +378,10 @@ METHOD AllocStatement() CLASS SR_PGS
       ::lSetNext  := .F.
    EndIf
 
-return SQL_SUCCESS
+RETURN SQL_SUCCESS
 
 METHOD GetAffectedRows()
-return PGSAFFECTEDROWS(::hDbc)
+RETURN PGSAFFECTEDROWS(::hDbc)
 
 /*------------------------------------------------------------------------*/
 

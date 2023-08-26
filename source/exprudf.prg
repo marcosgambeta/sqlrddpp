@@ -321,7 +321,7 @@ RETURN result
 FUNCTION GetFileName(cPath)
 
    LOCAL aGroups
-   local cRegEx := "^(?:(\w:(?:\\|/)?)((?:.+?(?:\\|/))*))?(\w+?)(\.\w+)?$"
+   LOCAL cRegEx := "^(?:(\w:(?:\\|/)?)((?:.+?(?:\\|/))*))?(\w+?)(\.\w+)?$"
 
    IF HB_RegExMatch(cRegEx, cPath, .F.)
       aGroups := HB_RegExAtX(cRegEx, cPath)

@@ -89,24 +89,35 @@ Static aJoinWords
 * SQL Code generation
 */
 
-Function SR_SQLCodeGen(apCode, aParam, nSystemId, lIdent, lParseTableName)
-Return   SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, , , , lParseTableName)
+FUNCTION SR_SQLCodeGen(apCode, aParam, nSystemId, lIdent, lParseTableName)
+RETURN   SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, , , , lParseTableName)
 
-Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext, nSpaces, lParseTableName)
+Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext, nSpaces, lParseTableName)
 
-   local cSql, nCommand, uData, nDepht, nErrorId, aRet, nFlt, cTmp
-   local cAtual, cAtual2, nPos, cTbl, outer
-   local aFilters  := {}
-   local lLocking  := .F.
-   local nLen      := len(apCode)
-   local bError    := Errorblock()
-   local aLJoins   := {}             /* A, B, Expression */
-   local aTables   := {}             /* TableName */
-   local aQualifiedTables   := {}             /* Owner.TableName */
-   local aAlias    := {}
-   local aOuters   := {}
-   local cSqlCols  := ""
-   local cTrailler := ""
+   LOCAL cSql
+   LOCAL nCommand
+   LOCAL uData
+   LOCAL nDepht
+   LOCAL nErrorId
+   LOCAL aRet
+   LOCAL nFlt
+   LOCAL cTmp
+   LOCAL cAtual
+   LOCAL cAtual2
+   LOCAL nPos
+   LOCAL cTbl
+   LOCAL outer
+   LOCAL aFilters  := {}
+   LOCAL lLocking  := .F.
+   LOCAL nLen      := len(apCode)
+   LOCAL bError    := Errorblock()
+   LOCAL aLJoins   := {}             /* A, B, Expression */
+   LOCAL aTables   := {}             /* TableName */
+   LOCAL aQualifiedTables := {}             /* Owner.TableName */
+   LOCAL aAlias    := {}
+   LOCAL aOuters   := {}
+   LOCAL cSqlCols  := ""
+   LOCAL cTrailler := ""
 
    Default(nSystemId, SR_GetConnection():nSystemID)
    Default(nIP, 1)
@@ -1195,107 +1206,109 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
       nSpaces -= 2
    EndIf
 
-   Return cSQL
+   RETURN cSQL
 
 /*
 * Quoting xBase DataTypes
 */
 
-Function SR_SQLQuotedString(uData, nSystemID, lNotNull)
+FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
-   local cType := valtype(uData), uElement, cRet := ""
+   LOCAL cType := valtype(uData)
+   LOCAL uElement
+   LOCAL cRet := ""
 
    Default(lNotNull, .F.)
 
    If (!lNotNull) .AND. empty(uData)
-      Return "NULL"
+      RETURN "NULL"
    Endif
 
    If lNotNull .AND. empty(uData) .AND. cType $ "CM"
-      Return ['] + " " + [']
+      RETURN ['] + " " + [']
    Endif
 
    Do Case
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
-      return [E'] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + [']
+      RETURN [E'] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + [']
    Case cType $ "CM"
-      return ['] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + [']
+      RETURN ['] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + [']
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
-      return ([TO_DATE('] + rtrim(DtoS(uData)) + [','YYYYMMDD')])
+      RETURN ([TO_DATE('] + rtrim(DtoS(uData)) + [','YYYYMMDD')])
    Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS )
-      return ([']+transform(DtoS(uData) ,'@R 9999-99-99')+['])
+      RETURN ([']+transform(DtoS(uData) ,'@R 9999-99-99')+['])
    Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
-      return (['] + SR_dtosdot(uData) + ['])
+      RETURN (['] + SR_dtosdot(uData) + ['])
    Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
-      return (['] + SR_dtoUS(uData) + ['])
+      RETURN (['] + SR_dtoUS(uData) + ['])
    Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
-      return (['] + SR_dtoDot(uData) + ['])
+      RETURN (['] + SR_dtoDot(uData) + ['])
    Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
-      return [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
+      RETURN [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
-      return [{d ']+transform(DtoS(iif(year(uData)<1850,stod("18500101"),uData)) ,'@R 9999-99-99')+['}]
+      RETURN [{d ']+transform(DtoS(iif(year(uData)<1850,stod("18500101"),uData)) ,'@R 9999-99-99')+['}]
    Case cType == "D" .AND. ( nSystemID == SYSTEMID_MYSQL .OR. nSystemID == SYSTEMID_MARIADB )
-      return ([str_to_date( '] + dtos(uData) + [', '%Y%m%d' )])
+      RETURN ([str_to_date( '] + dtos(uData) + [', '%Y%m%d' )])
    Case cType == "D"
-      return (['] + dtos(uData) + ['])
+      RETURN (['] + dtos(uData) + ['])
    Case cType == "N"
-      return ltrim(str(uData))
+      RETURN ltrim(str(uData))
    Case cType == "L" .AND. nSystemID == SYSTEMID_POSTGR
-      return iif(uData,"true","false")
+      RETURN iif(uData,"true","false")
    Case cType == "L" .AND. nSystemID == SYSTEMID_INFORM
-      return iif(uData,"'t'","'f'")
+      RETURN iif(uData,"'t'","'f'")
    Case cType == "L"
-      return iif(uData,"1","0")
+      RETURN iif(uData,"1","0")
    Case cType == "A"
       For each uElement in uData
          cRet += iif(empty(cRet),"",", ") + SR_SQLQuotedString(uElement, nSystemID, lNotNull)
       Next
-      return cRet
+      RETURN cRet
    Case cType == "O"
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      Return SR_SQLQuotedString(SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID, lNotNull)
+      RETURN SR_SQLQuotedString(SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID, lNotNull)
    EndCase
 
-Return "NULL"
+RETURN "NULL"
 
 /*
 *   SQLBASE date format
 */
 
-Function SR_dtosdot(dData)
+FUNCTION SR_dtosdot(dData)
 
-   Local cData := dtos(dData)
+   LOCAL cData := dtos(dData)
 
-Return SubStr(cData, 1, 4) + "-" + subStr(cData, 5, 2) + "-" + subStr(cData, 7, 2)
+RETURN SubStr(cData, 1, 4) + "-" + subStr(cData, 5, 2) + "-" + subStr(cData, 7, 2)
 
 /*
 *  YYYY.MM.DD
 */
 
-Function SR_dtoDot(dData)
+FUNCTION SR_dtoDot(dData)
 
-   Local cData := dtos(dData)
+   LOCAL cData := dtos(dData)
 
-Return SubStr(cData, 1, 4) + "." + subStr(cData, 5, 2) + "." + subStr(cData, 7, 2)
+RETURN SubStr(cData, 1, 4) + "." + subStr(cData, 5, 2) + "." + subStr(cData, 7, 2)
 
 /*
 *  MMDDYYYY
 */
 
-Function SR_dtous(dData)
+FUNCTION SR_dtous(dData)
 
-   Local cData := dtos(dData)
+   LOCAL cData := dtos(dData)
 
-Return subStr(cData, 5, 2) + subStr(cData, 7, 2) + SubStr(cData, 1, 4)
+RETURN subStr(cData, 5, 2) + subStr(cData, 7, 2) + SubStr(cData, 1, 4)
 
 /*
 * Error Handler
 */
 
-Static Function SR_SQLParseError(arg1, arg2, cDescr, nCode, cOper, oError)
+Static FUNCTION SR_SQLParseError(arg1, arg2, cDescr, nCode, cOper, oError)
 
-   local uRet
-   local oErr := ErrorNew()
+   LOCAL uRet
+   LOCAL oErr := ErrorNew()
 
    If arg1 != NIL .AND. arg2 != NIL
       oErr:Args          := { arg1, arg2 }
@@ -1317,7 +1330,7 @@ Static Function SR_SQLParseError(arg1, arg2, cDescr, nCode, cOper, oError)
 
    uRet := Eval(oError, oErr)
 
-Return uRet
+RETURN uRet
 
 /*
 * SQL Filters
@@ -1326,12 +1339,12 @@ Return uRet
 *
 */
 
-Static Function SR_SolveFilters(aFilters,aRet,cAlias,nSystemID)
+Static FUNCTION SR_SolveFilters(aFilters,aRet,cAlias,nSystemID)
 
-   Local i
+   LOCAL i
 
    If !(HB_ISARRAY(aRet) .AND. len(aRet) >= 2 .AND. HB_ISCHAR(aRet[1]))
-      Return .F.
+      RETURN .F.
    EndIf
 
    Default(nSystemID, SR_GetConnection():nSystemID)
@@ -1345,7 +1358,7 @@ Static Function SR_SolveFilters(aFilters,aRet,cAlias,nSystemID)
       EndIf
    Next
 
-Return .T.
+RETURN .T.
 
 /*
 * Startup settings
@@ -1362,67 +1375,67 @@ Return
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetTableInfoBlock(b)
+FUNCTION SR_SetTableInfoBlock(b)
 
    If !HB_ISBLOCK(b)
-      Return .F.
+      RETURN .F.
    ENdIf
 
    bTableInfo := b
 
-Return .T.
+RETURN .T.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetIndexInfoBlock(b)
+FUNCTION SR_SetIndexInfoBlock(b)
 
    If !HB_ISBLOCK(b)
-      Return .F.
+      RETURN .F.
    ENdIf
 
    bIndexInfo := b
 
-Return .T.
+RETURN .T.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GetTableInfoBlock()
+FUNCTION SR_GetTableInfoBlock()
 
-Return bTableInfo
-
-/*------------------------------------------------------------------------*/
-
-Function SR_GetIndexInfoBlock()
-
-Return bIndexInfo
+RETURN bTableInfo
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetNextRecordBlock(b)
+FUNCTION SR_GetIndexInfoBlock()
+
+RETURN bIndexInfo
+
+/*------------------------------------------------------------------------*/
+
+FUNCTION SR_SetNextRecordBlock(b)
 
    If !HB_ISBLOCK(b)
-      Return .F.
+      RETURN .F.
    ENdIf
 
    bNextRecord := b
 
-Return .T.
+RETURN .T.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GetNextRecordBlock()
+FUNCTION SR_GetNextRecordBlock()
 
-Return bNextRecord
+RETURN bNextRecord
 
 /*
 * Version Report
 */
 
-Function SR_ParserVersion()
+FUNCTION SR_ParserVersion()
 
-   local nVers := 1
+   LOCAL nVers := 1
 
-Return nVers
+RETURN nVers
 
 
 /*
@@ -1431,9 +1444,9 @@ Return nVers
 *
 */
 
-Function SR_pCodeDescr(nCode)
+FUNCTION SR_pCodeDescr(nCode)
 
-   local nFound
+   LOCAL nFound
 
    Static apCode := {;
       { "SQL_PCODE_SELECT",                     0 },;
@@ -1520,16 +1533,16 @@ Function SR_pCodeDescr(nCode)
    }
 
    if !HB_ISNUMERIC(nCode)
-      Return nCode
+      RETURN nCode
    endif
 
    nFound := aScan(apCode, {|x| x[2] == nCode })
 
    If nFound > 0
-      Return apCode[nFound,1]
+      RETURN apCode[nFound,1]
    EndIf
 
-Return nCode
+RETURN nCode
 
 /*------------------------------------------------------------------------*/
 
@@ -1644,7 +1657,7 @@ RETURN aRet
 
 /*------------------------------------------------------------------------*/
 
-Static Function SR_IsComparOp(nOp)
+Static FUNCTION SR_IsComparOp(nOp)
 
    SWITCH nOp
    CASE SQL_PCODE_OPERATOR_EQ
@@ -1660,11 +1673,11 @@ Static Function SR_IsComparOp(nOp)
       RETURN .T.
    ENDSWITCH
 
-Return .F.
+RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-Static Function SR_IsComparNullOp(nOp)
+Static FUNCTION SR_IsComparNullOp(nOp)
 
    SWITCH nOp
    CASE SQL_PCODE_OPERATOR_IS_NULL
@@ -1672,15 +1685,15 @@ Static Function SR_IsComparNullOp(nOp)
       RETURN .T.
    ENDSWITCH
 
-Return .F.
+RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-Static Function SR_ComparOpText(nOp)
+Static FUNCTION SR_ComparOpText(nOp)
 
-   local cSql := ""
+   LOCAL cSql := ""
 
-   Switch nOp
+   SWITCH nOp
    CASE SQL_PCODE_OPERATOR_EQ
       cSql += " = "
       EXIT
@@ -1713,6 +1726,6 @@ Static Function SR_ComparOpText(nOp)
       EXIT
    ENDSWITCH
 
-Return cSql
+RETURN cSql
 
 /*------------------------------------------------------------------------*/

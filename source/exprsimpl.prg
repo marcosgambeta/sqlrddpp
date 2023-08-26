@@ -113,7 +113,7 @@ METHOD SimplifyComposition(oExpression) CLASS ExpressionSimplifierBase
 
    IF !newOperands[1] == oExpression:oOperand1 .OR. !newOperands[2] == oExpression:oOperand2
       newClipperString := newOperands[1]:oClipperExpression:cValue + " " + oExpression:oOperator:aSymbols[1] + " " + newOperands[2]:oClipperExpression:cValue
-      return ::NewComposedExpression(oExpression:cContext, newClipperString, newOperands[1], oExpression:oOperator, newOperands[2])
+      RETURN ::NewComposedExpression(oExpression:cContext, newClipperString, newOperands[1], oExpression:oOperator, newOperands[2])
    ENDIF
 
 RETURN oExpression

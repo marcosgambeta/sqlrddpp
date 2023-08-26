@@ -68,70 +68,72 @@ STATIC s_lNoAlert
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GoPhantom()
+FUNCTION SR_GoPhantom()
 
    If IS_SQLRDD
-      Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):sqlGoPhantom()
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):sqlGoPhantom()
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
 FUNCTION SR_WorkareaFileName()
 
    if empty(alias())
-      Return ""
+      RETURN ""
    endif
 
    if ! IS_SQLRDD
-      Return ""
+      RETURN ""
    endif
 
-Return dbInfo(DBI_INTERNAL_OBJECT):cFileName
+RETURN dbInfo(DBI_INTERNAL_OBJECT):cFileName
 
 /*------------------------------------------------------------------------*/
 
 FUNCTION SR_dbStruct()
 
    if empty(alias())
-      Return {}
+      RETURN {}
    endif
 
    if ! IS_SQLRDD
-      Return {}
+      RETURN {}
    endif
 
-Return aclone(dbInfo(DBI_INTERNAL_OBJECT):aFields)
+RETURN aclone(dbInfo(DBI_INTERNAL_OBJECT):aFields)
 
 /*------------------------------------------------------------------------*/
 
-Function SR_MsgLogFile(uMsg, p1, p2, p3, p4, p5, p6, p7, p8)
+FUNCTION SR_MsgLogFile(uMsg, p1, p2, p3, p4, p5, p6, p7, p8)
    SR_LogFile("sqlerror.log", {uMsg, p1, p2, p3, p4, p5, p6, p7, p8})
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_Val2Char(a,n1,n2)
+FUNCTION SR_Val2Char(a,n1,n2)
    Do Case
    Case HB_ISSTRING(a) 
-      Return a
+      RETURN a
    Case HB_ISNUMERIC(a) .AND. n1 != NIL .AND. n2 != NIL
-      Return Str(a,n1,n2)
+      RETURN Str(a,n1,n2)
    Case HB_ISNUMERIC(a)
-      Return Str(a)
+      RETURN Str(a)
    Case HB_ISDATE(a)
-      Return dtoc(a)
+      RETURN dtoc(a)
    Case HB_ISLOGICAL(a) 
-      Return iif(a, ".T.", ".F.")
+      RETURN iif(a, ".T.", ".F.")
    EndCase
-Return ""
+RETURN ""
 
 /*------------------------------------------------------------------------*/
 
-Function SR_LogFile(cFileName, aInfo, lAddDateTime)
+FUNCTION SR_LogFile(cFileName, aInfo, lAddDateTime)
 
-   local hFile, cLine, n
+   LOCAL hFile
+   LOCAL cLine
+   LOCAL n
 
    Default lAddDatetime TO .T.
 
@@ -164,49 +166,58 @@ Function SR_LogFile(cFileName, aInfo, lAddDateTime)
    FWrite(hFile, alltrim(cLine))
    FClose(hFile)
 
-return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_FilterStatus(lEnable)
+FUNCTION SR_FilterStatus(lEnable)
 
    If IS_SQLRDD
       If HB_ISLOGICAL(lEnable) 
-         Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lDisableFlts := !lEnable
+         RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lDisableFlts := !lEnable
       Else
-         Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lDisableFlts
+         RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lDisableFlts
       EndIf
    EndIf
 
-Return .F.
+RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_CreateConstraint(aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
+FUNCTION SR_CreateConstraint(aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
 
    If IS_SQLRDD
-      Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):CreateConstraint(dbInfo(DBI_INTERNAL_OBJECT):cFileName,aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):CreateConstraint(dbInfo(DBI_INTERNAL_OBJECT):cFileName,aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_DropConstraint(cConstraintName, lFKs)
+FUNCTION SR_DropConstraint(cConstraintName, lFKs)
 
    If IS_SQLRDD
-      Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):DropConstraint(dbInfo(DBI_INTERNAL_OBJECT):cFileName,cConstraintName, lFKs)
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):DropConstraint(dbInfo(DBI_INTERNAL_OBJECT):cFileName,cConstraintName, lFKs)
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_ChangeStruct(cTableName, aNewStruct)
+FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
 
-   Local oWA, lOk := .T., aToDrop := {}, aToFix := {}
-   Local i, n, cAlias, nReg, cTblName, nAlias, nOrd
-   Local aDirect := {}
+   LOCAL oWA
+   LOCAL lOk := .T.
+   LOCAL aToDrop := {}
+   LOCAL aToFix := {}
+   LOCAL i
+   LOCAL n
+   LOCAL cAlias
+   LOCAL nReg
+   LOCAL cTblName
+   LOCAL nAlias
+   LOCAL nOrd
+   LOCAL aDirect := {}
 
    If select() == 0
       SR_RuntimeErr(, "SR_ChengeStructure: Workarea not in use.")
@@ -341,11 +352,11 @@ Function SR_ChangeStruct(cTableName, aNewStruct)
       SR_RuntimeErr(, "SR_ChengeStructure: Not a SQLRDD workarea.")
    EndIf
 
-Return lOk
+RETURN lOk
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetCurrDate(d)
+FUNCTION SR_SetCurrDate(d)
 
    If IS_SQLRDD
       d := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):SetCurrDate(d)
@@ -354,21 +365,21 @@ Function SR_SetCurrDate(d)
       EndIf
    EndIf
 
-Return d
+RETURN d
 
 /*------------------------------------------------------------------------*/
 
-Function SR_QuickAppend(l)
+FUNCTION SR_QuickAppend(l)
 
    If IS_SQLRDD
       l := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):SetQuickAppend(l)
    EndIf
 
-Return l
+RETURN l
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetColPK(cColName)
+FUNCTION SR_SetColPK(cColName)
 
    If IS_SQLRDD
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):SetColPK(cColName)
@@ -377,23 +388,23 @@ Function SR_SetColPK(cColName)
       EndIf
    EndIf
 
-Return cColName
+RETURN cColName
 
 /*------------------------------------------------------------------------*/
 
-Function SR_IsWAHist()
+FUNCTION SR_IsWAHist()
 
    If IS_SQLRDD
-      Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lHistoric
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lHistoric
    EndIf
 
-Return .F.
+RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetReverseIndex(nIndex, lSet)
+FUNCTION SR_SetReverseIndex(nIndex, lSet)
 
-   Local lOldSet
+   LOCAL lOldSet
 
    If IS_SQLRDD .AND. nIndex > 0 .AND. nIndex <= len((Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex)
       lOldSet := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, DESCEND_INDEX_ORDER]
@@ -402,65 +413,65 @@ Function SR_SetReverseIndex(nIndex, lSet)
       EndIf
    EndIf
 
-Return lOldSet
+RETURN lOldSet
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetNextDt(d)
+FUNCTION SR_SetNextDt(d)
 
    If IS_SQLRDD
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):SetNextDt(d)
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_DisableHistoric()
+FUNCTION SR_DisableHistoric()
 
    If IS_SQLRDD
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):DisableHistoric()
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):Refresh()
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_EnableHistoric()
+FUNCTION SR_EnableHistoric()
 
    If IS_SQLRDD
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):EnableHistoric()
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):Refresh()
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GetActiveDt()
+FUNCTION SR_GetActiveDt()
 
-Return DtAtiv
+RETURN DtAtiv
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetActiveDt(d)
+FUNCTION SR_SetActiveDt(d)
 
    DEFAULT d TO date()
 
-Return DtAtiv := d
+RETURN DtAtiv := d
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetActiveDate(d)
+FUNCTION SR_SetActiveDate(d)
 
-   Local dOld := DtAtiv
+   LOCAL dOld := DtAtiv
 
    If d != NIL
       DtAtiv := d
    EndIf
 
-Return dOld
+RETURN dOld
 
 /*------------------------------------------------------------------------*/
 
@@ -472,82 +483,82 @@ Return
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetCreateAsHistoric(l)
+FUNCTION SR_SetCreateAsHistoric(l)
 
-   Local lOld := lCreateAsHistoric
+   LOCAL lOld := lCreateAsHistoric
 
    If HB_ISLOGICAL(l) 
       lCreateAsHistoric := l
    EndIf
 
-Return lCreateAsHistoric
+RETURN lCreateAsHistoric
 
 /*------------------------------------------------------------------------*/
 
-Function SR_HasHistoric()
+FUNCTION SR_HasHistoric()
 
-Return (lHistorico := .T.)
+RETURN (lHistorico := .T.)
 
 /*------------------------------------------------------------------------*/
 
-Function SR_cDBValue(uData, nSystemID)
+FUNCTION SR_cDBValue(uData, nSystemID)
 
    default nSystemID TO SR_GetConnection():nSystemID
 
-return SR_SubQuoted(valtype(uData), uData, nSystemID)
+RETURN SR_SubQuoted(valtype(uData), uData, nSystemID)
 
 /*------------------------------------------------------------------------*/
 
-Static Function SR_SubQuoted(cType, uData, nSystemID)
+Static FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
-   local cRet
-   lOCAL cOldSet := SET(_SET_DATEFORMAT)   
+   LOCAL cRet
+   LOCAL cOldSet := SET(_SET_DATEFORMAT)   
 
    Do Case
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_ORACLE
-      return ['] + rtrim(strtran(uData,"'","'||"+"CHR(39)"+"||'")) + [']
+      RETURN ['] + rtrim(strtran(uData,"'","'||"+"CHR(39)"+"||'")) + [']
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_MSSQL7
-      return ['] + rtrim(strtran(uData,"'",[']+['])) + [']
+      RETURN ['] + rtrim(strtran(uData,"'",[']+['])) + [']
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
-      return [E'] + strtran(rtrim(strtran(uData,"'",[']+['])), "\","\\") + [']
+      RETURN [E'] + strtran(rtrim(strtran(uData,"'",[']+['])), "\","\\") + [']
    Case cType $ "CM"
-      return ['] + rtrim(strtran(uData,"'","")) + [']
+      RETURN ['] + rtrim(strtran(uData,"'","")) + [']
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
-      return [TO_DATE('] + rtrim(DtoS(uData)) + [','YYYYMMDD')]
+      RETURN [TO_DATE('] + rtrim(DtoS(uData)) + [','YYYYMMDD')]
     Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS )
-        return [']+transform(DtoS(uData) ,'@R 9999-99-99')+[']
+        RETURN [']+transform(DtoS(uData) ,'@R 9999-99-99')+[']
    Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
-      return ['] + SR_dtosDot(uData) + [']
+      RETURN ['] + SR_dtosDot(uData) + [']
    Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
-      return ['] + SR_dtoUS(uData) + [']
+      RETURN ['] + SR_dtoUS(uData) + [']
    Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
-      return ['] + SR_dtoDot(uData) + [']
+      RETURN ['] + SR_dtoDot(uData) + [']
    Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
-      return [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
+      RETURN [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
 
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
-      return [{d ']+transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)) ,'@R 9999-99-99')+['}]
+      RETURN [{d ']+transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)) ,'@R 9999-99-99')+['}]
    Case cType == "D"
-      return ['] + dtos(uData) + [']
+      RETURN ['] + dtos(uData) + [']
    Case cType == "N"   
-      return ltrim(str(uData))
+      RETURN ltrim(str(uData))
    Case cType == "L" .AND. (nSystemID == SYSTEMID_POSTGR .OR. nSystemID == SYSTEMID_FIREBR3 ) 
-      return iif(uData, "true", "false")
+      RETURN iif(uData, "true", "false")
    Case cType == "L" .AND. nSystemID == SYSTEMID_INFORM
-      return iif(uData, "'t'", "'f'")      
+      RETURN iif(uData, "'t'", "'f'")      
    Case cType == "L"   
-      return iif(uData, "1", "0")
+      RETURN iif(uData, "1", "0")
    case ctype == "T"  .AND. nSystemID == SYSTEMID_POSTGR  
       IF Empty(uData) 
          RETURN 'NULL'
       ENDIF 
 
-      return ['] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']      
+      RETURN ['] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']      
    case ctype == "T" .AND. nSystemID == SYSTEMID_ORACLE
       IF Empty(uData) 
          RETURN 'NULL'
       ENDIF       
-      return [ TIMESTAMP '] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']
+      RETURN [ TIMESTAMP '] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']
    Case cType == 'T'
       IF Empty(uData) 
          RETURN 'NULL'
@@ -559,18 +570,17 @@ Static Function SR_SubQuoted(cType, uData, nSystemID)
       
    OtherWise
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      return SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID)
+      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID)
    EndCase
 
-Return ""
+RETURN ""
 
 /*------------------------------------------------------------------------*/
 
-Function SR_WriteTimeLog(cComm, oCnn, nLimisencos)
+FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
 
-   Local nAlAtual := Select()
-
-   Local TRACE_STRUCT := { ;
+   LOCAL nAlAtual := Select()
+   LOCAL TRACE_STRUCT := { ;
                             { "USUARIO",    "C", 10, 0 },;
                             { "DATA",       "D", 08, 0 },;
                             { "HORA",       "C", 08, 0 },;
@@ -609,7 +619,7 @@ Function SR_WriteTimeLog(cComm, oCnn, nLimisencos)
 
    dbSelectArea(nAlAtual)
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
@@ -636,18 +646,17 @@ RETURN ""
 
 /*------------------------------------------------------------------------*/
 
-Function SR_WriteDbLog(cComm, oCnn)
+FUNCTION SR_WriteDbLog(cComm, oCnn)
 
-   Local nAlAtual := Select()
-
-   Local TRACE_STRUCT   := { ;
-                              { "USUARIO",    "C", 10, 0 },;
-                              { "DATA",       "D", 08, 0 },;
-                              { "HORA",       "C", 08, 0 },;
-                              { "CONTADOR",   "C", 01, 0 },;
-                              { "TRANSCOUNT", "N", 10, 0 },;
-                              { "COMANDO",    "M", 10, 0 } ;
-                           }
+   LOCAL nAlAtual := Select()
+   LOCAL TRACE_STRUCT := { ;
+                            { "USUARIO",    "C", 10, 0 },;
+                            { "DATA",       "D", 08, 0 },;
+                            { "HORA",       "C", 08, 0 },;
+                            { "CONTADOR",   "C", 01, 0 },;
+                            { "TRANSCOUNT", "N", 10, 0 },;
+                            { "COMANDO",    "M", 10, 0 } ;
+                         }
 
    (oCnn) // To remove warning
 
@@ -679,13 +688,14 @@ Function SR_WriteDbLog(cComm, oCnn)
 
    dbSelectArea(nAlAtual)
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_ShowVector(a)
+FUNCTION SR_ShowVector(a)
 
-   local cRet := "", i
+   LOCAL cRet := ""
+   LOCAL i
 
    If HB_ISARRAY(a) 
 
@@ -709,7 +719,7 @@ Function SR_ShowVector(a)
 
    EndIf
 
-Return cRet
+RETURN cRet
 
 /*------------------------------------------------------------------------*/
 
@@ -792,9 +802,13 @@ RETURN ""
 
 /*------------------------------------------------------------------------*/
 
-Function SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
+FUNCTION SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
 
-   local cRet, cAl1, cAl2, cAlias, oCnn
+   LOCAL cRet
+   LOCAL cAl1
+   LOCAL cAl2
+   LOCAL cAlias
+   LOCAL oCnn
 
    oCnn := SR_GetConnection()
 
@@ -822,13 +836,16 @@ Function SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
 
    cRet += "))"
 
-Return cRet
+RETURN cRet
 
 /*------------------------------------------------------------------------*/
 
-Function SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
+FUNCTION SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
 
-   local cRet, cAl1, cAl2, oCnn
+   LOCAL cRet
+   LOCAL cAl1
+   LOCAL cAl2
+   LOCAL oCnn
 
    oCnn := SR_GetConnection()
 
@@ -855,52 +872,52 @@ Function SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
 
    cRet += "))"
 
-Return  cRet
+RETURN cRet
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetNextSvVers(lVers)
+FUNCTION SR_SetNextSvVers(lVers)
 
    If IS_SQLRDD
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lVers := lVers
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GetRddName(nArea)
+FUNCTION SR_GetRddName(nArea)
 
    DEFAULT nArea TO Select()
 
    Do Case
    Case Empty(Alias(nArea))
-      Return "    "
+      RETURN "    "
    OtherWise
-      Return ( nArea )->( RddName() )
+      RETURN ( nArea )->( RddName() )
    EndCase
 
-Return ""
+RETURN ""
 
 /*------------------------------------------------------------------------*/
 
-Function IsSQLWorkarea()
+FUNCTION IsSQLWorkarea()
 
-Return "*" + SR_GetRddName() + "*" $ "*SQLRDD*ODBCRDD*SQLEX*"
+RETURN "*" + SR_GetRddName() + "*" $ "*SQLRDD*ODBCRDD*SQLEX*"
 
 /*------------------------------------------------------------------------*/
 
-Function SR_OrdCondSet(cForSql, cForxBase)
+FUNCTION SR_OrdCondSet(cForSql, cForxBase)
 
    If IS_SQLRDD
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):OrdSetForClause(cForSql, cForxBase)
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetJoin(nAreaTarget, cField, nAlias, nOrderTarget)
+FUNCTION SR_SetJoin(nAreaTarget, cField, nAlias, nOrderTarget)
 
    (nAreaTarget)
    (cField)
@@ -909,63 +926,69 @@ Function SR_SetJoin(nAreaTarget, cField, nAlias, nOrderTarget)
 
    SR_RuntimeErr(, "SR_SetJoin() is no longer supported")
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_AddRuleNotNull(cCol)
+FUNCTION SR_AddRuleNotNull(cCol)
 
-   local lRet
+   LOCAL lRet
 
    If IS_SQLRDD
       lRet := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):AddRuleNotNull(cCol)
       SR_CleanTabInfoCache()
-      Return lRet
+      RETURN lRet
    EndIf
 
-Return .F.
+RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_Deserialize(uData)
-* Local ctemp,cdes,chex
-* cTemp := udata
-* altd()
-* cHex := SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10))))
-* cdes := sr_Deserialize1(cHex)
-* tracelog(udata,chex,cdes)
-* return cdes
-Return SR_Deserialize1(SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10)))))
+FUNCTION SR_Deserialize(uData)
+
+   //LOCAL ctemp
+   //LOCAL cdes
+   //LOCALchex
+
+// cTemp := udata
+// altd()
+// cHex := SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10))))
+// cdes := sr_Deserialize1(cHex)
+// tracelog(udata,chex,cdes)
+// RETURN cdes
+
+RETURN SR_Deserialize1(SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10)))))
 
 /*------------------------------------------------------------------------*/
 
-Function SR_DropRuleNotNull(cCol)
+FUNCTION SR_DropRuleNotNull(cCol)
 
-   local lRet
+   LOCAL lRet
 
    If IS_SQLRDD
       lRet := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):DropRuleNotNull(cCol)
       SR_CleanTabInfoCache()
-      Return lRet
+      RETURN lRet
    EndIf
 
-Return .F.
+RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_LastSQLError()
+FUNCTION SR_LastSQLError()
 
    If IS_SQLRDD
-      Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):oSql:cSQLError
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):oSql:cSQLError
    EndIf
 
-Return ""
+RETURN ""
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetFilter(cFlt)
+FUNCTION SR_SetFilter(cFlt)
 
-   Local oWA, uRet
+   LOCAL oWA
+   LOCAL uRet
 
    If IS_SQLRDD
       oWA := (Select())->(dbInfo(DBI_INTERNAL_OBJECT))
@@ -978,43 +1001,43 @@ Function SR_SetFilter(cFlt)
       EndIf
    EndIf
 
-Return uRet
+RETURN uRet
 
 /*------------------------------------------------------------------------*/
 
-Function SR_ResetStatistics()
+FUNCTION SR_ResetStatistics()
 
    If IS_SQLRDD
       (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):ResetStatistics()
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GetnConnection()
+FUNCTION SR_GetnConnection()
 
    If IS_SQLRDD
-      Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT):oSql:nID )
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT):oSql:nID )
    EndIf
 
-Return 0
+RETURN 0
 
 /*------------------------------------------------------------------------*/
 
-Function SR_HasFilters()
+FUNCTION SR_HasFilters()
 
    If IS_SQLRDD
-      Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):HasFilters()
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):HasFilters()
    EndIf
 
-Return .F.
+RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_dbRefresh()
+FUNCTION SR_dbRefresh()
 
-   Local oWA
+   LOCAL oWA
 
    If IS_SQLRDD
       oWA := (Select())->(dbInfo(DBI_INTERNAL_OBJECT))
@@ -1026,7 +1049,7 @@ Function SR_dbRefresh()
       EndIf
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
@@ -1047,7 +1070,7 @@ ENDCLASS
 
 METHOD Haeval(bExpr) CLASS SqlFastHash
 
-Return Heval(::hHash, bExpr)
+RETURN Heval(::hHash, bExpr)
 
 /*------------------------------------------------------------------------*/
 
@@ -1077,6 +1100,7 @@ RETURN .T.
 /*------------------------------------------------------------------------*/
 
 METHOD Find(uHashKey, nIndex, nPart) CLASS SqlFastHash
+
    LOCAL aData
 
    nIndex := HGetPos(::hHash,uHashKey)
@@ -1092,13 +1116,14 @@ RETURN aData
 /*------------------------------------------------------------------------*/
 
 METHOD Delete(uHashKey) CLASS SqlFastHash
+
    LOCAL nIndex := 0
 
    nIndex := HGetPos(::hHash,uHashKey)
 
    If nIndex > 0
       HDelAt(::hHash, nIndex)
-      Return .T.
+      RETURN .T.
    EndIf
 
 RETURN .F.
@@ -1106,13 +1131,14 @@ RETURN .F.
 /*------------------------------------------------------------------------*/
 
 METHOD Update(uHashKey, uValue) CLASS SqlFastHash
+
    LOCAL nIndex := 0
 
    nIndex := HGetPos(::hHash,uHashKey)
 
    If nIndex > 0
       HSetValueAt(::hHash, nIndex, uValue)
-      Return .T.
+      RETURN .T.
    EndIf
 
 RETURN .F.
@@ -1127,9 +1153,9 @@ RETURN .F.
 
 /*------------------------------------------------------------------------*/
 
-Function SR_BeginTransaction(nCnn)
+FUNCTION SR_BeginTransaction(nCnn)
 
-   local oCnn
+   LOCAL oCnn
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1150,13 +1176,13 @@ Function SR_BeginTransaction(nCnn)
 
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_CommitTransaction(nCnn)
+FUNCTION SR_CommitTransaction(nCnn)
 
-   local oCnn
+   LOCAL oCnn
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1173,13 +1199,14 @@ Function SR_CommitTransaction(nCnn)
       EndIf
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetAppSite(nCnn, cSite)
+FUNCTION SR_SetAppSite(nCnn, cSite)
 
-   local oCnn, cOld
+   LOCAL oCnn
+   LOCAL cOld
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1194,13 +1221,14 @@ Function SR_SetAppSite(nCnn, cSite)
       EndIf
    EndIf
 
-Return cOld
+RETURN cOld
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetConnectionLogChanges(nCnn, nOpt)
+FUNCTION SR_SetConnectionLogChanges(nCnn, nOpt)
 
-   local oCnn, nOld
+   LOCAL oCnn
+   LOCAL nOld
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1215,13 +1243,14 @@ Function SR_SetConnectionLogChanges(nCnn, nOpt)
       EndIf
    EndIf
 
-Return nOld
+RETURN nOld
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetAppUser(nCnn, cUsername)
+FUNCTION SR_SetAppUser(nCnn, cUsername)
 
-   local oCnn, cOld
+   LOCAL oCnn
+   LOCAL cOld
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1236,13 +1265,14 @@ Function SR_SetAppUser(nCnn, cUsername)
       EndIf
    EndIf
 
-Return cOld
+RETURN cOld
 
 /*------------------------------------------------------------------------*/
 
-Function SR_SetALockWait(nCnn, nSeconds)
+FUNCTION SR_SetALockWait(nCnn, nSeconds)
 
-   local oCnn, nOld
+   LOCAL oCnn
+   LOCAL nOld
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1255,13 +1285,13 @@ Function SR_SetALockWait(nCnn, nSeconds)
       oCnn:nLockWaitTime := nSeconds
    EndIf
 
-Return nOld
+RETURN nOld
 
 /*------------------------------------------------------------------------*/
 
-Function SR_RollBackTransaction(nCnn)
+FUNCTION SR_RollBackTransaction(nCnn)
 
-   local oCnn
+   LOCAL oCnn
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1278,13 +1308,13 @@ Function SR_RollBackTransaction(nCnn)
       EndIf
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_TransactionCount(nCnn)
+FUNCTION SR_TransactionCount(nCnn)
 
-   local oCnn
+   LOCAL oCnn
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1293,16 +1323,16 @@ Function SR_TransactionCount(nCnn)
    EndIf
 
    If oCnn != NIL
-      Return oCnn:nTransacCount
+      RETURN oCnn:nTransacCount
    EndIf
 
-Return 0
+RETURN 0
 
 /*------------------------------------------------------------------------*/
 
-Function SR_EndTransaction(nCnn)
+FUNCTION SR_EndTransaction(nCnn)
 
-   local oCnn
+   LOCAL oCnn
 
    If HB_ISOBJECT(nCnn)
       oCnn := nCnn
@@ -1317,14 +1347,14 @@ Function SR_EndTransaction(nCnn)
       EndIf
    EndIf
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function SR_RuntimeErr(cOperation, cErr)
+FUNCTION SR_RuntimeErr(cOperation, cErr)
 
-   Local oErr := ErrorNew()
-   Local cDescr
+   LOCAL oErr := ErrorNew()
+   LOCAL cDescr
 
    DEFAULT cOperation TO "SQLRDD"
    DEFAULT cErr TO "RunTimeError"
@@ -1345,23 +1375,24 @@ Function SR_RuntimeErr(cOperation, cErr)
 
    Throw(oErr)
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function dbCount()
+FUNCTION dbCount()
 
    If IS_SQLRDD
-      Return (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):KeyCount()
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):KeyCount()
    EndIf
 
-Return 0
+RETURN 0
 
 /*------------------------------------------------------------------------*/
 
-Function SR_GetStack()
+FUNCTION SR_GetStack()
 
-   Local i := 1, cErrorLog := ""
+   LOCAL i := 1
+   LOCAL cErrorLog := ""
 
    while ( i < 70 )
        If ! Empty(ProcName(i))
@@ -1370,7 +1401,7 @@ Function SR_GetStack()
        i++
    end
 
-Return  cErrorLog
+RETURN  cErrorLog
 
 /*------------------------------------------------------------------------*/
 
@@ -1401,12 +1432,21 @@ Alert() copied as SQLBINDBYVAL() -> DEMO banner protection
 
 #define INRANGE(xLo, xVal, xHi)       (xVal >= xLo .AND. xVal <= xHi)
 
-
 FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
    LOCAL nChoice
-   LOCAL aSay, nPos, nWidth, nOpWidth, nInitRow, nInitCol
-   LOCAL nKey, aPos, nCurrent, aHotkey, aOptionsOK, cEval
+   LOCAL aSay
+   LOCAL nPos
+   LOCAL nWidth
+   LOCAL nOpWidth
+   LOCAL nInitRow
+   LOCAL nInitCol
+   LOCAL nKey
+   LOCAL aPos
+   LOCAL nCurrent
+   LOCAL aHotkey
+   LOCAL aOptionsOK
+   LOCAL cEval
    LOCAL cColorHigh
 
    LOCAL nOldRow
@@ -1416,14 +1456,23 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
    LOCAL nOldDispCount
    LOCAL nCount
-   LOCAL nLen, sCopy
+   LOCAL nLen
+   LOCAL sCopy
    LOCAL lWhile
 
-   LOCAL cColorStr,cColorPair1,cColorPair2,cColor11,cColor12,cColor21,cColor22
-   LOCAL nCommaSep,nSlash
+   LOCAL cColorStr
+   LOCAL cColorPair1
+   LOCAL cColorPair2
+   LOCAL cColor11
+   LOCAL cColor12
+   LOCAL cColor21
+   LOCAL cColor22
+   LOCAL nCommaSep
+   LOCAL nSlash
 
 #ifdef HB_COMPAT_C53
-   LOCAL nMRow, nMCol
+   LOCAL nMRow
+   LOCAL nMCol
 #endif
 
    /* TOFIX: Clipper decides at runtime, whether the GT is linked in,
@@ -1845,7 +1894,7 @@ RETURN nChoice
 // Convert number color format to character color format.
 STATIC FUNCTION COLORLETTER(cColor)
 
-Local nColor
+   LOCAL nColor
 
   if !IsCharacter(cColor)
      cColor:=""
@@ -1901,7 +1950,7 @@ RETURN ( cColor )
 STATIC FUNCTION COLORVALID(cColor)
 
 if !IsCharacter(cColor)
-   Return .F.
+   RETURN .F.
 endif
 
 cColor := StrTran(cColor, " ", "")
@@ -1934,11 +1983,11 @@ if cColor=="0"  .OR.;
    cColor=="RB" .OR.;
    cColor=="W"
 
-   Return .T.
+   RETURN .T.
 
 ENDIF
 
-Return .F.
+RETURN .F.
 
 #PRAGMA BEGINDUMP
 
@@ -1963,8 +2012,9 @@ HB_FUNC( SR_PHFILE )
 
 #PRAGMA ENDDUMP
 
-function sr_AddToFilter(nRecNo)
-   Local oWA
+FUNCTION sr_AddToFilter(nRecNo)
+
+   LOCAL oWA
 
    If IS_SQLRDD
       oWA := (Select())->(dbInfo(DBI_INTERNAL_OBJECT))
@@ -1975,10 +2025,12 @@ function sr_AddToFilter(nRecNo)
       EndIf
    EndIf
 
-Return NIL
+RETURN NIL
 
 FUNCTION sr_clearFilter()
-   Local oWa
+
+   LOCAL oWa
+
    If IS_SQLRDD
       oWA := (Select())->(dbInfo(DBI_INTERNAL_OBJECT))
       
@@ -1988,12 +2040,14 @@ FUNCTION sr_clearFilter()
       EndIf
    EndIf
 
-Return NIL
+RETURN NIL
 
 
 FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
+
    LOCAL oCnn
    LOCAL cSql := "ALTER TABLE "+ cTable + " ALTER COLUMN " +cField +" SET DEFAULT "
+
    oCnn := SR_GetConnection()
    IF HB_ISNUMERIC(cDefault) 
       cSql += Alltrim(str(cDefault))
@@ -2011,4 +2065,4 @@ FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
 RETURN NIL            
 
 FUNCTION SR_Deserialize1(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
-return HB_Deserialize(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
+RETURN HB_Deserialize(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
