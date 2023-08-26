@@ -51,7 +51,12 @@ source/sqlsrodbc.c
 {!xhb}-hbx=sqlrddpp.hbx
 {!xhb}sqlrddpp.hbx
 
-{allgcc}-cflag=-fpermissive
+# if necessary, add manually:
+# hbmk2 sqlrddpp.hbp -cflag=-fpermissive
+# harbour, gcc and c++ mode
+# harbour++
+#{allgcc}-cflag=-fpermissive
+
 {allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
 
 xhb.hbc
