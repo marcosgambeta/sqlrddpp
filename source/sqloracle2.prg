@@ -95,8 +95,10 @@ ENDCLASS
 /*------------------------------------------------------------------------*/
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_ORACLE2
-   (aArray)
-   (lTranslate)
+
+   HB_SYMBOL_UNUSED(aArray)
+   HB_SYMBOL_UNUSED(lTranslate)
+
 RETURN -1
 
 /*------------------------------------------------------------------------*/
@@ -300,21 +302,20 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
    //LOCAL cString
 
-   (cDSN)
-   (cUser)
-   (cPassword)
-   (nVersion)
-   (cOwner)
-   (nSizeMaxBuff)
-   (lTrace)
-   (nPrefetch)
-   (nSelMeth)
-   (nEmptyMode)
-   (nDateMode)
-   (lCounter)
-   (lAutoCommit)
+   HB_SYMBOL_UNUSED(cDSN)
+   HB_SYMBOL_UNUSED(cUser)
+   HB_SYMBOL_UNUSED(cPassword)
+   HB_SYMBOL_UNUSED(nVersion)
+   HB_SYMBOL_UNUSED(cOwner)
+   HB_SYMBOL_UNUSED(nSizeMaxBuff)
+   HB_SYMBOL_UNUSED(lTrace)
+   HB_SYMBOL_UNUSED(nPrefetch)
+   HB_SYMBOL_UNUSED(nSelMeth)
+   HB_SYMBOL_UNUSED(nEmptyMode)
+   HB_SYMBOL_UNUSED(nDateMode)
+   HB_SYMBOL_UNUSED(lCounter)
+   HB_SYMBOL_UNUSED(lAutoCommit)
 
-   
    ::hStmt := NIL
 *    nret    :=  SQLO2_CONNECT(::cUser + "/" + ::cPassWord + "@" + ::cDtb, @hDbc)
    if ::cApp != NIL
@@ -484,9 +485,9 @@ METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet) CLASS SR_ORACLE2
    DEFAULT lIn to .F.
    DEFAULT lStart to .F.
    
-   (nLen)
-   (cRet)
-   (nLenRet)
+   HB_SYMBOL_UNUSED(nLen)
+   HB_SYMBOL_UNUSED(cRet)
+   HB_SYMBOL_UNUSED(nLenRet)
    
    IF lStart
       ::AllocStatement()
@@ -586,8 +587,8 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    DEFAULT nMaxRecords TO 999999999999
    DEFAULT cVar To ":c1"
 
-   (ncols)
-   (nlogmode)
+   HB_SYMBOL_UNUSED(ncols)
+   HB_SYMBOL_UNUSED(nlogmode)
 
    ::AllocStatement()
 

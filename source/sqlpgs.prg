@@ -82,8 +82,10 @@ ENDCLASS
 /*------------------------------------------------------------------------*/
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_PGS
-   (aArray)
-   (lTranslate)
+
+   HB_SYMBOL_UNUSED(aArray)
+   HB_SYMBOL_UNUSED(lTranslate)
+
 RETURN -1
 
 /*------------------------------------------------------------------------*/
@@ -242,19 +244,19 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
    LOCAL cString
 
-   (cDSN)
-   (cUser)
-   (cPassword)
-   (nVersion)
-   (cOwner)
-   (nSizeMaxBuff)
-   (lTrace)
-   (nPrefetch)
-   (nSelMeth)
-   (nEmptyMode)
-   (nDateMode)
-   (lCounter)
-   (lAutoCommit)
+   HB_SYMBOL_UNUSED(cDSN)
+   HB_SYMBOL_UNUSED(cUser)
+   HB_SYMBOL_UNUSED(cPassword)
+   HB_SYMBOL_UNUSED(nVersion)
+   HB_SYMBOL_UNUSED(cOwner)
+   HB_SYMBOL_UNUSED(nSizeMaxBuff)
+   HB_SYMBOL_UNUSED(lTrace)
+   HB_SYMBOL_UNUSED(nPrefetch)
+   HB_SYMBOL_UNUSED(nSelMeth)
+   HB_SYMBOL_UNUSED(nEmptyMode)
+   HB_SYMBOL_UNUSED(nDateMode)
+   HB_SYMBOL_UNUSED(lCounter)
+   HB_SYMBOL_UNUSED(lAutoCommit)
 
    DEFAULT ::cPort TO 5432
 

@@ -1636,7 +1636,7 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
    LOCAL nAlAtual := Select()
    LOCAL cPre := hHashData[nAliasTmp]["cFile"]
 
-   (oCnn) // To remove warning
+   HB_SYMBOL_UNUSED(oCnn)
    
    DEFAULT cComm to ""
 

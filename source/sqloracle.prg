@@ -95,8 +95,10 @@ ENDCLASS
 /*------------------------------------------------------------------------*/
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_ORACLE
-   (aArray)
-   (lTranslate)
+
+   HB_SYMBOL_UNUSED(aArray)
+   HB_SYMBOL_UNUSED(lTranslate)
+
 RETURN -1
 
 /*------------------------------------------------------------------------*/
@@ -294,21 +296,20 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL cBuff := ""
    LOCAL aRet := {}
 
-   (cDSN)
-   (cUser)
-   (cPassword)
-   (nVersion)
-   (cOwner)
-   (nSizeMaxBuff)
-   (lTrace)
-   (nPrefetch)
-   (nSelMeth)
-   (nEmptyMode)
-   (nDateMode)
-   (lCounter)
-   (lAutoCommit)
+   HB_SYMBOL_UNUSED(cDSN)
+   HB_SYMBOL_UNUSED(cUser)
+   HB_SYMBOL_UNUSED(cPassword)
+   HB_SYMBOL_UNUSED(nVersion)
+   HB_SYMBOL_UNUSED(cOwner)
+   HB_SYMBOL_UNUSED(nSizeMaxBuff)
+   HB_SYMBOL_UNUSED(lTrace)
+   HB_SYMBOL_UNUSED(nPrefetch)
+   HB_SYMBOL_UNUSED(nSelMeth)
+   HB_SYMBOL_UNUSED(nEmptyMode)
+   HB_SYMBOL_UNUSED(nDateMode)
+   HB_SYMBOL_UNUSED(lCounter)
+   HB_SYMBOL_UNUSED(lAutoCommit)
 
-   
    ::hStmt := NIL
    nret    :=  SQLO_CONNECT(::cUser + "/" + ::cPassWord + "@" + ::cDtb, @hDbc)
    if nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
@@ -423,9 +424,9 @@ METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet) CLASS SR_ORACLE
    DEFAULT lIn to .F.
    DEFAULT lStart to .F.
    
-   (nLen)
-   (cRet)
-   (nLenRet)
+   HB_SYMBOL_UNUSED(nLen)
+   HB_SYMBOL_UNUSED(cRet)
+   HB_SYMBOL_UNUSED(nLenRet)
    
    IF lStart
       ::AllocStatement()
@@ -525,8 +526,8 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    DEFAULT nMaxRecords TO 999999999999
    DEFAULT cVar To ":c1"
 
-   (nlogMode)
-   (ncols)
+   HB_SYMBOL_UNUSED(nlogMode)
+   HB_SYMBOL_UNUSED(ncols)
 
    ::AllocStatement()
 

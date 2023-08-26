@@ -590,7 +590,7 @@ FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
                             { "CUSTO",      "N", 12, 0 } ;
                          }
 
-   (oCnn) // to remove warning
+   HB_SYMBOL_UNUSED(oCnn)
 
    BEGIN SEQUENCE
 
@@ -658,7 +658,7 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
                             { "COMANDO",    "M", 10, 0 } ;
                          }
 
-   (oCnn) // To remove warning
+   HB_SYMBOL_UNUSED(oCnn)
 
    DEFAULT cComm TO ""
 
@@ -919,10 +919,10 @@ RETURN NIL
 
 FUNCTION SR_SetJoin(nAreaTarget, cField, nAlias, nOrderTarget)
 
-   (nAreaTarget)
-   (cField)
-   (nAlias)
-   (nOrderTarget)
+   HB_SYMBOL_UNUSED(nAreaTarget)
+   HB_SYMBOL_UNUSED(cField)
+   HB_SYMBOL_UNUSED(nAlias)
+   HB_SYMBOL_UNUSED(nOrderTarget)
 
    SR_RuntimeErr(, "SR_SetJoin() is no longer supported")
 
@@ -1147,7 +1147,7 @@ RETURN .F.
 
 METHOD UpdateIndex(nPos, nPart, uValue) CLASS SqlFastHash
    /* nPart not used - Compatible with old version */
-   (nPart)
+   HB_SYMBOL_UNUSED(nPart)
    HSetValueAt(::hHash, nPos, uValue)
 RETURN .F.
 

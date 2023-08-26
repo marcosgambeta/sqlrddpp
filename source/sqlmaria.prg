@@ -89,9 +89,11 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_MARIA
 
    LOCAL nRet
 
-   (aArray)
-   (lTranslate)
+   HB_SYMBOL_UNUSED(aArray)
+   HB_SYMBOL_UNUSED(lTranslate)
+
    nRet := -1
+
 RETURN nRet
 
 /*------------------------------------------------------------------------*/
@@ -236,20 +238,20 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL cSystemVers := ""
    LOCAL cBuff := ""
    LOCAL nVersionp
-   
-   (cDSN)
-   (cUser)
-   (cPassword)
-   (nVersion)
-   (cOwner)
-   (nSizeMaxBuff)
-   (lTrace)
-   (nPrefetch)
-   (nSelMeth)
-   (nEmptyMode)
-   (nDateMode)
-   (lCounter)
-   (lAutoCommit)
+
+   HB_SYMBOL_UNUSED(cDSN)
+   HB_SYMBOL_UNUSED(cUser)
+   HB_SYMBOL_UNUSED(cPassword)
+   HB_SYMBOL_UNUSED(nVersion)
+   HB_SYMBOL_UNUSED(cOwner)
+   HB_SYMBOL_UNUSED(nSizeMaxBuff)
+   HB_SYMBOL_UNUSED(lTrace)
+   HB_SYMBOL_UNUSED(nPrefetch)
+   HB_SYMBOL_UNUSED(nSelMeth)
+   HB_SYMBOL_UNUSED(nEmptyMode)
+   HB_SYMBOL_UNUSED(nDateMode)
+   HB_SYMBOL_UNUSED(lCounter)
+   HB_SYMBOL_UNUSED(lAutoCommit)
 
    hDbc := MYSConnect(::cHost, ::cUser, ::cPassWord, ::cDtb, ::cPort, ::cDtb, nTimeout, ::lCompress)
    nRet := MYSStatus(hDbc)

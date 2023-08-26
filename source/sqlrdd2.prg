@@ -3763,7 +3763,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
    LOCAL cKeyValue
    LOCAL lIsIndKey := .F.
 
-   (lLast) // to remove warning
+   HB_SYMBOL_UNUSED(lLast)
 
    If ::lCollectingBehavior
       For each i in ::aSelectList
@@ -6599,7 +6599,7 @@ METHOD sqlOrderListFocus(uOrder, cBag) CLASS SR_WORKAREA
    LOCAL i
    LOCAL aInd
 
-   (cBag) // to remove warning
+   HB_SYMBOL_UNUSED(cBag)
 
    If HB_ISCHAR(uOrder)      /* TAG order */
       nOrder := aScan(::aIndex, {|x| upper(alltrim(x[ORDER_TAG])) == upper(alltrim(uOrder)) })
@@ -6678,9 +6678,8 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
    //LOCAL i
    //LOCAL aInd
 
-   (cBag) // to remove warning
-   //(uOrder)
-   
+   HB_SYMBOL_UNUSED(cBag)
+   //HB_SYMBOL_UNUSED(uOrder)
 
    If HB_ISCHAR(uOrder)      // TAG order
       nOrder := aScan(::aIndex, {|x| upper(alltrim(x[ORDER_TAG])) == upper(alltrim(uOrder)) })
@@ -6837,7 +6836,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
    LOCAL cName
    LOCAL nKeySize := 0
 
-   (lEnable)
+   HB_SYMBOL_UNUSED(lEnable)
 
    If HB_ISARRAY(aTargetColumns) .AND. len(aTargetColumns) > 0 .AND. HB_ISARRAY(aTargetColumns[1])
       aTargetColumns := aTargetColumns[1]
@@ -8079,7 +8078,7 @@ RETURN lRet
 
 METHOD sqlUnLock(uRecord) CLASS SR_WORKAREA
 
-   (uRecord)
+   HB_SYMBOL_UNUSED(uRecord)
 
    ::sqlGoCold()
 
@@ -9642,7 +9641,7 @@ METHOD OrdSetForClause(cFor, cForxBase) CLASS SR_WORKAREA
    LOCAL cWord := ""
    LOCAL cWordUpper
 
-   (cForxBase)
+   HB_SYMBOL_UNUSED(cForxBase)
 
    cFor := alltrim(cFor)
 
@@ -10181,8 +10180,6 @@ METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColum
    Endif
 
 RETURN NIL
-
-
 
 /*------------------------------------------------------------------------*/
 

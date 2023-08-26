@@ -626,7 +626,7 @@ FUNCTION SR_ReloadFieldModifiers(oConnect)
       oConnect:Commit()
    EndIf
 #else
-   (oConnect)
+   HB_SYMBOL_UNUSED(oConnect)
 #endif
 
 RETURN NIL
@@ -1310,7 +1310,7 @@ FUNCTION SR_ExistIndex(cIndexName, cOwner)
    LOCAL nRet
    LOCAL aRet := {}
 
-   (cOwner)
+   HB_SYMBOL_UNUSED(cOwner)
 
    oCnn := SR_GetConnection()
 

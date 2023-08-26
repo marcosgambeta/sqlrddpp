@@ -838,7 +838,7 @@ METHOD oExpression(xValue) CLASS EnchancedDirectRelation
 
    LOCAL cRelationExpr
 
-   (xValue)
+   HB_SYMBOL_UNUSED(xValue)
 
    IF ::_oExpression == NIL
       cRelationExpr := ::oClipperExpression:cValue
@@ -854,7 +854,7 @@ METHOD oIndexExpression(xValue) CLASS EnchancedDirectRelation
 
    LOCAL cIndexExpr
 
-   (xValue)
+   HB_SYMBOL_UNUSED(xValue)
 
    IF ::_oIndexExpression == NIL
       cIndexExpr := iif(::oSeekIndex:lIsSynthetic, ::oSeekIndex:aDbFields[1]:cName, ::oSeekIndex:oClipperExpression:cValue)

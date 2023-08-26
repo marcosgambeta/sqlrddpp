@@ -422,19 +422,19 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL cBuff := ""
    LOCAL aRet := {}
 
-   ( cDSN)
-   (cUser)
-   (cPassword)
-   (nVersion)
-   (cOwner)
-   (nSizeMaxBuff)
-   (lTrace)
-   (nPrefetch)
-   (nselMeth)
-   (nEmptyMode)
-   (nDateMode)
-   (lCounter)
-   (lAutoCommit)
+   HB_SYMBOL_UNUSED( cDSN)
+   HB_SYMBOL_UNUSED(cUser)
+   HB_SYMBOL_UNUSED(cPassword)
+   HB_SYMBOL_UNUSED(nVersion)
+   HB_SYMBOL_UNUSED(cOwner)
+   HB_SYMBOL_UNUSED(nSizeMaxBuff)
+   HB_SYMBOL_UNUSED(lTrace)
+   HB_SYMBOL_UNUSED(nPrefetch)
+   HB_SYMBOL_UNUSED(nselMeth)
+   HB_SYMBOL_UNUSED(nEmptyMode)
+   HB_SYMBOL_UNUSED(nDateMode)
+   HB_SYMBOL_UNUSED(lCounter)
+   HB_SYMBOL_UNUSED(lAutoCommit)
 
    ::lNative := .F.
 
