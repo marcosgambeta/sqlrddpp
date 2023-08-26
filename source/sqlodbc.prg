@@ -146,22 +146,22 @@ METHOD DriverCatTables() CLASS SR_ODBC
 
          n ++
          If n > nAllocated
-            Switch nAllocated
-            Case ARRAY_BLOCK1
+            SWITCH nAllocated
+            CASE ARRAY_BLOCK1
                nAllocated := ARRAY_BLOCK2
-               Exit
-            Case ARRAY_BLOCK2
+               EXIT
+            CASE ARRAY_BLOCK2
                nAllocated := ARRAY_BLOCK3
-               Exit
-            Case ARRAY_BLOCK3
+               EXIT
+            CASE ARRAY_BLOCK3
                nAllocated := ARRAY_BLOCK4
-               Exit
-            Case ARRAY_BLOCK4
+               EXIT
+            CASE ARRAY_BLOCK4
                nAllocated := ARRAY_BLOCK5
-               Exit
-            Default
+               EXIT
+            DEFAULT
                nAllocated += ARRAY_BLOCK5
-            End
+            ENDSWITCH
 
             aSize(aArray, nAllocated)
          EndIf
@@ -448,18 +448,18 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    ::DetectTargetDb()
 
-   Switch ::nSystemID
-   Case SYSTEMID_IBMDB2
+   SWITCH ::nSystemID
+   CASE SYSTEMID_IBMDB2
       SR_SetConnectAttr(hDbc, SQL_ATTR_LONGDATA_COMPAT, SQL_LD_COMPAT_YES)
-      Exit
-   Case SYSTEMID_MSSQL7
-   Case SYSTEMID_AZURE
+      EXIT
+   CASE SYSTEMID_MSSQL7
+   CASE SYSTEMID_AZURE
       ::exec("select cast( @@spid as numeric )", .T., .T., @aRet)
       If len(aRet) > 0
          ::uSid := val(str(aRet[1,1],8,0))
       EndIf
-      Exit
-   End
+      EXIT
+   ENDSWITCH
 
 return Self
 

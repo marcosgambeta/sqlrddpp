@@ -1062,23 +1062,23 @@ Local nRet := DE_CONT
        nRet := DE_ABORT
     endif
 #else
-    // xHarbour without 5.3 extensions code
-    Switch nKey
-      Case K_DOWN;oTb:down();Exit
-      Case K_UP;oTb:up();Exit
-      Case K_LEFT;oTb:left();Exit
-      Case K_RIGHT;oTb:right();Exit
-      Case K_PGDN;oTb:pageDown();Exit
-      Case K_PGUP;oTb:pageUp();Exit
-      Case K_CTRL_PGUP;oTb:goTop();Exit
-      Case K_CTRL_PGDN;oTb:goBottom();Exit
-      Case K_HOME;oTb:home();Exit
-      Case K_END;oTb:end();Exit
-      Case K_CTRL_HOME;oTb:panHome();Exit
-      Case K_CTRL_END;oTb:panEnd();Exit
-      Case K_CTRL_LEFT;oTb:panLeft();Exit
-      Case K_CTRL_RIGHT;oTb:panRight();Exit
-    End
+   // xHarbour without 5.3 extensions code
+   SWITCH nKey
+   CASE K_DOWN       ; oTb:down()     ; EXIT
+   CASE K_UP         ; oTb:up()       ; EXIT
+   CASE K_LEFT       ; oTb:left()     ; EXIT
+   CASE K_RIGHT      ; oTb:right()    ; EXIT
+   CASE K_PGDN       ; oTb:pageDown() ; EXIT
+   CASE K_PGUP       ; oTb:pageUp()   ; EXIT
+   CASE K_CTRL_PGUP  ; oTb:goTop()    ; EXIT
+   CASE K_CTRL_PGDN  ; oTb:goBottom() ; EXIT
+   CASE K_HOME       ; oTb:home()     ; EXIT
+   CASE K_END        ; oTb:end()      ; EXIT
+   CASE K_CTRL_HOME  ; oTb:panHome()  ; EXIT
+   CASE K_CTRL_END   ; oTb:panEnd()   ; EXIT
+   CASE K_CTRL_LEFT  ; oTb:panLeft()  ; EXIT
+   CASE K_CTRL_RIGHT ; oTb:panRight() ; EXIT
+   ENDSWITCH
 #endif
 
 Return nRet

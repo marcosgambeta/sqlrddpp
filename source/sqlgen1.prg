@@ -68,7 +68,7 @@
 #define  GETPARAM_VAL_2     uData:=iif(uData+1<=len(aParam),SR_DBQUALIFY(PARAM_SOLV,nSystemID),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##")
 #define  GETPARAM_VALNN     cSql+=iif(uData+1<=len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID,.T.),"##PARAM_"+strzero(uData+1,3)+"_NOT_NULL_NOT_SUPPLIED##");nIP++;Exit
 #define  FIX_PRE_WHERE      iif(nContext==SQL_CONTEXT_SELECT_PRE_WHERE,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" WHERE "),iif(nContext==SQL_CONTEXT_SELECT_PRE_WHERE2,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" AND "),))
-#define  PASSTHROUGH        nIP++;Exit
+#define  PASSTHROUGH        nIP++;EXIT
 #define  IDENTSPACE         space(nSpaces)
 //#define  TABLE_OPTIMIZER    iif(nSystemId==SYSTEMID_MSSQL7,iif(lLocking," WITH (UPDLOCK)", " WITH (NOLOCK)"),"")
 #define  TABLE_OPTIMIZER    iif(nSystemId==SYSTEMID_MSSQL7,iif(lLocking," WITH (UPDLOCK)", ""),"")
@@ -260,7 +260,6 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql +=  NEWLINE + IDENTSPACE + "  "
                EndIf
             EndIf
-
             PASSTHROUGH
          CASE SQL_PCODE_TABLE_NO_ALIAS
             aadd(aAlias, "")
@@ -396,31 +395,31 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_ORACLE
             CASE SYSTEMID_MSSQL7
                cSql += "AVG("
-               Exit
+               EXIT
             DEFAULT
                cSql += "AVERAGE("
-            END
+            ENDSWITCH
             RECURSIVE_CALL
          CASE SQL_PCODE_FUNC_ISNULL
             FIX_PRE_WHERE
             SWITCH nSystemId
             CASE SYSTEMID_MSSQL7
                cSql += "ISNULL("
-               Exit
+               EXIT
             CASE SYSTEMID_ORACLE
                cSql += "NVL("
-               Exit
+               EXIT
             CASE SYSTEMID_IBMDB2
                cSql += "VALUE("
-               Exit
+               EXIT
             CASE SYSTEMID_POSTGR
             CASE SYSTEMID_MYSQL
             Case SYSTEMID_MARIADB
                cSql += "COALESCE("
-               Exit
+               EXIT
             DEFAULT
                cSql += "ISNULL("
-            END
+            ENDSWITCH
             RECURSIVE_CALL
          CASE SQL_PCODE_FUNC_MAX
             FIX_PRE_WHERE
@@ -444,10 +443,10 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_MSSQL7
             CASE SYSTEMID_SYBASE
                cSql += "SUBSTRING("
-               Exit
+               EXIT
             DEFAULT
                cSql += "SUBSTR("
-            END
+            ENDSWITCH
             RECURSIVE_CALL
          CASE SQL_PCODE_FUNC_SUBSTR2
             FIX_PRE_WHERE
@@ -455,10 +454,10 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_MSSQL7
             CASE SYSTEMID_SYBASE
                cSql += "SUBSTRING("
-               Exit
+               EXIT
             DEFAULT
                cSql += "SUBSTR("
-            END
+            ENDSWITCH
             RECURSIVE_CALL
          CASE SQL_PCODE_FUNC_SUM
             FIX_PRE_WHERE
@@ -469,10 +468,10 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             SWITCH nSystemId
             CASE SYSTEMID_MSSQL7
                cSql += "dbo.trim("
-               Exit
+               EXIT
             DEFAULT
                cSql += "TRIM("
-            END
+            ENDSWITCH
             RECURSIVE_CALL
          CASE SQL_PCODE_SELECT_ITEM_ASTERISK
             cSql += "*"
@@ -491,24 +490,24 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_SELECT_LIMIT
             SKIPFWD
             SWITCH nSystemId
-            Case SYSTEMID_MSSQL7
-            Case SYSTEMID_CACHE
+            CASE SYSTEMID_MSSQL7
+            CASE SYSTEMID_CACHE
                cSql += "TOP " + ltrim(str(uData)) + " "
-               Exit
-            Case SYSTEMID_FIREBR
-            Case SYSTEMID_FIREBR3
-            Case SYSTEMID_INFORM
+               EXIT
+            CASE SYSTEMID_FIREBR
+            CASE SYSTEMID_FIREBR3
+            CASE SYSTEMID_INFORM
                cSql += "FIRST " + ltrim(str(uData)) + " "
-               Exit
-            Case SYSTEMID_MYSQL
-            Case SYSTEMID_MARIADB
-            Case SYSTEMID_POSTGR
+               EXIT
+            CASE SYSTEMID_MYSQL
+            CASE SYSTEMID_MARIADB
+            CASE SYSTEMID_POSTGR
                cTrailler := " LIMIT " + ltrim(str(uData)) + " "
-               Exit
-            Case SYSTEMID_IBMDB2
+               EXIT
+            CASE SYSTEMID_IBMDB2
                cTrailler := " fetch first " + ltrim(str(uData)) + " rows only"
-               Exit
-            END
+               EXIT
+            ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_SELECT_ORDER_ASC
             SKIPFWD
@@ -517,29 +516,29 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                cSql += SR_DBQUALIFY(uData, nSystemID) + "."
                SKIPFWD
             EndIf
-            Switch uData
-            Case SQL_PCODE_COLUMN_NAME_BINDVAR
+            SWITCH uData
+            CASE SQL_PCODE_COLUMN_NAME_BINDVAR
                SKIPFWD
                cSql += SR_DBQUALIFY(&uData, nSystemID) + " ASC"
                If nSystemId == SYSTEMID_ORACLE
                   cSql += " NULLS FIRST"
                EndIf
-               Exit
-            Case SQL_PCODE_COLUMN_NAME_PARAM
+               EXIT
+            CASE SQL_PCODE_COLUMN_NAME_PARAM
                SKIPFWD
                GETPARAM_VAL_2
                cSql += SR_DBQUALIFY(uData, nSystemID) + " ASC"
                If nSystemId == SYSTEMID_ORACLE
                   cSql += " NULLS FIRST"
                EndIf
-               Exit
-            Default
+               EXIT
+            DEFAULT
                SKIPFWD
                cSql += SR_DBQUALIFY(uData, nSystemID) + " ASC"
                If nSystemId == SYSTEMID_ORACLE
                   cSql += " NULLS FIRST"
                EndIf
-            End
+            ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_SELECT_ORDER_DESC
             SKIPFWD
@@ -548,29 +547,29 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                cSql += SR_DBQUALIFY(uData, nSystemID) + "."
                SKIPFWD
             EndIf
-            Switch uData
-            Case SQL_PCODE_COLUMN_NAME_BINDVAR
+            SWITCH uData
+            CASE SQL_PCODE_COLUMN_NAME_BINDVAR
                SKIPFWD
                cSql += SR_DBQUALIFY(&uData, nSystemID) + " DESC"
                If nSystemId == SYSTEMID_ORACLE
                   cSql += " NULLS FIRST"
                EndIf
-               Exit
-            Case SQL_PCODE_COLUMN_NAME_PARAM
+               EXIT
+            CASE SQL_PCODE_COLUMN_NAME_PARAM
                SKIPFWD
                GETPARAM_VAL_2
                cSql += SR_DBQUALIFY(uData, nSystemID) + " DESC"
                If nSystemId == SYSTEMID_ORACLE
                   cSql += " NULLS FIRST"
                EndIf
-               Exit
-            Default
+               EXIT
+            DEFAULT
                SKIPFWD
                cSql += SR_DBQUALIFY(uData, nSystemID) + " DESC"
                If nSystemId == SYSTEMID_ORACLE
                   cSql += " NULLS FIRST"
                EndIf
-            End
+            ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_SELECT_ORDER
             cSql += NEWLINE + IDENTSPACE + " ORDER BY "
@@ -938,26 +937,25 @@ Static Function SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             SWITCH nSystemId
             CASE SYSTEMID_MSSQL7
                cSql += " + "
-               Exit
+               EXIT
             CASE SYSTEMID_ORACLE
             CASE SYSTEMID_POSTGR
             CASE SYSTEMID_MYSQL
             Case SYSTEMID_MARIADB
                cSql += " || "
-               Exit
-            END
+               EXIT
+            ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_OPERATOR_JOIN
             SWITCH nSystemId
             CASE SYSTEMID_MSSQL7
                cSql += " = "
-               Exit
+               EXIT
             CASE SYSTEMID_ORACLE
                cSql += " = "
-               Exit
-            END
+               EXIT
+            ENDSWITCH
             PASSTHROUGH
-
          CASE SQL_PCODE_OPERATOR_LEFT_OUTER_JOIN
             SKIPFWD
             If uData == SQL_PCODE_COLUMN_ALIAS
@@ -1660,7 +1658,7 @@ Static Function SR_IsComparOp(nOp)
    CASE SQL_PCODE_OPERATOR_IS_NULL
    CASE SQL_PCODE_OPERATOR_IS_NOT_NULL
       RETURN .T.
-   END SWITCH
+   ENDSWITCH
 
 Return .F.
 
@@ -1672,7 +1670,7 @@ Static Function SR_IsComparNullOp(nOp)
    CASE SQL_PCODE_OPERATOR_IS_NULL
    CASE SQL_PCODE_OPERATOR_IS_NOT_NULL
       RETURN .T.
-   END SWITCH
+   ENDSWITCH
 
 Return .F.
 
@@ -1685,35 +1683,35 @@ Static Function SR_ComparOpText(nOp)
    Switch nOp
    CASE SQL_PCODE_OPERATOR_EQ
       cSql += " = "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_NE
       cSql += " != "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_GT
       cSql += " > "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_GE
       cSql += " >= "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_LT
       cSql += " < "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_LE
       cSql += " <= "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_LIKE
       cSql += " LIKE "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_NOT_LIKE
       cSql += " NOT LIKE "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_IS_NULL
       cSql += " IS NULL "
-      Exit
+      EXIT
    CASE SQL_PCODE_OPERATOR_IS_NOT_NULL
       cSql += " IS NOT NULL "
-      Exit
-   End
+      EXIT
+   ENDSWITCH
 
 Return cSql
 

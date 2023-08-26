@@ -1474,34 +1474,27 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       CASE "C"
       CASE "M"
          EXIT
-
       CASE "N"
          xMessage := LTrim(Str(xMessage))
          EXIT
-
       CASE "D"
          xMessage := DToC(xMessage)
          EXIT
-
       CASE "T"
          xMessage := TToC(xMessage)
          EXIT
-
       CASE "L"
          xMessage := iif(xMessage, ".T.", ".F.")
          EXIT
-
       CASE "O"
          xMessage := xMessage:className + " Object"
          EXIT
-
       CASE "B"
          xMessage := "{||...}"
          EXIT
-
       DEFAULT
          xMessage := "NIL"
-      END
+      ENDSWITCH
 
       DO WHILE ( nPos := At(';', xMessage) ) != 0
          AAdd(aSay, Left(xMessage, nPos - 1))
@@ -1726,19 +1719,16 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          CASE 0
             lWhile := .F.
             EXIT
-
          CASE K_ESC
             nChoice := 0
             lWhile  := .F.
             EXIT
-
          DEFAULT
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
                lWhile  := .F.
             ENDIF
-
-         END
+         ENDSWITCH
 
       ENDDO
 
@@ -1784,20 +1774,16 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          CASE 0
             lWhile := .F.
             EXIT
-
          CASE K_ESC
             nChoice := 0
             lWhile  := .F.
             EXIT
-
 #ifdef HB_COMPAT_C53
-
          CASE K_LBUTTONDOWN
             nMRow  := MRow()
             nMCol  := MCol()
             nPos   := 0
             nCount := Len(aSay)
-
             FOR EACH cEval IN aOptionsOK
                IF nMRow == nInitRow + nCount + 2 .AND. ;
                   INRANGE(aPos[HB_EnumIndex()], nMCol, aPos[HB_EnumIndex()] + Len(cEval) + 2 - 1)
@@ -1805,16 +1791,12 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                   EXIT
                ENDIF
             NEXT
-
             IF nPos > 0
                nChoice := nPos
                lWhile := .F.
             ENDIF
-
             EXIT
-
 #endif
-
          CASE K_LEFT
          CASE K_SH_TAB
             IF Len(aOptionsOK) > 1
@@ -1825,7 +1807,6 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                nDelay := 0
             ENDIF
             EXIT
-
          CASE K_RIGHT
          CASE K_TAB
             IF Len(aOptionsOK) > 1
@@ -1836,14 +1817,12 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                nDelay := 0
             ENDIF
             EXIT
-
          DEFAULT
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := aScan(aHotkey, {| x | x == Upper(Chr(nKey)) })
                lWhile  := .F.
             ENDIF
-
-         END
+         ENDSWITCH
 
       ENDDO
 
@@ -1877,7 +1856,6 @@ Local nColor
   cColor := StrTran(cColor, "+", "")
 
   nColor := Abs(Val(cColor))
-
 
   if nColor=0
      cColor:="N"

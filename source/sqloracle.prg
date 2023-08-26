@@ -672,22 +672,22 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          While (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
             n ++
             If n > nAllocated
-               Switch nAllocated
-               Case ARRAY_BLOCK1
+               SWITCH nAllocated
+               CASE ARRAY_BLOCK1
                   nAllocated := ARRAY_BLOCK2
-                  Exit
-               Case ARRAY_BLOCK2
+                  EXIT
+               CASE ARRAY_BLOCK2
                   nAllocated := ARRAY_BLOCK3
-                  Exit
-               Case ARRAY_BLOCK3
+                  EXIT
+               CASE ARRAY_BLOCK3
                   nAllocated := ARRAY_BLOCK4
-                  Exit
-               Case ARRAY_BLOCK4
+                  EXIT
+               CASE ARRAY_BLOCK4
                   nAllocated := ARRAY_BLOCK5
-                  Exit
-               Default
+                  EXIT
+               DEFAULT
                   nAllocated += ARRAY_BLOCK5
-               End
+               ENDSWITCH
 
                aSize(aArray, nAllocated)
             EndIf

@@ -1370,22 +1370,20 @@ while lRet
    IF Aret == NIL
       loop
    endif
-   switch aRet[1]
-   case _ORATBROWSE_METHOD
-     oBrowse:applykey(nKey)
-     exit
-  case _ORATBROWSE_REFRESHALL   
-     zap
-     osql:exec(cSql,,.T.,,cTempFile)
-     go top
-     exit     
-  
-  case  _ORATBROWSE_EXIT  
+   SWITCH aRet[1]
+   CASE _ORATBROWSE_METHOD
+      oBrowse:applykey(nKey)
+      EXIT
+   CASE _ORATBROWSE_REFRESHALL
+      zap
+      osql:exec(cSql,,.T.,,cTempFile)
+      go top
+      EXIT
+   CASE  _ORATBROWSE_EXIT
      lRet := .F.
-     exit
-    
-   end switch       
-       
+     EXIT
+   ENDSWITCH
+
 enddo
    
 return 0
