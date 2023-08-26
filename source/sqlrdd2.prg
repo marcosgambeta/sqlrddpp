@@ -10188,16 +10188,16 @@ FUNCTION SR_ParseFileName(cInd)
    LOCAL i
    LOCAL cRet := ""
 
-   For i = len(cInd) to 1 STEP -1
-      If cInd[i] == "."
+   FOR i := len(cInd) TO 1 STEP -1
+      IF substr(cInd, i, 1) == "."
          cRet := ""
-         Loop
-      endif
-      If cInd[i] $ "\/:"
-         Exit
-      EndIf
-      cRet := cInd[i] + cRet
-   Next
+         LOOP
+      ENDIF
+      IF substr(cInd, i, 1) $ "\/:"
+         EXIT
+      ENDIF
+      cRet := substr(cInd, i, 1) + cRet
+   NEXT
 
 RETURN alltrim(cRet)
 
