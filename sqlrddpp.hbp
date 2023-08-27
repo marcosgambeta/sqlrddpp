@@ -22,7 +22,7 @@ source/sqlconnection.prg
 source/sqlfirebird.prg
 source/sqlgen1.prg
 source/sqlmy.prg
-source/sqlnames.prg
+#source/sqlnames.prg
 source/sqlodbc.prg
 source/sqloracle.prg
 source/sqlpgs.prg

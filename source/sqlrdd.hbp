@@ -38,7 +38,7 @@ exprsimpl.prg
 exprobjs.prg
 exprrelation.prg
 exprudf.prg
-sqlnames.prg
+#sqlnames.prg
 
 sql.y
 #sqly.c
