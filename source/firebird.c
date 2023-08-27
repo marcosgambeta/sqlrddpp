@@ -189,18 +189,18 @@ HB_FUNC( FBCONNECT )  // FBConnect( cDatabase, cUser, cPassword, [charset], @hEn
 
    dpb[i++] = isc_dpb_password;
    len = strlen(passwd);
-   dpb[i++] = len;
+   dpb[i++] = (char) len;
    strncpy(&(dpb[i]), passwd, len);
    i += len;
 
    if( charset != NULL ) {
       dpb[i++] = isc_dpb_lc_ctype;
       len = strlen(charset);
-      dpb[i++] = len;
+      dpb[i++] = (char) len;
       strncpy(&(dpb[i]), charset, len);
       i += len;
    }
-   if( isc_attach_database( session->status, 0, db_connect, &(session->db), i, dpb ) ) {
+   if( isc_attach_database( session->status, 0, db_connect, &(session->db), (short) i, dpb ) ) {
       fb_log_status(session, "FBCONNECT");
       if( session->msgerror )
          hb_xfree(session->msgerror);
@@ -371,7 +371,7 @@ HB_FUNC( FBEXECUTE ) // FBExecute( hEnv, cCmd, nDialect )
    }
    //printf( "isc_dsql_prepare %p %p %p %s %p\n", session->status, session->transac, session->stmt, command, session->sqlda );
    //if( isc_dsql_prepare( session->status, &(session->transac), &(session->stmt), 0, command, hb_parni(3), session->sqlda ) )
-   isc_dsql_prepare( session->status, &(session->transac), &(session->stmt), 0, command, hb_parni(3), session->sqlda );
+   isc_dsql_prepare( session->status, &(session->transac), &(session->stmt), 0, command, (unsigned short) hb_parni(3), session->sqlda );
    if( CHECK_ERROR(session) ) {
       ERRORLOGANDEXIT( session, (char *) command );
    }
@@ -433,14 +433,14 @@ HB_FUNC( FBEXECUTE ) // FBExecute( hEnv, cCmd, nDialect )
    if( !session->sqlda->sqld ) {
 //           ISC_STATUS r;
 //      if( isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL ) )
-      isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL );
+      isc_dsql_execute( session->status, &(session->transac), &(session->stmt), (unsigned short) hb_parni(3), NULL );
       if( CHECK_ERROR(session) ) {
          ERRORLOGANDEXIT( session, "FBEXECUTE4" );
       }
    } else {
       //if( isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), session->sqlda ) )
 //          ISC_STATUS r;
-      isc_dsql_execute( session->status, &(session->transac), &(session->stmt), hb_parni(3), session->sqlda ) ;
+      isc_dsql_execute( session->status, &(session->transac), &(session->stmt), (unsigned short) hb_parni(3), session->sqlda ) ;
       if( CHECK_ERROR(session) ) {
          ERRORLOGANDEXIT( session, "FBEXECUTE5" );
       }
@@ -471,7 +471,7 @@ HB_FUNC( FBEXECUTEIMMEDIATE ) // FBExecuteImmediate( hEnv, cCmd, nDialect )
 //    if( isc_dsql_execute_immediate( session->status, &(session->db), &(session->transac), 0, command, hb_parni(3), NULL ) ) {
 //       ERRORLOGANDEXIT( session, (char *) command );
 //    }
-   isc_dsql_execute_immediate( session->status, &(session->db), &(session->transac), 0, command, hb_parni(3), NULL );
+   isc_dsql_execute_immediate( session->status, &(session->db), &(session->transac), 0, command, (unsigned short) hb_parni(3), NULL );
 
    if( CHECK_ERROR(session) ) {
       ERRORLOGANDEXIT( session, (char *) command );
@@ -732,9 +732,9 @@ HB_FUNC( FBGETDATA )    // FBGetData( hEnv, nField, @uData )
 
             if( dscale < 0 ) {
                ISC_INT64 tens;
-               short i;
+               short si;
                tens = 1;
-               for( i = 0; i > dscale; i-- ) {
+               for( si = 0; si > dscale; si-- ) {
                   tens *= 10;
                }
 
@@ -884,7 +884,7 @@ HB_FUNC( FBCREATEDB )
       hb_snprintf( create_db, sizeof( create_db ), "CREATE DATABASE '%s' USER '%s' PASSWORD '%s'", db_name, username, passwd /*, page, charset*/ );
    }
 
-   if( isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, dialect, NULL) ) {
+   if( isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, (unsigned short) dialect, NULL) ) {
       hb_retni( SQL_ERROR );
       TraceLog( LOGFILE, "FireBird Error: %s - code: %i (see iberr.h)\n", "create database", status[1] );
    } else {
@@ -1273,9 +1273,9 @@ HB_FUNC( FBLINEPROCESSED )
 
                      if( dscale < 0 ) {
                         ISC_INT64 tens;
-                        short i;
+                        short si;
                         tens = 1;
-                        for( i = 0; i > dscale; i-- ) {
+                        for( si = 0; si > dscale; si-- ) {
                            tens *= 10;
                         }
 
@@ -1292,7 +1292,7 @@ HB_FUNC( FBLINEPROCESSED )
                                     (ISC_INT64) (value / tens),
                                     -dscale,
                                     (ISC_INT64) -(value % tens));
-                           FBFieldGet( hb_arrayGetItemPtr( pFields, icol ), temp, (char * ) data, strlen( data ), bQueryOnly, ulSystemID, bTranslate );         
+                           FBFieldGet( hb_arrayGetItemPtr( pFields, icol ), temp, (char * ) data, strlen( data ), bQueryOnly, ulSystemID, bTranslate );
                         } else {
                            hb_snprintf( data, sizeof( data ), "%*s.%0*" ISC_INT64_FORMAT "d",
                                     field_width - 1 + dscale,
@@ -1306,25 +1306,25 @@ HB_FUNC( FBLINEPROCESSED )
                         FBFieldGet( hb_arrayGetItemPtr( pFields, icol ), temp, (char * ) data, strlen( data ), bQueryOnly, ulSystemID, bTranslate );
                      } else {
 //                         sprintf(p, "%*" ISC_INT64_FORMAT "d%", field_width, (ISC_INT64) value);
-//                         hb_snprintf( data, sizeof( data ), "%*" ISC_INT64_FORMAT "d", field_width, ( ISC_INT64 ) value );                         
+//                         hb_snprintf( data, sizeof( data ), "%*" ISC_INT64_FORMAT "d", field_width, ( ISC_INT64 ) value );
                            PHB_ITEM pField = hb_arrayGetItemPtr( pFields, icol );
                            LONG lType = ( LONG ) hb_arrayGetNL( pField, 6 );
                            if( lType == SQL_BIT || lType == SQL_SMALLINT )
-                              hb_itemPutL(temp,value);
+                              hb_itemPutL(temp, (HB_BOOL) value);
                            else
                               hb_itemPutNInt( temp,( ISC_INT64 ) value);
 
                      }
-                  
-                  
-                  
+
+
+
                   hb_arraySetForward( pRet, icol , temp );
-}              
+}
                   break;
 
                case IB_SQL_FLOAT:
-//                   
-                  
+//
+
 //                   hb_snprintf( data, sizeof( data ), "%15g ", *(float ISC_FAR *) (var->sqldata));
 //                   TraceLog("fb.log","valor float = %lf data %s\n",*(float ISC_FAR *) (var->sqldata),data);
 //                   FBFieldGet( hb_arrayGetItemPtr( pFields, icol ), temp, (char * ) data, strlen( data ), bQueryOnly, ulSystemID, bTranslate );
@@ -1333,8 +1333,8 @@ HB_FUNC( FBLINEPROCESSED )
                   break;
 
                case IB_SQL_DOUBLE:
-//                   
-                  
+//
+
 //                   hb_snprintf( data, sizeof( data ), "%24f ", *(double ISC_FAR *) (var->sqldata));
 //                   TraceLog("fb.log","valor double = %lf data %s\n",*(float ISC_FAR *) (var->sqldata),data);
 //                   FBFieldGet( hb_arrayGetItemPtr( pFields, icol ), temp, (char * ) data, strlen( data ), bQueryOnly, ulSystemID, bTranslate );
