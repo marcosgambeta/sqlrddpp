@@ -56,4 +56,6 @@
 #define CR_LF     ( chr(13) + chr(10) )
 
 
+#if 0
 #include "hbcompat.ch"
+#endif
