@@ -570,14 +570,14 @@ int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact )
       itemTemp = hb_itemArrayGet( pTag, INDEX_KEY_CODEBLOCK );
       if( HB_IS_NUMBER( itemTemp ) ) {
          pKeyVal = hb_itemArrayGet( ((SQLAREAP)thiswa)->aBuffer, hb_arrayGetNL( pTag, INDEX_KEY_CODEBLOCK ) );
-         len1 = hb_strRTrimLen( hb_itemGetCPtr( pKeyVal ), hb_itemGetCLen( pKeyVal ), FALSE ) - 15;
+         len1 = (BYTE) hb_strRTrimLen( hb_itemGetCPtr( pKeyVal ), hb_itemGetCLen( pKeyVal ), FALSE ) - 15;
          val1 = hb_itemGetCPtr( pKeyVal );
       } else {
          EVALINFO info;
          hb_evalNew( &info, hb_itemArrayGet( pTag, INDEX_KEY_CODEBLOCK ) );
          pKeyVal = hb_evalLaunch( &info );
          hb_evalRelease( &info );
-         len1 = hb_itemGetCLen( pKeyVal );
+         len1 = (BYTE) hb_itemGetCLen( pKeyVal );
          val1 = hb_itemGetCPtr( pKeyVal );
       }
       hb_itemRelease( itemTemp );
@@ -593,13 +593,13 @@ int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact )
    } else if( HB_IS_NUMBER( pKey ) ) {
       PHB_ITEM pLen = hb_itemPutNL( NULL, (const LONG) len1 );
       val2 = valbuf = hb_itemStr( pKey, pLen, NULL );
-      len2 = strlen( val2 );
+      len2 = (BYTE) strlen( val2 );
       hb_itemRelease( pLen );
    } else if( HB_IS_LOGICAL( pKey ) ) {
       len2 = 1;
       val2 = hb_itemGetL( pKey ) ? "T" : "F";
    } else {
-      len2 = hb_itemGetCLen( pKey );
+      len2 = (BYTE) hb_itemGetCLen( pKey );
       val2 = hb_itemGetCPtr( pKey );
    }
 
@@ -1220,8 +1220,8 @@ static HB_ERRCODE sqlGetValue( SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value 
       }
       */
 #ifndef HB_CDP_SUPPORT_OFF
-      LPFIELD pField = thiswa->area.lpFields + fieldNum - 1;
-      if( pField->uiType == HB_FT_STRING ) {
+      LPFIELD pField_ = thiswa->area.lpFields + fieldNum - 1;
+      if( pField_->uiType == HB_FT_STRING ) {
          PHB_CODEPAGE cdpDest = thiswa->cdPageCnv ? thiswa->cdPageCnv : hb_vmCDP();
          if( thiswa->area.cdPage && thiswa->area.cdPage != cdpDest ) {
             HB_SIZE nLen = hb_itemGetCLen( itemTemp );
@@ -2947,17 +2947,17 @@ static HB_ERRCODE sqlLock( SQLAREAP thiswa, LPDBLOCKINFO pLockInfo )
          hb_objSendMessage( thiswa->oWorkArea, s_pSym_SQLLOCK, 2, pMethod, pRecord );
          hb_itemRelease( pRecord );
 
-         pLockInfo->fResult = hb_itemGetL( hb_stackReturnItem() );
+         pLockInfo->fResult = (HB_USHORT) hb_itemGetL( hb_stackReturnItem() );
          break;
 
       case DBLM_MULTIPLE:
          hb_objSendMessage( thiswa->oWorkArea, s_pSym_SQLLOCK, 2, pMethod, pLockInfo->itmRecID );
-         pLockInfo->fResult = hb_itemGetL( hb_stackReturnItem() );
+         pLockInfo->fResult = (HB_USHORT) hb_itemGetL( hb_stackReturnItem() );
          break;
 
       case DBLM_FILE:
          hb_objSendMessage( thiswa->oWorkArea, s_pSym_SQLLOCK, 1, pMethod );
-         pLockInfo->fResult = hb_itemGetL( hb_stackReturnItem() );
+         pLockInfo->fResult = (HB_USHORT) hb_itemGetL( hb_stackReturnItem() );
          break;
 
       default:
