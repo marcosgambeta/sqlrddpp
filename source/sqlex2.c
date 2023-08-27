@@ -101,7 +101,7 @@ char * QualifyName( char * szName, SQLEXAREAP thiswa )
       case SYSTEMID_FIREBR:
       case SYSTEMID_IBMDB2:
       case SYSTEMID_ADABAS:
-         szName[i] = toupper( (BYTE) szName[i] );
+         szName[i] = (char) toupper( (BYTE) szName[i] );
          break;
       case SYSTEMID_INGRES:
       case SYSTEMID_POSTGR:
@@ -109,7 +109,7 @@ char * QualifyName( char * szName, SQLEXAREAP thiswa )
       case SYSTEMID_MARIADB:
       case SYSTEMID_OTERRO:
       case SYSTEMID_INFORM:
-         szName[i] = tolower( (BYTE) szName[i] );
+         szName[i] = (char) tolower( (BYTE) szName[i] );
          break;
       }
    }
@@ -434,9 +434,9 @@ HB_ERRCODE BindInsertColumns( SQLEXAREAP thiswa )
             case SQL_C_CHAR: {
                InsertRecord->lIndPtr = SQL_NTS;
 
-               res = SQLBindParameter( thiswa->hStmtInsert, iBind, SQL_PARAM_INPUT,
-                                       InsertRecord->iCType,
-                                       InsertRecord->iSQLType,
+               res = SQLBindParameter( thiswa->hStmtInsert, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) InsertRecord->iCType,
+                                       (SQLSMALLINT) InsertRecord->iSQLType,
                                        InsertRecord->ColumnSize,
                                        InsertRecord->DecimalDigits,
                                        InsertRecord->asChar.value, 0, &(InsertRecord->lIndPtr) );
@@ -446,7 +446,7 @@ HB_ERRCODE BindInsertColumns( SQLEXAREAP thiswa )
                SQLINTEGER nInd;
                InsertRecord->lIndPtr = SQL_NTS;
                nInd = strlen((const char *)(InsertRecord->asChar.value));
-               res = SQLBindParameter( thiswa->hStmtInsert, iBind,
+               res = SQLBindParameter( thiswa->hStmtInsert, (SQLUSMALLINT) iBind,
                                        SQL_PARAM_INPUT,
                                        SQL_C_CHAR,
                                        SQL_LONGVARCHAR,
@@ -459,9 +459,9 @@ HB_ERRCODE BindInsertColumns( SQLEXAREAP thiswa )
             }
             case SQL_C_DOUBLE: {
                InsertRecord->lIndPtr = 0;
-               res = SQLBindParameter( thiswa->hStmtInsert, iBind, SQL_PARAM_INPUT,
-                                       InsertRecord->iCType,
-                                       InsertRecord->iSQLType,
+               res = SQLBindParameter( thiswa->hStmtInsert, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) InsertRecord->iCType,
+                                       (SQLSMALLINT) InsertRecord->iSQLType,
                                        InsertRecord->ColumnSize,
                                        InsertRecord->DecimalDigits,
                                        &(InsertRecord->asNumeric), 0, &(InsertRecord->lIndPtr) );
@@ -470,7 +470,7 @@ HB_ERRCODE BindInsertColumns( SQLEXAREAP thiswa )
             case SQL_C_TYPE_TIMESTAMP: {
                //DebugBreak();
                InsertRecord->lIndPtr = 0;
-               res = SQLBindParameter( thiswa->hStmtInsert, iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter( thiswa->hStmtInsert, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
                                        SQL_C_TYPE_TIMESTAMP,
                                        SQL_TYPE_TIMESTAMP,
                                        SQL_TIMESTAMP_LEN,
@@ -480,7 +480,7 @@ HB_ERRCODE BindInsertColumns( SQLEXAREAP thiswa )
             }
             case SQL_C_TYPE_DATE: {
                InsertRecord->lIndPtr = 0;
-               res = SQLBindParameter( thiswa->hStmtInsert, iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter( thiswa->hStmtInsert, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
                                        SQL_C_TYPE_DATE,
                                        SQL_TYPE_DATE,
                                        SQL_DATE_LEN,
@@ -489,9 +489,9 @@ HB_ERRCODE BindInsertColumns( SQLEXAREAP thiswa )
                break;
             }
             case SQL_C_BIT: {
-               res = SQLBindParameter( thiswa->hStmtInsert, iBind, SQL_PARAM_INPUT,
-                                       InsertRecord->iCType,
-                                       InsertRecord->iSQLType,
+               res = SQLBindParameter( thiswa->hStmtInsert, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) InsertRecord->iCType,
+                                       (SQLSMALLINT) InsertRecord->iSQLType,
                                        InsertRecord->ColumnSize,
                                        InsertRecord->DecimalDigits,
                                        &(InsertRecord->asLogical), 0, NULL );
@@ -627,7 +627,7 @@ HB_ERRCODE ExecuteInsertStmt( SQLEXAREAP thiswa )
    }
    case SYSTEMID_ORACLE:
    case SYSTEMID_MYSQL: {
-      SQLRETURN res;
+      SQLRETURN _res;
       char ident[200]={0};
       char tablename[100]={0};
 
@@ -647,34 +647,34 @@ HB_ERRCODE ExecuteInsertStmt( SQLEXAREAP thiswa )
             }
          }
 
-         res = SQLAllocHandle( SQL_HANDLE_STMT, (HDBC) thiswa->hDbc, &(thiswa->hStmtNextval) );
-         if( CHECK_SQL_N_OK( res ) ) {
-            odbcErrorDiagRTE( thiswa->hStmtNextval, "SQLAllocStmt", ident, res, __LINE__, __FILE__ );
+         _res = SQLAllocHandle( SQL_HANDLE_STMT, (HDBC) thiswa->hDbc, &(thiswa->hStmtNextval) );
+         if( CHECK_SQL_N_OK( _res ) ) {
+            odbcErrorDiagRTE( thiswa->hStmtNextval, "SQLAllocStmt", ident, _res, __LINE__, __FILE__ );
             return HB_FAILURE;
          }
 
-         res = SQLPrepare( thiswa->hStmtNextval, (SQLCHAR *) (ident), SQL_NTS );
-         if( CHECK_SQL_N_OK( res ) ) {
-            odbcErrorDiagRTE( thiswa->hStmtNextval, "SQLPrepare", ident, res, __LINE__, __FILE__ );
+         _res = SQLPrepare( thiswa->hStmtNextval, (SQLCHAR *) (ident), SQL_NTS );
+         if( CHECK_SQL_N_OK( _res ) ) {
+            odbcErrorDiagRTE( thiswa->hStmtNextval, "SQLPrepare", ident, _res, __LINE__, __FILE__ );
             return (HB_FAILURE);
          }
       } else {
          ident[0] = '\0';
       }
 
-      res = SQLExecute( thiswa->hStmtNextval );
-      if( CHECK_SQL_N_OK( res ) ) {
-         odbcErrorDiagRTE( thiswa->hStmtNextval, "SQLExecute", ident, res, __LINE__, __FILE__ );
+      _res = SQLExecute( thiswa->hStmtNextval );
+      if( CHECK_SQL_N_OK( _res ) ) {
+         odbcErrorDiagRTE( thiswa->hStmtNextval, "SQLExecute", ident, _res, __LINE__, __FILE__ );
          return (HB_FAILURE);
       }
-      res = SQLFetch( thiswa->hStmtNextval );
-      if( CHECK_SQL_N_OK( res ) ) {
-         odbcErrorDiagRTE( thiswa->hStmtNextval, "ExecuteInsertStmt/Fetch", ident, res, __LINE__, __FILE__ );
+      _res = SQLFetch( thiswa->hStmtNextval );
+      if( CHECK_SQL_N_OK( _res ) ) {
+         odbcErrorDiagRTE( thiswa->hStmtNextval, "ExecuteInsertStmt/Fetch", ident, _res, __LINE__, __FILE__ );
          return (HB_FAILURE);
       }
-      res = SQLGetData( thiswa->hStmtNextval, 1, SQL_C_ULONG, &(thiswa->recordList[0]), sizeof( SQL_C_ULONG ), NULL );
-      if( CHECK_SQL_N_OK( res ) ) {
-         odbcErrorDiagRTE( thiswa->hStmtNextval, "ExecuteInsertStmt/GetData", ident, res, __LINE__, __FILE__ );
+      _res = SQLGetData( thiswa->hStmtNextval, 1, SQL_C_ULONG, &(thiswa->recordList[0]), sizeof( SQL_C_ULONG ), NULL );
+      if( CHECK_SQL_N_OK( _res ) ) {
+         odbcErrorDiagRTE( thiswa->hStmtNextval, "ExecuteInsertStmt/GetData", ident, _res, __LINE__, __FILE__ );
          return (HB_FAILURE);
       }
       SQLFreeStmt( thiswa->hStmtNextval, SQL_CLOSE );
@@ -745,9 +745,9 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
          switch (CurrRecord->iCType) {
             case SQL_C_CHAR: {
                CurrRecord->lIndPtr = SQL_NTS;
-               res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
-                                       CurrRecord->iCType,
-                                       CurrRecord->iSQLType,
+               res = SQLBindParameter( thiswa->hStmtUpdate, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) CurrRecord->iCType,
+                                       (SQLSMALLINT) CurrRecord->iSQLType,
                                        CurrRecord->ColumnSize,
                                        CurrRecord->DecimalDigits,
                                        CurrRecord->asChar.value, 0, &(CurrRecord->lIndPtr) );
@@ -757,7 +757,7 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
                SQLINTEGER nInd;
                CurrRecord->lIndPtr = SQL_NTS;
                nInd = strlen((const char *)(CurrRecord->asChar.value));
-               res = SQLBindParameter( thiswa->hStmtUpdate, iBind,
+               res = SQLBindParameter( thiswa->hStmtUpdate, (SQLUSMALLINT) iBind,
                                        SQL_PARAM_INPUT,
                                        SQL_C_CHAR,
                                        SQL_LONGVARCHAR,
@@ -770,9 +770,9 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
             }
             case SQL_C_DOUBLE: {
                CurrRecord->lIndPtr = 0;
-               res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
-                                       CurrRecord->iCType,
-                                       CurrRecord->iSQLType,
+               res = SQLBindParameter( thiswa->hStmtUpdate, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) CurrRecord->iCType,
+                                       (SQLSMALLINT) CurrRecord->iSQLType,
                                        CurrRecord->ColumnSize,
                                        CurrRecord->DecimalDigits,
                                        &(CurrRecord->asNumeric), 0, &(CurrRecord->lIndPtr) );
@@ -781,7 +781,7 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
             case SQL_C_TYPE_TIMESTAMP: {
               //DebugBreak();
                CurrRecord->lIndPtr = 0;
-               res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter( thiswa->hStmtUpdate, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
                                        SQL_C_TYPE_TIMESTAMP,
                                        SQL_TYPE_TIMESTAMP,
                                        SQL_TIMESTAMP_LEN,
@@ -791,7 +791,7 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
             }
             case SQL_C_TYPE_DATE: {
                CurrRecord->lIndPtr = 0;
-               res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter( thiswa->hStmtUpdate, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
                                        SQL_C_TYPE_DATE,
                                        SQL_TYPE_DATE,
                                        SQL_DATE_LEN,
@@ -800,9 +800,9 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
                break;
             }
             case SQL_C_BIT: {
-               res = SQLBindParameter( thiswa->hStmtUpdate, iBind, SQL_PARAM_INPUT,
-                                       CurrRecord->iCType,
-                                       CurrRecord->iSQLType,
+               res = SQLBindParameter( thiswa->hStmtUpdate, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) CurrRecord->iCType,
+                                       (SQLSMALLINT) CurrRecord->iSQLType,
                                        CurrRecord->ColumnSize,
                                        CurrRecord->DecimalDigits,
                                        &(CurrRecord->asLogical), 0, NULL );
@@ -829,7 +829,7 @@ HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa )
    temp = hb_strdup( (const char *) thiswa->sSql );
    sprintf( thiswa->sSql, "%s\n WHERE %c%s%c = ?", temp, OPEN_QUALIFIER( thiswa ), thiswa->sRecnoName, CLOSE_QUALIFIER( thiswa ) );
    hb_xfree( temp );
-   res = SQLBindParameter( thiswa->hStmtUpdate, ++iBind, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 15, 0, &(thiswa->lUpdatedRecord), 0, NULL );
+   res = SQLBindParameter( thiswa->hStmtUpdate, (SQLUSMALLINT) ++iBind, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 15, 0, &(thiswa->lUpdatedRecord), 0, NULL );
    if( CHECK_SQL_N_OK( res ) ) {
       odbcErrorDiagRTE( thiswa->hStmtUpdate, "BindUpdateColumns", thiswa->sSql, res, __LINE__, __FILE__ );
       return HB_FAILURE;
