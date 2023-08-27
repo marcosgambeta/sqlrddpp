@@ -448,7 +448,7 @@ static HB_ERRCODE getMissingColumn( SQLEXAREAP thiswa, PHB_ITEM pFieldData, LONG
    res = SQLExecute( thiswa->colStmt[lFieldPosDB - 1] );
 
    if( CHECK_SQL_N_OK( res ) ) {
-      odbcErrorDiagRTE( thiswa->colStmt[lFieldPosDB - 1], "getMissingColumn/SQLExecute", sSql, res, __LINE__, __FILE__ );
+      odbcErrorDiagRTE( thiswa->colStmt[lFieldPosDB - 1], "getMissingColumn/SQLExecute", sSql, (SQLRETURN) res, __LINE__, __FILE__ );
       SQLFreeStmt( thiswa->colStmt[lFieldPosDB - 1], SQL_CLOSE );
       return (HB_FAILURE);
    }
@@ -458,7 +458,7 @@ static HB_ERRCODE getMissingColumn( SQLEXAREAP thiswa, PHB_ITEM pFieldData, LONG
    res = SQLFetch( thiswa->colStmt[lFieldPosDB - 1] );
    if( res != SQL_SUCCESS ) {
       if( res == SQL_ERROR ) {
-         odbcErrorDiagRTE( thiswa->colStmt[lFieldPosDB - 1], "getMissingColumn/SQLFetch", sSql, res, __LINE__, __FILE__ );
+         odbcErrorDiagRTE( thiswa->colStmt[lFieldPosDB - 1], "getMissingColumn/SQLFetch", sSql, (SQLRETURN) res, __LINE__, __FILE__ );
          SQLFreeStmt( thiswa->colStmt[lFieldPosDB - 1], SQL_CLOSE );
          return (HB_FAILURE);
       }
@@ -477,7 +477,7 @@ static HB_ERRCODE getMissingColumn( SQLEXAREAP thiswa, PHB_ITEM pFieldData, LONG
 
 HB_ERRCODE SetBindValue( PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hStmt )
 {
-   BOOL bEmpty          = SR_itemEmpty( pFieldData );
+   BOOL bEmpty = SR_itemEmpty( pFieldData );
    SQLRETURN res;
 
    switch ( BindStructure->iCType ) {
@@ -550,7 +550,7 @@ HB_ERRCODE SetBindValue( PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT h
 
             // Pointer may be changed during realloc, so parameter should be re-bound
             res = SQLBindParameter( hStmt,
-                                    BindStructure->iParNum,
+                                    (SQLUSMALLINT) BindStructure->iParNum,
                                     SQL_PARAM_INPUT,
                                     SQL_C_CHAR,
                                     SQL_LONGVARCHAR,
@@ -607,14 +607,14 @@ HB_ERRCODE SetBindValue( PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT h
 
          hb_dateDecode( hb_itemGetDL( pFieldData ), &iYear, &iMonth, &iDay );
          BindStructure->asDate.year  = (SQLSMALLINT) iYear;
-         BindStructure->asDate.month = (SQLUINTEGER) iMonth;
-         BindStructure->asDate.day   = (SQLUINTEGER) iDay;
+         BindStructure->asDate.month = (SQLUSMALLINT) iMonth;
+         BindStructure->asDate.day   = (SQLUSMALLINT) iDay;
          break;
       }
       case SQL_C_TYPE_TIMESTAMP: {
          int iYear, iMonth, iDay;
          int iHour, iMinute;
-         BOOL bEmpty = SR_itemEmpty( pFieldData );
+         //BOOL bEmpty = SR_itemEmpty( pFieldData ); declared at beginning
 //DebugBreak();
          if( (!bEmpty) && BindStructure->isBoundNULL && hStmt ) {   // Param was NULL, should be re-bound
             BindStructure->isBoundNULL  = FALSE;
@@ -630,7 +630,7 @@ HB_ERRCODE SetBindValue( PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT h
          {
 #ifdef __XHARBOUR__
             // hb_dateDecode( pFieldData->item.asDate.value, &iYear, &iMonth, &iDay );
-            //hb_timeDecode( pFieldData->item.asDate.time, piHour, piMin, pdSec );         
+            //hb_timeDecode( pFieldData->item.asDate.time, piHour, piMin, pdSec );
             //DebugBreak();
             double seconds;
             hb_datetimeDecode(pFieldData->item.asDate.value,  pFieldData->item.asDate.time,
@@ -641,13 +641,13 @@ HB_ERRCODE SetBindValue( PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT h
             int seconds, millisec;
             hb_itemGetTDT( pFieldData, &lJulian, &lMilliSec );
             hb_dateDecode( lJulian, &iYear, &iMonth, &iDay );
-            hb_timeDecode( lMilliSec, &iHour, &iMinute, &seconds, &millisec ); 
+            hb_timeDecode( lMilliSec, &iHour, &iMinute, &seconds, &millisec );
 #endif
             BindStructure->asTimestamp.year     = (SQLSMALLINT) iYear;
-            BindStructure->asTimestamp.month    = (SQLUINTEGER) iMonth;
-            BindStructure->asTimestamp.day      = (SQLUINTEGER) iDay;
-            BindStructure->asTimestamp.hour     = (SQLUINTEGER) iHour;
-            BindStructure->asTimestamp.minute   = (SQLUINTEGER) iMinute;
+            BindStructure->asTimestamp.month    = (SQLUSMALLINT) iMonth;
+            BindStructure->asTimestamp.day      = (SQLUSMALLINT) iDay;
+            BindStructure->asTimestamp.hour     = (SQLUSMALLINT) iHour;
+            BindStructure->asTimestamp.minute   = (SQLUSMALLINT) iMinute;
             BindStructure->asTimestamp.second   = (SQLUSMALLINT)seconds;
             BindStructure->asTimestamp.fraction = 0;
          }
@@ -842,8 +842,8 @@ static void BindAllIndexStmts( SQLEXAREAP thiswa )
       BindStructure = GetBindStruct( thiswa, IndexBind );
 
       res = SQLBindParameter( hStmt, 1, SQL_PARAM_INPUT,
-                                          BindStructure->iCType,
-                                          BindStructure->iSQLType,
+                                          (SQLSMALLINT) BindStructure->iCType,
+                                          (SQLSMALLINT) BindStructure->iSQLType,
                                           BindStructure->ColumnSize,
                                           BindStructure->DecimalDigits,
                                           &(BindStructure->asNumeric), 0, NULL );
@@ -865,18 +865,18 @@ static void BindAllIndexStmts( SQLEXAREAP thiswa )
             if( !BindStructure->isArgumentNull ) {
                switch (BindStructure->iCType) {
                   case SQL_C_CHAR: {
-                     res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
-                                             BindStructure->iCType,
-                                             BindStructure->iSQLType,
+                     res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                             (SQLSMALLINT) BindStructure->iCType,
+                                             (SQLSMALLINT) BindStructure->iSQLType,
                                              BindStructure->ColumnSize,
                                              BindStructure->DecimalDigits,
                                              BindStructure->asChar.value, 0, NULL );
                      break;
                   }
                   case SQL_C_DOUBLE: {
-                     res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
-                                             BindStructure->iCType,
-                                             BindStructure->iSQLType,
+                     res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                             (SQLSMALLINT) BindStructure->iCType,
+                                             (SQLSMALLINT) BindStructure->iSQLType,
                                              BindStructure->ColumnSize,
                                              BindStructure->DecimalDigits,
                                              &(BindStructure->asNumeric), 0, NULL );
@@ -891,7 +891,7 @@ static void BindAllIndexStmts( SQLEXAREAP thiswa )
                      //                        0,
                      //                        &(BindStructure->asTimestamp), 0, 0 );
 
-                     res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
+                     res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
                                              SQL_C_TYPE_TIMESTAMP,
                                              SQL_TYPE_TIMESTAMP,
                                              SQL_TIMESTAMP_LEN,
@@ -900,7 +900,7 @@ static void BindAllIndexStmts( SQLEXAREAP thiswa )
                      break;
                   }
                   case SQL_C_TYPE_DATE: {
-                     res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
+                     res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
                                              SQL_C_TYPE_DATE,
                                              SQL_TYPE_DATE,
                                              SQL_DATE_LEN,
@@ -909,9 +909,9 @@ static void BindAllIndexStmts( SQLEXAREAP thiswa )
                      break;
                   }
                   case SQL_C_BIT: {
-                     res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
-                                             BindStructure->iCType,
-                                             BindStructure->iSQLType,
+                     res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                             (SQLSMALLINT) BindStructure->iCType,
+                                             (SQLSMALLINT) BindStructure->iSQLType,
                                              BindStructure->ColumnSize,
                                              BindStructure->DecimalDigits,
                                              &(BindStructure->asLogical), 0, NULL );
@@ -2990,7 +2990,7 @@ static HB_ERRCODE sqlExGetValue( SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM va
 
          if( HB_IS_HASH( pTemp ) && sr_isMultilang() ) {
             PHB_ITEM pLangItem = hb_itemNew( NULL );
-            HB_SIZE ulPos;
+            //HB_SIZE ulPos; declared at beginning
             if(    hb_hashScan( pTemp, sr_getBaseLang( pLangItem ), &ulPos )
                 || hb_hashScan( pTemp, sr_getSecondLang( pLangItem ), &ulPos )
                 || hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) ) {
@@ -4145,14 +4145,14 @@ static int sqlKeyCompareEx( SQLEXAREAP thiswa, PHB_ITEM pKey, BOOL fExact )
 
       if( HB_IS_NUMBER( itemTemp ) ) {
          pKeyVal = hb_itemArrayGet( thiswa->aBuffer, hb_arrayGetNL( pTag, INDEX_KEY_CODEBLOCK )-2 );
-         len1 = hb_strRTrimLen( hb_itemGetCPtr( pKeyVal ), hb_itemGetCLen( pKeyVal ), FALSE ) - 15;
+         len1 = (BYTE) hb_strRTrimLen( hb_itemGetCPtr( pKeyVal ), hb_itemGetCLen( pKeyVal ), FALSE ) - 15;
          val1 = hb_itemGetCPtr( pKeyVal );
       } else {
          EVALINFO info;
          hb_evalNew( &info, hb_itemArrayGet( pTag, INDEX_KEY_CODEBLOCK ) );
          pKeyVal = hb_evalLaunch( &info );
          hb_evalRelease( &info );
-         len1 = hb_itemGetCLen( pKeyVal );
+         len1 = (BYTE) hb_itemGetCLen( pKeyVal );
          val1 = hb_itemGetCPtr( pKeyVal );
       }
       hb_itemRelease( itemTemp );
@@ -4168,13 +4168,13 @@ static int sqlKeyCompareEx( SQLEXAREAP thiswa, PHB_ITEM pKey, BOOL fExact )
    } else if( HB_IS_NUMBER( pKey ) ) {
       PHB_ITEM pLen = hb_itemPutNL( NULL, (const LONG) len1 );
       val2 = valbuf = hb_itemStr( pKey, pLen, NULL );
-      len2 = strlen( val2 );
+      len2 = (BYTE) strlen( val2 );
       hb_itemRelease( pLen );
    } else if( HB_IS_LOGICAL( pKey ) ) {
       len2 = 1;
       val2 = hb_itemGetL( pKey ) ? "T" : "F";
    } else {
-      len2 = hb_itemGetCLen( pKey );
+      len2 = (BYTE) hb_itemGetCLen( pKey );
       val2 = hb_itemGetCPtr( pKey );
    }
 
