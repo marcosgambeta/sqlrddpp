@@ -46,12 +46,14 @@
  *
  */
 
-#include "compat.ch"
+// #include "compat.ch"
 #include "error.ch"
 #include "sqlrdd.ch"
 #include "msg.ch"
 #include "hbsql.ch"
 #include "sqlrddsetup.ch"
+
+#define CRLF      ( chr(13) + chr(10) )
 
 /*
 * Readble Macros

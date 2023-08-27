@@ -48,12 +48,14 @@
 
 #include "hbclass.ch"
 #include "common.ch"
-#include "compat.ch"
+// #include "compat.ch"
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"
 #include "error.ch"
 #include "msg.ch"
 #include "sqlrddsetup.ch"
+
+#define CRLF      ( chr(13) + chr(10) )
 
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500

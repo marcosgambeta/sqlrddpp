@@ -50,7 +50,7 @@
 #include "common.ch"
 #include "hbclass.ch"
 #include "sqlrdd.ch"
-#include "compat.ch"
+// #include "compat.ch"
 #include "sqlodbc.ch"
 #include "error.ch"
 #include "ord.ch"
@@ -62,7 +62,8 @@
 #define DUPL_IND_DETECT                .F.
 #define SQLRDD_LEARNING_REPETITIONS     5
 
-
+#define CRLF      ( chr(13) + chr(10) )
+#define CR_LF     ( chr(13) + chr(10) )
 
 STATIC aFather :={}
 STATIC nStartId :=0

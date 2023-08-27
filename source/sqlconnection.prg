@@ -51,7 +51,7 @@
 
 #include "hbclass.ch"
 #include "common.ch"
-#include "compat.ch"
+// #include "compat.ch"
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"
 #include "error.ch"
@@ -59,6 +59,8 @@
 #include "sqlrddsetup.ch"
 
 #define DEBUGSESSION     .F.
+
+#define CRLF      ( chr(13) + chr(10) )
 
 STATIC lNwgOldCompat := .F.
 

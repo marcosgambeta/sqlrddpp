@@ -49,7 +49,7 @@
 
 #include "hbclass.ch"
 #include "common.ch"
-#include "compat.ch"
+// #include "compat.ch"
 #include "sqlora.ch"
 #include "sqlrdd.ch"
 #include "error.ch"
