@@ -51,9 +51,9 @@
 #include "common.ch"
 #include "msg.ch"
 
-Static s_nMessages   := 32
+STATIC s_nMessages   := 32
 
-Static s_aMsg1 := ;
+STATIC s_aMsg1 := ;
 { ;
    "Attempt to write to an empty table without a previous Append Blank",;
    "Undefined SQL datatype: ",;
@@ -89,7 +89,7 @@ Static s_aMsg1 := ;
    "Table or View does not exist";
 }
 
-Static s_aMsg2 := ;
+STATIC s_aMsg2 := ;
 { ;
    "Tentativa de gravar um registro em tabela vazia sem antes adicionar uma linha",;
    "Tipo de dado SQL indefinido : ",;
@@ -125,7 +125,7 @@ Static s_aMsg2 := ;
    "Tabela ou View não existente";
 }
 
-Static s_aMsg3 := ;
+STATIC s_aMsg3 := ;
 { ;
    "Attempt to write to an empty table without a previous Append Blank",;
    "Undefined SQL datatype: ",;
@@ -161,7 +161,7 @@ Static s_aMsg3 := ;
    "Table or View does not exist";
 }
 
-Static s_aMsg4 := ;
+STATIC s_aMsg4 := ;
 { ;
    "Attempt to write to an empty table without a previous Append Blank",;
    "Undefined SQL datatype: ",;
@@ -197,7 +197,7 @@ Static s_aMsg4 := ;
    "Table or View does not exist";
 }
 
-Static s_aMsg5 := ;
+STATIC s_aMsg5 := ;
 { ;
    "Attempt to write to an empty table without a previous Append Blank",;
    "Undefined SQL datatype: ",;
@@ -233,7 +233,7 @@ Static s_aMsg5 := ;
    "Table or View does not exist";
 }
 
-Static s_aMsg6 := ;
+STATIC s_aMsg6 := ;
 { ;
    "Attempt to write to an empty table without a previous Append Blank",;
    "Undefined SQL datatype: ",;
@@ -269,7 +269,7 @@ Static s_aMsg6 := ;
    "Table or View does not exist";
 }
 
-Static s_aMsg7 := ;
+STATIC s_aMsg7 := ;
 { ;
    "Attempt to write to an empty table without a previous Append Blank",;
    "Undefined SQL datatype: ",;
@@ -305,7 +305,7 @@ Static s_aMsg7 := ;
    "Table or View does not exist";
 };
 
-Static s_aMsg
+STATIC s_aMsg
 
 /*------------------------------------------------------------------------*/
 INIT PROCEDURE SR_Init2

@@ -217,7 +217,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
          NEXT i
          IF lAtLeastOneParamSimplified
             newClipperString := oExpression:cFunctionName + "("
-            FOR i := 1 to len(newParams)
+            FOR i := 1 TO len(newParams)
                newClipperString += newParams[i]:oExpression:oClipperExpression:cValue + iif(i == len(newParams), ")", ",")
             NEXT i
             result := FunctionExpression():new(oExpression:cContext, newClipperString, oExpression:cFunctionName, newParams)

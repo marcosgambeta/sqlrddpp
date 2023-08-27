@@ -55,7 +55,8 @@
 #include "msg.ch"
 #include "error.ch"
 #include "sqlrddsetup.ch"
-request HB_Deserialize,HB_DeserialNext
+REQUEST HB_Deserialize
+REQUEST HB_DeserialNext
 #define FH_ALLOC_BLOCK     32
 
 Static DtAtiv, lHistorico
@@ -147,12 +148,12 @@ FUNCTION SR_LogFile(cFileName, aInfo, lAddDateTime)
 
    Endif
 
-   for n = 1 to Len(aInfo)
+   FOR n := 1 TO Len(aInfo)
       If aInfo[n] == NIL
          Exit
       EndIf
       cLine += SR_Val2CharQ(aInfo[n]) + Chr(9)
-   next
+   NEXT n
 
    cLine += CRLF
 
@@ -246,7 +247,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       SR_LogFile("changestruct.log", { oWA:cFileName, "Original Structure:", e"\r\n" + sr_showVector(oWA:aFields)  })
       SR_LogFile("changestruct.log", { oWA:cFileName, "New Structure:", e"\r\n" + sr_showVector(aNewStruct)  })
 
-      For i = 1 to len(aNewStruct)
+      FOR i := 1 TO len(aNewStruct)
          aNewStruct[i,1] := Upper(alltrim(aNewStruct[i,1]))
          If (n := aScan(oWA:aFields, {|x| x[1] == aNewStruct[i,1] }) ) > 0
 
@@ -272,7 +273,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
                aadd(aToFix, aClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing data type:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ElseIf aNewStruct[i, 2] != oWA:aFields[n, 2]
-               IF aNewStruct[i, 2] $"CN" .AND. oWA:aFields[n, 2] $"CN" .AND. oWA:oSql:nSystemID == SYSTEMID_POSTGR               
+               IF aNewStruct[i, 2] $"CN" .AND. oWA:aFields[n, 2] $"CN" .AND. oWA:oSql:nSystemID == SYSTEMID_POSTGR
 
 *                   IF "8.4" $ oWA:oSql:cSystemVers .OR. "9.0" $ oWA:oSql:cSystemVers
                   IF oWA:oSql:lPostgresql8 .AND. !oWA:oSql:lPostgresql83
@@ -281,11 +282,11 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
                      aadd(aToFix, aClone(aNewStruct[i]))
                   ENDIF
                   SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field types:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
-               ELSE 
+               ELSE
                   SR_LogFile("changestruct.log", { oWA:cFileName, "ERROR: Cannot convert data type of field:", aNewStruct[i,1], " from", oWA:aFields[n, 2], "to", aNewStruct[i, 2] })
                ENDIF
-            ElseIf aNewStruct[i, 3] >= oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"              
-               
+            ElseIf aNewStruct[i, 3] >= oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"
+
                aadd(aDirect, aClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3] })
             ElseIf aNewStruct[i, 3] < oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"
@@ -298,16 +299,16 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
             aadd(aToFix, aClone(aNewStruct[i]))
             SR_LogFile("changestruct.log", { oWA:cFileName, "Will add column:", aNewStruct[i,1] })
          EndIf
-      Next
+      NEXT i
 
-      For i = 1 to len(oWA:aFields)
+      FOR i := 1 TO len(oWA:aFields)
          If (n := aScan(aNewStruct, {|x| x[1] == oWA:aFields[i,1] }) ) == 0
             If (!oWA:aFields[i,1] == oWA:cRecnoName) .AND. (!oWA:aFields[i,1] == oWA:cDeletedName ) .AND. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
                aadd(aToDrop, aClone(oWA:aFields[i]))
                SR_LogFile("changestruct.log", { oWA:cFileName, "Will drop:", oWA:aFields[i,1] })
             EndIf
          EndIf
-      Next
+      NEXT i
       IF Len(aDirect) > 0 .AND.;
        ( oWA:oSql:nSystemID == SYSTEMID_FIREBR .OR. ;
          oWA:oSql:nSystemID == SYSTEMID_FIREBR3 .OR. ;
@@ -326,13 +327,13 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
          oWA:AlterColumns(aToFix, .T.)
       EndIf
 
-      For i = 1 to len(aToDrop)
+      FOR i := 1 TO len(aToDrop)
          If aToDrop[i,1] == "BACKUP_"
             oWA:DropColumn(aToDrop[i,1], .F.)
          Else
             oWA:DropColumn(aToDrop[i,1], .T.)
          EndIf
-      Next
+      NEXT i
 
       SELECT (nALias)
       dbCloseArea()
@@ -701,15 +702,15 @@ FUNCTION SR_ShowVector(a)
 
       cRet := "{"
 
-      For i = 1 to len(a)
+      FOR i := 1 TO len(a)
 
-         If HB_ISARRAY(a[i]) 
+         If HB_ISARRAY(a[i])
             cRet += SR_showvector(a[i]) + iif(i == len(a), "", ",") + CRLF
          Else
             cRet += SR_Val2CharQ(a[i]) + iif(i == len(a), "", ",")
          EndIf
 
-      Next
+      NEXT i
 
       cRet += "}"
 
@@ -1558,7 +1559,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                IF xMessage[nPos] $ ( " " + Chr(9) )
                   EXIT
                ENDIF
-            NEXT
+            NEXT nPos
 
             IF nPos == 0
                nPos := 58
@@ -1897,7 +1898,7 @@ STATIC FUNCTION COLORLETTER(cColor)
    LOCAL nColor
 
   if !IsCharacter(cColor)
-     cColor:=""
+     cColor := ""
   endif
 
   cColor := StrTran(cColor, " ", "")
@@ -1906,40 +1907,40 @@ STATIC FUNCTION COLORLETTER(cColor)
 
   nColor := Abs(Val(cColor))
 
-  if nColor=0
-     cColor:="N"
+  if nColor=0 // TODO: switch
+     cColor := "N"
   elseif nColor=1
-     cColor:="B"
+     cColor := "B"
   elseif nColor=2
-     cColor:="G"
+     cColor := "G"
   elseif nColor=3
-     cColor:="BG"
+     cColor := "BG"
   elseif nColor=4
-     cColor:="R"
+     cColor := "R"
   elseif nColor=5
-     cColor:="RB"
+     cColor := "RB"
   elseif nColor=6
-     cColor:="GR"
+     cColor := "GR"
   elseif nColor=7
-     cColor:="W"
+     cColor := "W"
   elseif nColor=8
-     cColor:="N+"
+     cColor := "N+"
   elseif nColor=9
-     cColor:="B+"
+     cColor := "B+"
   elseif nColor=10
-     cColor:="G+"
+     cColor := "G+"
   elseif nColor=11
-     cColor:="BG+"
+     cColor := "BG+"
   elseif nColor=12
-     cColor:="R+"
+     cColor := "R+"
   elseif nColor=13
-     cColor:="RB+"
+     cColor := "RB+"
   elseif nColor=14
-     cColor:="GR+"
+     cColor := "GR+"
   elseif nColor=15
-     cColor:="W+"
+     cColor := "W+"
   else
-     cColor:="W+" // 15 is the max.
+     cColor := "W+" // 15 is the max.
   endif
 
 RETURN ( cColor )

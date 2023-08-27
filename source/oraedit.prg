@@ -1,9 +1,9 @@
-request ADS
+REQUEST ADS
 #include "ads.ch"
 
-Static hHashData :=hash()
+STATIC hHashData :=hash()
 
-Static TRACE_STRUCT   := { ;
+STATIC TRACE_STRUCT   := { ;
                               { "USUARIO",    "C", 10, 0 },;
                               { "DATA",       "D", 08, 0 },;
                               { "HORA",       "C", 08, 0 },;
@@ -111,7 +111,7 @@ Static TRACE_STRUCT   := { ;
 #define DE_APPEND  3
 #endif
 #define    HB_COMPAT_C53
-static nAliasTmp := 0
+STATIC nAliasTmp := 0
      
 FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop,;
                  nLeft,;
@@ -146,7 +146,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop,;
    LOCAL nAt
    LOCAL cFile
    LOCAL nPosOrderBY
-   LOCAL cCols :=""
+   LOCAL cCols := ""
    LOCAL nOldArea := Select()
    LOCAL cAlias
    LOCAL cQueryPage := ""
@@ -154,7 +154,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop,;
    LOCAL nLowerBound
    LOCAL nStep := 100
    LOCAL aRet := {}
-   LOCAL cFiletoDelete :=""
+   LOCAL cFiletoDelete := ""
    LOCAL lInEof :=.F.
    LOCAL aTemp
    LOCAL aPk
@@ -174,46 +174,43 @@ SR_SetRDDTemp("ADT")
   else
      FOR EACH i IN axColumns
         if "||" $ I
-
            cTmp := "TMP"+strzero(nApeStart++,3)
            cCols += i+" as "+cTmp+","
            AADD(atempcols, { cTmp, hb_atokens(i,"||"), i })
-
         ELSE
         cCols += i+","
 
         ENDIF
      NEXT
 
-
      //cCols := substr(cCols,1,len(cCols)-1)
 
-     For EACH acolsadded in aTempCols
-         For EACH n in acolsadded[2]
-             cCols += n+","
-     NEXT
-     Next
+      FOR EACH acolsadded IN aTempCols
+         FOR EACH n IN acolsadded[2]
+             cCols += n + ","
+         NEXT
+      NEXT
 
-     aPk := GETPRIMARYKEY(cTable)  
-     
-     For EACH cTmp in aPk
-        if At(Upper(cTmp), Upper(cCols)) == 0
-           cCols += cTmp+","
-        EndIf
-     Next
-     
+     aPk := GETPRIMARYKEY(cTable)
+
+     FOR EACH cTmp IN aPk
+        IF At(Upper(cTmp), Upper(cCols)) == 0
+           cCols += cTmp + ","
+        ENDIF
+     NEXT
+
      cCols := substr(cCols,1,len(cCols)-1)
-  endif    
-   
+  endif
+
  cSql := "Select  " + cCols + "  from " + cTable
  cCount := "select count(*) from " + cTable
 
 if !empty(cWhere) .AND. HB_ISARRAY(aVarSust)
 
-for i:=1 to len(aVarSust) 
+FOR i := 1 TO len(aVarSust)
    cBind := ":" + alltrim(str(i))
    cWhere := strtran(cWhere, cBind, sr_cdbvalue(aVarSust[i]))
-next
+NEXT i
 * nat := at
 endif
 if !empty(cWhere) 
@@ -234,9 +231,9 @@ if !empty(cWhere)
    else
       aPk := GETPRIMARYKEY(cTable)
       if len(aPk) > 0
-         for each aTemp in aPk     
-         cdesc += atemp + " ,"      
-      next
+         FOR EACH aTemp IN aPk
+            cdesc += atemp + " ,"
+         NEXT
       cdesc := substr(cdesc,1,len(cdesc)-1)
    endif   
    if !empty(cDesc) 
@@ -316,21 +313,20 @@ nLowerBound +=nHigerBound
   DEFAULT acColumnSep  TO " " + Chr(179) + " "
   DEFAULT acColumnFootings TO ""
 
+   IF Empty(axColumns) .OR. ! HB_ISARRAY(axColumns)
 
-  IF Empty(axColumns) .OR. ! HB_ISARRAY(axColumns)
+      axColumns := Array(FCount())
 
-    axColumns := Array(FCount())
+      FOR EACH i IN axColumns
+         i := FieldName(HB_EnumIndex())
+      NEXT
 
-    FOR EACH i IN axColumns
-      i := FieldName(HB_EnumIndex())
-    NEXT
-
-  END
+  ENDIF
 
   /* 17/05/2006 - E.F. - Check parameters type before continue.
     * 1) Clipper avoid argument values if it is invalid.
     *    xHarbour call a run time error. IMHO this is better solution to
-         avoid old errors in code and bad practices inherited from Clipper's days. 
+         avoid old errors in code and bad practices inherited from Clipper's days.
    * 2) There is no error base reserved to dbEdit function, then I have
    *    assigned the 1127 for this.
    */
@@ -451,9 +447,9 @@ nLowerBound +=nHigerBound
   oTBR:setKey(K_CTRL_DOWN, {|| _MoveCol(oTBR, K_CTRL_DOWN), 0})
 #endif
 
- // Build columns
- //
- FOR EACH i IN axColumns
+   // Build columns
+   //
+   FOR EACH i IN axColumns
 
     IF !Empty(i)
 
@@ -463,7 +459,7 @@ nLowerBound +=nHigerBound
           n := Ascan(atempcols, { |x| x[3] == i })
           if n > 0
              cTmp := atempcols[n,1]
-          endif   
+          endif
        endif
 
        If HB_ISARRAY(i)
@@ -473,7 +469,7 @@ nLowerBound +=nHigerBound
              bFunc := IIf(HB_ISBLOCK(cTmp), cTmp, &("{||" + cTmp + '}'))
           Else
           bFunc := IIf(HB_ISBLOCK(i), i, &("{||" + i + '}'))
-          EndIf    
+          EndIf
        End
 
        If HB_ISMEMO(Eval(bFunc))
@@ -544,9 +540,9 @@ nLowerBound +=nHigerBound
 
        oTBR:addColumn(oTBC)
 
-    END
+   end
 
- NEXT
+   NEXT
 
  DispEnd()
 
@@ -847,12 +843,12 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql,;
 *          aField := hb_atokens(csql,',')
 *            aVal := hb_atokens(cvalues,',')
 *          (calias)->(dbappend())
-*          for i := 1 to len(afield)
+*          FOR i := 1 TO len(afield)
 *             BEGIN SEQUENCE
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])),aval[i]))
 *             RECOVER
 *             END SEQUENCE
-*          next
+*          NEXT i
 *          endif
 *          
 *           
@@ -1024,7 +1020,7 @@ RETURN i
 
 
 #ifdef HB_COMPAT_C53
-Static FUNCTION _MoveCol(oTBR, nKey)
+STATIC FUNCTION _MoveCol(oTBR, nKey)
 
    LOCAL oTBR1
    LOCAL oTBR2
@@ -1185,13 +1181,13 @@ FUNCTION GetCurValue(calias)
    LOCAL n
    LOCAL aTemp := {}
 
-for n:=1 to (cAlias)->(fcount())
+FOR n := 1 TO (cAlias)->(fcount())
    aadd(aTemp,(cAlias)->(fieldget(n)))
-next
+NEXT n
    aadd(aTemp,(calias)->(recno()))
 RETURN aTemp
 
-static FUNCTION refreshFullData(csql,cAlias,cfile,nHigh,nLow,nStep)
+STATIC FUNCTION refreshFullData(csql,cAlias,cfile,nHigh,nLow,nStep)
 
    LOCAL nRecno := 0
    LOCAL ckey
@@ -1245,9 +1241,9 @@ ELSE
 ENDIF
 sr_getconnection():exec(cSql,,.T.,@aret)
 if len(aRet) > 0
-   for each aTemp in aRet
-   aadd(aFields,alltrim(aTemp[2]))
-   next
+   FOR EACH aTemp IN aRet
+      aadd(aFields, alltrim(aTemp[2]))
+   NEXT
 endif
 RETURN aFields  
 
@@ -1269,12 +1265,12 @@ if len(aFields) > 0
    cSql := "select * from "+ ctable
    cSql += " where "
 
-   for each aTemp in aFields
+   FOR EACH aTemp IN aFields
       cKey := (calias)->(fieldGet((cAlias)->(fieldpos(aTemp))))
       if empty(ckey)
-      cSql += " " + aTemp  + " is null "
+         cSql += " " + aTemp  + " is null "
       else
-      cSql += " " + aTemp  + " = " + sr_cdbvalue(ckey)
+         cSql += " " + aTemp  + " = " + sr_cdbvalue(ckey)
       endif
       cSql += " AND "
    NEXT
@@ -1285,22 +1281,19 @@ if len(aFields) > 0
    if len(aret) > 0
       (calias)->(rlock())
       aTemp := aret[1]
-      for each aTmp in aFields2
-         
+      FOR EACH aTmp IN aFields2
          nPos :=ascan(adb,{|x| x[1] ==  aFields2[i,1] })
          if nPos >0
-         
-         (cAlias)->(fieldput((cAlias)->(fieldpos(adb[nPos, 1])), aTemp[i]))
+            (cAlias)->(fieldput((cAlias)->(fieldpos(adb[nPos, 1])), aTemp[i]))
          endif
          i++
-      next
+      NEXT
       (calias)->(dbunlock())
       nrecno := (calias)->(recno())
       (calias)->(dbgoto(nrecno))
    endif
 endif
 RETURN NIL
-
 
 FUNCTION GETREFRESHCURINSVALUE(calias,ctable,calias2)
 
@@ -1323,12 +1316,12 @@ if len(aFields) > 0
    cSql := "select * from "+ ctable
    cSql += " where "
 
-   for each aTemp in aFields
+   FOR EACH aTemp IN aFields
       cSql += " " + aTemp  + " = " + sr_cdbvalue((calias)->(fieldGet((cAlias)->(fieldpos(aTemp)))))
       cSql += " AND "
    NEXT
 
-   cSql := substr(cSql,1,len(csql)-4)  
+   cSql := substr(cSql,1,len(csql)-4)
    //corrigido neste ponto
 *    sr_getconnection():exec(cSql, , .T., , cfile, cAlias2, 1)
    //(calias2)->(dbgobottom())
@@ -1339,12 +1332,12 @@ if len(aFields) > 0
    
    if len(aret) > 0
       
-*       for each aTemp in aRet
+*       FOR EACH aTemp IN aRet
          (calias2)->(dbappend())
        //  tracelog(valtoprg(atemp),aFields2[i,1] )
          i:=1
          aTemp := aret[1]
-         FOR each aTmpField in aFields2
+         FOR EACH aTmpField IN aFields2
             cField := aTmpField[1]
             nposf := (cAlias2)->(fieldpos(cField))
             (cAlias2)->( fieldput(nposf, aTemp[i]))
@@ -1352,16 +1345,16 @@ if len(aFields) > 0
          NEXT
          (calias2)->(dbcommit())
          (calias2)->(dbunlock())
-*       next
-      
+*       NEXT
+
       //nrec:=(cAlias2)->(recno())
       //(calias2)->(dbgoto(nrec))
-      
+
    endif
-   
+
 endif
 
-RETURN NIL   
+RETURN NIL
 
 FUNCTION IsPrimaryKeyDeleted(calias,cTable)
 
@@ -1377,21 +1370,21 @@ FUNCTION IsPrimaryKeyDeleted(calias,cTable)
 if len(aFields) > 0
    cSql := "select * from "+ ctable
    cSql += " where "
-   for each aTemp in aFields
-   nFieldPos := (cAlias)->(fieldpos(aTemp))
+   FOR EACH aTemp IN aFields
+      nFieldPos := (cAlias)->(fieldpos(aTemp))
       xval := (calias)->(fieldGet(nfieldPos))
       if empty(xval)
          cSql += " "+aTemp  + " is null "
-      else 
+      else
          cSql += " "+aTemp  + " = " + sr_cdbvalue(xVal)
       endif
       cSql += " AND "
    NEXT
-   cSql := substr(cSql,1,len(csql)-4)  
+   cSql := substr(cSql,1,len(csql)-4)
 
    sr_getconnection():exec(cSql,,.T.,@aret)
    if len(aRet ) == 0
-   RETURN .T.
+      RETURN .T.
    endif
 endif
 RETURN .F.   
@@ -1420,16 +1413,14 @@ FUNCTION insertupdated(calias,ctable)
 
 cFile := substr(cfile,1,at('.',cfile)-1)
 if len(aFields) > 0
-   for each aTemp in afields
-
+   FOR EACH aTemp IN afields
       cFields += aTemp+','
       cdesc += atemp + " DESC,"
       nPos := ascan(adb,{|x| upper(x[1]) == aTemp})
       if nPos >0
          aadd(aTemp2,adb[npos,2])
       endif
-
-   next
+   NEXT
    cdesc := substr(cdesc,1,len(cdesc)-1)
    cFields := substr(cFields,1,len(cFields)-1)
    cSql :=GetLastInsertCommand(cTable)
@@ -1450,23 +1441,22 @@ if len(aFields) > 0
          aField := hb_atokens(csql,',')
            aVal := hb_atokens(cvalues,',')
 *          (calias)->(dbappend())
-*          for i := 1 to len(afield)
+*          FOR i := 1 TO len(afield)
 *             BEGIN SEQUENCE
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])),aval[i]))
 *             RECOVER
 *             END SEQUENCE
-*          next
+*          NEXT i
                
     cSql := "select " + cfields + " from " + cTable  + " where "
-      for each aTemp in aFields
+   FOR EACH aTemp IN aFields
       nPos := ascan(afield,{|x| upper(x) == upper(aTemp)})
       if nPos >0
          if "TO_DATE(" $ upper(aval[npos])
             aval[nPos]:=substr(aval[npos],at("TO_DATE(",upper(aval[nPos]))+8)
             aval[npos] := strtran(aval[npos],"'",'')
             aval[npos] :=stod(aval[npos])
-         endif  
-      
+         endif
          if HB_ISCHAR(aval[npos])
             cSql += " " + aTemp  + " = " +  aVal[nPos]
          elseif  HB_ISNUMERIC(aval[npos]) .OR.  HB_ISDATE(aval[npos])
@@ -1475,7 +1465,7 @@ if len(aFields) > 0
       cSql += " AND "
       endif
    NEXT
-   cSql := substr(cSql,1,len(csql)-4)   
+   cSql := substr(cSql,1,len(csql)-4)
    else
       csql := "select " + cfields + " from "+ ctable + " where rownum <4  order by " + cDesc
    endif
@@ -1484,13 +1474,13 @@ if len(aFields) > 0
 
       inssqltmp->(dbgotop())
       while !inssqltmp->(eof())
-         cSqlTmp :=""
+         cSqlTmp := ""
          i:=1
-         for each aTemp in aFields
+         FOR EACH aTemp IN aFields
             nPos := ascan(adb,{|x| upper(x[1]) == aTemp})
-            if nPos >0                           
+            if nPos >0
                if inssqltmp->(fieldtype(i)) == "C"
-                  cSqlTmp += inssqltmp->(fieldget(i)) 
+                  cSqlTmp += inssqltmp->(fieldget(i))
                elseif inssqltmp->(fieldtype(i)) == "N"
                   if  adb[npos,4] > 0
                      cSqlTmp +=  str(inssqltmp->(fieldget(i)),adb[npos,3],adb[npos,4])
@@ -1499,13 +1489,13 @@ if len(aFields) > 0
                   endif
                elseif inssqltmp->(fieldtype(i)) == "D"
                    cSqlTmp += dtos(inssqltmp->(fieldget(i)))
-               endif            
-            endif   
+               endif
+            endif
             i++
-         next
-         
+         NEXT
+
          *use (cSqlTmp) new Alias "INSSQLTMP2" via "ADSADT"
-         
+
          if !(calias)->(dbseek(csqltmp))
                GETREFRESHCURINSVALUE('INSSQLTMP',ctable,calias)
                
@@ -1524,12 +1514,12 @@ RETURN NIL
          
       
 *          (calias)->(dbappend())
-*          for i := 1 to len(afield)
+*          FOR i := 1 TO len(afield)
 *             BEGIN SEQUENCE
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])),aval[i]))
 *             RECOVER
 *             END SEQUENCE
-*          next
+*          NEXT i
       
    
       
@@ -1553,32 +1543,31 @@ if len(aFields) > 0
    if len(afields) == 1
       cKey := afields[1]
    else
-      for each aTemp in afields
+      FOR EACH aTemp IN afields
          nPos := ascan(adb,{|x| upper(x[1]) == aTemp})
-         if nPos >0      
+         if nPos >0
             aadd(aTemp2,adb[npos,2])
-         endif      
-      next    
+         endif
+      NEXT
 
-      for each aTemp in afields
+      FOR EACH aTemp IN afields
          nPos := ascan(adb,{|x| upper(x[1]) == aTemp})
-         if nPos >0      
+         if nPos >0
             if adb[npos,2] =="C"
                ckey +=  atemp + "+"
-            elseif adb[npos,2] =="N"   
+            elseif adb[npos,2] =="N"
                if adb[npos,4]>0
                   ckey += "str("+atemp+","+str(adb[npos,3])+","+str(adb[npos,4])+")+"
                else
                   ckey += "str("+atemp+","+str(adb[npos,3])+")+"
-               endif   
-            elseif adb[npos,2] =="D"   
+               endif
+            elseif adb[npos,2] =="D"
                ckey +=  "dtos("+atemp + ")+"
             endif
-                              
-         endif      
-      next   
+         endif
+      NEXT
       ckey:=alltrim(ckey)
-      if substr(ckey,-1,1)=='+'              
+      if substr(ckey,-1,1)=='+'
          cKey := substr(cKey, 1, len(ckey) - 1)
       endif
    endif

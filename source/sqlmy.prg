@@ -116,9 +116,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MYSQL
       RETURN aArray
    EndIf
 
-   For i = 1 to len(aArray)
+   FOR i := 1 TO len(aArray)
       aArray[i] := ::aCurrLine[i]
-   Next
+   NEXT i
 
 RETURN aArray
 
@@ -206,9 +206,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    ::aFields := aFields
 
-   For each aFld in ::aFields
+   FOR EACH aFld IN ::aFields
       aFld[FIELD_ENUM] := hb_enumIndex()
-   Next
+   NEXT
 
    If lReSelect .AND. !lLoadCache
       ::FreeStatement()

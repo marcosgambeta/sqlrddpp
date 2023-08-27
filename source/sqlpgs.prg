@@ -108,9 +108,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
       RETURN aArray
    EndIf
 
-   For i = 1 to len(aArray)
+   FOR i := 1 TO len(aArray)
       aArray[i] := ::aCurrLine[i]
-   Next
+   NEXT i
 
 RETURN aArray
 

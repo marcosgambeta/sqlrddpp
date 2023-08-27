@@ -59,7 +59,8 @@
 #ifndef __XHARBOUR__
    REQUEST XHB_LIB
 #endif
-request HB_Deserialize,HB_Serialize
+REQUEST HB_Deserialize
+REQUEST HB_Serialize
 #define DEMO_NOTICE    "54686973206170706C69636174696F6E20776173206275696C64207769746820612064656D6F206F662053514C5244442C2064697374726962757465642062792078486172626F75722E636F6D2E0D0A0D0A457374612061706C69636163616F20E920666569746120636F6D20756D612076657273616F2044454D4F4E5354524143414F20646F2053514C5244442C2065207365752075736F20E9207065726D697469646F204150454E415320504152412046494E53204445204156414C4941C7C34F2E204120646973747269627569E7E36F20656D2070726F6475E7E36F2064657374612061706C696361E7E36F20E92070726F696269646120652073756A6569746120E0732070656E616C6964616465732070726576697374617320656D206C65692E204D61697320696E666F726D61E7F5657320656D207777772E78686172626F75722E636F6D2E62722E0D0A"
 
 /* Need this modules linked */
@@ -606,7 +607,7 @@ FUNCTION SR_ReloadFieldModifiers(oConnect)
       oConnect:nTCCompat := 2
       If len(aRet) > 0
          cLast := aRet[1,1]
-         For each aField in aRet
+         FOR EACH aField IN aRet
             If aField[1] != cLast
                If "." $ cLast
                   cLast := Upper(SubSTr(cLast, At(".", cLast) + 1))
@@ -616,7 +617,7 @@ FUNCTION SR_ReloadFieldModifiers(oConnect)
                cLast := aField[1]
             EndIf
             aadd(aFlds, { aField[2], aField[3], aField[4], aField[5] })
-         Next
+         NEXT
          If "." $ cLast
             cLast := Upper(SubSTr(cLast, At(".", cLast) + 1))
          EndIf
@@ -643,7 +644,7 @@ Static FUNCTION SR_SetEnvSQLRDD(oConnect)
    LOCAL cSql
    LOCAL lOld
 
-   For i = 1 to 2
+   FOR i := 1 TO 2
 
       If i == 1
          oCnn := oConnect
@@ -800,7 +801,7 @@ Static FUNCTION SR_SetEnvSQLRDD(oConnect)
          EXIT
 
       ENDSWITCH
-   Next
+   NEXT i
 
    /* check for the control tables */
    aRet := {}
@@ -1142,9 +1143,9 @@ FUNCTION SR_ReloadMLHash(oConnect)
    hMultilangColumns := Hash()
    HAllocate(hMultilangColumns, max(10, len(aRet)))
 
-   For each aCol in aRet
+   FOR EACH aCol IN aRet
       hMultilangColumns[aCol[1] + aCol[2]] := aCol
-   Next
+   NEXT
 
 RETURN NIL
 
@@ -1660,7 +1661,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
    ENDIF
    oCnn:Commit()
 
-   For each aIndex in aRet
+   FOR EACH aIndex IN aRet
       cPhisicalName := rtrim(aIndex[2])
 
       SWITCH oCnn:nSystemID
@@ -1700,7 +1701,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
 
          TEMPDROPCO->( dbCLoseArea() )
       EndIf
-   Next
+   NEXT
 
    oCnn:Commit()
    SR_CleanTabInfoCache()
@@ -1776,9 +1777,9 @@ FUNCTION SR_ListIndex(cFilename)
    aRet := {}
    nRet := oCnn:exec("SELECT IDXNAME_,PHIS_NAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + alltrim(upper(cFilename)) + "'", .F., .T., @aRet)
 
-   For i = 1 to len(aRet)
+   FOR i := 1 TO len(aRet)
       aRet[i,1] := alltrim(aRet[i,1])
-   Next
+   NEXT i
 
 RETURN aRet
 
@@ -2006,7 +2007,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
       aLocks := { SR_Val2Char(uLocks) }
    EndCase
 
-   For each cValue in aLocks
+   FOR EACH cValue IN aLocks
 
       cValue := SR_Val2Char(cValue)
 
@@ -2060,10 +2061,10 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
          lRet := .F.
          Exit
       EndIf
-   Next
+   NEXT
 
    If !lRet
-      For each cValue in aAdded
+      FOR EACH cValue IN aAdded
          SWITCH oCnn:nSystemID
          CASE SYSTEMID_MSSQL7
          CASE SYSTEMID_ORACLE
@@ -2075,7 +2076,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
          ENDSWITCH
          oCnn:oSqlTransact:exec(cSql, .F.)
          oCnn:oSqlTransact:Commit()
-      Next
+      NEXT
    EndIf
 
 RETURN lRet
@@ -2104,7 +2105,7 @@ FUNCTION SR_ReleaseLocks(uLocks, oCnn)
       aLocks := { SR_Val2Char(uLocks) }
    EndCase
 
-   For each cValue in aLocks
+   FOR EACH cValue IN aLocks
       cValue := SR_Val2Char(cValue)
       SWITCH oCnn:nSystemID
       CASE SYSTEMID_MSSQL7
@@ -2118,7 +2119,7 @@ FUNCTION SR_ReleaseLocks(uLocks, oCnn)
 
       oCnn:oSqlTransact:exec(cSql, .T.)
       oCnn:oSqlTransact:Commit()
-   Next
+   NEXT
 
 RETURN lRet
 
@@ -2180,10 +2181,10 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
    LOCAL aToken
    LOCAL aCon := hb_atokens(cConnect,";")
 
-   For each aItem in aCon
+   FOR EACH aItem IN aCon
       aToken := hb_atokens(aItem,"=")
       cBuff = Upper(aToken[1])
-      Do Case
+      Do Case // TODO: switch
       Case cBuff == "OCI"
          RETURN CONNECT_ORACLE
       Case cBuff == "OCI2"
@@ -2201,10 +2202,9 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
       Case cBuff == "DSN" .OR. cBuff == "DRIVER"
          RETURN CONNECT_ODBC
       EndCase
-   Next
+   NEXT
 
 RETURN SYSTEMID_UNKNOW
-
 
 /*------------------------------------------------------------------------*/
 
@@ -2225,7 +2225,7 @@ static HB_BOOL s_fSerializeArrayAsJson    = HB_FALSE;
 static HB_BOOL s_fSql2008newTypes         = HB_FALSE;
 
 static HB_BOOL s_iOldPgsBehavior          = HB_FALSE;
-static HB_BOOL s_fShortasNum              = HB_FALSE;  
+static HB_BOOL s_fShortasNum              = HB_FALSE;
 
 HB_BOOL HB_EXPORT sr_isMultilang(void)
 {

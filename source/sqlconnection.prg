@@ -336,7 +336,7 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
    aRet2 := array(len(aRet))
    FOR i := 1 TO len(aRet)
       aRet2[i] := upper(rtrim(aRet[i, 1]))
-   NEXT
+   NEXT i
 
 RETURN aRet2
 
@@ -350,7 +350,7 @@ METHOD Fetch(aLine, lTranslate, aFields) CLASS SR_CONNECTION
       aSize(aLine, ::nFields)
       FOR i := 1 TO ::nFields
          aLine[i] := ::FieldGet(i, ::aFields, lTranslate)
-      NEXT
+      NEXT i
    ENDIF
 
 RETURN nRet
@@ -370,7 +370,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_CONNECTION
 
    FOR i := 1 TO len(aFields)
       aArray[i] := ::FieldGet(i, aFields, lTranslate)
-   NEXT
+   NEXT i
 
 RETURN aArray
 
@@ -486,7 +486,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                         ELSE
                            nFieldRec := i
                         ENDIF
-                     NEXT
+                     NEXT i
                      dbCreate(cFile, SR_AdjustNum(aDb), SR_SetRDDTemp())
                   ELSE
                      dbCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
@@ -506,7 +506,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   IF nFieldRec == NIL
                      FOR i := 1 TO len(aFields)
                         FieldPut(i, ::FieldGet(i, aFields, lTranslate))
-                     NEXT
+                     NEXT i
                   ELSE
                      FOR i := 1 TO len(aFields)
                         DO CASE
@@ -517,7 +517,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                         CASE i < nFieldRec
                            FieldPut(i, ::FieldGet(i, aFields, lTranslate))
                         ENDCASE
-                     NEXT
+                     NEXT i
                   ENDIF
 
                   n++
@@ -534,7 +534,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
                FOR i := 1 TO len(aFields)
                   ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)) , Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
-               NEXT
+               NEXT i
 
                ::cResult += chr(13) + chr(10)
                aMemo     := Array(len(aFields))
@@ -555,7 +555,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                      ELSE
                         cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                      ENDIF
-                  NEXT
+                  NEXT i
 
                   ::cResult += cEste + chr(13) + chr(10)
                   n++
@@ -569,10 +569,10 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                            ELSE
                               cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                            ENDIF
-                        NEXT
+                        NEXT i
                         ::cResult += cEste + chr(13) + chr(10)
                         n++
-                     NEXT
+                     NEXT j
                   ENDIF
 
                EndDo
@@ -623,7 +623,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   aArray[n] := array(len(aFields))
                   FOR i := 1 TO len(aFields)
                      aArray[n, i] := ::FieldGet(i, aFields, lTranslate)
-                  NEXT
+                  NEXT i
                   IF n > nMaxRecords
                      EXIT
                   ENDIF
@@ -985,7 +985,7 @@ FUNCTION SR_AdjustNum(a)
          b[i, 3] := 10
       ENDIF
 
-   NEXT
+   NEXT i
 
 RETURN b
 

@@ -99,9 +99,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD3
       RETURN aArray
    EndIf
 
-   For i = 1 to len(aArray)
+   FOR i := 1 TO len(aArray)
       aArray[i] := ::aCurrLine[i]
-   Next
+   NEXT i
 
 RETURN aArray
 
@@ -196,7 +196,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    aFields   := Array(nFields)
    ::nFields := nFields
 
-   for n = 1 to nFields
+   FOR n := 1 TO nFields
 
       nDec := 0
 
@@ -225,7 +225,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          EndIf
 
       endif
-   next
+   NEXT n
 
    ::aFields := aFields
 

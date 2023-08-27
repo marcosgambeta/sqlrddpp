@@ -119,9 +119,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ODBC
       RETURN aArray
    EndIf
 
-   For i = 1 to len(aArray)
+   FOR i := 1 TO len(aArray)
       aArray[i] := ::aCurrLine[i]
-   Next
+   NEXT i
 
 RETURN aArray
 
@@ -203,9 +203,9 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
 
       While (::nRetCode := ::FetchRaw(lTranslate, aFieldsMore)) = SQL_SUCCESS
          AADD(aArray, Array(len(aFieldsMore)))
-         For i = 1 to len(aFieldsMore)
+         FOR i := 1 TO len(aFieldsMore)
             aArray[n,i] := ::FieldGet(i, aFieldsMore, lTranslate)
-         Next
+         NEXT i
          n ++
       EndDo
 
@@ -332,7 +332,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    aFields   := Array(nFields)
    ::nFields := nFields
 
-   for n = 1 to nFields
+   FOR n := 1 TO nFields
 
       nDec := 0
       nSoma:= 0
@@ -352,18 +352,18 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          If (nLen == 2000 .OR. nLen == 4000) .AND. SR_SetNwgCompat()
             nType := SQL_FAKE_LOB
          EndIf
-         
+
          if  ::nSystemID == SYSTEMID_ORACLE  .AND. nLen == 19 .AND. (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME)
              nType := SQL_DATE
-         ENDIF    
+         ENDIF
          if ::nsystemId ==  SYSTEMID_MSSQL7
-            if ( ntype == SQL_TYPE_DATE ) .AND.  SR_GETSQL2008NEWTYPES() .AND.  ::lSqlServer2008 
+            if ( ntype == SQL_TYPE_DATE ) .AND.  SR_GETSQL2008NEWTYPES() .AND.  ::lSqlServer2008
                nType := SQL_DATE
-            elseif ( nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME ) .AND.  SR_GETSQL2008NEWTYPES() .AND.  ::lSqlServer2008 
-         
+            elseif ( nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME ) .AND.  SR_GETSQL2008NEWTYPES() .AND.  ::lSqlServer2008
+
             elseif  (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP  .OR. nType == SQL_DATETIME) .AND. !SR_GETSQL2008NEWTYPES() //.AND.   !::lSqlServer2008
             nType := SQL_DATE
-         endif   
+         endif
          endif
 
          cName     := upper(alltrim(cName))
@@ -386,7 +386,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          EndIf
 
       endif
-   next
+   NEXT n
 
    ::aFields := aFields
 

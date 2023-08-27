@@ -219,9 +219,9 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_NO_WHERE
             If len(aFilters) > 0
                cSql += NEWLINE + IDENTSPACE + "WHERE"
-               For nFlt = 1 to len(aFilters)
-                  cSql +=  NEWLINE + IDENTSPACE + iif(nFlt > 1, " AND ", "  ") + aFilters[nFlt]
-               Next
+               FOR nFlt := 1 TO len(aFilters)
+                  cSql += NEWLINE + IDENTSPACE + iif(nFlt > 1, " AND ", "  ") + aFilters[nFlt]
+               NEXT nFlt
                cSql += " "
             EndIf
             nContext := SQL_CONTEXT_RESET
@@ -229,9 +229,9 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_WHERE
             If len(aFilters) > 0
                cSql += NEWLINE + IDENTSPACE + "WHERE "
-               For nFlt = 1 to len(aFilters)
+               FOR nFlt := 1 TO len(aFilters)
                   cSql += NEWLINE + IDENTSPACE + iif(nFlt > 1, " AND ", "  ") + aFilters[nFlt]
-               Next
+               NEXT nFlt
                nContext := SQL_CONTEXT_SELECT_PRE_WHERE2
             Else
                nContext := SQL_CONTEXT_SELECT_PRE_WHERE
@@ -615,7 +615,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
                aSort(aOuters,,, { |x,y| x[1] > y[1] .AND. x[2] > y[2] })
 
-               For each outer in aOuters
+               FOR EACH outer IN aOuters
                   If outer[1] != cAtual .AND. hb_enumIndex() > 1
                      cSql += ", "
                      cSql += CRLF
@@ -647,9 +647,9 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   EndIf
                   cAtual  := outer[1]
                   cAtual2 := outer[2]
-               Next
+               NEXT
 
-               For each outer in aOuters
+               FOR EACH outer IN aOuters
                   nPos := aScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
 
                   If nPos == 0
@@ -680,15 +680,15 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                      aSize(aAlias, len(aAlias) - 1)
                   EndIf
 
-               Next
+               NEXT
 
                If len(aTables) > 0 .AND. len(aOuters) > 0
                   cSql += ", " + CRLF
                EndIf
 
-               For each cTbl in aQualifiedTables
+               FOR EACH cTbl IN aQualifiedTables
                   cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif(hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-               Next
+               NEXT
 
                cSql += cTmp + cTrailler
                cTrailler := ""
@@ -722,7 +722,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cAtual2 := "$"
       //            aSort(aOuters,,, { |x,y| x[1] > y[1] .AND. x[2] > y[2] })
 
-                  For each outer in aOuters
+                  FOR EACH outer IN aOuters
       //               If outer[1] != cAtual .AND. hb_enumIndex() > 1
       //                  cSql += ", "
       //                  cSql += CRLF
@@ -756,7 +756,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                      EndIf
                      cAtual  := outer[1]
                      cAtual2 := outer[2]
-                  Next
+                  NEXT
 
                Else
 
@@ -768,7 +768,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
                   aSort(aOuters,,, { |x,y| x[1] > y[1] .AND. x[2] > y[2] })
 
-                  For each outer in aOuters
+                  FOR EACH outer IN aOuters
                      If outer[1] != cAtual .AND. hb_enumIndex() > 1
                         cSql += ", "
                         cSql += CRLF
@@ -800,11 +800,11 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                      EndIf
                      cAtual  := outer[1]
                      cAtual2 := outer[2]
-                  Next
+                  NEXT
 
                EndIf
 
-               For each outer in aOuters
+               FOR EACH outer IN aOuters
                   nPos := aScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
 
                   If nPos == 0
@@ -835,15 +835,15 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                      aSize(aAlias, len(aAlias) - 1)
                   EndIf
 
-               Next
+               NEXT
 
                If len(aTables) > 0 .AND. len(aOuters) > 0
                   cSql += ", " + CRLF
                EndIf
 
-               For each cTbl in aQualifiedTables
+               FOR EACH cTbl IN aQualifiedTables
                   cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif(hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-               Next
+               NEXT
 
                cSql += cTmp + cTrailler
                cTrailler := ""
@@ -1064,7 +1064,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             cAtual2 := "$"
 //            aSort(aOuters,,, { |x,y| x[1] > y[1] .AND. x[2] > y[2] })
 
-            For each outer in aOuters
+            FOR EACH outer IN aOuters
 //               If outer[1] != cAtual .AND. hb_enumIndex() > 1
 //                  cSql += ", "
 //                  cSql += CRLF
@@ -1098,7 +1098,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                EndIf
                cAtual  := outer[1]
                cAtual2 := outer[2]
-            Next
+            NEXT
 
          Else
 
@@ -1110,7 +1110,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             aSort(aOuters,,, { |x,y| x[1] > y[1] .AND. x[2] > y[2] })
 
-            For each outer in aOuters
+            FOR EACH outer IN aOuters
                If outer[1] != cAtual .AND. hb_enumIndex() > 1
                   cSql += ", "
                   cSql += CRLF
@@ -1142,11 +1142,11 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                EndIf
                cAtual  := outer[1]
                cAtual2 := outer[2]
-            Next
+            NEXT
 
          EndIf
 
-         For each outer in aOuters
+         FOR EACH outer IN aOuters
             nPos := aScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
 
             If nPos == 0
@@ -1177,15 +1177,15 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                aSize(aAlias, len(aAlias) - 1)
             EndIf
 
-         Next
+         NEXT
 
          If len(aTables) > 0 .AND. len(aOuters) > 0
             cSql += ", " + CRLF
          EndIf
 
-         For each cTbl in aQualifiedTables
+         FOR EACH cTbl IN aQualifiedTables
             cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + iif(left(cTbl,1)!= "(", TABLE_OPTIMIZER, "") + iif(hb_enumIndex() < len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-         Next
+         NEXT
 
          cSql += cTmp + cTrailler
          cTrailler := ""
@@ -1228,7 +1228,7 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
       RETURN ['] + " " + [']
    Endif
 
-   Do Case
+   Do Case // TODO: switch ?
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
       RETURN [E'] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + [']
    Case cType $ "CM"
@@ -1260,9 +1260,9 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
    Case cType == "L"
       RETURN iif(uData,"1","0")
    Case cType == "A"
-      For each uElement in uData
+      FOR EACH uElement IN uData
          cRet += iif(empty(cRet),"",", ") + SR_SQLQuotedString(uElement, nSystemID, lNotNull)
-      Next
+      NEXT
       RETURN cRet
    Case cType == "O"
       cRet := SR_STRTOHEX(HB_Serialize(uData))
@@ -1350,13 +1350,13 @@ Static FUNCTION SR_SolveFilters(aFilters,aRet,cAlias,nSystemID)
    Default(nSystemID, SR_GetConnection():nSystemID)
    Default(cAlias, SR_DBQUALIFY(aRet[TABLE_INFO_TABLE_NAME], nSystemID))
 
-   For i = 1 to len(aRet[TABLE_INFO_FILTERS])
+   FOR i := 1 TO len(aRet[TABLE_INFO_FILTERS])
       If SR_EvalFilters()
          aadd(aFilters, &( StrTran(aRet[TABLE_INFO_FILTERS,i], "<ALIAS>", cAlias ) ))
       Else
          aadd(aFilters, StrTran(aRet[TABLE_INFO_FILTERS,i], "<ALIAS>", cAlias ))
       EndIf
-   Next
+   NEXT i
 
 RETURN .T.
 
