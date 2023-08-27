@@ -395,19 +395,19 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
 
          switch ( BindStructure->iCType ) {
             case SQL_C_CHAR: {
-               int nTrim, i;
+               int nTrim, index;
                size  = lenKey > (int)(BindStructure->ColumnSize) ? ((int) (BindStructure->ColumnSize)) : lenKey;
                nTrim = size;
 
                // RTrim() the string value
 
-               for( i = (size -1); i >= 0; i-- ) {
-                  if( szKey[i] == '\0' || szKey[i] != ' ' ) {
-                     nTrim = i+1;
+               for( index = (size -1); index >= 0; index-- ) {
+                  if( szKey[index] == '\0' || szKey[index] != ' ' ) {
+                     nTrim = index+1;
                      break;
                   }
                }
-               if( i < 0 ) {
+               if( index < 0 ) {
                   nTrim = 0;
                }
 
@@ -462,10 +462,10 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
                BindStructure->asTimestamp.year  = (SQLSMALLINT) lVal;
                mask += 4;
                hb_compStrToNum( mask, 2, &lVal, &dVal, NULL, NULL );
-               BindStructure->asTimestamp.month = (SQLUINTEGER) lVal;
+               BindStructure->asTimestamp.month = (SQLUSMALLINT) lVal;
                mask += 2;
                hb_compStrToNum( mask, 2, &lVal, &dVal, NULL, NULL );
-               BindStructure->asTimestamp.day   = (SQLUINTEGER) lVal;
+               BindStructure->asTimestamp.day   = (SQLUSMALLINT) lVal;
                BindStructure->asTimestamp.hour     = 0;
                BindStructure->asTimestamp.minute   = 0;
                BindStructure->asTimestamp.second   = 0;
@@ -491,10 +491,10 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
                BindStructure->asDate.year  = (SQLSMALLINT) lVal;
                mask += 4;
                hb_compStrToNum( mask, 2, &lVal, &dVal, NULL, NULL );
-               BindStructure->asDate.month = (SQLUINTEGER) lVal;
+               BindStructure->asDate.month = (SQLUSMALLINT) lVal;
                mask += 2;
                hb_compStrToNum( mask, 2, &lVal, &dVal, NULL, NULL );
-               BindStructure->asDate.day   = (SQLUINTEGER) lVal;
+               BindStructure->asDate.day   = (SQLUSMALLINT) lVal;
 
                break;
             }
@@ -528,8 +528,8 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
 
          if( BindStructure->iCType == SQL_C_TYPE_DATE ) {
             BindStructure->asDate.year  = (SQLSMALLINT) iYear;
-            BindStructure->asDate.month = (SQLUINTEGER) iMonth;
-            BindStructure->asDate.day   = (SQLUINTEGER) iDay;
+            BindStructure->asDate.month = (SQLUSMALLINT) iMonth;
+            BindStructure->asDate.day   = (SQLUSMALLINT) iDay;
          } else if( BindStructure->iCType == SQL_C_TYPE_TIMESTAMP ) {
 #ifdef __XHARBOUR__
             double seconds;
@@ -542,10 +542,10 @@ HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryL
 #endif
 
             BindStructure->asTimestamp.year  = (SQLSMALLINT) iYear;
-            BindStructure->asTimestamp.month = (SQLUINTEGER) iMonth;
-            BindStructure->asTimestamp.day   = (SQLUINTEGER) iDay;
-            BindStructure->asTimestamp.hour     = (SQLUINTEGER)iHour;    ;
-            BindStructure->asTimestamp.minute   = (SQLUINTEGER)iMinute;  ;
+            BindStructure->asTimestamp.month = (SQLUSMALLINT) iMonth;
+            BindStructure->asTimestamp.day   = (SQLUSMALLINT) iDay;
+            BindStructure->asTimestamp.hour     = (SQLUSMALLINT)iHour;    ;
+            BindStructure->asTimestamp.minute   = (SQLUSMALLINT)iMinute;  ;
             BindStructure->asTimestamp.second   = (SQLUSMALLINT)seconds;
             BindStructure->asTimestamp.fraction = 0;
          } else {
@@ -598,18 +598,18 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
          }
          switch (BindStructure->iCType) {
             case SQL_C_CHAR: {
-               res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
-                                       BindStructure->iCType,
-                                       BindStructure->iSQLType,
+               res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) BindStructure->iCType,
+                                       (SQLSMALLINT) BindStructure->iSQLType,
                                        BindStructure->ColumnSize,
                                        BindStructure->DecimalDigits,
                                        BindStructure->asChar.value, 0, NULL );
                break;
             }
             case SQL_C_DOUBLE: {
-               res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
-                                       BindStructure->iCType,
-                                       BindStructure->iSQLType,
+               res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) BindStructure->iCType,
+                                       (SQLSMALLINT) BindStructure->iSQLType,
                                        BindStructure->ColumnSize,
                                        BindStructure->DecimalDigits,
                                        &(BindStructure->asNumeric), 0, NULL );
@@ -623,7 +623,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                //                        SQL_TIMESTAMP_LEN,
                //                        0,
                //                        &(BindStructure->asTimestamp), 0, 0 );
-               res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
                                           SQL_C_TYPE_TIMESTAMP,
                                           SQL_TYPE_TIMESTAMP,
                                        SQL_TIMESTAMP_LEN,
@@ -632,7 +632,7 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                break;
             }
             case SQL_C_TYPE_DATE: {
-               res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
                                        SQL_C_TYPE_DATE,
                                        SQL_TYPE_DATE,
                                        SQL_DATE_LEN,
@@ -641,9 +641,9 @@ void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel )
                break;
             }
             case SQL_C_BIT: {
-               res = SQLBindParameter( hStmt, iBind, SQL_PARAM_INPUT,
-                                       BindStructure->iCType,
-                                       BindStructure->iSQLType,
+               res = SQLBindParameter( hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+                                       (SQLSMALLINT) BindStructure->iCType,
+                                       (SQLSMALLINT) BindStructure->iSQLType,
                                        BindStructure->ColumnSize,
                                        BindStructure->DecimalDigits,
                                        &(BindStructure->asLogical), 0, NULL );
