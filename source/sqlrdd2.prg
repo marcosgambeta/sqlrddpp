@@ -1054,9 +1054,9 @@ METHOD ParseIndexColInfo(cSQL) CLASS SR_WORKAREA
    cOut := left(cSql, 11)
 
    FOR i := 12 TO nLen
-      If cSql[i] == "@"
+      If substr(cSql, i, 1) == "@"
 
-         nIndexCol := val(cSql[i+2])+1  // This is ZERO-base
+         nIndexCol := val(substr(cSql, i + 2, 1))+1  // This is ZERO-base
 
          If aQuot[nIndexCol] == "NULL"  // This 90% of the problem from 1% of the cases
 
@@ -1066,7 +1066,7 @@ METHOD ParseIndexColInfo(cSQL) CLASS SR_WORKAREA
 
                cFieldName := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2]], ::oSql:nSystemID)
 
-               SWITCH cSql[i+1]
+               SWITCH substr(cSql, i + 1, 1)
                CASE "1"  // >
                   cOut := ShiftLeftAddParentesis(cOut) + " IS NOT NULL AND " + cFieldName + " > 0 )"
                   EXIT
@@ -1084,7 +1084,7 @@ METHOD ParseIndexColInfo(cSQL) CLASS SR_WORKAREA
                   EXIT
                ENDSWITCH
             Else
-               SWITCH cSql[i+1]
+               SWITCH substr(cSql, i + 1, 1)
                CASE "1"  // >
                   cOut += "IS NOT NULL"
                   EXIT
@@ -1105,7 +1105,7 @@ METHOD ParseIndexColInfo(cSQL) CLASS SR_WORKAREA
          Else
             lNull     := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2], 5]
 
-            SWITCH cSql[i+1]
+            SWITCH substr(cSql, i + 1, 1)
             CASE "1"  // >
                cOut += " > " + aQuot[nIndexCol]
                EXIT
@@ -1135,7 +1135,7 @@ METHOD ParseIndexColInfo(cSQL) CLASS SR_WORKAREA
          EndIf
          i += 2
       Else
-         cOut += cSql[i]
+         cOut += substr(cSql, i, 1)
       EndIf
    NEXT i
 
@@ -1147,10 +1147,10 @@ STATIC FUNCTION ShiftLeft(cSql)
 
    LOCAL i := len(cSql)
 
-   While cSql[i] == " "
+   While substr(cSql, i, 1) == " "
       i--
    EndDo
-   While cSql[i] != " "
+   While substr(cSql, i, 1) != " "
       i--
    EndDo
    cSql := SubStr(cSql, 1, i)
@@ -1163,15 +1163,15 @@ STATIC FUNCTION ShiftLeftAddParentesis(cSql)
 
    LOCAL i := len(cSql)
 
-   While cSql[i] == " "
+   While substr(cSql, i, 1) == " "
       i--
    EndDo
-   While cSql[i] != " "
+   While substr(cSql, i, 1) != " "
       i--
    EndDo
    cSql := SubStr(cSql, 1, i) + "(" + SubStr(cSql, i)
    i := len(cSql)
-   While cSql[i] == " "
+   While substr(cSql, i, 1) == " "
       i--
    EndDo
 
@@ -6361,7 +6361,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
 
    If len(aInd) == 0
       FOR i := 1 TO len(cBagName)
-         c := cBagName[i]
+         c := substr(cBagName, i, 1)
          If IsDigit(c) .OR. IsAlpha(c) .OR. c == "_"  .OR. c == " "
             cWord += c
          EndIf
@@ -6859,7 +6859,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
 
    If !SR_GetSyntheticIndex()
       FOR i := 1 TO len(cColumns)
-         c := cColumns[i]
+         c := substr(cColumns, i, 1)
          If lInFunction .OR. lInParams
             If c == ")"
                lInFunction := .F.
@@ -9636,27 +9636,27 @@ METHOD OrdSetForClause(cFor, cForxBase) CLASS SR_WORKAREA
    If ::aInfo[AINFO_INDEXORD] > 0
 
       FOR i := 1 TO len(cFor)
-         If (!IsDigit(cFor[i])) .AND. (!IsAlpha(cFor[i])) .AND. (cFor[i] != "_")
+         If (!IsDigit(substr(cFor, i, 1))) .AND. (!IsAlpha(substr(cFor, i, 1))) .AND. (substr(cFor, i, 1) != "_")
             cWordUpper := Upper(cWord)
             If len(cWord) > 0 .AND. aScan(::aNames, {|x| x == cWordUpper}) > 0
-               cOut += "A." + SR_DBQUALIFY(cWordUpper, ::oSql:nSystemID) + cFor[i]
+               cOut += "A." + SR_DBQUALIFY(cWordUpper, ::oSql:nSystemID) + substr(cFor, i, 1)
             Else
-               cOut += cWord + cFor[i]
+               cOut += cWord + substr(cFor, i, 1)
             EndIf
             cWord := ""
-         ElseIf IsDigit(cFor[i]) .OR. IsAlpha(cFor[i]) .OR. cFor[i] = "_"
-            cWord += cFor[i]
+         ElseIf IsDigit(substr(cFor, i, 1)) .OR. IsAlpha(substr(cFor, i, 1)) .OR. substr(cFor, i, 1) = "_"
+            cWord += substr(cFor, i, 1)
          Else
-           cOut += cFor[i]
+           cOut += substr(cFor, i, 1)
          EndIf
       NEXT i
 
       If len(cWord) > 0
          cWordUpper := Upper(cWord)
          If aScan(::aNames, {|x| x == cWordUpper}) > 0
-            cOut += "A." + SR_DBQUALIFY(cWordUpper, ::oSql:nSystemID) + cFor[i]
+            cOut += "A." + SR_DBQUALIFY(cWordUpper, ::oSql:nSystemID) + substr(cFor, i, 1)
          Else
-            cOut += cWord + cFor[i]
+            cOut += cWord + substr(cFor, i, 1)
          EndIf
       EndIf
 
@@ -9679,13 +9679,13 @@ METHOD ParseForClause(cFor) CLASS SR_WORKAREA
 
    FOR i := 1 TO len(cFor)
 
-      If cFor[i] == '"'
-         cFor[i] := "'"
+      If substr(cFor, i, 1) == '"'
+         cFor := stuff(cFor, i, 1, "'")
       EndIf
 
-      If (!IsDigit(cFor[i])) .AND. (!IsAlpha(cFor[i])) .AND. (cFor[i] != "_")
+      If (!IsDigit(substr(cFor, i, 1))) .AND. (!IsAlpha(substr(cFor, i, 1))) .AND. (substr(cFor, i, 1) != "_")
 
-         If cFor[i] == "-" .AND. cFor[i+1] == ">"        // Remove ALIAS
+         If substr(cFor, i, 1) == "-" .AND. substr(cFor, i + 1, 1) == ">"        // Remove ALIAS
             cWord := ""
             i ++
             Loop
@@ -9698,7 +9698,7 @@ METHOD ParseForClause(cFor) CLASS SR_WORKAREA
             cOut += cWord
          EndIf
 
-         If cFor[i] == "." .AND. lower(cFor[i+1]) $ "aon"       // .AND. .OR.
+         If substr(cFor, i, 1) == "." .AND. lower(substr(cFor, i + 1, 1)) $ "aon"       // .AND. .OR.
             If lower(SubStr(cFor, i, 5)) == ".AND."
                cOut += " AND "
                i += 4
@@ -9716,12 +9716,12 @@ METHOD ParseForClause(cFor) CLASS SR_WORKAREA
             EndIf
          EndIf
 
-         cOut += cFor[i]
+         cOut += substr(cFor, i, 1)
          cWord := ""
-      ElseIf IsDigit(cFor[i]) .OR. IsAlpha(cFor[i]) .OR. cFor[i] = "_"
-         cWord += cFor[i]
+      ElseIf IsDigit(substr(cFor, i, 1)) .OR. IsAlpha(substr(cFor, i, 1)) .OR. substr(cFor, i, 1) = "_"
+         cWord += substr(cFor, i, 1)
       Else
-         cOut += cFor[i]
+         cOut += substr(cFor, i, 1)
       EndIf
 
    NEXT i
@@ -9729,9 +9729,9 @@ METHOD ParseForClause(cFor) CLASS SR_WORKAREA
    If len(cWord) > 0
       cWordUpper := Upper(cWord)
       If aScan(::aNames, {|x| x == cWordUpper}) > 0
-         cOut += "A." + SR_DBQUALIFY(cWordUpper, ::oSql:nSystemID) + cFor[i]
+         cOut += "A." + SR_DBQUALIFY(cWordUpper, ::oSql:nSystemID) + substr(cFor, i, 1)
       Else
-         cOut += cWord + cFor[i]
+         cOut += cWord + substr(cFor, i, 1)
       EndIf
    EndIf
 
@@ -9739,7 +9739,7 @@ METHOD ParseForClause(cFor) CLASS SR_WORKAREA
       cOut := "A." + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = ' '"
    EndIf
 
-RETURN  cOut
+RETURN cOut
 
 /*------------------------------------------------------------------------*/
 
@@ -9794,7 +9794,7 @@ METHOD AddRuleNotNull(cColumn) CLASS SR_WORKAREA
 
          ::oSql:Commit()
 
-         Do Case
+         Do Case // TODO: switch
          Case ::oSql:nSystemID == SYSTEMID_IBMDB2
 
             If ::AlterColumns({{ ::aFields[nCol,1], ::aFields[nCol,2], ::aFields[nCol,3], ::aFields[nCol,4], .F. }}, .T.)
@@ -9865,7 +9865,7 @@ METHOD DropRuleNotNull(cColumn) CLASS SR_WORKAREA
 
       ::oSql:Commit()
 
-      Do Case
+      Do Case // TODO: switch
       Case ::oSql:nSystemID == SYSTEMID_IBMDB2
 
       Case ::oSql:nSystemID == SYSTEMID_MYSQL .OR.  ::oSql:nSystemID == SYSTEMID_MARIADB
