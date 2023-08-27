@@ -282,17 +282,17 @@ HB_FUNC( SR_STRTOHEX )
       iCipher = (int) (iNum % 16);
 
       if( iCipher < 10 ) {
-         c[1] = '0' + iCipher;
+         c[1] = '0' + (char) iCipher;
       } else {
-         c[1] = 'A' + (iCipher - 10 );
+         c[1] = 'A' + (char) (iCipher - 10 );
       }
       iNum >>=4;
 
       iCipher = iNum % 16;
       if( iCipher < 10 ) {
-         c[0] = '0' + iCipher;
+         c[0] = '0' + (char) iCipher;
       } else {
-         c[0] = 'A' + (iCipher - 10 );
+         c[0] = 'A' + (char) (iCipher - 10 );
       }
 
       c+=2;
@@ -348,7 +348,7 @@ char * sr_Hex2Str( const char * cStr, int len, int * lenOut )
 
       iNum += iCipher;
       cStr++;
-      outbuff[i] = iNum;
+      outbuff[i] = (char) iNum;
    }
 
    outbuff[nalloc] = '\0';
@@ -882,15 +882,15 @@ HB_FUNC( SR_DBQUALIFY )
       case SYSTEMID_ADABAS:
          szOut[0] = '"';
          for( i = 0; i < ulLen; i++ ) {
-            szOut[ i+1 ] = toupper( (BYTE) pszBuffer[ i ] );
+            szOut[ i+1 ] = (char) toupper( (BYTE) pszBuffer[ i ] );
          }
          szOut[i+1] = '"';
          break;
       case SYSTEMID_INGRES:
-      case SYSTEMID_POSTGR:      
+      case SYSTEMID_POSTGR:
          szOut[0] = '"';
          for( i = 0; i < ulLen; i++ ) {
-            szOut[ i+1 ] = tolower( (BYTE) pszBuffer[ i ] );
+            szOut[ i+1 ] = (char) tolower( (BYTE) pszBuffer[ i ] );
          }
          szOut[i+1] = '"';
          break;
@@ -906,13 +906,13 @@ HB_FUNC( SR_DBQUALIFY )
       case SYSTEMID_MARIADB:
          szOut[0] = '`';
          for( i = 0; i < ulLen; i++ ) {
-            szOut[ i+1 ] = tolower( (BYTE) pszBuffer[ i ] );
+            szOut[ i+1 ] = (char) tolower( (BYTE) pszBuffer[ i ] );
          }
          szOut[i+1] = '`';
          break;
       case SYSTEMID_INFORM:
          for( i = 0; i < ulLen; i++ ) {
-            szOut[ i ] = tolower( (BYTE) pszBuffer[ i ] );
+            szOut[ i ] = (char) tolower( (BYTE) pszBuffer[ i ] );
          }
          ulLen -=2;
          break;
