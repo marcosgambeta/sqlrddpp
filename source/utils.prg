@@ -1910,41 +1910,26 @@ STATIC FUNCTION COLORLETTER(cColor)
 
   nColor := Abs(Val(cColor))
 
-  if nColor=0 // TODO: switch
-     cColor := "N"
-  elseif nColor=1
-     cColor := "B"
-  elseif nColor=2
-     cColor := "G"
-  elseif nColor=3
-     cColor := "BG"
-  elseif nColor=4
-     cColor := "R"
-  elseif nColor=5
-     cColor := "RB"
-  elseif nColor=6
-     cColor := "GR"
-  elseif nColor=7
-     cColor := "W"
-  elseif nColor=8
-     cColor := "N+"
-  elseif nColor=9
-     cColor := "B+"
-  elseif nColor=10
-     cColor := "G+"
-  elseif nColor=11
-     cColor := "BG+"
-  elseif nColor=12
-     cColor := "R+"
-  elseif nColor=13
-     cColor := "RB+"
-  elseif nColor=14
-     cColor := "GR+"
-  elseif nColor=15
-     cColor := "W+"
-  else
+  SWITCH nColor
+  CASE 0  ; cColor := "N"   ; EXIT
+  CASE 1  ; cColor := "B"   ; EXIT
+  CASE 2  ; cColor := "G"   ; EXIT
+  CASE 3  ; cColor := "BG"  ; EXIT
+  CASE 4  ; cColor := "R"   ; EXIT
+  CASE 5  ; cColor := "RB"  ; EXIT
+  CASE 6  ; cColor := "GR"  ; EXIT
+  CASE 7  ; cColor := "W"   ; EXIT
+  CASE 8  ; cColor := "N+"  ; EXIT
+  CASE 9  ; cColor := "B+"  ; EXIT
+  CASE 10 ; cColor := "G+"  ; EXIT
+  CASE 11 ; cColor := "BG+" ; EXIT
+  CASE 12 ; cColor := "R+"  ; EXIT
+  CASE 13 ; cColor := "RB+" ; EXIT
+  CASE 14 ; cColor := "GR+" ; EXIT
+  CASE 15 ; cColor := "W+"  ; EXIT
+  OTHERWISE
      cColor := "W+" // 15 is the max.
-  endif
+  ENDSWITCH
 
 RETURN ( cColor )
 

@@ -9795,52 +9795,53 @@ METHOD AddRuleNotNull(cColumn) CLASS SR_WORKAREA
 
          ::oSql:Commit()
 
-         Do Case // TODO: switch
-         Case ::oSql:nSystemID == SYSTEMID_IBMDB2
-
-            If ::AlterColumns({{ ::aFields[nCol,1], ::aFields[nCol,2], ::aFields[nCol,3], ::aFields[nCol,4], .F. }}, .T.)
+         SWITCH ::oSql:nSystemID
+         CASE SYSTEMID_IBMDB2
+            IF ::AlterColumns({{::aFields[nCol, 1], ::aFields[nCol, 2], ::aFields[nCol, 3], ::aFields[nCol, 4], .F.}}, .T.)
                nRet := SQL_SUCCESS
-            Else
+            ELSE
                nRet := SQL_ERROR
-            EndIf
-         Case ::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB
-
-            If ::aFields[nCol,2] == "C"
-               If ::aFields[nCol,3] > 255
-                  cType := "VARCHAR (" + str(::aFields[nCol,3],3) + ")"
-               Else
-                  cType := "CHAR (" + str(::aFields[nCol,3],3) + ")"
-               EndIf
-            ElseIf ::aFields[nCol,2] == "N"
-               cType := cMySqlNumericDataType + " (" + str(::aFields[nCol,3],4) + "," + str(::aFields[nCol,4],3) + ")"
-            ElseIf ::aFields[nCol,2] == "D"
+            ENDIF
+            EXIT
+         CASE SYSTEMID_MYSQL
+         CASE SYSTEMID_MARIADB
+            IF ::aFields[nCol, 2] == "C"
+               IF ::aFields[nCol, 3] > 255
+                  cType := "VARCHAR (" + str(::aFields[nCol, 3], 3) + ")"
+               ELSE
+                  cType := "CHAR (" + str(::aFields[nCol, 3], 3) + ")"
+               ENDIF
+            ELSEIF ::aFields[nCol, 2] == "N"
+               cType := cMySqlNumericDataType + " (" + str(::aFields[nCol, 3], 4) + "," + str(::aFields[nCol, 4], 3) + ")"
+            ELSEIF ::aFields[nCol, 2] == "D"
                cType = "DATE"
-            EndIf
-            nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " MODIFY " + cColumn + " " + cType + " NOT NULL" , .F.)
-
-         Case ::oSql:nSystemID == SYSTEMID_SYBASE .OR. ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_AZURE
-
-            If ::aFields[nCol,2] == "C"
-               cType := "CHAR (" + str(::aFields[nCol,3],3) + ")"
-            ElseIf ::aFields[nCol,2] == "N"
-               cType := "NUMERIC (" + str(::aFields[nCol,3],4) + "," + str(::aFields[nCol,4],3) + ")"
-            ElseIf ::aFields[nCol,2] == "D"
+            ENDIF
+            nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " MODIFY " + cColumn + " " + cType + " NOT NULL", .F.)
+            EXIT
+         CASE SYSTEMID_SYBASE
+         CASE SYSTEMID_MSSQL7
+         CASE SYSTEMID_AZURE
+            IF ::aFields[nCol, 2] == "C"
+               cType := "CHAR (" + str(::aFields[nCol, 3], 3) + ")"
+            ELSEIF ::aFields[nCol, 2] == "N"
+               cType := "NUMERIC (" + str(::aFields[nCol, 3], 4) + "," + str(::aFields[nCol, 4], 3) + ")"
+            ELSEIF ::aFields[nCol, 2] == "D"
                cType = "DATETIME"
-            EndIf
-            nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " ALTER COLUMN " + cColumn + " " + cType + " NOT NULL" , .F.)
-
-         Case ::oSql:nSystemID == SYSTEMID_ORACLE
-            nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " MODIFY " + cColumn + " NOT NULL" , .F.)
-
-         Case ::oSql:nSystemID == SYSTEMID_POSTGR
-            nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " ALTER COLUMN " + cColumn + " SET NOT NULL" , .F.)
-
-         Case ::oSql:nSystemID == SYSTEMID_FIREBR
-            nRet  := ::oSql:exec("update RDB$RELATION_FIELDS set RDB$NULL_FLAG = 1 where (RDB$FIELD_NAME = '" + cColumn + "') and (RDB$RELATION_NAME = '" + ::cFileName + "')" , .T.)
-         Case ::oSql:nSystemID == SYSTEMID_FIREBR3
-            nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " ALTER " + cColumn + " NOT NULL" , .F.)
-
-         EndCase
+            ENDIF
+            nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " ALTER COLUMN " + cColumn + " " + cType + " NOT NULL", .F.)
+            EXIT
+         CASE SYSTEMID_ORACLE
+            nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " MODIFY " + cColumn + " NOT NULL", .F.)
+            EXIT
+         CASE SYSTEMID_POSTGR
+            nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " ALTER COLUMN " + cColumn + " SET NOT NULL", .F.)
+            EXIT
+         CASE SYSTEMID_FIREBR
+            nRet := ::oSql:exec("update RDB$RELATION_FIELDS set RDB$NULL_FLAG = 1 where (RDB$FIELD_NAME = '" + cColumn + "') and (RDB$RELATION_NAME = '" + ::cFileName + "')", .T.)
+            EXIT
+         CASE SYSTEMID_FIREBR3
+            nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " ALTER " + cColumn + " NOT NULL", .F.)
+         ENDSWITCH
       EndIf
    EndIf
 
@@ -9866,43 +9867,43 @@ METHOD DropRuleNotNull(cColumn) CLASS SR_WORKAREA
 
       ::oSql:Commit()
 
-      Do Case // TODO: switch
-      Case ::oSql:nSystemID == SYSTEMID_IBMDB2
-
-      Case ::oSql:nSystemID == SYSTEMID_MYSQL .OR.  ::oSql:nSystemID == SYSTEMID_MARIADB
-
-         If ::aFields[nCol,2] == "C"
-            cType := "CHAR (" + str(::aFields[nCol,3],3) + ")"
-         ElseIf ::aFields[nCol,2] == "N"
-            cType := cMySqlNumericDataType + " (" + str(::aFields[nCol,3],4) + "," + str(::aFields[nCol,4],3) + ")"
-         ElseIf ::aFields[nCol,2] == "D"
-            cType = "DATE"
-         EndIf
-         nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " MODIFY " + cColumn + " " + cType + " NULL" , .F.)
-
-      Case ::oSql:nSystemID == SYSTEMID_SYBASE .OR. ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_AZURE
-
-         If ::aFields[nCol,2] == "C"
-            cType := "CHAR (" + str(::aFields[nCol,3],3) + ")"
-         ElseIf ::aFields[nCol,2] == "N"
-            cType := "NUMERIC (" + str(::aFields[nCol,3],4) + "," + str(::aFields[nCol,4],3) + ")"
-         ElseIf ::aFields[nCol,2] == "D"
-            cType = "DATETIME"
-         EndIf
-         nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " ALTER COLUMN " + cColumn + " " + cType + " NULL" , .F.)
-
-      Case ::oSql:nSystemID == SYSTEMID_ORACLE
-         nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " MODIFY " + cColumn + " NULL" , .F.)
-
-      Case ::oSql:nSystemID == SYSTEMID_POSTGR
-         nRet  := ::oSql:exec("ALTER TABLE " +  ::cQualifiedTableName  + " ALTER COLUMN " + cColumn + " SET NULL" , .F.)
-
-      EndCase
+      SWITCH ::oSql:nSystemID
+      CASE SYSTEMID_IBMDB2
+         EXIT
+      CASE SYSTEMID_MYSQL
+      CASE SYSTEMID_MARIADB
+         IF ::aFields[nCol, 2] == "C"
+            cType := "CHAR (" + str(::aFields[nCol, 3], 3) + ")"
+         ELSEIF ::aFields[nCol, 2] == "N"
+            cType := cMySqlNumericDataType + " (" + str(::aFields[nCol, 3], 4) + "," + str(::aFields[nCol, 4], 3) + ")"
+         ELSEIF ::aFields[nCol, 2] == "D"
+            cType := "DATE"
+         ENDIF
+         nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " MODIFY " + cColumn + " " + cType + " NULL", .F.)
+         EXIT
+      CASE SYSTEMID_SYBASE
+      CASE SYSTEMID_MSSQL7
+      CASE SYSTEMID_AZURE
+         IF ::aFields[nCol, 2] == "C"
+            cType := "CHAR (" + str(::aFields[nCol, 3], 3) + ")"
+         ELSEIF ::aFields[nCol, 2] == "N"
+            cType := "NUMERIC (" + str(::aFields[nCol, 3], 4) + "," + str(::aFields[nCol, 4], 3) + ")"
+         ELSEIF ::aFields[nCol, 2] == "D"
+            cType := "DATETIME"
+         ENDIF
+         nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " ALTER COLUMN " + cColumn + " " + cType + " NULL", .F.)
+         EXIT
+      CASE SYSTEMID_ORACLE
+         nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " MODIFY " + cColumn + " NULL", .F.)
+         EXIT
+      CASE SYSTEMID_POSTGR
+         nRet := ::oSql:exec("ALTER TABLE " + ::cQualifiedTableName + " ALTER COLUMN " + cColumn + " SET NULL", .F.)
+      ENDSWITCH
    EndIf
 
    If nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO .OR. nRet == SQL_NO_DATA_FOUND
       lOk := .T.
-      ::aFields[nCol,FIELD_NULLABLE] := .F.
+      ::aFields[nCol, FIELD_NULLABLE] := .F.
    EndIf
 
 RETURN lOk

@@ -2184,24 +2184,28 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
    FOR EACH aItem IN aCon
       aToken := hb_atokens(aItem,"=")
       cBuff = Upper(aToken[1])
-      Do Case // TODO: switch
-      Case cBuff == "OCI"
+      SWITCH cBuff
+      CASE "OCI"
          RETURN CONNECT_ORACLE
-      Case cBuff == "OCI2"
+      CASE "OCI2"
          RETURN CONNECT_ORACLE2
-      Case cBuff == "PGS"
+      CASE "PGS"
          RETURN CONNECT_POSTGRES
-      Case cBuff == "MYSQL"
+      CASE "MYSQL"
          RETURN CONNECT_MYSQL
-      Case cBuff == "MARIA"
+      CASE "MARIA"
          RETURN CONNECT_MARIA
-      Case cBuff == "FB" .OR. cBuff == "FIREBIRD" .OR. cBuff == "IB"
+      CASE "FB"
+      CASE "FIREBIRD"
+      CASE "IB"
          RETURN CONNECT_FIREBIRD
-      Case cBuff == "FB3" .OR. cBuff == "FIREBIRD3"
+      CASE "FB3"
+      CASE "FIREBIRD3"
          RETURN CONNECT_FIREBIRD3
-      Case cBuff == "DSN" .OR. cBuff == "DRIVER"
+      CASE "DSN"
+      CASE "DRIVER"
          RETURN CONNECT_ODBC
-      EndCase
+      ENDSWITCH
    NEXT
 
 RETURN SYSTEMID_UNKNOW

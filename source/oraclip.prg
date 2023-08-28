@@ -1477,57 +1477,67 @@ STATIC FUNCTION mySQLLen(nType, nLen, nDec)
    LOCAL cType := "U"
    LOCAL Self := QSelf()
 
-   DEFAULT nDec to -1
+   DEFAULT nDec TO -1
 
-   do case // TODO: switch
-   case (nType == SQL_CHAR .OR. nType == SQL_VARCHAR .OR. nType == SQL_NVARCHAR) .AND. IIf(SR_SetNwgCompat(), nLen != 4000 .AND. nLen != 2000, .T.)
-
-   Case nType == SQL_SMALLINT .OR. nType == SQL_TINYINT
-      If ::lQueryOnly
+   SWITCH nType
+   CASE SQL_CHAR
+   CASE SQL_VARCHAR
+   CASE SQL_NVARCHAR
+      IF IIf(SR_SetNwgCompat(), nLen != 4000 .AND. nLen != 2000, .T.)
+      ENDIF
+      EXIT
+   CASE SQL_SMALLINT
+   CASE SQL_TINYINT
+      IF ::lQueryOnly
          nLen := 10
-      Else
+      ELSE
          nLen := 1
-      EndIf
-
-   case nType == SQL_BIT
-        nLen := 1
-
-   case nType == SQL_NUMERIC  .OR. nType == SQL_DECIMAL  .OR. ;
-        nType == SQL_INTEGER  .OR. ;
-        nType == SQL_FLOAT    .OR. nType == SQL_REAL     .OR. ;
-        nType == SQL_DOUBLE
-
-      If nLen > 19 .AND. nDec > 10 .AND. !( nLen = 38 .AND. nDec = 0 )
+      ENDIF
+      EXIT
+   CASE SQL_BIT
+      nLen := 1
+      EXIT
+   CASE SQL_NUMERIC
+   CASE SQL_DECIMAL
+   CASE SQL_INTEGER
+   CASE SQL_FLOAT
+   CASE SQL_REAL
+   CASE SQL_DOUBLE
+      IF nLen > 19 .AND. nDec > 10 .AND. !(nLen = 38 .AND. nDec = 0)
          nLen := 20
          nDec := 6
-      EndIf
-     
-     If nDec >3 .AND. !( nLen = 38 .AND. nDec = 0 )
-        nLen := 14
-      endif
-      If !( nLen = 38 .AND. nDec = 0 )
+      ENDIF
+      IF nDec > 3 .AND. !(nLen = 38 .AND. nDec = 0)
+         nLen := 14
+      ENDIF
+      IF !(nLen = 38 .AND. nDec = 0)
          nLen := min(nLen, 20)
          nLen := max(nLen, 1)
-      EndIf
-
-   case nType == SQL_DATE .OR. nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_TYPE_DATE .OR. ntype == SQL_DATETIME
-     nLen := 8
-
-   case nType == SQL_TIME
-     nLen := 8
-
-   case nType == SQL_LONGVARCHAR .OR. nType == SQL_LONGVARBINARY .OR. nType == SQL_FAKE_LOB
-     nLen := 10
-
-   Case nType == SQL_GUID
+      ENDIF
+      EXIT
+   CASE SQL_DATE
+   CASE SQL_TIMESTAMP
+   CASE SQL_TYPE_TIMESTAMP
+   CASE SQL_TYPE_DATE
+   CASE SQL_DATETIME
+      nLen := 8
+      EXIT
+   CASE SQL_TIME
+      nLen := 8
+      EXIT
+   CASE SQL_LONGVARCHAR
+   CASE SQL_LONGVARBINARY
+   CASE SQL_FAKE_LOB
+      nLen := 10
+      EXIT
+   CASE SQL_GUID
       nLen := 36
-
-   endcase
+   ENDSWITCH
 
 RETURN nLen
 
 
-FUNCTION orarownum(nCursor) 
+FUNCTION orarownum(nCursor)
 RETURN aOraClipCursors[nCursor]["curpos"]
 
 FUNCTION oraGoto(n, aDados, nRow)
@@ -1666,15 +1676,19 @@ Elseif !aOraClipCursors[n]["completed"]
 //     FOR i := 1 TO len(aOraClipCursors[n]["data"])
        aDb := aOraClipCursors[n]["aFields"]
       FOR i := 1 TO len(aDb)
-         if adb[i, 2] == "C" // TODO: switch
+         SWITCH adb[i, 2]
+         CASE "C"
             aadd(aOraClipCursors[n]["data"], "")
-         elseif adb[i, 2] == "N"
+            EXIT
+         CASE "N"
             aadd(aOraClipCursors[n]["data"], 0)
-         elseif adb[i, 2] == "D"
+            EXIT
+         CASE "D"
             aadd(aOraClipCursors[n]["data"], ctod(""))
-         elseif adb[i, 2] == "L"
+            EXIT
+         CASE "L"
             aadd(aOraClipCursors[n]["data"], .F.)
-         endif
+         ENDSWITCH
       NEXT i
          aOraClipCursors[n]["completed"] := .T.
          aOraClipCursors[n]["eof"] := .T.
