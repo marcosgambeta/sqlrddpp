@@ -280,13 +280,13 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       cTargetDB  = "PostgreSQL Native"
       ::exec("select version()", .T., .T., @aRet)
       If len (aRet) > 0
-         cSystemVers := aRet[1,1]
-         cString := aRet[1,1]          
+         cSystemVers := aRet[1, 1]
+         cString := aRet[1, 1]          
          cMatch := HB_AtX(s_reEnvVar, cString, , @nStart, @nLen)
          if !empty(cMatch )
             aVersion      := hb_atokens(cMatch, ".")
          else
-            aVersion      := hb_atokens(strtran(Upper(aRet[1,1]),"POSTGRESQL ",""), ".")
+            aVersion      := hb_atokens(strtran(Upper(aRet[1, 1]),"POSTGRESQL ",""), ".")
          endif
       Else
          cSystemVers= "??"
@@ -317,7 +317,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::exec("select pg_backend_pid()", .T., .T., @aRet)
 
    If len(aRet) > 0
-      ::uSid := val(str(aRet[1,1],8,0))
+      ::uSid := val(str(aRet[1, 1],8,0))
    EndIf
 
 RETURN Self

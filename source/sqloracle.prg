@@ -334,7 +334,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::exec("select sid from " + IIf(::lCluster, "g", "" ) + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
    If len(aRet) > 0
-      ::uSid := val(str(aRet[1,1],8,0))
+      ::uSid := val(str(aRet[1, 1], 8, 0))
    EndIf
 
 RETURN Self
@@ -577,7 +577,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             aDb := {}
             If lNoRecno
                FOR i := 1 TO len(aFields)
-                  If aFields[i,1] != cRecnoName
+                  If aFields[i, 1] != cRecnoName
                      AADD(aDb, aFields[i])
                   Else
                      nFieldRec := i
@@ -595,7 +595,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          n := 1
 
-         While n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+         DO WHILE n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
 
             Append Blank
 
@@ -618,7 +618,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
             n ++
 
-         EndDo
+         ENDDO
 
          dbGoTop()
 
@@ -629,13 +629,13 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          aFields   := ::IniFields(.F.,,,,,cRecnoName, cDeletedName,.T.)
  
          FOR i := 1 TO len(aFields)
-            ::cResult += PadR(aFields[i,1], IIf(aFields[i,2] == "M", Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i,1]), aFields[i,3])), "-") + " "
+            ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
          NEXT i
 
          ::cResult += chr(13) + chr(10)
          aMemo     := Array(len(aFields))
 
-         While n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+         DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
 
             cEste      := ""
             nLenMemo   := 0
@@ -643,13 +643,13 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
             FOR i := 1 TO len(aFields)
                cCampo := ::FieldGet(i, aFields, lTranslate)
-               If aFields[i,2] == "M"
-                  nLenMemo   := Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30))
+               If aFields[i, 2] == "M"
+                  nLenMemo   := Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
                   nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
                   cEste += memoline(cCampo,nLenMemo,1) + " "
                   aMemo[i] := cCampo
                Else
-                  cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i,1]), aFields[i,3])) + " "
+                  cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                EndIf
             NEXT i
 
@@ -660,10 +660,10 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                FOR j := 2 TO nLinesMemo
                   cEste    := ""
                   FOR i := 1 TO len(aFields)
-                     If aFields[i,2] == "M"
+                     If aFields[i, 2] == "M"
                         cEste += memoline(aMemo[i],nLenMemo,j) + " "
                      Else
-                        cEste += Space(Max(len(aFields[i,1]), aFields[i,3])) + " "
+                        cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                      EndIf
                   NEXT i
                   ::cResult += cEste + chr(13) + chr(10)
@@ -671,7 +671,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                NEXT j
             EndIf
 
-         EndDo
+         ENDDO
 
       Else      // Retorno deve ser para Array !
 
@@ -693,7 +693,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          n       := 0
          aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
-         While (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
+         DO WHILE (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
             n ++
             If n > nAllocated
                SWITCH nAllocated
@@ -723,10 +723,10 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             If n > nMaxRecords
                Exit
             EndIf
-         EndDo
+         ENDDO
          aSize(aArray, n)
       EndIf
-   
+
    Endif
  
    nerror:=SQLO_CLOSESTMT(::hDbc)

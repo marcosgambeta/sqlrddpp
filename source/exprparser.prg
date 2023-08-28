@@ -150,9 +150,9 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
       cRegO := "^((?:[^\'\?]*(?:\'[^\']*\'|\?(?:[^\'\?]*(?:\'[^\']*\'))*[^\'\?]*\?))*?[^\'\?]*?)(" + o:cPattern + ")(\s*[^>].*)$"
       IF (HB_RegExMatch(cRegO, cExpression, .F.))
          aGroups := HB_RegExAtX(cRegO, cExpression)
-         oOperand1 := ::InternParse(aGroups[2,1], cAlias)
+         oOperand1 := ::InternParse(aGroups[2, 1], cAlias)
          oConnector := o
-         oOperand2 := ::InternParse(aGroups[4,1], cAlias)
+         oOperand2 := ::InternParse(aGroups[4, 1], cAlias)
          exit
       ENDIF
    NEXT i

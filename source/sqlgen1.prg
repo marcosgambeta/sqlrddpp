@@ -141,7 +141,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
    BEGIN SEQUENCE
 
-      WHILE .T.
+      DO WHILE .T.
 
          If nIp > nLen .OR. nDepht < 0    /* nDepht controls recursivity */
             Exit
@@ -886,7 +886,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                                             iif(!SR_IsComparNullOp(apCode[nIP+6]), apCode[nIP+7] == SQL_PCODE_COLUMN_BY_VALUE, .T.) .AND.;
                                             (nFlt := aScan(aOuters, {|x| upper(x[2]) == upper(apCode[nIP+3])})) > 0
 
-               aOuters[nFlt,3] += " AND " + SR_DBQUALIFY(apCode[nIP+3], nSystemID) + "." + SR_DBQUALIFY(apCode[nIP+5], nSystemID) + SR_ComparOpText(apCode[nIP+6]) + iif(!SR_IsComparNullOp(apCode[nIP+6]), SR_SQLQuotedString(apCode[nIP+8], nSystemID), "" )
+               aOuters[nFlt, 3] += " AND " + SR_DBQUALIFY(apCode[nIP+3], nSystemID) + "." + SR_DBQUALIFY(apCode[nIP+5], nSystemID) + SR_ComparOpText(apCode[nIP+6]) + iif(!SR_IsComparNullOp(apCode[nIP+6]), SR_SQLQuotedString(apCode[nIP+8], nSystemID), "" )
                nIP += iif(SR_IsComparNullOp(apCode[nIP + 6]), 7, 9)
                Exit
             ElseIf nIP + 1 <= len(apCode) .AND. apCode[nIP+1] == SQL_PCODE_OPERATOR_LEFT_OUTER_JOIN
@@ -981,17 +981,17 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             If uData == SQL_PCODE_COLUMN_NAME
                SKIPFWD
-               aOuters[len(aOuters),3] := SR_DBQUALIFY(aOuters[len(aOuters),1], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
+               aOuters[len(aOuters), 3] := SR_DBQUALIFY(aOuters[len(aOuters), 1], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
             EndIf
 
-            aOuters[len(aOuters),3] += " = "
+            aOuters[len(aOuters), 3] += " = "
 
             If uData == SQL_PCODE_COLUMN_ALIAS
                SKIPFWD
-               aOuters[len(aOuters),2] := uData
+               aOuters[len(aOuters), 2] := uData
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -999,7 +999,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             If uData == SQL_PCODE_COLUMN_NAME
                SKIPFWD
-               aOuters[len(aOuters),3] += SR_DBQUALIFY(aOuters[len(aOuters),2], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
+               aOuters[len(aOuters), 3] += SR_DBQUALIFY(aOuters[len(aOuters), 2], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -1019,17 +1019,17 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             If uData == SQL_PCODE_COLUMN_NAME
                SKIPFWD
-               aOuters[len(aOuters),3] := SR_DBQUALIFY(aOuters[len(aOuters),1], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
+               aOuters[len(aOuters), 3] := SR_DBQUALIFY(aOuters[len(aOuters), 1], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
             EndIf
 
-            aOuters[len(aOuters),3] += " = "
+            aOuters[len(aOuters), 3] += " = "
 
             If uData == SQL_PCODE_COLUMN_ALIAS
                SKIPFWD
-               aOuters[len(aOuters),2] := uData
+               aOuters[len(aOuters), 2] := uData
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -1037,7 +1037,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             If uData == SQL_PCODE_COLUMN_NAME
                SKIPFWD
-               aOuters[len(aOuters),3] += SR_DBQUALIFY(aOuters[len(aOuters),2], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
+               aOuters[len(aOuters), 3] += SR_DBQUALIFY(aOuters[len(aOuters), 2], nSystemID) + "." + SR_DBQUALIFY(uData, nSystemID)
                SKIPFWD
             Else
                BREAK SQL_SINTAX_ERROR_OUTER_JOIN
@@ -1227,32 +1227,32 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
    Endif
 
    If lNotNull .AND. empty(uData) .AND. cType $ "CM"
-      RETURN ['] + " " + [']
+      RETURN "'" + " " + "'"
    Endif
 
    Do Case // TODO: switch ?
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
-      RETURN [E'] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + [']
+      RETURN [E'] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
    Case cType $ "CM"
-      RETURN ['] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + [']
+      RETURN "'" + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
       RETURN ([TO_DATE('] + rtrim(DtoS(uData)) + [','YYYYMMDD')])
    Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS )
-      RETURN ([']+transform(DtoS(uData) ,'@R 9999-99-99')+['])
+      RETURN ("'" + transform(DtoS(uData), "@R 9999-99-99") + "'")
    Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
-      RETURN (['] + SR_dtosdot(uData) + ['])
+      RETURN ("'" + SR_dtosdot(uData) + "'")
    Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
-      RETURN (['] + SR_dtoUS(uData) + ['])
+      RETURN ("'" + SR_dtoUS(uData) + "'")
    Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
-      RETURN (['] + SR_dtoDot(uData) + ['])
+      RETURN ("'" + SR_dtoDot(uData) + "'")
    Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
-      RETURN [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
+      RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
       RETURN [{d ']+transform(DtoS(iif(year(uData)<1850,stod("18500101"),uData)) ,'@R 9999-99-99')+['}]
    Case cType == "D" .AND. ( nSystemID == SYSTEMID_MYSQL .OR. nSystemID == SYSTEMID_MARIADB )
       RETURN ([str_to_date( '] + dtos(uData) + [', '%Y%m%d' )])
    Case cType == "D"
-      RETURN (['] + dtos(uData) + ['])
+      RETURN ("'" + dtos(uData) + "'")
    Case cType == "N"
       RETURN ltrim(str(uData))
    Case cType == "L" .AND. nSystemID == SYSTEMID_POSTGR
@@ -1541,7 +1541,7 @@ FUNCTION SR_pCodeDescr(nCode)
    nFound := aScan(apCode, {|x| x[2] == nCode })
 
    If nFound > 0
-      RETURN apCode[nFound,1]
+      RETURN apCode[nFound, 1]
    EndIf
 
 RETURN nCode

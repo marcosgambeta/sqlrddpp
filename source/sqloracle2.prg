@@ -345,14 +345,14 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    if !empty(cMatch )
       aVersion      := hb_atokens(cMatch, ".")
    else
-      aVersion      := hb_atokens(strtran(Upper(aRet[1,1]),"ORACLE ",""), ".")
+      aVersion      := hb_atokens(strtran(Upper(aRet[1, 1]),"ORACLE ",""), ".")
    endif
    
    
    ::exec("select sid from " + IIf(::lCluster, "g", "" ) + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
    If len(aRet) > 0
-      ::uSid := val(str(aRet[1,1],8,0))
+      ::uSid := val(str(aRet[1, 1],8,0))
    EndIf
    SQLO2_SETSTATEMENTCACHESIZE(hdbc,50)
    ::lOracle12 :=( Val(aversion[1]) == 12 )
@@ -406,14 +406,14 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
           ORACLEBINDALLOC2(::hDBC, len(::aBindParameters))
          FOR i := 1 TO len(::aBindParameters )
             if HB_ISARRAY(::aBindParameters[i])
-               if HB_ISCHAR(::aBindParameters[i,2])
-                  ORACLEINBINDPARAM2(::hDBC,i,-1,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)
-               elseif HB_ISDATE(::aBindParameters[i,2])
-                  ORACLEINBINDPARAM2(::hDBC,i,8,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)
+               if HB_ISCHAR(::aBindParameters[i, 2])
+                  ORACLEINBINDPARAM2(::hDBC,i,-1,::aBindParameters[i, 3],0,::aBindParameters[i, 2],.T.)
+               elseif HB_ISDATE(::aBindParameters[i, 2])
+                  ORACLEINBINDPARAM2(::hDBC,i,8,::aBindParameters[i, 3],0,::aBindParameters[i, 2],.T.)
                elseif HB_ISLOGICAL(::aBindParameters[i])
-                  ORACLEINBINDPARAM2(::hDBC,i,3,::aBindParameters[i,3],0,::aBindParameters[i,2],.T.)
+                  ORACLEINBINDPARAM2(::hDBC,i,3,::aBindParameters[i, 3],0,::aBindParameters[i, 2],.T.)
                else
-                  ORACLEINBINDPARAM2(::hDBC,i,2,15,0,::aBindParameters[i,2],.T.)
+                  ORACLEINBINDPARAM2(::hDBC,i,2,15,0,::aBindParameters[i, 2],.T.)
                endif
             else
                if HB_ISCHAR(::aBindParameters[i])
@@ -635,7 +635,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             aDb := {}
             If lNoRecno
                FOR i := 1 TO len(aFields)
-                  If aFields[i,1] != cRecnoName
+                  If aFields[i, 1] != cRecnoName
                      AADD(aDb, aFields[i])
                   Else
                      nFieldRec := i
@@ -653,7 +653,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          n := 1
 
-         While n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+         DO WHILE n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
 
             Append Blank
 
@@ -676,7 +676,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
             n ++
 
-         EndDo
+         ENDDO
 
          dbGoTop()
 
@@ -685,15 +685,15 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          ::cResult := ""
          n         := 0
          aFields   := ::IniFields(.F.,,,,,cRecnoName, cDeletedName,.T.)
- 
+
          FOR i := 1 TO len(aFields)
-            ::cResult += PadR(aFields[i,1], IIf(aFields[i,2] == "M", Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i,1]), aFields[i,3])), "-") + " "
+            ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
          NEXT i
 
          ::cResult += chr(13) + chr(10)
          aMemo     := Array(len(aFields))
 
-         While n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
+         DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
 
             cEste      := ""
             nLenMemo   := 0
@@ -701,13 +701,13 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
             FOR i := 1 TO len(aFields)
                cCampo := ::FieldGet(i, aFields, lTranslate)
-               If aFields[i,2] == "M"
-                  nLenMemo   := Max(len(aFields[i,1]), iif(::lShowTxtMemo, 79, 30))
+               If aFields[i, 2] == "M"
+                  nLenMemo   := Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
                   nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
                   cEste += memoline(cCampo,nLenMemo,1) + " "
                   aMemo[i] := cCampo
                Else
-                  cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i,1]), aFields[i,3])) + " "
+                  cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                EndIf
             NEXT i
 
@@ -718,10 +718,10 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                FOR j := 2 TO nLinesMemo
                   cEste    := ""
                   FOR i := 1 TO len(aFields)
-                     If aFields[i,2] == "M"
+                     If aFields[i, 2] == "M"
                         cEste += memoline(aMemo[i],nLenMemo,j) + " "
                      Else
-                        cEste += Space(Max(len(aFields[i,1]), aFields[i,3])) + " "
+                        cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                      EndIf
                   NEXT i
                   ::cResult += cEste + chr(13) + chr(10)
@@ -729,7 +729,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                NEXT j
             EndIf
 
-         EndDo
+         ENDDO
 
       Else      // Retorno deve ser para Array !
 
@@ -751,7 +751,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          n       := 0
          aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
-         While (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
+         DO WHILE (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
             n ++
             If n > nAllocated
                SWITCH nAllocated
@@ -781,10 +781,10 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             If n > nMaxRecords
                Exit
             EndIf
-         EndDo
+         ENDDO
          aSize(aArray, n)
       EndIf
-   
+
    Endif
  
    nerror:=SQLO2_CLOSESTMT(::hDbc)
@@ -838,23 +838,23 @@ FUNCTION SR_AdjustNum(a)
    FOR i := 1 TO len(b)
 
       If lNwgOldCompat
-         If b[i,2] = "N"
-            b[i,3] ++
+         If b[i, 2] = "N"
+            b[i, 3] ++
          EndIf
       EndIf
 
-      If b[i,2] = "N" .AND. b[i,3] > 18
-         b[i,3] := 19
+      If b[i, 2] = "N" .AND. b[i, 3] > 18
+         b[i, 3] := 19
       EndIf
 
       If lNwgOldCompat
-         If b[i,2] = "N" .AND. b[i,4] >= (b[i,3] - 1)
-            b[i,4] := abs(b[i,3] - 2)
+         If b[i, 2] = "N" .AND. b[i, 4] >= (b[i, 3] - 1)
+            b[i, 4] := abs(b[i, 3] - 2)
          EndIf
       EndIf
 
-      If b[i,2] = "M"
-         b[i,3] := 10
+      If b[i, 2] = "M"
+         b[i, 3] := 10
       EndIf
 
    NEXT i

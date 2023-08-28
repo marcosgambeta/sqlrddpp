@@ -251,8 +251,8 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       SR_LogFile("changestruct.log", { oWA:cFileName, "New Structure:", e"\r\n" + sr_showVector(aNewStruct)  })
 
       FOR i := 1 TO len(aNewStruct)
-         aNewStruct[i,1] := Upper(alltrim(aNewStruct[i,1]))
-         If (n := aScan(oWA:aFields, {|x| x[1] == aNewStruct[i,1] }) ) > 0
+         aNewStruct[i, 1] := Upper(alltrim(aNewStruct[i, 1]))
+         If (n := aScan(oWA:aFields, {|x| x[1] == aNewStruct[i, 1] }) ) > 0
 
             aSize(aNewStruct[i], max(len(aNewStruct[i] ), 5))
 
@@ -260,21 +260,21 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
                // Structure is identical. Only need to check for NOT NULL flag.
                If aNewStruct[i, FIELD_NULLABLE] != NIL .AND. aNewStruct[i, FIELD_NULLABLE] !=  oWA:aFields[n, FIELD_NULLABLE]
                   If aNewStruct[i, FIELD_NULLABLE]
-                     SR_LogFile("changestruct.log", { oWA:cFileName, "Changing to nullable:", aNewStruct[i,1]})
-                     oWA:DropRuleNotNull(aNewStruct[i,1])
+                     SR_LogFile("changestruct.log", { oWA:cFileName, "Changing to nullable:", aNewStruct[i, 1]})
+                     oWA:DropRuleNotNull(aNewStruct[i, 1])
                   Else
-                     SR_LogFile("changestruct.log", { oWA:cFileName, "Changing to not null:", aNewStruct[i,1]})
-                     oWA:AddRuleNotNull(aNewStruct[i,1])
+                     SR_LogFile("changestruct.log", { oWA:cFileName, "Changing to not null:", aNewStruct[i, 1]})
+                     oWA:AddRuleNotNull(aNewStruct[i, 1])
                   EndIf
                EndIf
             ElseIf oWA:oSql:nSystemID == SYSTEMID_IBMDB2
-               SR_LogFile("changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i,1], " - Operation not supported by back end database" })
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i, 1], " - Operation not supported by back end database" })
             ElseIf aNewStruct[i, 2] == "M" .AND. oWA:aFields[n, 2] == "C"
                aadd(aToFix, aClone(aNewStruct[i]))
-               SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change data type of field:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change data type of field:", aNewStruct[i, 1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ElseIf aNewStruct[i, 2] == "C" .AND. oWA:aFields[n, 2] == "M"
                aadd(aToFix, aClone(aNewStruct[i]))
-               SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing data type:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing data type:", aNewStruct[i, 1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ElseIf aNewStruct[i, 2] != oWA:aFields[n, 2]
                IF aNewStruct[i, 2] $"CN" .AND. oWA:aFields[n, 2] $"CN" .AND. oWA:oSql:nSystemID == SYSTEMID_POSTGR
 
@@ -284,31 +284,31 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
                   else
                      aadd(aToFix, aClone(aNewStruct[i]))
                   ENDIF
-                  SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field types:", aNewStruct[i,1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
+                  SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field types:", aNewStruct[i, 1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
                ELSE
-                  SR_LogFile("changestruct.log", { oWA:cFileName, "ERROR: Cannot convert data type of field:", aNewStruct[i,1], " from", oWA:aFields[n, 2], "to", aNewStruct[i, 2] })
+                  SR_LogFile("changestruct.log", { oWA:cFileName, "ERROR: Cannot convert data type of field:", aNewStruct[i, 1], " from", oWA:aFields[n, 2], "to", aNewStruct[i, 2] })
                ENDIF
             ElseIf aNewStruct[i, 3] >= oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"
 
                aadd(aDirect, aClone(aNewStruct[i]))
-               SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3] })
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Will Change field size:", aNewStruct[i, 1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3] })
             ElseIf aNewStruct[i, 3] < oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"
                aadd(aToFix, aClone(aNewStruct[i]))
-               SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field size:", aNewStruct[i,1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3]})
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Warning: Possible data loss changing field size:", aNewStruct[i, 1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3]})
             Else
-               SR_LogFile("changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i,1] })
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Column cannot be changed:", aNewStruct[i, 1] })
             EndIf
          Else
             aadd(aToFix, aClone(aNewStruct[i]))
-            SR_LogFile("changestruct.log", { oWA:cFileName, "Will add column:", aNewStruct[i,1] })
+            SR_LogFile("changestruct.log", { oWA:cFileName, "Will add column:", aNewStruct[i, 1] })
          EndIf
       NEXT i
 
       FOR i := 1 TO len(oWA:aFields)
-         If (n := aScan(aNewStruct, {|x| x[1] == oWA:aFields[i,1] }) ) == 0
-            If (!oWA:aFields[i,1] == oWA:cRecnoName) .AND. (!oWA:aFields[i,1] == oWA:cDeletedName ) .AND. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
+         If (n := aScan(aNewStruct, {|x| x[1] == oWA:aFields[i, 1] }) ) == 0
+            If (!oWA:aFields[i, 1] == oWA:cRecnoName) .AND. (!oWA:aFields[i, 1] == oWA:cDeletedName ) .AND. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
                aadd(aToDrop, aClone(oWA:aFields[i]))
-               SR_LogFile("changestruct.log", { oWA:cFileName, "Will drop:", oWA:aFields[i,1] })
+               SR_LogFile("changestruct.log", { oWA:cFileName, "Will drop:", oWA:aFields[i, 1] })
             EndIf
          EndIf
       NEXT i
@@ -331,10 +331,10 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       EndIf
 
       FOR i := 1 TO len(aToDrop)
-         If aToDrop[i,1] == "BACKUP_"
-            oWA:DropColumn(aToDrop[i,1], .F.)
+         If aToDrop[i, 1] == "BACKUP_"
+            oWA:DropColumn(aToDrop[i, 1], .F.)
          Else
-            oWA:DropColumn(aToDrop[i,1], .T.)
+            oWA:DropColumn(aToDrop[i, 1], .T.)
          EndIf
       NEXT i
 
@@ -513,64 +513,64 @@ RETURN SR_SubQuoted(valtype(uData), uData, nSystemID)
 
 /*------------------------------------------------------------------------*/
 
-Static FUNCTION SR_SubQuoted(cType, uData, nSystemID)
+STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    LOCAL cRet
-   LOCAL cOldSet := SET(_SET_DATEFORMAT)   
+   LOCAL cOldSet := SET(_SET_DATEFORMAT)
 
-   Do Case
+   Do Case // TODO: switch ?
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_ORACLE
-      RETURN ['] + rtrim(strtran(uData,"'","'||"+"CHR(39)"+"||'")) + [']
+      RETURN "'" + rtrim(strtran(uData,"'","'||"+"CHR(39)"+"||'")) + "'"
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_MSSQL7
-      RETURN ['] + rtrim(strtran(uData,"'",[']+['])) + [']
+      RETURN "'" + rtrim(strtran(uData,"'","'"+"'")) + "'"
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
-      RETURN [E'] + strtran(rtrim(strtran(uData,"'",[']+['])), "\","\\") + [']
+      RETURN [E'] + strtran(rtrim(strtran(uData,"'","'"+"'")), "\","\\") + "'"
    Case cType $ "CM"
-      RETURN ['] + rtrim(strtran(uData,"'","")) + [']
+      RETURN "'" + rtrim(strtran(uData,"'","")) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
       RETURN [TO_DATE('] + rtrim(DtoS(uData)) + [','YYYYMMDD')]
     Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS )
-        RETURN [']+transform(DtoS(uData) ,'@R 9999-99-99')+[']
+        RETURN "'"+transform(DtoS(uData) ,'@R 9999-99-99')+"'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
-      RETURN ['] + SR_dtosDot(uData) + [']
+      RETURN "'" + SR_dtosDot(uData) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
-      RETURN ['] + SR_dtoUS(uData) + [']
+      RETURN "'" + SR_dtoUS(uData) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
-      RETURN ['] + SR_dtoDot(uData) + [']
+      RETURN "'" + SR_dtoDot(uData) + "'"
    Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
-      RETURN [']+transform(DtoS(uData) ,'@R 9999/99/99')+[']
+      RETURN "'"+transform(DtoS(uData) ,'@R 9999/99/99')+"'"
 
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
       RETURN [{d ']+transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)) ,'@R 9999-99-99')+['}]
    Case cType == "D"
-      RETURN ['] + dtos(uData) + [']
-   Case cType == "N"   
+      RETURN "'" + dtos(uData) + "'"
+   Case cType == "N"
       RETURN ltrim(str(uData))
-   Case cType == "L" .AND. (nSystemID == SYSTEMID_POSTGR .OR. nSystemID == SYSTEMID_FIREBR3 ) 
+   Case cType == "L" .AND. (nSystemID == SYSTEMID_POSTGR .OR. nSystemID == SYSTEMID_FIREBR3 )
       RETURN iif(uData, "true", "false")
    Case cType == "L" .AND. nSystemID == SYSTEMID_INFORM
-      RETURN iif(uData, "'t'", "'f'")      
-   Case cType == "L"   
+      RETURN iif(uData, "'t'", "'f'")
+   Case cType == "L"
       RETURN iif(uData, "1", "0")
-   case ctype == "T"  .AND. nSystemID == SYSTEMID_POSTGR  
-      IF Empty(uData) 
+   case ctype == "T"  .AND. nSystemID == SYSTEMID_POSTGR
+      IF Empty(uData)
          RETURN 'NULL'
-      ENDIF 
+      ENDIF
 
-      RETURN ['] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']      
+      RETURN "'" + transform(ttos(uData), '@R 9999-99-99 99:99:99') + "'"
    case ctype == "T" .AND. nSystemID == SYSTEMID_ORACLE
-      IF Empty(uData) 
+      IF Empty(uData)
          RETURN 'NULL'
-      ENDIF       
-      RETURN [ TIMESTAMP '] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + [']
+      ENDIF
+      RETURN [ TIMESTAMP '] + transform(ttos(uData), '@R 9999-99-99 99:99:99') + "'"
    Case cType == 'T'
-      IF Empty(uData) 
+      IF Empty(uData)
          RETURN 'NULL'
-      ENDIF 
+      ENDIF
       Set(_SET_DATEFORMAT, "yyyy-mm-dd")
       cRet := ttoc(uData)
       Set(_SET_DATEFORMAT, cOldSet)
-      RETURN [']+cRet+[']
+      RETURN "'"+cRet+"'"
       
    OtherWise
       cRet := SR_STRTOHEX(HB_Serialize(uData))
@@ -602,20 +602,20 @@ FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
          dbCreate("long_qry.dbf", TRACE_STRUCT, "DBFNTX")
       EndIf
 
-      While .T.
+      DO WHILE .T.
          dbUseArea(.T., "DBFNTX", "long_qry.dbf", "LONG_QRY", .T., .F.)
          If !NetErr()
             exit
          EndIf
          ThreadSleep(500)
-      EndDo
+      ENDDO
 
-      LONG_QRY->( dbAppend() )
+      LONG_QRY->(dbAppend())
       Replace LONG_QRY->DATA         with Date()
       Replace LONG_QRY->HORA         with Time()
       Replace LONG_QRY->COMANDO      with cComm
       Replace LONG_QRY->CUSTO        with nLimisencos
-      LONG_QRY->( dbCloseArea() )
+      LONG_QRY->(dbCloseArea())
 
    RECOVER
 
@@ -672,19 +672,19 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
          dbCreate("sqllog.dbf", TRACE_STRUCT, "DBFNTX")
       EndIf
 
-      While .T.
+      DO WHILE .T.
          dbUseArea(.T., "DBFNTX", "sqllog.dbf", "SQLLOG", .T., .F.)
          If !NetErr()
-            exit
+            EXIT
          EndIf
          ThreadSleep(500)
-      EndDo
+      ENDDO
 
-      SQLLOG->( dbAppend() )
+      SQLLOG->(dbAppend())
       Replace SQLLOG->DATA         with Date()
       Replace SQLLOG->HORA         with Time()
       Replace SQLLOG->COMANDO      with cComm
-      SQLLOG->( dbCloseArea() )
+      SQLLOG->(dbCloseArea())
 
    RECOVER
 
@@ -898,7 +898,7 @@ FUNCTION SR_GetRddName(nArea)
    Case Empty(Alias(nArea))
       RETURN "    "
    OtherWise
-      RETURN ( nArea )->( RddName() )
+      RETURN (nArea)->(RddName())
    EndCase
 
 RETURN ""
@@ -1398,14 +1398,14 @@ FUNCTION SR_GetStack()
    LOCAL i := 1
    LOCAL cErrorLog := ""
 
-   while ( i < 70 )
-       If ! Empty(ProcName(i))
-          cErrorLog += CRLF + Trim(ProcName(i)) + "     Linha : " + alltrim(str(ProcLine(i)))
-       EndIf
-       i++
-   end
+   DO WHILE (i < 70)
+      If !Empty(ProcName(i))
+         cErrorLog += CRLF + Trim(ProcName(i)) + "     Linha : " + alltrim(str(ProcLine(i)))
+      EndIf
+      i++
+   ENDDO
 
-RETURN  cErrorLog
+RETURN cErrorLog
 
 /*------------------------------------------------------------------------*/
 

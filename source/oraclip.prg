@@ -471,7 +471,7 @@ FUNCTION oraeof(n)
    LOCAL i
 
 If aOraClipCursors[n]["completed"]
-   lreturn := .T. // ( aOraClipCursors[n]["aliastmp"] )->( eof() )
+   lreturn := .T. // (aOraClipCursors[n]["aliastmp"])->(eof())
 Else
    If !aOraClipCursors[n]["completed"] .AND. aOraClipCursors[n]["eof"]   
       lreturn := .T.
@@ -922,9 +922,9 @@ aOraClipCursors[n]["cursoropen"] := .T.
             endif
          NEXT nPos
       else
-          while OraFetchSelect(n) == 0
+          DO WHILE OraFetchSelect(n) == 0
              aadd(aRet,aOraClipCursors[n]["data"])
-          enddo
+          ENDDO
           
       endif
 
@@ -990,9 +990,9 @@ endif
              ENDIF
           NEXT nPos
       else
-          while OraFetchSelect(n) == 0
+          DO WHILE OraFetchSelect(n) == 0
              aadd(aRet,aOraClipCursors[n]["data"])
-          enddo
+          ENDDO
       endif
 
 
@@ -1144,11 +1144,11 @@ BEGIN SEQUENCE
              ENDIF
           NEXT nPos
       else
-          while OraFetchSelect(nCursor) == 0
+          DO WHILE OraFetchSelect(nCursor) == 0
              IF LEN(aOraClipCursors[nCursor]["data"]) > 0
                 aadd(aDataRet,aOraClipCursors[nCursor]["data"])
              ENDIF
-          enddo
+          ENDDO
       endif
          aTableData := aDataRet
       endif
@@ -1161,10 +1161,10 @@ BEGIN SEQUENCE
 //       nStart := hData["curpos"]
 //
 //       if nRows == -1
-//          while nStart <= len(aRet)
+//          DO WHILE nStart <= len(aRet)
 //             aadd(aDataRet,aRet[nStart])
 //             nStart ++
-//          enddo
+//          ENDDO
 //          aTableData := aDataRet
 //          aOraClipCursors[nCursor]["curpos"] := len(aRet) +1
 //
@@ -1654,9 +1654,8 @@ SETORAHANDLE(hDBC,hDBCHandle)
 
 
 
-If aOraClipCursors[n]["curpos"] <= ( cAlias )->( RecCount() ) .AND.;
-   aOraClipCursors[n]["curpos"] <> 0
-   ( cAlias )->( dBGoto(aOraClipCursors[n]["curpos"]) )
+If aOraClipCursors[n]["curpos"] <= (cAlias)->(RecCount()) .AND. aOraClipCursors[n]["curpos"] <> 0
+   (cAlias)->(dBGoto(aOraClipCursors[n]["curpos"]))
 Elseif !aOraClipCursors[n]["completed"]
 
   nError := oSql:Fetch(,aOraClipCursors[n]["aFields"] )
@@ -1667,11 +1666,11 @@ Elseif !aOraClipCursors[n]["completed"]
 
      aArray := Array(Len(aOraClipCursors[n]["aFields"]))
 
-     ( cAlias )->( dBAppend() )
+     (cAlias)->(dBAppend())
      FOR i := 1 TO Len(aOraClipCursors[n]["aFields"])
-         ( cAlias )->( FieldPut(i, oSql:FieldGet( i, aOraClipCursors[n]["aFields"] )) )
+         (cAlias)->(FieldPut(i, oSql:FieldGet(i, aOraClipCursors[n]["aFields"])))
      NEXT i
-     ( cAlias )->( dBUnlock() )
+     (cAlias)->(dBUnlock())
   Else
 //     FOR i := 1 TO len(aOraClipCursors[n]["data"])
        aDb := aOraClipCursors[n]["aFields"]
@@ -1705,7 +1704,7 @@ Elseif !aOraClipCursors[n]["completed"]
   EndIf
 
 Else
-   ( cAlias )->( dBGoto(aOraClipCursors[n]["curpos"]) )
+   (cAlias)->(dBGoto(aOraClipCursors[n]["curpos"]))
 EndIf
 if select(aOraClipCursors[n]["aliastmp"])>0
    FOR i := 1 TO Len(aOraClipCursors[n]["aFields"])

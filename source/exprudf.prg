@@ -325,7 +325,7 @@ FUNCTION GetFileName(cPath)
 
    IF HB_RegExMatch(cRegEx, cPath, .F.)
       aGroups := HB_RegExAtX(cRegEx, cPath)
-      RETURN aGroups[4,1]
+      RETURN aGroups[4, 1]
    ELSE
       Throw(ErrorNew(,,,, cPath + " is not a valid path"))
    ENDIF

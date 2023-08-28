@@ -606,7 +606,7 @@ FUNCTION SR_ReloadFieldModifiers(oConnect)
       HAllocate(oConnect:aFieldModifier, 10000)
       oConnect:nTCCompat := 2
       If len(aRet) > 0
-         cLast := aRet[1,1]
+         cLast := aRet[1, 1]
          FOR EACH aField IN aRet
             If aField[1] != cLast
                If "." $ cLast
@@ -679,7 +679,7 @@ Static FUNCTION SR_SetEnvSQLRDD(oConnect)
          oCnn:exec("select sid from " + IIf(oCnn:lCluster, "g", "") + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
          If len(aRet) > 0
-            oCnn:uSid := val(str(aRet[1,1],8,0))
+            oCnn:uSid := val(str(aRet[1, 1],8,0))
          EndIf
 
          oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + [SR_MGMNTLOCKS WHERE SPID_ = ] + str(oCnn:uSid) + [ OR SPID_ NOT IN (select "AUDSID" from ] + IIf(oCnn:lCluster, "g", "") + [v$session)], .F.)
@@ -722,7 +722,7 @@ Static FUNCTION SR_SetEnvSQLRDD(oConnect)
          oCnn:exec("SELECT convert( char(30), login_time, 21 ) FROM MASTER.DBO.SYSPROCESSES where SPID = @@SPID", .F., .T., @aRet)
 
          If len(aRet) > 0
-            oCnn:cLoginTime   := alltrim(aRet[1,1])
+            oCnn:cLoginTime   := alltrim(aRet[1, 1])
          EndIf
 
          oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLOCKS WHERE SPID_ = @@SPID OR convert( CHAR(10), SPID_ ) + convert( CHAR(23), LOGIN_TIME_, 21 ) NOT IN (SELECT convert( CHAR(10), SPID) + CONVERT( CHAR(23), LOGIN_TIME, 21 ) FROM MASTER.DBO.SYSPROCESSES)", .F.)
@@ -808,7 +808,7 @@ Static FUNCTION SR_SetEnvSQLRDD(oConnect)
    oConnect:exec("SELECT VERSION_, SIGNATURE_ FROM " + SR_GetToolsOwner() + "SR_MGMNTVERSION", .F., .T., @aRet)
 
    If len(aRet) > 0
-      cStartingVersion := alltrim(aRet[1,1])
+      cStartingVersion := alltrim(aRet[1, 1])
    Else
       cStartingVersion := ""
    EndIf
@@ -874,7 +874,7 @@ Static FUNCTION SR_SetEnvSQLRDD(oConnect)
 
       cRet := HB_SR__MGMNT_VERSION
    Else
-      cRet := aRet[1,1]
+      cRet := aRet[1, 1]
    EndIf
 
    If cStartingVersion < "MGMNT 1.65"
@@ -1495,10 +1495,12 @@ RETURN NIL
 /*------------------------------------------------------------------------*/
 
 Procedure SR_End()
+
    DEFAULT aConnections TO {}
-   While len(aConnections) > 0
+   DO WHILE len(aConnections) > 0
       SR_EndConnection(len(aConnections))
-   EndDo
+   ENDDO
+
 Return
 
 /*------------------------------------------------------------------------*/
@@ -1511,10 +1513,10 @@ FUNCTION _SR_UnRegister(oWA)
    aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
    If HB_ISARRAY(aActiveWAs)
-      While (n := aScan(aActiveWAs, { |x| x:nThisArea == oWA:nThisArea }) ) > 0
+      DO WHILE (n := aScan(aActiveWAs, { |x| x:nThisArea == oWA:nThisArea }) ) > 0
          aDel(aActiveWAs, n)
          aSize(aActiveWAs, len(aActiveWAs) - 1)
-      EndDo
+      ENDDO
    EndIf
 
 RETURN NIL
@@ -1651,9 +1653,9 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
       endif
    EndIf
 
-   cFileName   := rtrim(aRet[1,1])
-   cIndex      := rtrim(aRet[1,2])
-   cIdxName    := rtrim(aRet[1,3])
+   cFileName   := rtrim(aRet[1, 1])
+   cIndex      := rtrim(aRet[1, 2])
+   cIdxName    := rtrim(aRet[1, 3])
    If lTag
       oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + cFileName + "' AND PHIS_NAME_ = '" + cIndex + "'" + iif(oCnn:lComments," /* Wipe index info */",""), .F.)
    ELSE
@@ -1690,7 +1692,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
 
       If (!Empty(aIndex[4])) .OR. aIndex[5][1] == "#"
          USE (cFileName) NEW VIA "SQLRDD" ALIAS "TEMPDROPCO" exclusive
-         oWA := TEMPDROPCO->( dbInfo(DBI_INTERNAL_OBJECT) )
+         oWA := TEMPDROPCO->(dbInfo(DBI_INTERNAL_OBJECT))
 
          If !Empty(aIndex[4])
             oWA:DropColumn("INDKEY_" + alltrim(aIndex[4]), .F.)
@@ -1699,7 +1701,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
             oWA:DropColumn("INDFOR_" + substr(aIndex[5],2,3), .F.)
          EndIf
 
-         TEMPDROPCO->( dbCLoseArea() )
+         TEMPDROPCO->(dbCLoseArea())
       EndIf
    NEXT
 
@@ -1778,7 +1780,7 @@ FUNCTION SR_ListIndex(cFilename)
    nRet := oCnn:exec("SELECT IDXNAME_,PHIS_NAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + alltrim(upper(cFilename)) + "'", .F., .T., @aRet)
 
    FOR i := 1 TO len(aRet)
-      aRet[i,1] := alltrim(aRet[i,1])
+      aRet[i, 1] := alltrim(aRet[i, 1])
    NEXT i
 
 RETURN aRet
@@ -2039,7 +2041,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
          oCnn:oSqlTransact:Commit()
 
          If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-            While nRetries > 0
+            DO WHILE nRetries > 0
                oCnn:oSqlTransact:exec(cDel, .F.)
                oCnn:oSqlTransact:Commit()
                nRet := oCnn:oSqlTransact:exec(cIns, .F.)
@@ -2051,7 +2053,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
                Else
                   Exit
                EndIf
-            EndDo
+            ENDDO
          EndIf
       EndIf
 
