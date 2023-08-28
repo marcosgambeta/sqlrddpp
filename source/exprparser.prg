@@ -105,13 +105,13 @@ RETURN SELF
 METHOD SortedOperators CLASS ParserBase
 
    IF ::_SortedOperators == NIL
-      ::_SortedOperators := asort(::GetOperators(),,, {|x,y|x:nPriority < y:nPriority})
+      ::_SortedOperators := asort(::GetOperators(),,, {|x, y|x:nPriority < y:nPriority})
    ENDIF
 
 RETURN ::_SortedOperators
 
 METHOD Parse(cExpression) CLASS ParserBase
-RETURN ::InternParse("?" + AtRepl('"', cExpression, "'") + "?", ::_cDefaultContext)
+RETURN ::InternParse("?" + AtRepl(chr(34), cExpression, "'") + "?", ::_cDefaultContext)
 
 METHOD InternParse(cExpression, cAlias) CLASS ParserBase
 

@@ -66,11 +66,12 @@
 CLASS SR_ORACLE2 FROM SR_CONNECTION
 
    DATA hdbc
-   DATA nParamStart  INIT 0
+   DATA nParamStart INIT 0
 
-   Data Is_logged_on,is_Attached
-   Data aBinds
-   Data aCurrLine
+   DATA Is_logged_on
+   DATA is_Attached
+   DATA aBinds
+   DATA aCurrLine
 
    METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CONSTRUCTOR
    METHOD End()
@@ -84,7 +85,7 @@ CLASS SR_ORACLE2 FROM SR_CONNECTION
    METHOD FetchRaw(lTranslate, aFields)
    METHOD FieldGet(nField, aField, lTranslate)
    METHOD MoreResults(aArray, lTranslate)
-   METHOD BINDPARAM(lStart,lIn,cRet,nLen)
+   METHOD BINDPARAM(lStart, lIn, cRet, nLen)
    METHOD ConvertParams(c)
    METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)
    METHOD Getline(aFields, lTranslate, aArray)
@@ -216,9 +217,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    If lReSelect
       If !Empty(cCommand)
-         nRet := ::Execute(cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F.)
+         nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       Else
-         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments," /* Open Workarea */",""), .F.)
+         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments, " /* Open Workarea */", ""), .F.)
       EndIf
 
       If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
@@ -347,16 +348,16 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    if !empty(cMatch )
       aVersion      := hb_atokens(cMatch, ".")
    else
-      aVersion      := hb_atokens(strtran(Upper(aRet[1, 1]),"ORACLE ",""), ".")
+      aVersion      := hb_atokens(strtran(Upper(aRet[1, 1]), "ORACLE ", ""), ".")
    endif
    
    
    ::exec("select sid from " + IIf(::lCluster, "g", "" ) + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
    If len(aRet) > 0
-      ::uSid := val(str(aRet[1, 1],8,0))
+      ::uSid := val(str(aRet[1, 1], 8, 0))
    EndIf
-   SQLO2_SETSTATEMENTCACHESIZE(hdbc,50)
+   SQLO2_SETSTATEMENTCACHESIZE(hdbc, 50)
    ::lOracle12 :=( Val(aversion[1]) == 12 )
 
 RETURN Self
@@ -409,23 +410,23 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
          FOR i := 1 TO len(::aBindParameters )
             if HB_ISARRAY(::aBindParameters[i])
                if HB_ISCHAR(::aBindParameters[i, 2])
-                  ORACLEINBINDPARAM2(::hDBC,i,-1,::aBindParameters[i, 3],0,::aBindParameters[i, 2],.T.)
+                  ORACLEINBINDPARAM2(::hDBC, i, -1, ::aBindParameters[i, 3], 0, ::aBindParameters[i, 2], .T.)
                elseif HB_ISDATE(::aBindParameters[i, 2])
-                  ORACLEINBINDPARAM2(::hDBC,i,8,::aBindParameters[i, 3],0,::aBindParameters[i, 2],.T.)
+                  ORACLEINBINDPARAM2(::hDBC, i, 8, ::aBindParameters[i, 3], 0, ::aBindParameters[i, 2], .T.)
                elseif HB_ISLOGICAL(::aBindParameters[i])
-                  ORACLEINBINDPARAM2(::hDBC,i,3,::aBindParameters[i, 3],0,::aBindParameters[i, 2],.T.)
+                  ORACLEINBINDPARAM2(::hDBC, i, 3, ::aBindParameters[i, 3], 0, ::aBindParameters[i, 2], .T.)
                else
-                  ORACLEINBINDPARAM2(::hDBC,i,2,15,0,::aBindParameters[i, 2],.T.)
+                  ORACLEINBINDPARAM2(::hDBC, i, 2, 15, 0, ::aBindParameters[i, 2], .T.)
                endif
             else
                if HB_ISCHAR(::aBindParameters[i])
-                  ORACLEINBINDPARAM2(::hDBC,i,-1,len(::aBindParameters[i]),0,::aBindParameters[i],.T.)
+                  ORACLEINBINDPARAM2(::hDBC, i, -1, len(::aBindParameters[i]), 0, ::aBindParameters[i], .T.)
                elseif HB_ISDATE(::aBindParameters[i])
-                  ORACLEINBINDPARAM2(::hDBC,i,8,::aBindParameters[i],0,::aBindParameters[i],.T.)
+                  ORACLEINBINDPARAM2(::hDBC, i, 8, ::aBindParameters[i], 0, ::aBindParameters[i], .T.)
                elseif HB_ISLOGICAL(::aBindParameters[i])
-                  ORACLEINBINDPARAM2(::hDBC,i,3,::aBindParameters[i],0,::aBindParameters[i],.T.)
+                  ORACLEINBINDPARAM2(::hDBC, i, 3, ::aBindParameters[i], 0, ::aBindParameters[i], .T.)
                else
-                  ORACLEINBINDPARAM2(::hDBC,i,2,15,0,::aBindParameters[i],.T.)
+                  ORACLEINBINDPARAM2(::hDBC, i, 2, 15, 0, ::aBindParameters[i], .T.)
                endif
             endif
          NEXT i
@@ -459,12 +460,12 @@ Static FUNCTION ProcessParams(cSql, nBound)
    LOCAL xParam
    LOCAL nParamBound := 0
 
-   cSql := StrTran(cSql,cTemp,"")
-   aItens := hb_aTokens("?",",")
+   cSql := StrTran(cSql, cTemp, "")
+   aItens := hb_aTokens("?", ",")
 
    FOR EACH xParam IN aItens
       nPos := hB_enumIndex()
-      cOriginal += alltrim(":P"+StrZero(nPos,3)) +" "
+      cOriginal += alltrim(":P"+StrZero(nPos, 3)) +" "
       nParamBound ++
    NEXT
 
@@ -631,7 +632,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    If lFetch
       If !Empty(cFile)
        
-         aFields := ::IniFields(.F.,,,,,cRecnoName, cDeletedName )
+         aFields := ::IniFields(.F., , , , , cRecnoName, cDeletedName)
 
          if Select(cAlias) == 0
             aDb := {}
@@ -686,7 +687,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          ::cResult := ""
          n         := 0
-         aFields   := ::IniFields(.F.,,,,,cRecnoName, cDeletedName,.T.)
+         aFields   := ::IniFields(.F., , , , , cRecnoName, cDeletedName, .T.)
 
          FOR i := 1 TO len(aFields)
             ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
@@ -706,7 +707,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                If aFields[i, 2] == "M"
                   nLenMemo   := Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
                   nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
-                  cEste += memoline(cCampo,nLenMemo,1) + " "
+                  cEste += memoline(cCampo, nLenMemo, 1) + " "
                   aMemo[i] := cCampo
                Else
                   cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i, 1]), aFields[i, 3])) + " "
@@ -721,7 +722,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                   cEste    := ""
                   FOR i := 1 TO len(aFields)
                      If aFields[i, 2] == "M"
-                        cEste += memoline(aMemo[i],nLenMemo,j) + " "
+                        cEste += memoline(aMemo[i], nLenMemo, j) + " "
                      Else
                         cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                      EndIf
@@ -778,7 +779,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
             aArray[n] := array(len(aFields))
             FOR i := 1 TO len(aFields)
-               aArray[n,i] := ::FieldGet(i, aFields, lTranslate)
+               aArray[n, i] := ::FieldGet(i, aFields, lTranslate)
             NEXT i
             If n > nMaxRecords
                Exit

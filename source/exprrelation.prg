@@ -563,7 +563,7 @@ FUNCTION GetIndexes(lOrdered)
    IF ::aIndexes == NIL
       ::aIndexes := {}
       FOR i := 1 TO len(::aIndex)
-         IF hb_regexLike("^\w+$", ::aIndex[i,10])
+         IF hb_regexLike("^\w+$", ::aIndex[i, 10])
             aadd(::aIndexes, DbIndex():new(self, ::aIndex[i, 10]))
          ENDIF
       NEXT i

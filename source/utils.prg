@@ -88,7 +88,7 @@ FUNCTION SR_WorkareaFileName()
       RETURN ""
    endif
 
-   if ! IS_SQLRDD
+   if !IS_SQLRDD
       RETURN ""
    endif
 
@@ -102,7 +102,7 @@ FUNCTION SR_dbStruct()
       RETURN {}
    endif
 
-   if ! IS_SQLRDD
+   if !IS_SQLRDD
       RETURN {}
    endif
 
@@ -116,12 +116,12 @@ RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-FUNCTION SR_Val2Char(a,n1,n2)
+FUNCTION SR_Val2Char(a, n1, n2)
    Do Case
    Case HB_ISSTRING(a) 
       RETURN a
    Case HB_ISNUMERIC(a) .AND. n1 != NIL .AND. n2 != NIL
-      RETURN Str(a,n1,n2)
+      RETURN Str(a, n1, n2)
    Case HB_ISNUMERIC(a)
       RETURN Str(a)
    Case HB_ISDATE(a)
@@ -191,7 +191,7 @@ RETURN .F.
 FUNCTION SR_CreateConstraint(aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
 
    If IS_SQLRDD
-      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):CreateConstraint(dbInfo(DBI_INTERNAL_OBJECT):cFileName,aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):CreateConstraint(dbInfo(DBI_INTERNAL_OBJECT):cFileName, aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
    EndIf
 
 RETURN NIL
@@ -201,7 +201,7 @@ RETURN NIL
 FUNCTION SR_DropConstraint(cConstraintName, lFKs)
 
    If IS_SQLRDD
-      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):DropConstraint(dbInfo(DBI_INTERNAL_OBJECT):cFileName,cConstraintName, lFKs)
+      RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):DropConstraint(dbInfo(DBI_INTERNAL_OBJECT):cFileName, cConstraintName, lFKs)
    EndIf
 
 RETURN NIL
@@ -520,15 +520,15 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    Do Case // TODO: switch ?
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_ORACLE
-      RETURN "'" + rtrim(strtran(uData,"'","'||"+"CHR(39)"+"||'")) + "'"
+      RETURN "'" + rtrim(strtran(uData, "'", "'||" + "CHR(39)" + "||'")) + "'"
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_MSSQL7
-      RETURN "'" + rtrim(strtran(uData,"'","'"+"'")) + "'"
+      RETURN "'" + rtrim(strtran(uData, "'", "'" + "'")) + "'"
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
-      RETURN [E'] + strtran(rtrim(strtran(uData,"'","'"+"'")), "\","\\") + "'"
+      RETURN "E'" + strtran(rtrim(strtran(uData, "'", "'" + "'")), "\", "\\") + "'"
    Case cType $ "CM"
-      RETURN "'" + rtrim(strtran(uData,"'","")) + "'"
+      RETURN "'" + rtrim(strtran(uData, "'", "")) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
-      RETURN [TO_DATE('] + rtrim(DtoS(uData)) + [','YYYYMMDD')]
+      RETURN "TO_DATE('" + rtrim(DtoS(uData)) + "','YYYYMMDD')"
     Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS )
         RETURN "'"+transform(DtoS(uData) ,'@R 9999-99-99')+"'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
@@ -541,7 +541,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       RETURN "'"+transform(DtoS(uData) ,'@R 9999/99/99')+"'"
 
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
-      RETURN [{d ']+transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)) ,'@R 9999-99-99')+['}]
+      RETURN "{d '" + transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
    Case cType == "D"
       RETURN "'" + dtos(uData) + "'"
    Case cType == "N"
@@ -574,7 +574,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       
    OtherWise
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(len(cRet),10) + cRet, nSystemID)
+      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(len(cRet), 10) + cRet, nSystemID)
    EndCase
 
 RETURN ""
@@ -816,9 +816,9 @@ FUNCTION SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
 
    oCnn := SR_GetConnection()
 
-   cAlias := "W" + StrZero(++_nCnt,3)
-   cAl1   := "W" + StrZero(++_nCnt,3)
-   cAl2   := "W" + StrZero(++_nCnt,3)
+   cAlias := "W" + StrZero(++_nCnt, 3)
+   cAl1   := "W" + StrZero(++_nCnt, 3)
+   cAl2   := "W" + StrZero(++_nCnt, 3)
 
    If _nCnt >= 995
       _nCnt := 1
@@ -853,8 +853,8 @@ FUNCTION SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
 
    oCnn := SR_GetConnection()
 
-   cAl1   := "W" + StrZero(++_nCnt,3)
-   cAl2   := "W" + StrZero(++_nCnt,3)
+   cAl1   := "W" + StrZero(++_nCnt, 3)
+   cAl2   := "W" + StrZero(++_nCnt, 3)
 
    If _nCnt >= 995
       _nCnt := 1
@@ -958,7 +958,7 @@ FUNCTION SR_Deserialize(uData)
 // altd()
 // cHex := SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10))))
 // cdes := sr_Deserialize1(cHex)
-// tracelog(udata,chex,cdes)
+// tracelog(udata, chex, cdes)
 // RETURN cdes
 
 RETURN SR_Deserialize1(SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10)))))
@@ -1001,7 +1001,7 @@ FUNCTION SR_SetFilter(cFlt)
          oWA:cFilter := cFlt
          oWA:Refresh()
       ElseIf HB_ISSTRING(cFlt) 
-         oWA:cFilter := ''
+         oWA:cFilter := ""
       EndIf
    EndIf
 
@@ -1107,7 +1107,7 @@ METHOD Find(uHashKey, nIndex, nPart) CLASS SqlFastHash
 
    LOCAL aData
 
-   nIndex := HGetPos(::hHash,uHashKey)
+   nIndex := HGetPos(::hHash, uHashKey)
 
    If nIndex > 0
       aData := HGetValueAt(::hHash, nIndex)
@@ -1123,7 +1123,7 @@ METHOD Delete(uHashKey) CLASS SqlFastHash
 
    LOCAL nIndex := 0
 
-   nIndex := HGetPos(::hHash,uHashKey)
+   nIndex := HGetPos(::hHash, uHashKey)
 
    If nIndex > 0
       HDelAt(::hHash, nIndex)
@@ -1138,7 +1138,7 @@ METHOD Update(uHashKey, uValue) CLASS SqlFastHash
 
    LOCAL nIndex := 0
 
-   nIndex := HGetPos(::hHash,uHashKey)
+   nIndex := HGetPos(::hHash, uHashKey)
 
    If nIndex > 0
       HSetValueAt(::hHash, nIndex, uValue)
@@ -1307,7 +1307,7 @@ FUNCTION SR_RollBackTransaction(nCnn)
       If oCnn:nTransacCount >  0
          oCnn:nTransacCount := 0
          // Should CLEAN UP ALL workareas BEFORE issue the ROLLBACK
-         _SR_ScanExecAll({ |y,x| (y), aeval(x, { |z| z:Refresh(.F.) }) })
+         _SR_ScanExecAll({ |y, x| (y), aeval(x, { |z| z:Refresh(.F.) }) })
          oCnn:RollBack()
       EndIf
    EndIf
@@ -1599,8 +1599,8 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
       cColor11 := cColor12 := cColor21 := cColor22 := ""
 
-      cColorStr := alltrim(StrTran(cColorNorm," ",""))
-      nCommaSep := At(",",cColorStr)
+      cColorStr := alltrim(StrTran(cColorNorm, " ", ""))
+      nCommaSep := At(",", cColorStr)
 
       if nCommaSep > 0 // exist more than one color pair.
          cColorPair1 := SubStr(cColorStr, 1, nCommaSep - 1)
@@ -1610,7 +1610,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          cColorPair2 := ""
       endif
 
-      nSlash := At("/",cColorPair1)
+      nSlash := At("/", cColorPair1)
 
       if nSlash > 1
          cColor11 := SubStr(cColorPair1, 1, nSlash - 1)
@@ -1650,7 +1650,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       // if second color pair exist, then xHarbour alert will handle properly.
       if !empty(cColorPair2)
 
-         nSlash := At("/",cColorPair2)
+         nSlash := At("/", cColorPair2)
 
          if nSlash > 1
             cColor21 := SubStr(cColorPair2, 1, nSlash - 1)
@@ -1938,43 +1938,43 @@ RETURN ( cColor )
 // Test vality of the color string
 STATIC FUNCTION COLORVALID(cColor)
 
-if !IsCharacter(cColor)
-   RETURN .F.
-endif
+   IF !IsCharacter(cColor)
+      RETURN .F.
+   ENDIF
 
-cColor := StrTran(cColor, " ", "")
-cColor := StrTran(cColor, "*", "")
-cColor := StrTran(cColor, "+", "")
-cColor := Upper(cColor)
+   cColor := StrTran(cColor, " ", "")
+   cColor := StrTran(cColor, "*", "")
+   cColor := StrTran(cColor, "+", "")
+   cColor := Upper(cColor)
 
-if cColor=="0"  .OR.;
-   cColor=="1"  .OR.;
-   cColor=="2"  .OR.;
-   cColor=="3"  .OR.;
-   cColor=="4"  .OR.;
-   cColor=="5"  .OR.;
-   cColor=="6"  .OR.;
-   cColor=="7"  .OR.;
-   cColor=="8"  .OR.;
-   cColor=="9"  .OR.;
-   cColor=="10" .OR.;
-   cColor=="11" .OR.;
-   cColor=="12" .OR.;
-   cColor=="13" .OR.;
-   cColor=="14" .OR.;
-   cColor=="15" .OR.;
-   cColor=="B"  .OR.;
-   cColor=="BG" .OR.;
-   cColor=="G"  .OR.;
-   cColor=="GR" .OR.;
-   cColor=="N"  .OR.;
-   cColor=="R"  .OR.;
-   cColor=="RB" .OR.;
-   cColor=="W"
+   if cColor == "0"  .OR. ;
+      cColor == "1"  .OR. ;
+      cColor == "2"  .OR. ;
+      cColor == "3"  .OR. ;
+      cColor == "4"  .OR. ;
+      cColor == "5"  .OR. ;
+      cColor == "6"  .OR. ;
+      cColor == "7"  .OR. ;
+      cColor == "8"  .OR. ;
+      cColor == "9"  .OR. ;
+      cColor == "10" .OR. ;
+      cColor == "11" .OR. ;
+      cColor == "12" .OR. ;
+      cColor == "13" .OR. ;
+      cColor == "14" .OR. ;
+      cColor == "15" .OR. ;
+      cColor == "B"  .OR. ;
+      cColor == "BG" .OR. ;
+      cColor == "G"  .OR. ;
+      cColor == "GR" .OR. ;
+      cColor == "N"  .OR. ;
+      cColor == "R"  .OR. ;
+      cColor == "RB" .OR. ;
+      cColor == "W"
 
-   RETURN .T.
+      RETURN .T.
 
-ENDIF
+   ENDIF
 
 RETURN .F.
 
@@ -2044,14 +2044,14 @@ FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
       IF Empty(cDefault)
          cSql += "''"
       ELSE
-         cSql +="'"+cDefault+"'"
+         cSql += "'" + cDefault + "'"
       ENDIF
    ENDIF
-   IF oCnn:nSystemId==SYSTEMID_POSTGR
+   IF oCnn:nSystemId == SYSTEMID_POSTGR
       oCnn:exec(cSql, , .F.)
       oCnn:Commit()
    ENDIF
-RETURN NIL            
+RETURN NIL
 
 FUNCTION SR_Deserialize1(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
 RETURN HB_Deserialize(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)

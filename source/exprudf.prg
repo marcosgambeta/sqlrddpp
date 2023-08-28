@@ -63,7 +63,7 @@ FUNCTION xSelect(aArray, bSelector)
 
    LOCAL newArray := array(len(aArray))
 
-   aeval(aArray, {|x,n|newArray[n] := eval(bSelector, x)})
+   aeval(aArray, {|x, n|newArray[n] := eval(bSelector, x)})
 
 RETURN newArray
 
@@ -228,7 +228,7 @@ METHOD aAdd(xKey, xValue, nMode) CLASS Dictionary
 
    LOCAL lContainsKey := ::lContainsKey(xKey)
 
-   IF !(ascan({1,2,3}, nMode) > 0)
+   IF !(ascan({1, 2, 3}, nMode) > 0)
       nMode := 1
    ENDIF
    DO CASE

@@ -175,9 +175,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    If lReSelect
       If !Empty(cCommand)
-         nRet := ::Execute(cCommand + iif(::lComments," /* Open Workarea with custom SQL command */",""), .F.)
+         nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       Else
-         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments," /* Open Workarea */",""), .F.)
+         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments, " /* Open Workarea */", ""), .F.)
       EndIf
       If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          RETURN NIL
@@ -260,7 +260,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    DEFAULT ::cPort TO 5432
 
-   cConnect := "host=" + ::cHost + " user=" + ::cUser + " password=" + ::cPassword + " dbname=" + ::cDTB + " port=" + str(::cPort,6)
+   cConnect := "host=" + ::cHost + " user=" + ::cUser + " password=" + ::cPassword + " dbname=" + ::cDTB + " port=" + str(::cPort, 6)
 
    IF !Empty(::sslcert)
       cConnect += " sslmode=prefer sslcert="+::sslcert +" sslkey="+::sslkey +" sslrootcert="+ ::sslrootcert +" sslcrl="+ ::sslcrl
@@ -286,11 +286,11 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
          if !empty(cMatch )
             aVersion      := hb_atokens(cMatch, ".")
          else
-            aVersion      := hb_atokens(strtran(Upper(aRet[1, 1]),"POSTGRESQL ",""), ".")
+            aVersion      := hb_atokens(strtran(Upper(aRet[1, 1]), "POSTGRESQL ", ""), ".")
          endif
       Else
          cSystemVers= "??"
-         aVersion      := {"6","0"}
+         aVersion      := {"6", "0"}
       EndIf
    EndIf
 
@@ -300,7 +300,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::cTargetDB   := Upper(cTargetDB)
    
 
-*    If ! ("7.3" $ cSystemVers .OR. "7.4" $ cSystemVers .OR. "8.0" $ cSystemVers .OR. "8.1" $ cSystemVers .OR. "8.2" $ cSystemVers .OR. "8.3" $ cSystemVers .OR. "8.4" $ cSystemVers .OR. "9.0" $ cSystemVers or. "9.1" $ cSystemVers)
+*    If !("7.3" $ cSystemVers .OR. "7.4" $ cSystemVers .OR. "8.0" $ cSystemVers .OR. "8.1" $ cSystemVers .OR. "8.2" $ cSystemVers .OR. "8.3" $ cSystemVers .OR. "8.4" $ cSystemVers .OR. "9.0" $ cSystemVers or. "9.1" $ cSystemVers)
 
      if !(( Val(aversion[1]) == 7 .AND. Val(aversion[2]) >= 3) .OR. ( Val(aversion[1]) >= 8 ))
       ::End()
@@ -317,7 +317,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::exec("select pg_backend_pid()", .T., .T., @aRet)
 
    If len(aRet) > 0
-      ::uSid := val(str(aRet[1, 1],8,0))
+      ::uSid := val(str(aRet[1, 1], 8, 0))
    EndIf
 
 RETURN Self

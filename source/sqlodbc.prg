@@ -190,7 +190,7 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
       DEFAULT aArray TO {}
       n := 1
       IF aFieldsMore == NIL
-         aFieldsMore := ::IniFields(.F.,,,,,SR_RecnoName(), SR_DeletedName())
+         aFieldsMore := ::IniFields(.F., , , , , SR_RecnoName(), SR_DeletedName())
       ENDIF
 
       DO WHILE (::nRetCode := ::FetchRaw(lTranslate, aFieldsMore)) = SQL_SUCCESS

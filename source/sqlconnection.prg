@@ -95,9 +95,9 @@ CLASS SR_CONNECTION
    DATA lClustered AS LOGICAL INIT .F. READONLY
    //culik 30/12/2011 adicionado para indicar se e  sqlserver versao 2008 ou superior
    DATA lSqlServer2008 AS LOGICAL INIT .F.
-   DATA lPostgresql8   AS LOGICAL INIT .F.  // do we have postgressql >= 8.3
-   DATA lPostgresql83  AS LOGICAL INIT .F.  // do we have postgressql >= 8.3
-   DATA lMariaDb       AS LOGICAL INIT .F.  // do we have mariadb
+   DATA lPostgresql8   AS LOGICAL INIT .F. // do we have postgressql >= 8.3
+   DATA lPostgresql83  AS LOGICAL INIT .F. // do we have postgressql >= 8.3
+   DATA lMariaDb       AS LOGICAL INIT .F. // do we have mariadb
    DATA oHashActiveWAs
 
    DATA aTableInfo INIT {=>}
@@ -127,7 +127,7 @@ CLASS SR_CONNECTION
 
    DATA lSetNext         AS LOGICAL    INIT .F.
    DATA lResultSet       AS LOGICAL    INIT .T.
-   DATA lAllInCache      AS LOGICAL    INIT .F.  // Handles whether derived workareas are ALL_IN_CACHE or not
+   DATA lAllInCache      AS LOGICAL    INIT .F. // Handles whether derived workareas are ALL_IN_CACHE or not
    DATA cLastComm        AS CHARACTER  INIT ""
    DATA cMgmntVers       AS CHARACTER  INIT ""
    DATA cLoginTime       AS CHARACTER  INIT ""
@@ -169,7 +169,7 @@ CLASS SR_CONNECTION
    DATA lClustered AS LOGICAL INIT .F. READONLY
    //culik 30/12/2011 adicionado para indicar se e  sqlserver versao 2008 ou superior
    DATA lSqlServer2008 AS LOGICAL INIT .F.
-   DATA lOracle12      AS LOGICAL INIT .F.  // do we have Oracle >= 12.0
+   DATA lOracle12      AS LOGICAL INIT .F. // do we have Oracle >= 12.0
 
    DATA lBind INIT .F.
    DATA cSqlPrepare INIT ""
@@ -450,10 +450,10 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
       lFetch := lFetch .AND. ::lResultSet
 
-      IF nRet != SQL_SUCCESS  .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
+      IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
 
          ::nRetCode  := nRet
-         ::cSQLError := ''
+         ::cSQLError := ""
          IF lMsg
             IF len(cCommand) > 10000
                ::RunTimeErr("", "SQLExecDirect Error" + ;
@@ -703,8 +703,8 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
 
          IF lErrMsg .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
 
-            ::RunTimeErr("","SQLExecDirect Error" + ;
-                     CRLF + ::LastError() + CRLF +;
+            ::RunTimeErr("", "SQLExecDirect Error" + ;
+                     CRLF + ::LastError() + CRLF + ;
                      "Command : " + cCommand + CRLF + ;
                      "hStmt   : " + SR_Val2Char(::hStmt))
          ENDIF
@@ -784,7 +784,7 @@ METHOD DetectTargetDb() CLASS SR_CONNECTION
          ::cSystemName := "DB2/400"
          cTargetDB     := "DB2/400"
       ENDIF
-   CASE "MYSQL" $ cTargetDB .AND.  SubStr(alltrim(::cSystemVers), 1, 3) >= "4.1"
+   CASE "MYSQL" $ cTargetDB .AND. SubStr(alltrim(::cSystemVers), 1, 3) >= "4.1"
       ::nSystemID := SYSTEMID_MYSQL
    CASE "MARIADB" $ cTargetDB
       ::nSystemID := SYSTEMID_MARIADB
@@ -1007,7 +1007,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
    DEFAULT nPreFetch   TO 0
    DEFAULT cDSN        TO ""
    DEFAULT lCounter    TO .F.
-   DEFAULT lAutoCommit TO .F.  /* by default support transactions */
+   DEFAULT lAutoCommit TO .F. /* by default support transactions */
 
    ::lAutoCommit  := lAutoCommit
    ::nVersion     := nVersion
@@ -1049,7 +1049,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
       ::nRetCode := SQL_ERROR
       RETURN SELF
    ELSE
-      aCon := hb_atokens(cConnect,";")
+      aCon := hb_atokens(cConnect, ";")
 
       FOR EACH aItem IN aCon
 
@@ -1057,7 +1057,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
             LOOP
          ENDIF
 
-         aToken := hb_atokens(aItem,"=")
+         aToken := hb_atokens(aItem, "=")
          cBuff := alltrim(Upper(aToken[1]))
          IF len(aToken) = 1
             aadd(aToken, "")

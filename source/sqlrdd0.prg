@@ -679,7 +679,7 @@ Static FUNCTION SR_SetEnvSQLRDD(oConnect)
          oCnn:exec("select sid from " + IIf(oCnn:lCluster, "g", "") + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
          If len(aRet) > 0
-            oCnn:uSid := val(str(aRet[1, 1],8,0))
+            oCnn:uSid := val(str(aRet[1, 1], 8, 0))
          EndIf
 
          oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + [SR_MGMNTLOCKS WHERE SPID_ = ] + str(oCnn:uSid) + [ OR SPID_ NOT IN (select "AUDSID" from ] + IIf(oCnn:lCluster, "g", "") + [v$session)], .F.)
@@ -1679,9 +1679,9 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
          EXIT
       CASE SYSTEMID_ORACLE
          If len(aIndex[6]) > 4 .AND. aIndex[6][4] == "@"
-            oCnn:exec("DROP INDEX " + cOwner + "A$" + SubStr(aIndex[6],1,3) + SubStr(cFileName,1,25) + iif(oCnn:lComments, " /* Drop VIndex */", ""), .F.)
+            oCnn:exec("DROP INDEX " + cOwner + "A$" + SubStr(aIndex[6], 1, 3) + SubStr(cFileName, 1, 25) + iif(oCnn:lComments, " /* Drop VIndex */", ""), .F.)
             oCnn:Commit()
-            oCnn:exec("DROP INDEX " + cOwner + "D$" + SubStr(aIndex[6],1,3) + SubStr(cFileName,1,25) + iif(oCnn:lComments, " /* Drop VIndex */", ""), .F.)
+            oCnn:exec("DROP INDEX " + cOwner + "D$" + SubStr(aIndex[6], 1, 3) + SubStr(cFileName, 1, 25) + iif(oCnn:lComments, " /* Drop VIndex */", ""), .F.)
             oCnn:Commit()
          EndIf
          oCnn:exec("DROP INDEX " + cPhisicalName + iif(oCnn:lComments, " /* DROP Index */", ""), .F.)
@@ -1698,7 +1698,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
             oWA:DropColumn("INDKEY_" + alltrim(aIndex[4]), .F.)
          EndIf
          If aIndex[5][1] == "#"
-            oWA:DropColumn("INDFOR_" + substr(aIndex[5],2,3), .F.)
+            oWA:DropColumn("INDFOR_" + substr(aIndex[5], 2, 3), .F.)
          EndIf
 
          TEMPDROPCO->(dbCLoseArea())
@@ -1844,16 +1844,16 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
    CASE SYSTEMID_MYSQL
    CASE SYSTEMID_MARIADB
       IF oCnn:nSystemID == SYSTEMID_POSTGR
-         nRet := oCnn:exec("ALTER TABLE " + cOwner +SR_DBQUALIFY(cTable+"_sq",oCnn:nSystemID) + " RENAME TO " + cOwner + SR_DBQUALIFY(cNewName+"_sq",oCnn:nSystemID), .F.)
+         nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cTable + "_sq", oCnn:nSystemID) + " RENAME TO " + cOwner + SR_DBQUALIFY(cNewName+"_sq", oCnn:nSystemID), .F.)
       ENDIF
 
-      nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cTable,oCnn:nSystemID) + " RENAME TO " + cOwner + SR_DBQUALIFY(cNewName,oCnn:nSystemID), .F.)
+      nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cTable, oCnn:nSystemID) + " RENAME TO " + cOwner + SR_DBQUALIFY(cNewName, oCnn:nSystemID), .F.)
       If nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
          lOk := .T.
       EndIf
 
       IF oCnn:nSystemID == SYSTEMID_POSTGR
-         nRet := oCnn:exec("ALTER TABLE "+cOwner + SR_DBQUALIFY(cNewName,oCnn:nSystemID) +" ALTER COLUMN " + SR_RecnoName()+ " SET DEFAULT nextval('" + lower(cNewName)+"_sq'::regclass)")
+         nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cNewName, oCnn:nSystemID) + " ALTER COLUMN " + SR_RecnoName()+ " SET DEFAULT nextval('" + lower(cNewName)+"_sq'::regclass)")
       ENDIF
       IF oCnn:nSystemID == SYSTEMID_ORACLE
          nRet := oCnn:exec("RENAME " + cOwner + cTable + "_sq" + " TO " + cOwner + cNewName+"_sq", .F.)
@@ -2378,7 +2378,7 @@ HB_FUNC(SETFIREBIRDUSESHORTASNUM)
 
 FUNCTION SR_Version()
 
-Return HB_SR__VERSION_STRING + ", Build " + alltrim(strzero(HB_SQLRDD_BUILD,4)) + ", " + HB_SR__MGMNT_VERSION
+Return HB_SR__VERSION_STRING + ", Build " + alltrim(strzero(HB_SQLRDD_BUILD, 4)) + ", " + HB_SR__MGMNT_VERSION
 
 /*------------------------------------------------------------------------*/
 
