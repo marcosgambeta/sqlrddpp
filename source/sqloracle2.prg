@@ -56,6 +56,8 @@
 #include "msg.ch"
 #include "sqlrddsetup.ch"
 
+#define CRLF      ( chr(13) + chr(10) )
+
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500
 
@@ -379,13 +381,13 @@ RETURN NIL
 /*------------------------------------------------------------------------*/
 
 METHOD Commit(lNoLog) CLASS SR_ORACLE2
-   Super:Commit(lNoLog)
+   ::super:Commit(lNoLog)
 RETURN (::nRetcode := SQLO2_COMMIT(::hdbc) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_ORACLE2
-   Super:RollBack()
+   ::super:RollBack()
 RETURN ( ::nRetCode := SQLO2_ROLLBACK(::hDbc) )
 
 /*------------------------------------------------------------------------*/
@@ -548,7 +550,7 @@ METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE2
    END SEQUENCE
    
    If nError < 0
-      ::RunTimeErr("", str(SQLO2_GETERRORCODE(::hDbc), 4) + " - " + SQLO2_GETERRORDESCR(:hDbc) ) 
+      ::RunTimeErr("", str(SQLO2_GETERRORCODE(::hDbc), 4) + " - " + SQLO2_GETERRORDESCR(::hDbc))
    Else
    //If nError >= 0
         

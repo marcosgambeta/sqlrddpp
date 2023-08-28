@@ -300,18 +300,18 @@ METHOD End() CLASS SR_MARIA
       MYSFinish(::hDbc)
    EndIf
 
-RETURN Super:End()
+RETURN ::super:End()
 
 /*------------------------------------------------------------------------*/
 
 METHOD Commit(lNoLog) CLASS SR_MARIA
-   Super:Commit(lNoLog)
+   ::super:Commit(lNoLog)
 RETURN ( ::nRetCode := MYSCommit(::hDbc) )
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_MARIA
-   Super:RollBack()
+   ::super:RollBack()
 RETURN ( ::nRetCode := MYSRollBack(::hDbc) )
 
 /*------------------------------------------------------------------------*/

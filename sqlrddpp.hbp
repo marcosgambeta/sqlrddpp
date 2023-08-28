@@ -20,11 +20,14 @@ source/exprtransl.prg
 source/exprudf.prg
 source/sqlconnection.prg
 source/sqlfirebird.prg
+source/sqlfirebird3.prg
 source/sqlgen1.prg
+source/sqlmaria.prg
 source/sqlmy.prg
 #source/sqlnames.prg
 source/sqlodbc.prg
 source/sqloracle.prg
+source/sqloracle2.prg
 source/sqlpgs.prg
 source/sqlrdd0.prg
 source/sqlrdd2.prg
