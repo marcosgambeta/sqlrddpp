@@ -56,7 +56,7 @@
 #include "msg.ch"
 #include "sqlrddsetup.ch"
 
-#define CRLF      ( chr(13) + chr(10) )
+#define SR_CRLF   (chr(13) + chr(10))
 
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500
@@ -154,7 +154,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_ORACLE
       ::nRetCode := SQLO_FETCH(::hDBC)
       ::aCurrLine := NIL
    Else
-      ::RunTimeErr("", "SQLO_FETCH - Invalid cursor state" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
+      ::RunTimeErr("", "SQLO_FETCH - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
    EndIf
 
 RETURN ::nRetCode
@@ -165,7 +165,7 @@ METHOD FreeStatement() CLASS SR_ORACLE
 
    if ::hDBC != NIL .AND. ::hstmt != NIL
       if SQLO_CLOSESTMT(::hDBC) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLO_CLOSESTMT error" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
+         ::RunTimeErr("", "SQLO_CLOSESTMT error" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
       endif
       ::hstmt := NIL
    endif
@@ -230,8 +230,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ::nFields := SQLO_NUMCOLS(::hDBC)
 
    If ::nFields < 0
-         ::RunTimeErr("", "SQLO_NUMCOLS Error" + chr(13)+chr(10)+ str(::nFields) + chr(13)+chr(10)+;
-                          "Last command sent to database : " + ::cLastComm )
+         ::RunTimeErr("", "SQLO_NUMCOLS Error" + SR_CRLF + str(::nFields) + SR_CRLF + ;
+                          "Last command sent to database : " + ::cLastComm)
 
       RETURN NIL
    EndIf
@@ -241,8 +241,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    FOR n := 1 TO ::nFields
 
       if ( ::nRetCode := SQLO_DESCRIBECOL(::hDBC, n, @cName, @nType, @nLen, @nDec, @nNull) ) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLDescribeCol Error" + chr(13)+chr(10)+ ::LastError() + chr(13)+chr(10)+;
-                          "Last command sent to database : " + ::cLastComm )
+         ::RunTimeErr("", "SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+                          "Last command sent to database : " + ::cLastComm)
         RETURN NIL
       else
 
@@ -348,7 +348,7 @@ METHOD End() CLASS SR_ORACLE
 
    IF !Empty(::hDbc)
      IF  ( nRet := SQLO_DISCONNECT(::hDbc)) != SQL_SUCCESS
-        SR_MsgLogFile("Error disconnecting : " + str(nRet) + CRLF + ::LastError())
+        SR_MsgLogFile("Error disconnecting : " + str(nRet) + SR_CRLF + ::LastError())
      EndIf
    ENDIF
 
@@ -633,7 +633,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
          NEXT i
 
-         ::cResult += chr(13) + chr(10)
+         ::cResult += SR_CRLF
          aMemo     := Array(len(aFields))
 
          DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS )
@@ -654,7 +654,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                EndIf
             NEXT i
 
-            ::cResult += cEste + chr(13) + chr(10)
+            ::cResult += cEste + SR_CRLF
             n ++
 
             If ::lShowTxtMemo .AND. nLinesMemo > 1
@@ -667,7 +667,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                         cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                      EndIf
                   NEXT i
-                  ::cResult += cEste + chr(13) + chr(10)
+                  ::cResult += cEste + SR_CRLF
                   n ++
                NEXT j
             EndIf

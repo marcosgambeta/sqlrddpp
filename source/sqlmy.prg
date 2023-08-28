@@ -57,6 +57,8 @@
 #include "mysql.ch"
 #include "sqlrddsetup.ch"
 
+#define SR_CRLF   (chr(13) + chr(10))
+
 #define  DEBUGSESSION                .F.
 #define ARRAY_BLOCK                  500
 #define MINIMAL_MYSQL_SUPPORTED  40105
@@ -138,7 +140,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_MYSQL
       ::nRetCode := MYSFetch(::hDbc)
       ::aCurrLine := NIL
    ELSE
-      ::RunTimeErr("", "MySQLFetch - Invalid cursor state" + chr(13) + chr(10) + chr(13) + chr(10) + "Last command sent to database : " + chr(13) + chr(10) + ::cLastComm)
+      ::RunTimeErr("", "MySQLFetch - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
    ENDIF
 
 RETURN ::nRetCode
@@ -181,8 +183,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ENDIF
 
    IF MYSResultStatus(::hDbc) != SQL_SUCCESS
-      ::RunTimeErr("", "SqlNumResultCols Error" + chr(13) + chr(10) + chr(13) + chr(10) + ;
-         "Last command sent to database : " + chr(13) + chr(10) + ::cLastComm)
+      ::RunTimeErr("", "SqlNumResultCols Error" + SR_CRLF + SR_CRLF + ;
+         "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
    ENDIF
 

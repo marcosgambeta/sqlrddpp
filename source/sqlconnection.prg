@@ -60,7 +60,7 @@
 
 #define DEBUGSESSION     .F.
 
-#define CRLF      ( chr(13) + chr(10) )
+#define SR_CRLF   (chr(13) + chr(10))
 
 STATIC lNwgOldCompat := .F.
 
@@ -457,10 +457,10 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
          IF lMsg
             IF len(cCommand) > 10000
                ::RunTimeErr("", "SQLExecDirect Error" + ;
-                        CRLF + ::LastError() + CRLF + "Command sent to database : " + CRLF + SubStr(cCommand, 1, 2000) + " ... (command too long to display here)")
+                        SR_CRLF + ::LastError() + SR_CRLF + "Command sent to database : " + SR_CRLF + SubStr(cCommand, 1, 2000) + " ... (command too long to display here)")
             ELSE
                ::RunTimeErr("", "SQLExecDirect Error" + ;
-                        CRLF + ::LastError() + CRLF + "Command sent to database : " + CRLF + cCommand)
+                        SR_CRLF + ::LastError() + SR_CRLF + "Command sent to database : " + SR_CRLF + cCommand)
             ENDIF
          ELSE
             ::cSQLError := ::LastError()
@@ -538,7 +538,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)) , Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
                NEXT i
 
-               ::cResult += chr(13) + chr(10)
+               ::cResult += SR_CRLF
                aMemo     := Array(len(aFields))
 
                DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
@@ -559,7 +559,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                      ENDIF
                   NEXT i
 
-                  ::cResult += cEste + chr(13) + chr(10)
+                  ::cResult += cEste + SR_CRLF
                   n++
 
                   IF ::lShowTxtMemo .AND. nLinesMemo > 1
@@ -572,7 +572,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                               cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
                            ENDIF
                         NEXT i
-                        ::cResult += cEste + chr(13) + chr(10)
+                        ::cResult += cEste + SR_CRLF
                         n++
                      NEXT j
                   ENDIF
@@ -704,8 +704,8 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
          IF lErrMsg .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
 
             ::RunTimeErr("", "SQLExecDirect Error" + ;
-                     CRLF + ::LastError() + CRLF + ;
-                     "Command : " + cCommand + CRLF + ;
+                     SR_CRLF + ::LastError() + SR_CRLF + ;
+                     "Command : " + cCommand + SR_CRLF + ;
                      "hStmt   : " + SR_Val2Char(::hStmt))
          ENDIF
 
@@ -937,10 +937,10 @@ METHOD RuntimeErr(cOperation, cErr) CLASS SR_CONNECTION
    DEFAULT cOperation TO ::ClassName()
    DEFAULT cErr       TO "RunTimeError"
 
-   cDescr := alltrim(cErr) + CRLF +;
-             "Steatment handle  : " + SR_Val2Char(::hStmt)+CRLF+;
-             "Connection handle : " + SR_Val2Char(::hDbc)+CRLF+;
-             "RetCode           : " + SR_Val2Char(::nRetCode)+CRLF
+   cDescr := alltrim(cErr) + SR_CRLF + ;
+             "Steatment handle  : " + SR_Val2Char(::hStmt) + SR_CRLF + ;
+             "Connection handle : " + SR_Val2Char(::hDbc) + SR_CRLF + ;
+             "RetCode           : " + SR_Val2Char(::nRetCode) + SR_CRLF
 
    ::RollBack()
 

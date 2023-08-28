@@ -56,7 +56,7 @@
 #include "error.ch"
 #include "sqlrddsetup.ch"
 
-#define CRLF      ( chr(13) + chr(10) )
+#define SR_CRLF   (chr(13) + chr(10))
 
 REQUEST HB_Deserialize
 REQUEST HB_DeserialNext
@@ -158,7 +158,7 @@ FUNCTION SR_LogFile(cFileName, aInfo, lAddDateTime)
       cLine += SR_Val2CharQ(aInfo[n]) + Chr(9)
    NEXT n
 
-   cLine += CRLF
+   cLine += SR_CRLF
 
    IF sr_phFile(cFileName)
       hFile := FOpen(cFileName, 1)
@@ -708,7 +708,7 @@ FUNCTION SR_ShowVector(a)
       FOR i := 1 TO len(a)
 
          If HB_ISARRAY(a[i])
-            cRet += SR_showvector(a[i]) + iif(i == len(a), "", ",") + CRLF
+            cRet += SR_showvector(a[i]) + iif(i == len(a), "", ",") + SR_CRLF
          Else
             cRet += SR_Val2CharQ(a[i]) + iif(i == len(a), "", ",")
          EndIf
@@ -828,7 +828,7 @@ FUNCTION SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
    DEFAULT n TO 0
    DEFAULT nSystem TO oCnn:nSystemID
 
-   cRet := "SELECT " + cAlias + ".* FROM " + cTable + " " + cAlias + " WHERE " + CRLF
+   cRet := "SELECT " + cAlias + ".* FROM " + cTable + " " + cAlias + " WHERE " + SR_CRLF
 
    cRet += "(" + cAlias + ".DT__HIST = (SELECT" + iif(n = 3, " MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
    cRet += cTable + " " + cAl1 + " WHERE " + cAlias + "." + cPK + "="
@@ -1400,7 +1400,7 @@ FUNCTION SR_GetStack()
 
    DO WHILE (i < 70)
       If !Empty(ProcName(i))
-         cErrorLog += CRLF + Trim(ProcName(i)) + "     Linha : " + alltrim(str(ProcLine(i)))
+         cErrorLog += SR_CRLF + Trim(ProcName(i)) + "     Linha : " + alltrim(str(ProcLine(i)))
       EndIf
       i++
    ENDDO

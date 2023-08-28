@@ -56,6 +56,8 @@
 #include "firebird.ch"
 #include "sqlrddsetup.ch"
 
+#define SR_CRLF   (chr(13) + chr(10))
+
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500
 
@@ -129,7 +131,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_FIREBIRD
       ::nRetCode := FBFetch(::hEnv)
       ::aCurrLine := NIL
    Else
-      ::RunTimeErr("", "FBFetch - Invalid cursor state" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
+      ::RunTimeErr("", "FBFetch - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
    EndIf
 
 RETURN ::nRetCode
@@ -188,8 +190,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    EndIf
 
    if ( ::nRetCode := FBNumResultCols(::hEnv, @nFields) ) != SQL_SUCCESS
-      ::RunTimeErr("", "FBNumResultCols Error" + chr(13)+chr(10)+ chr(13)+chr(10)+;
-               "Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
+      ::RunTimeErr("", "FBNumResultCols Error" + SR_CRLF + SR_CRLF + ;
+               "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
    endif
 
@@ -201,8 +203,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       nDec := 0
 
       if ( ::nRetCode := FBDescribeCol(::hEnv, n, @cName, @nType, @nLen, @nDec, @nNull) ) != SQL_SUCCESS
-         ::RunTimeErr("", "FBDescribeCol Error" + chr(13)+chr(10)+ ::LastError() + chr(13)+chr(10)+;
-                          "Last command sent to database : " + ::cLastComm )
+         ::RunTimeErr("", "FBDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+                          "Last command sent to database : " + ::cLastComm)
          RETURN NIL
       else
          _nLen := nLen

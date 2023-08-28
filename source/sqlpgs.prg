@@ -56,6 +56,8 @@
 #include "pgs.ch"
 #include "sqlrddsetup.ch"
 
+#define SR_CRLF   (chr(13) + chr(10))
+
 /*------------------------------------------------------------------------*/
 
 CLASS SR_PGS FROM SR_CONNECTION
@@ -138,7 +140,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_PGS
       ::nRetCode := PGSFetch(::hDbc)
       ::aCurrLine := NIL
    Else
-      ::RunTimeErr("", "PGSFetch - Invalid cursor state" + chr(13)+chr(10)+ chr(13)+chr(10)+"Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
+      ::RunTimeErr("", "PGSFetch - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
    EndIf
 
 RETURN ::nRetCode
@@ -185,8 +187,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    EndIf
 
    If PGSResultStatus(::hStmt) != SQL_SUCCESS
-      ::RunTimeErr("", "SqlNumResultCols Error" + chr(13)+chr(10)+ chr(13)+chr(10)+;
-               "Last command sent to database : " + chr(13)+chr(10) + ::cLastComm )
+      ::RunTimeErr("", "SqlNumResultCols Error" + SR_CRLF + SR_CRLF + ;
+               "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
    endif
 

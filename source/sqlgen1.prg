@@ -53,7 +53,7 @@
 #include "hbsql.ch"
 #include "sqlrddsetup.ch"
 
-#define CRLF      ( chr(13) + chr(10) )
+#define SR_CRLF   (chr(13) + chr(10))
 
 /*
 * Readble Macros
@@ -77,7 +77,7 @@
 #define  COMMAND_OPTIMIZER  iif(nSystemId==SYSTEMID_SYBASE,iif(lLocking,"", " AT ISOLATION READ UNCOMMITTED "),"")
 #define  SELECT_OPTIMIZER1  ""
 #define  SELECT_OPTIMIZER2  iif(nSystemId==SYSTEMID_ORACLE,iif(lLocking," FOR UPDATE", ""),"")
-#define  NEWLINE            iif(lIdent,CRLF,"")
+#define  NEWLINE            iif(lIdent,SR_CRLF,"")
 
 #xtranslate Default(<Var>, <xVal>) => IIF(<Var> == NIL, <Var> := <xVal>, NIL)
 
@@ -620,11 +620,11 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                FOR EACH outer IN aOuters
                   If outer[1] != cAtual .AND. hb_enumIndex() > 1
                      cSql += ", "
-                     cSql += CRLF
+                     cSql += SR_CRLF
                   ElseIf outer[1] = cAtual .AND. outer[2] = cAtual2
                      cSql += " AND "
                   ElseIf  hb_enumIndex() > 1
-                     cSql += CRLF
+                     cSql += SR_CRLF
                   EndIf
 
                   If outer[1] != cAtual
@@ -685,7 +685,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                NEXT
 
                If len(aTables) > 0 .AND. len(aOuters) > 0
-                  cSql += ", " + CRLF
+                  cSql += ", " + SR_CRLF
                EndIf
 
                FOR EACH cTbl IN aQualifiedTables
@@ -727,12 +727,12 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   FOR EACH outer IN aOuters
       //               If outer[1] != cAtual .AND. hb_enumIndex() > 1
       //                  cSql += ", "
-      //                  cSql += CRLF
+      //                  cSql += SR_CRLF
       //               ElseIf outer[1] = cAtual .AND. outer[2] = cAtual2
                      If outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += " AND "
                      ElseIf  hb_enumIndex() > 1
-                        cSql += CRLF
+                        cSql += SR_CRLF
                      EndIf
 
                      If hb_enumIndex() = 1
@@ -773,11 +773,11 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   FOR EACH outer IN aOuters
                      If outer[1] != cAtual .AND. hb_enumIndex() > 1
                         cSql += ", "
-                        cSql += CRLF
+                        cSql += SR_CRLF
                      ElseIf outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += " AND "
                      ElseIf  hb_enumIndex() > 1
-                        cSql += CRLF
+                        cSql += SR_CRLF
                      EndIf
 
                      If outer[1] != cAtual
@@ -840,7 +840,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                NEXT
 
                If len(aTables) > 0 .AND. len(aOuters) > 0
-                  cSql += ", " + CRLF
+                  cSql += ", " + SR_CRLF
                EndIf
 
                FOR EACH cTbl IN aQualifiedTables
@@ -1069,12 +1069,12 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             FOR EACH outer IN aOuters
 //               If outer[1] != cAtual .AND. hb_enumIndex() > 1
 //                  cSql += ", "
-//                  cSql += CRLF
+//                  cSql += SR_CRLF
 //               ElseIf outer[1] = cAtual .AND. outer[2] = cAtual2
                If outer[1] = cAtual .AND. outer[2] = cAtual2
                   cSql += " AND "
                ElseIf  hb_enumIndex() > 1
-                  cSql += CRLF
+                  cSql += SR_CRLF
                EndIf
 
                If hb_enumIndex() = 1
@@ -1115,11 +1115,11 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             FOR EACH outer IN aOuters
                If outer[1] != cAtual .AND. hb_enumIndex() > 1
                   cSql += ", "
-                  cSql += CRLF
+                  cSql += SR_CRLF
                ElseIf outer[1] = cAtual .AND. outer[2] = cAtual2
                   cSql += " AND "
                ElseIf  hb_enumIndex() > 1
-                  cSql += CRLF
+                  cSql += SR_CRLF
                EndIf
 
                If outer[1] != cAtual
@@ -1182,7 +1182,7 @@ Static FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          NEXT
 
          If len(aTables) > 0 .AND. len(aOuters) > 0
-            cSql += ", " + CRLF
+            cSql += ", " + SR_CRLF
          EndIf
 
          FOR EACH cTbl IN aQualifiedTables

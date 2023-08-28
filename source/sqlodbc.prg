@@ -55,7 +55,7 @@
 #include "msg.ch"
 #include "sqlrddsetup.ch"
 
-#define CRLF      ( chr(13) + chr(10) )
+#define SR_CRLF   (chr(13) + chr(10))
 
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500
@@ -225,7 +225,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_ODBC
       ::nRetCode := SR_Fetch(::hStmt)
       ::aCurrLine := NIL
    ELSE
-      ::RunTimeErr("", "SQLFetch - Invalid cursor state" + chr(13) + chr(10) + chr(13) + chr(10) + "Last command sent to database : " + chr(13) + chr(10) + ::cLastComm)
+      ::RunTimeErr("", "SQLFetch - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
    ENDIF
 
 RETURN ::nRetCode
@@ -234,7 +234,7 @@ METHOD FreeStatement() CLASS SR_ODBC
 
    IF !empty(::hStmt) // != NIL // != 0
       IF SR_FreeStm(::hStmt, SQL_DROP) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLFreeStmt [DROP] error" + chr(13) + chr(10) + chr(13) + chr(10) + "Last command sent to database : " + chr(13) + chr(10) + ::cLastComm)
+         ::RunTimeErr("", "SQLFreeStmt [DROP] error" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
       ENDIF
       ::hStmt := NIL
    ENDIF
@@ -252,7 +252,7 @@ METHOD AllocStatement() CLASS SR_ODBC
       ::hStmt = hStmtLocal
    ELSE
       ::nRetCode := nRet
-      ::RunTimeErr("", "SQLAllocStmt [NEW] Error" + CRLF + CRLF + ::LastError() + CRLF + CRLF+"Last command sent to database : " + chr(13) + chr(10) + ::cLastComm)
+      ::RunTimeErr("", "SQLAllocStmt [NEW] Error" + SR_CRLF + SR_CRLF + ::LastError() + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
    ENDIF
 
@@ -306,8 +306,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ENDIF
 
    IF (::nRetCode := SR_NumRes(::hStmt, @nFields)) != SQL_SUCCESS
-      ::RunTimeErr("", "SqlNumResultCols Error" + chr(13) + chr(10) + chr(13) + chr(10) + ;
-         "Last command sent to database : " + chr(13) + chr(10) + ::cLastComm)
+      ::RunTimeErr("", "SqlNumResultCols Error" + SR_CRLF + SR_CRLF + ;
+         "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
    ENDIF
 
@@ -320,7 +320,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       nSoma := 0
 
       IF (::nRetCode := SR_Describ(::hStmt, n, @cName, 255, @nNameLen, @nType, @nLen, @nDec, @nNull, ::nSystemID)) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLDescribeCol Error" + chr(13) + chr(10) + ::LastError() + chr(13) + chr(10) + ;
+         ::RunTimeErr("", "SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
             "Last command sent to database : " + ::cLastComm)
          RETURN NIL
       ELSE
@@ -474,13 +474,13 @@ METHOD End() CLASS SR_ODBC
    ::Commit(.T.)
 
    IF (nRet := SR_Disconn(::hDbc)) != SQL_SUCCESS
-      SR_MsgLogFile("Error disconnecting : " + str(nRet) + CRLF + ::LastError())
+      SR_MsgLogFile("Error disconnecting : " + str(nRet) + SR_CRLF + ::LastError())
    ELSE
       IF (nRet := SR_FreeCon(::hDbc)) != SQL_SUCCESS
-         SR_MsgLogFile("Error in SR_FreeCon() : " + str(nRet) + CRLF + ::LastError())
+         SR_MsgLogFile("Error in SR_FreeCon() : " + str(nRet) + SR_CRLF + ::LastError())
       ELSE
          If (nRet := SR_FreeEnv(::hEnv)) != SQL_SUCCESS
-            SR_MsgLogFile("Error in SR_FreeEnv() : " + str(nRet) + CRLF + ::LastError())
+            SR_MsgLogFile("Error in SR_FreeEnv() : " + str(nRet) + SR_CRLF + ::LastError())
          EndIf
       ENDIF
    ENDIF
