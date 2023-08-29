@@ -1230,7 +1230,8 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
       RETURN "'" + " " + "'"
    Endif
 
-   Do Case // TODO: switch ?
+#if 0 // TODO: old code for reference (to be deleted)
+   Do Case
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
       RETURN [E'] + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
    Case cType $ "CM"
@@ -1270,6 +1271,67 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
       cRet := SR_STRTOHEX(HB_Serialize(uData))
       RETURN SR_SQLQuotedString(SQL_SERIALIZED_SIGNATURE + str(len(cRet), 10) + cRet, nSystemID, lNotNull)
    EndCase
+#endif
+
+   SWITCH cType
+
+   CASE "C"
+   CASE "M"
+      IF nSystemID == SYSTEMID_POSTGR
+         RETURN "E'" + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
+      ELSE
+         RETURN "'" + rtrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
+      ENDIF
+
+   CASE "D"
+      SWITCH nSystemID
+      CASE SYSTEMID_ORACLE
+         RETURN "TO_DATE('" + rtrim(DtoS(uData)) + "','YYYYMMDD')"
+      CASE SYSTEMID_IBMDB2
+      CASE SYSTEMID_ADABAS
+         RETURN "'" + transform(DtoS(uData), "@R 9999-99-99") + "'"
+      CASE SYSTEMID_SQLBAS
+         RETURN "'" + SR_dtosdot(uData) + "'"
+      CASE SYSTEMID_INFORM
+         RETURN "'" + SR_dtoUS(uData) + "'"
+      CASE SYSTEMID_INGRES
+         RETURN "'" + SR_dtoDot(uData) + "'"
+      CASE SYSTEMID_FIREBR
+      CASE SYSTEMID_FIREBR3
+         RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
+      CASE SYSTEMID_CACHE
+         RETURN "{d '" + transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
+      CASE SYSTEMID_MYSQL
+      CASE SYSTEMID_MARIADB
+         RETURN "str_to_date( '" + dtos(uData) + "', '%Y%m%d' )"
+      OTHERWISE
+         RETURN "'" + dtos(uData) + "'"
+      ENDSWITCH
+
+   CASE "N"
+      RETURN ltrim(str(uData))
+
+   CASE "L"
+      SWITCH nSystemID
+      CASE SYSTEMID_POSTGR
+         RETURN iif(uData, "true", "false")
+      CASE SYSTEMID_INFORM
+         RETURN iif(uData, "'t'", "'f'")
+      OTHERWISE
+         RETURN iif(uData, "1", "0")
+      ENDSWITCH
+
+   CASE "A"
+      FOR EACH uElement IN uData
+         cRet += iif(empty(cRet), "", ", ") + SR_SQLQuotedString(uElement, nSystemID, lNotNull)
+      NEXT
+      RETURN cRet
+
+   CASE "O"
+      cRet := SR_STRTOHEX(HB_Serialize(uData))
+      RETURN SR_SQLQuotedString(SQL_SERIALIZED_SIGNATURE + str(len(cRet), 10) + cRet, nSystemID, lNotNull)
+
+   ENDSWITCH
 
 RETURN "NULL"
 
