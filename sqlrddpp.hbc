@@ -1,4 +1,4 @@
-incpaths=Include
+incpaths=include
 
 libpaths=lib/${hb_plat}/${hb_comp}
 
