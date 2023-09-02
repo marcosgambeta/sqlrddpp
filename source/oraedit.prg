@@ -1256,7 +1256,7 @@ FUNCTION GETREFRESHCURVALUE(calias, ctable)
    LOCAL aTmp
 
 if len(aFields) > 0
-   cSql := "select * from "+ ctable
+   cSql := "select * from " + ctable
    cSql += " where "
 
    FOR EACH aTemp IN aFields
@@ -1307,7 +1307,7 @@ FUNCTION GETREFRESHCURINSVALUE(calias, ctable, calias2)
    LOCAL aTmp
 
 if len(aFields) > 0
-   cSql := "select * from "+ ctable
+   cSql := "select * from " + ctable
    cSql += " where "
 
    FOR EACH aTemp IN aFields
@@ -1362,15 +1362,15 @@ FUNCTION IsPrimaryKeyDeleted(calias, cTable)
    LOCAL xVal
 
 if len(aFields) > 0
-   cSql := "select * from "+ ctable
+   cSql := "select * from " + ctable
    cSql += " where "
    FOR EACH aTemp IN aFields
       nFieldPos := (cAlias)->(fieldpos(aTemp))
       xval := (calias)->(fieldGet(nfieldPos))
       if empty(xval)
-         cSql += " "+aTemp  + " is null "
+         cSql += " " + aTemp + " is null "
       else
-         cSql += " "+aTemp  + " = " + sr_cdbvalue(xVal)
+         cSql += " " + aTemp + " = " + sr_cdbvalue(xVal)
       endif
       cSql += " AND "
    NEXT
@@ -1461,7 +1461,7 @@ if len(aFields) > 0
    NEXT
    cSql := substr(cSql, 1, len(csql) - 4)
    else
-      csql := "select " + cfields + " from "+ ctable + " where rownum <4  order by " + cDesc
+      csql := "select " + cfields + " from " + ctable + " where rownum <4  order by " + cDesc
    endif
    use ( csql ) new alias "INSSQLTMP" via "SQLRDD"
    if INSSQLTMP->(reccount())>0

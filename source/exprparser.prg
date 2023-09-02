@@ -377,9 +377,11 @@ METHOD new(pWorkarea)
    cOperatorsChoice := cJoin(xSelect(::aClipperComparisonOperators, {|x| x:cPattern}), "|")
    cOperatorsChars := cPattern(CharList(cJoin(xSelectMany(::aClipperComparisonOperators, {|x| x:aSymbols}), "")))
 
-   ::_cRegOperator := HB_RegExComp("^((?:[^\'\?]*?(?:\'[^\']*\'|\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*?\?))*(?:[^\'\?]*?[^-"+cOperatorsChars+"\s])?\s*)("+cOperatorsChoice+")([^"+cOperatorsChars+"].*)$", .F.)
-   ::_cRegNegative1 := HB_RegExComp("^("+::_cNegativesPattern+")\s*(\?.*\?)$", .F.)
-   ::_cRegNegative2 := HB_RegExComp("^("+::_cNegativesPattern+")\s*(.+)$", .F.)
+   ::_cRegOperator := ;
+      HB_RegExComp("^((?:[^\'\?]*?(?:\'[^\']*\'|\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*?\?))*(?:[^\'\?]*?[^-" + ;
+      cOperatorsChars + "\s])?\s*)(" + cOperatorsChoice + ")([^" + cOperatorsChars + "].*)$", .F.)
+   ::_cRegNegative1 := HB_RegExComp("^(" + ::_cNegativesPattern + ")\s*(\?.*\?)$", .F.)
+   ::_cRegNegative2 := HB_RegExComp("^(" + ::_cNegativesPattern + ")\s*(.+)$", .F.)
 
 RETURN SELF
 

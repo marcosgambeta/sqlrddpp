@@ -581,7 +581,7 @@ CLASS MSSQLExpressionTranslator FROM ExpressionTranslator
    METHOD TranslateBooleanExpression(oBooleanExpression)
 
    PROTECTED:
-   METHOD Deny(cCondition) INLINE "not("+cCondition+")"
+   METHOD Deny(cCondition) INLINE "not(" + cCondition + ")"
 
    EXPORTED:
    METHOD new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)

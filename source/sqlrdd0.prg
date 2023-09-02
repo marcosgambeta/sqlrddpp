@@ -667,7 +667,7 @@ Static FUNCTION SR_SetEnvSQLRDD(oConnect)
          oCnn:exec("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'", .F.)
          oCnn:exec("alter session set SESSION_CACHED_CURSORS=10000", .F.)
          If oCnn:cCharSet != NIL
-            oCnn:exec("ALTER SESSION SET NLS_CHARACTERSET="+oCnn:cCharSet, .F.)
+            oCnn:exec("ALTER SESSION SET NLS_CHARACTERSET=" + oCnn:cCharSet, .F.)
          EndIf
          If oCnn:lNative
             oCnn:exec("ALTER SESSION SET NLS_DATE_FORMAT='yyyymmdd'", .F.)

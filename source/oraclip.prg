@@ -21,7 +21,7 @@ FUNCTION OraExecSql(n, c, adata)
 
 if aData != NIL .AND. HB_ISARRAY(adata)
 FOR i := len(aData) TO 1 step -1
-   cBind := ":"+alltrim(str(i))
+   cBind := ":" + alltrim(str(i))
    c := strtran(c, cBind, sr_cdbvalue(adata[i]))
 NEXT i
 endif
@@ -152,7 +152,7 @@ if adata == NIL
 endif
 
 FOR i := 1 TO len(aData)
-   cBind := ":"+alltrim(str(i))
+   cBind := ":" + alltrim(str(i))
    cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
 NEXT i
 //    nError := sr_getconnection():exec(csql, , .T., @aret)
@@ -263,7 +263,7 @@ if pCount() == 3
 elseif pCount() == 4
 
    FOR i := 1 TO len(aData)
-      cBind := ":"+alltrim(str(i))
+      cBind := ":" + alltrim(str(i))
       cwhere := strtran(cwhere, cBind, sr_cdbvalue(adata[i]))
    NEXT i
    cSql += " where " +  cwhere 
@@ -376,9 +376,9 @@ FUNCTION OraLogon(cCnxName, cUser, cPwd, cAlias, nCnxType)
    LOCAL cString
    LOCAL nRet
 
-cString := "UID="+cUSer+";PWD="+cPwd
+cString := "UID=" + cUSer + ";PWD=" + cPwd
 if !empty(cAlias ) 
-cString += ";TNS="+cAlias
+cString += ";TNS=" + cAlias
 endif
 nRet := sr_addconnection(CONNECT_ORACLE, cstring)
 

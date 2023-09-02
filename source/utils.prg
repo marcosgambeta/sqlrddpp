@@ -534,7 +534,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
       RETURN "TO_DATE('" + rtrim(DtoS(uData)) + "','YYYYMMDD')"
     Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS)
-        RETURN "'"+transform(DtoS(uData) ,'@R 9999-99-99')+"'"
+        RETURN "'" + transform(DtoS(uData) ,'@R 9999-99-99')+"'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
       RETURN "'" + SR_dtosDot(uData) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
@@ -542,7 +542,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
       RETURN "'" + SR_dtoDot(uData) + "'"
    Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
-      RETURN "'"+transform(DtoS(uData) ,'@R 9999/99/99')+"'"
+      RETURN "'" + transform(DtoS(uData) ,'@R 9999/99/99')+"'"
 
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
       RETURN "{d '" + transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
@@ -574,7 +574,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       Set(_SET_DATEFORMAT, "yyyy-mm-dd")
       cRet := ttoc(uData)
       Set(_SET_DATEFORMAT, cOldSet)
-      RETURN "'"+cRet+"'"
+      RETURN "'" + cRet + "'"
 
    OtherWise
       cRet := SR_STRTOHEX(HB_Serialize(uData))
@@ -1718,14 +1718,14 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                cColor12 := COLORLETTER(cColor12)
             ENDIF
 
-            cColorNorm := cColor11+"/"+cColor12
+            cColorNorm := cColor11 + "/" + cColor12
 
         ENDIF
 
       ELSE
          cColor11 := "W+"
          cColor12 := "R"
-         cColorNorm := cColor11+"/"+cColor12
+         cColorNorm := cColor11 + "/" + cColor12
       ENDIF
 
 
@@ -1759,7 +1759,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                 // extracting color attributes from background color.
                 cColor22 := StrTran(cColor22, "+", "")
                 cColor22 := StrTran(cColor22, "*", "")
-                cColorHigh := cColor21+"/"+cColor22
+                cColorHigh := cColor21 + "/" + cColor22
 
             ENDIF
 
@@ -1775,7 +1775,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             cColor11 := StrTran(cColor11, "+", "")
             cColor11 := StrTran(cColor11, "*", "")
          ENDIF
-         cColorHigh := cColor12+"/"+cColor11
+         cColorHigh := cColor12 + "/" + cColor11
       ENDIF
 
    ENDIF
@@ -2115,7 +2115,7 @@ RETURN NIL
 FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
 
    LOCAL oCnn
-   LOCAL cSql := "ALTER TABLE "+ cTable + " ALTER COLUMN " +cField +" SET DEFAULT "
+   LOCAL cSql := "ALTER TABLE " + cTable + " ALTER COLUMN " + cField + " SET DEFAULT "
 
    oCnn := SR_GetConnection()
    IF HB_ISNUMERIC(cDefault)

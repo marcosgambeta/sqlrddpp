@@ -465,7 +465,7 @@ Static FUNCTION ProcessParams(cSql, nBound)
 
    FOR EACH xParam IN aItens
       nPos := hB_enumIndex()
-      cOriginal += alltrim(":P"+StrZero(nPos, 3)) +" "
+      cOriginal += alltrim(":P" + StrZero(nPos, 3)) + " "
       nParamBound ++
    NEXT
 
