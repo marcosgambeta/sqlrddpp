@@ -40,14 +40,11 @@
  *
  */
 
-// #include "compat.ch"
 #include "sqlrdd.ch"
 #include "hbclass.ch"
-// #ifndef __XHARBOUR__
-//    #include "xhbcls.ch"
-// #endif
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 FUNCTION NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
 
    DbSetRelation(cAlias, bRelation, cRelation, lScoped)
@@ -55,7 +52,6 @@ FUNCTION NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
 
 RETURN NIL
 
-**************************************************
 FUNCTION NewdbClearRelation()
 
    dbClearRelation()
@@ -63,7 +59,6 @@ FUNCTION NewdbClearRelation()
 
 RETURN NIL
 
-**************************************************
 FUNCTION Newdbclearfilter()
 
    dbclearfilter()
@@ -71,7 +66,6 @@ FUNCTION Newdbclearfilter()
 
 RETURN NIL
 
-**************************************************
 FUNCTION oGetWorkarea(cAlias)
 
    LOCAL result
@@ -86,21 +80,21 @@ FUNCTION oGetWorkarea(cAlias)
 
 RETURN result
 
-**************************************************
 PROCEDURE SelectFirstAreaNotInUse()
 
    LOCAL nArea
 
    FOR nArea := 1 TO 65534
       IF Empty(alias(nArea))
-         SELECT &nArea
+         dbSelectArea(nArea)
          EXIT
       ENDIF
    NEXT
 
 RETURN
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS RelationBase
 
    EXPORTED:
@@ -111,7 +105,8 @@ CLASS RelationBase
 
 ENDCLASS
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS IndirectRelation FROM RelationBase
 
    EXPORTED:
@@ -125,7 +120,8 @@ CLASS IndirectRelation FROM RelationBase
 
 ENDCLASS
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS DirectRelation FROM RelationBase
 
    EXPORTED:
@@ -136,7 +132,7 @@ CLASS DirectRelation FROM RelationBase
 
 ENDCLASS
 
-METHOD new(pWorkarea1, pWorkarea2, pExpression)
+METHOD new(pWorkarea1, pWorkarea2, pExpression) CLASS DirectRelation
 
    IF HB_ISCHAR(pWorkarea1)
       ::oWorkarea1 := oGetWorkarea(pWorkarea1)
@@ -153,7 +149,8 @@ METHOD new(pWorkarea1, pWorkarea2, pExpression)
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS RelationFactory
 
    EXPORTED:
@@ -164,7 +161,7 @@ CLASS RelationFactory
 
 ENDCLASS
 
-METHOD new()
+METHOD new() CLASS RelationFactory
 
    STATIC instance
 
@@ -174,7 +171,8 @@ METHOD new()
 
 RETURN instance
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS RelationManager
 
    HIDDEN:
@@ -200,7 +198,7 @@ CLASS RelationManager
 
 ENDCLASS
 
-METHOD new()
+METHOD new() CLASS RelationManager
 
    STATIC instance
 
@@ -302,7 +300,8 @@ METHOD BuildRelations(oIndirectRelation, cAlias1, cAlias2) CLASS RelationManager
 
 RETURN result
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS DbIndex
 
    HIDDEN:
@@ -343,7 +342,7 @@ CLASS DbIndex
 
 ENDCLASS
 
-METHOD new(pWorkarea, pName)
+METHOD new(pWorkarea, pName) CLASS DbIndex
 
    IF HB_ISCHAR(pWorkarea)
       ::oWorkarea := oGetWorkarea(pWorkarea)
@@ -384,18 +383,19 @@ RETURN ::_aDbFields
 
 METHOD nLength() CLASS DbIndex
 
-   LOCAL i
+   LOCAL item
 
    IF ::_nLength == NIL
       ::_nLength := 0
-      FOR i := 1 TO len(::aDbFields)
-         ::_nLength += ::aDbFields[i]:nLength
-      NEXT i
+      FOR EACH item IN ::aDbFields
+         ::_nLength += item:nLength
+      NEXT
    ENDIF
 
 RETURN ::_nLength
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS DbField
 
    EXPORTED:
@@ -412,7 +412,7 @@ CLASS DbField
 
 ENDCLASS
 
-METHOD new(pName, pType, pLength)
+METHOD new(pName, pType, pLength) CLASS DbField
 
    ::cName := pName
    ::cType := pType
@@ -420,7 +420,8 @@ METHOD new(pName, pType, pLength)
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ClipperExpression
 
    EXPORTED:
@@ -521,7 +522,7 @@ RETURN ::_nLength
 **************************************************
 
 #if 0
-FUNCTION ExtendWorkarea() // requires xhbcls.ch
+FUNCTION ExtendWorkarea() // TODO: requires xhbcls.ch (to be deleted)
 
    EXTEND CLASS SR_WORKAREA WITH DATA aIndexes
    EXTEND CLASS SR_WORKAREA WITH METHOD GetIndexes
@@ -635,3 +636,5 @@ FUNCTION NewParseForClause(cFor, lFixVariables)
    oCondition := oParser:Parse(cFor)
 
 RETURN otranslator:Translate(oCondition)
+
+///////////////////////////////////////////////////////////////////////////////
