@@ -40,10 +40,10 @@
  *
  */
 
-// #include "compat.ch"
 #include "hbclass.ch"
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS Operator
 
    HIDDEN:
@@ -61,14 +61,14 @@ CLASS Operator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols)
+METHOD new(pName, pSymbols) CLASS Operator
 
    ::cName := pName
    ::aSymbols := pSymbols
 
 RETURN SELF
 
-METHOD cPattern
+METHOD cPattern() CLASS Operator
 
    IF ::_cPattern == NIL
       ::_cPattern := cJoin(::aSymbols, "|")
@@ -77,7 +77,8 @@ METHOD cPattern
 
 RETURN ::_cPattern
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ComparisonOperator FROM Operator
 
    EXPORTED:
@@ -85,13 +86,14 @@ CLASS ComparisonOperator FROM Operator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols)
+METHOD new(pName, pSymbols) CLASS ComparisonOperator
 
    ::super:new(pName, pSymbols)
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS SerialOperator FROM Operator
 
    PROTECTED:
@@ -105,13 +107,14 @@ CLASS SerialOperator FROM Operator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols)
+METHOD new(pName, pSymbols) CLASS SerialOperator
 
    ::super:new(pName, pSymbols)
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS LogicalOperator FROM SerialOperator
 
    EXPORTED:
@@ -119,7 +122,7 @@ CLASS LogicalOperator FROM SerialOperator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols)
+METHOD new(pName, pSymbols) CLASS LogicalOperator
 
    ::super:new(pName, pSymbols)
    IF pName == "and"
@@ -130,7 +133,8 @@ METHOD new(pName, pSymbols)
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ArithmeticOperator FROM SerialOperator
 
    EXPORTED:
@@ -138,20 +142,26 @@ CLASS ArithmeticOperator FROM SerialOperator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols)
+METHOD new(pName, pSymbols) CLASS ArithmeticOperator
 
    ::super:new(pName, pSymbols)
-   IF pName == "exponent"
+   SWITCH pName
+   CASE "exponent"
       ::_nPriority := 2
-   ELSEIF pName == "multiplied" .OR. pName == "divided"
+      EXIT
+   CASE "multiplied"
+   CASE "divided"
       ::_nPriority := 1
-   ELSEIF pName == "plus" .OR. pName == "minus"
+      EXIT
+   CASE "plus"
+   CASE "minus"
       ::_nPriority := 0
-   ENDIF
+   ENDSWITCH
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS AlgebraSet
 
    EXPORTED:
@@ -171,41 +181,52 @@ CLASS AlgebraSet
 
 ENDCLASS
 
-METHOD new(pOperator, pType)
+METHOD new(pOperator, pType) CLASS AlgebraSet
 
    ::oOperator := pOperator
    ::cType := pType
 
-   DO CASE
-   CASE ascan({"plus", "minus"}, ::oOperator:cName) > 0
-      IF ::cType == "C"
+   SWITCH ::oOperator:cName
+   CASE "plus"
+   CASE "minus"
+      SWITCH ::cType
+      CASE "C"
          ::cIdentityElement := "''"
-      ELSEIF ::cType == "N"
+         EXIT
+      CASE "N"
          ::cIdentityElement := "0"
-      ELSEIF ::cType == "D"
+         EXIT
+      CASE "D"
          ::cIdentityElement := "0"
-      ENDIF
-   CASE ascan({"multiplied", "divided", "exponent"}, ::oOperator:cName) > 0
+      ENDSWITCH
+      EXIT
+   CASE "multiplied"
+   CASE "divided"
+   CASE "exponent"
       ::cIdentityElement := "1"
       ::cAbsorbentElement := "0"
       ::cType := "N"
-   CASE ::oOperator:cName == "and"
+      EXIT
+   CASE "and"
       ::cIdentityElement := ".T."
       ::cAbsorbentElement := ".F."
       ::cType := "L"
-   CASE ::oOperator:cName == "or"
+      EXIT
+   CASE "or"
       ::cIdentityElement := ".F."
       ::cAbsorbentElement := ".T."
       ::cType := "L"
-   ENDCASE
+   ENDSWITCH
 
 RETURN SELF
 
-**************************************************
-CLASS ISerialComposition //just a dummy class that is used as interface
+///////////////////////////////////////////////////////////////////////////////
+
+CLASS ISerialComposition // just a dummy class that is used as interface
 ENDCLASS
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ExpressionBase
 
    HIDDEN:
@@ -237,7 +258,7 @@ CLASS ExpressionBase
 
 ENDCLASS
 
-METHOD new(pContext, pClipperString)
+METHOD new(pContext, pClipperString) CLASS ExpressionBase
 
    ::oClipperExpression := ClipperExpression():new(pContext, pClipperString)
    ::cContext := upper(pContext)
@@ -252,11 +273,12 @@ METHOD oWorkArea() CLASS ExpressionBase
 
 RETURN ::_oWorkArea
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ConditionBase FROM ExpressionBase
 
    PROTECTED:
-   DATA lDenied_ INIT .F. //bug with _lDenied, so I use lDenied_
+   DATA lDenied_ INIT .F. // bug with _lDenied, so I use lDenied_
 
    EXPORTED:
    ACCESS lDenied
@@ -273,7 +295,7 @@ CLASS ConditionBase FROM ExpressionBase
 
 ENDCLASS
 
-METHOD new2(pContext, pClipperString, pDenied)
+METHOD new2(pContext, pClipperString, pDenied) CLASS ConditionBase
 
    ::lDenied_ := pDenied
 
@@ -288,7 +310,8 @@ METHOD lDenied(value) CLASS ConditionBase
 
 RETURN ::lDenied_
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS BooleanExpression FROM ConditionBase
 
    EXPORTED:
@@ -309,13 +332,13 @@ CLASS BooleanExpression FROM ConditionBase
 
 ENDCLASS
 
-METHOD new2(pContext, pClipperString, pDenied, pExpr)
+METHOD new2(pContext, pClipperString, pDenied, pExpr) CLASS BooleanExpression
 
    ::lDenied_ := pDenied
 
 RETURN ::new(pContext, pClipperString, pExpr)
 
-METHOD new(pContext, pClipperString, pExpr)
+METHOD new(pContext, pClipperString, pExpr) CLASS BooleanExpression
 
    ::super:new(pContext, pClipperString)
    ::oExpression := pExpr
@@ -335,7 +358,8 @@ METHOD lDenied(value) CLASS BooleanExpression
 
 RETURN ::super:lDenied(value)
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ComposedConditionBase FROM ConditionBase
 
    EXPORTED:
@@ -366,15 +390,18 @@ METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2) CLASS Comp
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS Comparison FROM ComposedConditionBase
 ENDCLASS
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ComposedCondition FROM ComposedConditionBase
 ENDCLASS
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS Expression FROM ExpressionBase
 
    EXPORTED:
@@ -388,7 +415,8 @@ ENDCLASS
 METHOD GetType() CLASS Expression
 RETURN ::oClipperExpression:cType
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ValueExpression FROM Expression
 
    EXPORTED:
@@ -404,14 +432,14 @@ CLASS ValueExpression FROM Expression
    METHOD GetType()
 
    EXPORTED:
-   ACCESS oExpression INLINE self //usefull to implement the same interface than ValueExpression
+   ACCESS oExpression INLINE self // usefull to implement the same interface than ValueExpression
 
    EXPORTED:
    METHOD new(pContext, pValue)
 
 ENDCLASS
 
-METHOD new(pContext, pValue)
+METHOD new(pContext, pValue) CLASS ValueExpression
 
    ::super:new(pContext, alltrim(pValue))
 
@@ -433,11 +461,14 @@ RETURN SELF
 METHOD GetType() CLASS ValueExpression
 
    IF ::cType == NIL
-      IF ::ValueType == "field"
+      SWITCH ::ValueType
+      CASE "field"
          ::cType := ::oWorkArea:GetFieldByName(::Value):cType
-      ELSEIF ::ValueType == "variable"
+         EXIT
+      CASE "variable"
          ::cType := ::super:GetType()
-      ELSEIF ::ValueType == "value"
+         EXIT
+      CASE "value"
          IF hb_regexLike("\d+", ::Value)
             ::cType := "N"
          ELSEIF hb_regexLike("'.*'", ::Value)
@@ -445,14 +476,16 @@ METHOD GetType() CLASS ValueExpression
          ELSEIF ascan({".T.", ".F."}, upper(::Value)) > 0
             ::cType := "L"
          ENDIF
-      ELSE
+         EXIT
+      OTHERWISE
          ::cType = "U"
-      ENDIF
+      ENDSWITCH
    ENDIF
 
 RETURN ::cType
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS FunctionExpression FROM Expression
 
    EXPORTED:
@@ -464,7 +497,7 @@ CLASS FunctionExpression FROM Expression
 
 ENDCLASS
 
-METHOD new(pContext, pClipperString, pFunctionName, aParameters)
+METHOD new(pContext, pClipperString, pFunctionName, aParameters) CLASS FunctionExpression
 
    ::super:new(pContext, pClipperString)
    ::cFunctionName := lower(pFunctionName)
@@ -472,7 +505,8 @@ METHOD new(pContext, pClipperString, pFunctionName, aParameters)
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS Parameter
 
    EXPORTED:
@@ -484,14 +518,15 @@ CLASS Parameter
 
 ENDCLASS
 
-METHOD new(pExpression, pIsByRef)
+METHOD new(pExpression, pIsByRef) CLASS Parameter
 
    ::oExpression := pExpression
    ::lIsByRef := pIsByRef
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ComposedExpression FROM Expression
 
    EXPORTED:
@@ -510,7 +545,7 @@ CLASS ComposedExpression FROM Expression
 
 ENDCLASS
 
-METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
+METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2) CLASS ComposedExpression
 
    ::super:new(pContext, pClipperString)
    ::oOperand1 := pOperand1
@@ -519,13 +554,13 @@ METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
 
 RETURN SELF
 
-METHOD GetType()
+METHOD GetType() CLASS ComposedExpression
 
    LOCAL cOperand1Type
 
    IF ::cType == NIL
       cOperand1Type := ::oOperand1:GetType()
-      IF ascan({"plus", "minus"}, ::oOperator:cName) > 0 .AND. cOperand1Type == "N" //date + numeric
+      IF ascan({"plus", "minus"}, ::oOperator:cName) > 0 .AND. cOperand1Type == "N" // date + numeric
          ::cType := ::oOperand2:GetType()
       ELSE
          ::cType := cOperand1Type
@@ -534,7 +569,8 @@ METHOD GetType()
 
 RETURN ::cType
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 PROCEDURE Visualize(oExpression) // for debuging
 
    LOCAL i
@@ -563,7 +599,6 @@ PROCEDURE Visualize(oExpression) // for debuging
 
 RETURN
 
-**************************************************
 FUNCTION CollectAliases(oExpression, aAliases)
 
    LOCAL i
@@ -582,7 +617,6 @@ FUNCTION CollectAliases(oExpression, aAliases)
 
 RETURN aAliases
 
-**************************************************
 FUNCTION ConvertToCondition(oExpression)
 
    IF !oExpression:isKindOf("ComposedExpression") .AND. oExpression:GetType() == "L"
@@ -590,3 +624,5 @@ FUNCTION ConvertToCondition(oExpression)
    ENDIF
 
 RETURN NIL
+
+///////////////////////////////////////////////////////////////////////////////
