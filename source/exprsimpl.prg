@@ -40,10 +40,10 @@
  *
  */
 
-// #include "compat.ch"
 #include "hbclass.ch"
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ExpressionSimplifierBase
 
    EXPORTED:
@@ -78,7 +78,7 @@ CLASS ExpressionSimplifierBase
 
 ENDCLASS
 
-METHOD new(pFixVariables, pIgnoreRelations, pContext)
+METHOD new(pFixVariables, pIgnoreRelations, pContext) CLASS ExpressionSimplifierBase
 
    IF pFixVariables != NIL
       ::lFixVariables := pFixVariables
@@ -122,7 +122,9 @@ METHOD CompositionAssessable(oExpression) CLASS ExpressionSimplifierBase
 RETURN       (oExpression:oOperand1:lSimplified .OR. ::Assessable(oExpression:oOperand1)) ;
        .AND. (oExpression:oOperand2:lSimplified .OR. ::Assessable(oExpression:oOperand2))
 
-**************************************************
+
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ExpressionSimplifier FROM ExpressionSimplifierBase
 
    HIDDEN:
@@ -154,7 +156,7 @@ CLASS ExpressionSimplifier FROM ExpressionSimplifierBase
 
 ENDCLASS
 
-METHOD new(pFixVariables, pIgnoreRelations, pContext, pConditionSimplifier)
+METHOD new(pFixVariables, pIgnoreRelations, pContext, pConditionSimplifier) CLASS ExpressionSimplifier
 
    ::_oConditionSimplifier := pConditionSimplifier
 
@@ -182,17 +184,21 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
       RECOVER
       END SEQUENCE
       IF lEvaluated
-         DO CASE
-         CASE HB_ISCHAR(newValue)
+         SWITCH valtype(newValue)
+         CASE "C"
             newValue := "'" + newValue + "'"
             result := ValueExpression():new(oExpression:cContext, newValue)
-         CASE HB_ISNUMERIC(newValue) .OR. HB_ISLOGICAL(newValue) .OR. valtype(newValue) == "U"
+            EXIT
+         CASE "N"
+         CASE "L"
+         CASE "U"
             newValue := cstr(newValue)
             result := ValueExpression():new(oExpression:cContext, newValue)
-         CASE HB_ISDATE(newValue)
+            EXIT
+         CASE "D"
             newValue := "'" + dtoc(newValue) + "'"
             result := FunctionExpression():new(oExpression:cContext, "ctod(" + newValue + ")", "ctod", {Parameter():new(ValueExpression():new(oExpression:cContext, newValue), .F.)})
-         ENDCASE
+         ENDSWITCH
       ENDIF
    ENDIF
    IF !lEvaluated
@@ -206,7 +212,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
             IF oParameter:oExpression:isKindOf("ConditionBase")
                simplifier := ::oConditionSimplifier
             ELSE
-               simplifier := self
+               simplifier := SELF
             ENDIF
             IF oParameter:lIsByRef .OR. (oSimplifiedExpression := simplifier:Simplify(oParameter:oExpression)) == oParameter:oExpression
                aadd(newParams, oParameter)
@@ -255,36 +261,41 @@ METHOD ValueAssessable(oExpression) CLASS ExpressionSimplifier
 
    LOCAL lRet
 
-   DO CASE
-   CASE oExpression:ValueType == "value"
+   SWITCH oExpression:ValueType
+   CASE "value"
       lRet := .T.
-   CASE oExpression:ValueType == "variable"
+      EXIT
+   CASE "variable"
       lRet := ::lFixVariables
-   CASE oExpression:ValueType == "field"
+      EXIT
+   CASE "field"
       lRet := (::lIgnoreRelations .OR. !::cContext == oExpression:cContext .AND. len(RelationManager():new():GetRelations(::cContext, oExpression:cContext)) == 0) .AND. ::lFixVariables
-   ENDCASE
+   ENDSWITCH
 
 RETURN lRet
 
 METHOD FunctionAssessable(oExpression) CLASS ExpressionSimplifier
 
-   LOCAL i
+   LOCAL item
    LOCAL simplifier
 
-   FOR i := 1 TO len(oExpression:aParameters)
-      IF oExpression:aParameters[i]:oExpression:isKindOf("ConditionBase")
+   FOR EACH item IN oExpression:aParameters
+      IF item:oExpression:isKindOf("ConditionBase")
          simplifier := ::oConditionSimplifier
       ELSE
-         simplifier := self
+         simplifier := SELF
       ENDIF
-      IF !simplifier:Assessable(oExpression:aParameters[i]:oExpression)
+      IF !simplifier:Assessable(item:oExpression)
          RETURN .F.
       ENDIF
-   NEXT i
+   NEXT
 
-RETURN __DynsIsFun(__DynsGetIndex(oExpression:cFunctionName)) .AND. !oExpression:cFunctionName == "deleted" .AND. !oExpression:cFunctionName == "recno"
+RETURN __DynsIsFun(__DynsGetIndex(oExpression:cFunctionName)) ;
+   .AND. !oExpression:cFunctionName == "deleted" ;
+   .AND. !oExpression:cFunctionName == "recno"
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS ConditionSimplifier FROM ExpressionSimplifierBase
 
    HIDDEN:
@@ -313,9 +324,9 @@ CLASS ConditionSimplifier FROM ExpressionSimplifierBase
 
 ENDCLASS
 
-METHOD new(pFixVariables, pIgnoreRelations, pContext)
+METHOD new(pFixVariables, pIgnoreRelations, pContext) CLASS ConditionSimplifier
 
-   ::_oExpressionSimplifier := ExpressionSimplifier():new(pFixVariables, pIgnoreRelations, pContext, self)
+   ::_oExpressionSimplifier := ExpressionSimplifier():new(pFixVariables, pIgnoreRelations, pContext, SELF)
 
 RETURN ::super:new(pFixVariables, pIgnoreRelations, pContext)
 
@@ -381,3 +392,5 @@ RETURN ::_oExpressionSimplifier:Assessable(oCondition:oExpression)
 METHOD ComparisonAssessable(oCondition) CLASS ConditionSimplifier
 RETURN       ::_oExpressionSimplifier:Assessable(oCondition:oOperand1) ;
        .AND. ::_oExpressionSimplifier:Assessable(oCondition:oOperand2)
+
+///////////////////////////////////////////////////////////////////////////////
