@@ -662,7 +662,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
       aSize(aInd, INDEXMAN_SIZE)
       IF aInd[INDEXMAN_IDXKEY][4] == "@"
          IF ::oSql:nSystemID == SYSTEMID_ORACLE
-            aInd[INDEXMAN_VIRTUAL_SYNTH] := SubStr(aInd[INDEXMAN_IDXKEY], 1, 3)+SubStr(::cFileName, 1, 25)
+            aInd[INDEXMAN_VIRTUAL_SYNTH] := SubStr(aInd[INDEXMAN_IDXKEY], 1, 3) + SubStr(::cFileName, 1, 25)
          ENDIF
          aInd[INDEXMAN_IDXKEY]  := SubStr(aInd[INDEXMAN_IDXKEY], 5)
       ENDIF
@@ -1065,7 +1065,7 @@ METHOD ParseIndexColInfo(cSQL) CLASS SR_WORKAREA
    FOR i := 12 TO nLen
       IF substr(cSql, i, 1) == "@"
 
-         nIndexCol := val(substr(cSql, i + 2, 1))+1  // This is ZERO-base
+         nIndexCol := val(substr(cSql, i + 2, 1)) + 1  // This is ZERO-base
 
          IF aQuot[nIndexCol] == "NULL"  // This 90% of the problem from 1% of the cases
 
@@ -2607,7 +2607,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                   EXIT
                CASE SQL_VARBINARY
                   IF ::osql:nsystemID ==SYSTEMID_MSSQL7
-                     cVal += iif(!lFirst, ", ", "( ")+ '0x'+StrtoHex(cmemo)
+                     cVal += iif(!lFirst, ", ", "( ") + "0x" + StrtoHex(cmemo)
                   ELSE
                      cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                   ENDIF
@@ -4578,12 +4578,12 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
       IF len(::aIndex) > 0 .AND. ::aInfo[AINFO_INDEXORD] > 0 .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL
          IF ::aInfo[AINFO_REVERSE_INDEX]
             cTemp := iif(nDirection != ORD_DIR_FWD, ::WhereVMajor(), ::WhereVMinor())
-            cSql  := 'SELECT /*+ INDEX( A ' + iif(nDirection != ORD_DIR_FWD, 'A$', 'D$') + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + " AND ROWNUM <= " + str(::nCurrentFetch+2)+ ' '+;
-                    ::OrderBy(NIL, nDirection == ORD_DIR_FWD) +  iif(::oSql:lComments, " /* Skip " + iif(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */","")
+            cSql := "SELECT /*+ INDEX( A " + iif(nDirection != ORD_DIR_FWD, "A$", "D$") + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + " AND ROWNUM <= " + str(::nCurrentFetch+2) + " " + ;
+               ::OrderBy(NIL, nDirection == ORD_DIR_FWD) + iif(::oSql:lComments, " /* Skip " + iif(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */", "")
          ELSE
             cTemp := iif(nDirection == ORD_DIR_FWD, ::WhereVMajor(), ::WhereVMinor())
-            cSql  := 'SELECT /*+ INDEX( A ' + iif(nDirection == ORD_DIR_FWD, 'A$', 'D$') + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + " AND ROWNUM <= " + str(::nCurrentFetch+2)+ ' '+;
-                  ::OrderBy(NIL, nDirection == ORD_DIR_FWD) +    iif(::oSql:lComments, " /* Skip " + iif(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */","")
+            cSql := "SELECT /*+ INDEX( A " + iif(nDirection == ORD_DIR_FWD, "A$", "D$") + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + " AND ROWNUM <= " + str(::nCurrentFetch+2)+ " " + ;
+               ::OrderBy(NIL, nDirection == ORD_DIR_FWD) + iif(::oSql:lComments, " /* Skip " + iif(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */", "")
          ENDIF
          Exit  // Leave this exist HERE !!!!
       ENDIF
@@ -8662,7 +8662,7 @@ METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WOR
 
    FOR i := 1 TO len(aIndexes)
 
-      IF at(["]+cColumn+["], aIndexes[i, 3]) > 0 .OR. at([+]+cColumn+[+], [+]+alltrim(aIndexes[i, 3])+[+] ) > 0 .OR.;
+      IF at(chr(34) + cColumn + chr(34), aIndexes[i, 3]) > 0 .OR. at("+" + cColumn + "+", "+" + alltrim(aIndexes[i, 3]) + "+" ) > 0 .OR. ;
          (Left(cColumn, 7) == "INDKEY_" .AND. SubStr(cColumn, 8, 3) == SubStr(aIndexes[i, 2], 1, 3))
 
          // Drop the index

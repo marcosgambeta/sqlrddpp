@@ -1853,7 +1853,7 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
       EndIf
 
       IF oCnn:nSystemID == SYSTEMID_POSTGR
-         nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cNewName, oCnn:nSystemID) + " ALTER COLUMN " + SR_RecnoName()+ " SET DEFAULT nextval('" + lower(cNewName)+"_sq'::regclass)")
+         nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cNewName, oCnn:nSystemID) + " ALTER COLUMN " + SR_RecnoName() + " SET DEFAULT nextval('" + lower(cNewName) + "_sq'::regclass)")
       ENDIF
       IF oCnn:nSystemID == SYSTEMID_ORACLE
          nRet := oCnn:exec("RENAME " + cOwner + cTable + "_sq" + " TO " + cOwner + cNewName+"_sq", .F.)

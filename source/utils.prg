@@ -533,8 +533,8 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       RETURN "'" + rtrim(strtran(uData, "'", "")) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
       RETURN "TO_DATE('" + rtrim(DtoS(uData)) + "','YYYYMMDD')"
-    Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS)
-        RETURN "'" + transform(DtoS(uData) ,'@R 9999-99-99')+"'"
+   Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS)
+        RETURN "'" + transform(DtoS(uData), "@R 9999-99-99") + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
       RETURN "'" + SR_dtosDot(uData) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
@@ -542,8 +542,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
       RETURN "'" + SR_dtoDot(uData) + "'"
    Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
-      RETURN "'" + transform(DtoS(uData) ,'@R 9999/99/99')+"'"
-
+      RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
       RETURN "{d '" + transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
    Case cType == "D"

@@ -951,7 +951,7 @@ aOraClipCursors[n]["cursoropen"] := .T.
 //                exit
 //             endif
 //          NEXT
-//          aOraClipCursors[n]["curpos"] := len(aDataRet )+1
+//          aOraClipCursors[n]["curpos"] := len(aDataRet) + 1
 //          aRet := aDataRet
 //       endif
    else
@@ -1019,7 +1019,7 @@ endif
 //             endif
 //          NEXT
 //          aRet := aDataRet
-//          aOraClipCursors[n]["curpos"] := len(aDataRet )+1
+//          aOraClipCursors[n]["curpos"] := len(aDataRet) + 1
 //       endif
 //
    else

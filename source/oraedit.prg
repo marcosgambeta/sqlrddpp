@@ -1210,7 +1210,7 @@ endif
    cSql := strtran(csql, ":LowerBound", str(nLow))
 
 sr_getconnection():exec(cSql, , .T., , cfile, cAlias)
-   nAfterRec:=(calias)->(reccount())
+   nAfterRec := (calias)->(reccount())
 
    if nAfterRec > nrecno .AND. nBeforeTotRec<nAfterRec
    if nrecno == 0
@@ -1329,7 +1329,7 @@ if len(aFields) > 0
 *       FOR EACH aTemp IN aRet
          (calias2)->(dbappend())
        //  tracelog(valtoprg(atemp), aFields2[i, 1])
-         i:=1
+         i := 1
          aTemp := aret[1]
          FOR EACH aTmpField IN aFields2
             cField := aTmpField[1]
@@ -1341,7 +1341,7 @@ if len(aFields) > 0
          (calias2)->(dbunlock())
 *       NEXT
 
-      //nrec:=(cAlias2)->(recno())
+      //nrec := (cAlias2)->(recno())
       //(calias2)->(dbgoto(nrec))
 
    endif
@@ -1469,7 +1469,7 @@ if len(aFields) > 0
       inssqltmp->(dbgotop())
       DO WHILE !inssqltmp->(eof())
          cSqlTmp := ""
-         i:=1
+         i := 1
          FOR EACH aTemp IN aFields
             nPos := ascan(adb,{|x| upper(x[1]) == aTemp})
             if nPos >0
@@ -1560,8 +1560,8 @@ if len(aFields) > 0
             endif
          endif
       NEXT
-      ckey:=alltrim(ckey)
-      if substr(ckey, -1, 1) == '+'
+      ckey := alltrim(ckey)
+      if substr(ckey, -1, 1) == "+"
          cKey := substr(cKey, 1, len(ckey) - 1)
       endif
    endif
