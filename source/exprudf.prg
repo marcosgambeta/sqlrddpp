@@ -40,10 +40,10 @@
  *
  */
 
-// #include "compat.ch"
 #include "hbclass.ch"
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 FUNCTION cJoin(aArray, cString)
 
    LOCAL result := ""
@@ -58,7 +58,6 @@ FUNCTION cJoin(aArray, cString)
 
 RETURN result
 
-**************************************************
 FUNCTION xSelect(aArray, bSelector)
 
    LOCAL newArray := array(len(aArray))
@@ -67,7 +66,6 @@ FUNCTION xSelect(aArray, bSelector)
 
 RETURN newArray
 
-**************************************************
 FUNCTION xSelectMany(aArray, bSelector)
 
    LOCAL newArray := {}
@@ -76,21 +74,19 @@ FUNCTION xSelectMany(aArray, bSelector)
 
 RETURN newArray
 
-**************************************************
 FUNCTION aWhere(aArray, bPredicate)
 
+   LOCAL item
    LOCAL newArray := {}
-   LOCAL i
 
-   FOR i := 1 TO len(aArray)
-      IF eval(bPredicate, aArray[i])
-         aadd(newArray, aArray[i])
+   FOR EACH item IN aArray
+      IF eval(bPredicate, item)
+         aadd(newArray, item)
       ENDIF
-   NEXT i
+   NEXT
 
 RETURN newArray
 
-**************************************************
 FUNCTION xFirst(aArray, bPredicate)
 
    LOCAL i := ascan(aArray, bPredicate)
@@ -101,7 +97,6 @@ FUNCTION xFirst(aArray, bPredicate)
 
 RETURN aArray[i]
 
-**************************************************
 FUNCTION xFirstOrDefault(aArray)
 
    IF len(aArray) == 0
@@ -110,36 +105,33 @@ FUNCTION xFirstOrDefault(aArray)
 
 RETURN aArray[1]
 
-**************************************************
 FUNCTION aDistinct(aArray, bSelector)
 
+   LOCAL item
    LOCAL newArray := {}
    LOCAL ids := {}
-   LOCAL i
    LOCAL id
 
-   FOR i := 1 TO len(aArray)
-      id := eval(bSelector, aArray[i])
+   FOR EACH item IN aArray
+      id := eval(bSelector, item)
       IF !(ascan(ids, id) > 0)
          aadd(ids, id)
-         aadd(newArray, aArray[i])
+         aadd(newArray, item)
       ENDIF
-   NEXT i
+   NEXT
 
 RETURN newArray
 
-**************************************************
 PROCEDURE aAddRange(aArray1, aArray2)
 
-   LOCAL i
+   LOCAL item
 
-   FOR i := 1 TO len(aArray2)
-      aadd(aArray1, aArray2[i])
-   NEXT i
+   FOR EACH item IN aArray2
+      aadd(aArray1, item)
+   NEXT
 
 RETURN
 
-**************************************************
 PROCEDURE aAddDistinct(aArray1, xValue, bSelector)
 
    LOCAL id
@@ -154,18 +146,16 @@ PROCEDURE aAddDistinct(aArray1, xValue, bSelector)
 
 RETURN
 
-**************************************************
 PROCEDURE aAddRangeDistinct(aArray1, aArray2, bSelector)
 
-   LOCAL i
+   LOCAL item
 
-   FOR i := 1 TO len(aArray2)
-      aAddDistinct(aArray1, aArray2[i], bSelector)
-   NEXT i
+   FOR EACH item IN aArray2
+      aAddDistinct(aArray1, item, bSelector)
+   NEXT
 
 RETURN
 
-**************************************************
 PROCEDURE RemoveAll(aArray, bPredicate)
 
    LOCAL i
@@ -179,11 +169,11 @@ PROCEDURE RemoveAll(aArray, bPredicate)
 
 RETURN
 
-**************************************************
 FUNCTION aReplaceNilBy(aArray, xValue)
 RETURN aeval(aArray, {|x, n|iif(x == NIL, aArray[n] := xValue, NIL)})
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS Dictionary
 
    HIDDEN:
@@ -235,36 +225,36 @@ METHOD aAdd(xKey, xValue, nMode) CLASS Dictionary
    CASE !lContainsKey
       aadd(::aInternArray, KeyValuePair():new(xKey, xValue))
    CASE nMode == 1 .AND. lContainsKey
-      Throw(ErrorNew(,,,, "The given key already exists in the dictionary"))
+      Throw(ErrorNew(, , , , "The given key already exists in the dictionary"))
    CASE nMode == 3 .AND. lContainsKey
       ::SetValue(xKey, xValue)
    ENDCASE
 
 RETURN NIL
 
-METHOD GetKeyValuePair(xKey)
+METHOD GetKeyValuePair(xKey) CLASS Dictionary
 
    LOCAL result := xFirst(::aInternArray, {|y|y:xKey == xKey})
 
    IF result == NIL
-      Throw(ErrorNew(,,,, "The key " + cstr(xKey) + " was not found."))
+      Throw(ErrorNew(, , , , "The key " + cstr(xKey) + " was not found."))
    ENDIF
 
 RETURN result
 
-METHOD At(nIndex)
+METHOD At(nIndex) CLASS Dictionary
 RETURN ::aInternArray[nIndex]
 
 METHOD xValue(xKey) CLASS Dictionary
 RETURN ::GetKeyValuePair(xKey):xValue
 
-METHOD SetValue(xKey, xValue)
+METHOD SetValue(xKey, xValue) CLASS Dictionary
 
    ::GetKeyValuePair(xKey):xValue := xValue
 
 RETURN NIL
 
-METHOD nIndexOfKey(xKey)
+METHOD nIndexOfKey(xKey) CLASS Dictionary
 RETURN ascan(::aInternArray, {|x|x:xKey == xKey})
 
 METHOD Remove(xKey) CLASS Dictionary
@@ -286,7 +276,8 @@ RETURN NIL
 METHOD lContainsKey(xKey) CLASS Dictionary
 RETURN ::nIndexOfKey(xKey) > 0
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 CLASS KeyValuePair
 
    EXPORTED:
@@ -298,26 +289,26 @@ CLASS KeyValuePair
 
 ENDCLASS
 
-METHOD new(pKey, pValue)
+METHOD new(pKey, pValue) CLASS KeyValuePair
 
    ::xKey := pKey
    ::xValue := pValue
 
 RETURN SELF
 
-**************************************************
+///////////////////////////////////////////////////////////////////////////////
+
 FUNCTION ToDictionary(aArray, bKeySelector)
 
+   LOCAL item
    LOCAL result := Dictionary():new()
-   LOCAL i
 
-   FOR i := 1 TO len(aArray)
-      result:aadd(eval(bKeySelector, aArray[i]), aArray[i])
-   NEXT i
+   FOR EACH item IN aArray
+      result:aadd(eval(bKeySelector, item), item)
+   NEXT
 
 RETURN result
 
-**************************************************
 FUNCTION GetFileName(cPath)
 
    LOCAL aGroups
@@ -327,7 +318,9 @@ FUNCTION GetFileName(cPath)
       aGroups := HB_RegExAtX(cRegEx, cPath)
       RETURN aGroups[4, 1]
    ELSE
-      Throw(ErrorNew(,,,, cPath + " is not a valid path"))
+      Throw(ErrorNew(, , , , cPath + " is not a valid path"))
    ENDIF
 
 RETURN NIL
+
+///////////////////////////////////////////////////////////////////////////////
