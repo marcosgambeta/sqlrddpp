@@ -4,6 +4,8 @@
 * All Rights Reserved
 */
 
+// NOTE: this code is not compatible with Harbour
+
 #include "sqlrdd.ch"
 
 #define RECORDS_IN_TEST                   1000
@@ -12,13 +14,27 @@
 
 /*------------------------------------------------------------------------*/
 
-Function Main( cDSN, lLog )
+FUNCTION Main(cDSN, lLog)
 
-   local aStruct1 := {{"DEPARTMENT_ID_PK","C",8,0 },{"DEPARTMENT_DESCR","C",50,0}, {"COST_CENTER_ID","C",10,0}}
-   local aStruct2 := {{"COST_CENTER_ID_PK","C",10,0 },{"COST_CENTER_DESCR","C",50,0}}
-   local aStruct3 := {{"EMPLOYEE_ID_PK","C",8,0 },{"DEPARTMENT_ID","C",8,0 },{"EMPLOYEE_FIRSTNAME","C",50,0},{"EMPLOYEE_LASTNAME","C",50,0},{"EMPLOYEE_EMAIL","C",80,0}}
-
-   local nCnn, i, oErr
+   LOCAL aStruct1 := { ;
+                      {"DEPARTMENT_ID_PK"  , "C",  8, 0}, ;
+                      {"DEPARTMENT_DESCR"  , "C", 50, 0}, ;
+                      {"COST_CENTER_ID"    , "C", 10, 0};
+                     }
+   LOCAL aStruct2 := {;
+                      {"COST_CENTER_ID_PK" , "C", 10, 0}, ;
+                      {"COST_CENTER_DESCR" , "C", 50, 0} ;
+                     }
+   LOCAL aStruct3 := { ;
+                      {"EMPLOYEE_ID_PK"    , "C",  8, 0}, ;
+                      {"DEPARTMENT_ID"     , "C",  8, 0}, ;
+                      {"EMPLOYEE_FIRSTNAME", "C", 50, 0}, ;
+                      {"EMPLOYEE_LASTNAME" , "C", 50, 0}, ;
+                      {"EMPLOYEE_EMAIL"    , "C", 80, 0} ;
+                     }
+   LOCAL nCnn
+   LOCAL i
+   LOCAL oErr
 
    ? ""
    ? "constraint.exe"
@@ -27,36 +43,36 @@ Function Main( cDSN, lLog )
    ? "(c) 2005 - Marcelo Lombardo"
    ? ""
 
-   Alert( "In current version, this sample works only with MySQL, MSSQL Server, Oracle and Postgres." )
+   Alert("In current version, this sample works only with MySQL, MSSQL Server, Oracle and Postgres.")
 
-   Connect( cDSN )    // see connect.prg
+   Connect(cDSN)    // see connect.prg
 
-   SR_UseDeleteds( .F. )      // Don't keep deleted records in database
+   SR_UseDeleteds(.F.)      // Don't keep deleted records in database
 
-   ? "Connected to        :", SR_GetConnectionInfo(, SQL_DBMS_NAME ), SR_GetConnectionInfo(, SQL_DBMS_VER )
+   ? "Connected to        :", SR_GetConnectionInfo(, SQL_DBMS_NAME), SR_GetConnectionInfo(, SQL_DBMS_VER)
 
-   If lLog != NIL
+   IF lLog != NIL
       ? "Starting LOG", SR_GetActiveConnection(), SR_StartLog()
-   endif
+   ENDIF
 
-   RddSetDefault( "SQLRDD" )
+   RddSetDefault("SQLRDD")
 
    // Please note table creation order is VERY important.
    // If you chage it, you would not run sample twice
 
-   ? "Creating table EMPLOYEE    :", dbCreate( "EMPLOYEE", aStruct3 )
+   ? "Creating table EMPLOYEE    :", dbCreate("EMPLOYEE", aStruct3)
    ? "Creating EMPLOYEE PRIMARY KEY..."
    USE "EMPLOYEE" NEW
    INDEX ON EMPLOYEE_ID_PK TAG EMPLOYEE_ID CONSTRAINT EMPLOYEE_PK TARGET EMPLOYEE KEY EMPLOYEE_ID_PK
    ? ""
 
-   ? "Creating table DEPARTMENT  :", dbCreate( "DEPARTMENT", aStruct1 )
+   ? "Creating table DEPARTMENT  :", dbCreate("DEPARTMENT", aStruct1)
    ? "Creating DEPARTMENT PRIMARY KEY..."
    USE "DEPARTMENT" NEW
    INDEX ON DEPARTMENT_ID_PK TAG DEPARTMENT_ID CONSTRAINT DEPARTMENT_PK TARGET DEPARTMENT KEY DEPARTMENT_ID_PK
    ? ""
 
-   ? "Creating table COST_CENTER :", dbCreate( "COST_CENTER", aStruct2 )
+   ? "Creating table COST_CENTER :", dbCreate("COST_CENTER", aStruct2)
    ? "Creating COST_CENTER PRIMARY KEY..."
    USE "COST_CENTER" NEW
    INDEX ON COST_CENTER_ID_PK TAG COST_CENTER_ID CONSTRAINT COST_CENTER_PK TARGET COST_CENTER KEY COST_CENTER_ID_PK
@@ -86,20 +102,20 @@ Function Main( cDSN, lLog )
    ? ""
 
    ? "Creating remaining DEPARTMENT indexes..."
-   INDEX ON DEPARTMENT_DESCR  TAG DEPARTMENT_DESCR
+   INDEX ON DEPARTMENT_DESCR TAG DEPARTMENT_DESCR
    ? ""
 
    ? "Add some cost centers..."
    SELECT COST_CENTER
-   Append Blank
-   Replace COST_CENTER_ID_PK  with "1.01.001"
-   Replace COST_CENTER_DESCR  with "Sales"
-   Append Blank
-   Replace COST_CENTER_ID_PK  with "1.01.002"
-   Replace COST_CENTER_DESCR  with "Manufacturing"
-   Append Blank
-   Replace COST_CENTER_ID_PK  with "1.01.003"
-   Replace COST_CENTER_DESCR  with "Administration"
+   APPEND BLANK
+   REPLACE COST_CENTER_ID_PK WITH "1.01.001"
+   REPLACE COST_CENTER_DESCR WITH "Sales"
+   APPEND BLANK
+   REPLACE COST_CENTER_ID_PK WITH "1.01.002"
+   REPLACE COST_CENTER_DESCR WITH "Manufacturing"
+   APPEND BLANK
+   REPLACE COST_CENTER_ID_PK WITH "1.01.003"
+   REPLACE COST_CENTER_DESCR WITH "Administration"
    dbUnlock()
    dbCommit()
 
@@ -109,29 +125,29 @@ Function Main( cDSN, lLog )
    ? "   **** Run time error MUST happen ****"
    ? ""
 
-   TRY
+   BEGIN SEQUENCE
       // Try to push a DUPLICATE record
-      Append Blank
-      Replace COST_CENTER_ID_PK  with "1.01.001"      // DUPLICATED ID
-      Replace COST_CENTER_DESCR  with "Sales"
+      APPEND BLANK
+      REPLACE COST_CENTER_ID_PK WITH "1.01.001"      // DUPLICATED ID
+      REPLACE COST_CENTER_DESCR WITH "Sales"
       dbCommit()
-   CATCH oErr
+   RECOVER USING oErr
       ? oErr:Description
-   END
-   wait
+   END SEQUENCE
+   WAIT
 
-   clear screen
+   CLEAR SCREEN
    ? "Add some cost departments..."
    SELECT DEPARTMENT
-   Append Blank
-   Replace DEPARTMENT_ID_PK  with "001"
-   Replace DEPARTMENT_DESCR  with "Commercial"
-   Replace COST_CENTER_ID    with "1.01.001"
+   APPEND BLANK
+   REPLACE DEPARTMENT_ID_PK WITH "001"
+   REPLACE DEPARTMENT_DESCR WITH "Commercial"
+   REPLACE COST_CENTER_ID   WITH "1.01.001"
 
-   Append Blank
-   Replace DEPARTMENT_ID_PK  with "003"
-   Replace DEPARTMENT_DESCR  with "Accounting"
-   Replace COST_CENTER_ID    with "1.01.003"
+   APPEND BLANK
+   REPLACE DEPARTMENT_ID_PK WITH "003"
+   REPLACE DEPARTMENT_DESCR WITH "Accounting"
+   REPLACE COST_CENTER_ID   WITH "1.01.003"
    dbUnlock()
    dbCommit()
 
@@ -142,53 +158,53 @@ Function Main( cDSN, lLog )
    ? "   **** Run time error MUST happen ****"
    ? ""
 
-   TRY
-      Append Blank
-      Replace DEPARTMENT_ID_PK  with "005"
-      Replace DEPARTMENT_DESCR  with "Advertising"
-      Replace COST_CENTER_ID    with "1.01.005"
+   BEGIN SEQUENCE
+      APPEND BLANK
+      REPLACE DEPARTMENT_ID_PK WITH "005"
+      REPLACE DEPARTMENT_DESCR WITH "Advertising"
+      REPLACE COST_CENTER_ID   WITH "1.01.005"
       dbCommit()
-   CATCH oErr
+   RECOVER USING oErr
       ? oErr:Description
-   END
-   wait
+   END SEQUENCE
+   WAIT
 
-   clear screen
+   CLEAR SCREEN
    ? "Add some cost employees..."
    SELECT EMPLOYEE
-   Append Blank
-   Replace EMPLOYEE_ID_PK     with "0001"
-   Replace DEPARTMENT_ID      with "001"
-   Replace EMPLOYEE_FIRSTNAME with "James"
-   Replace EMPLOYEE_LASTNAME  with "Labrie"
+   APPEND BLANK
+   REPLACE EMPLOYEE_ID_PK     WITH "0001"
+   REPLACE DEPARTMENT_ID      WITH "001"
+   REPLACE EMPLOYEE_FIRSTNAME WITH "James"
+   REPLACE EMPLOYEE_LASTNAME  WITH "Labrie"
 
-   Append Blank
-   Replace EMPLOYEE_ID_PK     with "0002"
-   Replace DEPARTMENT_ID      with "001"
-   Replace EMPLOYEE_FIRSTNAME with "John"
-   Replace EMPLOYEE_LASTNAME  with "Petrucci"
+   APPEND BLANK
+   REPLACE EMPLOYEE_ID_PK     WITH "0002"
+   REPLACE DEPARTMENT_ID      WITH "001"
+   REPLACE EMPLOYEE_FIRSTNAME WITH "John"
+   REPLACE EMPLOYEE_LASTNAME  WITH "Petrucci"
 
-   Append Blank
-   Replace EMPLOYEE_ID_PK     with "0003"
-   Replace DEPARTMENT_ID      with "001"
-   Replace EMPLOYEE_FIRSTNAME with "Mark"
-   Replace EMPLOYEE_LASTNAME  with "Portnoy"
+   APPEND BLANK
+   REPLACE EMPLOYEE_ID_PK     WITH "0003"
+   REPLACE DEPARTMENT_ID      WITH "001"
+   REPLACE EMPLOYEE_FIRSTNAME WITH "Mark"
+   REPLACE EMPLOYEE_LASTNAME  WITH "Portnoy"
 
-   Append Blank
-   Replace EMPLOYEE_ID_PK     with "0004"
-   Replace DEPARTMENT_ID      with "003"
-   Replace EMPLOYEE_FIRSTNAME with "Jodan"
-   Replace EMPLOYEE_LASTNAME  with "Rudess"
+   APPEND BLANK
+   REPLACE EMPLOYEE_ID_PK     WITH "0004"
+   REPLACE DEPARTMENT_ID      WITH "003"
+   REPLACE EMPLOYEE_FIRSTNAME WITH "Jodan"
+   REPLACE EMPLOYEE_LASTNAME  WITH "Rudess"
 
-   Append Blank
-   Replace EMPLOYEE_ID_PK     with "0005"
-   Replace DEPARTMENT_ID      with "003"
-   Replace EMPLOYEE_FIRSTNAME with "Jhon"
-   Replace EMPLOYEE_LASTNAME  with "Myung"
+   APPEND BLANK
+   REPLACE EMPLOYEE_ID_PK     WITH "0005"
+   REPLACE DEPARTMENT_ID      WITH "003"
+   REPLACE EMPLOYEE_FIRSTNAME WITH "Jhon"
+   REPLACE EMPLOYEE_LASTNAME  WITH "Myung"
    dbUnlock()
    dbCommit()
 
-   clear screen
+   CLEAR SCREEN
    ? ""
    ? "We have FOREIGN KEY defined, so it will NOT allow to DELETE a department"
    ? "where there are employees connected"
@@ -197,22 +213,23 @@ Function Main( cDSN, lLog )
    ? ""
 
    SELECT DEPARTMENT
-   Set Order to "DEPARTMENT_ID"
-   Seek "001"
+   SET ORDER TO "DEPARTMENT_ID"
+   SEEK "001"
 
-   If Found()
-      TRY
+   IF Found()
+      BEGIN SEQUENCE
          dbDelete()
          dbCommit()
-      CATCH oErr
+      RECOVER USING oErr
          ? oErr:Description
-      END
-   Else
+      END SEQUENCE
+   ELSE
       ? "Department NOT FOUND"
-   EndIf
-   wait
+   ENDIF
 
-Return NIL
+   WAIT
+
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 

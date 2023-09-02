@@ -13,101 +13,107 @@
 
 FUNCTION MAIN(cDsn)
 
-   Local oSql, i, n, aFiles, aOpt := {}, aTabs := {}, nTab
+   LOCAL oSql
+   LOCAL i
+   LOCAL n
+   LOCAL aFiles
+   LOCAL aOpt := {}
+   LOCAL aTabs := {}
+   LOCAL nTab
 
-   Connect( cDSN )    // see connect.prg
+   Connect(cDSN)    // see connect.prg
 
-   SR_SetlUseDBCatalogs( .T. )    // Diz ao SQLRDD para usar os índices do catálogo do banco de dados
+   SR_SetlUseDBCatalogs(.T.)    // Diz ao SQLRDD para usar os índices do catálogo do banco de dados
 
-   ? "Connected to :", SR_GetConnectionInfo(, SQL_DBMS_NAME ), SR_GetConnectionInfo(, SQL_DBMS_VER )
+   ? "Connected to :", SR_GetConnectionInfo(, SQL_DBMS_NAME), SR_GetConnectionInfo(, SQL_DBMS_VER)
    ? "RDD Version  :", SR_Version()
    ? " "
    ? "Abrindo tabela SA1010"
 
-   If sr_existtable( "SA1010" )     // Verifica se a tabela existe no banco de dados
+   IF sr_existtable("SA1010")     // Verifica se a tabela existe no banco de dados
 
       USE SA1010 via "SQLRDD"       // Abre a tabela e os índices!!
 
       ? "Estrutura da tabela :"
-      Wait SR_ShowVector( dbStruct() )
+      WAIT SR_ShowVector(dbStruct())
 
       dbGoTop()
 
       ? " "
       ? "Indices             :"
-      For i = 1 to 100
-         If empty(OrdName(i))
-            Exit
-         EndIf
-         ? OrdName( i ), OrdKey( i ) //, OrdKeyCount( i )
-      Next
+      FOR i := 1 TO 100
+         IF empty(OrdName(i))
+            EXIT
+         ENDIF
+         ? OrdName(i), OrdKey(i) //, OrdKeyCount(i)
+      NEXT i
 
       ? ""
-      ? "SEEK ", dbSeek( "  " + strZero( 65, 10 ) )
+      ? "SEEK ", dbSeek("  " + strZero(65, 10))
 
-      wait "Pressione qualquer tecla para executar o browse()"
-      clear
+      WAIT "Pressione qualquer tecla para executar o browse()"
+      CLEAR
 
       browse()
       USE
 
-   Else
-      Wait "Tabela não existe: " + "SA1010"
-//      Return
-   EndIf
+   ELSE
+      WAIT "Tabela não existe: " + "SA1010"
+      // RETURN
+   ENDIF
 
-   clear
+   CLEAR
 
    ? "Listando todas as tabelas do banco de dados com suas chaves de indice"
    ? " "
-   wait "Pressione qualquer tecla para iniciar"
+   WAIT "Pressione qualquer tecla para iniciar"
    ? " "
 
    aFiles := SR_ListTables()                    // Busca todas as tabelas do banco de dados
 
-   For n = 1 to len( aFiles )
-      If left( aFiles[n], 3 ) $ "SR_;TOP;SYS;DTP"       // Não queremos tabelas de catálogo
+   FOR n := 1 TO len(aFiles)
+      IF left(aFiles[n], 3) $ "SR_;TOP;SYS;DTP"       // Não queremos tabelas de catálogo
          Loop
-      EndIf
-      TRY
+      ENDIF
+      BEGIN SEQUENCE
          USE (aFiles[n]) VIA "SQLRDD"
          ? "Table " + aFiles[n] + " Lastrec() ", lastrec(), " Keys "
-         For i = 1 to 100
-            If empty(OrdName(i))
-               Exit
-            EndIf
-            ?? OrdName( i ) + " "
-         Next
-         aadd( aOpt, aFiles[n] + " Lastrec() :" + str(lastrec()) + " Indices :" + str(i-1) )
-         aadd( aTabs, aFiles[n] )
-      CATCH
-      END
-   Next
+         FOR i := 1 TO 100
+            IF empty(OrdName(i))
+               EXIT
+            ENDIF
+            ?? OrdName(i) + " "
+         NEXT i
+         aadd(aOpt, aFiles[n] + " Lastrec() :" + str(lastrec()) + " Indices :" + str(i - 1))
+         aadd(aTabs, aFiles[n])
+      //CATCH
+      END SEQUENCE
+   NEXT n
 
-   Wait
+   WAIT
 
    nTab := 1
 
-   While .t.
+   DO WHILE .T.
 
-      clear
+      CLEAR
 
-      @1,5 SAY "Escolha uma das tabelas para abrir, ESC para sair"
+      @ 1, 5 SAY "Escolha uma das tabelas para abrir, ESC para sair"
 
-      nTab := achoice( 3, 10, 27, 60, aOpt,,, nTab )
+      nTab := achoice(3, 10, 27, 60, aOpt, , , nTab)
 
-      If nTab > 0
+      IF nTab > 0
          USE (aTabs[nTab]) VIA "SQLRDD"
          browse()
-      Else
-         Exit
-      EndIf
+      ELSE
+         EXIT
+      ENDIF
 
-   EndDo
+   ENDDO
 
-   clear
+   CLEAR
 
-Return
+RETURN
 
 /*------------------------------------------------------------------------*/
 

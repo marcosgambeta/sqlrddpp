@@ -18,11 +18,13 @@ REQUEST DBFDBT
 
 /*------------------------------------------------------------------------*/
 
-Function Main( cRDD, cDSN )
+FUNCTION Main(cRDD, cDSN)
 
-   local nCnn, nDrv, cDriver
+   LOCAL nCnn
+   LOCAL nDrv
+   LOCAL cDriver
 
-   clear screen
+   CLEAR SCREEN
 
    ? ""
    ? "dbf2sql.exe"
@@ -31,83 +33,86 @@ Function Main( cRDD, cDSN )
    ? "(c) 2004 - Marcelo Lombardo"
    ? ""
 
-   If !Connect(@cRDD, cDSN)
-      Return
-   EndIf
+   IF !Connect(@cRDD, cDSN)
+      RETURN
+   ENDIF
 
-   nDrv := Alert( "Select source RDD", { "DBFCDX", "DBFNTX" } )
+   nDrv := Alert("Select source RDD", {"DBFCDX", "DBFNTX"})
 
-   Do Case
-   Case nDrv == 1
+   DO CASE
+   CASE nDrv == 1
       cDriver := "DBFCDX"
-   Case nDrv == 2
+   CASE nDrv == 2
       cDriver := "DBFNTX"
-   EndCase
-   RddSetDefault( cDriver )
+   ENDCASE
+   RddSetDefault(cDriver)
 
    SET DELETED ON
 
    ? "RDD in use          :", cRDD
 
-   upload( ".\", "", cDriver, cRDD )
+   upload(".\", "", cDriver, cRDD)
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function upload( cBaseDir, cPrefix, cDriver, cRDD )
+FUNCTION upload(cBaseDir, cPrefix, cDriver, cRDD)
 
-   local aFiles, aStruct, aFile, cFile
+   LOCAL aFiles
+   LOCAL aStruct
+   LOCAL aFile
+   LOCAL cFile
 
    /* upload files */
 
-   aFiles := directory( cBaseDir + "*.dbf" )
+   aFiles := directory(cBaseDir + "*.dbf")
 
-   For each aFile in aFiles
-      cFile := strtran(lower( alltrim( cPrefix + aFile[ F_NAME ] ) ),".dbf","")
-      dbUseArea( .T., cDriver, cBaseDir + aFile[ F_NAME ], "ORIG" )
-      ? "   Uploading...", cFile, "(" + alltrim(str(ORIG->( lastrec() ) ) ), "records)"
-      aStruct := ORIG->( dbStruct() )
-      ORIG->( dbCloseArea() )
+   FOR EACH aFile IN aFiles
+      cFile := strtran(lower(alltrim(cPrefix + aFile[F_NAME])), ".dbf", "")
+      dbUseArea(.T., cDriver, cBaseDir + aFile[F_NAME], "ORIG")
+      ? "   Uploading...", cFile, "(" + alltrim(str(ORIG->(lastrec()))), "records)"
+      aStruct := ORIG->(dbStruct())
+      ORIG->(dbCloseArea())
 
-      dbCreate( cFile, aStruct, cRDD )
-      dbUseArea( .T., cRDD, cFile, "DEST", .F. )
-      Append from (cBaseDir + aFile[ F_NAME ]) VIA cDriver
+      dbCreate(cFile, aStruct, cRDD)
+      dbUseArea(.T., cRDD, cFile, "DEST", .F.)
+      APPEND FROM (cBaseDir + aFile[F_NAME]) VIA cDriver
 
-      dbUseArea( .T., cDriver, cBaseDir + aFile[ F_NAME ], "ORIG" )
+      dbUseArea(.T., cDriver, cBaseDir + aFile[F_NAME], "ORIG")
 
-      If !empty( ordname(1) )
+      IF !empty(ordname(1))
          ? "   Creating indexes:", cFile
-      EndIf
+      ENDIF
 
-      n:=1
-      while .t.
-         if empty( ordname(n) )
-            exit
-         endif
-        ? "      =>", ordname(n),",", ordkey(n),",", ordfor(n)
-        DEST->(ordCondSet(orig->(ordfor(n)),,.t.,,,, nil, nil, nil, nil,, nil, .F., .F., .F., .F.))
-        DEST->(dbGoTop())
-        DEST->(ordCreate(,orig->(OrdName(n)), orig->(ordKey(n)), &("{||"+orig->(OrdKey(n))+"}") ))
-        ++n
-      enddo
-      ORIG->( dbCloseArea() )
-      DEST->( dbCloseArea() )
-   Next
+      n := 1
+      DO WHILE .T.
+         IF empty(ordname(n))
+            EXIT
+         ENDIF
+         ? "      =>", ordname(n), ",", ordkey(n), ",", ordfor(n)
+         DEST->(ordCondSet(orig->(ordfor(n)), , .T., , , , NIL, NIL, NIL, NIL,, NIL, .F., .F., .F., .F.))
+         DEST->(dbGoTop())
+         DEST->(ordCreate(, orig->(OrdName(n)), orig->(ordKey(n)), &("{||" + orig->(OrdKey(n)) + "}")))
+         ++n
+      ENDDO
+      ORIG->(dbCloseArea())
+      DEST->(dbCloseArea())
+   NEXT
 
    /* recursive directories scan */
 
-   aFiles := directory( cBaseDir + "*.*", "D" )
+   aFiles := directory(cBaseDir + "*.*", "D")
 
-   For each aFile in aFiles
-      if left( aFile[ F_NAME ], 1 ) != "." .and. "D" $ aFile[ F_ATTR ]
-        cFile := cBaseDir + aFile[ F_NAME ] + HB_OsPathSeparator()
+   FOR EACH aFile IN aFiles
+      IF left(aFile[F_NAME], 1) != "." .AND. "D" $ aFile[F_ATTR]
+         cFile := cBaseDir + aFile[F_NAME] + HB_OsPathSeparator()
          ? "   Subdir......", cFile
-         upload( cFile, cPrefix + lower(alltrim(aFile[ F_NAME ])) + "_", cDriver )
-      endif
-   Next
+         upload(cFile, cPrefix + lower(alltrim(aFile[F_NAME])) + "_", cDriver)
+      ENDIF
+   NEXT
 
-Return
+RETURN
 
 /*------------------------------------------------------------------------*/
 

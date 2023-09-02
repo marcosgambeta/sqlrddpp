@@ -30,109 +30,117 @@ REQUEST DBFDBT
 
 /*------------------------------------------------------------------------*/
 
-Function Connect( cRDD, cDatabase )
+FUNCTION Connect(cRDD, cDatabase)
 
-   local nCnn, nDrv, cDriver, nOpt, nDetected, hIniFile, aKeys, nKey, cConnString
-   local oldScreen, hDsn
+   LOCAL nCnn
+   LOCAL nDrv
+   LOCAL cDriver
+   LOCAL nOpt
+   LOCAL nDetected
+   LOCAL hIniFile
+   LOCAL aKeys
+   LOCAL nKey
+   LOCAL cConnString
+   LOCAL oldScreen
+   LOCAL hDsn
 
    Public cRDDName
 
-   SetMode( 35, 80 )
+   SetMode(35, 80)
 
-   hIniFile := HB_ReadIni( "sqlrdd.ini", .F.,,.F. )     // Read ini file in a hash table
+   hIniFile := HB_ReadIni("sqlrdd.ini", .F., ,.F.)     // Read ini file in a hash table
 
-   If hIniFile == NIL
+   IF hIniFile == NIL
       ? "Could not read from sqlrdd.ini"
-      Quit
-   EndIf
+      QUIT
+   ENDIF
 
-   If cDatabase == NIL
-      aKeys := HGetKeys( hIniFile )
-      If len(aKeys) == 0
+   IF cDatabase == NIL
+      aKeys := HGetKeys(hIniFile)
+      IF len(aKeys) == 0
          ? "No connections available in sqlrdd.ini"
-         Quit
-      ElseIf len(aKeys) == 1
+         QUIT
+      ELSEIF len(aKeys) == 1
          nKey := 1
-      Else
-         clear screen
-         @5,1 say PadC( "Choose connection option", 80 )
-         nKey := achoice( 5, 20, 22, 60, aKeys )
-         clear screen
+      ELSE
+         CLEAR SCREEN
+         @ 5, 1 SAY PadC("Choose connection option", 80)
+         nKey := achoice(5, 20, 22, 60, aKeys)
+         CLEAR SCREEN
 
-         If nKey == 0
+         IF nKey == 0
             ? "No connection selected"
-            Quit
-         EndIf
-      EndIf
+            QUIT
+         ENDIF
+      ENDIF
 
-      hDsn := HGetValueAt( hIniFile, nKey )
+      hDsn := HGetValueAt(hIniFile, nKey)
 
-      If !"CONNSTRING" IN hDsn
+      IF !("CONNSTRING" $ hDsn)
          ? "ConnString not found in " + aKeys[nKey]
-         Quit
-      EndIf
-   Else
-      If ! cDatabase IN hIniFile
+         QUIT
+      ENDIF
+   ELSE
+      IF !(cDatabase $ hIniFile)
          ? "Connection [" + cDatabase + "] not found in sqlrdd.ini"
-         Quit
-      EndIf
+         QUIT
+      ENDIF
 
-      hDsn := hIniFile[ cDatabase ]
+      hDsn := hIniFile[cDatabase]
 
-      If !"CONNSTRING" IN hDsn
+      IF !("CONNSTRING" $ hDsn)
          ? "ConnString not found in " + cDatabase
-         Quit
-      EndIf
+         QUIT
+      ENDIF
+   ENDIF
 
-   EndIf
+   cConnString := hDsn["CONNSTRING"]
+   nDetected   := DetectDBFromDSN(cConnString)
 
-   cConnString := hDsn[ "CONNSTRING" ]
-   nDetected   := DetectDBFromDSN( cConnString )
-
-   If nDetected > SYSTEMID_UNKNOW
+   IF nDetected > SYSTEMID_UNKNOW
       ? "Connecting to", cConnString
-      nCnn := SR_AddConnection( nDetected, cConnString )
-   Else
-      clear screen
-      nOpt := Alert( "Please, select connection type", { "ODBC", "Postgres", "MySQL", "Oracle", "Firebird" } )
-      If nOpt > 0
-         nCnn := SR_AddConnection( If( nOpt = 1, CONNECT_ODBC, if( nOpt = 2, CONNECT_POSTGRES, if( nOpt = 3, CONNECT_MYSQL, if( nOpt = 4, CONNECT_ORACLE, CONNECT_FIREBIRD ) ) ) ), cConnString )
-      Else
+      nCnn := SR_AddConnection(nDetected, cConnString)
+   ELSE
+      CLEAR SCREEN
+      nOpt := Alert("Please, select connection type", {"ODBC", "Postgres", "MySQL", "Oracle", "Firebird"})
+      IF nOpt > 0
+         nCnn := SR_AddConnection(IIf(nOpt == 1, CONNECT_ODBC, iif(nOpt == 2, CONNECT_POSTGRES, iif(nOpt == 3, CONNECT_MYSQL, iif(nOpt == 4, CONNECT_ORACLE, CONNECT_FIREBIRD)))), cConnString)
+      ELSE
          ? "No connection type selected"
-         Quit
-      EndIf
-   EndIf
+         QUIT
+      ENDIF
+   ENDIF
 
    /* returns the connection handle or -1 if it fails */
-   If nCnn < 0
+   IF nCnn < 0
       ? "Connection error. See sqlerror.log for details."
-      Quit
-   EndIf
+      QUIT
+   ENDIF
 
-   If valtype( cRDD ) == "C"
-      cRDD := alltrim(Upper( cRDD ))
-   EndIf
+   IF valtype(cRDD) == "C"
+      cRDD := alltrim(Upper(cRDD))
+   ENDIF
 
-   if cRDD == NIL
-      i := alert( "Please select RDD", { "Automatic", "SQLRDD Extreme", "SQLRDD" } )
-      If i == 1 .and. SR_GetConnection():nConnectionType == CONNECT_ODBC
+   IF cRDD == NIL
+      i := alert("Please select RDD", {"Automatic", "SQLRDD Extreme", "SQLRDD"})
+      IF i == 1 .AND. SR_GetConnection():nConnectionType == CONNECT_ODBC
          cRDD := "SQLEX"
-      ElseIf i == 1
+      ELSEIF i == 1
          cRDD := "SQLRDD"
-      ElseIf i == 2
+      ELSEIF i == 2
          cRDD := "SQLEX"
-      ElseIf i == 3
+      ELSEIF i == 3
          cRDD := "SQLRDD"
-      Else
-         Quit
-      EndIf
-   EndIf
+      ELSE
+         QUIT
+      ENDIF
+   ENDIF
 
-   if SR_GetConnection():nConnectionType != CONNECT_ODBC .and. cRDD == "SQLEX"
-      Alert( "SQLRDD Extreme supports only ODBC connections.", { "Quit" } )
-      Quit
-   EndIf
+   IF SR_GetConnection():nConnectionType != CONNECT_ODBC .AND. cRDD == "SQLEX"
+      Alert("SQLRDD Extreme supports only ODBC connections.", {"Quit"})
+      QUIT
+   ENDIF
 
-Return .T.
+RETURN .T.
 
 /*------------------------------------------------------------------------*/

@@ -13,20 +13,23 @@
 
 /*------------------------------------------------------------------------*/
 
-Function Main( cDSN, lLog, cRdd )
+FUNCTION Main(cDSN, lLog, cRdd)
 
-   local aStruct := {{"CODE_ID","C",8,0 },;
-                     {"CARDID","C",1,0},;
-                     {"DESCR","C",50,0},;
-                     {"PERCENT","N",10,2},;
-                     {"DAYS","N",8,0},;
-                     {"DATE_LIM","D",8,0},;
-                     {"ENABLE","L",1,0},;
-                     {"OBS","M",10,0},;
-                     {"VALUE","N",18,6}}
-   local nCnn, i
+   LOCAL aStruct := { ;
+                     {"CODE_ID" , "C",  8, 0}, ;
+                     {"CARDID"  , "C",  1, 0}, ;
+                     {"DESCR"   , "C", 50, 0}, ;
+                     {"PERCENT" , "N", 10, 2}, ;
+                     {"DAYS"    , "N",  8, 0}, ;
+                     {"DATE_LIM", "D",  8, 0}, ;
+                     {"ENABLE"  , "L",  1, 0}, ;
+                     {"OBS"     , "M", 10, 0}, ;
+                     {"VALUE"   , "N", 18, 6} ;
+                    }
+   LOCAL nCnn
+   LOCAL i
 
-   IF Empty( cRdd )
+   IF Empty(cRdd)
       cRDD := "SQLRDD"
    ENDIF
 
@@ -39,39 +42,40 @@ Function Main( cDSN, lLog, cRdd )
 
    ? "Connecting to database..."
 
-   Connect( cDSN )    // see connect.prg
+   Connect(cDSN)    // see connect.prg
 
-   ? "Connected to        :", SR_GetConnectionInfo(, SQL_DBMS_NAME ), SR_GetConnectionInfo(, SQL_DBMS_VER )
-   ? "Creating table      :", dbCreate( "TEST_FILTER", aStruct, cRDD )
+   ? "Connected to        :", SR_GetConnectionInfo(, SQL_DBMS_NAME), SR_GetConnectionInfo(, SQL_DBMS_VER)
+   ? "Creating table      :", dbCreate("TEST_FILTER", aStruct, cRDD)
 
-   USE "TEST_FILTER" EXCLUSIVE VIA ( cRDD ) CODEPAGE "ES850"
+   USE "TEST_FILTER" EXCLUSIVE VIA (cRDD) CODEPAGE "ES850"
 
-   REQUEST HB_CODEPAGE_ESWIN,HB_CODEPAGE_ES850
+   REQUEST HB_CODEPAGE_ESWIN
+   REQUEST HB_CODEPAGE_ES850
 
    ? "Creating 02 indexes..."
-   ? DbInfo( DBI_CPID, "ES850" )
-   ? DbInfo( DBI_CPCONVERTTO, "ESWIN" )
+   ? DbInfo(DBI_CPID, "ES850")
+   ? DbInfo(DBI_CPCONVERTTO, "ESWIN")
 
-   Index on CODE_ID+DESCR            to TEST_FILTER_IND01
-   Index on str(DAYS)+dtos(DATE_LIM) to TEST_FILTER_IND02
+   INDEX ON CODE_ID + DESCR TO TEST_FILTER_IND01
+   INDEX ON str(DAYS) + dtos(DATE_LIM) TO TEST_FILTER_IND02
 
    ? "Appending " + alltrim(str(RECORDS_IN_TEST)) + " records.."
 
    s := seconds()
 
-   For i = 1 to RECORDS_IN_TEST
-      Append Blank
-      Replace CODE_ID  with strZero( i, 5 )
-      Replace DESCR    with dtoc( date() ) + " - " + time()
-      Replace DAYS     with (RECORDS_IN_TEST - i)
-      Replace DATE_LIM with date()
-      Replace ENABLE   with .T.
-      Replace OBS      with "This is a memo field. Seconds since midnight : " + alltrim(str(seconds()))
-   Next
+   FOR i := 1 TO RECORDS_IN_TEST
+      APPEND BLANK
+      REPLACE CODE_ID  WITH strZero(i, 5)
+      REPLACE DESCR    WITH dtoc(date()) + " - " + time()
+      REPLACE DAYS     WITH (RECORDS_IN_TEST - i)
+      REPLACE DATE_LIM WITH date()
+      REPLACE ENABLE   WITH .T.
+      REPLACE OBS      WITH "This is a memo field. Seconds since midnight : " + alltrim(str(seconds()))
+   NEXT i
 
    ? "dbCloseArea()       :", dbCloseArea()
 
-   USE "TEST_FILTER" SHARED VIA ( cRDD )
+   USE "TEST_FILTER" SHARED VIA (cRDD)
 
    ? "Opening Indexes"
    SET INDEX TO TEST_FILTER_IND01
@@ -84,11 +88,11 @@ Function Main( cDSN, lLog, cRdd )
    ? "Press any key to browse()"
 
    inkey(0)
-   clear
+   CLEAR
 
-   browse(row()+1,1,row()+20,80)
+   browse(row() + 1, 1, row() + 20, 80)
 
-   clear
+   CLEAR
 
    SET FILTER TO
 
@@ -96,12 +100,12 @@ Function Main( cDSN, lLog, cRdd )
    ? "Press any key to browse()"
 
    inkey(0)
-   clear
+   CLEAR
 
    dbGoTop()
-   browse(row()+1,1,row()+20,80)
+   browse(row() + 1, 1, row() + 20, 80)
 
-   clear
+   CLEAR
 
    SET FILTER TO MyFunc()    // Slow and non optimized filter
 
@@ -112,35 +116,35 @@ Function Main( cDSN, lLog, cRdd )
    ? "Press any key to browse()"
 
    inkey(0)
-   clear
+   CLEAR
 
-   browse(row()+1,1,row()+20,80)
+   browse(row() + 1, 1, row() + 20, 80)
 
-   clear
+   CLEAR
    SET FILTER TO
-   ? "OrdKeyCount() ->" + Str( OrdKeyCount() )
-   SET SCOPE TO strZero( 10, 5 ),strZero( 20, 5 )
-   ? "SET SCOPE TO '" + strZero( 10, 5 ) + "', '" + strZero( 20, 5 ) + "'"
+   ? "OrdKeyCount() ->" + Str(OrdKeyCount())
+   SET SCOPE TO strZero(10, 5), strZero(20, 5)
+   ? "SET SCOPE TO '" + strZero(10, 5) + "', '" + strZero(20, 5) + "'"
    DBGOTOP()
-   ? "OrdKeyNo() ->" + Str( OrdKeyNo() )
-   ? "OrdKeyCount() ->" + Str( OrdKeyCount() )
+   ? "OrdKeyNo() ->" + Str(OrdKeyNo())
+   ? "OrdKeyCount() ->" + Str(OrdKeyCount())
    ? "Press any key to browse()"
 
    inkey(0)
-   clear
+   CLEAR
 
    dbGoTop()
-   browse(row()+1,1,row()+20,80)
+   browse(row() + 1, 1, row() + 20, 80)
 
    DbCloseAll()
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
-Function MyFunc()
+FUNCTION MyFunc()
 
-Return DAYS < 10
+RETURN DAYS < 10
 
 /*------------------------------------------------------------------------*/
 

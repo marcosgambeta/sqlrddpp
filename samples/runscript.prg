@@ -8,7 +8,7 @@
 #include "sqlrdd.ch"
 #include "sqlodbc.ch"
 
-#define CRLF   chr(13)+chr(10)
+#define CRLF   chr(13) + chr(10)
 
 #define SQL_DBMS_NAME                       17
 #define SQL_DBMS_VER                        18
@@ -21,12 +21,20 @@ static lUnicode
 
 /*------------------------------------------------------------------------*/
 
-Function Main( cScriptFile, cLogFile, nToCommit )
+FUNCTION Main(cScriptFile, cLogFile, nToCommit)
 
-   local oSql, h1, h2, cSql, nCnn, nRet, nIssued, nErrors, j
+   LOCAL oSql
+   LOCAL h1
+   LOCAL h2
+   LOCAL cSql
+   LOCAL nCnn
+   LOCAL nRet
+   LOCAL nIssued
+   LOCAL nErrors
+   LOCAL j
 
    ? ""
-   ? Replicate( "-", 79 )
+   ? Replicate("-", 79)
    ? ""
    ? "RunScript - tool for pushing large script files into SQL Databases"
    ? ""
@@ -38,16 +46,16 @@ Function Main( cScriptFile, cLogFile, nToCommit )
    ? "command as a separator. If the database rejects any SQL statement, it will"
    ? "be added to the log file, as well as the error message."
    ? ""
-   ? Replicate( "-", 79 )
+   ? Replicate("-", 79)
    ? ""
 
    Connect()
 
-   ? "Connected to :", SR_GetConnectionInfo(, SQL_DBMS_NAME ), SR_GetConnectionInfo(, SQL_DBMS_VER )
+   ? "Connected to :", SR_GetConnectionInfo(, SQL_DBMS_NAME), SR_GetConnectionInfo(, SQL_DBMS_VER)
 
    oSql := SR_GetConnection()
 
-   If empty( cScriptFile )
+   IF empty(cScriptFile)
       ? "Usage: runscript <ScriptFile> [<LogFile>] [<CommitEveryN>]"
       ? ""
       ? "where:"
@@ -55,41 +63,40 @@ Function Main( cScriptFile, cLogFile, nToCommit )
       ? ""
       ? "ex.: runscript demodata.sql logs.txt"
       ? ""
-      ? Replicate( "-", 79 )
+      ? Replicate("-", 79)
       ? ""
-      Return
-   EndIf
+      RETURN
+   ENDIF
 
    /* Check for files */
-   If !file( cScriptFile )
+   IF !file(cScriptFile)
       ? "Script input file not found."
-      Return
-   EndIf
+      RETURN
+   ENDIF
 
-   h1 = fopen( cScriptFile )
+   h1 = fopen(cScriptFile)
 
-   if h1 < 0
+   IF h1 < 0
       ? "Error opening the script file " + cScriptFile
-      Return
-   EndIf
+      RETURN
+   ENDIF
 
-   If nToCommit == NIL
+   IF nToCommit == NIL
       nToCommit := 1000
-   EndIf
+   ENDIF
 
-   If cLogFile == NIL
+   IF cLogFile == NIL
       cLogFile := "runscript.log"
-   endif
+   ENDIF
 
-   h2 = fcreate( cLogFile )
+   h2 = fcreate(cLogFile)
 
-   if h2 < 0
+   IF h2 < 0
       ? "Error creating log file " + cLogFile
-      Return
-   EndIf
+      RETURN
+   ENDIF
 
-   fwrite( h2, "Runscript 1.0" + CRLF + CRLF + ;
-               dtoc(date()) + " " + time() + "*** Log started to run " + cScriptFile + CRLF )
+   fwrite(h2, "Runscript 1.0" + CRLF + CRLF + dtoc(date()) + " " + time() + "*** Log started to run " + cScriptFile + CRLF)
 
    nIssued  := 0
    nErrors  := 0
@@ -98,47 +105,47 @@ Function Main( cScriptFile, cLogFile, nToCommit )
 
    ? ""
 
-   While !Empty( cSql := ProxStmt(h1) )
+   DO WHILE !Empty(cSql := ProxStmt(h1))
 
-      cSql := alltrim( cSql )
+      cSql := alltrim(cSql)
 
-      While (!empty( cSql )) .and. right( cSql, 1 ) $ chr(13) + chr(10) + ";"
-         cSql := left( cSql, len(cSql)-1 )
-      EndDo
+      DO WHILE (!empty(cSql)) .AND. right(cSql, 1) $ chr(13) + chr(10) + ";"
+         cSql := left(cSql, len(cSql) - 1)
+      ENDDO
 
-      If upper(right(cSql,3)) == " GO"
-         cSql := left( cSql, len(cSql)-3 )
-      EndIf
+      IF upper(right(cSql, 3)) == " GO"
+         cSql := left(cSql, len(cSql) - 3)
+      ENDIF
 
-      nRet := oSql:exec( cSql, .F. )
+      nRet := oSql:exec(cSql, .F.)
 
       nIssued ++
 
-      If nRet != SQL_SUCCESS
+      IF nRet != SQL_SUCCESS
          nErrors ++
-         fwrite( h2, dtoc(date()) + " " + time() + " SQL Statement: " + CRLF + cSql + CRLF + "Error:" + CRLF + oSql:cSQLError + CRLF )
-      EndIf
+         fwrite(h2, dtoc(date()) + " " + time() + " SQL Statement: " + CRLF + cSql + CRLF + "Error:" + CRLF + oSql:cSQLError + CRLF)
+      ENDIF
 
-      If ( nIssued % nToCommit ) = 0
+      IF (nIssued % nToCommit) = 0
          oSql:Commit()
-      EndIf
+      ENDIF
 
-      @row(), 1 say "Processing (ALT+C to cancel)  " + cGira[j] + "  " + alltrim( str(nIssued) ) + " commands executed with " + alltrim( str(nErrors) ) + " error" + if(nErrors != 1,"s", "")
+      @ row(), 1 say "Processing (ALT+C to cancel)  " + cGira[j] + "  " + alltrim(str(nIssued)) + " commands executed with " + alltrim(str(nErrors)) + " error" + iif(nErrors != 1, "s", "")
       j++
 
-      if j = 5
+      IF j = 5
          j := 1
-      endif
+      ENDIF
 
-   EndDo
+   ENDDO
 
    oSql:commit()
 
-   fwrite( h2, CRLF + CRLF + alltrim( str(nIssued) ) + " command" + if(nIssued>1,"s", "") + " executed" + CRLF + alltrim( str(nErrors) ) + " error" + if(nErrors != 1,"s", "") + CRLF + CRLF )
-   fwrite( h2, dtoc(date()) + " " + time() + "*** Log finished." )
+   fwrite(h2, CRLF + CRLF + alltrim(str(nIssued)) + " command" + iif(nIssued > 1, "s", "") + " executed" + CRLF + alltrim(str(nErrors)) + " error" + iif(nErrors != 1, "s", "") + CRLF + CRLF)
+   fwrite(h2, dtoc(date()) + " " + time() + "*** Log finished.")
 
-   fclose( h1 )
-   fclose( h2 )
+   fclose(h1)
+   fclose(h2)
 
    oSql:end()
 
@@ -148,13 +155,18 @@ Function Main( cScriptFile, cLogFile, nToCommit )
 
    Run ("notepad " + cLogFile)
 
-Return
+RETURN
 
 /*------------------------------------------------------------------------*/
 
-Function ProxStmt( h1 )
+FUNCTION ProxStmt(h1)
 
-   local c, i, cOut, lEOF, lOpenQuote, lLF
+   LOCAL c
+   LOCAL i
+   LOCAL cOut
+   LOCAL lEOF
+   LOCAL lOpenQuote
+   LOCAL lLF
 
    cOut := ""
    lEOF := .F.
@@ -162,82 +174,83 @@ Function ProxStmt( h1 )
 
    lOpenQuote := .F.
 
-   If empty( cBuffer )
-      cBuffer := ReadBlock( h1, @lEOF )
-      If empty( cBuffer )
-         Return ""
-      EndIf
-   EndIf
+   IF empty(cBuffer)
+      cBuffer := ReadBlock(h1, @lEOF)
+      IF empty(cBuffer)
+         RETURN ""
+      ENDIF
+   ENDIF
 
    c := cBuffer
 
-   While !empty(c) .and. c[1] == chr(10)
+   DO WHILE !empty(c) .AND. c[1] == chr(10)
       lLF := .T.
-      c   := subStr(c,2)
-   EndDo
+      c := subStr(c, 2)
+   ENDDO
 
-   While .T.
+   DO WHILE .T.
 
-      For i = 1 to len( c )
-         If c[i] == "'"
+      FOR i := 1 TO len(c)
+         IF c[i] == "'"
             lOpenQuote := !lOpenQuote
             cOut += c[i]
-         ElseIf c[i] == chr(13) .and. (!lOpenQuote)
+         ELSEIF c[i] == chr(13) .AND. (!lOpenQuote)
             cOut += " "
-         ElseIf c[i] == chr(255) .and. ((!lOpenQuote) .or. lUnicode )
-         ElseIf c[i] == chr(254) .and. ((!lOpenQuote) .or. lUnicode )
-         ElseIf c[i] == chr(0)   .and. ((!lOpenQuote) .or. lUnicode )
-         ElseIf c[i] == chr(10)  .and. (!lOpenQuote) .and. (!lLF)
+         ELSEIF c[i] == chr(255) .AND. ((!lOpenQuote) .OR. lUnicode)
+         ELSEIF c[i] == chr(254) .AND. ((!lOpenQuote) .OR. lUnicode)
+         ELSEIF c[i] == chr(0)   .AND. ((!lOpenQuote) .OR. lUnicode)
+         ELSEIF c[i] == chr(10)  .AND. (!lOpenQuote) .AND. (!lLF)
             cOut += " "
             lLF := .T.
-         ElseIf ((c[i] = chr(10) .and. lLF) .or. c[i] == ";") .and. !Empty( alltrim(cOut) ) .and. (!lOpenQuote)
-            cBuffer := SubStr( c, i+1 )
-            Return cOut
-         Else
+         ELSEIF ((c[i] = chr(10) .AND. lLF) .OR. c[i] == ";") .AND. !Empty(alltrim(cOut)) .AND. (!lOpenQuote)
+            cBuffer := SubStr(c, i + 1)
+            RETURN cOut
+         ELSE
             cOut += c[i]
             lLF := .F.
-         EndIf
+         ENDIF
 
-      Next
+      NEXT i
 
-      If lEOF
+      IF lEOF
          cBuffer := ""
-         Return alltrim( cOut )
-      EndIf
+         RETURN alltrim(cOut)
+      ENDIF
 
-      c := ReadBlock( h1, @lEOF )
+      c := ReadBlock(h1, @lEOF)
 
-      If empty( c )
+      IF empty(c)
          cBuffer := ""
-         Return alltrim( cOut )
-      EndIf
+         RETURN alltrim(cOut)
+      ENDIF
 
-   EndDo
+   ENDDO
 
-Return ""
+RETURN ""
 
 /*------------------------------------------------------------------------*/
 
-Function ReadBlock( h1, lEOF )
+FUNCTION ReadBlock(h1, lEOF)
 
-   local n, c := space(4096)
+   LOCAL n
+   LOCAL c := space(4096)
 
-   lEOF := .f.
-   n := fread( h1, @c, 4096 )
+   lEOF := .F.
+   n := fread(h1, @c, 4096)
 
-   If n < 4096
+   IF n < 4096
       lEOF := .T.
-   EndIf
+   ENDIF
 
-   If lUnicode == NIL
-      If left( c, 2 ) == chr(255) + chr(254)
+   IF lUnicode == NIL
+      IF left(c, 2) == chr(255) + chr(254)
          lUnicode := .T.
-      Else
+      ELSE
          lUnicode := .F.
-      EndIf
-   EndIf
+      ENDIF
+   ENDIF
 
-Return c
+RETURN c
 
 /*------------------------------------------------------------------------*/
 

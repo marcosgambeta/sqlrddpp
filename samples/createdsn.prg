@@ -13,45 +13,49 @@
 
 FUNCTION MAIN(cDsn)
 
-   Local nDetected, cConnString, cAtributes, cDriver, i
+   LOCAL nDetected
+   LOCAL cConnString
+   LOCAL cAtributes
+   LOCAL cDriver
+   LOCAL i
 
-   clear screen
+   CLEAR SCREEN
 
-   Alert( "This sample works only with MSSQL Server under Windows. Changing 'cDriver' and 'cAtributes' you can adapt to other databases." )
+   Alert("This sample works only with MSSQL Server under Windows. Changing 'cDriver' and 'cAtributes' you can adapt to other databases.")
 
-   ? [This will create a System DSN named "xHB001" in ODBC panel to access Nothwind sample database in MSSQL Server]
-   
+   ? "This will create a System DSN named " + chr(34) + "xHB001" + chr(34) + " in ODBC panel to access Nothwind sample database in MSSQL Server"
+
    cAtributes := "DSN=xHB001;Description=xHB Test;Server=.;Database=Northwind;UseProcForPrepare=Yes;Trusted_Connection=Yes;AnsiNPW=Yes;"
    cDriver    := "SQL Server"
-   
-   If SR_InstallDSN( cDriver, cAtributes )
 
-      Alert( "If you go to ODBC setup panel you should find created DSN. Hit ok to try to connect to data source." )
+   IF SR_InstallDSN(cDriver, cAtributes)
+
+      Alert("If you go to ODBC setup panel you should find created DSN. Hit ok to try to connect to data source.")
 
       cConnString := "DSN=xHB001"
-      nDetected   := DetectDBFromDSN( cConnString )
-   
-      If nDetected > SYSTEMID_UNKNOW
+      nDetected   := DetectDBFromDSN(cConnString)
+
+      IF nDetected > SYSTEMID_UNKNOW
          ? "Connecting to", cConnString
-         If SR_AddConnection( nDetected, cConnString ) > 0
-            ? "Connected to ", SR_GetConnectionInfo(, SQL_DBMS_NAME ), SR_GetConnectionInfo(, SQL_DBMS_VER )
-         Else
+         IF SR_AddConnection(nDetected, cConnString) > 0
+            ? "Connected to ", SR_GetConnectionInfo(, SQL_DBMS_NAME), SR_GetConnectionInfo(, SQL_DBMS_VER)
+         ELSE
             ? "Connection failure"
-         EndIf
-      EndIf
-   Else
+         ENDIF
+      ENDIF
+   ELSE
       ? "DSN creation failure:"
-      For i = 1 to 8
-         ? SR_InstallError( i )
-      Next
-   EndIf
-   
+      FOR i := 1 TO 8
+         ? SR_InstallError(i)
+      NEXT i
+   ENDIF
+
    ? ""
    ? "Press any key to quit"
 
    inkey(0)
 
-Return
+RETURN
 
 /*------------------------------------------------------------------------*/
 

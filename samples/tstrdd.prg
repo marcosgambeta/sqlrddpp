@@ -8,8 +8,8 @@
 
 #xcommand DEFAULT <uVar1> := <uVal1> ;
                [, <uVarN> := <uValN> ] => ;
-                  <uVar1> := If( <uVar1> == nil, <uVal1>, <uVar1> ) ;;
-                [ <uVarN> := If( <uVarN> == nil, <uValN>, <uVarN> ); ]
+                  <uVar1> := IIf(<uVar1> == NIL, <uVal1>, <uVar1>) ;;
+                [ <uVarN> := IIf(<uVarN> == NIL, <uValN>, <uVarN>); ]
 
 #define RECORDS_IN_TEST                  10000
 #define SQL_DBMS_NAME                       17
@@ -17,22 +17,30 @@
 
 /*------------------------------------------------------------------------*/
 
-Function Main( nRDD, cPath, lRecreate, cDSN )
+FUNCTION Main(nRDD, cPath, lRecreate, cDSN)
 
-   local aStruct := {;
-                     {"CODE_ID","C",8,0 },;
-                     {"DESCR","C",50,0},;
-                     {"CARDID","C",1,0},;
-                     {"PERCENT","N",10,2},;
-                     {"DAYS","N",8,0},;
-                     {"ENABLE","L",1,0},;
-                     {"VALUE","N",18,6},;
-                     {"OBS","M",10,0},;
-                     {"DATE_LIM","D",8,0};
-                     }
+   LOCAL aStruct := { ;
+                     {"CODE_ID" , "C",  8, 0}, ;
+                     {"DESCR"   , "C", 50, 0}, ;
+                     {"CARDID"  , "C",  1, 0}, ;
+                     {"PERCENT" , "N", 10, 2}, ;
+                     {"DAYS"    , "N",  8, 0}, ;
+                     {"ENABLE"  , "L",  1, 0}, ;
+                     {"VALUE"   , "N", 18, 6}, ;
+                     {"OBS"     , "M", 10, 0}, ;
+                     {"DATE_LIM", "D",  8, 0};
+                    }
+   LOCAL nCnn
+   LOCAL i
+   LOCAL cRDD
+   LOCAL oSql
+   LOCAL nMinTime
+   LOCAL nIdealBuff
+   LOCAL nTime
+   LOCAL xVal
+   LOCAL s
 
-   local nCnn, i, cRDD, oSql, nMinTime, nIdealBuff, nTime, xVal, s
-   Public cRDDName
+   PUBLIC cRDDName
 
 //   REQUEST DBFNSX
 
@@ -48,45 +56,45 @@ Function Main( nRDD, cPath, lRecreate, cDSN )
    ? "(c) 2008 - Marcelo Lombardo"
    ? ""
 
-   default nRdd := "1"
+   DEFAULT nRdd := "1"
 
-   If nRDD == NIL
-      Quit
-   EndIf
+   IF nRDD == NIL
+      QUIT
+   ENDIF
 
    DEFAULT cPath := "z:\temp\"      // We suggest a network drive to have a fair comparison
    DEFAULT lRecreate := .T.
 
-   sr_useDeleteds( .f. )
+   sr_useDeleteds(.F.)
 
-   if valtype( lRecreate ) == "C"
+   IF valtype(lRecreate) == "C"
       lRecreate := lRecreate $ "sSyY"
-   EndIf
+   ENDIF
 
-   SWITCH Val( nRdd )
+   SWITCH Val(nRdd)
    CASE 2
-      cRDD  := "SQLRDD"
-      cPath := ''
+      cRDD := "SQLRDD"
+      cPath := ""
       EXIT
    CASE 3
-      cRDD  := "DBFNTX"
+      cRDD := "DBFNTX"
       EXIT
    CASE 4
-      cRDD  := "DBFCDX"
+      cRDD := "DBFCDX"
       EXIT
    CASE 5
-      cRDD  := "DBFNSX"
+      cRDD := "DBFNSX"
       EXIT
-   DEFAULT
-      cRDD  := "SQLEX"
-      cPath := ''
-   END SWITCH
+   OTHERWISE
+      cRDD := "SQLEX"
+      cPath := ""
+   ENDSWITCH
 
-   IF Val( nRdd ) < 3
+   IF Val(nRdd) < 3
       ? "Connecting to database..."
 
-      Connect( @cRDD, cDSN )    // see connect.prg
-      ? "Connected to        :", SR_GetConnectionInfo(, SQL_DBMS_NAME ), SR_GetConnectionInfo(, SQL_DBMS_VER )
+      Connect(@cRDD, cDSN)    // see connect.prg
+      ? "Connected to        :", SR_GetConnectionInfo(, SQL_DBMS_NAME), SR_GetConnectionInfo(, SQL_DBMS_VER)
 
       oSql := sr_GetConnection()
    ENDIF
@@ -95,11 +103,11 @@ Function Main( nRDD, cPath, lRecreate, cDSN )
    ? "Current RDD:", cRDD
    ? " "
 
-   IF (! If( "RDD" $ cRDD,;
-            SQLRDD.File( cPath + "TEST_TABLE_RDD_" + cRDD ),;
-            File( cPath + "TEST_TABLE_RDD_" + cRDD + ".dbf" ) ) ) .or. lRecreate
+   IF (!IIf("RDD" $ cRDD, ;
+            sr_File(cPath + "TEST_TABLE_RDD_" + cRDD), ;
+            File(cPath + "TEST_TABLE_RDD_" + cRDD + ".dbf"))) .OR. lRecreate
 
-      ? "Creating table      :", dbCreate( cPath + "TEST_TABLE_RDD_" + cRDD, aStruct, cRDD )
+      ? "Creating table      :", dbCreate(cPath + "TEST_TABLE_RDD_" + cRDD, aStruct, cRDD)
 
       USE (cPath + "TEST_TABLE_RDD_" + cRDD) EXCLUSIVE VIA cRDD
 
@@ -107,68 +115,68 @@ Function Main( nRDD, cPath, lRecreate, cDSN )
 
       s := seconds() * 100
 
-      For i = 1 to RECORDS_IN_TEST
-         Append Blank
-         Replace CODE_ID  with strZero( i, 5 )
-         Replace DESCR    with dtoc( date() ) + " - " + strZero( i, 5 ) + " - " + time()
-         Replace PERCENT  with i/(RECORDS_IN_TEST/10)
-         Replace DAYS     with (RECORDS_IN_TEST - i)
-         Replace DATE_LIM with date()
-         REPLACE CARDID   with "X"
-         Replace ENABLE   with .T.
-         Replace VALUE    with i/10
-         Replace OBS      with "This is a memo field. Seconds since midnight : " + alltrim(str(seconds())) + " record " + strZero( i, 5 )
-      Next
+      FOR i := 1 TO RECORDS_IN_TEST
+         APPEND BLANK
+         REPLACE CODE_ID  WITH strZero(i, 5)
+         REPLACE DESCR    WITH dtoc(date()) + " - " + strZero(i, 5) + " - " + time()
+         REPLACE PERCENT  WITH i / (RECORDS_IN_TEST / 10)
+         REPLACE DAYS     WITH (RECORDS_IN_TEST - i)
+         REPLACE DATE_LIM WITH date()
+         REPLACE CARDID   WITH "X"
+         REPLACE ENABLE   WITH .T.
+         REPLACE VALUE    WITH i / 10
+         REPLACE OBS      WITH "This is a memo field. Seconds since midnight : " + alltrim(str(seconds())) + " record " + strZero(i, 5)
+      NEXT i
 
-      ? "Append performed in ", ((seconds()*100) - s)/100
+      ? "Append performed in ", ((seconds() * 100) - s) / 100
       ? "Creating 02 indexes..."
 
-      If "CDX" $ cRDD
-         Index on CODE_ID+DESCR            TAG IND01
-         Index on str(DAYS)+dtos(DATE_LIM) TAG IND02
-         Index on CODE_ID+DESCR            TAG IND03 DESCEND
-      Else
-         Index on CODE_ID+DESCR         to (cPath + "TEST_TABLE_RDD_IND01")
-         Index on str(DAYS)             to (cPath + "TEST_TABLE_RDD_IND02")  //+dtos(DATE_LIM)
-         Index on CODE_ID+DESCR         to (cPath + "TEST_TABLE_RDD_IND03") DESCEND
-      EndIf
+      IF "CDX" $ cRDD
+         INDEX ON CODE_ID + DESCR            TAG IND01
+         INDEX ON str(DAYS) + dtos(DATE_LIM) TAG IND02
+         INDEX ON CODE_ID + DESCR            TAG IND03 DESCEND
+      ELSE
+         INDEX ON CODE_ID + DESCR TO (cPath + "TEST_TABLE_RDD_IND01")
+         INDEX ON str(DAYS)       TO (cPath + "TEST_TABLE_RDD_IND02") // + dtos(DATE_LIM)
+         INDEX ON CODE_ID + DESCR TO (cPath + "TEST_TABLE_RDD_IND03") DESCEND
+      ENDIF
       ? "dbClearIndex()      :", dbClearIndex()
       ? "dbCloseArea()       :", dbCloseArea()
 
-   Else
+   ELSE
       ? "Reusing existing table"
-   EndIf
+   ENDIF
 
    nMinTime   := 99999999999
    nIdealBuff := 0
 
    s := seconds() * 100
 
-   For nBuffer = 1 to 1
+   FOR nBuffer := 1 TO 1
 
       USE (cPath + "TEST_TABLE_RDD_" + cRDD) SHARED VIA cRDD
-      If "CDX" $ cRDD
+      IF "CDX" $ cRDD
          SET INDEX TO (cPath + "TEST_TABLE_RDD_" + cRDD)
-      Else
-         SET INDEX TO (cPath + "TEST_TABLE_RDD_IND01" )
-         SET INDEX TO (cPath + "TEST_TABLE_RDD_IND02" ) ADDITIVE
-         SET INDEX TO (cPath + "TEST_TABLE_RDD_IND03" ) ADDITIVE
-      EndIf
+      ELSE
+         SET INDEX TO (cPath + "TEST_TABLE_RDD_IND01")
+         SET INDEX TO (cPath + "TEST_TABLE_RDD_IND02") ADDITIVE
+         SET INDEX TO (cPath + "TEST_TABLE_RDD_IND03") ADDITIVE
+      ENDIF
 
-      For j = 1 to 2
+      FOR j := 1 TO 2
 
-         ? "Starting pass:", j, "Elapsed time:", ((seconds()*100) - s)/100
-         DoTest( j )
+         ? "Starting pass:", j, "Elapsed time:", ((seconds() * 100) - s) / 100
+         DoTest(j)
 
-      Next
+      NEXT j
 
       USE
 
-   Next
+   NEXT nBuffer
 
-   ? " performing in ", ((seconds()*100) - s)/100
+   ? " performing in ", ((seconds() * 100) - s) / 100
 
-Return NIL
+RETURN NIL
 
 /*------------------------------------------------------------------------*/
 
@@ -176,10 +184,10 @@ Return NIL
 
 /*------------------------------------------------------------------------*/
 
-Function DoTest( nLoop )
+FUNCTION DoTest(nLoop)
 
-   Private lError := .F.
-   Private s := seconds() * 100
+   PRIVATE lError := .F.
+   PRIVATE s := seconds() * 100
 
    // DBGOTOP() / DBGOBOTTOM() test
 
@@ -195,404 +203,406 @@ Function DoTest( nLoop )
    dbGoBottom()
    ChekStatusFlags4()
 
-
    // DBGOTO() test
 
-   DbGoTo( 1 )
+   DbGoTo(1)
    ChekStatusFlags1(1)
 
-   DbGoTo( 2 )
+   DbGoTo(2)
    ChekStatusFlags1(2)
 
-   DbGoTo( 3 )
+   DbGoTo(3)
    ChekStatusFlags1(3)
 
-   DbGoTo( 900 )
+   DbGoTo(900)
    ChekStatusFlags1(900)
 
-   DbGoTo( 901 )
+   DbGoTo(901)
    ChekStatusFlags1(901)
 
-   DbGoTo( 911 )
+   DbGoTo(911)
    ChekStatusFlags1(911)
 
-   DbGoTo( 921 )
+   DbGoTo(921)
    ChekStatusFlags1(921)
 
-   DbSkip( 1 )
+   DbSkip(1)
    ChekStatusFlags1(922)
 
-   DbGoTo( RECORDS_IN_TEST + 1 )
+   DbGoTo(RECORDS_IN_TEST + 1)
 
-   DbSkip( -1 )
-   ChekStatusFlags1( RECORDS_IN_TEST )
-
-   DbGoTo( RECORDS_IN_TEST + 1 )
-   ChekStatusFlags2()
-
-   DbGoTo( 0 )
-   ChekStatusFlags2()
-
-   DbGoTo( RECORDS_IN_TEST )
+   DbSkip(-1)
    ChekStatusFlags1(RECORDS_IN_TEST)
 
+   DbGoTo(RECORDS_IN_TEST + 1)
+   ChekStatusFlags2()
+
+   DbGoTo(0)
+   ChekStatusFlags2()
+
+   DbGoTo(RECORDS_IN_TEST)
+   ChekStatusFlags1(RECORDS_IN_TEST)
 
    // SKIP permormance test
 
-   For i = 1 to fcount() - 7
+   FOR i := 1 TO fcount() - 7
       xVal := FieldGet(i)
-   Next
+   NEXT i
 
-   Set order to 1
+   SET ORDER TO 1
 
    dbGoTop()
 
-   For i = 1 to RECORDS_IN_TEST - 2
+   FOR i := 1 TO RECORDS_IN_TEST - 2
 
       dbSkip()
 
-      if recno() != i + 1
+      IF recno() != i + 1
          ? "Skip para o registro errado()", i + 1, recno(), code_id
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if recno() != val( code_id )
+      IF recno() != val(code_id)
          ? "Erro em dbSkip()", i, recno(), code_id
-         lError := .t.
-      endif
-      if bof()
+         lError := .T.
+      ENDIF
+      IF bof()
          ? "Erro - nao deveria estar em BOF()", recno()
-         lError := .t.
-      endif
-      if eof()
+         lError := .T.
+      ENDIF
+      IF eof()
          ? "Erro - nao deveria estar em EOF()", recno()
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if lError
+      IF lError
          WAIT
-         exit
-      endif
-   Next
+         EXIT
+      ENDIF
+
+   NEXT i
 
    dbGoBottom()
 
-   For i = RECORDS_IN_TEST to 2 STEP -1
+   FOR i := RECORDS_IN_TEST TO 2 STEP -1
 
       dbSkip(-1)
-      if recno() != i - 1
+      IF recno() != i - 1
          ? "Skip para o registro errado", i - 1, recno(), code_id
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if recno() != val( code_id )
+      IF recno() != val(code_id)
          ? "Erro em dbSkip()", i, recno(), code_id
-         lError := .t.
-      endif
-      if bof()
+         lError := .T.
+      ENDIF
+      IF bof()
          ? "Erro - nao deveria estar em BOF()", recno()
-         lError := .t.
-      endif
-      if eof()
+         lError := .T.
+      ENDIF
+      IF eof()
          ? "Erro - nao deveria estar em EOF()", recno()
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if lError
+      IF lError
          WAIT
-         exit
-      endif
-   Next
+         EXIT
+      ENDIF
 
-   Set order to 0  // Natural order
+   NEXT i
+
+   SET ORDER TO 0  // Natural order
 
    dbGoTop()
 
-   For i = 1 to RECORDS_IN_TEST - 2
+   FOR i := 1 TO RECORDS_IN_TEST - 2
 
       dbSkip()
 
-      if recno() != i + 1
+      IF recno() != i + 1
          ? "Skip para o registro errado()", i + 1, recno(), code_id
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if recno() != val( code_id )
+      IF recno() != val(code_id)
          ? "Erro em dbSkip()", i, recno(), code_id
-         lError := .t.
-      endif
-      if bof()
+         lError := .T.
+      ENDIF
+      IF bof()
          ? "Erro - nao deveria estar em BOF()", recno()
-         lError := .t.
-      endif
-      if eof()
+         lError := .T.
+      ENDIF
+      IF eof()
          ? "Erro - nao deveria estar em EOF()", recno()
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if lError
+      IF lError
          WAIT
-         exit
-      endif
-   Next
+         EXIT
+      ENDIF
+
+   NEXT i
 
    dbGoBottom()
 
-   For i = RECORDS_IN_TEST to 2 STEP -1
+   FOR i := RECORDS_IN_TEST TO 2 STEP -1
       dbSkip(-1)
-      if recno() != i - 1
+      IF recno() != i - 1
          ? "Skip para o registro errado()", i - 1, recno(), code_id
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if recno() != val( code_id )
+      IF recno() != val(code_id)
          ? "Erro em dbSkip()", i, recno(), code_id
-         lError := .t.
-      endif
-      if bof()
+         lError := .T.
+      ENDIF
+      IF bof()
          ? "Erro - nao deveria estar em BOF()", recno()
-         lError := .t.
-      endif
-      if eof()
+         lError := .T.
+      ENDIF
+      IF eof()
          ? "Erro - nao deveria estar em EOF()", recno()
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if lError
+      IF lError
          WAIT
-         exit
-      endif
-   Next
+         EXIT
+      ENDIF
+   NEXT i
 
    // Seek test
 
    SET ORDER TO 1
 
-   For i = 1 to RECORDS_IN_TEST
+   FOR i := 1 TO RECORDS_IN_TEST
 
-      If !dbSeek( strZero( i, 5 ) )
-         ? "dbSeek() deveria retornar .t."
-         lError := .t.
-      endif
+      IF !dbSeek(strZero(i, 5))
+         ? "dbSeek() deveria retornar .T."
+         lError := .T.
+      ENDIF
 
-      If !found()
-         ? "found() deveria retornar .t."
-         lError := .t.
-      endif
+      IF !found()
+         ? "found() deveria retornar .T."
+         lError := .T.
+      ENDIF
 
-      If eof()
+      IF eof()
          ? "não deveria estar em eof()"
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      If bof()
+      IF bof()
          ? "não deveria estar em bof()"
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if recno() != i
+      IF recno() != i
          ? "Posição de registro errado", i, recno(), code_id
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if code_id != strZero( i, 5 )
+      IF code_id != strZero(i, 5)
          ? "Posição de registro errado", i, recno(), code_id
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if lError
+      IF lError
          WAIT
-         exit
-      endif
+         EXIT
+      ENDIF
 
-   Next
+   NEXT i
 
    // Replace test
 
    dbGoTop()
 
-   For i = 1 to RECORDS_IN_TEST - 2
+   FOR i := 1 TO RECORDS_IN_TEST - 2
 
       REPLACE VALUE WITH nLoop + i
 
       dbSkip()
 
-      if recno() != i + 1
+      IF recno() != i + 1
          ? "Skip para o registro errado após update", i + 1, recno(), code_id
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if recno() != val( code_id )
+      IF recno() != val(code_id)
          ? "Erro em dbSkip() apos update", i, recno(), code_id
-         lError := .t.
-      endif
-      if bof()
+         lError := .T.
+      ENDIF
+      IF bof()
          ? "Erro - nao deveria estar em BOF() apos update", recno()
-         lError := .t.
-      endif
-      if eof()
+         lError := .T.
+      ENDIF
+      IF eof()
          ? "Erro - nao deveria estar em EOF() apos update", recno()
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if lError
+      IF lError
          WAIT
-         exit
-      endif
-   Next
+         EXIT
+      ENDIF
+
+   NEXT i
 
    // Reverse Index test
 
-   Set order to 3
+   SET ORDER TO 3
 
    dbGoBottom()
 
-   For i = 1 to RECORDS_IN_TEST - 2
+   FOR i := 1 TO RECORDS_IN_TEST - 2
 
       dbSkip(-1)
 
-      if recno() != i + 1
+      IF recno() != i + 1
          ? "Skip Reverse para o registro errado()", i + 1, recno(), code_id
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if recno() != val( code_id )
+      IF recno() != val(code_id)
          ? "Erro em dbSkip(-1) on reverse index", i, recno(), code_id
-         lError := .t.
-      endif
-      if bof()
+         lError := .T.
+      ENDIF
+      IF bof()
          ? "Erro - nao deveria estar em BOF()", recno()
-         lError := .t.
-      endif
-      if eof()
+         lError := .T.
+      ENDIF
+      IF eof()
          ? "Erro - nao deveria estar em EOF()", recno()
-         lError := .t.
-      endif
+         lError := .T.
+      ENDIF
 
-      if lError
+      IF lError
          WAIT
-         exit
-      endif
-   Next
+         EXIT
+      ENDIF
 
-   Set Order to 1
+   NEXT i
 
-Return ((seconds()*100) - s)/100
+   SET ORDER TO 1
+
+RETURN ((seconds() * 100) - s) / 100
 
 /*------------------------------------------------------------------------*/
 
-Function ChekStatusFlags1( nExpected )    // Check navigation not hitting TOP or BOTTOM
+FUNCTION ChekStatusFlags1(nExpected)    // Check navigation not hitting TOP or BOTTOM
 
-   Local lError := .F.
+   LOCAL lError := .F.
 
-   if recno() != nExpected
+   IF recno() != nExpected
       ? "Error: recno() in ChekStatusFlags1 is not the expected", recno(), nExpected
-      lError := .t.
-   endif
+      lError := .T.
+   ENDIF
 
-   if recno() != val( code_id )
+   IF recno() != val(code_id)
       ? "Error: CODE_ID in ChekStatusFlags1 is not the expected", recno(), code_id
-      lError := .t.
-   endif
-   if bof()
+      lError := .T.
+   ENDIF
+   IF bof()
       ? "Error: Should not be at BOF() in ChekStatusFlags1", recno()
-      lError := .t.
-   endif
-   if eof()
+      lError := .T.
+   ENDIF
+   IF eof()
       ? "Error: Should not be at EOF() in ChekStatusFlags1", recno()
-      lError := .t.
-   endif
+      lError := .T.
+   ENDIF
 
-   if lError
+   IF lError
       WAIT
-   endif
+   ENDIF
 
-Return lError
+RETURN lError
 
 /*------------------------------------------------------------------------*/
 
-Function ChekStatusFlags2()      // Check phantom record condition for invalid DBGOTO()
+FUNCTION ChekStatusFlags2()      // Check phantom record condition for invalid DBGOTO()
 
-   Local lError := .F.
+   LOCAL lError := .F.
 
-   if recno() != RECORDS_IN_TEST + 1
+   IF recno() != RECORDS_IN_TEST + 1
       ? "Error: Should be at phantom record", recno(), code_id
-      lError := .t.
-   endif
-   if !bof()
+      lError := .T.
+   ENDIF
+   IF !bof()
       ? "Should be at BOF() with phantom record", recno()
-      lError := .t.
-   endif
-   if !eof()
+      lError := .T.
+   ENDIF
+   IF !eof()
       ? "Should be at EOF() with phantom record", recno()
-      lError := .t.
-   endif
+      lError := .T.
+   ENDIF
 
-   if lError
+   IF lError
       WAIT
-   endif
+   ENDIF
 
-Return lError
+RETURN lError
 
 /*------------------------------------------------------------------------*/
 
-Function ChekStatusFlags3()    // Check for TOP condition
+FUNCTION ChekStatusFlags3()    // Check for TOP condition
 
-   Local lError    := .F.
-   Local nExpected := 1
+   LOCAL lError := .F.
+   LOCAL nExpected := 1
 
-   if recno() != nExpected
+   IF recno() != nExpected
       ? "Error: Should be on first record, but is at", recno()
-      lError := .t.
-   endif
+      lError := .T.
+   ENDIF
 
-   if recno() != val( code_id )
+   IF recno() != val(code_id)
       ? "Error: Invalid value for CODE_ID in first record:", code_id
-      lError := .t.
-   endif
-   if bof()
+      lError := .T.
+   ENDIF
+   IF bof()
       ? "Error: should not be in BOF() at top", recno()
-      lError := .t.
-   endif
-   if eof()
+      lError := .T.
+   ENDIF
+   IF eof()
       ? "Error: should not be in EOF() at top", recno()
-      lError := .t.
-   endif
+      lError := .T.
+   ENDIF
 
-   if lError
+   IF lError
       WAIT
-   endif
+   ENDIF
 
-Return lError
+RETURN lError
 
 /*------------------------------------------------------------------------*/
 
-Function ChekStatusFlags4()    // Check for BOTTOM condition
+FUNCTION ChekStatusFlags4()    // Check for BOTTOM condition
 
-   Local lError    := .F.
-   Local nExpected := RECORDS_IN_TEST
+   LOCAL lError := .F.
+   LOCAL nExpected := RECORDS_IN_TEST
 
-   if recno() != nExpected
+   IF recno() != nExpected
       ? "Error: Should be at last record, but is at", recno()
-      lError := .t.
-   endif
+      lError := .T.
+   ENDIF
 
-   if recno() != val( code_id )
+   IF recno() != val(code_id)
       ? "Error: Invalid value for CODE_ID in last record:", code_id
-      lError := .t.
-   endif
-   if bof()
+      lError := .T.
+   ENDIF
+   IF bof()
       ? "Error: should not be in BOF() at bottom", recno()
-      lError := .t.
-   endif
-   if eof()
+      lError := .T.
+   ENDIF
+   IF eof()
       ? "Error: should not be in EOF() at bottom", recno()
-      lError := .t.
-   endif
+      lError := .T.
+   ENDIF
 
-   if lError
+   IF lError
       WAIT
-   endif
+   ENDIF
 
-Return lError
-
+RETURN lError
