@@ -573,7 +573,7 @@ RETURN ::cType
 
 PROCEDURE Visualize(oExpression) // for debuging
 
-   LOCAL i
+   LOCAL item
 
    alert(oExpression:className() + " - workarea: " + oExpression:cContext)
    IF oExpression:isKindOf("ConditionBase")
@@ -592,16 +592,16 @@ PROCEDURE Visualize(oExpression) // for debuging
    ELSEIF oExpression:isKindOf("FunctionExpression")
       alert(oExpression:cFunctionName)
       alert(cstr(len(oExpression:aParameters)) + " parameter(s) :")
-      FOR i := 1 TO len(oExpression:aParameters)
-         Visualize(oExpression:aParameters[i]:oExpression)
-      NEXT i
+      FOR EACH item IN oExpression:aParameters
+         Visualize(item:oExpression)
+      NEXT
    ENDIF
 
 RETURN
 
 FUNCTION CollectAliases(oExpression, aAliases)
 
-   LOCAL i
+   LOCAL item
 
    aAddDistinct(aAliases, oExpression:cContext, {|x|lower(x)})
    IF oExpression:isKindOf("BooleanExpression")
@@ -610,9 +610,9 @@ FUNCTION CollectAliases(oExpression, aAliases)
       CollectAliases(oExpression:oOperand1, aAliases)
       CollectAliases(oExpression:oOperand2, aAliases)
    ELSEIF oExpression:isKindOf("FunctionExpression")
-      FOR i := 1 TO len(oExpression:aParameters)
-         CollectAliases(oExpression:aParameters[i]:oExpression, aAliases)
-      NEXT i
+      FOR EACH item IN oExpression:aParameters
+         CollectAliases(item:oExpression, aAliases)
+      NEXT
    ENDIF
 
 RETURN aAliases
