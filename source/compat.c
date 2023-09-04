@@ -56,15 +56,15 @@
 void TraceLog( const char * szFile, const char * szTraceMsg, ... )
 {
    if( szTraceMsg ) {
-      FILE * hFile = hb_fopen( szFile ? szFile : "trace.log", "a" );
+      FILE * hFile = hb_fopen(szFile ? szFile : "trace.log", "a");
       if( hFile ) {
          va_list ap;
 
-         va_start( ap, szTraceMsg );
-         vfprintf( hFile, szTraceMsg, ap );
-         va_end( ap );
+         va_start(ap, szTraceMsg);
+         vfprintf(hFile, szTraceMsg, ap);
+         va_end(ap);
 
-         fclose( hFile );
+         fclose(hFile);
       }
    }
 }
