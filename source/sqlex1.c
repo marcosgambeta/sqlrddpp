@@ -4098,14 +4098,14 @@ HB_CALL_ON_STARTUP_END(_hb_sqlEx_rdd_init_)
 
 HB_FUNC( SR_SETPAGEREADSIZE )
 {
-   if( ISNUM(1) ) {
+   if( HB_ISNUM(1) ) {
       pageReadSize = hb_itemGetNL( hb_param(1, HB_IT_NUMERIC) );
    }
 }
 
 HB_FUNC( SR_SETBUFFERPOOLSIZE )
 {
-   if( ISNUM(1) ) {
+   if( HB_ISNUM(1) ) {
       bufferPoolSize = hb_itemGetNL( hb_param(1, HB_IT_NUMERIC) );
    }
 }

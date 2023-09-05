@@ -405,7 +405,7 @@ HB_FUNC( ORACLEINBINDPARAM2 )
       Stmt->pLink[iPos].iType = iParamType;
       switch (Stmt->pLink[iPos].iType) {
          case 2 : {
-             if( ISNUM(6) ) {
+             if( HB_ISNUM(6) ) {
                 Stmt->pLink[ iPos ].ulValue = hb_parnl(6);
                ret = OCI_BindUnsignedInt( Stmt->stmt,Stmt->pLink[iPos].bindname,&Stmt->pLink[ iPos ].ulValue );
 
@@ -416,7 +416,7 @@ HB_FUNC( ORACLEINBINDPARAM2 )
          }
          break;
          case 3 : {
-             if( ISNUM(6) ) {
+             if( HB_ISNUM(6) ) {
                 Stmt->pLink[ iPos ].iValue = hb_parl(6);
                 OCI_BindBigInt( Stmt->stmt,Stmt->pLink[iPos].bindname,&Stmt->pLink[ iPos ].iValue );
              } else {
@@ -427,7 +427,7 @@ HB_FUNC( ORACLEINBINDPARAM2 )
           break;
 
          case  4 : {
-            if( ISNUM(6) ) {
+            if( HB_ISNUM(6) ) {
                Stmt->pLink[ iPos ].dValue = hb_parnd(6);
                OCI_BindDouble(Stmt->stmt,Stmt->pLink[iPos].bindname,&Stmt->pLink[ iPos ].dValue );
             } else {
@@ -437,7 +437,7 @@ HB_FUNC( ORACLEINBINDPARAM2 )
          }
          break;
          case 5: {
-             if( ISNUM(6) ) {
+             if( HB_ISNUM(6) ) {
                 Stmt->pLink[ iPos ].lValue = hb_parnll(6);
                 OCI_BindBigInt( Stmt->stmt,Stmt->pLink[iPos].bindname,&Stmt->pLink[ iPos ].lValue );
              } else {

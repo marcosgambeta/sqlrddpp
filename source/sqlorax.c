@@ -842,7 +842,7 @@ HB_FUNC( ORACLEINBINDPARAM )
       }
          break;
       case  4 : {
-         if( ISNUM(6) )
+         if( HB_ISNUM(6) )
             Stmt->pLink[ iPos ].dValue = hb_parnd(6);
 
       ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt : Stmt->stmtParam,
@@ -855,7 +855,7 @@ HB_FUNC( ORACLEINBINDPARAM )
       }
                           break;
      case 2 : {
-         if( ISNUM(6) )
+         if( HB_ISNUM(6) )
             Stmt->pLink[ iPos ].ulValue = hb_parnl(6);
 
          ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,
@@ -868,7 +868,7 @@ HB_FUNC( ORACLEINBINDPARAM )
      }
       break;
      case 3 : {
-         if( ISNUM(6) )
+         if( HB_ISNUM(6) )
             Stmt->pLink[ iPos ].iValue = hb_parl(6);
 
          ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,

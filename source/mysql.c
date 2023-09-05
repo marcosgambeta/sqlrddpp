@@ -102,8 +102,8 @@ HB_FUNC( MYSCONNECT )
    const char * szUser = hb_parc(2);
    const char * szPass = hb_parc(3);
    const char * szDb = hb_parc(4);
-   UINT uiPort = ISNUM(5) ? hb_parnl(5) : MYSQL_PORT;
-   UINT uiTimeout = ISNUM(7) ? hb_parnl(7) : 3600;
+   UINT uiPort = HB_ISNUM(5) ? hb_parnl(5) : MYSQL_PORT;
+   UINT uiTimeout = HB_ISNUM(7) ? hb_parnl(7) : 3600;
    BOOL lCompress = ISLOG(8) ?  hb_parl(8) : 0;
    mysql_library_init(0, NULL, NULL);
 //    memset(session, 0, sizeof(MYSQL_SESSION));
