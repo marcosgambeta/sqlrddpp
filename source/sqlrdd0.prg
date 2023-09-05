@@ -2354,7 +2354,7 @@ HB_FUNC( SR_SETSQL2008NEWTYPES )
 HB_FUNC(SETPGSOLDBEHAVIOR)
 {
    int iOld = s_iOldPgsBehavior;
-   if (ISLOG(1) )
+   if (HB_ISLOG(1) )
        s_iOldPgsBehavior= hb_parl(1) ;
     hb_retl(iOld) ;
 }
@@ -2367,7 +2367,7 @@ return s_fShortasNum;
 HB_FUNC(SETFIREBIRDUSESHORTASNUM)
 {
    int iOld = s_fShortasNum;
-   if (ISLOG(1) )
+   if (HB_ISLOG(1) )
        s_fShortasNum= hb_parl(1) ;
     hb_retl(iOld) ;
 

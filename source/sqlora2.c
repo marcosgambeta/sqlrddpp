@@ -155,7 +155,7 @@ HB_FUNC( SQLO2_CONNECT )
 {
    // POCI_ORASESSION session = (POCI_ORASESSION) hb_xgrab(sizeof(OCI_ORASESSION));
    POCI_ORASESSION session = (POCI_ORASESSION)hb_xgrabz( sizeof(OCI_ORASESSION));
-//    int lPool = 0; //  ISLOG(5)?hb_parl(5) :0;
+//    int lPool = 0; //  HB_ISLOG(5) ? hb_parl(5) : 0;
 //    char sPool[30] = {0};
 
    // memset(session, 0, sizeof(OCI_ORASESSION));
@@ -338,7 +338,7 @@ HB_FUNC( SQLO2_EXECDIRECT )
 HB_FUNC( SQLO2_EXECUTE )
 {
    POCI_ORASESSION session = (POCI_ORASESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   BOOL  lStmt = ISLOG(3) ? hb_parl(3) : 0;
+   BOOL  lStmt = HB_ISLOG(3) ? hb_parl(3) : 0;
    if( session ) {
       char * stm = (char * ) hb_parc(2);
       if( lStmt ) {
@@ -390,8 +390,8 @@ HB_FUNC( ORACLEINBINDPARAM2 )
    int iFieldSize = hb_parni(4);
    int iPos = iParamNum-1;
    int ret = SQL_ERROR;
-   BOOL lStmt = ISLOG(7) ? hb_parl(7) : 0;
-   BOOL isNull = ISLOG(8) ? hb_parl(8) : 0;
+   BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : 0;
+   BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : 0;
 
 
    if( Stmt ) {
@@ -614,7 +614,7 @@ HB_FUNC(ORACLEPREPARE2)
 {
    POCI_ORASESSION session = (POCI_ORASESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    const char * szSql = hb_parc(2);
-   BOOL lStmt = ISLOG(3) ? hb_parl(3) : 0;
+   BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : 0;
    int ret = -1;
 
    if( session ) {

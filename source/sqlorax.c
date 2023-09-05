@@ -231,7 +231,7 @@ HB_FUNC( SQLO_EXECDIRECT )
 HB_FUNC( SQLO_EXECUTE )
 {
    POCI_SESSION session = (POCI_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   BOOL lStmt = ISLOG(3) ? hb_parl(3) : 0;
+   BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : 0;
    if( session ) {
      if( lStmt ) {
          while( SQLO_STILL_EXECUTING == (session->status = sqlo_executeselect(session->stmt, 1)) ) {
@@ -825,8 +825,8 @@ HB_FUNC( ORACLEINBINDPARAM )
    int iFieldSize = hb_parni(4);
    int iPos = iParamNum-1;
    int ret = SQL_ERROR;
-   BOOL lStmt = ISLOG(7) ? hb_parl(7) : 0;
-   BOOL isNull = ISLOG(8) ? hb_parl(8) : 0;
+   BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : 0;
+   BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : 0;
 
   
 
@@ -1078,7 +1078,7 @@ HB_FUNC(ORACLEPREPARE)
 {
    POCI_SESSION session = (POCI_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    const char * szSql = hb_parc(2);
-   BOOL lStmt = ISLOG(3) ? hb_parl(3) : 0;
+   BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : 0;
 
    if( session ) {
      if( lStmt ) {
