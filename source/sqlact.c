@@ -263,7 +263,7 @@ HB_FUNC( SR_STRTOHEX )
    int i, len;
    int iCipher;
 
-   if( ! ISCHAR(1) ) {
+   if( ! HB_ISCHAR(1) ) {
       hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, "SR_STRTOHEX", 1, hb_param(1,HB_IT_ANY) );
       return;
    }
@@ -363,7 +363,7 @@ HB_FUNC( SR_HEXTOSTR )
    char *outbuff;
    int nalloc;
 
-   if( ! ISCHAR(1) ) {
+   if( ! HB_ISCHAR(1) ) {
       hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, "SR_HEXTOSTR", 1, hb_param(1,HB_IT_ANY) );
       return;
    }
@@ -538,7 +538,7 @@ HB_FUNC( SR_ESCAPESTRING )
    iSize= hb_parclen(1);
    idatabase = hb_parni(2);
 
-   if( ! (ISCHAR(1) && HB_ISNUM(2)) ) {
+   if( ! (HB_ISCHAR(1) && HB_ISNUM(2)) ) {
       hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, "SR_ESCAPESTRING", 2, hb_param(1,HB_IT_ANY), hb_param(2,HB_IT_ANY) );
       return;
    }
@@ -651,7 +651,7 @@ HB_FUNC( SR_ESCAPENUM )
    iSize= hb_parclen(1);
    FromBuffer = hb_parc(1);
 
-   if( ! (ISCHAR(1) && HB_ISNUM(2)  && HB_ISNUM(3)) ) {
+   if( ! (HB_ISCHAR(1) && HB_ISNUM(2)  && HB_ISNUM(3)) ) {
       hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, "SR_ESCAPENUM", 3, hb_param(1,HB_IT_ANY), hb_param(2,HB_IT_ANY), hb_param(3,HB_IT_ANY) );
       return;
    }

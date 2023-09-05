@@ -973,15 +973,15 @@ HB_FUNC( SR_GETINFO )
 HB_FUNC( SR_SETCONNECTATTR )
 {
 //    hb_retnl( ( LONG ) SQLSetConnectAttr( (  SQLHDBC  ) hb_parptr(1), ( UWORD ) hb_parnl(2),
-//            ( ULONG ) ISCHAR(3) ? ( SQLPOINTER ) hb_parcx(3) : ( SQLPOINTER ) hb_parnl(3), hb_parni(4) ) );
+//            ( ULONG ) HB_ISCHAR(3) ? ( SQLPOINTER ) hb_parcx(3) : ( SQLPOINTER ) hb_parnl(3), hb_parni(4) ) );
 #if ODBCVER >= 0x0300
    hb_retni(  SQLSetConnectAttr( (  SQLHDBC  ) hb_parptr(1), ( SQLINTEGER ) hb_parnl(2),
-           ISCHAR(3) ? ( SQLPOINTER ) hb_parc(3) : ( SQLPOINTER ) ( HB_PTRUINT ) hb_parnint(3),
-           ISCHAR(3) ? ( SQLINTEGER ) hb_parclen(3) : ( SQLINTEGER ) SQL_IS_INTEGER ) );
+           HB_ISCHAR(3) ? ( SQLPOINTER ) hb_parc(3) : ( SQLPOINTER ) ( HB_PTRUINT ) hb_parnint(3),
+           HB_ISCHAR(3) ? ( SQLINTEGER ) hb_parclen(3) : ( SQLINTEGER ) SQL_IS_INTEGER ) );
 #else
    hb_retni( SQLSetConnectOption( (  SQLHDBC  ) hb_parptr(1),
                                      ( SQLUSMALLINT ) hb_parni(2),
-                                     ISCHAR(3) ? ( SQLULEN ) hb_parc(3) : ( SQLULEN ) hb_parnl(3) ) );
+                                     HB_ISCHAR(3) ? ( SQLULEN ) hb_parc(3) : ( SQLULEN ) hb_parnl(3) ) );
 #endif
 
 }
@@ -993,12 +993,12 @@ HB_FUNC( SR_SETCONNECTOPTION )
 #if ODBCVER >= 0x0300
       hb_retni( SQLSetConnectAttr( (  SQLHDBC  ) hb_parptr(1),
                                    ( SQLINTEGER ) hb_parnl(2),
-                                   ISCHAR(3) ? ( SQLPOINTER ) hb_parc(3) : ( SQLPOINTER ) ( HB_PTRUINT ) hb_parnint(3),
-                                   ISCHAR(3) ? ( SQLINTEGER ) hb_parclen(3) : ( SQLINTEGER ) SQL_IS_INTEGER ) );
+                                   HB_ISCHAR(3) ? ( SQLPOINTER ) hb_parc(3) : ( SQLPOINTER ) ( HB_PTRUINT ) hb_parnint(3),
+                                   HB_ISCHAR(3) ? ( SQLINTEGER ) hb_parclen(3) : ( SQLINTEGER ) SQL_IS_INTEGER ) );
 
 #else
    hb_retni(  SQLSetConnectOption( (  SQLHDBC  ) hb_parptr(1), ( SQLINTEGER ) hb_parnl(2),
-           ISCHAR(3) ? ( SQLPOINTER ) hb_parc(3) : ( SQLPOINTER ) ( HB_PTRUINT ) hb_parnint(3) ) );
+           HB_ISCHAR(3) ? ( SQLPOINTER ) hb_parc(3) : ( SQLPOINTER ) ( HB_PTRUINT ) hb_parnint(3) ) );
 #endif
 }
 
@@ -1009,12 +1009,12 @@ HB_FUNC( SR_SETSTMTOPTION )
 #if ODBCVER >= 0x0300
       hb_retni( SQLSetStmtAttr( ( SQLHSTMT ) hb_parptr(1),
                                 ( SQLINTEGER ) hb_parnl(2),
-                                ISCHAR(3) ? ( SQLPOINTER ) hb_parc(3) : ( SQLPOINTER ) ( HB_PTRUINT ) hb_parnint(3),
-                                ISCHAR(3) ? ( SQLINTEGER ) hb_parclen(3) : ( SQLINTEGER ) SQL_IS_INTEGER ) );
+                                HB_ISCHAR(3) ? ( SQLPOINTER ) hb_parc(3) : ( SQLPOINTER ) ( HB_PTRUINT ) hb_parnint(3),
+                                HB_ISCHAR(3) ? ( SQLINTEGER ) hb_parclen(3) : ( SQLINTEGER ) SQL_IS_INTEGER ) );
 #else
    hb_retni( SQLSetStmtOption( ( SQLHSTMT ) hb_parptr(1),
                                   ( SQLINTEGER ) hb_parnl(2),
-                                  ISCHAR(3) ? ( SQLULEN ) hb_parc(3) : ( SQLULEN ) hb_parnl(3) ) );
+                                  HB_ISCHAR(3) ? ( SQLULEN ) hb_parc(3) : ( SQLULEN ) hb_parnl(3) ) );
 #endif
 
 }

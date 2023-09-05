@@ -511,7 +511,7 @@ HB_FUNC( ORACLEINBINDPARAM2 )
 //            memset(Stmt->pLink[iPos].col_name,'\0',(iFieldSize+1) * sizeof(char));
 
 
-            if( ISCHAR(6) ) {
+            if( HB_ISCHAR(6) ) {
                hb_xmemcpy(Stmt->pLink[ iPos ].col_name, hb_parc(6),hb_parclen(6) );
                Stmt->pLink[ iPos ].col_name[hb_parclen(6)] ='\0';
                ret = OCI_BindString(Stmt->stmt, Stmt->pLink[iPos].bindname,Stmt->pLink[ iPos ].col_name, hb_parclen(6) );

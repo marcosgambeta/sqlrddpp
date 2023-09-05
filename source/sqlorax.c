@@ -964,7 +964,7 @@ HB_FUNC( ORACLEINBINDPARAM )
       break;
      case 1: {
         
-        if( ISCHAR(6) ) {
+        if( HB_ISCHAR(6) ) {
            sprintf(Stmt->pLink[ iPos ].sValue,hb_parcx(6),hb_parclen(6));          
         }
         ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt : Stmt->stmtParam, iParamNum, SQLOT_AFC, &Stmt->pLink[iPos].sValue, iFieldSize, &Stmt->pLink[iPos].sVal, 0);
@@ -980,7 +980,7 @@ HB_FUNC( ORACLEINBINDPARAM )
          memset(Stmt->pLink[iPos].col_name,'\0',(iFieldSize+1) * sizeof(char));
 
       
-      if( ISCHAR(6) ) {
+      if( HB_ISCHAR(6) ) {
          hb_xmemcpy(Stmt->pLink[ iPos ].col_name, hb_parc(6),hb_parclen(6) );
       }
       
