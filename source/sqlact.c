@@ -88,10 +88,10 @@ HB_FUNC( SR_SQLPARSE )     /* SqlParse(cCommand, @nError, @nErrorPos) */
          stmt->pArray = hb_itemArrayNew(0);
          // printf("Parse ERROR. Retornado array de %i posicoes.\n", stmt->pArray->item.asArray.value->ulLen );
 
-         if( ISBYREF(2) ) {
+         if( HB_ISBYREF(2) ) {
             hb_itemPutNI( (PHB_ITEM) hb_param(2, HB_IT_ANY), stmt->errMsg );
          }
-         if( ISBYREF(3) ) {
+         if( HB_ISBYREF(3) ) {
             hb_itemPutNI( (PHB_ITEM) hb_param(3, HB_IT_ANY), ( int ) ( stmt->queryPtr - sqlIniPos ) );
          }
       }
