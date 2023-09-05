@@ -217,7 +217,7 @@ HB_FUNC( FBCONNECT3 )  // FBConnect( cDatabase, cUser, cPassword, [charset], @hE
       strncpy(&(dpb[i]), charset, len);
       i += len;
    }
-   if( isc_attach_database( session->status, 0, db_connect, &(session->db), i, dpb ) ) {
+   if( isc_attach_database(session->status, 0, db_connect, &(session->db), i, dpb) ) {
       fb_log_status(session, "FBCONNECT");
       if( session->msgerror )
          hb_xfree(session->msgerror);
@@ -234,7 +234,7 @@ HB_FUNC( FBCONNECT3 )  // FBConnect( cDatabase, cUser, cPassword, [charset], @hE
 
 /*------------------------------------------------------------------------*/
 
-HB_FUNC( FBCLOSE3 )   // FBClose( hEnv )
+HB_FUNC( FBCLOSE3 )   // FBClose(hEnv)
 {
    PFB_SESSION session = (PFB_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    int i;
@@ -359,7 +359,7 @@ HB_FUNC( FBROLLBACKTRANSACTION3 )  // FBRollBackTransaction( hEnv )
 
 /*------------------------------------------------------------------------*/
 
-HB_FUNC( FBEXECUTE3 ) // FBExecute( hEnv, cCmd, nDialect )
+HB_FUNC( FBEXECUTE3 ) // FBExecute(hEnv, cCmd, nDialect)
 {
    PFB_SESSION session = (PFB_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    const char * command = hb_parcx(2);
@@ -390,7 +390,7 @@ HB_FUNC( FBEXECUTE3 ) // FBExecute( hEnv, cCmd, nDialect )
       }
    }
    //printf("isc_dsql_prepare %p %p %p %s %p\n", session->status, session->transac, session->stmt, command, session->sqlda);
-   //if( isc_dsql_prepare( session->status, &(session->transac), &(session->stmt), 0, command, hb_parni(3), session->sqlda ) )
+   //if( isc_dsql_prepare(session->status, &(session->transac), &(session->stmt), 0, command, hb_parni(3), session->sqlda) )
    isc_dsql_prepare(session->status, &(session->transac), &(session->stmt), 0, command, hb_parni(3), session->sqlda);
    if( CHECK_ERROR(session) ) {
       ERRORLOGANDEXIT(session, (char *) command);
@@ -664,7 +664,7 @@ HB_FUNC( FBFETCH3 )   // FBFetch( hEnv )
 
 /*------------------------------------------------------------------------*/
 
-HB_FUNC( FBGETDATA3 )    // FBGetData( hEnv, nField, @uData )
+HB_FUNC( FBGETDATA3 )    // FBGetData(hEnv, nField, @uData)
 {
    PFB_SESSION session = (PFB_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    int icol = hb_parni(2);
@@ -806,19 +806,19 @@ HB_FUNC( FBGETDATA3 )    // FBGetData( hEnv, nField, @uData )
                   hb_snprintf( data, sizeof(data), "%*" ISC_INT64_FORMAT "d", field_width, (ISC_INT64) value);
                }
             
-            hb_storc( data, 3 );
+            hb_storc(data, 3);
         }
             break;
 
          case IB_SQL_FLOAT:
             hb_snprintf( data, sizeof(data), "%15g ", *(float ISC_FAR *) (var->sqldata));
-            hb_storc( data, 3 );
+            hb_storc(data, 3);
             break;
 
          case IB_SQL_DOUBLE:
             
             hb_snprintf( data, sizeof(data), "%24f ", *(double ISC_FAR *) (var->sqldata));
-            hb_storc( data, 3 );
+            hb_storc(data, 3);
             break;
 
          case IB_SQL_BLOB:
@@ -865,7 +865,7 @@ HB_FUNC( FBGETDATA3 )    // FBGetData( hEnv, nField, @uData )
                }
             }
 
-            if( isc_close_blob( session->status, &blob_handle ) ) {
+            if( isc_close_blob(session->status, &blob_handle) ) {
                ERRORLOGANDEXIT( session, "FBGETDATA3" );
             }
 
@@ -877,7 +877,7 @@ HB_FUNC( FBGETDATA3 )    // FBGetData( hEnv, nField, @uData )
             hb_snprintf( data, sizeof(data), "%04d-%02d-%02d", times.tm_year + 1900, times.tm_mon + 1, times.tm_mday );
             
 
-            hb_storc( data, 3 );
+            hb_storc(data, 3);
             break;
 
          default:
@@ -971,7 +971,7 @@ HB_FUNC( FBVERSION3 )
       isc_vax_integer( tmp, 100 );
       hb_retnl( num_version );
    }
-   hb_retc( tmp );
+   hb_retc(tmp);
 }
 
 /*------------------------------------------------------------------------*/
@@ -981,8 +981,8 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
    LONG lType;
    HB_SIZE lLen, lDec;
    PHB_ITEM pTemp;
-   HB_SYMBOL_UNUSED( bQueryOnly );
-   HB_SYMBOL_UNUSED( ulSystemID );
+   HB_SYMBOL_UNUSED(bQueryOnly);
+   HB_SYMBOL_UNUSED(ulSystemID);
    
 
    lType = (LONG) hb_arrayGetNL(pField, 6);
@@ -1083,7 +1083,7 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) ) {
                if( s_pSym_SR_FROMJSON == NULL ) {
                   hb_dynsymLock();
-                  s_pSym_SR_FROMJSON = hb_dynsymFindName( "HB_JSONDECODE" );
+                  s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
                   hb_dynsymUnlock();
                   if( s_pSym_SR_FROMJSON  == NULL ) {
                      printf( "Could not find Symbol HB_JSONDECODE\n" );
@@ -1092,20 +1092,20 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
                hb_vmPushDynSym( s_pSym_SR_FROMJSON );
                hb_vmPushNil();
                hb_vmPushString( bBuffer, lLenBuff );
-               pTemp = hb_itemNew( NULL );
+               pTemp = hb_itemNew(NULL);
                hb_vmPush(pTemp);
                hb_vmDo(2);
                /* TOFIX: What this code should do ???
                 * Now it's a dummy code which does not make anything usable.
                 * [druzus]
                 */
-               hb_itemForwardValue( pItem, pTemp );
-               hb_itemRelease( pTemp );
+               hb_itemForwardValue(pItem, pTemp);
+               hb_itemRelease(pTemp);
 
             } else if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) ) {
                if( s_pSym_SR_DESERIALIZE == NULL ) {
                   hb_dynsymLock();
-                  s_pSym_SR_DESERIALIZE = hb_dynsymFindName( "SR_DESERIALIZE" );
+                  s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
                   hb_dynsymUnlock();
                   if( s_pSym_SR_DESERIALIZE  == NULL ) {
                      printf( "Could not find Symbol SR_DESERIALIZE\n" );
@@ -1116,22 +1116,22 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
                hb_vmPushString( bBuffer, lLenBuff );
                hb_vmDo(1);
 
-               pTemp = hb_itemNew( NULL );
-               hb_itemForwardValue( pTemp, hb_stackReturnItem() );
+               pTemp = hb_itemNew(NULL);
+               hb_itemForwardValue(pTemp, hb_stackReturnItem());
 
                if( HB_IS_HASH( pTemp ) && sr_isMultilang() && bTranslate ) {
-                  PHB_ITEM pLangItem = hb_itemNew( NULL );
+                  PHB_ITEM pLangItem = hb_itemNew(NULL);
                   HB_SIZE ulPos;
                   if(    hb_hashScan( pTemp, sr_getBaseLang( pLangItem ), &ulPos )
                       || hb_hashScan( pTemp, sr_getSecondLang( pLangItem ), &ulPos )
                       || hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) ) {
                      hb_itemCopy( pItem, hb_hashGetValueAt( pTemp, ulPos ) );
                   }
-                  hb_itemRelease( pLangItem );
+                  hb_itemRelease(pLangItem);
                } else {
-                  hb_itemForwardValue( pItem, pTemp );
+                  hb_itemForwardValue(pItem, pTemp);
                }
-               hb_itemRelease( pTemp );
+               hb_itemRelease(pTemp);
             } else {
                hb_itemPutCL( pItem, bBuffer, lLenBuff );
             }
@@ -1184,7 +1184,7 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
 //
 //             hb_itemPutDTS( pItem, dt );
             long lJulian, lMilliSec;
-            hb_timeStampStrRawGet( bBuffer, &lJulian, &lMilliSec ); // TOCHECK:
+            hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
             hb_itemPutTDT( pItem, lJulian, lMilliSec );
 #else
             long lJulian, lMilliSec;
@@ -1234,11 +1234,11 @@ HB_FUNC( FBLINEPROCESSED3 )
 
 
    if( session ) {
-      cols = hb_arrayLen( pFields );
+      cols = hb_arrayLen(pFields);
 
       for( icol = 1; icol <= cols; icol++ ) {
 //        LONG lType;
-         temp = hb_itemNew( NULL );
+         temp = hb_itemNew(NULL);
          var = session->sqlda->sqlvar;
          lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), FIELD_ENUM);
          //lType = (LONG) hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 6);
@@ -1247,31 +1247,31 @@ HB_FUNC( FBLINEPROCESSED3 )
 
 
          if( lIndex == 0 ) {
-            hb_arraySetForward( pRet, icol, temp );
+            hb_arraySetForward(pRet, icol, temp);
          } else {
             for( i = 0; i < lIndex-1; i++, var++ ){}
 
             if( ( var->sqltype & 1 ) && ( *var->sqlind < 0 ) ) {
                FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) "", 0, bQueryOnly, ulSystemID, bTranslate );
-               hb_arraySetForward( pRet, icol , temp );
+               hb_arraySetForward(pRet, icol, temp);
             } else {
                dtype = ( ( (XSQLVAR *) var )->sqltype & ~1 );
                switch ( dtype ) {
                case IB_SQL_TEXT:
                   FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) var->sqldata, var->sqllen, bQueryOnly, ulSystemID, bTranslate );
-                  hb_arraySetForward( pRet, icol , temp );
+                  hb_arraySetForward(pRet, icol, temp);
                   break;
                case IB_SQL_BOOLEAN: {
                   ISC_UCHAR udata = *(ISC_UCHAR FAR*)var->sqldata;
                   hb_itemPutL( temp, udata==(ISC_UCHAR)"T" || udata==(ISC_UCHAR)"t"  || udata==1  ? TRUE : FALSE );
-                  hb_arraySetForward( pRet, icol , temp );
+                  hb_arraySetForward(pRet, icol, temp);
                   break;
             }
                case IB_SQL_VARYING:
                   vary = (VARY*) var->sqldata;
                   vary->vary_string[vary->vary_length] = '\0';
-                  FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) vary->vary_string, strlen( vary->vary_string ), bQueryOnly, ulSystemID, bTranslate );
-                  hb_arraySetForward( pRet, icol , temp );
+                  FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) vary->vary_string, strlen(vary->vary_string), bQueryOnly, ulSystemID, bTranslate );
+                  hb_arraySetForward(pRet, icol, temp);
                   break;
                case IB_SQL_TIMESTAMP:
                   isc_decode_timestamp( ( ISC_TIMESTAMP ISC_FAR * ) var->sqldata, &times );
@@ -1286,20 +1286,20 @@ HB_FUNC( FBLINEPROCESSED3 )
 
       //            sprintf ( p, "%*s ", 24, date_s );
 
-                  FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) date_s, strlen( date_s ), bQueryOnly, ulSystemID, bTranslate );
-                  hb_arraySetForward( pRet, icol , temp );
+                  FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) date_s, strlen(date_s), bQueryOnly, ulSystemID, bTranslate );
+                  hb_arraySetForward(pRet, icol, temp);
                   break;
 
                case IB_SQL_TYPE_TIME:
-                  isc_decode_sql_time( ( ISC_TIME ISC_FAR * ) var->sqldata, &times );
+                  isc_decode_sql_time((ISC_TIME ISC_FAR *) var->sqldata, &times);
                   hb_snprintf( date_s, sizeof(date_s), "%02d:%02d:%02d.%04d",
                         times.tm_hour,
                         times.tm_min,
                         times.tm_sec,
                         ( int ) ( ( *( ( ISC_TIME * ) var->sqldata ) ) % 10000 ) );
 
-                  FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) date_s, strlen( date_s ), bQueryOnly, ulSystemID, bTranslate );
-                  hb_arraySetForward( pRet, icol , temp );
+                  FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) date_s, strlen(date_s), bQueryOnly, ulSystemID, bTranslate );
+                  hb_arraySetForward(pRet, icol, temp);
                   break;
 
                case IB_SQL_LONG:
@@ -1372,9 +1372,7 @@ HB_FUNC( FBLINEPROCESSED3 )
 
                      }
 
-
-
-                  hb_arraySetForward( pRet, icol , temp );
+                  hb_arraySetForward(pRet, icol, temp);
 }
                   break;
 
@@ -1383,9 +1381,9 @@ HB_FUNC( FBLINEPROCESSED3 )
 
 //                   hb_snprintf( data, sizeof(data), "%15g ", *(float ISC_FAR *) (var->sqldata));
 //                   TraceLog("fb.log","valor float = %lf data %s\n",*(float ISC_FAR *) (var->sqldata),data);
-//                   FBFieldGet( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) data, strlen( data ), bQueryOnly, ulSystemID, bTranslate );
-                  hb_itemPutNDLen( temp,*(float ISC_FAR *) (var->sqldata),lLen,lDec );
-                  hb_arraySetForward( pRet, icol , temp );
+//                   FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *) data, strlen(data), bQueryOnly, ulSystemID, bTranslate);
+                  hb_itemPutNDLen(temp, *(float ISC_FAR *) (var->sqldata), lLen, lDec);
+                  hb_arraySetForward(pRet, icol, temp);
                   break;
 
                case IB_SQL_DOUBLE:
@@ -1393,9 +1391,9 @@ HB_FUNC( FBLINEPROCESSED3 )
 
 //                   hb_snprintf( data, sizeof(data), "%24f ", *(double ISC_FAR *) (var->sqldata));
 //                   TraceLog("fb.log","valor double = %lf data %s\n",*(float ISC_FAR *) (var->sqldata),data);
-//                   FBFieldGet( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) data, strlen( data ), bQueryOnly, ulSystemID, bTranslate );
-                  hb_itemPutNDLen( temp,*(double ISC_FAR *) (var->sqldata),lLen,lDec );
-                  hb_arraySetForward( pRet, icol , temp );
+//                   FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *) data, strlen(data), bQueryOnly, ulSystemID, bTranslate);
+                  hb_itemPutNDLen(temp, *(double ISC_FAR *) (var->sqldata), lLen, lDec);
+                  hb_arraySetForward(pRet, icol, temp);
                   break;
 
                case IB_SQL_BLOB:
@@ -1442,15 +1440,15 @@ HB_FUNC( FBLINEPROCESSED3 )
                      }
                   }
 
-                  if( isc_close_blob( session->status, &blob_handle ) ) {
+                  if( isc_close_blob(session->status, &blob_handle) ) {
                      ERRORLOGANDEXIT( session, "FBGETDATA3" );
                   }
 
                   FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) read_blob, blob_size, bQueryOnly, ulSystemID, bTranslate );
-                  hb_arraySetForward( pRet, icol , temp );
+                  hb_arraySetForward(pRet, icol, temp);
 
-                  hb_storclenAdopt( read_blob, blob_size, 3 );
-                  hb_xfree( read_blob );
+                  hb_storclenAdopt(read_blob, blob_size, 3);
+                  hb_xfree(read_blob);
                   break;
 
                case IB_SQL_TYPE_DATE:
@@ -1458,8 +1456,8 @@ HB_FUNC( FBLINEPROCESSED3 )
                   hb_snprintf( date_s, sizeof(date_s), "%04d-%02d-%02d", times.tm_year + 1900, times.tm_mon + 1, times.tm_mday );
 
                   hb_snprintf( data, sizeof(data), "%*s ", 8, date_s );
-                  FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) data, strlen( data ), bQueryOnly, ulSystemID, bTranslate );
-                  hb_arraySetForward( pRet, icol , temp );
+                  FBFieldGet3( hb_arrayGetItemPtr(pFields, icol), temp, (char * ) data, strlen(data), bQueryOnly, ulSystemID, bTranslate );
+                  hb_arraySetForward(pRet, icol, temp);
                   break;
 
                default:
@@ -1468,7 +1466,7 @@ HB_FUNC( FBLINEPROCESSED3 )
                }
             }
          }
-         hb_itemRelease( temp );
+         hb_itemRelease(temp);
       }
       hb_retni( SQL_SUCCESS );
    }

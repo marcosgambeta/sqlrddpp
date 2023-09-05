@@ -75,11 +75,11 @@ const char * _sqlo_sqloraID="$Id$";
 #  include "glib.h"
 #  define MALLOC g_malloc
 #  define REALLOC g_realloc
-#  define FREE(_p) {void ** l_p= (void **)&(_p); if( *l_p != NULL ) {g_free( *l_p); *l_p = NULL; } }
+#  define FREE(_p) {void ** l_p= (void **)&(_p); if( *l_p != NULL ) {g_free(*l_p); *l_p = NULL; } }
 #else
 #  define MALLOC malloc
 #  define REALLOC realloc
-#  define FREE(_p) {void ** l_p= (void**)&(_p); if( *l_p != NULL ) {free( *l_p); *l_p = NULL; } }
+#  define FREE(_p) {void ** l_p= (void**)&(_p); if( *l_p != NULL ) {free(*l_p); *l_p = NULL; } }
 #endif
 
 #define NDEBUG
@@ -89,9 +89,12 @@ const char * _sqlo_sqloraID="$Id$";
 #define HAVE_OCISTMTFETCH2
 #define HAVE_OCILOBWRITEAPPEND
 
-#if defined (__STDC__) || defined (_AIX) || defined(PROTOTYPES) ||\
-            (defined (__mips) && defined (_SYSTYPE_SVR4)) ||\
-             defined(WIN32) || defined(__cplusplus)\
+#if    defined(__STDC__) \
+    || defined(_AIX) \
+    || defined(PROTOTYPES) \
+    || (defined(__mips) && defined(_SYSTYPE_SVR4)) \
+    || defined(WIN32) \
+    || defined(__cplusplus)
 
 #  define AND ,
 #  define DEFUN(name, arglist, args)      name(args)
@@ -472,7 +475,8 @@ typedef struct  _sqlo_col_struct {
   char * col_name;              /**< The column name */
   ub4 col_name_size;       /**< The max allocated length of col_name */
   ub2  dbsize;                  /**< The size in the database */
-#if defined(HB_OS_HPUX) || defined( HB_OS_AIX)
+#if    defined(HB_OS_HPUX) \
+    || defined(HB_OS_AIX)
   ub2  prec;                    /**< The precision */
   ub2  scale;                   /** The scale */
 
@@ -913,7 +917,7 @@ void * hb_xgrabDebug( int iline, HB_SIZE ulSize )
 {
    void * pmem;
 #ifndef DEBUG_XGRAB
-   HB_SYMBOL_UNUSED( iline );
+   HB_SYMBOL_UNUSED(iline);
 #endif
    pmem = hb_xgrab(ulSize );
 #ifdef DEBUG_XGRAB
@@ -926,13 +930,13 @@ void * hb_xreallocDebug( int iline, void * p, HB_SIZE ulSize )
 {
    void * pmem;
 #ifndef DEBUG_XGRAB
-   HB_SYMBOL_UNUSED( iline );
+   HB_SYMBOL_UNUSED(iline);
 #endif
 
 #ifdef DEBUG_XGRAB
    TraceLog( LOGFILE, "Pointer %p realloc %" HB_PFS "u bytes in line %i\n", p, ulSize, iline );
 #endif
-   pmem = hb_xrealloc( p, ulSize );
+   pmem = hb_xrealloc(p, ulSize);
 #ifdef DEBUG_XGRAB
    TraceLog( LOGFILE, "   Pointer %p realloc ok - %i bytes to pointer %p in line %i\n", p, ulSize, pmem, iline );
 #endif
@@ -1187,12 +1191,12 @@ DEFUN(_winmutex_lock, (mp),
   do {
     stat = WaitForSingleObject(mp, MUTEX_WAIT_TIME);
 
-    if( stat == WAIT_OBJECT_0 )
+    if( stat == WAIT_OBJECT_0 ) {
       locked = TRUE;
-    else if( stat == WAIT_ABANDONED )
-      ;
-    else
+    } else if( stat == WAIT_ABANDONED ) {
+    } else {
       locked = FALSE;
+    }
 
   } while( stat == WAIT_ABANDONED );
 
@@ -1458,18 +1462,11 @@ DEFUN(_get_stmt_state, (stp),
 #define OCI_ATTR_STMT_STATE 182
 #endif
 
-  dbp->status = OCIAttrGet( (dvoid*)stp->stmthp,
-                            (ub4)OCI_HTYPE_STMT,
-                            (dvoid *)&st,
-                            (ub4 *) 0,
-                            (ub4)OCI_ATTR_STMT_STATE,
-                            dbp->errhp
-                            );
+   dbp->status = OCIAttrGet((dvoid *) stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) &st, (ub4 *) 0, (ub4) OCI_ATTR_STMT_STATE, dbp->errhp);
 
-  CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_stmt_state", "OCIAttrGet");
+   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_stmt_state", "OCIAttrGet");
 
-  return (int) st;
-
+   return (int) st;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1726,9 +1723,8 @@ DEFUN(_db_release, (dbp), sqlo_db_struct_ptr_t dbp)
   dbp->status = 0;
 
   /* release all sths */
-  for( i = 0; i < dbp->stmtv_size; ++i )
-  {
-    _stmt_release( &(dbp->stmtv[ i ]) );
+  for( i = 0; i < dbp->stmtv_size; ++i ) {
+    _stmt_release(&(dbp->stmtv[i]));
   }
 
   if( dbp->stmtv )
@@ -1924,21 +1920,12 @@ DEFUN(_stmt_new, (dbp, stmt, stpp),
   /*
    * Allocate the statement handle
    */
-  dbp->status = OCIHandleAlloc( (dvoid *) dbp->envhp,
-                           (dvoid **) &stp->stmthp,
-                           OCI_HTYPE_STMT,
-                           (size_t) 0,
-                           (dvoid **) 0
-                           );
+  dbp->status = OCIHandleAlloc((dvoid *) dbp->envhp, (dvoid **) &stp->stmthp, OCI_HTYPE_STMT, (size_t) 0, (dvoid **) 0);
 
   if( dbp->status != OCI_SUCCESS ) {
-
-    _stmt_release( stp );
-
+    _stmt_release(stp);
   } else {
-
     *stpp = stp;
-
   }
 
   return dbp->status;
@@ -2050,8 +2037,8 @@ DEFUN(_dealloc_bindp, ( stp ),
     assert( stp->bindpv != NULL );
     assert( stp->indpv != NULL );
 
-    XFREE( stp->bindpv, __LINE__ );        /* bind pointer array */
-    XFREE( stp->indpv, __LINE__ );                /* indicator var. pointer array */
+    XFREE(stp->bindpv, __LINE__);        /* bind pointer array */
+    XFREE(stp->indpv, __LINE__);                /* indicator var. pointer array */
   }
 
   stp->bindpv_size = 0;
@@ -2191,7 +2178,7 @@ DEFUN(_dealloc_definep, ( stp ),
     /* free all column names */
     for( col_idx = 0; col_idx < stp->defnpv_size; ++col_idx ) {
       if( stp->ocolsv[ col_idx ].col_name ) {
-         XFREE( stp->ocolsv[ col_idx ].col_name, __LINE__ );
+         XFREE(stp->ocolsv[col_idx].col_name, __LINE__);
       }
 
       if( stp->ocolsv[ col_idx ].loblp ) {
@@ -2201,21 +2188,21 @@ DEFUN(_dealloc_definep, ( stp ),
       }
 
       if( stp->outv[ col_idx ] ) {
-         XFREE( stp->outv[ col_idx ], __LINE__ );
+         XFREE(stp->outv[col_idx], __LINE__);
          stp->outv[ col_idx ] = NULL;
          stp->outv_size[ col_idx ] = 0;
          stp->rlenv[ col_idx ] = 0;
       }
     }
 
-    XFREE( stp->defnpv, __LINE__ );
-    XFREE( stp->ocolsv, __LINE__ );
-    XFREE( stp->outv, __LINE__ );
-    XFREE( stp->outv_size, __LINE__ );
-    XFREE( stp->oindv, __LINE__ );
-    XFREE( stp->rlenv, __LINE__ );
-    XFREE( stp->ocol_namev, __LINE__ );
-    XFREE( stp->ocol_namev_size, __LINE__ );
+    XFREE(stp->defnpv, __LINE__);
+    XFREE(stp->ocolsv, __LINE__);
+    XFREE(stp->outv, __LINE__);
+    XFREE(stp->outv_size, __LINE__);
+    XFREE(stp->oindv, __LINE__);
+    XFREE(stp->rlenv, __LINE__);
+    XFREE(stp->ocol_namev, __LINE__);
+    XFREE(stp->ocol_namev_size, __LINE__);
 
     stp->defnpv = NULL;
     stp->ocolsv = NULL;
@@ -3352,22 +3339,11 @@ DEFUN(_get_ocol_db_data_type, (stp, pos, dtypep),
                    pos););
 
   /* allocate a parameter descriptor */
-  dbp->status = OCIParamGet( stp->stmthp,
-                             OCI_HTYPE_STMT,
-                             dbp->errhp,
-                             (void **)((dvoid *)&paramd),
-                             (ub4) pos
-                             );
+  dbp->status = OCIParamGet(stp->stmthp, OCI_HTYPE_STMT, dbp->errhp, (void **) ((dvoid *) &paramd), (ub4) pos);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_data_type", "OCIParamGet");
 
-  dbp->status = OCIAttrGet( (dvoid*) paramd,
-                            (ub4) OCI_DTYPE_PARAM,
-                            (dvoid*) dtypep,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_DATA_TYPE,
-                            (OCIError *)dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *) paramd, (ub4) OCI_DTYPE_PARAM, (dvoid *) dtypep, (ub4 *) 0, (ub4) OCI_ATTR_DATA_TYPE, (OCIError *) dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_data_type", "OCIAttrGet(datatype)");
 
@@ -3416,21 +3392,11 @@ DEFUN(_get_ocol_db_size, (stp, pos, sizep),
                    pos););
 
   /* allocate a parameter descriptor */
-  dbp->status = OCIParamGet( stp->stmthp,
-                             OCI_HTYPE_STMT,
-                             dbp->errhp,
-                             (void **)((dvoid *)&paramd),
-                             (ub4) pos);
+  dbp->status = OCIParamGet(stp->stmthp, OCI_HTYPE_STMT, dbp->errhp, (void **) ((dvoid *) &paramd), (ub4) pos);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_size", "OCIParamGet");
 
-  dbp->status = OCIAttrGet( (dvoid*) paramd,
-                            (ub4) OCI_DTYPE_PARAM,
-                            (dvoid*) sizep,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_DATA_SIZE,
-                            (OCIError *)dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *) paramd, (ub4) OCI_DTYPE_PARAM, (dvoid *) sizep, (ub4 *) 0, (ub4) OCI_ATTR_DATA_SIZE, (OCIError *) dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_size", "OCIAttrGet(datatype)");
   TRACE(3, fprintf(_get_trace_fp(dbp), "_get_ocol_db_size: size: %d \n",
@@ -3476,26 +3442,15 @@ DEFUN(_get_ocol_db_prec, (stp, pos, precp),
                    pos););
 
   /* allocate a parameter descriptor */
-  dbp->status = OCIParamGet( stp->stmthp,
-                             OCI_HTYPE_STMT,
-                             dbp->errhp,
-                             (void **)((dvoid *)&paramd),
-                             (ub4) pos);
+  dbp->status = OCIParamGet(stp->stmthp, OCI_HTYPE_STMT, dbp->errhp, (void **) ((dvoid *) &paramd), (ub4) pos);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_prec", "OCIParamGet");
 
-  dbp->status = OCIAttrGet( (dvoid*) paramd,
-                            (ub4) OCI_DTYPE_PARAM,
-                            (dvoid*) precp,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_PRECISION,
-                            (OCIError *)dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *) paramd, (ub4) OCI_DTYPE_PARAM, (dvoid *) precp, (ub4 *) 0, (ub4) OCI_ATTR_PRECISION, (OCIError *) dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_prec", "OCIAttrGet(datatype)");
 
-  TRACE(3, fprintf(_get_trace_fp(dbp), "_get_ocol_db_prec: prec: %d \n",
-                   (int) *precp););
+  TRACE(3, fprintf(_get_trace_fp(dbp), "_get_ocol_db_prec: prec: %d \n", (int) *precp););
 
   /* free the descriptor */
   dbp->status = OCIDescriptorFree(paramd, OCI_DTYPE_PARAM);
@@ -3537,22 +3492,11 @@ DEFUN(_get_ocol_db_scale, (stp, pos, scalep),
                    pos););
 
   /* allocate a parameter descriptor */
-  dbp->status = OCIParamGet( stp->stmthp,
-                             OCI_HTYPE_STMT,
-                             dbp->errhp,
-                             (void **)((dvoid *)&paramd),
-                             (ub4) pos
-                             );
+  dbp->status = OCIParamGet(stp->stmthp, OCI_HTYPE_STMT, dbp->errhp, (void **) ((dvoid *) &paramd), (ub4) pos);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_scale", "OCIParamGet");
 
-  dbp->status = OCIAttrGet( (dvoid*) paramd,
-                            (ub4) OCI_DTYPE_PARAM,
-                            (dvoid*) scalep,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_SCALE,
-                            (OCIError *)dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *) paramd, (ub4) OCI_DTYPE_PARAM, (dvoid *) scalep, (ub4 *) 0, (ub4) OCI_ATTR_SCALE, (OCIError *) dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_scale", "OCIAttrGet(datatype)");
 
@@ -3599,22 +3543,11 @@ DEFUN(_get_ocol_db_is_null, (stp, colp, pos, is_nullp),
                    pos););
 
   /* allocate a parameter descriptor */
-  dbp->status = OCIParamGet( stp->stmthp,
-                             OCI_HTYPE_STMT,
-                             dbp->errhp,
-                             (void **)((dvoid *)&paramd),
-                             (ub4) pos
-                             );
+  dbp->status = OCIParamGet(stp->stmthp, OCI_HTYPE_STMT, dbp->errhp, (void **) ((dvoid *) &paramd), (ub4) pos);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_is_null", "OCIParamGet");
 
-  dbp->status = OCIAttrGet( (dvoid*) paramd,
-                            (ub4) OCI_DTYPE_PARAM,
-                            (dvoid*) is_nullp,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_IS_NULL,
-                            (OCIError *)dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *) paramd, (ub4) OCI_DTYPE_PARAM, (dvoid *) is_nullp, (ub4 *) 0, (ub4) OCI_ATTR_IS_NULL, (OCIError *) dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_ocol_db_is_null", "OCIAttrGet(datatype)");
 
@@ -3666,23 +3599,13 @@ DEFUN(_set_ocol_name, (stp, colp, pos),
                    pos););
 
   /* allocate a parameter descriptor */
-  dbp->status = OCIParamGet( stp->stmthp,
-                             OCI_HTYPE_STMT,
-                             dbp->errhp,
-                             (void **)((dvoid *)&paramd),
-                             (ub4) pos
-                             );
+  dbp->status = OCIParamGet(stp->stmthp, OCI_HTYPE_STMT, dbp->errhp, (void **) ((dvoid *) &paramd), (ub4) pos);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_set_ocol_name", "OCIParamGet");
 
   col_name_len = 0;
   col_name = NULL;
-  dbp->status = OCIAttrGet( (dvoid*) paramd, (ub4) OCI_DTYPE_PARAM,
-                            (dvoid**) &(col_name),
-                            (ub4 *) &(col_name_len),
-                            (ub4) OCI_ATTR_NAME,
-                            (OCIError *) dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *) paramd, (ub4) OCI_DTYPE_PARAM, (dvoid **) &(col_name), (ub4 *) &(col_name_len), (ub4) OCI_ATTR_NAME, (OCIError *) dbp->errhp);
 
   cur_col_name_len = col_name_len; /* save the real length */
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_set_ocol_name", "OCIAttrGet(column_name)");
@@ -3755,13 +3678,7 @@ DEFUN(_set_all_ocol_names, (stp), sqlo_stmt_struct_ptr_t stp )
   dbp = stp->dbp;
 
   /* Get number of columns in the select list */
-  dbp->status = OCIAttrGet( (dvoid*)stp->stmthp,
-                            (ub4) OCI_HTYPE_STMT,
-                            (dvoid *)  &num_cols,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_PARAM_COUNT,
-                            dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *)stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) &num_cols, (ub4 *) 0, (ub4) OCI_ATTR_PARAM_COUNT, dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_set_all_ocol_names", "OCIAttrGet(PARAM_COUNT)");
 
@@ -3832,7 +3749,7 @@ DEFUN(_alloc_ocol_buffer, (stp, pos, buffer_size),
         buf_size = MIN_OBUF_SIZE;
       }
       stp->outv[ col_idx ] = (char *)hb_xgrabDebug( __LINE__, (buf_size) * sizeof(char) );
-      memset(stp->outv[ col_idx ] , 0, (buf_size) * sizeof(char));
+      memset(stp->outv[col_idx], 0, (buf_size) * sizeof(char));
       stp->rlenv[ col_idx ] = buf_size;
     }
     stp->outv_size[ col_idx ] = buf_size;
@@ -3848,7 +3765,7 @@ DEFUN(_alloc_ocol_buffer, (stp, pos, buffer_size),
         buf_size = 2 * buf_size;
       }
       stp->outv[ col_idx ] = (char *)hb_xreallocDebug( __LINE__, stp->outv[ col_idx ], (buf_size) * sizeof(char) );
-      memset(stp->outv[ col_idx ] , 0, (buf_size) * sizeof(char));
+      memset(stp->outv[col_idx], 0, (buf_size) * sizeof(char));
       stp->rlenv[ col_idx ] = buf_size;
     } else {
       stp->outv_size[ col_idx ] = buf_size;
@@ -3910,7 +3827,7 @@ DEFUN(_define_ocol_by_pos, (stp, colp, pos),
      * unsupported data type
      */
 
-    _calc_obuf_size( &buffer_size, colp->database_dtype, colp->prec, colp->scale, colp->dbsize);
+    _calc_obuf_size(&buffer_size, colp->database_dtype, colp->prec, colp->scale, colp->dbsize);
 
     if( buffer_size ) {
        _alloc_ocol_buffer(stp, pos, buffer_size);
@@ -3936,11 +3853,7 @@ DEFUN(_define_ocol_by_pos, (stp, colp, pos),
       _alloc_ocol_buffer(stp, pos, INITIAL_LOB_ALLOC);
 
       if( !colp->loblp ) {
-         OCIDescriptorAlloc( (dvoid *) dbp->envhp,
-                          (dvoid **) &(colp->loblp),
-                          (ub4) OCI_DTYPE_LOB,
-                          (size_t) 0,
-                          (dvoid **) 0);
+         OCIDescriptorAlloc((dvoid *) dbp->envhp, (dvoid **) &(colp->loblp), (ub4) OCI_DTYPE_LOB, (size_t) 0, (dvoid **) 0);
          // TraceLog(LOGFILE, "col %i, OCIDescriptorAlloc %p\n", col_idx, colp->loblp );
       }
 
@@ -4034,14 +3947,7 @@ DEFUN(_define_output, (stp), sqlo_stmt_struct_ptr_t  stp)
    */
 
   if( 0 == stp->num_executions && !(stp->cursor_type == REFCURSOR) ) {
-    dbp->status = OCIStmtExecute( dbp->svchp,
-                                  stp->stmthp,
-                                  dbp->errhp,
-                                  (ub4) 0,
-                                  (ub4) 0,
-                                  (OCISnapshot *) 0,
-                                  (OCISnapshot *) 0,
-                                  (ub4) OCI_DEFAULT);
+    dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4) 0, (ub4) 0, (OCISnapshot *) 0, (OCISnapshot *) 0, (ub4) OCI_DEFAULT);
 
     if( OCI_STILL_EXECUTING == dbp->status ) {
       return dbp->status;
@@ -4056,13 +3962,7 @@ DEFUN(_define_output, (stp), sqlo_stmt_struct_ptr_t  stp)
     stp->opened = TRUE;
 
   /* Get info about the select list */
-  dbp->status = OCIAttrGet( (dvoid*)stp->stmthp,
-                            (ub4) OCI_HTYPE_STMT,
-                            (dvoid *)  &num_cols,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_PARAM_COUNT,
-                            dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *) stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) &num_cols, (ub4 *) 0, (ub4) OCI_ATTR_PARAM_COUNT, dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_output", "OCIAttrGet(PARAM_COUNT)");
 
@@ -4105,7 +4005,7 @@ DEFUN(_close_all_executing_cursors, (dbp), const_sqlo_db_struct_ptr_t dbp)
     sqlo_stmt_struct_ptr_t stp = &(dbp->stmtv[ stmt_idx ]);
 
     if( stp->used && stp->still_executing ) {
-      sqlo_close( ENCODE_STH(stp->sth, dbp->dbh) );
+      sqlo_close(ENCODE_STH(stp->sth, dbp->dbh));
     } /* endif is valid and executing */
   } /* end for stmt_idx */
 }
@@ -4130,14 +4030,14 @@ DEFUN(_close_all_db_cursors, (dbp), const_sqlo_db_struct_ptr_t dbp)
     unsigned int col_idx;
 
     if( stp->used ) {
-      sqlo_close( ENCODE_STH(stp->sth, dbp->dbh) );
+      sqlo_close(ENCODE_STH(stp->sth, dbp->dbh));
 
       /* free all allocated memory for a stmt. We do not do this
        * when a cursor is closed to recylce the memory, but in this
        * case the whole session is ended and we free it
        */
       _dealloc_definep( stp );
-      XFREE( stp->stmt, __LINE__ );
+      XFREE(stp->stmt, __LINE__);
       stp->stmt_size = 0;
     }
 
@@ -4147,7 +4047,7 @@ DEFUN(_close_all_db_cursors, (dbp), const_sqlo_db_struct_ptr_t dbp)
 
     for( col_idx = 0; col_idx < stp->defnpv_size; ++col_idx ) {
       if( stp->ocolsv && stp->ocolsv[ col_idx ].col_name )
-         XFREE( stp->ocolsv[ col_idx ].col_name, __LINE__ );
+         XFREE(stp->ocolsv[col_idx].col_name, __LINE__);
 
       if( stp->ocolsv && stp->ocolsv[ col_idx ].loblp ) {
 
@@ -4157,38 +4057,38 @@ DEFUN(_close_all_db_cursors, (dbp), const_sqlo_db_struct_ptr_t dbp)
         stp->ocolsv[ col_idx ].loblp = NULL;
       }
       if( stp->outv && stp->outv[ col_idx ] ) {
-         XFREE( stp->outv[ col_idx ], __LINE__ );
+         XFREE(stp->outv[col_idx], __LINE__);
          stp->outv[ col_idx ] = NULL;
          stp->outv_size[ col_idx ] = 0;
       }
     }
 
     if( stp->defnpv ) {
-      XFREE( stp->defnpv, __LINE__ );
+      XFREE(stp->defnpv, __LINE__);
     }
     if( stp->ocolsv ) {
-      XFREE( stp->ocolsv, __LINE__ );
+      XFREE(stp->ocolsv, __LINE__);
     }
     if( stp->outv ) {
-      XFREE( stp->outv, __LINE__ );
+      XFREE(stp->outv, __LINE__);
     }
     if( stp->outv_size ) {
-      XFREE( stp->outv_size, __LINE__ );
+      XFREE(stp->outv_size, __LINE__);
     }
     if( stp->oindv ) {
-      XFREE( stp->oindv, __LINE__ );
+      XFREE(stp->oindv, __LINE__);
     }
     if( stp->rlenv ) {
-      XFREE( stp->rlenv, __LINE__ );
+      XFREE(stp->rlenv, __LINE__);
     }
     if( stp->ocol_namev ) {
-      XFREE( stp->ocol_namev, __LINE__ );
+      XFREE(stp->ocol_namev, __LINE__);
     }
     if( stp->ocol_namev_size ) {
-      XFREE( stp->ocol_namev_size, __LINE__ );
+      XFREE(stp->ocol_namev_size, __LINE__);
     }
     if( stp->stmt_size > 0 ) {
-      XFREE( stp->stmt, __LINE__ );
+      XFREE(stp->stmt, __LINE__);
     }
 
     stp->defnpv = NULL;
@@ -4227,12 +4127,7 @@ DEFUN(_get_blocking_mode, (dbp, blocking),
   assert( blockingp );
 
   /* Returns TRUE if the server is in non-blocking mode */
-  dbp->status = OCIAttrGet( (dvoid*)dbp->srvhp,
-                            (ub4) OCI_HTYPE_SERVER,
-                            (dvoid *)  &non_blocking,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_NONBLOCKING_MODE,
-                            dbp->errhp);
+  dbp->status = OCIAttrGet((dvoid *) dbp->srvhp, (ub4) OCI_HTYPE_SERVER, (dvoid *) &non_blocking, (ub4 *) 0, (ub4) OCI_ATTR_NONBLOCKING_MODE, dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_blocking_mode", "OCIAttrGet error");
 
@@ -4321,12 +4216,7 @@ DEFUN(_get_stmt_type, (stp, stmt_typep),
   if( stmt_typep ) {
 
     /* Identify the statement type */
-    dbp->status = OCIAttrGet( (dvoid*) stp->stmthp,
-                              (ub4) OCI_HTYPE_STMT,
-                              (dvoid*) stmt_typep,
-                              (ub4 *) 0,
-                              (ub4) OCI_ATTR_STMT_TYPE,
-                              (OCIError *) dbp->errhp );
+    dbp->status = OCIAttrGet((dvoid *) stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) stmt_typep, (ub4 *) 0, (ub4) OCI_ATTR_STMT_TYPE, (OCIError *) dbp->errhp);
 
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_get_stmt_type", "OCIAttrGet");
 
@@ -4366,13 +4256,7 @@ DEFUN(_prepare, (stp, stmt, stmt_type),
   dbp = stp->dbp;
 
 
-  dbp->status = OCIStmtPrepare( stp->stmthp,
-                                dbp->errhp,
-                                (text *)stmt,
-                                strlen(stmt),
-                                OCI_NTV_SYNTAX,
-                                OCI_DEFAULT
-                                );
+  dbp->status = OCIStmtPrepare(stp->stmthp, dbp->errhp, (text *) stmt, strlen(stmt), OCI_NTV_SYNTAX, OCI_DEFAULT);
 
   TRACE(2, fprintf(_get_trace_fp(dbp),
                    "_prepare: OCIStmtPrepare: status=%d",
@@ -4434,7 +4318,7 @@ DEFUN(_sqlo_reopen, (stp, argc, argv),
       dbp->status = _bind_argv(stp, (unsigned int)argc, argv);
 
       if( SQLO_SUCCESS != dbp->status ) {
-        sqlo_close( ENCODE_STH(stp->sth, dbp->dbh) );
+        sqlo_close(ENCODE_STH(stp->sth, dbp->dbh));
         return dbp->status;
       }
 
@@ -4472,7 +4356,7 @@ DEFUN(_sqlo_reopen, (stp, argc, argv),
           _save_oci_status(dbp, "sqlo_reopen", "_define_output",
                            __LINE__);
 
-          sqlo_close( ENCODE_STH(stp->sth, dbp->dbh));
+          sqlo_close(ENCODE_STH(stp->sth, dbp->dbh));
           dbp->status = status;
           return dbp->status;
         }
@@ -4480,15 +4364,7 @@ DEFUN(_sqlo_reopen, (stp, argc, argv),
 
     } else {
       /* execute the cursor to open the statement again */
-      dbp->status = OCIStmtExecute( dbp->svchp,
-                                    stp->stmthp,
-                                    dbp->errhp,
-                                    (ub4) 0,
-                                    (ub4) 0,
-                                    (OCISnapshot *) 0,
-                                    (OCISnapshot *) 0,
-                                    dbp->exec_flags
-                                    );
+      dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4) 0, (ub4) 0, (OCISnapshot *) 0, (OCISnapshot *) 0, dbp->exec_flags);
 
       if( OCI_STILL_EXECUTING != dbp->status ) {
         CHECK_OCI_STATUS(dbp, dbp->status,
@@ -4497,7 +4373,7 @@ DEFUN(_sqlo_reopen, (stp, argc, argv),
         if( OCI_SUCCESS != dbp->status ) {
           int status = dbp->status;
 
-          sqlo_close( ENCODE_STH(stp->sth, dbp->dbh) );
+          sqlo_close(ENCODE_STH(stp->sth, dbp->dbh));
           dbp->status = status;
         }
 
@@ -4516,7 +4392,7 @@ DEFUN(_sqlo_reopen, (stp, argc, argv),
         _save_oci_status(dbp, "sqlo_reopen", "OCIStmtExecute(query)",
                          __LINE__);
 
-        sqlo_close( ENCODE_STH(stp->sth, dbp->dbh) );
+        sqlo_close(ENCODE_STH(stp->sth, dbp->dbh));
         dbp->status = status;
       }
     } else {
@@ -5065,21 +4941,11 @@ DEFUN(sqlo_exec, (dbh, stmt,rr),
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_exec: prepare: %s\n", stmt););
 
-  dbp->status = OCIHandleAlloc( (dvoid *) dbp->envhp,
-                                  (dvoid **) &dbp->stmthp,
-                                  OCI_HTYPE_STMT,
-                                  (size_t) 0,
-                                  (dvoid **) 0
-                                  );
+  dbp->status = OCIHandleAlloc((dvoid *) dbp->envhp, (dvoid **) &dbp->stmthp, OCI_HTYPE_STMT, (size_t) 0, (dvoid **) 0);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_exec", "OCIHandleAlloc(stmt)");
 
-  dbp->status = OCIStmtPrepare( dbp->stmthp,
-                                  dbp->errhp,
-                                  (text *)stmt,
-                                  strlen(stmt),
-                                  OCI_NTV_SYNTAX,
-                                  OCI_DEFAULT);
+  dbp->status = OCIStmtPrepare(dbp->stmthp, dbp->errhp, (text *) stmt, strlen(stmt), OCI_NTV_SYNTAX, OCI_DEFAULT);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_exec(prepare)", (char *) stmt);
 //  } else {
@@ -5087,15 +4953,7 @@ DEFUN(sqlo_exec, (dbh, stmt,rr),
 //    ;
 //  }
 
-  dbp->status = OCIStmtExecute( dbp->svchp,
-                                dbp->stmthp,
-                                dbp->errhp,
-                                (ub4) 1,
-                                (ub4) 0,
-                                ( OCISnapshot *) 0,
-                                (OCISnapshot *) 0,
-                                dbp->exec_flags
-                                );
+  dbp->status = OCIStmtExecute(dbp->svchp, dbp->stmthp, dbp->errhp, (ub4) 1, (ub4) 0, ( OCISnapshot *) 0, (OCISnapshot *) 0, dbp->exec_flags);
 
   TRACE(2, fprintf(_get_trace_fp(dbp),
                    "sqlo_exec: OCIStmtExecute returns %d\n", dbp->status););
@@ -5103,13 +4961,7 @@ DEFUN(sqlo_exec, (dbh, stmt,rr),
   if( dbp->status == OCI_SUCCESS ) {
 
     /* finished the call. Get row count */
-    dbp->status = OCIAttrGet( (dvoid*)dbp->stmthp,
-                              (ub4) OCI_HTYPE_STMT,
-                              (dvoid *)  &prows,
-                              (ub4 *) 0,
-                              (ub4) OCI_ATTR_ROW_COUNT,
-                              dbp->errhp
-                              );
+    dbp->status = OCIAttrGet((dvoid *) dbp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) &prows, (ub4 *) 0, (ub4) OCI_ATTR_ROW_COUNT, dbp->errhp);
 
     if( dbp->status == OCI_SUCCESS ) {
       /* SUCCESS */
@@ -5190,7 +5042,7 @@ DEFUN(sqlo_open,(dbh, stmt, argc, argv),
   CHECK_OCI_STATUS(dbp, status, "sqlo_open", "_prepare");
 
   if( OCI_SUCCESS != status ) {
-    CHECK_OCI_STATUS(dbp, sqlo_close( ENCODE_STH(stp->sth, dbh) ), "sqlo_open", "sqlo_close");
+    CHECK_OCI_STATUS(dbp, sqlo_close(ENCODE_STH(stp->sth, dbh)), "sqlo_open", "sqlo_close");
     return status;
   }
 
@@ -5198,8 +5050,7 @@ DEFUN(sqlo_open,(dbh, stmt, argc, argv),
   if( _is_plsql(stp) ) {
     status = SQLO_INVALID_STMT_TYPE;
 
-    CHECK_OCI_STATUS(dbp, sqlo_close( ENCODE_STH(stp->sth, dbh)),
-                     "sqlo_open", "sqlo_close, ERROR: INVALID STMT TYPE");
+    CHECK_OCI_STATUS(dbp, sqlo_close(ENCODE_STH(stp->sth, dbh)), "sqlo_open", "sqlo_close, ERROR: INVALID STMT TYPE");
     return status;
   }
 
@@ -5210,8 +5061,7 @@ DEFUN(sqlo_open,(dbh, stmt, argc, argv),
     CHECK_OCI_STATUS(dbp, status, "sqlo_open", "_set_prefetch_rows");
 
     if( OCI_SUCCESS != status ) {
-      CHECK_OCI_STATUS(dbp, sqlo_close( ENCODE_STH(stp->sth, dbh) ), "sqlo_open", "sqlo_close");
-
+      CHECK_OCI_STATUS(dbp, sqlo_close(ENCODE_STH(stp->sth, dbh)), "sqlo_open", "sqlo_close");
       return status;
     }
   }
@@ -5309,7 +5159,7 @@ DEFUN(sqlo_open2,(sthp, dbh, stmt, argc, argv),
   CHECK_OCI_STATUS(dbp, status, "sqlo_open2", "_prepare");
 
   if( OCI_SUCCESS != status ) {
-    CHECK_OCI_STATUS(dbp, sqlo_close( ENCODE_STH(stp->sth, dbh) ), "sqlo_open2", "sqlo_close");
+    CHECK_OCI_STATUS(dbp, sqlo_close(ENCODE_STH(stp->sth, dbh)), "sqlo_open2", "sqlo_close");
     return status;
   }
 
@@ -5317,7 +5167,7 @@ DEFUN(sqlo_open2,(sthp, dbh, stmt, argc, argv),
   if( _is_plsql(stp) ) {
     status = SQLO_INVALID_STMT_TYPE;
 
-    CHECK_OCI_STATUS(dbp, sqlo_close( ENCODE_STH(stp->sth, dbh)), "sqlo_open2", "sqlo_close, ERROR: INVALID STMT TYPE");
+    CHECK_OCI_STATUS(dbp, sqlo_close(ENCODE_STH(stp->sth, dbh)), "sqlo_open2", "sqlo_close, ERROR: INVALID STMT TYPE");
 
     return status;
   }
@@ -5329,7 +5179,7 @@ DEFUN(sqlo_open2,(sthp, dbh, stmt, argc, argv),
     CHECK_OCI_STATUS(dbp, status, "sqlo_open2", "_set_prefetch_rows");
 
     if( OCI_SUCCESS != status ) {
-      CHECK_OCI_STATUS(dbp, sqlo_close( ENCODE_STH(stp->sth, dbh) ), "sqlo_open2", "sqlo_close");
+      CHECK_OCI_STATUS(dbp, sqlo_close(ENCODE_STH(stp->sth, dbh)), "sqlo_open2", "sqlo_close");
       return status;
     }
   }
@@ -5397,15 +5247,7 @@ DEFUN(sqlo_fetch, (sth, nrows),
                        _get_stmt_string(stp)););
     }
 
-    dbp->status = OCIStmtExecute( dbp->svchp,
-                                  stp->stmthp,
-                                  dbp->errhp,
-                                  (ub4) 1,
-                                  (ub4) 0,
-                                  (OCISnapshot *) 0,
-                                  (OCISnapshot *) 0,
-                                  dbp->exec_flags
-                                  );
+    dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4) 1, (ub4) 0, (OCISnapshot *) 0, (OCISnapshot *) 0, dbp->exec_flags);
 
     if( OCI_SUCCESS != dbp->status ) {
       if( OCI_STILL_EXECUTING == dbp->status ) {
@@ -5555,13 +5397,7 @@ DEFUN(sqlo_prows, (sth), sqlo_stmt_handle_t sth)
   }
 
 
-  dbp->status = OCIAttrGet( (dvoid*)stp->stmthp,
-                            (ub4) OCI_HTYPE_STMT,
-                            (dvoid *)  &prows,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_ROW_COUNT,
-                            dbp->errhp
-                            );
+  dbp->status = OCIAttrGet((dvoid *) stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) &prows, (ub4 *) 0, (ub4) OCI_ATTR_ROW_COUNT, dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_prows(GetAttr)", "ROW_COUNT");
 
@@ -5604,27 +5440,14 @@ DEFUN(sqlo_ncols, (sth, in),
 
     if( 0 == stp->num_executions && ! (REFCURSOR == stp->cursor_type) ) {
       /* execute to describe the output */
-      while( OCI_STILL_EXECUTING ==
-             (dbp->status = OCIStmtExecute( dbp->svchp,
-                                            stp->stmthp,
-                                            dbp->errhp,
-                                            (ub4) 0,
-                                            (ub4) 0,
-                                            (OCISnapshot *) 0,
-                                            (OCISnapshot *) 0,
-                                            (ub4) OCI_DEFAULT)) ) {
+      while( OCI_STILL_EXECUTING == (dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4) 0, (ub4) 0, (OCISnapshot *) 0, (OCISnapshot *) 0, (ub4) OCI_DEFAULT)) ) {
         SQLO_USLEEP;
       }
       CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_ncols", "OCIStmtExecute(DESCRIBE)");
       ++(stp->num_executions);
     }
 
-    dbp->status = OCIAttrGet( (dvoid*)stp->stmthp,
-                              (ub4) OCI_HTYPE_STMT,
-                              (dvoid *)  &ncols,
-                              (ub4 *) 0,
-                              (ub4) OCI_ATTR_PARAM_COUNT,
-                              dbp->errhp);
+    dbp->status = OCIAttrGet((dvoid *) stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) &ncols, (ub4 *) 0, (ub4) OCI_ATTR_PARAM_COUNT, dbp->errhp);
 
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_ncols", "OCIAttrGet(NumberOfColumns)");
   }
@@ -5681,7 +5504,7 @@ DEFUN(sqlo_close, (sth), sqlo_stmt_handle_t sth)
 
     /* deallocate memory allocated for LONG columns */
     if( stp->outv_size[ defnp_idx ] >= _max_long_size ) {
-      XFREE( stp->outv[ defnp_idx ], __LINE__ );
+      XFREE(stp->outv[defnp_idx], __LINE__);
       stp->outv[ defnp_idx ] = NULL;
       stp->outv_size[ defnp_idx ] = 0;
     }
@@ -5706,7 +5529,7 @@ DEFUN(sqlo_close, (sth), sqlo_stmt_handle_t sth)
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_close", "OCIHandleFree(stmthp)");
   }
 
-  _stmt_release( stp );       /* make sth available to others. */
+  _stmt_release(stp);       /* make sth available to others. */
 
   return dbp->status;
 }
@@ -5896,10 +5719,7 @@ DEFUN(sqlo_server_attach, (dbhp, tnsname),
   EXEC_WHEN_THREADING(_env_lock(););
 
 #ifdef HAVE_OCIENVCREATE
-  dbp->status = OCIEnvCreate( &dbp->envhp,
-                              _oci_init_mode,
-                              NULL, NULL, NULL, NULL, 0, NULL
-                              );
+  dbp->status = OCIEnvCreate(&dbp->envhp, _oci_init_mode, NULL, NULL, NULL, NULL, 0, NULL);
   CHECK_OCI_STATUS(dbp, dbp->status, "sqlo_server_attach", "OCIEnvCreate" );
 #else
   dbp->status = OCIEnvInit( (OCIEnv **)((dvoid *)&dbp->envhp),
@@ -5913,50 +5733,36 @@ DEFUN(sqlo_server_attach, (dbhp, tnsname),
 
   /* release allocated resources */
   if( OCI_SUCCESS != dbp->status ) {
-    _db_release( dbp );
+    _db_release(dbp);
     return dbp->status;
   }
 
   /* Alloc the service context handle */
-  dbp->status = OCIHandleAlloc( (dvoid *)dbp->envhp,
-                                (dvoid **)&dbp->svchp,
-                                OCI_HTYPE_SVCCTX,
-                                0,
-                                (dvoid **) 0
-                                );
+  dbp->status = OCIHandleAlloc((dvoid *) dbp->envhp, (dvoid **)&dbp->svchp, OCI_HTYPE_SVCCTX, 0, (dvoid **) 0);
 
   CHECK_OCI_STATUS(dbp, dbp->status,
                    "sqlo_server_attach", "OCIEnvHandleAlloc(svchp)" );
 
   /* release allocated resources */
   if( OCI_SUCCESS != dbp->status ) {
-    _db_release( dbp );
+    _db_release(dbp);
     return dbp->status;
   }
 
   /* Alloc the error handle */
-  dbp->status = OCIHandleAlloc( (dvoid *)dbp->envhp,
-                                (dvoid **)&dbp->errhp,
-                                OCI_HTYPE_ERROR,
-                                0, (dvoid **) 0
-                                );
+  dbp->status = OCIHandleAlloc((dvoid *) dbp->envhp, (dvoid **) &dbp->errhp, OCI_HTYPE_ERROR, 0, (dvoid **) 0);
 
   CHECK_OCI_STATUS(dbp, dbp->status, "sqlo_server_attach",
                    "OCIHandleAlloc(errhp)" );
 
   /* release allocated resources */
   if( OCI_SUCCESS != dbp->status ) {
-    _db_release( dbp );
+    _db_release(dbp);
     return dbp->status;
   }
 
   /* Alloc the server handle */
-  dbp->status = OCIHandleAlloc( (dvoid *)dbp->envhp,
-                                (dvoid **)&dbp->srvhp,
-                                OCI_HTYPE_SERVER,
-                                0,
-                                (dvoid **) 0
-                                );
+  dbp->status = OCIHandleAlloc((dvoid *) dbp->envhp, (dvoid **) &dbp->srvhp, OCI_HTYPE_SERVER, 0, (dvoid **) 0);
 
   CHECK_OCI_STATUS(dbp, dbp->status,
                    "sqlo_server_attach", "OCIHandleAlloc(srvhp)" );
@@ -5979,7 +5785,7 @@ DEFUN(sqlo_server_attach, (dbhp, tnsname),
 
   /* release allocated resources */
   if( OCI_SUCCESS != dbp->status ) {
-    _db_release( dbp );
+    _db_release(dbp);
     return dbp->status;
   }
 
@@ -5997,17 +5803,12 @@ DEFUN(sqlo_server_attach, (dbhp, tnsname),
 
   /* release allocated resources */
   if( OCI_SUCCESS != dbp->status ) {
-    _db_release( dbp );
+    _db_release(dbp);
     return dbp->status;
   }
 
   /* Allocate a authentication handle */
-  dbp->status = OCIHandleAlloc( (dvoid *)dbp->envhp,
-                                (dvoid **)&dbp->authp,
-                                OCI_HTYPE_SESSION,
-                                0,
-                                (dvoid **) 0
-                                );
+  dbp->status = OCIHandleAlloc((dvoid *) dbp->envhp, (dvoid **)&dbp->authp, OCI_HTYPE_SESSION, 0, (dvoid **) 0);
 
   CHECK_OCI_STATUS( dbp, dbp->status,
                    "sqlo_server_attach", "OCIHandleAlloc(authp)" );
@@ -6017,7 +5818,7 @@ DEFUN(sqlo_server_attach, (dbhp, tnsname),
   } else {
     /* release allocated resources */
     TRACE(2,fprintf( _get_trace_fp(dbp), "sqlo_server_attach[%d]: failed\n", *dbhp); );
-    _db_release( dbp );
+    _db_release(dbp);
     return dbp->status;
   }
 
@@ -6100,36 +5901,23 @@ DEFUN(sqlo_session_begin, (dbh, username, password),
    * error code is 3123 (OCI_STILL_EXECUTING).
    * We catch this case here and wait until we are connected
    */
-  while( OCI_STILL_EXECUTING ==
-          (dbp->status = OCISessionBegin( (OCISvcCtx *)((dvoid *) dbp->svchp),
-                                          dbp->errhp,
-                                          dbp->authp,
-                                          OCI_CRED_RDBMS,
-                                          OCI_DEFAULT))
-          || (dbp->status == OCI_ERROR &&
-              _get_errcode(dbp) == ((-1) * OCI_STILL_EXECUTING) ) ) {
-    TRACE(2, fprintf(_get_trace_fp(dbp),
-                     "sqlo_session_begin: "
-                     "Still executing OCISessionBegin\n"););
+  while( OCI_STILL_EXECUTING == 
+     (dbp->status = OCISessionBegin((OCISvcCtx *) ((dvoid *) dbp->svchp), dbp->errhp, dbp->authp, OCI_CRED_RDBMS, OCI_DEFAULT))
+     || (dbp->status == OCI_ERROR && _get_errcode(dbp) == ((-1) * OCI_STILL_EXECUTING)) ) {
+    TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_session_begin: " "Still executing OCISessionBegin\n"););
     SQLO_USLEEP;
   }
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_session_begin", "OCISessionBegin");
 
-  /* Set the authentication handle in the service context */
-  while( OCI_STILL_EXECUTING ==
-         (dbp->status = OCIAttrSet( (dvoid *)dbp->svchp,
-                                    OCI_HTYPE_SVCCTX,
-                                    (dvoid *)dbp->authp,
-                                    (ub4) 0,
-                                    OCI_ATTR_SESSION,
-                                    dbp->errhp)) ) {
-    TRACE(2, fprintf(_get_trace_fp(dbp),"Still executing OCIAttrSet (authp -> svchp)\n"););
-    SQLO_USLEEP;
-  }
+   /* Set the authentication handle in the service context */
+   while( OCI_STILL_EXECUTING == (dbp->status = OCIAttrSet((dvoid *) dbp->svchp, OCI_HTYPE_SVCCTX, (dvoid *) dbp->authp, (ub4) 0, OCI_ATTR_SESSION, dbp->errhp)) ) {
+      TRACE(2, fprintf(_get_trace_fp(dbp),"Still executing OCIAttrSet (authp -> svchp)\n"););
+      SQLO_USLEEP;
+   }
 
   /* set dbp->errcode */
-  sqlo_geterrcode( dbh );
+  sqlo_geterrcode(dbh);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_session_begin", "OCIAttrSet(auth->service)");
 
@@ -6168,7 +5956,7 @@ DEFUN(sqlo_server_detach, (dbh), sqlo_db_handle_t dbh)
 
   /* forgot to call sqlo_session_end ? */
   if( dbp->session_created ) {
-    if( SQLO_SUCCESS != sqlo_session_end( dbh ) ) {
+    if( SQLO_SUCCESS != sqlo_session_end(dbh) ) {
       CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_server_detach", "sqlo_session_end");
     }
   }
@@ -6178,12 +5966,12 @@ DEFUN(sqlo_server_detach, (dbh), sqlo_db_handle_t dbh)
   if( OCI_SUCCESS != dbp->status ) {
     CHECK_OCI_STATUS(dbp, dbp->status,
                      "sqlo_server_detach", "OCIServerDetach");
-    _db_release( dbp );
+    _db_release(dbp);
     return dbp->status;
   }
 
   /* release the allocated resources */
-  _db_release( dbp );
+  _db_release(dbp);
 
   TRACE(2, fprintf(_get_trace_fp(dbp),
                    "sqlo_server_detach[%d]: detached\n", dbh); );
@@ -6210,7 +5998,7 @@ DEFUN(sqlo_server_free, (dbh), sqlo_db_handle_t dbh)
   if( dbp->attached )
     dbp->status = OCIServerDetach( dbp->srvhp, dbp->errhp, OCI_DEFAULT );
 
-  _db_release( dbp );
+  _db_release(dbp);
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_server_free[%d] finished with success\n", dbh); );
 
@@ -6240,11 +6028,7 @@ DEFUN(sqlo_session_end, (dbh), sqlo_db_handle_t dbh)
   /* close all open cursors  on this database connection */
   _close_all_db_cursors( dbp );
 
-  while( OCI_STILL_EXECUTING ==
-         (dbp->status = OCISessionEnd( dbp->svchp,
-                                       dbp->errhp,
-                                       dbp->authp,
-                                       0)) ) {
+  while( OCI_STILL_EXECUTING == (dbp->status = OCISessionEnd(dbp->svchp, dbp->errhp, dbp->authp, 0)) ) {
     TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_session_end: Still executing OCISessionEnd\n"););
     SQLO_USLEEP;
   }
@@ -6355,10 +6139,10 @@ DEFUN(sqlo_finish, (dbh), sqlo_db_handle_t dbh)
     for( dbv_idx = 0; dbv_idx < _dbv_size; ++dbv_idx ) {
       if( _dbv[ dbv_idx ])  //&& ( _dbv[ dbv_idx ]->used) ) {
         if( _dbv[ dbv_idx ]->stmtv ) {
-          XFREE( _dbv[ dbv_idx ]->stmtv, __LINE__ );
+          XFREE(_dbv[dbv_idx]->stmtv, __LINE__);
         }
-        _db_release( _dbv[ dbv_idx ] );
-        XFREE( _dbv[ dbv_idx ], __LINE__ );
+        _db_release(_dbv[dbv_idx]);
+        XFREE(_dbv[dbv_idx], __LINE__);
         _dbv[ dbv_idx ] = NULL;
       }
     }
@@ -6384,10 +6168,10 @@ DEFUN(sqlo_freeall, (), )
     for( dbv_idx = 0; dbv_idx < _dbv_size; ++dbv_idx ) {
       if( _dbv[ dbv_idx ]) { //&& ( _dbv[ dbv_idx ]->used) )
         if( _dbv[ dbv_idx ]->stmtv ) {
-          XFREE( _dbv[ dbv_idx ]->stmtv, __LINE__ );
+          XFREE(_dbv[dbv_idx]->stmtv, __LINE__);
         }
-        _db_release( _dbv[ dbv_idx ] );
-        XFREE( _dbv[ dbv_idx ], __LINE__ );
+        _db_release(_dbv[dbv_idx]);
+        XFREE(_dbv[dbv_idx], __LINE__);
         _dbv[ dbv_idx ] = NULL;
       }
     }
@@ -6401,7 +6185,7 @@ DEFUN(sqlo_freeall, (), )
  *  sqlo_getdatabase
  *-------------------------------------------------------------------------*/
 const char *
-DEFUN(sqlo_getdatabase, (dbh) , sqlo_db_handle_t dbh)
+DEFUN(sqlo_getdatabase, (dbh), sqlo_db_handle_t dbh)
 {
   sqlo_db_struct_ptr_t  dbp;
 
@@ -6562,20 +6346,20 @@ DEFUN(sqlo_bind_by_name,
 
       bindp_addr = &stp->bindpv[ stp->num_bindpv ];
 
-      dbp->status = OCIBindByName( stp->stmthp,
-                                   bindp_addr,
-                                   dbp->errhp,
-                                   (text *) param_name,
-                                   (sb4) strlen(param_name),
-                                   (dvoid *) param_addr,
-                                   (sb4) param_size,
-                                   (ub2) param_type,
-                                   (dvoid *) ind_addr,
-                                   (ub2 *) 0,
-                                   (ub2) 0,
-                                   (ub4) 0,
-                                   (ub4 *) 0,
-                                   OCI_DEFAULT);
+      dbp->status = OCIBindByName(stp->stmthp,
+                                  bindp_addr,
+                                  dbp->errhp,
+                                  (text *) param_name,
+                                  (sb4) strlen(param_name),
+                                  (dvoid *) param_addr,
+                                  (sb4) param_size,
+                                  (ub2) param_type,
+                                  (dvoid *) ind_addr,
+                                  (ub2 *) 0,
+                                  (ub2) 0,
+                                  (ub4) 0,
+                                  (ub4 *) 0,
+                                  OCI_DEFAULT);
       CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_bind_by_name. Cannot bind", param_name);
 
       /* In case of arrays, we setup the skip parameters. */
@@ -6687,12 +6471,12 @@ DEFUN(sqlo_define_ntable, (sth, pos, sth2p),
                    "sqlo_define_ntable [%2d]: pos: %u, num_defnpv=%d\n",
                    sth, pos, stp->num_defnpv););
 
-  if( _is_prepared( stp ) ) {
+  if( _is_prepared(stp) ) {
 
     _alloc_definep(stp, pos);
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_define_ntable. alloc error", "");
 
-    _stmt_new( dbp, "", &st2p);
+    _stmt_new(dbp, "", &st2p);
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_define_ntable", "_stmt_new");
 
     *sth2p = (int) ENCODE_STH(st2p->sth, dbp->dbh);
@@ -6884,13 +6668,7 @@ DEFUN(sqlo_execute, (sth, iterations),
    */
   if( DEFAULT != stp->cursor_type && 0 == stp->num_executions ) {
     /* REF CURSOR or NESTED TABLE */
-    dbp->status = OCIAttrGet( (dvoid*) stp->stmthp,
-                              (ub4) OCI_HTYPE_STMT,
-                              (dvoid*) &(stp->stype),
-                              (ub4 *) 0,
-                              (ub4) OCI_ATTR_STMT_TYPE,
-                              (OCIError *) dbp->errhp
-                              );
+    dbp->status = OCIAttrGet((dvoid *) stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid*) &(stp->stype), (ub4 *) 0, (ub4) OCI_ATTR_STMT_TYPE, (OCIError *) dbp->errhp);
 
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_execute", "GetStmtType");
     dbp->status = _define_output(stp);
@@ -6898,15 +6676,7 @@ DEFUN(sqlo_execute, (sth, iterations),
 
   } else if( _is_prepared(stp) ) {
 
-    dbp->status = OCIStmtExecute( dbp->svchp,
-                                  stp->stmthp,
-                                  dbp->errhp,
-                                  (ub4) iterations,
-                                  (ub4) 0,
-                                  (OCISnapshot *) 0,
-                                  (OCISnapshot *) 0,
-                                  dbp->exec_flags
-                                  );
+    dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4) iterations, (ub4) 0, (OCISnapshot *) 0, (OCISnapshot *) 0, dbp->exec_flags);
 
     if( OCI_SUCCESS != dbp->status && OCI_NO_DATA != dbp->status ) {
       if( OCI_STILL_EXECUTING == dbp->status ) {
@@ -6957,33 +6727,18 @@ DEFUN(sqlo_executeselect, (sth, iterations),
   /* For REF CURSORS and NESTED TABLES, we determine the statement type and
    * define the output here
    */
-  if( DEFAULT != stp->cursor_type && 0 == stp->num_executions ) {
+   if( DEFAULT != stp->cursor_type && 0 == stp->num_executions ) {
     /* REF CURSOR or NESTED TABLE */
-    dbp->status = OCIAttrGet( (dvoid*) stp->stmthp,
-                              (ub4) OCI_HTYPE_STMT,
-                              (dvoid*) &(stp->stype),
-                              (ub4 *) 0,
-                              (ub4) OCI_ATTR_STMT_TYPE,
-                              (OCIError *) dbp->errhp
-                              );
+    dbp->status = OCIAttrGet((dvoid *) stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) &(stp->stype), (ub4 *) 0, (ub4) OCI_ATTR_STMT_TYPE, (OCIError *) dbp->errhp);
 
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_execute", "GetStmtType");
     dbp->status = _define_output(stp);
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_execute", "_define_output");
 
-  } else if( _is_prepared(stp) ) {
-    
-//     dbp->status = OCIStmtExecute( dbp->svchp,
-//                                   stp->stmthp,
-//                                   dbp->errhp,
-//                                   (ub4) iterations,
-//                                   (ub4) 0,
-//                                   (OCISnapshot *) 0,
-//                                   (OCISnapshot *) 0,
-//                                   dbp->exec_flags
-//                                   );
-    dbp->status = _define_output(stp); 
-//     CHECK_OCI_STATUS_RETURN(dbp, Ret, "sqlo_execute", "_define_output");
+   } else if( _is_prepared(stp) ) {
+      //dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4) iterations, (ub4) 0, (OCISnapshot *) 0, (OCISnapshot *) 0, dbp->exec_flags);
+      dbp->status = _define_output(stp);
+      //CHECK_OCI_STATUS_RETURN(dbp, Ret, "sqlo_execute", "_define_output");
     if( OCI_SUCCESS != dbp->status && OCI_NO_DATA != dbp->status ) {
       if( OCI_STILL_EXECUTING == dbp->status ) {
         stp->still_executing = TRUE;
@@ -7426,11 +7181,7 @@ DEFUN(sqlo_alloc_lob_desc, (dbh, loblpp),
 
   CHECK_DBHANDLE(dbp, dbh, "sqlo_alloc_lob_desc", SQLO_INVALID_DB_HANDLE);
 
-  dbp->status = OCIDescriptorAlloc( (dvoid *) dbp->envhp,
-                                    (dvoid **) loblpp,
-                                    (ub4) OCI_DTYPE_LOB,
-                                    (size_t) 0,
-                                    (dvoid **) 0);
+  dbp->status = OCIDescriptorAlloc((dvoid *) dbp->envhp, (dvoid **) loblpp, (ub4) OCI_DTYPE_LOB, (size_t) 0, (dvoid **) 0);
 
   // TraceLog(LOGFILE, "col ?, OCIDescriptorAlloc 2 %p\n", loblpp );
 
@@ -7506,18 +7257,18 @@ DEFUN(sqlo_lob_write_buffer, (dbh, loblp, loblen, bufp, bufl, piece),
   else
     p = (ub1) piece;
 
-  dbp->status = OCILobWrite( dbp->svchp,
-                             dbp->errhp,
-                             (OCILobLocator *)loblp,
-                             &amtp,
-                             offset,
-                             (dvoid *) bufp,
-                             (ub4) nbytes,
-                             p,
-                             (dvoid *) 0,
-                             (OCICallbackLobWrite) NULL,
-                             (ub2) 0,
-                             (ub1) SQLCS_IMPLICIT);
+  dbp->status = OCILobWrite(dbp->svchp,
+                            dbp->errhp,
+                            (OCILobLocator *) loblp,
+                            &amtp,
+                            offset,
+                            (dvoid *) bufp,
+                            (ub4) nbytes,
+                            p,
+                            (dvoid *) 0,
+                            (OCICallbackLobWrite) NULL,
+                            (ub2) 0,
+                            (ub1) SQLCS_IMPLICIT);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_lob_write_buffer", "OCILobWrite");
 
@@ -7561,17 +7312,17 @@ DEFUN(sqlo_lob_append_buffer, (dbh, loblp, loblen, bufp, bufl, piece),
   else
     p = (ub1) piece;
 
-  dbp->status = OCILobWriteAppend( dbp->svchp,
-                                   dbp->errhp,
-                                   (OCILobLocator *)loblp,
-                                   &amtp,
-                                   (dvoid *) bufp,
-                                   (ub4) nbytes,
-                                   p,
-                                   (dvoid *) 0,
-                                   (OCICallbackLobWrite) NULL,
-                                   (ub2) 0,
-                                   (ub1) SQLCS_IMPLICIT);
+  dbp->status = OCILobWriteAppend(dbp->svchp,
+                                  dbp->errhp,
+                                  (OCILobLocator *) loblp,
+                                  &amtp,
+                                  (dvoid *) bufp,
+                                  (ub4) nbytes,
+                                  p,
+                                  (dvoid *) 0,
+                                  (OCICallbackLobWrite) NULL,
+                                  (ub2) 0,
+                                  (ub1) SQLCS_IMPLICIT);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_lob_append_buffer", "OCILobWriteAppend");
 
@@ -7616,7 +7367,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
     nbytes = filelen;
 
   /* get a chunk of data */
-  if( fread( buf, (size_t)nbytes, 1, fp) != 1 ) {
+  if( fread(buf, (size_t) nbytes, 1, fp) != 1) {
     strcpy(dbp->errmsg, "sqlo_lob_write_stream: I/O error. Could not get data from stream");
     dbp->status = SQLO_ERROR;
     return dbp->status;
@@ -7696,7 +7447,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
         piece = SQLO_LAST_PIECE;
       }
 
-      if( fread( (void*) buf, (size_t)nbytes, 1, fp) != 1 ) {
+      if( fread((void *) buf, (size_t) nbytes, 1, fp) != 1 ) {
         strcpy(dbp->errmsg, "sqlo_lob_write_stream: I/O error. Could not get data from stream");
         TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_lob_write_stream: "
                          "Error during fread(). Setting piece to SQLO_LAST_PIECE\n"););
@@ -7731,8 +7482,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
     } while( dbp->status == SQLO_NEED_DATA && ! feof(fp) );
 
 #ifdef HAVE_OCILOBOPEN
-    while( SQLO_STILL_EXECUTING ==
-           (dbp->status = OCILobClose(dbp->svchp, dbp->errhp, loblp)) ) {
+    while( SQLO_STILL_EXECUTING == (dbp->status = OCILobClose(dbp->svchp, dbp->errhp, loblp)) ) {
       SQLO_USLEEP;
     }
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "slqo_lob_write_stream", "OCILobClose");
@@ -7798,17 +7548,17 @@ DEFUN(sqlo_lob_read_buffer, (dbh, loblp, loblen, bufp, bufl),
 
   amtp = loblen;
 
-  dbp->status = OCILobRead( dbp->svchp,
-                            dbp->errhp,
-                            (OCILobLocator *)loblp,
-                            &amtp,
-                            offset,
-                            (dvoid *) bufp,
-                            (ub4) (loblen < bufl ? loblen : bufl),
-                            (dvoid *) 0,
-                            (OCICallbackLobRead) NULL,
-                            (ub2) 0,
-                            (ub1) SQLCS_IMPLICIT);
+  dbp->status = OCILobRead(dbp->svchp,
+                           dbp->errhp,
+                           (OCILobLocator *) loblp,
+                           &amtp,
+                           offset,
+                           (dvoid *) bufp,
+                           (ub4) (loblen < bufl ? loblen : bufl),
+                           (dvoid *) 0,
+                           (OCICallbackLobRead) NULL,
+                           (ub2) 0,
+                           (ub1) SQLCS_IMPLICIT);
 
   TRACE(3, fprintf(_get_trace_fp(dbp),
                    "sqlo_lob_read_buffer: amtp=%u\n", amtp););
@@ -7862,7 +7612,7 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
                      "sqlo_lob_read_stream: "
                      "got all in one piece (%u bytes)\n",
                      loblen););
-    (void) fwrite( (void *) buf, (size_t)loblen, 1, fp);
+    (void) fwrite((void *) buf, (size_t) loblen, 1, fp);
     break;
 
   case SQLO_ERROR:
@@ -7877,7 +7627,7 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
                      "sqlo_lob_read_stream: got first piece (%u bytes)\n",
                      nbytes););
     /* write this buffer */
-    (void) fwrite( (void *) buf, (size_t)nbytes, 1, fp);
+    (void) fwrite((void *) buf, (size_t) nbytes, 1, fp);
 
     do {
       memset(buf, '\0', MAX_LONG_SIZE);
@@ -7903,12 +7653,12 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
         TRACE(3, fprintf(_get_trace_fp(dbp), "sqlo_lob_read_stream: "
                          "got last piece (%u bytes)\n", remainder););
 
-        (void) fwrite( (void *) buf, (size_t)remainder, 1, fp);
+        (void) fwrite((void *) buf, (size_t) remainder, 1, fp);
       } else {
 
         TRACE(3, fprintf(_get_trace_fp(dbp), "sqlo_lob_read_stream: "
                          "got next piece (%u bytes)\n", nbytes););
-        (void) fwrite( (void *) buf, (size_t)nbytes, 1, fp);
+        (void) fwrite((void *) buf, (size_t) nbytes, 1, fp);
       }
 
     } while( SQLO_NEED_DATA == dbp->status );
@@ -7997,26 +7747,21 @@ DEFUN(sqlo_get_ocol_dtype, (sth, pos),
   if( 0 == stp->num_executions && ! (REFCURSOR == stp->cursor_type) ) {
     /* execute to describe the output */
     while( OCI_STILL_EXECUTING ==
-           (dbp->status = OCIStmtExecute( dbp->svchp,
-                                          stp->stmthp,
-                                          dbp->errhp,
-                                          (ub4) 0,
-                                          (ub4) 0,
-                                          (OCISnapshot *) 0,
-                                          (OCISnapshot *) 0,
-                                          (ub4) OCI_DEFAULT)) ) {
+           (dbp->status = OCIStmtExecute(dbp->svchp,
+                                         stp->stmthp,
+                                         dbp->errhp,
+                                         (ub4) 0,
+                                         (ub4) 0,
+                                         (OCISnapshot *) 0,
+                                         (OCISnapshot *) 0,
+                                         (ub4) OCI_DEFAULT)) ) {
       SQLO_USLEEP;
     }
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_nget_ocol_dtype", "OCIStmtExecute(DESCRIBE)");
     ++(stp->num_executions);
   }
 
-  dbp->status = OCIAttrGet( (dvoid*)stp->stmthp,
-                            (ub4) OCI_HTYPE_STMT,
-                            (dvoid *)  &num_cols,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_PARAM_COUNT,
-                            dbp->errhp);
+  dbp->status = OCIAttrGet((dvoid *) stp->stmthp, (ub4) OCI_HTYPE_STMT, (dvoid *) &num_cols, (ub4 *) 0, (ub4) OCI_ATTR_PARAM_COUNT, dbp->errhp);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_get_ocol_dtype", "OCIAttrGet(NumberOfColumns)");
 
@@ -8036,12 +7781,7 @@ DEFUN(sqlo_get_ocol_dtype, (sth, pos),
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_get_ocol_dtype", "OCIParamGet");
 
   /* Get datatype */
-  dbp->status = OCIAttrGet( (dvoid*) paramd,
-                            (ub4) OCI_DTYPE_PARAM,
-                            (dvoid*) &dtype,
-                            (ub4 *) 0,
-                            (ub4) OCI_ATTR_DATA_TYPE,
-                            (OCIError *)dbp->errhp );
+  dbp->status = OCIAttrGet((dvoid *) paramd, (ub4) OCI_DTYPE_PARAM, (dvoid *) &dtype, (ub4 *) 0, (ub4) OCI_ATTR_DATA_TYPE, (OCIError *) dbp->errhp);
 
   if( OCI_SUCCESS != dbp->status )
   {
