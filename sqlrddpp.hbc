@@ -3,8 +3,10 @@ incpaths=include
 libpaths=lib/${hb_plat}/${hb_comp}
 
 libs=sqlrddpp
-libs=odbc32
-libs=odbccp32
+{win}libs=odbc32
+{win}libs=odbccp32
+{unix&!darwin}libs=odbc
+{unix&darwin}libs=iodbc
 libs=xhb.hbc
 
 prgflags=-gc3
