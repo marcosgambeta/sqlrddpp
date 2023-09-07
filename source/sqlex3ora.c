@@ -133,7 +133,7 @@ static HB_ERRCODE getSeekWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType,
                                           // because Oracle does not store NULLs in indexes
 
          if( BindStructure->iCType == SQL_C_DOUBLE ) {
-            temp = hb_strdup( (const char *) thiswa->sWhere );
+            temp = hb_strdup((const char *) thiswa->sWhere);
             sprintf( thiswa->sWhere, "%s %s ( A.%c%s%c %s %s OR A.%c%s%c IS NULL )", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
                                                        OPEN_QUALIFIER( thiswa ), BindStructure->colName, CLOSE_QUALIFIER( thiswa ),
                                                        iCol == queryLevel ? ( bDirectionFWD ? ">=" : "<=" ) : "IS",
@@ -146,14 +146,14 @@ static HB_ERRCODE getSeekWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType,
                // Since this is not numeric, EVERYTHING is greater
                // or equal to NULL, so we do not add any restriction to WHERE clause.
             } else {
-               temp = hb_strdup( (const char *) thiswa->sWhere );
+               temp = hb_strdup((const char *) thiswa->sWhere);
                sprintf( thiswa->sWhere, "%s %s A.%c%s%c IS NULL", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
                                                           OPEN_QUALIFIER( thiswa ), BindStructure->colName, CLOSE_QUALIFIER( thiswa ) );
                hb_xfree(temp);
             }
          }
       } else {
-         temp = hb_strdup( (const char *) thiswa->sWhere );
+         temp = hb_strdup((const char *) thiswa->sWhere);
          sprintf(thiswa->sWhere, "%s %s A.%c%s%c %s :%s", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
             OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa),
             iCol == queryLevel ? (bDirectionFWD ? ">=" : "<=") : "=", BindStructure->colName);
@@ -196,7 +196,7 @@ HB_ERRCODE prepareSeekQueryOra(SQLEXORAAREAP thiswa, INDEXBINDORAP SeekBind)
 //    if( hPrep == NULL ) {
 //       return HB_FAILURE;
 //    }
-      OCI_AllowRebinding( thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt : SeekBind->SeekBwdStmt,1);
+      OCI_AllowRebinding(thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt : SeekBind->SeekBwdStmt, 1);
 
    if( !OCI_Prepare(thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt : SeekBind->SeekBwdStmt, thiswa->sSql) ) {
       return HB_FAILURE;
@@ -320,7 +320,7 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int * q
 
    // Push pKey value splitted into SeekBindings structures
 
-   if( HB_IS_STRING( pKey ) ) {
+   if( HB_IS_STRING(pKey) ) {
       // parse Key string and split it in index fields
 
       lenKey = hb_itemGetCLen(pKey);
@@ -378,12 +378,12 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int * q
             }
             case SQL_C_NUMERIC: {
               size = BindStructure->ColumnSize;
-               BindStructure->asNumeric = (HB_LONG) hb_strVal( szKey, BindStructure->ColumnSize );
+               BindStructure->asNumeric = (HB_LONG) hb_strVal(szKey, BindStructure->ColumnSize);
                break;
             }
             case SQL_C_DOUBLE: {
                size = BindStructure->ColumnSize;
-               BindStructure->asDouble = (double) hb_strVal( szKey, BindStructure->ColumnSize );
+               BindStructure->asDouble = (double) hb_strVal(szKey, BindStructure->ColumnSize);
                break;
             }
             case SQL_C_TYPE_TIMESTAMP: {
@@ -401,13 +401,13 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int * q
                   datemask[iPos] = szKey[iPos];
                }
 
-               hb_compStrToNum( datemask, 4, &lVal, &dVal, NULL, NULL );
+               hb_compStrToNum(datemask, 4, &lVal, &dVal, NULL, NULL);
                BindStructure->asTimestamp.year = (unsigned int) lVal;
                mask += 4;
-               hb_compStrToNum( mask, 2, &lVal, &dVal, NULL, NULL );
+               hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
                BindStructure->asTimestamp.month = (unsigned int) lVal;
                mask += 2;
-               hb_compStrToNum( mask, 2, &lVal, &dVal, NULL, NULL );
+               hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
                BindStructure->asTimestamp.day = (unsigned int) lVal;
                BindStructure->asTimestamp.hour = 0;
                BindStructure->asTimestamp.minute = 0;
@@ -430,13 +430,13 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int * q
                   datemask[iPos] = szKey[iPos];
                }
 
-               hb_compStrToNum( datemask, 4, &lVal, &dVal, NULL, NULL );
+               hb_compStrToNum(datemask, 4, &lVal, &dVal, NULL, NULL);
                BindStructure->asDate.year = (unsigned int) lVal;
                mask += 4;
-               hb_compStrToNum( mask, 2, &lVal, &dVal, NULL, NULL );
+               hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
                BindStructure->asDate.month = (unsigned int) lVal;
                mask += 2;
-               hb_compStrToNum( mask, 2, &lVal, &dVal, NULL, NULL );
+               hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
                BindStructure->asDate.day = (unsigned int) lVal;
 
                break;
@@ -499,7 +499,7 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int * q
          } else {
             BindStructure->asDouble = (double) hb_itemGetND(pKey);
          }
-      } else if( HB_IS_LOGICAL( pKey ) ) {
+      } else if( HB_IS_LOGICAL(pKey) ) {
          if( BindStructure->iCType != SQL_C_BIT ) {    // Check column data type
             // To Do: Raise RT error
             return HB_FAILURE;

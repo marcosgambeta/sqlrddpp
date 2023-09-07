@@ -242,7 +242,7 @@ HB_FUNC( FBCLOSE3 )   // FBClose(hEnv)
 
    if( session ) {
       if( session->transac ) {
-         if( isc_commit_transaction( session->status, &(session->transac) ) ) {
+         if( isc_commit_transaction(session->status, &(session->transac)) ) {
             ERRORLOGANDEXIT(session, "FBCLOSE");
          }
       }
@@ -268,7 +268,7 @@ HB_FUNC( FBCLOSE3 )   // FBClose(hEnv)
 
 /*------------------------------------------------------------------------*/
 
-HB_FUNC( FBBEGINTRANSACTION3 )  // FBBeginTransaction( hEnv )
+HB_FUNC( FBBEGINTRANSACTION3 )  // FBBeginTransaction(hEnv)
 {
    PFB_SESSION session = (PFB_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -323,7 +323,7 @@ HB_FUNC( FBBEGINTRANSACTION3 )  // FBBeginTransaction( hEnv )
 
 /*------------------------------------------------------------------------*/
 
-HB_FUNC( FBCOMMITTRANSACTION3 )  // FBBeginTransaction( hEnv )
+HB_FUNC( FBCOMMITTRANSACTION3 )  // FBBeginTransaction(hEnv)
 {
    PFB_SESSION session = (PFB_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -341,7 +341,7 @@ HB_FUNC( FBCOMMITTRANSACTION3 )  // FBBeginTransaction( hEnv )
 
 /*------------------------------------------------------------------------*/
 
-HB_FUNC( FBROLLBACKTRANSACTION3 )  // FBRollBackTransaction( hEnv )
+HB_FUNC( FBROLLBACKTRANSACTION3 )  // FBRollBackTransaction(hEnv)
 {
    PFB_SESSION session = (PFB_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -643,7 +643,7 @@ HB_FUNC( FBERROR3 )   // FBError( hEnv )
 
 /*------------------------------------------------------------------------*/
 
-HB_FUNC( FBFETCH3 )   // FBFetch( hEnv )
+HB_FUNC( FBFETCH3 )   // FBFetch(hEnv)
 {
    PFB_SESSION session = (PFB_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -698,7 +698,7 @@ HB_FUNC( FBGETDATA3 )    // FBGetData(hEnv, nField, @uData)
             hb_storclen((char *) var->sqldata, var->sqllen, 3);
             break;
          case IB_SQL_BOOLEAN:
-            hb_storl( var->sqldata == "1",3);
+            hb_storl(var->sqldata == "1", 3);
             break;
          case IB_SQL_VARYING:
             vary = (VARY*) var->sqldata;
@@ -828,7 +828,7 @@ HB_FUNC( FBGETDATA3 )    // FBGetData(hEnv, nField, @uData)
             if( isc_open_blob2( session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, NULL) ) {
                ERRORLOGANDEXIT( session, "FBGETDATA1" );
             }
-            if( isc_blob_info( session->status, &blob_handle, sizeof(blob_items), blob_items, sizeof(res_buffer), res_buffer ) ) {
+            if( isc_blob_info(session->status, &blob_handle, sizeof(blob_items), blob_items, sizeof(res_buffer), res_buffer) ) {
                ERRORLOGANDEXIT( session, "FBGETDATA2" );
             }
             for( resp = res_buffer; * resp != isc_info_end; ) {
@@ -881,13 +881,13 @@ HB_FUNC( FBGETDATA3 )    // FBGetData(hEnv, nField, @uData)
             break;
 
          default:
-            TraceLog( LOGFILE, "Unsupported data type returned in query: %i\n", dtype );
+            TraceLog(LOGFILE, "Unsupported data type returned in query: %i\n", dtype);
             break;
          }
       }
-      hb_retni( SQL_SUCCESS );
+      hb_retni(SQL_SUCCESS);
    } else {
-      hb_retni( SQL_ERROR );
+      hb_retni(SQL_ERROR);
    }
 }
 
@@ -934,15 +934,15 @@ HB_FUNC( FBCREATEDB3 )
    }
 
    if( isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, dialect, NULL) ) {
-      hb_retni( SQL_ERROR );
-      TraceLog( LOGFILE, "FireBird Error: %s - code: %i (see iberr.h)\n", "create database", status[1] );
+      hb_retni(SQL_ERROR);
+      TraceLog(LOGFILE, "FireBird Error: %s - code: %i (see iberr.h)\n", "create database", status[1]);
    } else {
       if( isc_detach_database ( (ISC_STATUS *)status, &newdb ) ) {
-         hb_retni( SQL_ERROR );
+         hb_retni(SQL_ERROR);
          return;
       }
 
-      hb_retni( SQL_SUCCESS );
+      hb_retni(SQL_SUCCESS);
    }
 }
 
@@ -967,9 +967,9 @@ HB_FUNC( FBVERSION3 )
 
    *tmp = 0;
 
-   if( !isc_version( &(session->db), firebird_info_cb, (void*)tmp) ) {
+   if( !isc_version(&(session->db), firebird_info_cb, (void*)tmp) ) {
       isc_vax_integer( tmp, 100 );
-      hb_retnl( num_version );
+      hb_retnl(num_version);
    }
    hb_retc(tmp);
 }
@@ -1013,12 +1013,12 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          }
          
          case SQL_LONGVARCHAR: {
-            hb_itemPutCL( pItem, bBuffer, 0 );
+            hb_itemPutCL(pItem, bBuffer, 0);
             break;
          }
          case SQL_BIT:
          case SQL_SMALLINT: {
-            hb_itemPutL( pItem, FALSE );
+            hb_itemPutL(pItem, FALSE);
             break;
          }
 
@@ -1042,7 +1042,7 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          }
 
          default:
-            TraceLog( LOGFILE, "Invalid data type detected: %i\n", lType );
+            TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
       }
    } else {
       switch( lType ) {
@@ -1080,7 +1080,7 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             break;
          }
          case SQL_LONGVARCHAR: {
-            if( lLenBuff > 0 && (strncmp( bBuffer, "[", 1 ) == 0 || strncmp( bBuffer, "[]", 2 ) )&& (sr_lSerializeArrayAsJson()) ) {
+            if( lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2) )&& (sr_lSerializeArrayAsJson()) ) {
                if( s_pSym_SR_FROMJSON == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
@@ -1089,9 +1089,9 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
                      printf( "Could not find Symbol HB_JSONDECODE\n" );
                   }
                }
-               hb_vmPushDynSym( s_pSym_SR_FROMJSON );
+               hb_vmPushDynSym(s_pSym_SR_FROMJSON);
                hb_vmPushNil();
-               hb_vmPushString( bBuffer, lLenBuff );
+               hb_vmPushString(bBuffer, lLenBuff);
                pTemp = hb_itemNew(NULL);
                hb_vmPush(pTemp);
                hb_vmDo(2);
@@ -1102,7 +1102,7 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
                hb_itemForwardValue(pItem, pTemp);
                hb_itemRelease(pTemp);
 
-            } else if( lLenBuff > 10 && strncmp( bBuffer, SQL_SERIALIZED_SIGNATURE, 10 ) == 0 && (!sr_lSerializedAsString()) ) {
+            } else if( lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()) ) {
                if( s_pSym_SR_DESERIALIZE == NULL ) {
                   hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
@@ -1111,20 +1111,20 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
                      printf( "Could not find Symbol SR_DESERIALIZE\n" );
                   }
                }
-               hb_vmPushDynSym( s_pSym_SR_DESERIALIZE );
+               hb_vmPushDynSym(s_pSym_SR_DESERIALIZE);
                hb_vmPushNil();
-               hb_vmPushString( bBuffer, lLenBuff );
+               hb_vmPushString(bBuffer, lLenBuff);
                hb_vmDo(1);
 
                pTemp = hb_itemNew(NULL);
                hb_itemForwardValue(pTemp, hb_stackReturnItem());
 
-               if( HB_IS_HASH( pTemp ) && sr_isMultilang() && bTranslate ) {
+               if( HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate ) {
                   PHB_ITEM pLangItem = hb_itemNew(NULL);
                   HB_SIZE ulPos;
-                  if(    hb_hashScan( pTemp, sr_getBaseLang( pLangItem ), &ulPos )
-                      || hb_hashScan( pTemp, sr_getSecondLang( pLangItem ), &ulPos )
-                      || hb_hashScan( pTemp, sr_getRootLang( pLangItem ), &ulPos ) ) {
+                  if(    hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos)
+                      || hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos)
+                      || hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos) ) {
                      hb_itemCopy( pItem, hb_hashGetValueAt( pTemp, ulPos ) );
                   }
                   hb_itemRelease(pLangItem);
@@ -1133,16 +1133,16 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
                }
                hb_itemRelease(pTemp);
             } else {
-               hb_itemPutCL( pItem, bBuffer, lLenBuff );
+               hb_itemPutCL(pItem, bBuffer, lLenBuff);
             }
             break;
          }
          case SQL_BIT:
          case SQL_SMALLINT: {
-            hb_itemPutL( pItem, bBuffer[0] == (char)'t'  || bBuffer[0] == (char)'T' || bBuffer[0] == 1 ? TRUE : FALSE );
-            //hb_itemPutL( pItem, hb_strVal( bBuffer, lLenBuff ) > 0  ? TRUE : FALSE );
-//            hb_itemPutL( pItem, bBuffer[0] == '1' ? TRUE : FALSE );
-//            hb_itemPutL( pItem, hb_strValInt( bBuffer, &iOverflow ) > 0  ? TRUE : FALSE );
+            hb_itemPutL(pItem, bBuffer[0] == (char) 't' || bBuffer[0] == (char) 'T' || bBuffer[0] == 1 ? TRUE : FALSE);
+            //hb_itemPutL(pItem, hb_strVal(bBuffer, lLenBuff) > 0 ? TRUE : FALSE);
+            //hb_itemPutL(pItem, bBuffer[0] == '1' ? TRUE : FALSE);
+            //hb_itemPutL(pItem, hb_strValInt(bBuffer, &iOverflow) > 0 ? TRUE : FALSE);
             break;
          }
 
@@ -1195,7 +1195,7 @@ void FBFieldGet3( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          }
 
          default:
-            TraceLog( LOGFILE, "Invalid data type detected: %i\n", lType );
+            TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
       }
    }
 }
@@ -1263,7 +1263,7 @@ HB_FUNC( FBLINEPROCESSED3 )
                   break;
                case IB_SQL_BOOLEAN: {
                   ISC_UCHAR udata = *(ISC_UCHAR FAR*)var->sqldata;
-                  hb_itemPutL( temp, udata==(ISC_UCHAR)"T" || udata==(ISC_UCHAR)"t"  || udata==1  ? TRUE : FALSE );
+                  hb_itemPutL(temp, udata == (ISC_UCHAR) "T" || udata == (ISC_UCHAR) "t" || udata == 1 ? TRUE : FALSE);
                   hb_arraySetForward(pRet, icol, temp);
                   break;
             }
@@ -1274,7 +1274,7 @@ HB_FUNC( FBLINEPROCESSED3 )
                   hb_arraySetForward(pRet, icol, temp);
                   break;
                case IB_SQL_TIMESTAMP:
-                  isc_decode_timestamp( ( ISC_TIMESTAMP ISC_FAR * ) var->sqldata, &times );
+                  isc_decode_timestamp((ISC_TIMESTAMP ISC_FAR *) var->sqldata, &times);
                   hb_snprintf( date_s, sizeof(date_s), "%04d-%02d-%02d %02d:%02d:%02d.%04d",
                         times.tm_year + 1900,
                         times.tm_mon + 1,
@@ -1364,11 +1364,12 @@ HB_FUNC( FBLINEPROCESSED3 )
 //                         sprintf(p, "%*" ISC_INT64_FORMAT "d%", field_width, (ISC_INT64) value);
 //                         hb_snprintf( data, sizeof(data), "%*" ISC_INT64_FORMAT "d", field_width, ( ISC_INT64 ) value );
                            PHB_ITEM pField = hb_arrayGetItemPtr(pFields, icol);
-                           LONG lType = ( LONG ) hb_arrayGetNL( pField, 6 );
-                           if( lType == SQL_BIT || lType == SQL_SMALLINT )
+                           LONG lType = (LONG) hb_arrayGetNL(pField, 6);
+                           if( lType == SQL_BIT || lType == SQL_SMALLINT ) {
                               hb_itemPutL(temp,value);
-                           else
-                              hb_itemPutNInt( temp,( ISC_INT64 ) value);
+                           } else {
+                              hb_itemPutNInt(temp, (ISC_INT64) value);
+                           }
 
                      }
 
@@ -1403,7 +1404,7 @@ HB_FUNC( FBLINEPROCESSED3 )
                   if( isc_open_blob2( session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, NULL) ) {
                      ERRORLOGANDEXIT( session, "FBGETDATA1" );
                   }
-                  if( isc_blob_info( session->status, &blob_handle, sizeof(blob_items), blob_items, sizeof(res_buffer), res_buffer ) ) {
+                  if( isc_blob_info(session->status, &blob_handle, sizeof(blob_items), blob_items, sizeof(res_buffer), res_buffer) ) {
                      ERRORLOGANDEXIT( session, "FBGETDATA2" );
                   }
                   for( resp = res_buffer; * resp != isc_info_end; ) {
@@ -1461,14 +1462,14 @@ HB_FUNC( FBLINEPROCESSED3 )
                   break;
 
                default:
-                  TraceLog( LOGFILE, "Unsupported data type returned in query: %i\n", dtype );
+                  TraceLog(LOGFILE, "Unsupported data type returned in query: %i\n", dtype);
                   break;
                }
             }
          }
          hb_itemRelease(temp);
       }
-      hb_retni( SQL_SUCCESS );
+      hb_retni(SQL_SUCCESS);
    }
 }
 
@@ -1482,10 +1483,10 @@ HB_FUNC( FB_MORERESULTS )
          var = session->sqlda->sqlvar;
          value = (ISC_INT64) *(ISC_INT64 ISC_FAR *) var->sqldata;
          hb_stornint(( ISC_INT64 ) value, 2);
-         hb_retni( SQL_SUCCESS );
+         hb_retni(SQL_SUCCESS);
          return;
       }
-      hb_retni( SQL_ERROR );
+      hb_retni(SQL_ERROR);
    }
    hb_retni(SQL_ERROR);
 }
