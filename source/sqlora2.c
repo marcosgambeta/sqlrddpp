@@ -328,7 +328,7 @@ HB_FUNC( SQLO2_EXECDIRECT )
 HB_FUNC( SQLO2_EXECUTE )
 {
    POCI_ORASESSION session = (POCI_ORASESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   BOOL  lStmt = HB_ISLOG(3) ? hb_parl(3) : 0;
+   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
    if( session ) {
       char * stm = (char *) hb_parc(2);
       if( lStmt ) {
@@ -379,8 +379,8 @@ HB_FUNC( ORACLEINBINDPARAM2 )
    int iFieldSize = hb_parni(4);
    int iPos = iParamNum - 1;
    int ret = SQL_ERROR;
-   BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : 0;
-   BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : 0;
+   HB_BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : HB_FALSE;
+   HB_BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
 
 
    if( Stmt ) {
@@ -600,7 +600,7 @@ HB_FUNC(ORACLEPREPARE2)
 {
    POCI_ORASESSION session = (POCI_ORASESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    const char * szSql = hb_parc(2);
-   BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : 0;
+   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
    int ret = -1;
 
    if( session ) {
@@ -673,7 +673,7 @@ HB_FUNC(ORACLEFREEBIND2)
 
 
 
-void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate, OCI_Resultset * rs)
+void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate, OCI_Resultset * rs)
 {
    LONG lType;
    HB_SIZE lLen, lDec;
@@ -719,7 +719,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, BOOL bQueryOnly
             break;
          }
          case SQL_BIT: {
-            hb_itemPutL(pItem, FALSE);
+            hb_itemPutL(pItem, HB_FALSE);
             break;
          }
 
@@ -823,8 +823,8 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, BOOL bQueryOnly
             break;
          }
          case SQL_BIT: {
-            //hb_itemPutL(pItem, bBuffer[0] == '1' ? TRUE : FALSE);
-            hb_itemPutL(pItem, OCI_GetBigInt(rs, iField) == 1 ? TRUE : FALSE);
+            //hb_itemPutL(pItem, bBuffer[0] == '1' ? HB_TRUE : HB_FALSE);
+            hb_itemPutL(pItem, OCI_GetBigInt(rs, iField) == 1 ? HB_TRUE : HB_FALSE);
             break;
          }
 
@@ -892,9 +892,9 @@ HB_FUNC( SQLO2_LINEPROCESSED )
    PHB_ITEM temp;
    HB_SIZE i, cols;
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
-   BOOL  bQueryOnly = hb_parl(4);
+   HB_BOOL  bQueryOnly = hb_parl(4);
    ULONG ulSystemID = hb_parnl(5);
-   BOOL  bTranslate = hb_parl(6);
+   HB_BOOL  bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 //   SQLO2_stmt_handle_t stmtParamRes;
 

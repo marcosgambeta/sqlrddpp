@@ -222,12 +222,12 @@ typedef struct _COLUMNBINDORA
                                        // of numeric variables in SQL
    unsigned int	ColumnSize;             // To make an easy bind
    unsigned short	DecimalDigits;          // To make an easy bind
-   BOOL isNullable;                    // Is this column NULLABLE ?
-   BOOL isArgumentNull;                // Value to be bound is NULL ?
-   BOOL isBoundNULL;                   // Field was bound as NULL ?
+   HB_BOOL isNullable;                    // Is this column NULLABLE ?
+   HB_BOOL isArgumentNull;                // Value to be bound is NULL ?
+   HB_BOOL isBoundNULL;                   // Field was bound as NULL ?
    int lIndPtr;                     // Buffer lenght pointer to be used in SQLBindParam()
-   BOOL isMemo;                        // Field is MEMO ?
-   BOOL isMultiLang;                   // Fiels is multi language ?
+   HB_BOOL isMemo;                        // Field is MEMO ?
+   HB_BOOL isMultiLang;                   // Fiels is multi language ?
    OCI_Lob *lob1;
 
 } COLUMNBINDORA;
@@ -256,14 +256,14 @@ typedef struct _SQLAREA
    PHB_CODEPAGE cdPageCnv; /* Area's codepage convert pointer */
    char * szDataFileName;  /* file name */
    LONG hOrdCurrent;       /* current index order */
-   BOOL shared;
-   BOOL readonly;          /* only SELECT allowed */
-   BOOL creating;          /* TRUE when creating table */
-   BOOL firstinteract;     /* TRUE when workarea was not used yet */
-   BOOL isam;              /* ISAM Simulator ? */
-   BOOL wasdel;
-   BOOL initialized;       /* Workarea Initialization done */
-   BOOL sqlfilter;         /* SET FILTER converted to SQL */
+   HB_BOOL shared;
+   HB_BOOL readonly;          /* only SELECT allowed */
+   HB_BOOL creating;          /* TRUE when creating table */
+   HB_BOOL firstinteract;     /* TRUE when workarea was not used yet */
+   HB_BOOL isam;              /* ISAM Simulator ? */
+   HB_BOOL wasdel;
+   HB_BOOL initialized;       /* Workarea Initialization done */
+   HB_BOOL sqlfilter;         /* SET FILTER converted to SQL */
 
    PHB_ITEM oWorkArea;      /* SQL Workarea object */
    PHB_ITEM aInfo;          /* Status array */
@@ -308,14 +308,14 @@ typedef struct _SQLEXORAAREA
    ///PHB_CODEPAGE cdPageCnv; /* Area's codepage convert pointer */
    ///char * szDataFileName;  /* file name */
    ///LONG hOrdCurrent;       /* current index order */   
-   //BOOL shared;
-   //BOOL readonly;          /* only SELECT allowed */
-   //BOOL creating;          /* TRUE when creating table */
-   //BOOL firstinteract;     /* TRUE when workarea was not used yet */
-   ///BOOL isam;              /* ISAM Simulator ? */
-   ///BOOL wasdel;
-   ///BOOL initialized;       /* Workarea Initialization done */
-   ///BOOL sqlfilter;         /* SET FILTER converted to SQL */
+   //HB_BOOL shared;
+   //HB_BOOL readonly;          /* only SELECT allowed */
+   //HB_BOOL creating;          /* TRUE when creating table */
+   //HB_BOOL firstinteract;     /* TRUE when workarea was not used yet */
+   ///HB_BOOL isam;              /* ISAM Simulator ? */
+   ///HB_BOOL wasdel;
+   ///HB_BOOL initialized;       /* Workarea Initialization done */
+   ///HB_BOOL sqlfilter;         /* SET FILTER converted to SQL */
    ///
    ///PHB_ITEM oWorkArea;      /* SQL Workarea object */
    ///PHB_ITEM aInfo;          /* Status array */
@@ -385,10 +385,10 @@ typedef struct _SQLEXORAAREA
    char sLimit1[50];          /* String for recordset limit */
    char sLimit2[50];          /* String for recordset limit */
 
-   BOOL bufferHot;            /* Does it have to write buffer down to database ? */
-   BOOL bIsInsert;            /* TRUE if appending a new record */
-   BOOL bConnVerified;        /* Already checked for ODBC connection ? */
-   BOOL bReverseIndex;        /* If current index is in DESCENDING order */
+   HB_BOOL bufferHot;            /* Does it have to write buffer down to database ? */
+   HB_BOOL bIsInsert;            /* TRUE if appending a new record */
+   HB_BOOL bConnVerified;        /* Already checked for ODBC connection ? */
+   HB_BOOL bReverseIndex;        /* If current index is in DESCENDING order */
    //INDEXBINDP 
    //IndexBindings[MAX_INDEXES];   /* Index column and prepared SQL expression handles for SKIP */
    INDEXBINDORAP *
@@ -396,24 +396,24 @@ typedef struct _SQLEXORAAREA
    
 //    OCI_Statement  * colStmt;              /* Single column retrieving statements */
    STATEMENT_DATA   * colStmt;
-   BOOL bConditionChanged1;      /* If any of conditions like filters, scope, historic, has
+   HB_BOOL bConditionChanged1;      /* If any of conditions like filters, scope, historic, has
                                     changed, prepared statements handles for Record List
                                     are no longer valid - USED FOR SKIP / GO TOP / BO BOTTOM */
-   BOOL bConditionChanged2;      /* If any of conditions like filters, scope, historic, has
+   HB_BOOL bConditionChanged2;      /* If any of conditions like filters, scope, historic, has
                                     changed, prepared statements handles for Record List
                                     are no longer valid - USED FOR SEEK */
-   BOOL bOrderChanged;           /* If order has changed, we should fix column bindings
+   HB_BOOL bOrderChanged;           /* If order has changed, we should fix column bindings
                                     before use then */
-   BOOL bRebuildSeekQuery;       /* If query for Seek must be recreated due to NULL interference */
-   BOOL bHistoric;               /* TRUE if workarea has historic */
+   HB_BOOL bRebuildSeekQuery;       /* If query for Seek must be recreated due to NULL interference */
+   HB_BOOL bHistoric;               /* TRUE if workarea has historic */
    COLUMNBINDORAP InsertRecord;     /* Column bindings to INSERT */
    COLUMNBINDORAP CurrRecord;       /* Current record bindings for SKIP / UPDATE */
    char editMask[MAX_FIELDS];    /* Flags if a column was updated - must be cleared on every GO_COLD */
    char updatedMask[MAX_FIELDS]; /* Copy of updateMask in currently prepared UPDATE stmt */
    char specialMask[MAX_FIELDS]; /* Same of updateMask but for special cols (INDKEY_xx and FORKEY_xx) */
-   BOOL bIndexTouchedInUpdate;   /* If any index column is affected by UPDATE */
-   BOOL bIsSelect;               /* Table open is an select statement*/
-   BOOL bOracle12;
+   HB_BOOL bIndexTouchedInUpdate;   /* If any index column is affected by UPDATE */
+   HB_BOOL bIsSelect;               /* Table open is an select statement*/
+   HB_BOOL bOracle12;
 } SQLEXORAAREA;
 
 typedef SQLEXORAAREA * LPSQLEXORAAREA;
@@ -426,22 +426,22 @@ typedef SQLEXORAAREA * LPSQLEXORAAREA;
 
 /* prototypes */
 
-int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact );
+int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact );
 void odbcErrorDiag( OCI_Statement  * hStmt, const char * routine, const char * szSql, int line );
 // void odbcErrorDiagRTE( OCI_Statement  * hStmt, char * routine, char * szSql, int res, int line, char * module );
 void OraErrorDiagRTE( OCI_Statement *hStmt, char * routine, char * szSql, int res, int line, char * module );
-void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, LONG lLenBuff, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate );
-char * QuoteTrimEscapeString( char * FromBuffer, ULONG iSize, int idatabase, BOOL bRTrim, ULONG * iSizeOut );
-char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, BOOL bNullable, int nSystemID, BOOL bTCCompat, BOOL bMemo, BOOL * bNullArgument );
-BOOL SR_itemEmpty2( PHB_ITEM pItem );
+void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, LONG lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate );
+char * QuoteTrimEscapeString( char * FromBuffer, ULONG iSize, int idatabase, HB_BOOL bRTrim, ULONG * iSizeOut );
+char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL * bNullArgument );
+HB_BOOL SR_itemEmpty2( PHB_ITEM pItem );
 void commonError( AREAP ThisDb, USHORT uiGenCode, USHORT uiSubCode, char* filename );
 HB_ERRCODE SetBindEmptylValue2( COLUMNBINDORAP BindStructure );
 HB_ERRCODE SetBindValue2( PHB_ITEM pFieldData, COLUMNBINDORAP BindStructure, OCI_Statement  * hStmt );
 char * QualifyName2( char * szName, SQLEXORAAREAP thiswa );
 COLUMNBINDORAP GetBindStructOra( SQLEXORAAREAP thiswa, INDEXBINDORAP IndexBind );
-BOOL getColumnListOra( SQLEXORAAREAP thiswa );
-void SolveFiltersOra( SQLEXORAAREAP thiswa, BOOL bWhere );
-void getOrderByExpressionOra( SQLEXORAAREAP thiswa, BOOL bUseOptimizerHints );
+HB_BOOL getColumnListOra( SQLEXORAAREAP thiswa );
+void SolveFiltersOra( SQLEXORAAREAP thiswa, HB_BOOL bWhere );
+void getOrderByExpressionOra( SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints );
 void setResultSetLimitOra( SQLEXORAAREAP thiswa, int iRows );
 void SetIndexBindStructureOra( SQLEXORAAREAP thiswa );
 void SetInsertRecordStructureOra( SQLEXORAAREAP thiswa );
@@ -454,16 +454,16 @@ void SetCurrRecordStructureOra( SQLEXORAAREAP thiswa );
 HB_ERRCODE CreateUpdateStmtOra( SQLEXORAAREAP thiswa );
 HB_ERRCODE PrepareInsertStmtOra( SQLEXORAAREAP thiswa );
 HB_ERRCODE BindInsertColumnsOra( SQLEXORAAREAP thiswa );
-HB_ERRCODE FeedRecordColsOra( SQLEXORAAREAP thiswa, BOOL bUpdate );
+HB_ERRCODE FeedRecordColsOra( SQLEXORAAREAP thiswa, HB_BOOL bUpdate );
 HB_ERRCODE ExecuteInsertStmtOra( SQLEXORAAREAP thiswa );
 HB_ERRCODE ExecuteUpdateStmtOra( SQLEXORAAREAP thiswa );
 
 /* SEEK Prototypes */
 
 HB_ERRCODE FeedSeekKeyToBindingsOra( SQLEXORAAREAP thiswa, PHB_ITEM pKey, int * queryLevel );
-BOOL CreateSeekStmtora( SQLEXORAAREAP thiswa, int queryLevel );
+HB_BOOL CreateSeekStmtora( SQLEXORAAREAP thiswa, int queryLevel );
 void BindSeekStmtora( SQLEXORAAREAP thiswa, int queryLevel );
 HB_ERRCODE getPreparedSeekora( SQLEXORAAREAP thiswa, int queryLevel, USHORT * iIndex, OCI_Statement  * * hStmt ,OCI_Resultset ** rs);
 OCI_Connection * GetConnection( OCI_ORASESSION *  p );
-void SQLO_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate,OCI_Resultset * rs );
+void SQLO_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate,OCI_Resultset * rs );
 #endif

@@ -141,12 +141,12 @@ typedef struct _COLUMNBIND
                                        // of numeric variables in SQL
    SQLUINTEGER	ColumnSize;             // To make an easy bind
    SQLSMALLINT	DecimalDigits;          // To make an easy bind
-   BOOL isNullable;                    // Is this column NULLABLE ?
-   BOOL isArgumentNull;                // Value to be bound is NULL ?
-   BOOL isBoundNULL;                   // Field was bound as NULL ?
+   HB_BOOL isNullable;                    // Is this column NULLABLE ?
+   HB_BOOL isArgumentNull;                // Value to be bound is NULL ?
+   HB_BOOL isBoundNULL;                   // Field was bound as NULL ?
    SQLLEN lIndPtr;                     // Buffer lenght pointer to be used in SQLBindParam()
-   BOOL isMemo;                        // Field is MEMO ?
-   BOOL isMultiLang;                   // Fiels is multi language ?
+   HB_BOOL isMemo;                        // Field is MEMO ?
+   HB_BOOL isMultiLang;                   // Fiels is multi language ?
 
 } COLUMNBIND;
 
@@ -159,7 +159,7 @@ typedef COLUMNBIND * COLUMNBINDP;
 typedef struct _SQLEXAREA
 {
    AREA area;
-   
+
    /*
    *  SQLRDD's additions to the workarea structure
    *
@@ -171,14 +171,14 @@ typedef struct _SQLEXAREA
    char * szDataFileName;  /* file name */
    LONG hOrdCurrent;       /* current index order */
    
-	BOOL shared;
-	BOOL readonly;          /* only SELECT allowed */
-	BOOL creating;          /* TRUE when creating table */
-	BOOL firstinteract;     /* TRUE when workarea was not used yet */
-   BOOL isam;              /* ISAM Simulator ? */
-   BOOL wasdel;
-   BOOL initialized;       /* Workarea Initialization done */
-   BOOL sqlfilter;         /* SET FILTER converted to SQL */
+   HB_BOOL shared;
+   HB_BOOL readonly;          /* only SELECT allowed */
+   HB_BOOL creating;          /* TRUE when creating table */
+   HB_BOOL firstinteract;     /* TRUE when workarea was not used yet */
+   HB_BOOL isam;              /* ISAM Simulator ? */
+   HB_BOOL wasdel;
+   HB_BOOL initialized;       /* Workarea Initialization done */
+   HB_BOOL sqlfilter;         /* SET FILTER converted to SQL */
 
    PHB_ITEM oWorkArea;      /* SQL Workarea object */
    PHB_ITEM aInfo;          /* Status array */
@@ -247,33 +247,33 @@ typedef struct _SQLEXAREA
    char sLimit1[50];          /* String for recordset limit */
    char sLimit2[50];          /* String for recordset limit */
 
-   BOOL bufferHot;            /* Does it have to write buffer down to database ? */
-   BOOL bIsInsert;            /* TRUE if appending a new record */
-   BOOL bConnVerified;        /* Already checked for ODBC connection ? */
-   BOOL bReverseIndex;        /* If current index is in DESCENDING order */
+   HB_BOOL bufferHot;            /* Does it have to write buffer down to database ? */
+   HB_BOOL bIsInsert;            /* TRUE if appending a new record */
+   HB_BOOL bConnVerified;        /* Already checked for ODBC connection ? */
+   HB_BOOL bReverseIndex;        /* If current index is in DESCENDING order */
    //INDEXBINDP 
    //IndexBindings[MAX_INDEXES];   /* Index column and prepared SQL expression handles for SKIP */
    INDEXBINDP *
    IndexBindings;   /* Index column and prepared SQL expression handles for SKIP */
    
    HSTMT * colStmt;              /* Single column retrieving statements */
-   BOOL bConditionChanged1;      /* If any of conditions like filters, scope, historic, has
+   HB_BOOL bConditionChanged1;      /* If any of conditions like filters, scope, historic, has
                                     changed, prepared statements handles for Record List
                                     are no longer valid - USED FOR SKIP / GO TOP / BO BOTTOM */
-   BOOL bConditionChanged2;      /* If any of conditions like filters, scope, historic, has
+   HB_BOOL bConditionChanged2;      /* If any of conditions like filters, scope, historic, has
                                     changed, prepared statements handles for Record List
                                     are no longer valid - USED FOR SEEK */
-   BOOL bOrderChanged;           /* If order has changed, we should fix column bindings
+   HB_BOOL bOrderChanged;           /* If order has changed, we should fix column bindings
                                     before use then */
-   BOOL bRebuildSeekQuery;       /* If query for Seek must be recreated due to NULL interference */
-   BOOL bHistoric;               /* TRUE if workarea has historic */
+   HB_BOOL bRebuildSeekQuery;       /* If query for Seek must be recreated due to NULL interference */
+   HB_BOOL bHistoric;               /* TRUE if workarea has historic */
    COLUMNBINDP InsertRecord;     /* Column bindings to INSERT */
    COLUMNBINDP CurrRecord;       /* Current record bindings for SKIP / UPDATE */
    char editMask[MAX_FIELDS];    /* Flags if a column was updated - must be cleared on every GO_COLD */
    char updatedMask[MAX_FIELDS]; /* Copy of updateMask in currently prepared UPDATE stmt */
    char specialMask[MAX_FIELDS]; /* Same of updateMask but for special cols (INDKEY_xx and FORKEY_xx) */
-   BOOL bIndexTouchedInUpdate;   /* If any index column is affected by UPDATE */
-   BOOL bIsSelect;               /* Table open is an select statement*/
+   HB_BOOL bIndexTouchedInUpdate;   /* If any index column is affected by UPDATE */
+   HB_BOOL bIsSelect;               /* Table open is an select statement*/
 
 } SQLEXAREA;
 
@@ -285,26 +285,26 @@ typedef SQLEXAREA * LPSQLEXAREA;
 
 /* prototypes */
 
-int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, BOOL fExact );
+int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact );
 void odbcErrorDiag( HSTMT hStmt, const char * routine, const char * szSql, int line );
 void odbcErrorDiagRTE( HSTMT hStmt, const char * routine, const char * szSql, SQLRETURN res, int line, const char * module );
-void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenBuff, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate );
-char * QuoteTrimEscapeString( char * FromBuffer, ULONG iSize, int idatabase, BOOL bRTrim, ULONG * iSizeOut );
-char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, BOOL bNullable, int nSystemID, BOOL bTCCompat, BOOL bMemo, BOOL * bNullArgument );
-BOOL SR_itemEmpty( PHB_ITEM pItem );
+void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate );
+char * QuoteTrimEscapeString( char * FromBuffer, ULONG iSize, int idatabase, HB_BOOL bRTrim, ULONG * iSizeOut );
+char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL * bNullArgument );
+HB_BOOL SR_itemEmpty( PHB_ITEM pItem );
 void commonError( AREAP ThisDb, USHORT uiGenCode, USHORT uiSubCode, char* filename );
 HB_ERRCODE SetBindEmptylValue( COLUMNBINDP BindStructure );
 HB_ERRCODE SetBindValue( PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hStmt );
 char * QualifyName( char * szName, SQLEXAREAP thiswa );
 COLUMNBINDP GetBindStruct( SQLEXAREAP thiswa, INDEXBINDP IndexBind );
-BOOL getColumnList( SQLEXAREAP thiswa );
-void SolveFilters( SQLEXAREAP thiswa, BOOL bWhere );
-void getOrderByExpression( SQLEXAREAP thiswa, BOOL bUseOptimizerHints );
+HB_BOOL getColumnList( SQLEXAREAP thiswa );
+void SolveFilters( SQLEXAREAP thiswa, HB_BOOL bWhere );
+void getOrderByExpression( SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints );
 void setResultSetLimit( SQLEXAREAP thiswa, int iRows );
 void SetIndexBindStructure( SQLEXAREAP thiswa );
 void SetInsertRecordStructure( SQLEXAREAP thiswa );
 ULONG GetCurrentRecordNum( SQLEXAREAP thiswa );
-extern void odbcGetData( SQLHSTMT hStmt, PHB_ITEM pField,PHB_ITEM pItem,  BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate,USHORT ui  );
+extern void odbcGetData( SQLHSTMT hStmt, PHB_ITEM pField,PHB_ITEM pItem,  HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate,USHORT ui  );
 /* INSERT and UPDATE prototypes */
 
 void CreateInsertStmt( SQLEXAREAP thiswa );
@@ -312,14 +312,14 @@ void SetCurrRecordStructure( SQLEXAREAP thiswa );
 HB_ERRCODE CreateUpdateStmt( SQLEXAREAP thiswa );
 HB_ERRCODE PrepareInsertStmt( SQLEXAREAP thiswa );
 HB_ERRCODE BindInsertColumns( SQLEXAREAP thiswa );
-HB_ERRCODE FeedRecordCols( SQLEXAREAP thiswa, BOOL bUpdate );
+HB_ERRCODE FeedRecordCols( SQLEXAREAP thiswa, HB_BOOL bUpdate );
 HB_ERRCODE ExecuteInsertStmt( SQLEXAREAP thiswa );
 HB_ERRCODE ExecuteUpdateStmt( SQLEXAREAP thiswa );
 
 /* SEEK Prototypes */
 
 HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLevel );
-BOOL CreateSeekStmt( SQLEXAREAP thiswa, int queryLevel );
+HB_BOOL CreateSeekStmt( SQLEXAREAP thiswa, int queryLevel );
 void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel );
 HB_ERRCODE getPreparedSeek( SQLEXAREAP thiswa, int queryLevel, USHORT * iIndex, HSTMT * hStmt );
 

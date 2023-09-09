@@ -444,7 +444,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr(ResultSet) => aStruct */
       }
 
       /* Nullable */
-      hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, 0));
+      hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, HB_FALSE));
       /* add to main array */
       hb_arraySetForward(ret, row + 1, atemp);
    }
@@ -639,7 +639,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr(ConnHandle, cTableName) => aStruct *
 
 //-----------------------------------------------------------------------------//
 
-void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate)
+void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate)
 {
    LONG lType;
    HB_SIZE lLen, lDec;
@@ -678,7 +678,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
             break;
          }
          case SQL_BIT: {
-            hb_itemPutL(pItem, FALSE);
+            hb_itemPutL(pItem, HB_FALSE);
             break;
          }
 
@@ -826,7 +826,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
          }
 
          case SQL_BIT: {
-            hb_itemPutL(pItem, bBuffer[0] == 't' ? TRUE : FALSE);
+            hb_itemPutL(pItem, bBuffer[0] == 't' ? HB_TRUE : HB_FALSE);
             break;
          }
 
@@ -870,9 +870,9 @@ HB_FUNC( PGSLINEPROCESSED )
    USHORT i;
    char * col;
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
-   BOOL  bQueryOnly = hb_parl(4);
+   HB_BOOL bQueryOnly = hb_parl(4);
    ULONG ulSystemID = hb_parnl(5);
-   BOOL  bTranslate = hb_parl(6);
+   HB_BOOL bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
    LONG lIndex, cols;
 

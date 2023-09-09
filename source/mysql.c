@@ -104,7 +104,7 @@ HB_FUNC( MYSCONNECT )
    const char * szDb = hb_parc(4);
    UINT uiPort = HB_ISNUM(5) ? hb_parnl(5) : MYSQL_PORT;
    UINT uiTimeout = HB_ISNUM(7) ? hb_parnl(7) : 3600;
-   BOOL lCompress = HB_ISLOG(8) ?  hb_parl(8) : 0;
+   HB_BOOL lCompress = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
    mysql_library_init(0, NULL, NULL);
 //    memset(session, 0, sizeof(MYSQL_SESSION));
 
@@ -221,7 +221,7 @@ HB_FUNC( MYSFETCH )     /* MYSFetch(ConnHandle, ResultSet) => nStatus */
 
 //-----------------------------------------------------------------------------//
 
-void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate)
+void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate)
 {
    LONG lType;
    HB_SIZE lLen, lDec;
@@ -259,7 +259,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             break;
          }
          case SQL_BIT: {
-            hb_itemPutL(pItem, FALSE);
+            hb_itemPutL(pItem, HB_FALSE);
             break;
          }
 
@@ -373,7 +373,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
             break;
          }
          case SQL_BIT: {
-            hb_itemPutL(pItem, bBuffer[0] == '1' ? TRUE : FALSE);
+            hb_itemPutL(pItem, bBuffer[0] == '1' ? HB_TRUE : HB_FALSE);
             break;
          }
 
@@ -420,9 +420,9 @@ HB_FUNC( MYSLINEPROCESSED )
    LONG lIndex;
 
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
-   BOOL  bQueryOnly = hb_parl(4);
+   HB_BOOL bQueryOnly = hb_parl(4);
    ULONG ulSystemID = hb_parnl(5);
-   BOOL  bTranslate = hb_parl(6);
+   HB_BOOL bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
    assert(session != NULL);
@@ -695,7 +695,7 @@ HB_FUNC( MYSQUERYATTR )
       }
 
       /* Nullable */
-      hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, IS_NOT_NULL(field->flags) ? 0 : 1));
+      hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, IS_NOT_NULL(field->flags) ? HB_FALSE : HB_TRUE));
       /* add to main array */
       hb_arraySetForward(ret, row + 1, atemp);
    }
@@ -835,7 +835,7 @@ HB_FUNC( MYSTABLEATTR )
       }
 
       /* Nullable */
-      hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, IS_NOT_NULL(field->flags) ? 0 : 1));
+      hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, IS_NOT_NULL(field->flags) ? HB_FALSE : HB_TRUE));
       /* add to main array */
       hb_arraySetForward(ret, row + 1, atemp);
    }

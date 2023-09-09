@@ -105,7 +105,7 @@
 static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
 static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
 void odbcErrorDiagRTE(SQLHSTMT hStmt, const char * routine, const char * szSql, SQLRETURN res, int line, const char * module);
-void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate, USHORT ui);
+void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate, USHORT ui);
 //-----------------------------------------------------------------------------//
 
 #if    defined(HB_OS_WIN_32) \
@@ -326,7 +326,7 @@ HB_FUNC( SR_FETCH )
 
 //-----------------------------------------------------------------------------//
 
-void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenBuff, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate)
+void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate)
 {
    LONG lType;
    HB_SIZE lLen, lDec;
@@ -359,7 +359,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
          case SQL_BIGINT:
          case SQL_FAKE_NUM: {
             if( cType[0] == 'L' && ulSystemID == SYSTEMID_ORACLE ) {
-               hb_itemPutL(pItem, FALSE);
+               hb_itemPutL(pItem, HB_FALSE);
             } else {
                char szResult[2] = {' ', '\0'};
                sr_escapeNumber(szResult, lLen, lDec, pItem);
@@ -402,7 +402,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
             break;
          }
          case SQL_BIT: {
-            hb_itemPutL(pItem, FALSE);
+            hb_itemPutL(pItem, HB_FALSE);
             break;
          }
          case SQL_SMALLINT:
@@ -410,7 +410,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
             if( bQueryOnly ) {
                hb_itemPutNI(pItem, 0);
             } else {
-               hb_itemPutL(pItem, FALSE);
+               hb_itemPutL(pItem, HB_FALSE);
             }
             break;
          }
@@ -451,7 +451,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
          case SQL_BIGINT:
          case SQL_FAKE_NUM: {
             if( cType[0] == 'L' && ulSystemID == SYSTEMID_ORACLE ) {
-               hb_itemPutL(pItem, bBuffer[0] == '1' ? TRUE : FALSE);
+               hb_itemPutL(pItem, bBuffer[0] == '1' ? HB_TRUE : HB_FALSE);
             } else {
                sr_escapeNumber(bBuffer, lLen, lDec, pItem);
             }
@@ -583,7 +583,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
             break;
          }
          case SQL_BIT: {
-            hb_itemPutL(pItem, bBuffer[0] == '1' ? TRUE : FALSE);
+            hb_itemPutL(pItem, bBuffer[0] == '1' ? HB_TRUE : HB_FALSE);
             break;
          }
          case SQL_SMALLINT:
@@ -591,7 +591,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
             if( bQueryOnly ) {
                hb_itemPutNI(pItem, (int) hb_strVal(bBuffer, lLenBuff));
             } else {
-               hb_itemPutL(pItem, hb_strVal(bBuffer, lLenBuff) > 0 ? TRUE : FALSE);
+               hb_itemPutL(pItem, hb_strVal(bBuffer, lLenBuff) > 0 ? HB_TRUE : HB_FALSE);
             }
             break;
          }
@@ -622,9 +622,9 @@ HB_FUNC( SR_ODBCLINEPROCESSED )
    PHB_ITEM temp;
    int i, cols;
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
-   BOOL  bQueryOnly = hb_parl(4);
+   HB_BOOL  bQueryOnly = hb_parl(4);
    ULONG ulSystemID = hb_parnl(5);
-   BOOL  bTranslate = hb_parl(6);
+   HB_BOOL  bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
    if( !pFields ) {
@@ -652,7 +652,7 @@ HB_FUNC( SR_ODBCLINEPROCESSED )
       if( lIndex == 0 ) {
          hb_arraySetForward(pRet, i, temp);
       } else {
-         odbcGetData((SQLHSTMT) hb_parptr(1), (PHB_ITEM) hb_arrayGetItemPtr(pFields, i),(PHB_ITEM) temp, (BOOL) bQueryOnly, (ULONG) ulSystemID, (BOOL) bTranslate, (USHORT) lIndex);
+         odbcGetData((SQLHSTMT) hb_parptr(1), (PHB_ITEM) hb_arrayGetItemPtr(pFields, i),(PHB_ITEM) temp, (HB_BOOL) bQueryOnly, (ULONG) ulSystemID, (HB_BOOL) bTranslate, (USHORT) lIndex);
          hb_arraySetForward(pRet, i, temp);
       }
       hb_itemRelease(temp);
@@ -677,12 +677,12 @@ HB_FUNC( SR_ODBCGETLINES ) // ( ::hStmt, nLenBuff, aFields, aCache, nSystemID, l
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
    PHB_ITEM pCache = hb_param(4, HB_IT_ARRAY);
    ULONG ulSystemID = hb_parnl(5);
-   BOOL  bTranslate = hb_parl(6);
+   HB_BOOL  bTranslate = hb_parl(6);
    int iCurrFetch = hb_parni(7);
    PHB_ITEM pInfo = hb_param(8, HB_IT_ARRAY);
    ULONG ulDirect = hb_parnl(9);
    ULONG ulnRecno = hb_parnl(10);
-   BOOL bFetchAll = hb_parl(11);
+   HB_BOOL bFetchAll = hb_parl(11);
    PHB_ITEM pFetch = hb_param(12, HB_IT_ARRAY);
    PHB_ITEM pRec = hb_param(13, HB_IT_ANY);
    LONG lPos = hb_parnl(14);
@@ -1145,7 +1145,7 @@ HB_FUNC( SR_ODBCWRITEMEMO )
 
 //-----------------------------------------------------------------------------//
 
-void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, BOOL bQueryOnly, ULONG ulSystemID, BOOL bTranslate, USHORT ui)
+void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate, USHORT ui)
 {
    LONG lType;
    HB_SIZE  lDec,lLen;
@@ -1208,7 +1208,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, BOOL bQueryOnl
                   }
                   if( (int)iLen ==  SQL_NULL_DATA ) {
                      if( cType[0] == 'L' && ulSystemID == SYSTEMID_ORACLE ) {
-                        hb_itemPutL(pItem, FALSE);
+                        hb_itemPutL(pItem, HB_FALSE);
                      } else {
                      hb_itemPutNLLen(pItem, 0, lLen);
                      }
@@ -1224,7 +1224,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, BOOL bQueryOnl
                   }
                   if( (int)iLen ==  SQL_NULL_DATA ) {
                      if( cType[0] == 'L' && ulSystemID == SYSTEMID_ORACLE ) {
-                        hb_itemPutL(pItem, FALSE);
+                        hb_itemPutL(pItem, HB_FALSE);
                      } else {
                        hb_itemPutNIntLen(pItem, 0, lLen);
                      }
@@ -1259,7 +1259,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, BOOL bQueryOnl
                   pItem = hb_itemPutL(pItem, val != 0);
                }
                if( (int)iLen ==  SQL_NULL_DATA ) {
-                  hb_itemPutL(pItem, 0);
+                  hb_itemPutL(pItem, HB_FALSE);
                }
 
                break;

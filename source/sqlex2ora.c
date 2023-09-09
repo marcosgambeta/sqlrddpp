@@ -217,7 +217,7 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
 
    char declare[200] = {0};
    char cType;
-   BOOL bNullable, bMultiLang, bIsMemo;
+   HB_BOOL bNullable, bMultiLang, bIsMemo;
    COLUMNBINDORAP InsertRecord;
 //    USHORT uiPos;
 
@@ -265,12 +265,12 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
 
       InsertRecord->iSQLType = (int)lType;
       InsertRecord->isNullable = bNullable;
-      InsertRecord->isBoundNULL = FALSE;
+      InsertRecord->isBoundNULL = HB_FALSE;
       InsertRecord->lFieldPosDB = i;
       InsertRecord->lFieldPosWA = lFieldPosWA;
       InsertRecord->ColumnSize = (unsigned int) hb_itemGetNI(pFieldLen);
       InsertRecord->DecimalDigits = (unsigned short) hb_itemGetNI(pFieldDec);
-      InsertRecord->isArgumentNull = FALSE;
+      InsertRecord->isArgumentNull = HB_FALSE;
       InsertRecord->isMemo = bIsMemo;
       InsertRecord->isMultiLang = bMultiLang;
 
@@ -488,7 +488,7 @@ HB_ERRCODE BindInsertColumnsOra(SQLEXORAAREAP thiswa)
 
 /*------------------------------------------------------------------------*/
 
-HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, BOOL bUpdate)
+HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
 {
    int iCols, i;
    PHB_ITEM pFieldData, pTemp;
@@ -692,7 +692,7 @@ HB_ERRCODE CreateUpdateStmtOra(SQLEXORAAREAP thiswa)
    iCols = (int) hb_arrayLen(thiswa->aFields);
    CurrRecord = thiswa->CurrRecord;
    iBind = 0;
-   thiswa->bIndexTouchedInUpdate = FALSE;
+   thiswa->bIndexTouchedInUpdate = HB_FALSE;
    if( thiswa->sSql ) {
       memset(thiswa->sSql, 0, MAX_SQL_QUERY_LEN * sizeof(char));
    }
@@ -704,7 +704,7 @@ HB_ERRCODE CreateUpdateStmtOra(SQLEXORAAREAP thiswa)
          if( !thiswa->specialMask[i] ) {
             thiswa->updatedMask[i] = '1';
          } else if( thiswa->sqlarea.hOrdCurrent != 0 ) {
-            thiswa->bIndexTouchedInUpdate = TRUE;     // If there is any special column, we cannot be sure
+            thiswa->bIndexTouchedInUpdate = HB_TRUE;     // If there is any special column, we cannot be sure
                                                       // current order is not affected by UPDATE, so it takes
                                                       // worst scenario
          }
@@ -740,7 +740,7 @@ iBind++;
          if( !thiswa->specialMask[i] ) {
             thiswa->updatedMask[i] = '1';
          } else if( thiswa->sqlarea.hOrdCurrent != 0 ) {
-            thiswa->bIndexTouchedInUpdate = TRUE;     // If there is any special column, we cannot be sure
+            thiswa->bIndexTouchedInUpdate = HB_TRUE;     // If there is any special column, we cannot be sure
                                                       // current order is not affected by UPDATE, so it takes
                                                       // worst scenario
          }
@@ -869,7 +869,7 @@ iBind++;
 
       for( i = 1; i <= thiswa->indexColumns; i++ ) {
          if( thiswa->editMask[hb_arrayGetNL(hb_arrayGetItemPtr(pColumns, i), 2) - 1]) {
-            thiswa->bIndexTouchedInUpdate = TRUE;
+            thiswa->bIndexTouchedInUpdate = HB_TRUE;
          }
       }
    }
@@ -889,7 +889,7 @@ HB_ERRCODE ExecuteUpdateStmtOra(SQLEXORAAREAP thiswa)
 
    thiswa->lUpdatedRecord = GetCurrentRecordNumOra(thiswa);
 
-   if( FeedRecordColsOra(thiswa, TRUE) == HB_FAILURE ) { // Stmt created and prepared, only need to push data
+   if( FeedRecordColsOra(thiswa, HB_TRUE) == HB_FAILURE ) { // Stmt created and prepared, only need to push data
       return HB_FAILURE;
    }
 

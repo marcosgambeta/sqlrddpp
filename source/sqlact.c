@@ -582,7 +582,7 @@ HB_FUNC( SR_ESCAPESTRING )
    }
 }
 
-char * QuoteTrimEscapeString(const char * FromBuffer, HB_SIZE iSize, int idatabase, BOOL bRTrim, HB_SIZE * iSizeOut)
+char * QuoteTrimEscapeString(const char * FromBuffer, HB_SIZE iSize, int idatabase, HB_BOOL bRTrim, HB_SIZE * iSizeOut)
 {
    char * ToBuffer;
 
@@ -643,7 +643,7 @@ HB_FUNC( SR_ESCAPENUM )
    char SciNot[5] = {'\0','\0','\0','\0','\0'};
    HB_SIZE iSize,iPos;
    int iDecPos;
-   BOOL bInteger = TRUE;
+   HB_BOOL bInteger = HB_TRUE;
    HB_SIZE len, dec;
    double dMultpl;
 
@@ -677,12 +677,12 @@ HB_FUNC( SR_ESCAPENUM )
       }
 
       if( ToBuffer[iPos] == '.' ) {
-         bInteger = FALSE;
+         bInteger = HB_FALSE;
          iDecPos = iPos;
       }
 
       if( ToBuffer[iPos] == 'E' && (iPos + 2) <= iSize ) { // 1928773.3663E+003
-         bInteger = FALSE;
+         bInteger = HB_FALSE;
          if( FromBuffer[iPos + 1] == '-' ) {
             SciNot[0] = FromBuffer[iPos + 1];
          } else {
@@ -757,7 +757,7 @@ PHB_ITEM sr_escapeNumber(char * FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
    char SciNot[5] = {'\0','\0','\0','\0','\0'};
    HB_SIZE iSize, iPos;
    int iDecPos;
-   BOOL bInteger = TRUE;
+   HB_BOOL bInteger = HB_TRUE;
    double dMultpl;
 
    iSize = strlen(FromBuffer);
@@ -780,12 +780,12 @@ PHB_ITEM sr_escapeNumber(char * FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
       }
 
       if( ToBuffer[iPos] == '.' ) {
-         bInteger = FALSE;
+         bInteger = HB_FALSE;
          iDecPos = iPos;
       }
 
       if( ToBuffer[iPos] == 'E' && (iPos + 2) <= iSize ) { // 1928773.3663E+003
-         bInteger = FALSE;
+         bInteger = HB_FALSE;
          if( FromBuffer[iPos + 1] == '-' ) {
             SciNot[0] = FromBuffer[iPos + 1];
          } else {
@@ -932,9 +932,9 @@ HB_FUNC( SR_DBQUALIFY )
 
 #ifdef SQLRDD_COMPAT_PRE_1_1
 
-BOOL hb_arraySetNL(PHB_ITEM pArray, ULONG ulIndex, LONG lVal)
+HB_BOOL hb_arraySetNL(PHB_ITEM pArray, ULONG ulIndex, LONG lVal)
 {
-   BOOL ret;
+   HB_BOOL ret;
    PHB_ITEM pItem = hb_errNew();
    hb_itemPutNL(pItem, lVal);
    ret = hb_arraySetForward(pArray, ulIndex, pItem);
@@ -944,9 +944,9 @@ BOOL hb_arraySetNL(PHB_ITEM pArray, ULONG ulIndex, LONG lVal)
 
 /*------------------------------------------------------------------------*/
 
-BOOL hb_arraySetL(PHB_ITEM pArray, ULONG ulIndex, BOOL lVal)
+HB_BOOL hb_arraySetL(PHB_ITEM pArray, ULONG ulIndex, HB_BOOL lVal)
 {
-   BOOL ret;
+   HB_BOOL ret;
    PHB_ITEM pItem = hb_errNew();
    hb_itemPutL(pItem, lVal);
    ret = hb_arraySetForward(pArray, ulIndex, pItem);
@@ -958,7 +958,7 @@ BOOL hb_arraySetL(PHB_ITEM pArray, ULONG ulIndex, BOOL lVal)
 
 //-----------------------------------------------------------------------------//
 
-BOOL SR_itemEmpty(PHB_ITEM pItem)
+HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
 {
    switch( hb_itemType(pItem) ) {
       case HB_IT_ARRAY:
@@ -997,7 +997,7 @@ BOOL SR_itemEmpty(PHB_ITEM pItem)
          hb_itemGetTDT(pItem, &lDate, &lTime);
          return lDate == 0 && lTime == 0;
       }
-#endif      
+#endif
       case HB_IT_LOGICAL:
          return !hb_itemGetL(pItem);
 
@@ -1016,21 +1016,21 @@ BOOL SR_itemEmpty(PHB_ITEM pItem)
       }
 #endif
       default:
-         return TRUE;
+         return HB_TRUE;
    }
 }
 
 //-----------------------------------------------------------------------------//
 
 // TODO: switch
-char * quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, BOOL bNullable, int nSystemID, BOOL bTCCompat, BOOL bMemo, BOOL * bNullArgument)
+char * quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL * bNullArgument)
 {
    char * sValue, sDate[9];
    HB_SIZE iSizeOut;
    int iTrim, iPos, iSize;
    sValue = NULL;
 
-   *bNullArgument = FALSE;
+   *bNullArgument = HB_FALSE;
 
    if( SR_itemEmpty(pFieldData) && (!(HB_IS_ARRAY(pFieldData) || HB_IS_OBJECT(pFieldData) || HB_IS_HASH(pFieldData)))
       && (((nSystemID == SYSTEMID_POSTGR) && HB_IS_DATE(pFieldData))
@@ -1042,12 +1042,12 @@ char * quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, B
          sValue[2] = 'L';
          sValue[3] = 'L';
          sValue[4] = '\0';
-         *bNullArgument = TRUE;
+         *bNullArgument = HB_TRUE;
 
          return sValue;
       } else {
          if( HB_IS_STRING(pFieldData) && bTCCompat ) {
-            sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, FALSE, &iSizeOut);
+            sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, HB_FALSE, &iSizeOut);
             return sValue;
          } else if( HB_IS_STRING(pFieldData) ) {
             sValue = (char *) hb_xgrab(4);
