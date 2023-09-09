@@ -68,7 +68,7 @@ const char * _sqlo_sqloraID = "$Id$";
 #endif
 
 #include "oci.h"
-#include "ociap.h"
+//#include "ociap.h"
 
 /* If glib is enabled, we use the glib allocators */
 #ifdef USE_GLIB_ALLOC
@@ -94,7 +94,8 @@ const char * _sqlo_sqloraID = "$Id$";
     || defined(PROTOTYPES) \
     || (defined(__mips) && defined(_SYSTYPE_SVR4)) \
     || defined(WIN32) \
-    || defined(__cplusplus)
+    || defined(__cplusplus) \
+    || defined(_MSC_VER)
 
 #  define AND ,
 #  define DEFUN(name, arglist, args)      name(args)
@@ -4332,7 +4333,7 @@ DEFUN(_sqlo_reopen, (stp, argc, argv),
 /*-------------------------------------------------------------------------
  * sqlo_get_stmt
  *------------------------------------------------------------------------*/
-const char *
+CONST char *
 DEFUN(sqlo_get_stmt, (sth), sqlo_stmt_handle_t sth )
 {
   sqlo_stmt_struct_ptr_t stp;
@@ -4516,7 +4517,7 @@ DEFUN(sqlo_trace, (dbh, on),
 /*---------------------------------------------------------------------------
  *         sqlo_geterror
  *--------------------------------------------------------------------------*/
-const char *
+CONST char *
 DEFUN(sqlo_geterror, (dbh), sqlo_db_handle_t dbh)
 {
   static char fatal_error[1024]; /* NOT THREAD SAFE !!! */
@@ -5230,7 +5231,7 @@ DEFUN(sqlo_fetch, (sth, nrows),
 /*---------------------------------------------------------------------------
  * sqlo_values
  *-------------------------------------------------------------------------*/
-const char **
+CONST char **
 DEFUN(sqlo_values, (sth, num, do_strip_string),
        sqlo_stmt_handle_t   sth               AND
        int *                num               AND
@@ -5351,7 +5352,7 @@ DEFUN(sqlo_ncols, (sth, in),
 /*---------------------------------------------------------------------------
  *        sqlo_command
  *-------------------------------------------------------------------------*/
-const char *
+CONST char *
 DEFUN(sqlo_command, (sth), sqlo_stmt_handle_t sth)
 {
   sqlo_stmt_struct_ptr_t  stp;
@@ -6037,7 +6038,7 @@ DEFUN(sqlo_freeall, (), )
 /*---------------------------------------------------------------------------
  *  sqlo_getdatabase
  *-------------------------------------------------------------------------*/
-const char *
+CONST char *
 DEFUN(sqlo_getdatabase, (dbh), sqlo_db_handle_t dbh)
 {
   sqlo_db_struct_ptr_t  dbp;
@@ -6618,7 +6619,7 @@ DEFUN(sqlo_executeselect, (sth, iterations),
 /*---------------------------------------------------------------------------
  * sqlo_ocol_names
  *-------------------------------------------------------------------------*/
-const char **
+CONST char **
 DEFUN(sqlo_ocol_names, (sth, num),
       sqlo_stmt_handle_t    sth     AND
       int *                 num )
@@ -6706,7 +6707,7 @@ DEFUN(sqlo_ocol_names2, (sth, num, ocol_names),
 /*---------------------------------------------------------------------------
  *        sqlo_ocol_name_lens
  *-------------------------------------------------------------------------*/
-const int *
+CONST int *
 DEFUN(sqlo_ocol_name_lens, (sth, num),
       sqlo_stmt_handle_t     sth    AND
       int *                  num )
@@ -6745,7 +6746,7 @@ DEFUN(sqlo_ocol_name_lens, (sth, num),
 /*---------------------------------------------------------------------------
  *        sqlo_value_lens
  *-------------------------------------------------------------------------*/
-const unsigned int *
+CONST unsigned int *
 DEFUN(sqlo_value_lens, (sth, num),
       sqlo_stmt_handle_t    sth    AND
       int *                 num )
