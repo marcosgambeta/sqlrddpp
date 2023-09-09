@@ -46,7 +46,7 @@ source/sqlex1.c
 source/sqlex2.c
 source/sqlex3.c
 source/sqllex.c
-{!allmsvc}source/sqlora.c
+source/sqlora.c
 source/sqlorax.c
 source/sqlrdd1.c
 source/sqlsrodbc.c
