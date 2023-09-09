@@ -3817,7 +3817,7 @@ DEFUN(_sth2stp, (sth, func_name),
   real_sth = DECODE_STH(sth);
   dbh = DECODE_DBH(sth);
 
-  CHECK_DBHANDLE(dbp, dbh, func_name, NULL);
+  CHECK_DBHANDLE(dbp, dbh, ((CONST char *) func_name), NULL);
 
   TRACE(3, fprintf(_get_trace_fp(dbp), "_sth2stp: sth %d -> sth=%u, dbh=%u\n", sth, real_sth, dbh););
 
@@ -4507,7 +4507,7 @@ DEFUN(sqlo_trace, (dbh, on),
     stat = sqlo_exec(dbh, "ALTER SESSION SET SQL_TRACE TRUE",NULL);
   } else {
     stat = sqlo_exec(dbh, "ALTER SESSION SET SQL_TRACE FALSE",NULL);
-  }  
+  }
 
   return stat;
 }
@@ -4574,7 +4574,7 @@ DEFUN(sqlo_geterror, (dbh), sqlo_db_handle_t dbh)
 #endif
     }
 
-    return (const char *) dbp->errmsg;
+    return (CONST char *) dbp->errmsg;
   }
 
 }
@@ -4925,7 +4925,7 @@ DEFUN(sqlo_open,(dbh, stmt, argc, argv),
   int status;
   int ret;
   bool_t bmf = FALSE;                   /* flag indicates change in blocking mode */
-  unsigned int blocking = SQLO_STH_INIT;
+  unsigned int blocking = (unsigned int) SQLO_STH_INIT;
 
   CHECK_DBHANDLE(dbp, dbh, "sqlo_open", SQLO_INVALID_DB_HANDLE);
 
@@ -5008,7 +5008,7 @@ DEFUN(sqlo_open2,(sthp, dbh, stmt, argc, argv),
   sqlo_stmt_struct_ptr_t stp = NULL;
   int status;
   int ret;
-  unsigned int blocking = SQLO_STH_INIT;
+  unsigned int blocking = (unsigned int) SQLO_STH_INIT;
   int real_sth;
 
   CHECK_DBHANDLE(dbp, dbh, "sqlo_open2", SQLO_INVALID_DB_HANDLE);
@@ -5259,7 +5259,7 @@ DEFUN(sqlo_values, (sth, num, do_strip_string),
   if( num )
     *num = (int)stp->num_defnpv;
 
-  return (const char **) stp->outv;
+  return (CONST char **) stp->outv;
 }
 
 
@@ -5358,7 +5358,7 @@ DEFUN(sqlo_command, (sth), sqlo_stmt_handle_t sth)
   sqlo_stmt_struct_ptr_t  stp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_command", NULL);
-  return _get_stmt_string(stp);
+  return (CONST char *) _get_stmt_string(stp);
 
 }
 
@@ -6652,7 +6652,7 @@ DEFUN(sqlo_ocol_names, (sth, num),
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_ocol_names: Returning %u column names\n", stp->num_defnpv););
 
-  return (const char **) stp->ocol_namev;
+  return (CONST char **) stp->ocol_namev;
 }
 
 
@@ -6737,7 +6737,7 @@ DEFUN(sqlo_ocol_name_lens, (sth, num),
                    "sqlo_ocol_name_lens: Returning %u column names\n",
                    stp->num_defnpv););
 
-  return (const int *) stp->ocol_namev_size;
+  return (CONST int *) stp->ocol_namev_size;
 }
 
 
@@ -6774,7 +6774,7 @@ DEFUN(sqlo_value_lens, (sth, num),
                    "sqlo_value_lens: Returning %u items\n",
                    stp->num_defnpv););
 
-  return (const unsigned int *) stp->outv_size;
+  return (CONST unsigned int *) stp->outv_size;
 }
 
 
@@ -6897,7 +6897,7 @@ DEFUN(sqlo_set_blocking, (dbh, on),
 {
   sqlo_db_struct_ptr_t dbp;
   unsigned int new_mode;
-  unsigned int blocking = SQLO_STH_INIT;
+  unsigned int blocking = (unsigned int) SQLO_STH_INIT;
 
   CHECK_DBHANDLE(dbp, dbh, "sqlo_set_blocking", SQLO_INVALID_DB_HANDLE);
 
@@ -6968,7 +6968,7 @@ DEFUN(sqlo_break, (dbh), sqlo_db_handle_t dbh)
 {
   sqlo_db_struct_ptr_t  dbp;
 
-  unsigned int blocking = SQLO_STH_INIT;
+  unsigned int blocking = (unsigned int) SQLO_STH_INIT;
 
   CHECK_DBHANDLE(dbp, dbh, "sqlo_break", SQLO_INVALID_DB_HANDLE);
 
