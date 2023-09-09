@@ -343,8 +343,7 @@ RETURN s_nMessages
 
 #include "compat.h"
 
-static int s_iMsgCount = 0;
-
+static int s_iMsgCount   = 0;
 static int s_iBaseLang   = 0;
 static int s_iSecondLang = 0;
 static int s_iRootLang   = 0;
@@ -367,8 +366,9 @@ PHB_ITEM HB_EXPORT sr_getRootLang(PHB_ITEM pLangItm)
 HB_FUNC_STATIC( SR_SETMSGCOUNT )
 {
    hb_retni(s_iMsgCount);
-   if( HB_ISNUM(1) )
+   if( HB_ISNUM(1) ) {
       s_iMsgCount = hb_parni(1);
+   }
 }
 
 HB_FUNC( SR_SETBASELANG )
@@ -377,8 +377,9 @@ HB_FUNC( SR_SETBASELANG )
 
    hb_retni(s_iBaseLang);
 
-   if( iLang > 0 && iLang <= s_iMsgCount )
+   if( iLang > 0 && iLang <= s_iMsgCount ) {
       s_iBaseLang = iLang;
+   }
 }
 
 HB_FUNC( SR_SETSECONDLANG )
@@ -387,8 +388,9 @@ HB_FUNC( SR_SETSECONDLANG )
 
    hb_retni(s_iSecondLang);
 
-   if( iLang > 0 && iLang <= s_iMsgCount )
+   if( iLang > 0 && iLang <= s_iMsgCount ) {
       s_iSecondLang = iLang;
+   }
 }
 
 HB_FUNC( SR_SETROOTLANG )
@@ -397,8 +399,9 @@ HB_FUNC( SR_SETROOTLANG )
 
    hb_retni(s_iRootLang);
 
-   if( iLang > 0 && iLang <= s_iMsgCount )
+   if( iLang > 0 && iLang <= s_iMsgCount ) {
       s_iRootLang = iLang;
+   }
 }
 
 #pragma ENDDUMP

@@ -2241,8 +2241,9 @@ HB_BOOL HB_EXPORT sr_isMultilang(void)
 HB_FUNC( SR_SETMULTILANG )
 {
    hb_retl(s_fMultiLang);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fMultiLang = hb_parl(1);
+   }
 }
 
 HB_BOOL HB_EXPORT sr_isShutdownProcess(void)
@@ -2253,8 +2254,9 @@ HB_BOOL HB_EXPORT sr_isShutdownProcess(void)
 HB_FUNC( SR_SETSHUTDOWN )
 {
    hb_retl(s_fShutDown);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fShutDown = hb_parl(1);
+   }
 }
 
 HB_BOOL HB_EXPORT sr_GoTopOnScope(void)
@@ -2265,8 +2267,9 @@ HB_BOOL HB_EXPORT sr_GoTopOnScope(void)
 HB_FUNC( SR_SETGOTOPONSCOPE )
 {
    hb_retl(s_fGoTopOnScope);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fGoTopOnScope = hb_parl(1);
+   }
 }
 
 HB_BOOL HB_EXPORT sr_lSerializedAsString(void)
@@ -2277,8 +2280,9 @@ HB_BOOL HB_EXPORT sr_lSerializedAsString(void)
 HB_FUNC( SR_SETSERIALIZEDSTRING )
 {
    hb_retl(s_fSerializedAsString);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fSerializedAsString = hb_parl(1);
+   }
 }
 
 HB_BOOL HB_EXPORT sr_lHideRecno(void)
@@ -2289,8 +2293,9 @@ HB_BOOL HB_EXPORT sr_lHideRecno(void)
 HB_FUNC( SR_SETHIDERECNO )
 {
    hb_retl(s_fHideRecno);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fHideRecno = hb_parl(1);
+   }
 }
 
 HB_BOOL HB_EXPORT sr_lHideHistoric(void)
@@ -2301,8 +2306,9 @@ HB_BOOL HB_EXPORT sr_lHideHistoric(void)
 HB_FUNC( SR_SETHIDEHISTORIC )
 {
    hb_retl(s_fHideHistoric);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fHideHistoric = hb_parl(1);
+   }
 }
 
 HB_BOOL HB_EXPORT sr_UseDeleteds(void)
@@ -2313,8 +2319,9 @@ HB_BOOL HB_EXPORT sr_UseDeleteds(void)
 HB_FUNC( SR_USEDELETEDS )
 {
    hb_retl(s_fUseDeleteds);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fUseDeleteds = hb_parl(1);
+   }
 }
 
 HB_BOOL HB_EXPORT sr_lSerializeArrayAsJson(void)
@@ -2325,18 +2332,19 @@ HB_BOOL HB_EXPORT sr_lSerializeArrayAsJson(void)
 HB_FUNC( SR_SETSERIALIZEARRAYASJSON )
 {
    hb_retl(s_fSerializeArrayAsJson);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fSerializeArrayAsJson = hb_parl(1);
+   }
 }
 
-BOOL HB_EXPORT sr_lsql2008newTypes(void)
+HB_BOOL HB_EXPORT sr_lsql2008newTypes(void)
 {
    return s_fSql2008newTypes;
 }
 
-BOOL HB_EXPORT sr_iOldPgsBehavior(void)
+HB_BOOL HB_EXPORT sr_iOldPgsBehavior(void)
 {
-   return s_iOldPgsBehavior ;
+   return s_iOldPgsBehavior;
 }
 
 HB_FUNC( SR_GETSQL2008NEWTYPES )
@@ -2347,31 +2355,35 @@ HB_FUNC( SR_GETSQL2008NEWTYPES )
 HB_FUNC( SR_SETSQL2008NEWTYPES )
 {
    hb_retl(s_fSql2008newTypes);
-   if( HB_ISLOG(1) )
+   if( HB_ISLOG(1) ) {
       s_fSql2008newTypes = hb_parl(1);
+   }
 }
 
-HB_FUNC(SETPGSOLDBEHAVIOR)
+HB_FUNC( SETPGSOLDBEHAVIOR )
 {
    int iOld = s_iOldPgsBehavior;
-   if (HB_ISLOG(1) )
-       s_iOldPgsBehavior= hb_parl(1) ;
-    hb_retl(iOld) ;
+   if( HB_ISLOG(1) ) {
+      s_iOldPgsBehavior = hb_parl(1);
+   }
+   hb_retl(iOld);
 }
 
 
-BOOL HB_EXPORT  sr_fShortasNum(void)
+HB_BOOL HB_EXPORT sr_fShortasNum(void)
 {
-return s_fShortasNum;
+   return s_fShortasNum;
 }
-HB_FUNC(SETFIREBIRDUSESHORTASNUM)
+
+HB_FUNC( SETFIREBIRDUSESHORTASNUM )
 {
    int iOld = s_fShortasNum;
-   if (HB_ISLOG(1) )
-       s_fShortasNum= hb_parl(1) ;
-    hb_retl(iOld) ;
-
+   if( HB_ISLOG(1) ) {
+      s_fShortasNum = hb_parl(1);
+   }
+   hb_retl(iOld);
 }
+
 #pragma ENDDUMP
 
 /*------------------------------------------------------------------------*/

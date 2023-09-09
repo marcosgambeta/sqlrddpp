@@ -2101,15 +2101,13 @@ FUNCTION sr_clearFilter()
 
    IF IS_SQLRDD
       oWA := (Select())->(dbInfo(DBI_INTERNAL_OBJECT))
-      
       IF !Empty(oWA:cFilter)
-         oWA:aRecnoFilter := {} 
+         oWA:aRecnoFilter := {}
          oWA:Refresh()
       ENDIF
    ENDIF
 
 RETURN NIL
-
 
 FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
 
