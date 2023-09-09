@@ -4412,7 +4412,7 @@ DEFUN(sqlo_init, (threaded_mode, max_db, max_cursors),
 
   if( TRACE_ENABLED && _trace_level > 0 ) {
     _open_global_trace_file();
-  }  
+  }
 
   /* Initialize OCI library */
 
@@ -4467,7 +4467,7 @@ DEFUN(sqlo_init, (threaded_mode, max_db, max_cursors),
 
 #endif
 
-    if( (status = _init_mutexes()) )
+    if( (status = _init_mutexes()) != 0 ) // TODO: 0 -> OCI_SUCCESS
       return status;
   }
 
@@ -5534,7 +5534,7 @@ DEFUN(sqlo_split_cstring, (cstr, uid, pwd, tnsname, bufsize),
     }
     *tnsname = '\0';
   } else {
-    if( (env_ptr = getenv("ORACLE_SID")) ) {
+    if( (env_ptr = getenv("ORACLE_SID")) != NULL ) {
       strncpy(tnsname, env_ptr, bufsize - 1);
       tnsname[bufsize - 1] = '\0';
     }
@@ -5560,7 +5560,7 @@ DEFUN(sqlo_server_attach, (dbhp, tnsname),
 
   TRACE(2, fprintf(_get_trace_fp(NULL), "sqlo_server_attach starts\n"););
 
-  if( !(dbp = _db_add()) ) {
+  if( (dbp = _db_add()) == NULL ) {
     TRACE(3, fprintf(_get_trace_fp(NULL), "sqlo_server_attach: Could not alloacte a dbp\n"););
     return SQLO_ERROR;
   }
@@ -5966,8 +5966,7 @@ DEFUN(sqlo_finish, (dbh), sqlo_db_handle_t dbh)
 
   if( dbp->session_created ) {
 
-    if( (status = sqlo_session_end(dbh)) ||
-         (status = sqlo_server_detach(dbh)) ) {
+    if( (status = sqlo_session_end(dbh)) != 0 || (status = sqlo_server_detach(dbh)) != 0 ) { // TODO: 0 -> OCI_SUCCESS
       TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_finish[%d] failed\n", dbh););
       /* Save the error message in the global variable, otherwise
        * sqlo_geterror(dbh) cannot return one when sqlo_server_free
