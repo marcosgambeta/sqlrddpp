@@ -83,10 +83,10 @@ static void myNoticeProcessor(void * arg, const char * message)
 //   TraceLog("sqlerror.log", "%s", message);
 }
 
-HB_FUNC( PGSCONNECT )   /* PGSConnect( ConnectionString ) => ConnHandle */
+HB_FUNC( PGSCONNECT ) /* PGSConnect(ConnectionString) => ConnHandle */
 {
    // PPSQL_SESSION session = (PPSQL_SESSION) hb_xgrab(sizeof(PSQL_SESSION));
-   PPSQL_SESSION session = (PPSQL_SESSION) hb_xgrabz( sizeof(PSQL_SESSION) );
+   PPSQL_SESSION session = (PPSQL_SESSION) hb_xgrabz(sizeof(PSQL_SESSION));
    const char *szConn = hb_parc(1);
 
 //    memset(session, 0, sizeof(PSQL_SESSION));
@@ -95,46 +95,46 @@ HB_FUNC( PGSCONNECT )   /* PGSConnect( ConnectionString ) => ConnHandle */
    
    session->ifetch = -2;
    /* Setup Postgres Notice Processor */
-   PQsetNoticeProcessor( session->dbh, myNoticeProcessor, NULL );
+   PQsetNoticeProcessor(session->dbh, myNoticeProcessor, NULL);
    hb_retptr((void *) session);
 }
 
 HB_FUNC( PGSFINISH )    /* PGSFinish(ConnHandle) */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( session->dbh != NULL );
+   assert(session->dbh != NULL);
    PQfinish(session->dbh);
    hb_xfree(session);
    hb_ret();
 }
 
-HB_FUNC( PGSSTATUS )       /* PGSStatus( ConnHandle ) => nStatus */
+HB_FUNC( PGSSTATUS ) /* PGSStatus(ConnHandle) => nStatus */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( session->dbh != NULL );   
+   assert(session->dbh != NULL);   
 
-   if( PQstatus( session->dbh ) == CONNECTION_OK ) {
+   if( PQstatus(session->dbh) == CONNECTION_OK ) {
       hb_retni(SQL_SUCCESS);
    } else {
       hb_retni(SQL_ERROR);
    }
 }
 
-HB_FUNC( PGSSTATUS2 )       /* PGSStatus( ConnHandle ) => nStatus */
+HB_FUNC( PGSSTATUS2 ) /* PGSStatus(ConnHandle) => nStatus */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( session->dbh != NULL );
+   assert(session->dbh != NULL);
    hb_retni((int) PQstatus(session->dbh));
 }
 
-HB_FUNC( PGSRESULTSTATUS )    /* PGSResultStatus( ResultSet ) => nStatus */
+HB_FUNC( PGSRESULTSTATUS ) /* PGSResultStatus(ResultSet) => nStatus */
 {
    int ret;
    PGresult * res = (PGresult *) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( res != NULL );
-   ret = (int) PQresultStatus( res );
+   assert(res != NULL);
+   ret = (int) PQresultStatus(res);
 
-   switch (ret) {
+   switch( ret ) {
    case PGRES_EMPTY_QUERY:
       ret = SQL_ERROR;
       break;
@@ -163,18 +163,18 @@ HB_FUNC( PGSEXEC )      /* PGSExec(ConnHandle, cCommand) => ResultSet */
    /* TraceLog(NULL, "PGSExec : %s\n", hb_parc(2)); */
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    int ret;
-   assert( session->dbh  != NULL );
+   assert(session->dbh != NULL);
 
    session->stmt = PQexec(session->dbh, hb_parc(2));
    hb_retptr((void *) session->stmt);
    
    session->ifetch = -1;
-   session->numcols = PQnfields( session->stmt );
-   ret = (int) PQresultStatus( session->stmt );
+   session->numcols = PQnfields(session->stmt);
+   ret = (int) PQresultStatus(session->stmt);
 
-   switch (ret) {
+   switch( ret ) {
    case PGRES_COMMAND_OK:
-      session->iAffectedRows =(int) atoi(PQcmdTuples( session->stmt ));
+      session->iAffectedRows =(int) atoi(PQcmdTuples(session->stmt));
    break;
    default :
    session->iAffectedRows =0;
@@ -186,17 +186,17 @@ HB_FUNC( PGSFETCH )     /* PGSFetch(ResultSet) => nStatus */
 {
    int iTpl;
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( session->dbh  != NULL );
-   assert( session->stmt != NULL );
+   assert(session->dbh  != NULL);
+   assert(session->stmt != NULL);
 
-   iTpl = PQresultStatus( session->stmt );
+   iTpl = PQresultStatus(session->stmt);
    session->iAffectedRows = 0;
    if( iTpl != PGRES_TUPLES_OK ) {
       hb_retni(SQL_INVALID_HANDLE);
    } else {
       if( session->ifetch >= -1 ) {
          session->ifetch++;
-         iTpl = PQntuples( session->stmt )-1;
+         iTpl = PQntuples(session->stmt) - 1;
          if( session->ifetch > iTpl ) {
             hb_retni(SQL_NO_DATA_FOUND);
          } else {
@@ -209,18 +209,18 @@ HB_FUNC( PGSFETCH )     /* PGSFetch(ResultSet) => nStatus */
    }
 }
 
-HB_FUNC( PGSRESSTATUS )    /* PGSResStatus( ResultSet ) => cErrMessage */
+HB_FUNC( PGSRESSTATUS ) /* PGSResStatus(ResultSet) => cErrMessage */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( session->dbh  != NULL );
-   assert( session->stmt != NULL );
+   assert(session->dbh != NULL);
+   assert(session->stmt != NULL);
    hb_retc(PQresStatus(PQresultStatus(session->stmt)));
 }
 
-HB_FUNC( PGSCLEAR )        /* PGSClear( ResultSet ) */
+HB_FUNC( PGSCLEAR )        /* PGSClear(ResultSet) */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( session->dbh  != NULL );
+   assert(session->dbh != NULL);
    if( session->stmt ) {
       PQclear(session->stmt);
       session->stmt = NULL;
@@ -231,30 +231,30 @@ HB_FUNC( PGSCLEAR )        /* PGSClear( ResultSet ) */
 HB_FUNC( PGSGETDATA )      /* PGSGetData(ResultSet, nColumn) => cValue */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( session->dbh  != NULL );
-   assert( session->stmt != NULL );
+   assert(session->dbh != NULL);
+   assert(session->stmt != NULL);
    hb_retc(PQgetvalue(session->stmt, session->ifetch, hb_parnl(2) - 1));
 }
 
-HB_FUNC( PGSCOLS )         /* PGSCols( ResultSet ) => nColsInQuery */
+HB_FUNC( PGSCOLS ) /* PGSCols(ResultSet) => nColsInQuery */
 {
    PGresult * res = (PGresult *) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( res != NULL );
-   hb_retnl((long)PQnfields( res ));
+   assert(res != NULL);
+   hb_retnl((long) PQnfields(res));
 }
 
-HB_FUNC( PGSERRMSG )         /* PGSErrMsg(ConnHandle) => cErrorMessage */
+HB_FUNC( PGSERRMSG ) /* PGSErrMsg(ConnHandle) => cErrorMessage */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   assert( session->dbh  != NULL );
+   assert(session->dbh != NULL);
    hb_retc(PQerrorMessage(session->dbh));
 }
 
-HB_FUNC( PGSCOMMIT )       /* PGSCommit( ConnHandle ) => nError */
+HB_FUNC( PGSCOMMIT ) /* PGSCommit(ConnHandle) => nError */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    PGresult * res;
-   assert( session->dbh  != NULL );
+   assert(session->dbh != NULL);
    res = PQexec(session->dbh, "COMMIT");
    if( PQresultStatus(res) == PGRES_COMMAND_OK ) {
       hb_retni(SQL_SUCCESS);
@@ -267,7 +267,7 @@ HB_FUNC( PGSROLLBACK )     /* PGSRollBack(ConnHandle) => nError */
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    PGresult * res;
-   assert( session->dbh  != NULL );
+   assert(session->dbh != NULL);
    res = PQexec(session->dbh, "ROLLBACK");
    if( PQresultStatus(res) == PGRES_COMMAND_OK ) {
       hb_retni(SQL_SUCCESS);
@@ -276,7 +276,7 @@ HB_FUNC( PGSROLLBACK )     /* PGSRollBack(ConnHandle) => nError */
    }
 }
 
-HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
+HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr(ResultSet) => aStruct */
 {
    int row, rows, type;
    
@@ -284,8 +284,8 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
    LONG typmod;
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-   assert( session->dbh  != NULL );
-   assert( session->stmt != NULL );
+   assert(session->dbh != NULL);
+   assert(session->stmt != NULL);
 
    if( hb_pcount() != 1 ) {
       hb_retnl(-2);
@@ -454,7 +454,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr( ResultSet ) => aStruct */
    hb_itemRelease(ret);
 }
 
-HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct */
+HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr(ConnHandle, cTableName) => aStruct */
 {
    char attcmm[512];
    int row, rows;
@@ -462,20 +462,20 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
    PGresult * stmtTemp;
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-   assert( session->dbh  != NULL );
+   assert(session->dbh != NULL);
 
    if( hb_pcount() < 3 ) {
       hb_retnl(-2);
       return;
    }
 
-   sprintf( attcmm, "select a.attname, a.atttypid, a.atttypmod, a.attnotnull from pg_attribute a left join pg_class b on a.attrelid = b.oid left join pg_namespace c on b.relnamespace = c.oid where a.attisdropped IS FALSE and a.attnum > 0 and b.relname = '%s' and c.nspname = '%s' order by attnum", hb_parc(2), hb_parc(3) );
+   sprintf(attcmm, "select a.attname, a.atttypid, a.atttypmod, a.attnotnull from pg_attribute a left join pg_class b on a.attrelid = b.oid left join pg_namespace c on b.relnamespace = c.oid where a.attisdropped IS FALSE and a.attnum > 0 and b.relname = '%s' and c.nspname = '%s' order by attnum", hb_parc(2), hb_parc(3));
 
    stmtTemp = PQexec(session->dbh, attcmm);
 
-   if( PQresultStatus( stmtTemp ) != PGRES_TUPLES_OK ) {
+   if( PQresultStatus(stmtTemp) != PGRES_TUPLES_OK ) {
       TraceLog(LOGFILE, "Query error : %i - %s\n", PQresultStatus(stmtTemp), PQresStatus(PQresultStatus(stmtTemp)));
-      PQclear( stmtTemp );
+      PQclear(stmtTemp);
    }
 
    rows = PQntuples(stmtTemp);
@@ -485,7 +485,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
 
    hb_arrayNew(ret, rows);
 
-   for( row=0; row < rows; row++ ) {
+   for( row = 0; row < rows; row++ ) {
       long typmod;
       long nullable;
       int type;
@@ -633,7 +633,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr( ConnHandle, cTableName ) => aStruct
    hb_itemRelease(temp);
    hb_itemReturnForward(ret);
    hb_itemRelease(ret);
-   PQclear( stmtTemp );
+   PQclear(stmtTemp);
 }
 
 
@@ -653,24 +653,24 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
    lLen = hb_arrayGetNL(pField, 3);
    lDec = hb_arrayGetNL(pField, 4);
 
-   if( lLenBuff <= 0 ) {   // database content is NULL
+   if( lLenBuff <= 0 ) { // database content is NULL
       switch( lType ) {
          case SQL_CHAR: {
             char * szResult = ( char * ) hb_xgrab(lLen + 1);
             hb_xmemset(szResult, ' ', lLen);
-            szResult[ lLen ] = '\0';
+            szResult[lLen] = '\0';
             hb_itemPutCLPtr(pItem, szResult, lLen);
             break;
          }
          case SQL_NUMERIC:
          case SQL_FAKE_NUM: {
-            char szResult[2] = { ' ', '\0' };
-            sr_escapeNumber( szResult, lLen, lDec, pItem );
+            char szResult[2] = {' ', '\0'};
+            sr_escapeNumber(szResult, lLen, lDec, pItem);
             break;
          }
          case SQL_DATE: {
             char dt[9] = {' ',' ',' ',' ',' ',' ',' ',' ','\0'};
-            hb_itemPutDS( pItem, dt );
+            hb_itemPutDS(pItem, dt);
             break;
          }
          case SQL_LONGVARCHAR: {
@@ -684,20 +684,20 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
 
 #ifdef SQLRDD_TOPCONN
          case SQL_FAKE_DATE: {
-            hb_itemPutDS( pItem, bBuffer );
+            hb_itemPutDS(pItem, bBuffer);
             break;
          }
 #endif
          case SQL_DATETIME: {
 //#ifdef __XHARBOUR__
-//            hb_itemPutDT( pItem, 0, 0, 0, 0, 0, 0, 0 );
+//            hb_itemPutDT(pItem, 0, 0, 0, 0, 0, 0, 0);
 //#else
-            hb_itemPutTDT( pItem, 0, 0 );
+            hb_itemPutTDT(pItem, 0, 0);
 //#endif
             break;
          }
          case SQL_TIME: {
-            hb_itemPutTDT( pItem, 0, 0 );
+            hb_itemPutTDT(pItem, 0, 0);
             break;
          }
 
@@ -713,14 +713,14 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
             hb_xmemcpy(szResult, bBuffer, (lLen < lLenBuff ? lLen : lLenBuff));
 
             for( lPos = lLenBuff; lPos < lLen; lPos++ ) {
-               szResult[ lPos ] = ' ';
+               szResult[lPos] = ' ';
             }
-            szResult[ lLen ] = '\0';
+            szResult[lLen] = '\0';
             hb_itemPutCLPtr(pItem, szResult, lLen);
             break;
          }
          case SQL_NUMERIC: {
-            sr_escapeNumber( bBuffer, lLen, lDec, pItem );
+            sr_escapeNumber(bBuffer, lLen, lDec, pItem);
             break;
          }
          case SQL_DATE: {
@@ -734,7 +734,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
             dt[6] = bBuffer[8];
             dt[7] = bBuffer[9];
             dt[8] = '\0';
-            hb_itemPutDS( pItem, dt );
+            hb_itemPutDS(pItem, dt);
             break;
          }
 
@@ -746,7 +746,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
                   s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
                   hb_dynsymUnlock();
                   if( s_pSym_SR_FROMJSON  == NULL ) {
-                     printf( "Could not find Symbol HB_JSONDECODE\n" );
+                     printf("Could not find Symbol HB_JSONDECODE\n");
                   }
                }
                hb_vmPushDynSym(s_pSym_SR_FROMJSON);
@@ -765,7 +765,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
                   hb_dynsymUnlock();
                   if( s_pSym_SR_DESERIALIZE  == NULL ) {
-                     printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                     printf("Could not find Symbol SR_DESERIALIZE\n");
                   }   
                }
                hb_vmPushDynSym(s_pSym_SR_DESERIALIZE);
@@ -783,7 +783,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
                   if(    hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos)
                       || hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos)
                       || hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos) ) {
-                     hb_itemCopy(pItem, hb_hashGetValueAt( pTemp, ulPos) );
+                     hb_itemCopy(pItem, hb_hashGetValueAt(pTemp, ulPos));
                   }
                   hb_itemRelease(pLangItem);
                } else {
@@ -803,7 +803,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
                   s_pSym_SR_FROMXML = hb_dynsymFindName("SR_FROMXML");
                   hb_dynsymUnlock();
                   if( s_pSym_SR_FROMXML  == NULL ) {
-                     printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                     printf("Could not find Symbol SR_DESERIALIZE\n");
                   }
                }
                pTemp1 = hb_itemArrayNew(0);
@@ -832,7 +832,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
 
 #ifdef SQLRDD_TOPCONN
          case SQL_FAKE_DATE: {
-            hb_itemPutDS( pItem, bBuffer );
+            hb_itemPutDS(pItem, bBuffer);
             break;
          }
 #endif
@@ -840,18 +840,18 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
 #ifdef __XHARBOUR__
             long lJulian, lMilliSec;
             hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
-            hb_itemPutTDT( pItem, lJulian, lMilliSec );
+            hb_itemPutTDT(pItem, lJulian, lMilliSec);
 #else
             long lJulian, lMilliSec;
-            hb_timeStampStrGetDT( bBuffer, &lJulian, &lMilliSec );
-            hb_itemPutTDT( pItem, lJulian, lMilliSec );
+            hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
+            hb_itemPutTDT(pItem, lJulian, lMilliSec);
 #endif
             break;
          }
          case SQL_TIME: {
            long  lMilliSec;
-            lMilliSec = hb_timeUnformat( bBuffer, NULL ); // TOCHECK:
-            hb_itemPutTDT( pItem, 0, lMilliSec );    
+            lMilliSec = hb_timeUnformat(bBuffer, NULL); // TOCHECK:
+            hb_itemPutTDT(pItem, 0, lMilliSec);    
             break;
          }
          
@@ -876,13 +876,13 @@ HB_FUNC( PGSLINEPROCESSED )
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
    LONG lIndex, cols;
 
-   assert( session->dbh  != NULL );
-   assert( session->stmt != NULL );
+   assert(session->dbh != NULL);
+   assert(session->stmt != NULL);
 
    if( session ) {
       cols = hb_arrayLen(pFields);
 
-      for( i=0; i < cols; i++ ) {
+      for( i = 0; i < cols; i++ ) {
          temp = hb_itemNew(NULL);
          lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i + 1), FIELD_ENUM);
 

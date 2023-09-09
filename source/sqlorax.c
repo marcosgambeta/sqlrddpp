@@ -76,7 +76,7 @@ typedef struct _ORA_BIND_COLS
    double  dValue;
    int iType;
    ULONG  ulValue;
-   char sDate[ 7 ];
+   char sDate[7];
    int iValue;
    char sValue[31];   
 //    OCIRowId * RowId;
@@ -115,10 +115,10 @@ HB_FUNC( SQLO_CONNECT )
    POCI_SESSION session = (POCI_SESSION) hb_xgrab(sizeof(OCI_SESSION));
 
    if( !OCI_initilized ) {
-#if defined(ENABLE_PTHREADS)  && defined(HAVE_PTHREAD_H)
-      session->status = sqlo_init(1, MAX_CONNECTIONS, MAX_CURSORS );
+#if defined(ENABLE_PTHREADS) && defined(HAVE_PTHREAD_H)
+      session->status = sqlo_init(1, MAX_CONNECTIONS, MAX_CURSORS);
 #else
-      session->status = sqlo_init(0, MAX_CONNECTIONS, MAX_CURSORS );
+      session->status = sqlo_init(0, MAX_CONNECTIONS, MAX_CURSORS);
 #endif
    } else {
       session->status = SQLO_SUCCESS;
@@ -130,12 +130,12 @@ HB_FUNC( SQLO_CONNECT )
       hb_retni(SQL_ERROR);
    }
 
-   session->status = sqlo_connect( &(session->dbh), hb_parcx(1) );
+   session->status = sqlo_connect(&(session->dbh), hb_parcx(1));
 
    if( SQLO_SUCCESS != session->status ) {
       hb_retni(SQL_ERROR);
    } else {
-      session->stmtParamRes= SQLO_STH_INIT;
+      session->stmtParamRes = SQLO_STH_INIT;
       sqlo_server_version(session->dbh, session->server_version, sizeof(session->server_version));
       hb_storptr((void *) session, 2);
       hb_retni(SQL_SUCCESS);
@@ -238,7 +238,7 @@ HB_FUNC( SQLO_EXECUTE )
             SQLO_USLEEP;
          }
       } else {
-         while( SQLO_STILL_EXECUTING == (session->status = sqlo_open2( &(session->stmt), session->dbh, hb_parcx(2), 0, NULL )) ) {
+         while( SQLO_STILL_EXECUTING == (session->status = sqlo_open2(&(session->stmt), session->dbh, hb_parcx(2), 0, NULL)) ) {
             SQLO_USLEEP;
          }
       }
@@ -247,7 +247,7 @@ HB_FUNC( SQLO_EXECUTE )
          session->numcols = 0;
          hb_retni(SQL_ERROR);
       } else {
-         session->numcols = sqlo_ncols( session->stmt, 0 );
+         session->numcols = sqlo_ncols(session->stmt, 0);
          hb_retni(SQL_SUCCESS);
       }
    } else {
@@ -326,7 +326,7 @@ int sqlo_sqldtype(USHORT type)
       case SQLOT_TIMESTAMP:
       case SQLOT_TIMESTAMP_TZ:
       case SQLOT_TIMESTAMP_LTZ:
-         isqltype= SQL_DATETIME;
+         isqltype = SQL_DATETIME;
          break;
       default:
          isqltype = 0;
@@ -345,7 +345,7 @@ HB_FUNC( SQLO_DESCRIBECOL ) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nD
     sqlo_stmt_handle_t stmtParamRes;
 
    if( session ) {
-      ncol = (USHORT)hb_parni(2)-1;
+      ncol = (USHORT)hb_parni(2) - 1;
       stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
       sqlo_describecol(stmtParamRes, ncol, &dType, &name, &namelen, &prec, &scale, &dbsize, &nullok);
       type = sqlo_sqldtype(dType);
@@ -413,7 +413,7 @@ HB_FUNC( SQLO_COMMIT )
    POCI_SESSION session = (POCI_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
    if( session  ) {
-      session->status = sqlo_commit( session->dbh );
+      session->status = sqlo_commit(session->dbh);
       if( SQLO_SUCCESS == session->status ) {
          hb_retni(SQL_SUCCESS);
       } else {
@@ -452,7 +452,7 @@ HB_FUNC( SQLO_CLOSESTMT )
 
       if( session->stmtParamRes  != -1 ) {
          session->status = sqlo_close(session->stmtParamRes);
-         session->stmtParamRes= SQLO_STH_INIT;
+         session->stmtParamRes = SQLO_STH_INIT;
          session->status = sqlo_close(session->stmtParam);
       }    
       session->status = sqlo_close(session->stmt);
@@ -478,24 +478,24 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
    lLen = hb_arrayGetNL(pField, 3);
    lDec = hb_arrayGetNL(pField, 4);
 
-   if( lLenBuff <= 0 ) {   // database content is NULL
+   if( lLenBuff <= 0 ) { // database content is NULL
       switch( lType ) {
          case SQL_CHAR: {
             char * szResult = (char *) hb_xgrab(lLen + 1);
             hb_xmemset(szResult, ' ', lLen);
-            szResult[ lLen ] = '\0';            
+            szResult[lLen] = '\0';            
             hb_itemPutCLPtr(pItem, szResult, lLen);
             break;
          }
          case SQL_NUMERIC:
          case SQL_FAKE_NUM: {
-            char szResult[2] = { ' ', '\0' };
-            sr_escapeNumber( szResult, lLen, lDec, pItem );
+            char szResult[2] = {' ', '\0'};
+            sr_escapeNumber(szResult, lLen, lDec, pItem);
             break;
          }
          case SQL_DATE: {
-            char dt[9] = {' ',' ',' ',' ',' ',' ',' ',' ','\0'};
-            hb_itemPutDS( pItem, dt );
+            char dt[9] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\0'};
+            hb_itemPutDS(pItem, dt);
             break;
          }
          case SQL_LONGVARCHAR: {
@@ -509,15 +509,15 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
 
 #ifdef SQLRDD_TOPCONN
          case SQL_FAKE_DATE: {
-            hb_itemPutDS( pItem, bBuffer );
+            hb_itemPutDS(pItem, bBuffer);
             break;
          }
 #endif
          case SQL_DATETIME: {
 // #ifdef __XHARBOUR__
-//             hb_itemPutDT( pItem, 0, 0, 0, 0, 0, 0, 0 );
+//             hb_itemPutDT(pItem, 0, 0, 0, 0, 0, 0, 0);
 // #else
-            hb_itemPutTDT( pItem, 0, 0 );
+            hb_itemPutTDT(pItem, 0, 0);
 // #endif
             break;
          }
@@ -530,17 +530,17 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
          case SQL_CHAR: {
             HB_SIZE lPos;
             char * szResult = (char *) hb_xgrab(lLen + 1);
-            hb_xmemcpy( szResult, bBuffer, (lLen < lLenBuff ? lLen : lLenBuff ) );
+            hb_xmemcpy(szResult, bBuffer, (lLen < lLenBuff ? lLen : lLenBuff));
 
             for( lPos = lLenBuff; lPos < lLen; lPos++ ) {
-               szResult[ lPos ] = ' ';
+               szResult[lPos] = ' ';
             }
-            szResult[ lLen ] = '\0';
+            szResult[lLen] = '\0';
             hb_itemPutCLPtr(pItem, szResult, lLen);
             break;
          }
          case SQL_NUMERIC: {
-            sr_escapeNumber( bBuffer, lLen, lDec, pItem );
+            sr_escapeNumber(bBuffer, lLen, lDec, pItem);
             break;
          }
          case SQL_DATE: {
@@ -554,7 +554,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
             dt[6] = bBuffer[6];
             dt[7] = bBuffer[7];
             dt[8] = '\0';
-            hb_itemPutDS( pItem, dt );
+            hb_itemPutDS(pItem, dt);
             break;
          }
          case SQL_LONGVARCHAR: {
@@ -563,7 +563,9 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                   hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
                   hb_dynsymUnlock();
-                  if( s_pSym_SR_FROMJSON  == NULL ) printf( "Could not find Symbol HB_JSONDECODE\n" );
+                  if( s_pSym_SR_FROMJSON  == NULL ) {
+                     printf("Could not find Symbol HB_JSONDECODE\n");
+                  }
                }
                hb_vmPushDynSym(s_pSym_SR_FROMJSON);
                hb_vmPushNil();
@@ -580,7 +582,9 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                   hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
                   hb_dynsymUnlock();
-                  if( s_pSym_SR_DESERIALIZE  == NULL ) printf( "Could not find Symbol SR_DESERIALIZE\n" );
+                  if( s_pSym_SR_DESERIALIZE  == NULL ) {
+                     printf("Could not find Symbol SR_DESERIALIZE\n");
+                  }
                }
                hb_vmPushDynSym(s_pSym_SR_DESERIALIZE);
                hb_vmPushNil();
@@ -596,7 +600,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                   if(    hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos)
                       || hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos)
                       || hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos) ) {
-                     hb_itemCopy( pItem, hb_hashGetValueAt( pTemp, ulPos ) );
+                     hb_itemCopy(pItem, hb_hashGetValueAt(pTemp, ulPos));
                   }
                   hb_itemRelease(pLangItem);
                } else {
@@ -615,7 +619,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
 
 #ifdef SQLRDD_TOPCONN
          case SQL_FAKE_DATE: {
-            hb_itemPutDS( pItem, bBuffer );
+            hb_itemPutDS(pItem, bBuffer);
             break;
          }
 #endif
@@ -640,14 +644,14 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
 //             dt[13] = bBuffer[16];
 //             dt[14] = '\0';
 // 
-//             hb_itemPutDTS( pItem, dt );
+//             hb_itemPutDTS(pItem, dt);
             long lJulian, lMilliSec;
             hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
-            hb_itemPutTDT( pItem, lJulian, lMilliSec );            
+            hb_itemPutTDT(pItem, lJulian, lMilliSec);            
 #else
             long lJulian, lMilliSec;
-            hb_timeStampStrGetDT( bBuffer, &lJulian, &lMilliSec );
-            hb_itemPutTDT( pItem, lJulian, lMilliSec );
+            hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
+            hb_itemPutTDT(pItem, lJulian, lMilliSec);
 #endif
             break;
          }
@@ -677,7 +681,7 @@ HB_FUNC( SQLO_LINE )
       lens = sqlo_value_lens(stmtParamRes, NULL);
       hb_arrayNew(ret, session->numcols);
 
-      for( i=0; i < session->numcols; i++ ) {
+      for( i = 0; i < session->numcols; i++ ) {
          temp = hb_itemNew(NULL);
          hb_arraySetForward(ret, i + 1, hb_itemPutCL(temp, (char *) line[i], lens[i]));
          hb_itemRelease(temp);
@@ -711,7 +715,7 @@ HB_FUNC( SQLO_LINEPROCESSED )
 
       cols = hb_arrayLen(pFields);
 
-      for( i=0; i < cols; i++ ) {
+      for( i = 0; i < cols; i++ ) {
          lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i + 1), FIELD_ENUM);
          temp = hb_itemNew(NULL);
 
@@ -751,7 +755,7 @@ HB_FUNC( ORACLEWRITEMEMO )
          char szSql[256] = {0};
          const char * sMemo = hb_arrayGetCPtr(pFieldDesc, 2);
          const char * sField = hb_arrayGetCPtr(pFieldDesc, 1);
-         sprintf( szSql, "UPDATE %s SET %s = EMPTY_CLOB() WHERE %s = %lu RETURNING %s INTO :b1", sTable, sField, sRecnoName, ulRecno, sField );
+         sprintf(szSql, "UPDATE %s SET %s = EMPTY_CLOB() WHERE %s = %lu RETURNING %s INTO :b1", sTable, sField, sRecnoName, ulRecno, sField);
 
          sth = sqlo_prepare(session->dbh, szSql);
          sqlo_alloc_lob_desc(session->dbh, &loblp);
@@ -765,7 +769,7 @@ HB_FUNC( ORACLEWRITEMEMO )
             return;
          }
 
-         status = sqlo_lob_write_buffer(session->dbh, loblp, strlen(sMemo), sMemo, strlen(sMemo), SQLO_ONE_PIECE );
+         status = sqlo_lob_write_buffer(session->dbh, loblp, strlen(sMemo), sMemo, strlen(sMemo), SQLO_ONE_PIECE);
 
          if( status < 0 ) {
             sqlo_free_lob_desc(session->dbh, &loblp);
@@ -789,7 +793,7 @@ void OracleFreeLink(int num_recs, POCI_SESSION p)
    if( p->pLink ) {
 
       for( i = 0; i < num_recs; i++ ) {
-         if( p->pLink[ i ].col_name ) {
+         if( p->pLink[i].col_name ) {
             hb_xfree(p->pLink[i].col_name);
          }
 
@@ -823,16 +827,15 @@ HB_FUNC( ORACLEINBINDPARAM )
    int iParamNum = hb_parni(2);
    int iParamType = hb_parni(3);
    int iFieldSize = hb_parni(4);
-   int iPos = iParamNum-1;
+   int iPos = iParamNum - 1;
    int ret = SQL_ERROR;
    BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : 0;
    BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : 0;
 
-  
+
 
 
    if( Stmt ) {
-
 
       Stmt->pLink[iPos].sVal = isNull ? -1 : 0;
       Stmt->pLink[iPos].iType = iParamType;
@@ -842,48 +845,35 @@ HB_FUNC( ORACLEINBINDPARAM )
       }
          break;
       case  4 : {
-         if( HB_ISNUM(6) )
-            Stmt->pLink[ iPos ].dValue = hb_parnd(6);
+         if( HB_ISNUM(6) ) {
+            Stmt->pLink[iPos].dValue = hb_parnd(6);
+         }
 
-      ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt : Stmt->stmtParam,
-                          iParamNum,
-                          SQLOT_FLT,
-                          &Stmt->pLink[ iPos ].dValue,
-                          sizeof(double),
-                          &Stmt->pLink[iPos].sVal,
-                          0);
+      ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt : Stmt->stmtParam, iParamNum, SQLOT_FLT, &Stmt->pLink[iPos].dValue,
+         sizeof(double), &Stmt->pLink[iPos].sVal, 0);
       }
                           break;
      case 2 : {
-         if( HB_ISNUM(6) )
-            Stmt->pLink[ iPos ].ulValue = hb_parnl(6);
+         if( HB_ISNUM(6) ) {
+            Stmt->pLink[iPos].ulValue = hb_parnl(6);
+         }
 
-         ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,
-                          iParamNum,
-                          SQLOT_INT,
-                          &Stmt->pLink[ iPos ].ulValue,
-                          sizeof(ULONG),
-                          &Stmt->pLink[iPos].sVal,
-                          0);
+         ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt :Stmt->stmtParam, iParamNum, SQLOT_INT, &Stmt->pLink[iPos].ulValue,
+            sizeof(ULONG), &Stmt->pLink[iPos].sVal, 0);
      }
       break;
      case 3 : {
-         if( HB_ISNUM(6) )
-            Stmt->pLink[ iPos ].iValue = hb_parl(6);
+         if( HB_ISNUM(6) ) {
+            Stmt->pLink[iPos].iValue = hb_parl(6);
+         }
 
-         ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,
-                          iParamNum,
-                          SQLOT_INT,
-                          &Stmt->pLink[ iPos ].iValue,
-                          sizeof(ULONG),
-                          &Stmt->pLink[iPos].sVal,
-                          0);
+         ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt :Stmt->stmtParam, iParamNum, SQLOT_INT, &Stmt->pLink[iPos].iValue,
+            sizeof(ULONG), &Stmt->pLink[iPos].sVal, 0);
      }
       break;
-      
+
      case 8 : {
-#ifdef __XHARBOUR__        
-        
+#ifdef __XHARBOUR__
           if( ISDATE(6) )
 #else
           if( HB_ISDATE(6) )
@@ -893,22 +883,17 @@ HB_FUNC( ORACLEINBINDPARAM )
          PHB_ITEM pFieldData = hb_param(6,HB_IT_DATE);
          hb_dateDecode(hb_itemGetDL(pFieldData), &iYear, &iMonth, &iDay);
          //hb_dateStrPut(Stmt->pLink[iPos].sDate, iYear, iMonth, iDay);
-         Stmt->pLink[ iPos ].sDate[0]= (char)(iYear / 100) + 100; // century
-         Stmt->pLink[ iPos ].sDate[1]= (char)(iYear % 100) + 100; // year
-         Stmt->pLink[ iPos ].sDate[2]= (char)iMonth;
-         Stmt->pLink[ iPos ].sDate[3]= (char)iDay;
-         Stmt->pLink[ iPos ].sDate[4]= 1;
-         Stmt->pLink[ iPos ].sDate[5]= 1;
-         Stmt->pLink[ iPos ].sDate[6]= 1;         
-      }    
+         Stmt->pLink[iPos].sDate[0] = (char) (iYear / 100) + 100; // century
+         Stmt->pLink[iPos].sDate[1] = (char) (iYear % 100) + 100; // year
+         Stmt->pLink[iPos].sDate[2] = (char) iMonth;
+         Stmt->pLink[iPos].sDate[3] = (char) iDay;
+         Stmt->pLink[iPos].sDate[4] = 1;
+         Stmt->pLink[iPos].sDate[5] = 1;
+         Stmt->pLink[iPos].sDate[6] = 1;
+      }
 
-         ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,
-                               iParamNum,
-                          SQLOT_DAT,
-                          &Stmt->pLink[ iPos ].sDate,
-                          sizeof(Stmt->pLink[ iPos ].sDate),
-                          &Stmt->pLink[iPos].sVal,
-                          0);
+      ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt :Stmt->stmtParam, iParamNum, SQLOT_DAT, &Stmt->pLink[iPos].sDate,
+         sizeof(Stmt->pLink[iPos].sDate), &Stmt->pLink[iPos].sVal, 0);
      }
       break;
 
@@ -927,45 +912,38 @@ HB_FUNC( ORACLEINBINDPARAM )
          int mSec;
          int iSeconds;
          #endif
-        PHB_ITEM pFieldData = hb_param(6,HB_IT_DATETIME);
-        #ifdef __XHARBOUR__
+         PHB_ITEM pFieldData = hb_param(6, HB_IT_DATETIME);
+         #ifdef __XHARBOUR__
          hb_dateDecode(hb_itemGetDL(pFieldData), &iYear, &iMonth, &iDay);
          hb_timeDecode(hb_itemGetT(pFieldData), &iHour, &iMin, &dSec);
          #else
          long plJulian;
          long plMilliSec;
-         hb_itemGetTDT(pFieldData,&plJulian, &plMilliSec);
+         hb_itemGetTDT(pFieldData, &plJulian, &plMilliSec);
          hb_dateDecode(plJulian, &iYear, &iMonth, &iDay);
          hb_timeDecode(plMilliSec, &iHour, &iMin, &iSeconds, &mSec);
-         
          #endif
          //hb_dateStrPut(Stmt->pLink[iPos].sDate, iYear, iMonth, iDay);
-         Stmt->pLink[ iPos ].sDate[0]= (char)(iYear / 100) + 100; // century
-         Stmt->pLink[ iPos ].sDate[1]= (char)(iYear % 100) + 100; // year
-         Stmt->pLink[ iPos ].sDate[2]= (char)iMonth;
-         Stmt->pLink[ iPos ].sDate[3]= (char)iDay;
-         Stmt->pLink[ iPos ].sDate[4]= (char)iHour+1;
-         Stmt->pLink[ iPos ].sDate[5]= (char)iMin+1;
-        #ifdef __XHARBOUR__         
-         Stmt->pLink[ iPos ].sDate[6]= (char)dSec+1;         
+         Stmt->pLink[iPos].sDate[0] = (char) (iYear / 100) + 100; // century
+         Stmt->pLink[iPos].sDate[1] = (char) (iYear % 100) + 100; // year
+         Stmt->pLink[iPos].sDate[2] = (char) iMonth;
+         Stmt->pLink[iPos].sDate[3] = (char) iDay;
+         Stmt->pLink[iPos].sDate[4] = (char) iHour + 1;
+         Stmt->pLink[iPos].sDate[5] = (char) iMin + 1;
+         #ifdef __XHARBOUR__
+         Stmt->pLink[iPos].sDate[6] = (char) dSec + 1;
          #else
-         Stmt->pLink[ iPos ].sDate[6]= (char)iSeconds+1;         
+         Stmt->pLink[iPos].sDate[6] = (char) iSeconds + 1;
          #endif
-      }    
+      }
 
-         ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,
-                               iParamNum,
-                          SQLOT_DAT,
-                          &Stmt->pLink[ iPos ].sDate,
-                          sizeof(Stmt->pLink[ iPos ].sDate),
-                          &Stmt->pLink[iPos].sVal,
-                          0);
+      ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt :Stmt->stmtParam, iParamNum, SQLOT_DAT, &Stmt->pLink[iPos].sDate,
+         sizeof(Stmt->pLink[iPos].sDate), &Stmt->pLink[iPos].sVal, 0);
      }
       break;
      case 1: {
-        
         if( HB_ISCHAR(6) ) {
-           sprintf(Stmt->pLink[ iPos ].sValue,hb_parcx(6),hb_parclen(6));          
+           sprintf(Stmt->pLink[iPos].sValue,hb_parcx(6),hb_parclen(6));
         }
         ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt : Stmt->stmtParam, iParamNum, SQLOT_AFC, &Stmt->pLink[iPos].sValue, iFieldSize, &Stmt->pLink[iPos].sVal, 0);
      }
@@ -977,21 +955,16 @@ HB_FUNC( ORACLEINBINDPARAM )
          iFieldSize = 1;
       }
          Stmt->pLink[iPos].col_name = (char *) hb_xgrab(sizeof(char) * (iFieldSize + 1));
-         memset(Stmt->pLink[iPos].col_name,'\0',(iFieldSize+1) * sizeof(char));
+         memset(Stmt->pLink[iPos].col_name,'\0',(iFieldSize + 1) * sizeof(char));
 
-      
+
       if( HB_ISCHAR(6) ) {
-         hb_xmemcpy(Stmt->pLink[ iPos ].col_name, hb_parc(6),hb_parclen(6) );
+         hb_xmemcpy(Stmt->pLink[iPos].col_name, hb_parc(6), hb_parclen(6));
       }
       
       
-      ret = sqlo_bind_by_pos( lStmt ? Stmt->stmt :Stmt->stmtParam,
-                          iParamNum,
-                          SQLOT_STR,
-                          Stmt->pLink[ iPos ].col_name,
-                          iFieldSize+1,
-                          &Stmt->pLink[iPos].sVal,
-                          0);
+      ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt :Stmt->stmtParam, iParamNum, SQLOT_STR, Stmt->pLink[iPos].col_name,
+         iFieldSize + 1, &Stmt->pLink[iPos].sVal, 0);
      }                     
      break;
      }
@@ -1013,29 +986,29 @@ HB_FUNC( ORACLEGETBINDDATA)
 
    PHB_ITEM p1 = hb_param(2, HB_IT_ANY);
 
-   if( HB_IS_NUMBER( p1 ) &&   p ) {
+   if( HB_IS_NUMBER(p1) &&   p ) {
 
       iPos = hb_itemGetNI(p1);
-      if( p->pLink[ iPos - 1 ].iType == 4 ) {
-         hb_retnd(p->pLink[ iPos - 1 ].dValue);
-      } else if( p->pLink[ iPos - 1 ].iType == 2) {
-         hb_retnint(p->pLink[ iPos - 1 ].ulValue);
-      } else if( p->pLink[ iPos - 1 ].iType == 8 ||   p->pLink[ iPos - 1 ].iType == 9 ) {
-         int century = p->pLink[ iPos - 1 ].sDate[0];
+      if( p->pLink[iPos - 1].iType == 4 ) {
+         hb_retnd(p->pLink[iPos - 1].dValue);
+      } else if( p->pLink[iPos - 1].iType == 2) {
+         hb_retnint(p->pLink[iPos - 1].ulValue);
+      } else if( p->pLink[iPos - 1].iType == 8 || p->pLink[iPos - 1].iType == 9 ) {
+         int century = p->pLink[iPos - 1].sDate[0];
          if( century >= 100 ) {
-             int year = (unsigned char)(p->pLink[ iPos - 1 ].sDate[1]);
+             int year = (unsigned char)(p->pLink[iPos - 1].sDate[1]);
              int month;
              int day;
              int hour;
              int min;
              int sec;
-             year = ((century-100)*100) + (year-100);
-             month = p->pLink[ iPos - 1 ].sDate[2];
-             day = p->pLink[ iPos - 1 ].sDate[3];
-             hour = p->pLink[ iPos - 1 ].sDate[4] - 1;
-             min = p->pLink[ iPos - 1 ].sDate[5] - 1;
-             sec = p->pLink[ iPos - 1 ].sDate[6] - 1;
-             if( p->pLink[ iPos - 1 ].iType == 8 ) {
+             year = ((century - 100) * 100) + (year - 100);
+             month = p->pLink[iPos - 1].sDate[2];
+             day = p->pLink[iPos - 1].sDate[3];
+             hour = p->pLink[iPos - 1].sDate[4] - 1;
+             min = p->pLink[iPos - 1].sDate[5] - 1;
+             sec = p->pLink[iPos - 1].sDate[6] - 1;
+             if( p->pLink[iPos - 1].iType == 8 ) {
                hb_retd(year, month, day); /* returns a date */
              } else {
 #ifdef __XHARBOUR__
@@ -1045,8 +1018,8 @@ HB_FUNC( ORACLEGETBINDDATA)
 #endif
              }
          }
-      } else  if( p->pLink[ iPos - 1 ].iType == 3) {
-         hb_retl(p->pLink[ iPos - 1 ].iValue);
+      } else  if( p->pLink[iPos - 1].iType == 3) {
+         hb_retl(p->pLink[iPos - 1].iValue);
       } else {
          hb_retc(p->pLink[iPos - 1].col_name);
       }
@@ -1149,7 +1122,7 @@ HB_FUNC( ORACLE_PROCCURSOR )
          return;
        }
           
-      session->numcols = sqlo_ncols( st2h, 0 );        
+      session->numcols = sqlo_ncols(st2h, 0);        
       
      } else {
          hb_retni(SQL_ERROR);
@@ -1174,7 +1147,7 @@ HB_FUNC( ORACLE_CLOSE_FCURSOR )
    POCI_SESSION session = (POCI_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
       
    if( SQLO_SUCCESS != sqlo_close(session->stmtParamRes) ) {
-       session->stmtParamRes= SQLO_STH_INIT;
+       session->stmtParamRes = SQLO_STH_INIT;
        hb_retni(SQL_ERROR);
        return; }
  
@@ -1202,10 +1175,10 @@ HB_FUNC(ORACLEEXECDIRCURSOR)
       ret = sqlo_execute(session->stmtParam, 1);
       if( ret == SQLO_SUCCESS ) {
             ret = sqlo_execute(session->stmtParamRes, 1);    
-            session->numcols = sqlo_ncols( session->stmtParamRes, 0 );
+            session->numcols = sqlo_ncols(session->stmtParamRes, 0);
             //session->status = sqlo_close(session->stmtParam);
             //ret = sqlo_execute(session->stmtParamRes, 1);
-            //session->numcols = sqlo_ncols( session->stmtParam, 0 );
+            //session->numcols = sqlo_ncols(session->stmtParam, 0);
 
       }
       hb_retni(ret);
@@ -1225,9 +1198,9 @@ HB_FUNC( ORACLEBINDALLOC )
 
    if( session ) {
       iBind = hb_parni(2);
-      // session->pLink = (ORA_BIND_COLS *) hb_xgrab(sizeof(ORA_BIND_COLS) * iBind);
-      // memset(session->pLink, 0, sizeof(ORA_BIND_COLS) * iBind);
-      session->pLink = (ORA_BIND_COLS * ) hb_xgrabz( sizeof(ORA_BIND_COLS ) * iBind  ); 
+      //session->pLink = (ORA_BIND_COLS *) hb_xgrab(sizeof(ORA_BIND_COLS) * iBind);
+      //memset(session->pLink, 0, sizeof(ORA_BIND_COLS) * iBind);
+      session->pLink = (ORA_BIND_COLS *) hb_xgrabz(sizeof(ORA_BIND_COLS) * iBind);
       session->ubBindNum = iBind;
    }
    hb_retni(1);
@@ -1247,7 +1220,7 @@ HB_FUNC( ORACLE_BINDCURSOR )
   
   if( session ) {
    /* parse the statement */
-   ret = sqlo_prepare(session->dbh,stmt );
+   ret = sqlo_prepare(session->dbh, stmt);
    if( ret == SQLO_SUCCESS ) {
        if( 0 <= (sth = ret) ) {
         /* bind all variables */
@@ -1283,13 +1256,13 @@ HB_FUNC( ORACLE_EXECCURSOR )
      return;
    }
 
-   session->numcols = sqlo_ncols( session->stmtParamRes, 0 );               
+   session->numcols = sqlo_ncols(session->stmtParamRes, 0);
    
 
    hb_retni(ret);
 }
 HB_FUNC( CLOSECURSOR )
-{  
+{
    POCI_SESSION session = (POCI_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
    if( session ) {
