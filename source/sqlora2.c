@@ -978,9 +978,9 @@ HB_FUNC( SQLO2_DESCRIBECOL ) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @n
    if( session ) {
       OCI_Column *col;                                                                                  
       ncol = hb_parni(2);                                                                                
-      //stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;              
+      //stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
       //SQLO2_describecol(stmtParamRes, ncol, &dType, &name, &namelen, &prec, &scale, &dbsize, &nullok);
-                                                                                                         
+
       col = OCI_GetColumn(session->rs, ncol);
       nullok = OCI_GetColumnNullable(col);
       name = (char *) OCI_GetColumnName(col);
@@ -993,7 +993,8 @@ HB_FUNC( SQLO2_DESCRIBECOL ) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @n
       //type = SQLO2_sqldtype(dType);
       hb_storni(type, 4);
 
-      if( type == SQL_CHAR ) { // TODO: switch
+#if 0 // TODO: old code for reference (to be deleted)
+      if( type == SQL_CHAR ) {
          hb_storni(0, 6);
          hb_storni(dbsize, 5);
       } else if( type == SQL_NUMERIC ) {
@@ -1010,6 +1011,33 @@ HB_FUNC( SQLO2_DESCRIBECOL ) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @n
       } else {
          hb_storni(prec, 5);
          hb_storni(scale, 6);
+      }
+#endif
+      switch( type ) {
+         case SQL_CHAR: {
+            hb_storni(0, 6);
+            hb_storni(dbsize, 5);
+            break;
+         }
+         case SQL_NUMERIC: {
+            if( prec == 0 ) {
+               hb_storni(19, 5);
+               hb_storni(6, 6);
+            } else {
+               hb_storni(prec, 5);
+               hb_storni(scale, 6);
+            }
+            break;
+         }
+         case SQL_DATETIME: {
+            hb_storni(0, 6);
+            hb_storni(8, 5);
+            break;
+         }
+         default: {
+            hb_storni(prec, 5);
+            hb_storni(scale, 6);
+         }
       }
 
       hb_storl(nullok, 7);
