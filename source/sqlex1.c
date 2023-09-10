@@ -459,7 +459,7 @@ static HB_ERRCODE getMissingColumn(SQLEXAREAP thiswa, PHB_ITEM pFieldData, LONG 
 
    res = SQLFetch(thiswa->colStmt[lFieldPosDB - 1]);
    if( res != SQL_SUCCESS ) {
-      if( res == SQL_ERROR ) {
+      if( res == (unsigned int) SQL_ERROR ) {
          odbcErrorDiagRTE(thiswa->colStmt[lFieldPosDB - 1], "getMissingColumn/SQLFetch", sSql, (SQLRETURN) res, __LINE__, __FILE__);
          SQLFreeStmt(thiswa->colStmt[lFieldPosDB - 1], SQL_CLOSE);
          return HB_FAILURE;
