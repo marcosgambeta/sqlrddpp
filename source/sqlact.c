@@ -322,11 +322,11 @@ char * sr_Hex2Str(const char * cStr, int len, int * lenOut)
       iCipher = 0;
 
       if( c >= '0' && c <= '9' ) {
-         iCipher = (ULONG) ( c - '0' );
+         iCipher = (ULONG) (c - '0');
       } else if( c >= 'A' && c <= 'F' ) {
-         iCipher = (ULONG) ( c - 'A' ) + 10;
+         iCipher = (ULONG) (c - 'A') + 10;
       } else if( c >= 'a' && c <= 'f' ) {
-         iCipher = (ULONG) ( c - 'a' ) + 10;
+         iCipher = (ULONG) (c - 'a') + 10;
       }
 
       iNum += iCipher;
@@ -376,163 +376,156 @@ HB_FUNC( SR_HEXTOSTR )
 
 static HB_SIZE escape_mysql(char * to, const char * from, HB_SIZE length)
 {
-  const char * to_start = to;
-  const char * end;
-  for( end = from + length; from != end; from++ )
-  {
-    switch (*from) {
-    case 0:            /* Must be escaped for 'mysql' */
-      *to++= '\\';
-      *to++= '0';
-      break;
-    case '\n':            /* Must be escaped for logs */
-      *to++= '\\';
-      *to++= 'n';
-      break;
-    case '\r':
-      *to++= '\\';
-      *to++= 'r';
-      break;
-    case '\\':
-      *to++= '\\';
-      *to++= '\\';
-      break;
-    case '\'':
-      *to++= '\\';
-      *to++= '\'';
-      break;
-    case '"':            /* Better safe than sorry */
-      *to++= '\\';
-      *to++= '"';
-      break;
-    case '\032':         /* This gives problems on Win32 */
-      *to++= '\\';
-      *to++= 'Z';
-      break;
-    default:
-      *to++= *from;
-    }
-  }
-  *to = 0;
-  return (HB_SIZE) (to - to_start);
+   const char * to_start = to;
+   const char * end;
+   for( end = from + length; from != end; from++ ) {
+     switch( *from ) {
+     case 0:            /* Must be escaped for 'mysql' */
+        *to++= '\\';
+        *to++= '0';
+        break;
+     case '\n':            /* Must be escaped for logs */
+        *to++= '\\';
+        *to++= 'n';
+        break;
+     case '\r':
+        *to++= '\\';
+        *to++= 'r';
+        break;
+     case '\\':
+        *to++= '\\';
+        *to++= '\\';
+        break;
+     case '\'':
+        *to++= '\\';
+        *to++= '\'';
+        break;
+     case '"':            /* Better safe than sorry */
+        *to++= '\\';
+        *to++= '"';
+        break;
+     case '\032':         /* This gives problems on Win32 */
+        *to++= '\\';
+        *to++= 'Z';
+        break;
+     default:
+        *to++= *from;
+     }
+   }
+   *to = 0;
+   return (HB_SIZE) (to - to_start);
 }
 
 static HB_SIZE escape_single(char * to, const char * from, HB_SIZE length)
 {
-  const char * to_start = to;
-  const char * end;
-  for( end = from + length; from != end; from++ ) {
-    switch (*from) {
-    case '\'':
-      *to++= '\'';
-      *to++= '\'';
-      break;
-    default:
-      *to++= *from;
-    }
-  }
-  *to = 0;
-  return (HB_SIZE) (to - to_start);
+   const char * to_start = to;
+   const char * end;
+   for( end = from + length; from != end; from++ ) {
+     switch( *from ) {
+     case '\'':
+       *to++= '\'';
+       *to++= '\'';
+       break;
+     default:
+       *to++= *from;
+     }
+   }
+   *to = 0;
+   return (HB_SIZE) (to - to_start);
 }
 
 static HB_SIZE escape_firebird(char * to, const char * from, HB_SIZE length)
 {
-  const char * to_start = to;
-  const char * end;
-  for( end = from + length; from != end; from++ )
-  {
-    switch (*from) {
-    case '\'':
-      *to++= '\'';
-      *to++= '\'';
-      break;
-    case 0:
-      *to++= ' ';
-      break;
-    default:
-      *to++= *from;
-    }
-  }
-  *to = 0;
-  return (HB_SIZE) (to - to_start);
+   const char * to_start = to;
+   const char * end;
+   for( end = from + length; from != end; from++ ) {
+      switch (*from) {
+      case '\'':
+         *to++= '\'';
+         *to++= '\'';
+         break;
+      case 0:
+         *to++= ' ';
+         break;
+      default:
+         *to++= *from;
+      }
+   }
+   *to = 0;
+   return (HB_SIZE) (to - to_start);
 }
 
 static HB_SIZE escape_db2(char * to, const char * from, HB_SIZE length)
 {
-  const char * to_start = to;
-  const char * end;
-  for( end = from + length; from != end; from++ )
-  {
-    switch (*from) {
-    case '\'':
-      *to++= '\'';
-      *to++= '\'';
-      break;
-    case 0:
-      *to++= ' ';
-      break;
-    default:
-      *to++= *from;
-    }
-  }
-  *to = 0;
-  return (HB_SIZE) (to - to_start);
+   const char * to_start = to;
+   const char * end;
+   for( end = from + length; from != end; from++ ) {
+      switch (*from) {
+      case '\'':
+         *to++= '\'';
+         *to++= '\'';
+         break;
+      case 0:
+         *to++= ' ';
+         break;
+      default:
+         *to++= *from;
+      }
+   }
+   *to = 0;
+   return (HB_SIZE) (to - to_start);
 }
 
 static HB_SIZE escape_pgs(char * to, const char * from, HB_SIZE length)
 {
-  const char * to_start = to;
-  const char * end;
-  for( end = from + length; from != end; from++ )
-  {
-    switch (*from) {
-    case '\'':
-      *to++= '\'';
-      *to++= '\'';
-      break;
-    case '\\':
-      *to++= '\\';
-      *to++= '\\';
-      break;
-    case 0:
-      break;
-    default:
-      *to++= *from;
-    }
-  }
-  *to = 0;
-  return (HB_SIZE) (to - to_start);
+   const char * to_start = to;
+   const char * end;
+   for( end = from + length; from != end; from++ ) {
+      switch( *from ) {
+      case '\'':
+         *to++= '\'';
+         *to++= '\'';
+         break;
+      case '\\':
+         *to++= '\\';
+         *to++= '\\';
+         break;
+      case 0:
+         break;
+      default:
+         *to++= *from;
+      }
+   }
+   *to = 0;
+   return (HB_SIZE) (to - to_start);
 }
 
 static HB_SIZE escape_oci(char * to, const char * from, HB_SIZE length)
 {
-  const char * to_start = to;
-  const char * end;
-  for( end = from + length; from != end; from++ )
-  {
-    switch (*from) {
-    case '\'':
-      *to++= '\'';
-      *to++= '\'';
-      break;
-    case 0:
-      break;
-
-    default:
-      *to++= *from;
-    }
-
-  }
-  *to = 0;
-  return (HB_SIZE) (to - to_start);
+   const char * to_start = to;
+   const char * end;
+   for( end = from + length; from != end; from++ ) {
+      switch( *from ) {
+      case '\'':
+         *to++= '\'';
+         *to++= '\'';
+         break;
+      case 0:
+         break;
+      default:
+         *to++= *from;
+      }
+   }
+   *to = 0;
+   return (HB_SIZE) (to - to_start);
 }
 
 HB_FUNC( SR_ESCAPESTRING )
 {
-   const char *FromBuffer;
+   const char * FromBuffer;
    HB_SIZE iSize;
    int idatabase;
-   char *ToBuffer;
+   char * ToBuffer;
 
    iSize = hb_parclen(1);
    idatabase = hb_parni(2);
@@ -546,7 +539,7 @@ HB_FUNC( SR_ESCAPESTRING )
       FromBuffer = hb_parc(1);
       ToBuffer = (char *) hb_xgrab((iSize * 2) + 1);
       if( ToBuffer ) {
-         switch (idatabase) {
+         switch( idatabase ) {
          case SYSTEMID_MYSQL:
          case SYSTEMID_MARIADB:
             iSize = escape_mysql(ToBuffer, FromBuffer, iSize);
@@ -591,7 +584,7 @@ char * QuoteTrimEscapeString(const char * FromBuffer, HB_SIZE iSize, int idataba
    ToBuffer[0] = '\'';
    ToBuffer++;
 
-   switch (idatabase) {
+   switch( idatabase ) {
    case SYSTEMID_MYSQL:
    case SYSTEMID_MARIADB:
       iSize = escape_mysql(ToBuffer, FromBuffer, iSize);
@@ -635,13 +628,12 @@ char * QuoteTrimEscapeString(const char * FromBuffer, HB_SIZE iSize, int idataba
    return ToBuffer;
 }
 
-
 HB_FUNC( SR_ESCAPENUM )
 {
-   const char *FromBuffer;
-   char *ToBuffer;
-   char SciNot[5] = {'\0','\0','\0','\0','\0'};
-   HB_SIZE iSize,iPos;
+   const char * FromBuffer;
+   char * ToBuffer;
+   char SciNot[5] = {'\0', '\0', '\0', '\0', '\0'};
+   HB_SIZE iSize, iPos;
    int iDecPos;
    HB_BOOL bInteger = HB_TRUE;
    HB_SIZE len, dec;
@@ -753,8 +745,8 @@ HB_FUNC( SR_ESCAPENUM )
 
 PHB_ITEM sr_escapeNumber(char * FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pRet)
 {
-   char *ToBuffer;
-   char SciNot[5] = {'\0','\0','\0','\0','\0'};
+   char * ToBuffer;
+   char SciNot[5] = {'\0', '\0', '\0', '\0', '\0'};
    HB_SIZE iSize, iPos;
    int iDecPos;
    HB_BOOL bInteger = HB_TRUE;
@@ -873,7 +865,7 @@ HB_FUNC( SR_DBQUALIFY )
       // Postgres, MySQL and Ingres must be lowercase
       // Others, doesn't matter column case
 
-      switch (ulDb) {
+      switch( ulDb ) {
       case SYSTEMID_ORACLE:
       case SYSTEMID_FIREBR:
       case SYSTEMID_FIREBR3:
@@ -961,68 +953,57 @@ HB_BOOL hb_arraySetL(PHB_ITEM pArray, ULONG ulIndex, HB_BOOL lVal)
 HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
 {
    switch( hb_itemType(pItem) ) {
-      case HB_IT_ARRAY:
+      case HB_IT_ARRAY: {
          return hb_arrayLen(pItem) == 0;
-
-      case HB_IT_HASH:
+      }
+      case HB_IT_HASH: {
          return hb_hashLen(pItem) == 0;
-
+      }
       case HB_IT_STRING:
-      case HB_IT_MEMO:
+      case HB_IT_MEMO: {
          return hb_strEmpty(hb_itemGetCPtr(pItem), hb_itemGetCLen(pItem));
-
-      case HB_IT_INTEGER:
+      }
+      case HB_IT_INTEGER: {
          return hb_itemGetNI(pItem) == 0;
-
-      case HB_IT_LONG:
+      }
+      case HB_IT_LONG: {
          return hb_itemGetNInt(pItem) == 0;
-
-      case HB_IT_DOUBLE:
+      }
+      case HB_IT_DOUBLE: {
          return hb_itemGetND(pItem) == 0.0;
-#ifdef __XHARBOUR__
-      case HB_IT_DATE:
-#ifdef SQLRDD_COMPAT_PRE_1_1
-         return (hb_itemGetDL(pItem) == 0);
-#else
-         return (hb_itemGetDL(pItem) == 0 && hb_itemGetT(pItem) == 0);
-#endif
-      case HB_IT_TIMEFLAG:
-         return (hb_itemGetDL(pItem) == 0 && hb_itemGetT(pItem) == 0);
-#else
-      case HB_IT_DATE:
+      }
+      case HB_IT_DATE: {
          return hb_itemGetDL(pItem) == 0;
-
+      }
       case HB_IT_TIMESTAMP: {
          long lDate, lTime;
          hb_itemGetTDT(pItem, &lDate, &lTime);
          return lDate == 0 && lTime == 0;
       }
-#endif
-      case HB_IT_LOGICAL:
+      case HB_IT_LOGICAL: {
          return !hb_itemGetL(pItem);
-
-      case HB_IT_BLOCK:
+      }
+      case HB_IT_BLOCK: {
          return HB_FALSE;
-
-      case HB_IT_POINTER:
+      }
+      case HB_IT_POINTER: {
          return hb_itemGetPtr(pItem) == NULL;
-#ifndef __XHARBOUR__
+      }
       case HB_IT_SYMBOL: {
          PHB_SYMB pSym = hb_itemGetSymbol(pItem);
-         if( pSym && ( pSym->scope.value & HB_FS_DEFERRED ) && pSym->pDynSym ) {
+         if( pSym && (pSym->scope.value & HB_FS_DEFERRED) && pSym->pDynSym ) {
             pSym = hb_dynsymSymbol(pSym->pDynSym);
          }
          return pSym == NULL || pSym->value.pFunPtr == NULL;
       }
-#endif
-      default:
+      default: {
          return HB_TRUE;
+      }
    }
 }
 
 //-----------------------------------------------------------------------------//
 
-// TODO: switch
 char * quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL * bNullArgument)
 {
    char * sValue, sDate[9];
@@ -1043,9 +1024,9 @@ char * quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, H
          sValue[3] = 'L';
          sValue[4] = '\0';
          *bNullArgument = HB_TRUE;
-
          return sValue;
       } else {
+#if 0 // TODO: old code for reference (to be deleted)
          if( HB_IS_STRING(pFieldData) && bTCCompat ) {
             sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, HB_FALSE, &iSizeOut);
             return sValue;
@@ -1062,9 +1043,35 @@ char * quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, H
             sValue[1] = '\0';
             return sValue;
          }
+#endif
+         switch( hb_itemType(pFieldData) ) {
+            case HB_IT_STRING:
+            case HB_IT_MEMO: {
+               if( bTCCompat ) {
+                  sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, HB_FALSE, &iSizeOut);
+                  return sValue;
+               } else {
+                  sValue = (char *) hb_xgrab(4);
+                  sValue[0] = '\'';
+                  sValue[1] = ' ';
+                  sValue[2] = '\'';
+                  sValue[3] = '\0';
+                  return sValue;
+               }
+            }
+            case HB_IT_INTEGER:
+            case HB_IT_LONG:
+            case HB_IT_DOUBLE: {
+               sValue = (char *) hb_xgrab(2);
+               sValue[0] = '0';
+               sValue[1] = '\0';
+               return sValue;
+            }
+         }
       }
    }
 
+#if 0 // TODO: old code for reference (to be deleted)
    if( HB_IS_STRING(pFieldData) ) {
       sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, !bTCCompat, &iSizeOut);
    } else if( HB_IS_NUMBER(pFieldData) ) {
@@ -1134,6 +1141,99 @@ char * quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, H
          }
       }
    }
+#endif
+   switch( hb_itemType(pFieldData) ) {
+      case HB_IT_STRING:
+      case HB_IT_MEMO: {
+         sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, !bTCCompat, &iSizeOut);
+         break;
+      }
+      case HB_IT_INTEGER:
+      case HB_IT_LONG:
+      case HB_IT_DOUBLE: {
+         sValue = hb_itemStr(pFieldData, pFieldLen, pFieldDec);
+         iTrim = 0;
+         iSize = 15;
+         while( sValue[iTrim] == ' ' ) {
+            iTrim++;
+         }
+         if( iTrim > 0 ) {
+            for( iPos = 0; iPos + iTrim < iSize; iPos++ ) {
+               sValue[iPos] = sValue[iPos + iTrim];
+            }
+            sValue[iPos] = '\0';
+         }
+         break;
+      }
+      case HB_IT_DATE: {
+         hb_dateDecStr(sDate, hb_itemGetDL(pFieldData));
+         sValue = (char *) hb_xgrab(30);
+         switch( nSystemID ) {
+            case SYSTEMID_ORACLE: {
+               if( !bMemo ) {
+                  sprintf(sValue, "TO_DATE(\'%s\',\'YYYYMMDD\')", sDate);
+                  return sValue;
+               }
+            }
+            default: {
+               if( !bMemo ) {
+                  sprintf(sValue, "\'%s\'", sDate);
+                  return sValue;
+               }
+            }
+         }
+         break;
+      }
+      case HB_IT_LOGICAL: {
+         sValue = (char *) hb_xgrab(6);
+         if( hb_itemGetL(pFieldData) ) {
+            switch( nSystemID ) {
+               case SYSTEMID_POSTGR: {
+                  sValue[0] = 't';
+                  sValue[1] = 'r';
+                  sValue[2] = 'u';
+                  sValue[3] = 'e';
+                  sValue[4] = '\0';
+                  break;
+               }
+               case SYSTEMID_INFORM: {
+                  sValue[0] = '\'';
+                  sValue[1] = 't';
+                  sValue[2] = '\'';
+                  sValue[3] = '\0';
+                  break;
+               }
+               default: {
+                  sValue[0] = '1';
+                  sValue[1] = '\0';
+               }
+            }
+         } else {
+            switch( nSystemID ) {
+               case SYSTEMID_POSTGR: {
+                  sValue[0] = 'f';
+                  sValue[1] = 'a';
+                  sValue[2] = 'l';
+                  sValue[3] = 's';
+                  sValue[4] = 'e';
+                  sValue[5] = '\0';
+                  break;
+               }
+               case SYSTEMID_INFORM: {
+                  sValue[0] = '\'';
+                  sValue[1] = 'f';
+                  sValue[2] = '\'';
+                  sValue[3] = '\0';
+                  break;
+               }
+               default: {
+                  sValue[0] = '0';
+                  sValue[1] = '\0';
+               }
+            }
+         }
+      }
+   }
+
    return sValue;
 }
-
