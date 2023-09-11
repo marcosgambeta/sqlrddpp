@@ -322,11 +322,11 @@ char * sr_Hex2Str(const char * cStr, int len, int * lenOut)
       iCipher = 0;
 
       if( c >= '0' && c <= '9' ) {
-         iCipher = (ULONG) (c - '0');
+         iCipher = (HB_ULONG) (c - '0');
       } else if( c >= 'A' && c <= 'F' ) {
-         iCipher = (ULONG) (c - 'A') + 10;
+         iCipher = (HB_ULONG) (c - 'A') + 10;
       } else if( c >= 'a' && c <= 'f' ) {
-         iCipher = (ULONG) (c - 'a') + 10;
+         iCipher = (HB_ULONG) (c - 'a') + 10;
       }
 
       iNum += iCipher;
@@ -339,11 +339,11 @@ char * sr_Hex2Str(const char * cStr, int len, int * lenOut)
       iCipher = 0;
 
       if( c >= '0' && c <= '9' ) {
-         iCipher = (ULONG) (c - '0');
+         iCipher = (HB_ULONG) (c - '0');
       } else if( c >= 'A' && c <= 'F' ) {
-         iCipher = (ULONG) (c - 'A') + 10;
+         iCipher = (HB_ULONG) (c - 'A') + 10;
       } else if( c >= 'a' && c <= 'f' ) {
-         iCipher = (ULONG) (c - 'a') + 10;
+         iCipher = (HB_ULONG) (c - 'a') + 10;
       }
 
       iNum += iCipher;
@@ -924,7 +924,7 @@ HB_FUNC( SR_DBQUALIFY )
 
 #ifdef SQLRDD_COMPAT_PRE_1_1
 
-HB_BOOL hb_arraySetNL(PHB_ITEM pArray, ULONG ulIndex, LONG lVal)
+HB_BOOL hb_arraySetNL(PHB_ITEM pArray, HB_ULONG ulIndex, LONG lVal)
 {
    HB_BOOL ret;
    PHB_ITEM pItem = hb_errNew();
@@ -936,7 +936,7 @@ HB_BOOL hb_arraySetNL(PHB_ITEM pArray, ULONG ulIndex, LONG lVal)
 
 /*------------------------------------------------------------------------*/
 
-HB_BOOL hb_arraySetL(PHB_ITEM pArray, ULONG ulIndex, HB_BOOL lVal)
+HB_BOOL hb_arraySetL(PHB_ITEM pArray, HB_ULONG ulIndex, HB_BOOL lVal)
 {
    HB_BOOL ret;
    PHB_ITEM pItem = hb_errNew();

@@ -917,7 +917,7 @@ HB_FUNC( FBVERSION )
 
 /*------------------------------------------------------------------------*/
 
-void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate)
+void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate)
 {
    HB_LONG lType;
    HB_SIZE lLen, lDec;
@@ -1132,7 +1132,7 @@ HB_FUNC( FBLINEPROCESSED )
    PHB_ITEM temp;
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
    HB_BOOL bQueryOnly = hb_parl(4);
-   ULONG ulSystemID = hb_parnl(5);
+   HB_ULONG ulSystemID = hb_parnl(5);
    HB_BOOL bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
    HB_LONG lIndex;

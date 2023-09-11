@@ -75,7 +75,7 @@ typedef struct _ORA_BIND_COLS
    short sVal;
    double  dValue;
    int iType;
-   ULONG  ulValue;
+   HB_ULONG  ulValue;
    char sDate[7];
    int iValue;
    char sValue[31];   
@@ -464,7 +464,7 @@ HB_FUNC( SQLO_CLOSESTMT )
 
 //-----------------------------------------------------------------------------//
 
-void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate)
+void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate)
 {
    HB_LONG lType;
    HB_SIZE lLen;
@@ -673,7 +673,7 @@ HB_FUNC( SQLO_LINEPROCESSED )
    HB_SIZE i, cols;
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
    HB_BOOL  bQueryOnly = hb_parl(4);
-   ULONG ulSystemID = hb_parnl(5);
+   HB_ULONG ulSystemID = hb_parnl(5);
    HB_BOOL  bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
    sqlo_stmt_handle_t stmtParamRes;
@@ -704,7 +704,7 @@ HB_FUNC( ORACLEWRITEMEMO )
 {
    POCI_SESSION session = (POCI_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    const char * sTable = hb_parc(2);
-   ULONG ulRecno = hb_parnl(3);
+   HB_ULONG ulRecno = hb_parnl(3);
    const char * sRecnoName = hb_parcx(4);
    sqlo_lob_desc_t loblp;
    sqlo_stmt_handle_t sth;
@@ -829,7 +829,7 @@ HB_FUNC( ORACLEINBINDPARAM )
          }
 
          ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt :Stmt->stmtParam, iParamNum, SQLOT_INT, &Stmt->pLink[iPos].ulValue,
-            sizeof(ULONG), &Stmt->pLink[iPos].sVal, 0);
+            sizeof(HB_ULONG), &Stmt->pLink[iPos].sVal, 0);
      }
       break;
      case 3 : {
@@ -838,7 +838,7 @@ HB_FUNC( ORACLEINBINDPARAM )
          }
 
          ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt :Stmt->stmtParam, iParamNum, SQLOT_INT, &Stmt->pLink[iPos].iValue,
-            sizeof(ULONG), &Stmt->pLink[iPos].sVal, 0);
+            sizeof(HB_ULONG), &Stmt->pLink[iPos].sVal, 0);
      }
       break;
 
