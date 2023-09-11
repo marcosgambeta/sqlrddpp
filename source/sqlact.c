@@ -873,7 +873,7 @@ HB_FUNC( SR_DBQUALIFY )
       case SYSTEMID_ADABAS:
          szOut[0] = '"';
          for( i = 0; i < ulLen; i++ ) {
-            szOut[i + 1] = (char) toupper((BYTE) pszBuffer[i]);
+            szOut[i + 1] = (char) toupper((HB_BYTE) pszBuffer[i]);
          }
          szOut[i + 1] = '"';
          break;
@@ -881,14 +881,14 @@ HB_FUNC( SR_DBQUALIFY )
       case SYSTEMID_POSTGR:
          szOut[0] = '"';
          for( i = 0; i < ulLen; i++ ) {
-            szOut[i + 1] = (char) tolower((BYTE) pszBuffer[i]);
+            szOut[i + 1] = (char) tolower((HB_BYTE) pszBuffer[i]);
          }
          szOut[i + 1] = '"';
          break;
       case SYSTEMID_MSSQL7:
          szOut[0] = '[';
          for( i = 0; i < ulLen; i++ ) {
-            szOut[i + 1] = (BYTE) pszBuffer[i];
+            szOut[i + 1] = (HB_BYTE) pszBuffer[i];
          }
          szOut[i + 1] = ']';
          break;
@@ -897,20 +897,20 @@ HB_FUNC( SR_DBQUALIFY )
       case SYSTEMID_MARIADB:
          szOut[0] = '`';
          for( i = 0; i < ulLen; i++ ) {
-            szOut[i + 1] = (char) tolower((BYTE) pszBuffer[i]);
+            szOut[i + 1] = (char) tolower((HB_BYTE) pszBuffer[i]);
          }
          szOut[i + 1] = '`';
          break;
       case SYSTEMID_INFORM:
          for( i = 0; i < ulLen; i++ ) {
-            szOut[i] = (char) tolower((BYTE) pszBuffer[i]);
+            szOut[i] = (char) tolower((HB_BYTE) pszBuffer[i]);
          }
          ulLen -=2;
          break;
       default:
          szOut[0] = '"';
          for( i = 0; i < ulLen; i++ ) {
-            szOut[i + 1] = (BYTE) pszBuffer[i];
+            szOut[i + 1] = (HB_BYTE) pszBuffer[i];
          }
          szOut[i + 1] = '"';
       }
