@@ -184,20 +184,20 @@ HB_FUNC( FBCONNECT ) // FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
    dpb[i++] = isc_dpb_user_name;
    len = strlen(user);
    dpb[i++] = (char) len;
-   strncpy(&(dpb[i]), user, len);
+   memcpy(&(dpb[i]), user, len);
    i += len;
 
    dpb[i++] = isc_dpb_password;
    len = strlen(passwd);
    dpb[i++] = (char) len;
-   strncpy(&(dpb[i]), passwd, len);
+   memcpy(&(dpb[i]), passwd, len);
    i += len;
 
    if( charset != NULL ) {
       dpb[i++] = isc_dpb_lc_ctype;
       len = strlen(charset);
       dpb[i++] = (char) len;
-      strncpy(&(dpb[i]), charset, len);
+      memcpy(&(dpb[i]), charset, len);
       i += len;
    }
    if( isc_attach_database(session->status, 0, db_connect, &(session->db), (short) i, dpb) ) {
