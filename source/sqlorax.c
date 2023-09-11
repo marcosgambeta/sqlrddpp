@@ -100,7 +100,7 @@ typedef struct _OCI_SESSION
 
 typedef OCI_SESSION * POCI_SESSION;
 
-static USHORT OCI_initilized = 0;
+static HB_USHORT OCI_initilized = 0;
 
 #ifdef HAVE_USLEEP
 #  define SQLO_USLEEP usleep(20000)
@@ -270,7 +270,7 @@ HB_FUNC( SQLO_NUMCOLS )
 
 //-----------------------------------------------------------------------------//
 
-int sqlo_sqldtype(USHORT type)
+int sqlo_sqldtype(HB_USHORT type)
 {
    int isqltype;
 
@@ -339,13 +339,13 @@ int sqlo_sqldtype(USHORT type)
 HB_FUNC( SQLO_DESCRIBECOL ) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec, @nNull )
 {
    POCI_SESSION session = (POCI_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-   USHORT dType, ncol;
+   HB_USHORT dType, ncol;
    int prec, scale, nullok, namelen, dbsize, type;
    char * name;
     sqlo_stmt_handle_t stmtParamRes;
 
    if( session ) {
-      ncol = (USHORT)hb_parni(2) - 1;
+      ncol = (HB_USHORT)hb_parni(2) - 1;
       stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
       sqlo_describecol(stmtParamRes, ncol, &dType, &name, &namelen, &prec, &scale, &dbsize, &nullok);
       type = sqlo_sqldtype(dType);
@@ -640,7 +640,7 @@ HB_FUNC( SQLO_LINE )
    const char ** line;
    const unsigned int * lens;
    PHB_ITEM ret, temp;
-   USHORT i;
+   HB_USHORT i;
    sqlo_stmt_handle_t stmtParamRes;
 
    ret = hb_itemNew(NULL);

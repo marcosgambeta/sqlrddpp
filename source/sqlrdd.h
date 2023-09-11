@@ -118,6 +118,6 @@ typedef SQLAREA * LPSQLAREA;
 
 /* prototypes */
 
-void commonError( AREAP ThisDb, USHORT uiGenCode, USHORT uiSubCode, char* filename );
+void commonError( AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, char* filename );
 
 #endif

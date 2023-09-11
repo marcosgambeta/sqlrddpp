@@ -857,7 +857,7 @@ HB_FUNC( PGSLINEPROCESSED )
 {
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    PHB_ITEM temp;
-   USHORT i;
+   HB_USHORT i;
    char * col;
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
    HB_BOOL bQueryOnly = hb_parl(4);

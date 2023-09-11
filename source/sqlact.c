@@ -259,7 +259,7 @@ HB_FUNC( SR_STRTOHEX )
    char *outbuff;
    const char *cStr;
    char *c;
-   USHORT iNum;
+   HB_USHORT iNum;
    int i, len;
    int iCipher;
 
