@@ -4096,7 +4096,7 @@ static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
       itemTemp = hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK);
       //if( pTag )
       //{
-         //EVALINFO info;
+         //HB_EVALINFO info;
          //hb_evalNew(&info, hb_itemArrayGet(pTag, INDEXMAN_KEY_CODEBLOCK));
          //pKey1 = hb_evalLaunch(&info);
          //hb_evalRelease(&info);
@@ -4107,7 +4107,7 @@ static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
          len1 = (BYTE) hb_strRTrimLen(hb_itemGetCPtr(pKeyVal), hb_itemGetCLen(pKeyVal), HB_FALSE) - 15;
          val1 = hb_itemGetCPtr(pKeyVal);
       } else {
-         EVALINFO info;
+         HB_EVALINFO info;
          hb_evalNew(&info, hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK));
          pKeyVal = hb_evalLaunch(&info);
          hb_evalRelease(&info);

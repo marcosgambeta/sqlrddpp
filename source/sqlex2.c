@@ -152,7 +152,7 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
       //pIndIt = hb_arrayGetItemPtr(pIndex, INDEXMAN_COLUMNS);
 
       if( !SR_itemEmpty(pIndIt) ) {
-         EVALINFO info;
+         HB_EVALINFO info;
          hb_evalNew(&info, hb_itemArrayGet(pIndex, INDEXMAN_KEY_CODEBLOCK));
          pKeyVal = hb_evalLaunch(&info);
          hb_evalRelease(&info);
@@ -170,7 +170,7 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
       pIndIt = hb_itemArrayGet(pIndex, INDEXMAN_FOR_CODEBLOCK);
 
       if( !SR_itemEmpty(pIndIt) ) {
-         EVALINFO info;
+         HB_EVALINFO info;
          hb_evalNew(&info, hb_itemArrayGet(pIndex, INDEXMAN_FOR_CODEBLOCK));
          pKeyVal = hb_evalLaunch(&info);
          hb_evalRelease(&info);
