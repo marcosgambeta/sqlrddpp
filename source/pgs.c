@@ -281,7 +281,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr(ResultSet) => aStruct */
    int row, rows, type;
    
    PHB_ITEM ret, atemp, temp;
-   LONG typmod;
+   HB_LONG typmod;
    PPSQL_SESSION session = (PPSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
    assert(session->dbh != NULL);
@@ -315,7 +315,7 @@ HB_FUNC( PGSQUERYATTR )     /* PGSQueryAttr(ResultSet) => aStruct */
       //nullable = PQgetisnull(session->stmt, row,PQfnumber(session->stmt, PQfname(session->stmt, row)));
       
       if( typmod < 0L ) {
-         typmod = (LONG) PQfsize(session->stmt, row);
+         typmod = (HB_LONG) PQfsize(session->stmt, row);
       }
 /*
       if( typmod < 0L ) {
@@ -641,7 +641,7 @@ HB_FUNC( PGSTABLEATTR )     /* PGSTableAttr(ConnHandle, cTableName) => aStruct *
 
 void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate)
 {
-   LONG lType;
+   HB_LONG lType;
    HB_SIZE lLen, lDec;
    PHB_ITEM pTemp;
    PHB_ITEM pTemp1;
@@ -649,7 +649,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
 
-   lType = (LONG) hb_arrayGetNL(pField, 6);
+   lType = (HB_LONG) hb_arrayGetNL(pField, 6);
    lLen = hb_arrayGetNL(pField, 3);
    lDec = hb_arrayGetNL(pField, 4);
 
@@ -864,7 +864,7 @@ HB_FUNC( PGSLINEPROCESSED )
    ULONG ulSystemID = hb_parnl(5);
    HB_BOOL bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
-   LONG lIndex, cols;
+   HB_LONG lIndex, cols;
 
    assert(session->dbh != NULL);
    assert(session->stmt != NULL);

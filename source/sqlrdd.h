@@ -76,7 +76,7 @@ typedef struct _SQLAREA
    */
    PHB_CODEPAGE cdPageCnv; /* Area's codepage convert pointer */
    char * szDataFileName;  /* file name */
-   LONG hOrdCurrent;       /* current index order */
+   HB_LONG hOrdCurrent;       /* current index order */
    HB_BOOL shared;
    HB_BOOL readonly;          /* only SELECT allowed */
    HB_BOOL creating;          /* HB_TRUE when creating table */

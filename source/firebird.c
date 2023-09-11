@@ -644,7 +644,7 @@ HB_FUNC( FBGETDATA )    // FBGetData(hEnv, nField, @uData)
    char * resp, item, * read_blob;
    char blob_items[] = {isc_info_blob_total_length, isc_info_blob_num_segments};
    char res_buffer[20];
-   LONG blob_size = 0L, num_segments = 0L, count, residual_size;
+   HB_LONG blob_size = 0L, num_segments = 0L, count, residual_size;
    short length;
    HB_BOOL bEnd = HB_FALSE;
    XSQLVAR * var;
@@ -919,13 +919,13 @@ HB_FUNC( FBVERSION )
 
 void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate)
 {
-   LONG lType;
+   HB_LONG lType;
    HB_SIZE lLen, lDec;
    PHB_ITEM pTemp;
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
    
-   lType = (LONG) hb_arrayGetNL(pField, 6);
+   lType = (HB_LONG) hb_arrayGetNL(pField, 6);
    lLen = hb_arrayGetNL(pField, 3);
    lDec = hb_arrayGetNL(pField, 4);
 
@@ -1123,7 +1123,7 @@ HB_FUNC( FBLINEPROCESSED )
    char * resp, item, * read_blob;
    char blob_items[] = {isc_info_blob_total_length, isc_info_blob_num_segments};
    char res_buffer[20];
-   LONG blob_size = 0L, num_segments = 0L, count, residual_size;
+   HB_LONG blob_size = 0L, num_segments = 0L, count, residual_size;
    short length;
    HB_BOOL bEnd = HB_FALSE;
    XSQLVAR * var;
@@ -1135,7 +1135,7 @@ HB_FUNC( FBLINEPROCESSED )
    ULONG ulSystemID = hb_parnl(5);
    HB_BOOL bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
-   LONG lIndex;
+   HB_LONG lIndex;
 
    HB_SIZE lLen, lDec;
    
@@ -1144,11 +1144,11 @@ HB_FUNC( FBLINEPROCESSED )
       cols = hb_arrayLen(pFields);
 
       for( icol = 1; icol <= cols; icol++ ) {
-//        LONG lType;
+//        HB_LONG lType;
          temp = hb_itemNew(NULL);
          var = session->sqlda->sqlvar;
          lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), FIELD_ENUM);
-         //lType = (LONG) hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 6);
+         //lType = (HB_LONG) hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 6);
          lLen = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 3);
          lDec = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 4);
          
@@ -1265,7 +1265,7 @@ HB_FUNC( FBLINEPROCESSED )
 //                         sprintf(p, "%*" ISC_INT64_FORMAT "d%", field_width, (ISC_INT64) value);
 //                         hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d", field_width, (ISC_INT64) value);
                            PHB_ITEM pField = hb_arrayGetItemPtr(pFields, icol);
-                           LONG lType = ( LONG ) hb_arrayGetNL(pField, 6);
+                           HB_LONG lType = ( HB_LONG ) hb_arrayGetNL(pField, 6);
                            if( lType == SQL_BIT || lType == SQL_SMALLINT ) {
                               hb_itemPutL(temp, (HB_BOOL) value);
                            } else {

@@ -466,7 +466,7 @@ HB_FUNC( SQLO_CLOSESTMT )
 
 void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate)
 {
-   LONG lType;
+   HB_LONG lType;
    HB_SIZE lLen;
    HB_SIZE lDec; 
    PHB_ITEM pTemp;
@@ -474,7 +474,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
 
-   lType = (LONG) hb_arrayGetNL(pField, 6);
+   lType = (HB_LONG) hb_arrayGetNL(pField, 6);
    lLen = hb_arrayGetNL(pField, 3);
    lDec = hb_arrayGetNL(pField, 4);
 
@@ -668,7 +668,7 @@ HB_FUNC( SQLO_LINEPROCESSED )
    POCI_SESSION session = (POCI_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    const char ** line;
    const unsigned int * lens;
-   LONG lIndex;
+   HB_LONG lIndex;
    PHB_ITEM temp;
    HB_SIZE i, cols;
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
