@@ -381,11 +381,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
                hb_itemPutTDT(pItem, 0, 0);
             } else {
                if( ( ulSystemID == SYSTEMID_POSTGR ) || ( ulSystemID == SYSTEMID_ORACLE )|| ( ulSystemID == SYSTEMID_FIREBR ) || ( ulSystemID == SYSTEMID_MYSQL ) || ( ulSystemID ==  SYSTEMID_MARIADB ) || (  ulSystemID ==SYSTEMID_MSSQL7 && sr_lsql2008newTypes() ) ) {
-// #ifdef __XHARBOUR__
-//                   hb_itemPutDT(pItem, 0, 0, 0, 0, 0, 0, 0);
-// #else
                   hb_itemPutTDT(pItem, 0, 0);
-// #endif
                } else {
                   char dt[9] = {' ',' ',' ',' ',' ',' ',' ',' ','\0'};
                   hb_itemPutDS(pItem, dt);
@@ -481,33 +477,9 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
 
                break;
             } else if( ( (ulSystemID == SYSTEMID_POSTGR ) || ( ulSystemID == SYSTEMID_ORACLE ) || ( ulSystemID == SYSTEMID_FIREBR ) || ( ulSystemID == SYSTEMID_MYSQL ) || ( ulSystemID ==  SYSTEMID_MARIADB ) || (  ulSystemID ==SYSTEMID_MSSQL7 && sr_lsql2008newTypes() ) ) && (lType == SQL_TIMESTAMP|| lType == SQL_TYPE_TIMESTAMP) ) {
-#ifdef __XHARBOUR__
-//                char dt1[18];
-//                dt1[0] = bBuffer[0];
-//                dt1[1] = bBuffer[1];
-//                dt1[2] = bBuffer[2];
-//                dt1[3] = bBuffer[3];
-//                dt1[4] = bBuffer[5];
-//                dt1[5] = bBuffer[6];
-//                dt1[6] = bBuffer[8];
-//                dt1[7] = bBuffer[9];
-//                dt1[8] = bBuffer[11];
-//                dt1[9] = bBuffer[12];
-//                dt1[10] = bBuffer[14];
-//                dt1[11] = bBuffer[15];
-//                dt1[12] = bBuffer[17];
-//                dt1[13] = bBuffer[18];
-//                dt1[14] = '\0';
-//                hb_itemPutDTS(pItem, dt1);
-               long lJulian, lMilliSec;
-               hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
-               hb_itemPutTDT(pItem, lJulian, lMilliSec);
-
-#else
             long lJulian, lMilliSec;
             hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
             hb_itemPutTDT(pItem, lJulian, lMilliSec);
-#endif
                break;
             } else {
                dt[0] = bBuffer[0];
@@ -1214,11 +1186,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQuery
                      }
                   }
               } else {
-               #ifdef __XHARBOUR__
-                  LONGLONG val = 0;
-               #else
-                     HB_I64 val = 0;
-                  #endif
+                  HB_I64 val = 0;
                   if( SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_SBIGINT, &val, sizeof(val), &iLen)) ) {
                      hb_itemPutNIntLen(pItem, val, lLen);
                   }
@@ -1280,11 +1248,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQuery
          case SQL_TYPE_TIMESTAMP: {
             TIMESTAMP_STRUCT val = {0, 0, 0, 0, 0, 0, 0};
             if( SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_TIMESTAMP, &val, sizeof(val), &iLen)) ) {
-               #ifdef __XHARBOUR__
-               hb_itemPutTDT(pItem, hb_dateEncode(val.year, val.month, val.day), hb_timeEncode(val.hour, val.minute, val.second));
-               #else
                hb_itemPutTDT(pItem, hb_dateEncode(val.year, val.month, val.day), hb_timeEncode(val.hour, val.minute, val.second, val.fraction / 1000000));
-               #endif
             }
             if( (int) iLen ==  SQL_NULL_DATA ) {
                hb_itemPutTDT(pItem, 0, 0);

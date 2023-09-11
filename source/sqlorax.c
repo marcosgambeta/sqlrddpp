@@ -514,11 +514,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
          }
 #endif
          case SQL_DATETIME: {
-// #ifdef __XHARBOUR__
-//             hb_itemPutDT(pItem, 0, 0, 0, 0, 0, 0, 0);
-// #else
             hb_itemPutTDT(pItem, 0, 0);
-// #endif
             break;
          }
 
@@ -624,35 +620,9 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
          }
 #endif
          case SQL_DATETIME: {
-#ifdef __XHARBOUR__
-            //hb_retdts(bBuffer);
-//             char dt[18];
-//             
-//             dt[0] = bBuffer[0];
-//             dt[1] = bBuffer[1];
-//             dt[2] = bBuffer[2];
-//             dt[3] = bBuffer[3];
-//             dt[4] = bBuffer[4];
-//             dt[5] = bBuffer[5];
-//             dt[6] = bBuffer[6];
-//             dt[7] = bBuffer[7];
-//             dt[8] = bBuffer[9];
-//             dt[9] = bBuffer[10];
-//             dt[10] = bBuffer[12];
-//             dt[11] = bBuffer[13];
-//             dt[12] = bBuffer[15];
-//             dt[13] = bBuffer[16];
-//             dt[14] = '\0';
-// 
-//             hb_itemPutDTS(pItem, dt);
-            long lJulian, lMilliSec;
-            hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
-            hb_itemPutTDT(pItem, lJulian, lMilliSec);            
-#else
             long lJulian, lMilliSec;
             hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
             hb_itemPutTDT(pItem, lJulian, lMilliSec);
-#endif
             break;
          }
 
@@ -873,11 +843,7 @@ HB_FUNC( ORACLEINBINDPARAM )
       break;
 
      case 8 : {
-#ifdef __XHARBOUR__
-          if( ISDATE(6) )
-#else
           if( HB_ISDATE(6) )
-#endif
       {
          int iYear, iMonth, iDay;
          PHB_ITEM pFieldData = hb_param(6,HB_IT_DATE);
@@ -898,31 +864,18 @@ HB_FUNC( ORACLEINBINDPARAM )
       break;
 
       case 9 : {
-#ifdef __XHARBOUR__        
-          if( ISDATETIME(6) )
-#else
           if( HB_ISDATETIME(6) )
-#endif
       {
         int iYear, iMonth, iDay;
          int  iHour, iMin;
-         #ifdef __XHARBOUR__
-         double  dSec;
-         #else
          int mSec;
          int iSeconds;
-         #endif
          PHB_ITEM pFieldData = hb_param(6, HB_IT_DATETIME);
-         #ifdef __XHARBOUR__
-         hb_dateDecode(hb_itemGetDL(pFieldData), &iYear, &iMonth, &iDay);
-         hb_timeDecode(hb_itemGetT(pFieldData), &iHour, &iMin, &dSec);
-         #else
          long plJulian;
          long plMilliSec;
          hb_itemGetTDT(pFieldData, &plJulian, &plMilliSec);
          hb_dateDecode(plJulian, &iYear, &iMonth, &iDay);
          hb_timeDecode(plMilliSec, &iHour, &iMin, &iSeconds, &mSec);
-         #endif
          //hb_dateStrPut(Stmt->pLink[iPos].sDate, iYear, iMonth, iDay);
          Stmt->pLink[iPos].sDate[0] = (char) (iYear / 100) + 100; // century
          Stmt->pLink[iPos].sDate[1] = (char) (iYear % 100) + 100; // year
@@ -930,11 +883,7 @@ HB_FUNC( ORACLEINBINDPARAM )
          Stmt->pLink[iPos].sDate[3] = (char) iDay;
          Stmt->pLink[iPos].sDate[4] = (char) iHour + 1;
          Stmt->pLink[iPos].sDate[5] = (char) iMin + 1;
-         #ifdef __XHARBOUR__
-         Stmt->pLink[iPos].sDate[6] = (char) dSec + 1;
-         #else
          Stmt->pLink[iPos].sDate[6] = (char) iSeconds + 1;
-         #endif
       }
 
       ret = sqlo_bind_by_pos(lStmt ? Stmt->stmt :Stmt->stmtParam, iParamNum, SQLOT_DAT, &Stmt->pLink[iPos].sDate,
@@ -1011,11 +960,7 @@ HB_FUNC( ORACLEGETBINDDATA)
              if( p->pLink[iPos - 1].iType == 8 ) {
                hb_retd(year, month, day); /* returns a date */
              } else {
-#ifdef __XHARBOUR__
-               hb_retdt(year, month, day, hour, min, sec, 0); /* returns a datetime */
-#else
                hb_rettd(hb_timeStampPack(year, month, day, hour, min, sec, 0));
-#endif
              }
          }
       } else  if( p->pLink[iPos - 1].iType == 3) {

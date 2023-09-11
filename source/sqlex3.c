@@ -533,16 +533,10 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLe
             BindStructure->asDate.month = (SQLUSMALLINT) iMonth;
             BindStructure->asDate.day = (SQLUSMALLINT) iDay;
          } else if( BindStructure->iCType == SQL_C_TYPE_TIMESTAMP ) {
-#ifdef __XHARBOUR__
-            double seconds;
-            hb_timeDecode(pKey->item.asDate.time, &iHour, &iMinute, &seconds);
-#else
             long lJulian, lMilliSec;
             int seconds, millisec;
             hb_itemGetTDT(pKey, &lJulian, &lMilliSec);
             hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
-#endif
-
             BindStructure->asTimestamp.year = (SQLSMALLINT) iYear;
             BindStructure->asTimestamp.month = (SQLUSMALLINT) iMonth;
             BindStructure->asTimestamp.day = (SQLUSMALLINT) iDay;

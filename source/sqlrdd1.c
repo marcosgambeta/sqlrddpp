@@ -1162,13 +1162,7 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value)
    }
 
    if( HB_IS_ARRAY(itemTemp) ) {
-#ifdef __XHARBOUR__
-      itemTemp3 = hb_arrayClone(itemTemp, NULL);
-      hb_itemForwardValue(value, itemTemp3);
-      hb_itemRelease(itemTemp3);
-#else
       hb_arrayCloneTo(value, itemTemp);
-#endif
    } else if( HB_IS_HASH(itemTemp) && sr_isMultilang() ) {
        pField = thiswa->area.lpFields + fieldNum - 1;
 
@@ -1353,11 +1347,7 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value)
       hb_arraySet(thiswa->aBuffer, fieldindex, value);
    } else if(HB_IS_STRING(value) && HB_IS_HASH(pDest) && sr_isMultilang() ) {
       PHB_ITEM pLangItem = hb_itemNew(NULL);
-#ifdef __XHARBOUR__
-      hb_hashAdd(pDest, ULONG_MAX, sr_getBaseLang(pLangItem), value);
-#else
       hb_hashAdd(pDest, sr_getBaseLang(pLangItem), value);
-#endif
       hb_itemRelease(pLangItem);
    } else if( pField->uiType == HB_FT_MEMO ) { // Memo fields can hold ANY datatype
       hb_arraySet(thiswa->aBuffer, fieldindex, value);
@@ -1805,13 +1795,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, USHORT uiIndex, PHB_ITEM pItem)
 void startSQLRDDSymbols()
 {
    if( s_pSym_WORKAREA == NULL ) {
-#ifdef __XHARBOUR__
-      HB_THREAD_STUB
-      hb_dynsymLock();
-#endif
-
       s_pSym_WORKAREA            = hb_dynsymFindName(WORKAREA_CLASS);
-
       s_pSym_SQLGOBOTTOM         = hb_dynsymFindName("SQLGOBOTTOM");
       s_pSym_SQLGOTO             = hb_dynsymFindName("SQLGOTO");
       s_pSym_SQLGOTOP            = hb_dynsymFindName("SQLGOTOP");
@@ -1850,7 +1834,6 @@ void startSQLRDDSymbols()
       s_pSym_SQLFILTERTEXT       = hb_dynsymFindName("SQLFILTERTEXT");
 
       if( s_pSym_WORKAREA            == NULL ) printf("Could not find Symbol %s\n", WORKAREA_CLASS);
-
       if( s_pSym_SQLGOBOTTOM         == NULL ) printf("Could not find Symbol %s\n", "SQLGOBOTTOM");
       if( s_pSym_SQLGOTO             == NULL ) printf("Could not find Symbol %s\n", "SQLGOTO");
       if( s_pSym_SQLGOTOP            == NULL ) printf("Could not find Symbol %s\n", "SQLGOTOP");
@@ -1886,10 +1869,6 @@ void startSQLRDDSymbols()
       if( s_pSym_SQLSETFILTER        == NULL ) printf("Could not find Symbol %s\n", "SQLSETFILTER");
       if( s_pSym_SQLCLEARFILTER      == NULL ) printf("Could not find Symbol %s\n", "SQLCLEARFILTER");
       if( s_pSym_SQLFILTERTEXT       == NULL ) printf("Could not find Symbol %s\n", "SQLFILTERTEXT");
-
-#ifdef __XHARBOUR__
-      hb_dynsymUnlock();
-#endif
    }
 }
 
@@ -3171,11 +3150,7 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
      if( field.uiLen == 4 ) {
          field.uiType = HB_FT_TIME;
      } else {
-#ifdef __XHARBOUR__
-         field.uiType = HB_FT_DATETIME;
-#else
          field.uiType = HB_FT_TIMESTAMP;
-#endif
     }
 
          break;

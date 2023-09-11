@@ -468,16 +468,10 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int * q
             BindStructure->asDate.month = (unsigned int) iMonth;
             BindStructure->asDate.day = (unsigned int) iDay;
          } else if( BindStructure->iCType == SQL_C_TYPE_TIMESTAMP ) {
-            #ifdef __XHARBOUR__
-               double seconds;
-               hb_timeDecode(pKey->item.asDate.time, &iHour, &iMinute, &seconds);
-            #else
-               long lJulian, lMilliSec;
-               int seconds, millisec;
-               hb_itemGetTDT(pKey, &lJulian, &lMilliSec);
-               hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
-            #endif
-
+            long lJulian, lMilliSec;
+            int seconds, millisec;
+            hb_itemGetTDT(pKey, &lJulian, &lMilliSec);
+            hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
             BindStructure->asTimestamp.year = (unsigned int) iYear;
             BindStructure->asTimestamp.month = (unsigned int) iMonth;
             BindStructure->asTimestamp.day = (unsigned int) iDay;

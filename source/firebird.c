@@ -678,20 +678,11 @@ HB_FUNC( FBGETDATA )    // FBGetData(hEnv, nField, @uData)
                   times.tm_min,
                   times.tm_sec,
                   (int) (((ISC_TIMESTAMP *) var->sqldata)->timestamp_time % 10000));
-#ifdef __XHARBOUR__
-{
-            long lJulian, lMilliSec;
-            hb_timeStampStrRawGet(date_s, &lJulian, &lMilliSec); // TOCHECK:
-//             hb_itemPutTDT(pItem, lJulian, lMilliSec);
-            hb_stortdt(lJulian, lMilliSec, 3); // TOCHECK:
-}
-#else
             {
                long lJulian, lMilliSec;
                hb_timeStampStrGetDT(date_s, &lJulian, &lMilliSec);
                hb_stortdt(lJulian, lMilliSec, 3);
             }
-#endif
             break;
          case IB_SQL_TYPE_TIME: {
             long  lMilliSec;
@@ -982,11 +973,7 @@ void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuf
             break;            
             }
          case SQL_DATETIME: {
-//#ifdef __XHARBOUR__
-//            hb_itemPutDT(pItem, 0, 0, 0, 0, 0, 0, 0);
-//#else
             hb_itemPutTDT(pItem, 0, 0);
-//#endif
             break;
          }
 
@@ -1108,37 +1095,9 @@ void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuf
          }
 
          case SQL_DATETIME: {
-#ifdef __XHARBOUR__
-            //hb_retdts(bBuffer);
-//             char dt[18];
-//             dt[0] = bBuffer[0];
-//             dt[1] = bBuffer[1];
-//             dt[2] = bBuffer[2];
-//             dt[3] = bBuffer[3];
-//             dt[4] = bBuffer[5];
-//             dt[5] = bBuffer[6];
-//             dt[6] = bBuffer[8];
-//             dt[7] = bBuffer[9];
-//             dt[8] = bBuffer[10];
-//             dt[9] = bBuffer[11];
-//             dt[10] = bBuffer[12];
-//             dt[11] = bBuffer[13];
-//             dt[12] = bBuffer[14];
-//             dt[13] = bBuffer[15];
-//             dt[14] = bBuffer[16];
-//             dt[15] = bBuffer[17];
-//             dt[16] = bBuffer[18];
-//             dt[17] = '\0';
-// 
-//             hb_itemPutDTS(pItem, dt);
-            long lJulian, lMilliSec;
-            hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
-            hb_itemPutTDT(pItem, lJulian, lMilliSec);
-#else
             long lJulian, lMilliSec;
             hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
             hb_itemPutTDT(pItem, lJulian, lMilliSec);
-#endif
             break;
          }
 

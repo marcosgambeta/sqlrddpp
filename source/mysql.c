@@ -270,11 +270,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          }
 #endif
          case SQL_DATETIME: {
-// #ifdef __XHARBOUR__
-//             hb_itemPutDT(pItem, 0, 0, 0, 0, 0, 0, 0);
-// #else
             hb_itemPutTDT(pItem, 0, 0);
-// #endif
             break;
          }
          case SQL_TIME: {
@@ -384,15 +380,9 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
          }
 #endif
          case SQL_DATETIME: {
-#ifdef __XHARBOUR__
-            long lJulian, lMilliSec;
-            hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
-            hb_itemPutTDT(pItem, lJulian, lMilliSec);
-#else
             long lJulian, lMilliSec;
             hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
             hb_itemPutTDT(pItem, lJulian, lMilliSec);
-#endif
             break;
          }
          case SQL_TIME: {

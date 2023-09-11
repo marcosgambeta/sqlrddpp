@@ -627,19 +627,11 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
          }
 
          {
-#ifdef __XHARBOUR__
-            // hb_dateDecode(pFieldData->item.asDate.value, &iYear, &iMonth, &iDay);
-            //hb_timeDecode(pFieldData->item.asDate.time, piHour, piMin, pdSec);
-            //DebugBreak();
-            double seconds;
-            hb_datetimeDecode(pFieldData->item.asDate.value, pFieldData->item.asDate.time, &iYear, &iMonth, &iDay, &iHour, &iMinute, &seconds);
-#else
             long lJulian, lMilliSec;
             int seconds, millisec;
             hb_itemGetTDT(pFieldData, &lJulian, &lMilliSec);
             hb_dateDecode(lJulian, &iYear, &iMonth, &iDay);
             hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
-#endif
             BindStructure->asTimestamp.year = (SQLSMALLINT) iYear;
             BindStructure->asTimestamp.month = (SQLUSMALLINT) iMonth;
             BindStructure->asTimestamp.day = (SQLUSMALLINT) iDay;
@@ -1947,11 +1939,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
       }
 
       // Add new array to Buffer Pool
-#ifdef __XHARBOUR__
-      hb_hashAdd(thiswa->hBufferPool, ULONG_MAX, pKey, aRecord);
-#else
       hb_hashAdd(thiswa->hBufferPool, pKey, aRecord);
-#endif
 
       // Feeds current record when it is found
       if( ((LONG) (thiswa->recordList[thiswa->recordListPos])) == lCurrRecord ) {
@@ -2994,13 +2982,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM val
    }
 
    if( HB_IS_ARRAY(itemTemp) ) {
-#ifdef __XHARBOUR__
-      itemTemp3 = hb_arrayClone(itemTemp, NULL);
-      hb_itemForwardValue(value, itemTemp3);
-      hb_itemRelease(itemTemp3);
-#else
       hb_arrayCloneTo(value, itemTemp);
-#endif
    } else if(HB_IS_HASH(itemTemp) && sr_isMultilang() ) {
       LPFIELD pField = thiswa->area.lpFields + fieldNum - 1;
 
@@ -3199,11 +3181,7 @@ static HB_ERRCODE sqlExPutValue(SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM val
       hb_arraySet(thiswa->aBuffer, fieldindex, value);
    } else if(HB_IS_STRING(value) && HB_IS_HASH(pDest) && sr_isMultilang() ) {
       PHB_ITEM pLangItem = hb_itemNew(NULL);
-#ifdef __XHARBOUR__
-      hb_hashAdd(pDest, ULONG_MAX, sr_getBaseLang(pLangItem), value);
-#else
       hb_hashAdd(pDest, sr_getBaseLang(pLangItem), value);
-#endif
       hb_itemRelease(pLangItem);
    } else if( pField->uiType == HB_FT_MEMO ) { // Memo fields can hold ANY datatype
       hb_arraySet(thiswa->aBuffer, fieldindex, value);

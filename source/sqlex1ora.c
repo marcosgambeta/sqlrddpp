@@ -623,18 +623,11 @@ HB_ERRCODE SetBindValue2(PHB_ITEM pFieldData, COLUMNBINDORAP BindStructure, OCI_
          }
 
          {
-#ifdef __XHARBOUR__
-            double seconds;
-            hb_datetimeDecode(pFieldData->item.asDate.value, pFieldData->item.asDate.time,
-                              &iYear, &iMonth, &iDay,
-                              &iHour, &iMinute, &seconds);
-#else
             long lJulian, lMilliSec;
             int seconds, millisec;
             hb_itemGetTDT(pFieldData, &lJulian, &lMilliSec);
             hb_dateDecode(lJulian, &iYear, &iMonth, &iDay);
             hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
-#endif
             BindStructure->asTimestamp.year = (unsigned int) iYear;
             BindStructure->asTimestamp.month = (unsigned int) iMonth;
             BindStructure->asTimestamp.day = (unsigned int) iDay;
@@ -1973,30 +1966,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
       }
 
       // Add new array to Buffer Pool
-#ifdef __XHARBOUR__
-//                if( s_pSym_TODATA  == NULL ) {
-//                   hb_dynsymLock();
-//                   s_pSym_TODATA = hb_dynsymFindName("TODATA");
-//                   hb_dynsymUnlock();
-//                   if( s_pSym_TODATA  == NULL ) printf("Could not find Symbol SR_DESERIALIZE\n");
-//                }
-//                 hb_vmPushDynSym(s_pSym_TODATA);
-//                 hb_vmPushNil();
-//                 hb_vmPush(aRecord);
-//                 hb_vmDo(1);
-//                 hb_vmPushDynSym(s_pSym_TODATA);
-//                 hb_vmPushNil();
-//                 hb_vmPush(pKey);
-//                 hb_vmDo(1);
-//                 hb_vmPushDynSym(s_pSym_TODATA);
-//                 hb_vmPushNil();
-//                 hb_vmPush(thiswa->hBufferPool);
-//                 hb_vmDo(1);
-
-      hb_hashAdd(thiswa->hBufferPool, ULONG_MAX, pKey, aRecord);
-#else
       hb_hashAdd(thiswa->hBufferPool, pKey, aRecord);
-#endif
 
       // Feeds current record when it is found
       if( ( (thiswa->recordList[thiswa->recordListPos])) == lCurrRecord ) {
@@ -3053,13 +3023,7 @@ static HB_ERRCODE sqlExOraGetValue(SQLEXORAAREAP thiswa, USHORT fieldNum, PHB_IT
    }
 
    if( HB_IS_ARRAY(itemTemp) ) {
-#ifdef __XHARBOUR__
-      itemTemp3 = hb_arrayClone(itemTemp, NULL);
-      hb_itemForwardValue(value, itemTemp3);
-      hb_itemRelease(itemTemp3);
-#else
       hb_arrayCloneTo(value, itemTemp);
-#endif
    } else if( HB_IS_HASH(itemTemp) && sr_isMultilang() ) {
       LPFIELD pField = thiswa->sqlarea.area.lpFields + fieldNum - 1;
 
@@ -3270,11 +3234,7 @@ static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, USHORT fieldNum, PHB_IT
       hb_arraySet(thiswa->sqlarea.aBuffer, fieldindex, value);
    } else if(HB_IS_STRING(value) && HB_IS_HASH(pDest) && sr_isMultilang() ) {
       PHB_ITEM pLangItem = hb_itemNew(NULL);
-#ifdef __XHARBOUR__
-      hb_hashAdd(pDest, ULONG_MAX, sr_getBaseLang(pLangItem), value);
-#else
       hb_hashAdd(pDest, sr_getBaseLang(pLangItem), value);
-#endif
       hb_itemRelease(pLangItem);
    } else if( pField->uiType == HB_FT_MEMO ) { // Memo fields can hold ANY datatype
       hb_arraySet(thiswa->sqlarea.aBuffer, fieldindex, value);
@@ -4347,11 +4307,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOn
          }
 #endif
          case SQL_DATETIME: {
-#ifdef __XHARBOUR__
-            hb_itemPutDT(pItem, 0, 0, 0, 0, 0, 0, 0);
-#else
             hb_itemPutTDT(pItem, 0, 0);
-#endif
             break;
          }
 
@@ -4472,32 +4428,9 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOn
 #endif
          case SQL_DATETIME: {
          char * bBuffer = (char*) OCI_GetString(rs, iField);
-#ifdef __XHARBOUR__
-            //hb_retdts(bBuffer);
-            char dt[18];
-
-            dt[0] = bBuffer[0];
-            dt[1] = bBuffer[1];
-            dt[2] = bBuffer[2];
-            dt[3] = bBuffer[3];
-            dt[4] = bBuffer[5];
-            dt[5] = bBuffer[6];
-            dt[6] = bBuffer[8];
-            dt[7] = bBuffer[9];
-            dt[8] = bBuffer[11];
-            dt[9] = bBuffer[12];
-            dt[10] = bBuffer[14];
-            dt[11] = bBuffer[15];
-            dt[12] = bBuffer[17];
-            dt[13] = bBuffer[18];
-            dt[14] = '\0';
-
-            hb_itemPutDTS(pItem, dt);
-#else
             long lJulian, lMilliSec;
             hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
             hb_itemPutTDT(pItem, lJulian, lMilliSec);
-#endif
             break;
          }
 

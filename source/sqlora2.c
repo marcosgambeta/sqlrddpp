@@ -455,38 +455,20 @@ HB_FUNC( ORACLEINBINDPARAM2 )
 
          case 9 : {
             Stmt->pLink[iPos].date = OCI_DateCreate(Stmt->cn);
-         #ifdef __XHARBOUR__
-            if( ISDATETIME(6) )
-         #else
             if( HB_ISDATETIME(6) )
-         #endif
             {
               int iYear, iMonth, iDay;
                int  iHour, iMin;
-               #ifdef __XHARBOUR__
-               double dSec;
-               #else
                int mSec;
                int iSeconds;
-               #endif
-              PHB_ITEM pFieldData = hb_param(6,HB_IT_DATETIME);
-              #ifdef __XHARBOUR__
-                  hb_dateDecode(hb_itemGetDL(pFieldData), &iYear, &iMonth, &iDay);
-                  hb_timeDecode(hb_itemGetT(pFieldData), &iHour, &iMin, &dSec);
-               #else
-                  long plJulian;
-                  long plMilliSec;
-                  hb_itemGetTDT(pFieldData,&plJulian, &plMilliSec);
-                  hb_dateDecode(plJulian, &iYear, &iMonth, &iDay);
-                  hb_timeDecode(plMilliSec, &iHour, &iMin, &iSeconds, &mSec);
-               #endif
-               
-               #ifdef __XHARBOUR__
-                  OCI_DateSetDateTime(Stmt->pLink[iPos].date,iYear, iMonth, iDay,iHour,iMin,(int)dSec);         
-               #else
-                  OCI_DateSetDateTime(Stmt->pLink[iPos].date,iYear, iMonth, iDay,iHour,iMin,iSeconds);         
-               #endif
-                  OCI_BindDate(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].date);
+               PHB_ITEM pFieldData = hb_param(6,HB_IT_DATETIME);
+               long plJulian;
+               long plMilliSec;
+               hb_itemGetTDT(pFieldData,&plJulian, &plMilliSec);
+               hb_dateDecode(plJulian, &iYear, &iMonth, &iDay);
+               hb_timeDecode(plMilliSec, &iHour, &iMin, &iSeconds, &mSec);
+               OCI_DateSetDateTime(Stmt->pLink[iPos].date,iYear, iMonth, iDay,iHour,iMin,iSeconds);
+               OCI_BindDate(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].date);
            } else {
              ret = OCI_BindDate(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].date);
            }
