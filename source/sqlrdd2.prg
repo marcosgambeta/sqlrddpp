@@ -5985,7 +5985,8 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          EXIT
 
       CASE "N"
-         DO CASE // TODO: switch ?
+#if 0 // TODO: old code for reference (to be deleted)
+         DO CASE
          CASE (::oSql:nSystemID == SYSTEMID_MSSQL6 .OR. ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_SYBASE .OR. ::oSql:nSystemID == SYSTEMID_AZURE) .AND. cField == ::cRecnoName
             IF ::oSql:lUseSequences
                cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") IDENTITY"
@@ -6049,11 +6050,129 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDCASE
+#endif
+         SWITCH ::oSql:nSystemID
+         CASE SYSTEMID_MSSQL6
+         CASE SYSTEMID_MSSQL7
+         CASE SYSTEMID_SYBASE
+         CASE SYSTEMID_AZURE
+            IF cField == ::cRecnoName
+               IF ::oSql:lUseSequences
+                  cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") IDENTITY"
+               ELSE
+                  cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE"
+               ENDIF
+            ELSE
+               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIF(lNotNull, " NOT NULL ", "")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_CACHE
+            IF cField == ::cRecnoName
+               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") UNIQUE " + [default objectscript '##class(] + SR_GetToolsOwner() + [SequenceControler).NEXTVAL("] + ::cFileName + [")']
+            ELSE
+               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIF(lNotNull, " NOT NULL ", "")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_POSTGR
+            IF cField == ::cRecnoName
+               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") default (nextval('" + ::cOwner + LimitLen(::cFileName, 3) + "_SQ')) NOT NULL UNIQUE"
+            ELSE
+               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ")  default 0 " + IIF(lNotNull, " NOT NULL ", "")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_MYSQL
+         CASE SYSTEMID_MARIADB
+            IF cField == ::cRecnoName
+               cSql += "BIGINT (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
+            ELSE
+               cSql += cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIF(lNotNull, " NOT NULL ", "")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_ORACLE
+            IF cField == ::cRecnoName
+               cSql += "NUMBER (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ")" +;
+                       IIF(lNotNull, " NOT NULL UNIQUE USING INDEX ( CREATE INDEX " + ::cOwner + LimitLen(::cFileName, 3) + "_UK ON " + ::cOwner + SR_DBQUALIFY(cTblName, ::oSql:nSystemID) + "( " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + ")" +;
+                       IIF(Empty(SR_SetTblSpaceIndx()), "", " TABLESPACE " + SR_SetTblSpaceIndx()) , "") + ")"
+            ELSE
+               cSql += "NUMBER (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ")" + IIF(lNotNull, " NOT NULL", "")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_IBMDB2
+            IF cField == ::cRecnoName
+               IF ::oSql:lUseSequences
+                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1, NO CACHE)"
+               ELSE
+                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") NOT NULL"
+               ENDIF
+            ELSE
+               cSql += "DECIMAL(" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ")" + IIF(lNotNull, " NOT NULL", "")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_ADABAS
+            IF cField == ::cRecnoName
+               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") NOT NULL DEFAULT SERIAL"
+            ELSE
+               cSql += "DECIMAL(" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ")" + IIF(lNotNull, " NOT NULL", "")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_INGRES
+            IF cField == ::cRecnoName
+               cSql += "DECIMAL (" + ltrim (str (aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE"
+            ELSE
+               cSql += "DECIMAL (" + ltrim (str (aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") " + IIF(lPrimary, "NOT NULL PRIMARY KEY ", IIF(lNotNull, " NOT NULL", ""))
+            ENDIF
+            EXIT
+         CASE SYSTEMID_INFORM
+            IF cField == ::cRecnoName
+               cSql += "SERIAL NOT NULL UNIQUE"
+            ELSE
+               cSql += "DECIMAL (" + ltrim (str (aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") " + IIF(lPrimary, "NOT NULL PRIMARY KEY ", IIF(lNotNull, " NOT NULL", ""))
+            ENDIF
+            EXIT
+         CASE SYSTEMID_FIREBR
+            IF cField == ::cRecnoName
+               cSql += "DECIMAL (" + ltrim (str (aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
+            ELSE
+               IF aCreate[i, FIELD_LEN] > 18
+                  cSql += "DOUBLE PRECISION" + IIF(lPrimary .OR. lNotNull, " NOT NULL", " ")
+               ELSE
+                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) +  ")" + IIF(lPrimary .OR. lNotNull, " NOT NULL", " ")
+               ENDIF
+            ENDIF
+            EXIT
+         CASE SYSTEMID_FIREBR3
+            IF cField == ::cRecnoName
+               cSql += "DECIMAL (" + ltrim (str (aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") GENERATED BY DEFAULT AS IDENTITY  NOT NULL UNIQUE "
+            ELSE
+               IF aCreate[i, FIELD_LEN] > 18
+                  cSql += "DOUBLE PRECISION" + IIF(lPrimary .OR. lNotNull, " NOT NULL", " ")
+               ELSE
+                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) +  ")" + IIF(lPrimary .OR. lNotNull, " NOT NULL", " ")
+               ENDIF
+            ENDIF
+            EXIT
+         CASE SYSTEMID_SQLBAS
+            IF aCreate[i, FIELD_LEN] > 15
+               cSql += "NUMBER" + IIF(lPrimary, " NOT NULL", " ")
+            ELSE
+               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ")" + IIF(lPrimary, " NOT NULL", " ")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_SQLANY
+            cSql += "NUMERIC (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") " + IIF(lNotNull, " NOT NULL", "")
+            EXIT
+         CASE SYSTEMID_ACCESS
+            cSql += "NUMERIC"
+            EXIT
+         OTHERWISE
+            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
+         ENDSWITCH
          EXIT
 
       // including xml data type
       // postgresql datetime
       CASE "T"
+#if 0 // TODO: old code for reference (to be deleted)
          DO CASE
          CASE ::oSql:nSystemID == SYSTEMID_POSTGR
             IF aCreate[i, FIELD_LEN] == 4
@@ -6077,6 +6196,35 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDCASE
+#endif
+         SWITCH ::oSql:nSystemID
+         CASE SYSTEMID_POSTGR
+            IF aCreate[i, FIELD_LEN] == 4
+                cSql += "time  without time zone "
+            ELSE
+                cSql += "timestamp  without time zone "
+            ENDIF
+            EXIT
+         CASE SYSTEMID_MYSQL
+         CASE SYSTEMID_MARIADB
+            IF aCreate[i, FIELD_LEN] == 4
+                cSql += "time "
+            ELSE
+                cSql += "DATETIME "
+            ENDIF
+            EXIT
+         // oracle datetime
+         CASE SYSTEMID_ORACLE
+         CASE SYSTEMID_FIREBR
+         CASE SYSTEMID_FIREBR3
+            cSql += "TIMESTAMP "
+            EXIT
+         CASE SYSTEMID_MSSQL7 // .AND. ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
+            cSql += "DATETIME NULL "
+            EXIT
+         OTHERWISE
+            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
+         ENDSWITCH
          EXIT
 
       CASE "V"
@@ -6101,6 +6249,8 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
    NEXT i
 
    cSql += " )"
+
+   // TODO: switch
 
    //If ::oSql:nSystemID == SYSTEMID_MYSQL
         //cSql += " Type=InnoDb "
@@ -6145,6 +6295,8 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
 //      cSql += " structure=btree"
 //      cSql += " with page_size= " + cRowSize + " structure=btree"
    ENDIF
+
+// TODO: end switch
 
    ::oSql:commit()
    nRet := ::oSql:exec(cSql, .T.)
