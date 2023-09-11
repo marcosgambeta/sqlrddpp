@@ -722,7 +722,7 @@ HB_FUNC( SR_ESCAPENUM )
 
    if( bInteger ) {
 #ifndef HB_LONG_LONG_OFF
-      LONGLONG lValue;
+      HB_LONGLONG lValue;
 #else
       LONG lValue;
 #endif
@@ -825,7 +825,7 @@ PHB_ITEM sr_escapeNumber(char * FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
 
    if( bInteger ) {
 #ifndef HB_LONG_LONG_OFF
-      LONGLONG lValue;
+      HB_LONGLONG lValue;
 #else
       LONG lValue;
 #endif
