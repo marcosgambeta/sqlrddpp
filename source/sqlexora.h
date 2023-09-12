@@ -47,14 +47,15 @@
  */
 
 #ifndef SQLEXORA_H
-
 #define SQLEXORA_H
+
 #include "sqlorastru.h"
-#include "hbsetup.h"
-#include "hbapi.h"
-#include "hbapirdd.h"
-#include "hbapiitm.h"
+#include <hbsetup.h>
+#include <hbapi.h>
+#include <hbapirdd.h>
+#include <hbapiitm.h>
 #include "sqlrdd.ch"
+
 #define SQL_CHAR                             1
 #define SQL_NUMERIC                          2
 #define SQL_DECIMAL                          3
@@ -393,7 +394,7 @@ typedef struct _SQLEXORAAREA
    //IndexBindings[MAX_INDEXES];   /* Index column and prepared SQL expression handles for SKIP */
    INDEXBINDORAP *
    IndexBindings;   /* Index column and prepared SQL expression handles for SKIP */
-   
+
 //    OCI_Statement  * colStmt;              /* Single column retrieving statements */
    STATEMENT_DATA   * colStmt;
    HB_BOOL bConditionChanged1;      /* If any of conditions like filters, scope, historic, has
@@ -466,4 +467,5 @@ void BindSeekStmtora( SQLEXORAAREAP thiswa, int queryLevel );
 HB_ERRCODE getPreparedSeekora( SQLEXORAAREAP thiswa, int queryLevel, USHORT * iIndex, OCI_Statement  * * hStmt ,OCI_Resultset ** rs);
 OCI_Connection * GetConnection( OCI_ORASESSION *  p );
 void SQLO_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate,OCI_Resultset * rs );
+
 #endif

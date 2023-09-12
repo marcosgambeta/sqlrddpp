@@ -52,15 +52,15 @@
 #ifndef _SQL_RDD_COMPAT_H
 #define _SQL_RDD_COMPAT_H
 
-#include "hbapi.h"
-#include "hbapiitm.h"
-#include "hbapirdd.h"
-#include "hbapierr.h"
-#include "hbset.h"
-#include "hbvm.h"
-#include "hbstack.h"
-#include "hbdate.h"
-#include "hbapicls.h"
+#include <hbapi.h>
+#include <hbapiitm.h>
+#include <hbapirdd.h>
+#include <hbapierr.h>
+#include <hbset.h>
+#include <hbvm.h>
+#include <hbstack.h>
+#include <hbdate.h>
+#include <hbapicls.h>
 
 HB_EXTERN_BEGIN
 

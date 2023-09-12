@@ -2062,9 +2062,9 @@ RETURN .F.
 #PRAGMA BEGINDUMP
 
 #include "compat.h"
-#include "hbapi.h"
-#include "hbapifs.h"
-#include "hbapiitm.h"
+#include <hbapi.h>
+#include <hbapifs.h>
+#include <hbapiitm.h>
 
 #ifndef HB_PATH_MAX
 #define HB_PATH_MAX   264 /* with trailing 0 byte */

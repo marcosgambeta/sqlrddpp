@@ -1844,8 +1844,8 @@ RETURN NIL
 
 #pragma BEGINDUMP
 
-#include "hbapi.h"
-#include "hbapiitm.h"
+#include <hbapi.h>
+#include <hbapiitm.h>
 
 typedef int sqlo_stmt_handle_t;
 

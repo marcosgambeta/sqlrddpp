@@ -49,11 +49,9 @@
 #include "sqlrddsetup.ch"
 #include "sqlprototypes.h"
 
-#if    !defined(HB_OS_DOS) \
-    && !defined(HB_OS_OS2)
+#if !defined(HB_OS_DOS) && !defined(HB_OS_OS2)
 
-#if    defined(HB_OS_WIN_32) \
-    || defined(HB_OS_WIN)
+#if defined(HB_OS_WIN_32) || defined(HB_OS_WIN)
    #include <windows.h>
    #include <odbcinst.h>
 #else
@@ -69,8 +67,7 @@
 #include <sqltypes.h>
 #include <assert.h>
 #if !defined(HB_OS_WIN)
-#  if    !defined(SQLLEN) \
-      && !defined(SQLTCHAR)
+#  if !defined(SQLLEN) && !defined(SQLTCHAR)
       typedef unsigned char   SQLTCHAR;
 #  endif
 #endif
@@ -96,8 +93,7 @@
       #define SQL_GUID                            -11
    #endif
 #endif
-#if    !defined(HB_OS_WIN) \
-    && !defined(SQL_GUID)
+#if !defined(HB_OS_WIN) && !defined(SQL_GUID)
 #define SQL_GUID                            -11
 #endif
 
@@ -108,8 +104,7 @@ void odbcErrorDiagRTE(SQLHSTMT hStmt, const char * routine, const char * szSql, 
 void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate, USHORT ui);
 //-----------------------------------------------------------------------------//
 
-#if    defined(HB_OS_WIN_32) \
-    || defined(HB_OS_WIN)
+#if defined(HB_OS_WIN_32) || defined(HB_OS_WIN)
 
 HB_FUNC( SR_INSTALLERROR )
 {
@@ -460,7 +455,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
 
             char dt[9];
 
-            if( ( ulSystemID == SYSTEMID_OTERRO ) ) {
+            if( ( ulSystemID == SYSTEMID_OTERRO ) ) { // TODO: switch ?
                dt[0] = bBuffer[6];
                dt[1] = bBuffer[7];
                dt[2] = bBuffer[8];
@@ -522,7 +517,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
                   if( s_pSym_SR_DESERIALIZE == NULL ) {
                      printf("Could not find Symbol SR_DESERIALIZE\n");
-                  }   
+                  }
                }
                hb_vmPushDynSym(s_pSym_SR_DESERIALIZE);
                hb_vmPushNil();
@@ -1254,8 +1249,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQuery
     }
 }
 
-#if    defined(HB_OS_WIN_32) \
-    || defined(HB_OS_WIN)
+#if defined(HB_OS_WIN_32) || defined(HB_OS_WIN)
 HB_FUNC( SR_BINDBYVALUE )
 {
    hb_retni(MessageBox(0, hb_parcx(1), hb_parcx(2), hb_parni(3)));

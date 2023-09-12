@@ -47,11 +47,11 @@
  */
 
 #include "compat.h"
-#include "hbapilng.h"
+#include <hbapilng.h>
 
 #include "sqlrdd.h"
 #include "msg.ch"
-#include "rddsys.ch"
+#include <rddsys.ch>
 #include "sqlrddsetup.ch"
 #include "sqlprototypes.h"
 

@@ -49,10 +49,10 @@
 #ifndef SQL_PARSER_INCLUDED
 #define SQL_PARSER_INCLUDED
 
-#include "hbapi.h"
-#include "hbapiitm.h"
-#include "hbapierr.h"
-#include "hbvm.h"
+#include <hbapi.h>
+#include <hbapiitm.h>
+#include <hbapierr.h>
+#include <hbvm.h>
 #include "hbsql.ch"
 
 #if !defined(NULL)

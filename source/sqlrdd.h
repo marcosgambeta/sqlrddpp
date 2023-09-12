@@ -52,10 +52,10 @@
 
 #include "compat.h"
 
-#include "hbsetup.h"
-#include "hbapi.h"
-#include "hbapirdd.h"
-#include "hbapiitm.h"
+#include <hbsetup.h>
+#include <hbapi.h>
+#include <hbapirdd.h>
+#include <hbapiitm.h>
 #include "sqlrdd.ch"
 
 #define SUPERTABLE                  ( &sqlrddSuper )
