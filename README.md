@@ -44,8 +44,8 @@ hbmk2 <filename> sqlrddpp.hbc -lfbclient
 ## Links
 
 SQLRDD for xHarbour  
-https://github.com/ronpinkas/xharbour  
-https://github.com/ronpinkas/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLRDD  
+https://github.com/xHarbour-org/xharbour  
+https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLRDD  
 
 Bison  
 https://gnuwin32.sourceforge.net/packages/bison.htm  
