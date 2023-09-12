@@ -60,48 +60,47 @@
 #include "hbvm.h"
 #include "hbstack.h"
 #include "hbdate.h"
-
 #include "hbapicls.h"
 
 HB_EXTERN_BEGIN
 
-extern void TraceLog( const char * sFile, const char * sTraceMsg, ... );
+extern void TraceLog(const char * sFile, const char * sTraceMsg, ...);
 
 HB_EXTERN_END
 
-typedef HB_BYTE            BYTE;
-typedef HB_SCHAR           SCHAR;
-typedef HB_SHORT           SHORT;
-typedef HB_USHORT          USHORT;
-typedef HB_UINT            UINT;
-typedef HB_LONG            LONG;
-typedef HB_ULONG           ULONG;
-typedef HB_BOOL            BOOL;
-typedef HB_LONGLONG        LONGLONG;
+// typedef HB_BYTE            BYTE;
+// typedef HB_SCHAR           SCHAR;
+// typedef HB_SHORT           SHORT;
+// typedef HB_USHORT          USHORT;
+// typedef HB_UINT            UINT;
+// typedef HB_LONG            LONG;
+// typedef HB_ULONG           ULONG;
+// typedef HB_BOOL            BOOL;
+// typedef HB_LONGLONG        LONGLONG;
 
-#define EVALINFO           HB_EVALINFO
+// #define EVALINFO           HB_EVALINFO
 
-#ifndef FALSE
-   #define FALSE           0
-#endif
-#ifndef TRUE
-   #define TRUE               (!0)
-#endif
+// #ifndef FALSE
+//    #define FALSE           0
+// #endif
+// #ifndef TRUE
+//    #define TRUE               (!0)
+// #endif
 
-#define ISBYREF(x)         HB_ISBYREF(x)
-#define ISCHAR(x)          HB_ISCHAR(x)
-#define ISNUM(x)           HB_ISNUM(x)
-#define ISLOG(x)           HB_ISLOG(x)
+// #define ISBYREF(x)         HB_ISBYREF(x)
+// #define ISCHAR(x)          HB_ISCHAR(x)
+// #define ISNUM(x)           HB_ISNUM(x)
+// #define ISLOG(x)           HB_ISLOG(x)
 
-#define hb_retcAdopt( szText )               hb_retc_buffer( (szText) )
-#define hb_retclenAdopt( szText, ulLen )     hb_retclen_buffer( (szText), (ulLen) )
-#define hb_retcStatic( szText )              hb_retc_const( (szText) )
-#define hb_storclenAdopt                     hb_storclen_buffer
-#define hb_itemPutCRawStatic                 hb_itemPutCLConst
-#define hb_itemForwardValue( dst, src )      hb_itemMove( dst, src )
-#define hb_cdppage()                         hb_vmCDP()
+// #define hb_retcAdopt( szText )               hb_retc_buffer( (szText) )
+// #define hb_retclenAdopt( szText, ulLen )     hb_retclen_buffer( (szText), (ulLen) )
+// #define hb_retcStatic( szText )              hb_retc_const( (szText) )
+// #define hb_storclenAdopt                     hb_storclen_buffer
+// #define hb_itemPutCRawStatic                 hb_itemPutCLConst
+// #define hb_itemForwardValue( dst, src )      hb_itemMove( dst, src )
+// #define hb_cdppage()                         hb_vmCDP()
 
-#define hb_dynsymLock()
-#define hb_dynsymUnlock()
+// #define hb_dynsymLock()
+// #define hb_dynsymUnlock()
 
 #endif /* _SQL_RDD_COMPAT_H */
