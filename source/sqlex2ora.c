@@ -139,7 +139,7 @@ static void ResolveSpecialCols(SQLEXORAAREAP thiswa)
    if( !thiswa->pIndexMgmnt ) {
       hb_objSendMsg(thiswa->sqlarea.oWorkArea, "AINDEXMGMNT", 0);
       thiswa->pIndexMgmnt = hb_itemNew(NULL);      
-      hb_itemForwardValue(thiswa->pIndexMgmnt, hb_stackReturnItem());
+      hb_itemMove(thiswa->pIndexMgmnt, hb_stackReturnItem());
    }
 
    iIndexes = hb_arrayLen(thiswa->pIndexMgmnt);
@@ -194,7 +194,7 @@ static void SerializeMemo(PHB_ITEM pFieldData)
    hb_vmPushNil();
    hb_vmPush(pFieldData);
    hb_vmDo(1);
-   hb_itemForwardValue(pFieldData, hb_stackReturnItem());
+   hb_itemMove(pFieldData, hb_stackReturnItem());
 }
 
 /*------------------------------------------------------------------------*/
@@ -523,7 +523,7 @@ HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
                   pTemp = hb_hashNew(NULL);
                   hb_hashAdd(pTemp, sr_getBaseLang(pLangItem), pFieldData);
                   hb_itemRelease(pLangItem);
-                  hb_itemForwardValue(pFieldData, pTemp);
+                  hb_itemMove(pFieldData, pTemp);
                   hb_itemRelease(pTemp);
                }
                if( InsertRecord->isMemo && (!HB_IS_STRING(pFieldData) ) ) {

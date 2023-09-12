@@ -568,7 +568,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                hb_vmPush(pTemp);
                hb_vmDo(2);
                /* TOFIX: */
-               hb_itemForwardValue(pItem, pTemp);
+               hb_itemMove(pItem, pTemp);
                hb_itemRelease(pTemp);
 
             } else if( lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()) ) {
@@ -584,7 +584,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                hb_vmDo(1);
 
                pTemp = hb_itemNew(NULL);
-               hb_itemForwardValue(pTemp, hb_stackReturnItem());
+               hb_itemMove(pTemp, hb_stackReturnItem());
 
                if( HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate ) {
                   PHB_ITEM pLangItem = hb_itemNew(NULL);
@@ -596,7 +596,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLen
                   }
                   hb_itemRelease(pLangItem);
                } else {
-                  hb_itemForwardValue(pItem, pTemp);
+                  hb_itemMove(pItem, pTemp);
                }
                hb_itemRelease(pTemp);
             } else {

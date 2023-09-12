@@ -2953,7 +2953,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM val
          hb_vmDo(1);
 
          pTemp = hb_itemNew(NULL);
-         hb_itemForwardValue(pTemp, hb_stackReturnItem());
+         hb_itemMove(pTemp, hb_stackReturnItem());
 
          if( HB_IS_HASH(pTemp) && sr_isMultilang() ) {
             PHB_ITEM pLangItem = hb_itemNew(NULL);
@@ -2965,7 +2965,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM val
             }
             hb_itemRelease(pLangItem);
          } else {
-            hb_itemForwardValue(itemTemp, pTemp);
+            hb_itemMove(itemTemp, pTemp);
          }
          hb_itemRelease(pTemp);
       }
@@ -2989,7 +2989,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM val
             hb_itemCopy(value, hb_hashGetValueAt(itemTemp, ulPos));
          } else {
             hb_itemPutC(pLangItem, NULL);
-            hb_itemForwardValue(value, pLangItem);
+            hb_itemMove(value, pLangItem);
          }
          hb_itemRelease(pLangItem);
       } else {
@@ -3024,7 +3024,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM val
          hb_itemRelease(pLangItem);
       }
    } else {
-      hb_itemForwardValue(value, itemTemp);
+      hb_itemMove(value, itemTemp);
    }
    hb_itemRelease(itemTemp);
    return HB_SUCCESS;

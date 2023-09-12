@@ -1224,7 +1224,7 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value)
          }
       }
 #endif
-      hb_itemForwardValue(value, itemTemp);
+      hb_itemMove(value, itemTemp);
    }
    hb_itemRelease(itemTemp);
    return HB_SUCCESS;
@@ -1726,7 +1726,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, USHORT uiIndex, PHB_ITEM pItem)
             commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
             return HB_FAILURE;
          }
-         hb_itemForwardValue(pItem, hb_stackReturnItem());
+         hb_itemMove(pItem, hb_stackReturnItem());
          break;
 
       case DBI_MEMOHANDLE:
@@ -1745,7 +1745,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, USHORT uiIndex, PHB_ITEM pItem)
             commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
             return HB_FAILURE;
          }
-         hb_itemForwardValue(pItem, hb_stackReturnItem());
+         hb_itemMove(pItem, hb_stackReturnItem());
          break;
 
       case DBI_DB_VERSION:
@@ -1756,7 +1756,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, USHORT uiIndex, PHB_ITEM pItem)
             commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
             return HB_FAILURE;
          }
-         hb_itemForwardValue(pItem, hb_stackReturnItem());
+         hb_itemMove(pItem, hb_stackReturnItem());
          break;
 
       case DBI_INTERNAL_OBJECT:
@@ -2676,7 +2676,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, USHORT uiIndex, LPDBORDERINFO pI
                pMacro = hb_macroCompile(hb_itemGetCPtr(pTemp));
                hb_macroRun(pMacro);
                hb_macroDelete(pMacro);
-               hb_itemForwardValue(pInfo->itmResult, hb_stackItemFromTop(-1));
+               hb_itemMove(pInfo->itmResult, hb_stackItemFromTop(-1));
                hb_itemRelease(pTemp);
                hb_itemRelease(pTag);
             } else {
