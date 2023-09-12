@@ -369,7 +369,7 @@ HB_FUNC( SR_HEXTOSTR )
    }
 
    outbuff = sr_Hex2Str(hb_parc(1), hb_parclen(1), &nalloc);
-   hb_retclenAdopt(outbuff, nalloc);
+   hb_retclen_buffer(outbuff, nalloc);
 }
 
 //---------------------------------------------------------------------------//
@@ -569,7 +569,7 @@ HB_FUNC( SR_ESCAPESTRING )
             break;
          }
       }
-      hb_retclenAdopt((char *) ToBuffer, iSize);
+      hb_retclen_buffer((char *) ToBuffer, iSize);
    } else {
       hb_retc("");
    }
@@ -914,7 +914,7 @@ HB_FUNC( SR_DBQUALIFY )
          }
          szOut[i + 1] = '"';
       }
-      hb_retclenAdopt(szOut, ulLen + 2);
+      hb_retclen_buffer(szOut, ulLen + 2);
    } else {
       hb_errRT_BASE_SubstR(EG_ARG, 1102, NULL, "SR_DBQUALIFY", 1, hb_paramError(1));
    }
