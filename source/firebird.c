@@ -812,7 +812,7 @@ HB_FUNC( FBGETDATA )    // FBGetData(hEnv, nField, @uData)
                ERRORLOGANDEXIT(session, "FBGETDATA3");
             }
 
-            hb_storclenAdopt(read_blob, blob_size, 3);
+            hb_storclen_buffer(read_blob, blob_size, 3);
             break;
 
          case IB_SQL_TYPE_DATE:
@@ -1345,7 +1345,7 @@ HB_FUNC( FBLINEPROCESSED )
                   FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *) read_blob, blob_size, bQueryOnly, ulSystemID, bTranslate);
                   hb_arraySetForward(pRet, icol, temp);
 
-                  hb_storclenAdopt(read_blob, blob_size, 3);
+                  hb_storclen_buffer(read_blob, blob_size, 3);
                   hb_xfree(read_blob);
                   break;
 
