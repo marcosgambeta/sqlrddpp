@@ -102,13 +102,9 @@ void startSQLEXSymbols()
 
    if( s_pSym_SOLVERESTRICTORS == NULL ) {
 
-      hb_dynsymLock();
-
       s_pSym_SOLVERESTRICTORS = hb_dynsymFindName("SOLVERESTRICTORS");
 
       if( s_pSym_SOLVERESTRICTORS == NULL ) printf("Could not find Symbol %s\n", "SOLVERESTRICTORS");
-
-      hb_dynsymUnlock();
    }
 }
 */
@@ -2946,9 +2942,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, USHORT fieldNum, PHB_ITEM val
       PHB_ITEM pTemp;
       if( lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()) ) {
          if( s_pSym_SR_DESERIALIZE == NULL ) {
-            hb_dynsymLock();
             s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-            hb_dynsymUnlock();
             if( s_pSym_SR_DESERIALIZE  == NULL ) {
                printf("Could not find Symbol SR_DESERIALIZE\n");
             }

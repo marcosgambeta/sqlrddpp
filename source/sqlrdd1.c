@@ -1275,9 +1275,7 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value)
    fieldindex = (USHORT)thiswa->uiBufferIndex[fieldNum - 1];
    pDest = hb_itemArrayGet(thiswa->aBuffer, fieldindex);
 //                if( s_pSym_SR_FROMXML == NULL ) {
-//                   hb_dynsymLock();
 //                   s_pSym_SR_FROMXML = hb_dynsymFindName("ESCREVE");
-//                   hb_dynsymUnlock();
 //                   if( s_pSym_SR_FROMXML  == NULL ) {
 //                      printf("Could not find Symbol SR_DESERIALIZE\n");
 //                   }

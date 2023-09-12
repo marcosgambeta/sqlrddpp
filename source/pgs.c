@@ -738,9 +738,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
 
             if( lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2) )&& (sr_lSerializeArrayAsJson()) ) {
                if( s_pSym_SR_FROMJSON == NULL ) {
-                  hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
-                  hb_dynsymUnlock();
                   if( s_pSym_SR_FROMJSON  == NULL ) {
                      printf("Could not find Symbol HB_JSONDECODE\n");
                   }
@@ -757,9 +755,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
 
             } else if( lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()) ) {
                if( s_pSym_SR_DESERIALIZE == NULL ) {
-                  hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-                  hb_dynsymUnlock();
                   if( s_pSym_SR_DESERIALIZE  == NULL ) {
                      printf("Could not find Symbol SR_DESERIALIZE\n");
                   }   
@@ -795,9 +791,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBu
          case SQL_LONGVARCHARXML: {
 
                if( s_pSym_SR_FROMXML == NULL ) {
-                  hb_dynsymLock();
                   s_pSym_SR_FROMXML = hb_dynsymFindName("SR_FROMXML");
-                  hb_dynsymUnlock();
                   if( s_pSym_SR_FROMXML  == NULL ) {
                      printf("Could not find Symbol SR_DESERIALIZE\n");
                   }

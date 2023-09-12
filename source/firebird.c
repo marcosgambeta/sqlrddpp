@@ -1018,9 +1018,7 @@ void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuf
          case SQL_LONGVARCHAR: {
             if( lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2) )&& (sr_lSerializeArrayAsJson()) ) {
                if( s_pSym_SR_FROMJSON == NULL ) {
-                  hb_dynsymLock();
                   s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
-                  hb_dynsymUnlock();
                   if( s_pSym_SR_FROMJSON == NULL ) {
                      printf("Could not find Symbol HB_JSONDECODE\n");
                   }
@@ -1040,9 +1038,7 @@ void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuf
 
             } else if( lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()) ) {
                if( s_pSym_SR_DESERIALIZE == NULL ) {
-                  hb_dynsymLock();
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-                  hb_dynsymUnlock();
                   if( s_pSym_SR_DESERIALIZE  == NULL ) {
                      printf("Could not find Symbol SR_DESERIALIZE\n");
                   }
