@@ -89,17 +89,17 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD
 
    DEFAULT lTranslate TO .T.
 
-   If aArray == NIL
+   IF aArray == NIL
       aArray := Array(len(aFields))
-   ElseIf len(aArray) != len(aFields)
+   ELSEIF len(aArray) != len(aFields)
       aSize(aArray, len(aFields))
-   EndIf
+   ENDIF
 
-   If ::aCurrLine == NIL
+   IF ::aCurrLine == NIL
       FBLINEPROCESSED(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
       ::aCurrLine := aArray
       RETURN aArray
-   EndIf
+   ENDIF
 
    FOR i = 1 TO len(aArray)
       aArray[i] := ::aCurrLine[i]
@@ -111,11 +111,11 @@ RETURN aArray
 
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_FIREBIRD
 
-   If ::aCurrLine == NIL
+   IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
       ::aCurrLine := array(LEN(aFields))
       FBLINEPROCESSED(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
-   EndIf
+   ENDIF
 
 RETURN ::aCurrLine[nField]
 
@@ -124,15 +124,15 @@ RETURN ::aCurrLine[nField]
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_FIREBIRD
 
    ::nRetCode := SQL_ERROR
-   DEFAULT aFields    TO ::aFields
+   DEFAULT aFields TO ::aFields
    DEFAULT lTranslate TO .T.
 
-   If ::hEnv != NIL
+   IF ::hEnv != NIL
       ::nRetCode := FBFetch(::hEnv)
       ::aCurrLine := NIL
-   Else
+   ELSE
       ::RunTimeErr("", "FBFetch - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
-   EndIf
+   ENDIF
 
 RETURN ::nRetCode
 
@@ -140,12 +140,12 @@ RETURN ::nRetCode
 
 METHOD AllocStatement() CLASS SR_FIREBIRD
 
-   If ::lSetNext
-      If ::nSetOpt == SQL_ATTR_QUERY_TIMEOUT
+   IF ::lSetNext
+      IF ::nSetOpt == SQL_ATTR_QUERY_TIMEOUT
          // To do.
-      EndIf
-      ::lSetNext  := .F.
-   EndIf
+      ENDIF
+      ::lSetNext := .F.
+   ENDIF
 
 RETURN SQL_SUCCESS
 
@@ -176,64 +176,62 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    DEFAULT cRecnoName   TO SR_RecnoName()
    DEFAULT cDeletedName TO SR_DeletedName()
 
-   If lReSelect
-      If !Empty(cCommand)
+   IF lReSelect
+      IF !Empty(cCommand)
          nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
-      Else
+      ELSE
          // DOON'T remove "+0"
          ::Exec("select a.rdb$field_name, b.rdb$field_precision + 0 from rdb$relation_fields a, rdb$fields b where a.rdb$relation_name = '" + StrTran(cTable, chr(34), "") + "' and a.rdb$field_source = b.rdb$field_name", .F., .T., @aLocalPrecision)
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments, " /* Open Workarea */", ""), .F.)
-      EndIf
-      If nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
+      ENDIF
+      IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          RETURN NIL
-      EndIf
-   EndIf
+      ENDIF
+   ENDIF
 
-   if ( ::nRetCode := FBNumResultCols(::hEnv, @nFields) ) != SQL_SUCCESS
-      ::RunTimeErr("", "FBNumResultCols Error" + SR_CRLF + SR_CRLF + ;
-               "Last command sent to database : " + SR_CRLF + ::cLastComm)
+   IF (::nRetCode := FBNumResultCols(::hEnv, @nFields)) != SQL_SUCCESS
+      ::RunTimeErr("", "FBNumResultCols Error" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
-   endif
+   ENDIF
 
-   aFields   := Array(nFields)
+   aFields := Array(nFields)
    ::nFields := nFields
 
    FOR n := 1 TO nFields
 
       nDec := 0
 
-      if ( ::nRetCode := FBDescribeCol(::hEnv, n, @cName, @nType, @nLen, @nDec, @nNull) ) != SQL_SUCCESS
-         ::RunTimeErr("", "FBDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
-                          "Last command sent to database : " + ::cLastComm)
+      IF (::nRetCode := FBDescribeCol(::hEnv, n, @cName, @nType, @nLen, @nDec, @nNull)) != SQL_SUCCESS
+         ::RunTimeErr("", "FBDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + "Last command sent to database : " + ::cLastComm)
          RETURN NIL
-      else
+      ELSE
          _nLen := nLen
          _nDec := nDec
 
-         cName     := upper(alltrim(cName))
-         nPos := aScan(aLocalPrecision, { |x| rtrim(x[1]) == cName })
-         cType     := ::SQLType(nType, cName, nLen)
+         cName := upper(alltrim(cName))
+         nPos := aScan(aLocalPrecision, {|x|rtrim(x[1]) == cName})
+         cType := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec)
-         If nPos > 0 .AND. aLocalPrecision[nPos, 2] > 0
+         IF nPos > 0 .AND. aLocalPrecision[nPos, 2] > 0
             nLenField := aLocalPrecision[nPos, 2]
-         ElseIf ( nType == SQL_DOUBLE .OR. nType == SQL_FLOAT .OR. nType == SQL_NUMERIC )
+         ELSEIF (nType == SQL_DOUBLE .OR. nType == SQL_FLOAT .OR. nType == SQL_NUMERIC)
             nLenField := 19
-         EndIf
+         ENDIF
 
-         If cType == "U"
+         IF cType == "U"
             ::RuntimeErr("", SR_Msg(21) + cName + " : " + str(nType))
-         Else
-            aFields[n] := { cName, cType, nLenField, nDec, nNull >= 1 , nType,, n, _nDec,, }
-         EndIf
+         ELSE
+            aFields[n] := {cName, cType, nLenField, nDec, nNull >= 1, nType, , n, _nDec, ,}
+         ENDIF
 
-      endif
+      ENDIF
    NEXT n
 
    ::aFields := aFields
 
-   If lReSelect .AND. !lLoadCache
+   IF lReSelect .AND. !lLoadCache
       ::FreeStatement()
-   EndIf
+   ENDIF
 
 RETURN aFields
 
@@ -251,12 +249,12 @@ RETURN alltrim(cMsgError) + " - Native error code " + AllTrim(str(nType))
 /*------------------------------------------------------------------------*/
 
 METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, ;
-            cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_FIREBIRD
+   cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_FIREBIRD
 
    LOCAL nRet
    LOCAL hEnv
    LOCAL cSystemVers
-   
+
    HB_SYMBOL_UNUSED(cDSN)
    HB_SYMBOL_UNUSED(cUser)
    HB_SYMBOL_UNUSED(cPassword)
@@ -273,27 +271,27 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    nRet := FBConnect(::cDtb, ::cUser, ::cPassword, ::cCharSet, @hEnv)
 
-   if nRet != SQL_SUCCESS
-      ::nRetCode = nRet
+   IF nRet != SQL_SUCCESS
+      ::nRetCode := nRet
       SR_MsgLogFile("Connection Error: " + alltrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + " - Username : " + ::cUser + " (Password not shown for security)")
       RETURN Self
-   else
-      ::cConnect  := cConnect
-      cTargetDB   := StrTran(FBVERSION(hEnv), "(access method)", "")
+   ELSE
+      ::cConnect := cConnect
+      cTargetDB := StrTran(FBVERSION(hEnv), "(access method)", "")
       cSystemVers := SubStr(cTargetDB, at("Firebird ", cTargetDB) + 9, 3)
-   EndIf
+   ENDIF
 
    nRet := FBBeginTransaction(hEnv)
 
-   if nRet != SQL_SUCCESS
-      ::nRetCode = nRet
+   IF nRet != SQL_SUCCESS
+      ::nRetCode := nRet
       SR_MsgLogFile("Transaction Start error : " + alltrim(str(nRet)))
       RETURN Self
-   EndIf
+   ENDIF
 
-   ::hEnv         := hEnv
-   ::cSystemName  := cTargetDB
-   ::cSystemVers  := cSystemVers
+   ::hEnv := hEnv
+   ::cSystemName := cTargetDB
+   ::cSystemVers := cSystemVers
 
    ::DetectTargetDb()
 
@@ -311,15 +309,19 @@ RETURN ::Super:End()
 /*------------------------------------------------------------------------*/
 
 METHOD Commit() CLASS SR_FIREBIRD
+
    ::Super:Commit()
-   ::nRetCode := FBCOMMITTRANSACTION(::hEnv )  
-RETURN ( ::nRetCode := FBBeginTransaction(::hEnv) )
+   ::nRetCode := FBCOMMITTRANSACTION(::hEnv )
+
+RETURN (::nRetCode := FBBeginTransaction(::hEnv))
 
 /*------------------------------------------------------------------------*/
 
 METHOD RollBack() CLASS SR_FIREBIRD
+
    ::Super:RollBack()
-RETURN ( ::nRetCode := FBRollBackTransaction(::hEnv) )
+
+RETURN (::nRetCode := FBRollBackTransaction(::hEnv))
 
 /*------------------------------------------------------------------------*/
 
@@ -327,13 +329,13 @@ METHOD ExecuteRaw(cCommand) CLASS SR_FIREBIRD
 
    LOCAL nRet
 
-   If upper(left(ltrim(cCommand), 6)) == "SELECT"
+   IF upper(left(ltrim(cCommand), 6)) == "SELECT"
       nRet := FBExecute(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .T.
-   Else
+   ELSE
       nRet := FBExecuteImmediate(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .F.
-   EndIf
+   ENDIF
 
 RETURN nRet
 
