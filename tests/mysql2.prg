@@ -31,7 +31,13 @@ PROCEDURE Main()
    nConnection := sr_AddConnection(CONNECT_MYSQL, "MySQL=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
 
    IF !sr_ExistTable("test")
-      dbCreate("test", {{"ID", "N", 10, 0}, {"FIRST", "C", 30, 0}, {"LAST", "C", 30, 0}, {"AGE", "N", 3, 0}}, "SQLRDD")
+      dbCreate("test", {{"ID",      "N", 10, 0}, ;
+                        {"FIRST",   "C", 30, 0}, ;
+                        {"LAST",    "C", 30, 0}, ;
+                        {"AGE",     "N",  3, 0}, ;
+                        {"DATE",    "D",  8, 0}, ;
+                        {"MARRIED", "L",  1, 0}, ;
+                        {"VALUE",   "N", 12, 2}}, "SQLRDD")
    ENDIF
 
    USE test EXCLUSIVE VIA "SQLRDD"
@@ -39,10 +45,13 @@ PROCEDURE Main()
    IF recno() < 100
       FOR n := 1 TO 100
          APPEND BLANK
-         REPLACE ID    WITH n
-         REPLACE FIRST WITH "FIRST" + hb_ntos(n)
-         REPLACE LAST  WITH "LAST" + hb_ntos(n)
-         REPLACE AGE   WITH n + 18
+         REPLACE ID      WITH n
+         REPLACE FIRST   WITH "FIRST" + hb_ntos(n)
+         REPLACE LAST    WITH "LAST" + hb_ntos(n)
+         REPLACE AGE     WITH n + 18
+         REPLACE DATE    WITH date() - n
+         REPLACE MARRIED WITH iif(n / 2 == int(n / 2), .T., .F.)
+         REPLACE VALUE   WITH n * 1000 / 100
       NEXT n
    ENDIF
 
@@ -54,6 +63,9 @@ PROCEDURE Main()
    oTB:addColumn(TBColumnNew("FIRST", {||TEST->FIRST}))
    oTB:addColumn(TBColumnNew("LAST", {||TEST->LAST}))
    oTB:addColumn(TBColumnNew("AGE", {||TEST->AGE}))
+   oTB:addColumn(TBColumnNew("DATE", {||TEST->DATE}))
+   oTB:addColumn(TBColumnNew("MARRIED", {||TEST->MARRIED}))
+   oTB:addColumn(TBColumnNew("VALUE", {||TEST->VALUE}))
 
    DO WHILE nKey != K_ESC
       dispbegin()
