@@ -11,6 +11,7 @@
 -Isource/mysql
 -Isource/oci
 -Isource/pgsql
+-Iinclude
 
 source/exprobjs.prg
 source/exprparser.prg
