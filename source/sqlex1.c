@@ -57,6 +57,11 @@ Quick to do list, 2009 feb 23:
     getColumnList() function
 
 */
+
+#if defined(_MSC_VER)
+   #pragma warning(disable : 4201)
+#endif
+
 //#define DEBUG_XGRAB
 #include "compat.h"
 #include <hbinit.h>

@@ -44,6 +44,10 @@
  *
  */
 
+#if defined(_MSC_VER)
+   #pragma warning(disable : 4201)
+#endif
+
 #include "compat.h"
 
 #include "sqlrddsetup.ch"
