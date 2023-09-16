@@ -2554,6 +2554,7 @@ DEFUN(_save_oci_status, (dbp, action, object, lineno),
         c = *action;
         c = *object;
       }
+      HB_SYMBOL_UNUSED(c);
   }
 #endif
 
