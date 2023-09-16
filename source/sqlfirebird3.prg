@@ -243,7 +243,7 @@ METHOD LastError() CLASS SR_FIREBIRD3
    LOCAL cMsgError
    LOCAL nType := 0
 
-   cMsgError := FBError(::hEnv, @nType)
+   cMsgError := FBError3(::hEnv, @nType)
 
 RETURN alltrim(cMsgError) + " - Native error code " + AllTrim(str(nType))
 
