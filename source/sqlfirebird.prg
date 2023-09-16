@@ -101,7 +101,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD
       RETURN aArray
    ENDIF
 
-   FOR i = 1 TO len(aArray)
+   FOR i := 1 TO len(aArray)
       aArray[i] := ::aCurrLine[i]
    NEXT i
 
@@ -170,10 +170,10 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    LOCAL cVlr := ""
    LOCAL aLocalPrecision := {}
 
-   DEFAULT lReSelect    TO .T.
-   DEFAULT lLoadCache   TO .F.
-   DEFAULT cWhere       TO ""
-   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT lReSelect TO .T.
+   DEFAULT lLoadCache TO .F.
+   DEFAULT cWhere TO ""
+   DEFAULT cRecnoName TO SR_RecnoName()
    DEFAULT cDeletedName TO SR_DeletedName()
 
    IF lReSelect
@@ -274,7 +274,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    IF nRet != SQL_SUCCESS
       ::nRetCode := nRet
       SR_MsgLogFile("Connection Error: " + alltrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + " - Username : " + ::cUser + " (Password not shown for security)")
-      RETURN Self
+      RETURN SELF
    ELSE
       ::cConnect := cConnect
       cTargetDB := StrTran(FBVERSION(hEnv), "(access method)", "")
@@ -286,7 +286,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    IF nRet != SQL_SUCCESS
       ::nRetCode := nRet
       SR_MsgLogFile("Transaction Start error : " + alltrim(str(nRet)))
-      RETURN Self
+      RETURN SELF
    ENDIF
 
    ::hEnv := hEnv
@@ -295,7 +295,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    ::DetectTargetDb()
 
-RETURN Self
+RETURN SELF
 
 /*------------------------------------------------------------------------*/
 
@@ -311,7 +311,7 @@ RETURN ::Super:End()
 METHOD Commit() CLASS SR_FIREBIRD
 
    ::Super:Commit()
-   ::nRetCode := FBCOMMITTRANSACTION(::hEnv )
+   ::nRetCode := FBCOMMITTRANSACTION(::hEnv)
 
 RETURN (::nRetCode := FBBeginTransaction(::hEnv))
 
