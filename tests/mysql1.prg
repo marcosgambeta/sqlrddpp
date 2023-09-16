@@ -27,6 +27,11 @@ PROCEDURE Main()
 
    nConnection := sr_AddConnection(CONNECT_MYSQL, "MySQL=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
 
+   IF nConnection < 0
+      alert("Connection error. See sqlerror.log for details.")
+      QUIT
+   ENDIF
+
    IF !sr_ExistTable("test")
       dbCreate("test", {{"ID",      "N", 10, 0}, ;
                         {"FIRST",   "C", 30, 0}, ;
