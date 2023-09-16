@@ -39,7 +39,7 @@ PROCEDURE Main()
 
    USE test EXCLUSIVE VIA "SQLRDD"
 
-   IF recno() < 100
+   IF reccount() < 100
       FOR n := 1 TO 100
          APPEND BLANK
          REPLACE ID      WITH n
