@@ -655,9 +655,9 @@ HB_FUNC(ORACLEFREEBIND2)
 
 
 
-void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate, OCI_Resultset * rs)
+void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate, OCI_Resultset * rs)
 {
-   LONG lType;
+   HB_LONG lType;
    HB_SIZE lLen, lDec;
    PHB_ITEM pTemp;
    unsigned int uiLen;
@@ -665,7 +665,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
 
-   lType = (LONG) hb_arrayGetNL(pField, 6);
+   lType = (HB_LONG) hb_arrayGetNL(pField, 6);
    lLen = hb_arrayGetNS(pField, 3);
    lDec = hb_arrayGetNS(pField, 4);
 
@@ -682,7 +682,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
          case SQL_NUMERIC:
          case SQL_FAKE_NUM: {
 //             char szResult[2] = {' ', '\0'};
-//             sr_escapeNumber(szResult, (ULONG) lLen, (ULONG) lDec, pItem);
+//             sr_escapeNumber(szResult, (HB_ULONG) lLen, (HB_ULONG) lDec, pItem);
 //             hb_itemPutNL(pItem,0);
             if( lDec > 0 ) {
                hb_itemPutNDLen(pItem, 0, lLen, lDec);
@@ -866,12 +866,12 @@ HB_FUNC( SQLO2_LINEPROCESSED )
 {
    POCI_ORASESSION session = (POCI_ORASESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-   LONG lIndex;
+   HB_LONG lIndex;
    PHB_ITEM temp;
    HB_SIZE i, cols;
    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
    HB_BOOL  bQueryOnly = hb_parl(4);
-   ULONG ulSystemID = hb_parnl(5);
+   HB_ULONG ulSystemID = hb_parnl(5);
    HB_BOOL  bTranslate = hb_parl(6);
    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 //   SQLO2_stmt_handle_t stmtParamRes;
@@ -1070,7 +1070,7 @@ HB_FUNC( ORACLEWRITEMEMO2 )
 {
    POCI_ORASESSION session = (POCI_ORASESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
    const char * sTable = hb_parc(2);
-   ULONG ulRecno = hb_parnl(3);
+   HB_ULONG ulRecno = hb_parnl(3);
    const char * sRecnoName = hb_parcx(4);
    //SQLO2_lob_desc_t loblp;
    //SQLO2_stmt_handle_t sth;

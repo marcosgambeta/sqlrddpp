@@ -220,7 +220,7 @@ void CreateInsertStmt(SQLEXAREAP thiswa)
 {
    int iCols, i;
    PHB_ITEM pFieldStruct, pFieldLen, pFieldDec;
-   LONG lFieldPosWA, lType;
+   HB_LONG lFieldPosWA, lType;
    char * colName, * sFields, * sParams, * temp;
    char ident[200] = {0};
    char tablename[100] = {0};
@@ -843,7 +843,7 @@ HB_ERRCODE CreateUpdateStmt(SQLEXAREAP thiswa)
 
    if( (!thiswa->bIndexTouchedInUpdate) && thiswa->hOrdCurrent ) {
       // Check if any updated column is included in current index column list
-      pColumns = hb_arrayGetItemPtr(hb_arrayGetItemPtr(thiswa->aOrders, (ULONG) thiswa->hOrdCurrent), INDEX_FIELDS);
+      pColumns = hb_arrayGetItemPtr(hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG) thiswa->hOrdCurrent), INDEX_FIELDS);
       thiswa->indexColumns = hb_arrayLen(pColumns);
 
       for( i = 1; i <= thiswa->indexColumns; i++ ) {

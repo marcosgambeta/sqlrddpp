@@ -64,8 +64,8 @@ HB_BOOL HB_EXPORT sr_lsql2008newTypes( void );
 HB_BOOL HB_EXPORT sr_iOldPgsBehavior( void ) ;
 HB_BOOL HB_EXPORT sr_fShortasNum( void );
 #ifdef SQLRDD_COMPAT_PRE_1_1
-   HB_BOOL hb_arraySetNL( PHB_ITEM pArray, ULONG ulIndex, LONG ulVal );
-   HB_BOOL hb_arraySetL( PHB_ITEM pArray, ULONG ulIndex, HB_BOOL lVal );
+   HB_BOOL hb_arraySetNL( PHB_ITEM pArray, HB_ULONG ulIndex, HB_LONG ulVal );
+   HB_BOOL hb_arraySetL( PHB_ITEM pArray, HB_ULONG ulIndex, HB_BOOL lVal );
 #endif
 HB_BOOL iTemCompEqual( PHB_ITEM pItem1, PHB_ITEM pItem2 );
 HB_BOOL hb_itemEmpty( PHB_ITEM pItem );

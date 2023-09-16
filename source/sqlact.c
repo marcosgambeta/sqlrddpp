@@ -724,7 +724,7 @@ HB_FUNC( SR_ESCAPENUM )
 #ifndef HB_LONG_LONG_OFF
       HB_LONGLONG lValue;
 #else
-      LONG lValue;
+      HB_LONG lValue;
 #endif
       int iOverflow;
       lValue = hb_strValInt(ToBuffer, &iOverflow);
@@ -827,7 +827,7 @@ PHB_ITEM sr_escapeNumber(char * FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM p
 #ifndef HB_LONG_LONG_OFF
       HB_LONGLONG lValue;
 #else
-      LONG lValue;
+      HB_LONG lValue;
 #endif
       int iOverflow;
       lValue = hb_strValInt(ToBuffer, &iOverflow);
@@ -924,7 +924,7 @@ HB_FUNC( SR_DBQUALIFY )
 
 #ifdef SQLRDD_COMPAT_PRE_1_1
 
-HB_BOOL hb_arraySetNL(PHB_ITEM pArray, HB_ULONG ulIndex, LONG lVal)
+HB_BOOL hb_arraySetNL(PHB_ITEM pArray, HB_ULONG ulIndex, HB_LONG lVal)
 {
    HB_BOOL ret;
    PHB_ITEM pItem = hb_errNew();

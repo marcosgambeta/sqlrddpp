@@ -66,8 +66,8 @@ typedef struct _ORA_BIND_COLS2
    double  dValue;
    unsigned int  ulValue;
    char sDate[ 7 ];  
-   LONGLONG iValue;
-   LONGLONG lValue; 
+   HB_LONGLONG iValue;
+   HB_LONGLONG lValue; 
    OCI_Date *date;  
    int iFieldSize;
 } ORA_BIND_COLS2 ;
@@ -82,8 +82,8 @@ typedef struct _ORA_BIND_COLS
    double  dValue;
    unsigned int  ulValue;
    char sDate[ 7 ];  
-   LONGLONG iValue;
-   LONGLONG lValue; 
+   HB_LONGLONG iValue;
+   HB_LONGLONG lValue; 
    OCI_Date *date;  
    int iFieldSize;
 } ORA_BIND_COLS ;

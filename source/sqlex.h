@@ -105,8 +105,8 @@ typedef struct _SQL_CHAR_STRUCT
 
 typedef struct _INDEXBIND
 {
-   LONG lFieldPosDB;                   // Relative field position in aFields
-   LONG hIndexOrder;                   // Index order
+   HB_LONG lFieldPosDB;                   // Relative field position in aFields
+   HB_LONG hIndexOrder;                   // Index order
    int  iLevel;                        // The current column in index
    int  iIndexColumns;                 // How many index columns in index
    HSTMT SkipFwdStmt;                  // Index stmt handle for SQL phrase in this level for FWD movment
@@ -128,8 +128,8 @@ typedef struct _COLUMNBIND
    int  iSQLType;                      // SQL data type of column
    int  iCType;                        // C data type of the argument. It determines
                                        // the as* member to be used, like xHB iTem API 'type'
-   LONG lFieldPosDB;                   // Relative field position in aFields
-   LONG lFieldPosWA;                   // Relative field position in aBuffer. NULL if RECNO or DELETED column
+   HB_LONG lFieldPosDB;                   // Relative field position in aFields
+   HB_LONG lFieldPosWA;                   // Relative field position in aBuffer. NULL if RECNO or DELETED column
    char * colName;                     // Fully qualified column name to be used in queries
    SQL_CHAR_STRUCT      asChar;        // Support for char data types
    SQLCHAR              asLogical;     // Support for logical data type
@@ -169,7 +169,7 @@ typedef struct _SQLEXAREA
 
    PHB_CODEPAGE cdPageCnv; /* Area's codepage convert pointer */
    char * szDataFileName;  /* file name */
-   LONG hOrdCurrent;       /* current index order */
+   HB_LONG hOrdCurrent;       /* current index order */
    
    HB_BOOL shared;
    HB_BOOL readonly;          /* only SELECT allowed */
@@ -192,8 +192,8 @@ typedef struct _SQLEXAREA
    PHB_ITEM aEmptyBuff;     /* Empty buffer to be in eof()+1 */
    PHB_ITEM aSelectList;
 
-   ULONG ulhRecno;          /* Recno position in field list */
-   ULONG ulhDeleted;        /* Deleted position in field list */
+   HB_ULONG ulhRecno;          /* Recno position in field list */
+   HB_ULONG ulhDeleted;        /* Deleted position in field list */
 
    int * uiBufferIndex;     /* Field offset in fields array */
    int * uiFieldList;       /* Keeps a field list for SELECT statements */
@@ -217,13 +217,13 @@ typedef struct _SQLEXAREA
    HSTMT hStmtUpdate;         /* Statement handle with prepared phrase to insert a new record */
    HDBC  hDbc;                /* Database connection handle */
    int nSystemID;             /* Connected database ID */
-   ULONG lCurrentRecord;      /* Should be filled by GetCurrentRecordNum() to be used in SKIP bindings */
-   ULONG lUpdatedRecord;      /* Should be filled by GetCurrentRecordNum() to be used in UPDATE bindings */
-   ULONG lBofAt;              /* BOF Record optimizer */
-   ULONG lEofAt;              /* EOF Record optimizer */
-   ULONG lLastRec;            /* LastRec() + 1 */
-   ULONG * lRecordToRetrieve; /* To be used with Binded Parameter */
-   ULONG * recordList;        /* record list to skip on */
+   HB_ULONG lCurrentRecord;      /* Should be filled by GetCurrentRecordNum() to be used in SKIP bindings */
+   HB_ULONG lUpdatedRecord;      /* Should be filled by GetCurrentRecordNum() to be used in UPDATE bindings */
+   HB_ULONG lBofAt;              /* BOF Record optimizer */
+   HB_ULONG lEofAt;              /* EOF Record optimizer */
+   HB_ULONG lLastRec;            /* LastRec() + 1 */
+   HB_ULONG * lRecordToRetrieve; /* To be used with Binded Parameter */
+   HB_ULONG * recordList;        /* record list to skip on */
    char * deletedList;        /* deleted list relative to record list */
    int recordListPos;         /* record list position */
    int recordListSize;        /* record list size */
@@ -288,8 +288,8 @@ typedef SQLEXAREA * LPSQLEXAREA;
 int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact );
 void odbcErrorDiag( HSTMT hStmt, const char * routine, const char * szSql, int line );
 void odbcErrorDiagRTE( HSTMT hStmt, const char * routine, const char * szSql, SQLRETURN res, int line, const char * module );
-void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate );
-char * QuoteTrimEscapeString( char * FromBuffer, ULONG iSize, int idatabase, HB_BOOL bRTrim, ULONG * iSizeOut );
+void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate );
+char * QuoteTrimEscapeString( char * FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim, HB_ULONG * iSizeOut );
 char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL * bNullArgument );
 HB_BOOL SR_itemEmpty( PHB_ITEM pItem );
 void commonError( AREAP ThisDb, USHORT uiGenCode, USHORT uiSubCode, char* filename );
@@ -303,8 +303,8 @@ void getOrderByExpression( SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints );
 void setResultSetLimit( SQLEXAREAP thiswa, int iRows );
 void SetIndexBindStructure( SQLEXAREAP thiswa );
 void SetInsertRecordStructure( SQLEXAREAP thiswa );
-ULONG GetCurrentRecordNum( SQLEXAREAP thiswa );
-extern void odbcGetData( SQLHSTMT hStmt, PHB_ITEM pField,PHB_ITEM pItem,  HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate,USHORT ui  );
+HB_ULONG GetCurrentRecordNum( SQLEXAREAP thiswa );
+extern void odbcGetData( SQLHSTMT hStmt, PHB_ITEM pField,PHB_ITEM pItem,  HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate,USHORT ui  );
 /* INSERT and UPDATE prototypes */
 
 void CreateInsertStmt( SQLEXAREAP thiswa );

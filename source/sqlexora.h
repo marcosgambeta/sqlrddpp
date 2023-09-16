@@ -212,12 +212,12 @@ typedef struct _COLUMNBINDORA
    char * colName;                     // Fully qualified column name to be used in queries
    SQL_CHAR_STRUCT      asChar;        // Support for char data types
    OCI_Date * asDate1;
-   ULONGLONG             asLogical;     // Support for logical data type
+   HB_ULONGLONG             asLogical;     // Support for logical data type
    SQL_DATE_STRUCTORA      asDate;        // I suppose ODBC driver will suport default
                                        // convertion to TIMESTAMP when needed
    SQL_TIMESTAMP_STRUCTORA asTimestamp;   // Timestamp support, always converted to DATE
    OCI_Date * asDate2;
-   ULONGLONG           asNumeric;
+   HB_ULONGLONG           asNumeric;
    double            asDouble;     // I suppose all ODBC drivers has build in
                                        // convertion from this type to all types
                                        // of numeric variables in SQL
@@ -256,7 +256,7 @@ typedef struct _SQLAREA
    */
    PHB_CODEPAGE cdPageCnv; /* Area's codepage convert pointer */
    char * szDataFileName;  /* file name */
-   LONG hOrdCurrent;       /* current index order */
+   HB_LONG hOrdCurrent;       /* current index order */
    HB_BOOL shared;
    HB_BOOL readonly;          /* only SELECT allowed */
    HB_BOOL creating;          /* TRUE when creating table */
@@ -308,7 +308,7 @@ typedef struct _SQLEXORAAREA
    */
    ///PHB_CODEPAGE cdPageCnv; /* Area's codepage convert pointer */
    ///char * szDataFileName;  /* file name */
-   ///LONG hOrdCurrent;       /* current index order */   
+   ///HB_LONG hOrdCurrent;       /* current index order */   
    //HB_BOOL shared;
    //HB_BOOL readonly;          /* only SELECT allowed */
    //HB_BOOL creating;          /* TRUE when creating table */
@@ -330,8 +330,8 @@ typedef struct _SQLEXORAAREA
    ///PHB_ITEM aEmptyBuff;     /* Empty buffer to be in eof()+1 */
    ///PHB_ITEM aSelectList;
    ///
-   ///ULONG ulhRecno;          /* Recno position in field list */
-   ///ULONG ulhDeleted;        /* Deleted position in field list */
+   ///HB_ULONG ulhRecno;          /* Recno position in field list */
+   ///HB_ULONG ulhDeleted;        /* Deleted position in field list */
    ///
    ///int * uiBufferIndex;     /* Field offset in fields array */
    ///int * uiFieldList;       /* Keeps a field list for SELECT statements */
@@ -356,13 +356,13 @@ typedef struct _SQLEXORAAREA
    OCI_Statement  * hStmtSkip;           /* Statement handle with prepared phrase to insert a new record */   
    OCI_ORASESSION  *hDbc;                /* Database connection handle */
    int nSystemID;             /* Connected database ID */
-   ULONGLONG lCurrentRecord;      /* Should be filled by GetCurrentRecordNumOra() to be used in SKIP bindings */
-   ULONGLONG lUpdatedRecord;      /* Should be filled by GetCurrentRecordNumOra() to be used in UPDATE bindings */
-   ULONGLONG lBofAt;              /* BOF Record optimizer */
-   ULONGLONG lEofAt;              /* EOF Record optimizer */
-   ULONGLONG lLastRec;            /* LastRec() + 1 */
-   ULONGLONG * lRecordToRetrieve; /* To be used with Binded Parameter */
-   ULONGLONG * recordList;        /* record list to skip on */
+   HB_ULONGLONG lCurrentRecord;      /* Should be filled by GetCurrentRecordNumOra() to be used in SKIP bindings */
+   HB_ULONGLONG lUpdatedRecord;      /* Should be filled by GetCurrentRecordNumOra() to be used in UPDATE bindings */
+   HB_ULONGLONG lBofAt;              /* BOF Record optimizer */
+   HB_ULONGLONG lEofAt;              /* EOF Record optimizer */
+   HB_ULONGLONG lLastRec;            /* LastRec() + 1 */
+   HB_ULONGLONG * lRecordToRetrieve; /* To be used with Binded Parameter */
+   HB_ULONGLONG * recordList;        /* record list to skip on */
    char * deletedList;        /* deleted list relative to record list */
    int recordListPos;         /* record list position */
    int recordListSize;        /* record list size */
@@ -431,8 +431,8 @@ int sqlKeyCompare( AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact );
 void odbcErrorDiag( OCI_Statement  * hStmt, const char * routine, const char * szSql, int line );
 // void odbcErrorDiagRTE( OCI_Statement  * hStmt, char * routine, char * szSql, int res, int line, char * module );
 void OraErrorDiagRTE( OCI_Statement *hStmt, char * routine, char * szSql, int res, int line, char * module );
-void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, LONG lLenBuff, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate );
-char * QuoteTrimEscapeString( char * FromBuffer, ULONG iSize, int idatabase, HB_BOOL bRTrim, ULONG * iSizeOut );
+void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_LONG lLenBuff, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate );
+char * QuoteTrimEscapeString( char * FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim, HB_ULONG * iSizeOut );
 char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL * bNullArgument );
 HB_BOOL SR_itemEmpty2( PHB_ITEM pItem );
 void commonError( AREAP ThisDb, USHORT uiGenCode, USHORT uiSubCode, char* filename );
@@ -446,7 +446,7 @@ void getOrderByExpressionOra( SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints )
 void setResultSetLimitOra( SQLEXORAAREAP thiswa, int iRows );
 void SetIndexBindStructureOra( SQLEXORAAREAP thiswa );
 void SetInsertRecordStructureOra( SQLEXORAAREAP thiswa );
-ULONGLONG GetCurrentRecordNumOra( SQLEXORAAREAP thiswa );
+HB_ULONGLONG GetCurrentRecordNumOra( SQLEXORAAREAP thiswa );
 
 /* INSERT and UPDATE prototypes */
 
@@ -466,6 +466,6 @@ HB_BOOL CreateSeekStmtora( SQLEXORAAREAP thiswa, int queryLevel );
 void BindSeekStmtora( SQLEXORAAREAP thiswa, int queryLevel );
 HB_ERRCODE getPreparedSeekora( SQLEXORAAREAP thiswa, int queryLevel, USHORT * iIndex, OCI_Statement  * * hStmt ,OCI_Resultset ** rs);
 OCI_Connection * GetConnection( OCI_ORASESSION *  p );
-void SQLO_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, ULONG ulSystemID, HB_BOOL bTranslate,OCI_Resultset * rs );
+void SQLO_FieldGet( PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate,OCI_Resultset * rs );
 
 #endif

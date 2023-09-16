@@ -307,7 +307,7 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
        || ( thiswa->recordListDirection == LIST_FORWARD && (!SeekBind->SeekFwdStmt ) )
        || ( thiswa->recordListDirection == LIST_BACKWARD && (!SeekBind->SeekBwdStmt ) ) ) {
 
-      pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (ULONG) thiswa->hOrdCurrent);
+      pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG) thiswa->hOrdCurrent);
       pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
       thiswa->indexColumns = hb_arrayLen(pColumns);
 

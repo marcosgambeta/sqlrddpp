@@ -82,10 +82,10 @@ static HB_BOOL ProcessFields(SQLAREAP ThisDb);
 static HB_BOOL SetFields(SQLAREAP ThisDb);
 
 /*
-static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, LONG * lorder);
+static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder);
 */
 HB_EXTERN_BEGIN
-   PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, LONG * lorder);
+   PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder);
 HB_EXTERN_END
 
 HB_FUNC_EXTERN( SR_END );
@@ -137,7 +137,7 @@ static PHB_DYNS s_pSym_WORKAREA = NULL;
 
 /*------------------------------------------------------------------------*/
 
-void fixCachePointer(LONG * lPosCache)
+void fixCachePointer(HB_LONG * lPosCache)
 {
    if( *lPosCache < 1 ) {
       *lPosCache += (CAHCE_PAGE_SIZE * 3);
@@ -150,14 +150,14 @@ void fixCachePointer(LONG * lPosCache)
 
 HB_FUNC( SR_FIXCACHEPOINTER )
 {
-   LONG lPos = hb_parnl(1);
+   HB_LONG lPos = hb_parnl(1);
    fixCachePointer(&lPos);
    hb_retnl(lPos);
 }
 
 /*------------------------------------------------------------------------*/
 
-HB_BOOL isCachePointerInRange(LONG lPosCache, LONG lBegin, LONG lEnd)
+HB_BOOL isCachePointerInRange(HB_LONG lPosCache, HB_LONG lBegin, HB_LONG lEnd)
 {
    if( lBegin == lEnd ) {
       return lPosCache == lBegin;
@@ -170,10 +170,10 @@ HB_BOOL isCachePointerInRange(LONG lPosCache, LONG lBegin, LONG lEnd)
 
 /*------------------------------------------------------------------------*/
 
-LONG searchCacheFWD(SQLAREAP thiswa, LONG lPreviousCacheStatus)
+HB_LONG searchCacheFWD(SQLAREAP thiswa, HB_LONG lPreviousCacheStatus)
 {
-   LONG lBegin, lEnd;
-   LONG lPosCache = hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE);
+   HB_LONG lBegin, lEnd;
+   HB_LONG lPosCache = hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE);
 
    if( !lPosCache ) {
       return 0;
@@ -199,10 +199,10 @@ LONG searchCacheFWD(SQLAREAP thiswa, LONG lPreviousCacheStatus)
 
 /*------------------------------------------------------------------------*/
 
-LONG searchCacheBWD(SQLAREAP thiswa, LONG lPreviousCacheStatus)
+HB_LONG searchCacheBWD(SQLAREAP thiswa, HB_LONG lPreviousCacheStatus)
 {
-   LONG lBegin, lEnd;
-   LONG lPosCache = hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE);
+   HB_LONG lBegin, lEnd;
+   HB_LONG lPosCache = hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE);
 
    if( !lPosCache ) {
       return 0;
@@ -254,7 +254,7 @@ void readCachePageBWD(SQLAREAP thiswa)
 
 /*------------------------------------------------------------------------*/
 
-void setCurrentFromCache(SQLAREAP thiswa, LONG lPos)
+void setCurrentFromCache(SQLAREAP thiswa, HB_LONG lPos)
 {
    HB_SIZE nPos, nLen;
    PHB_ITEM pCacheRecord, pCol;
@@ -294,7 +294,7 @@ void setCurrentFromCache(SQLAREAP thiswa, LONG lPos)
 
 /*------------------------------------------------------------------------*/
 
-void sqlGetBufferFromCache2(SQLAREAP thiswa, LONG lPos)
+void sqlGetBufferFromCache2(SQLAREAP thiswa, HB_LONG lPos)
 {
    HB_SIZE nPos, nLen;
    PHB_ITEM pCacheRecord, pCol;
@@ -416,7 +416,7 @@ static HB_ERRCODE sqlFound(SQLAREAP thiswa, HB_BOOL * found)
 
 static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
 {
-   LONG leof;
+   HB_LONG leof;
    PHB_ITEM eofat;
 
    eofat = hb_itemNew(NULL);
@@ -457,7 +457,7 @@ static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, LONG recno)
+static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, HB_LONG recno)
 {
    PHB_ITEM pParam1;
 
@@ -494,7 +494,7 @@ static HB_ERRCODE sqlGoToId(SQLAREAP thiswa, PHB_ITEM pItem)
    thiswa->wasdel = 0;
 
    if( HB_IS_NUMERIC(pItem) ) {
-      return SELF_GOTO(&thiswa->area, (LONG) hb_itemGetNL(pItem));
+      return SELF_GOTO(&thiswa->area, (HB_LONG) hb_itemGetNL(pItem));
    } else {
       if( hb_arrayGetL(thiswa->aInfo, AINFO_HOT) ) {
          hb_objSendMessage(thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0);
@@ -513,7 +513,7 @@ static HB_ERRCODE sqlGoToId(SQLAREAP thiswa, PHB_ITEM pItem)
 
 static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
 {
-   LONG lbof;
+   HB_LONG lbof;
 
    // TraceLog(NULL, "sqlGoTop\n");
 
@@ -553,7 +553,7 @@ static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
 
 int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 {
-   LONG lorder = 0;
+   HB_LONG lorder = 0;
    PHB_ITEM pTag, pKeyVal, itemTemp;
    int iLimit, iResult = 0;
    BYTE len1, len2;
@@ -592,7 +592,7 @@ int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
       valbuf = (char *) hb_xgrab(9);
       val2 = hb_itemGetDS(pKey, valbuf);
    } else if( HB_IS_NUMBER(pKey) ) {
-      PHB_ITEM pLen = hb_itemPutNL(NULL, (const LONG) len1);
+      PHB_ITEM pLen = hb_itemPutNL(NULL, (const HB_LONG) len1);
       val2 = valbuf = hb_itemStr(pKey, pLen, NULL);
       len2 = (BYTE) strlen(val2);
       hb_itemRelease(pLen);
@@ -711,7 +711,7 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlSkip(SQLAREAP thiswa, LONG lToSkip)
+static HB_ERRCODE sqlSkip(SQLAREAP thiswa, HB_LONG lToSkip)
 {
    HB_ERRCODE ret;
 
@@ -741,7 +741,7 @@ static HB_ERRCODE sqlSkip(SQLAREAP thiswa, LONG lToSkip)
 
 /*------------------------------------------------------------------------*/
 
-HB_ERRCODE sqlSkipFilter(SQLAREAP thiswa, LONG lUpDown)
+HB_ERRCODE sqlSkipFilter(SQLAREAP thiswa, HB_LONG lUpDown)
 {
    HB_BOOL bOutOfRange, bDeleted;
    PHB_ITEM pResult;
@@ -801,7 +801,7 @@ HB_ERRCODE sqlSkipFilter(SQLAREAP thiswa, LONG lUpDown)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE ConcludeSkipraw(SQLAREAP thiswa, LONG lToSkip)
+static HB_ERRCODE ConcludeSkipraw(SQLAREAP thiswa, HB_LONG lToSkip)
 {
 /*
    if( lToSkip != 0 ) {
@@ -822,7 +822,7 @@ static HB_ERRCODE ConcludeSkipraw(SQLAREAP thiswa, LONG lToSkip)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, LONG lToSkip)
+static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
 {
    HB_BOOL bEof, bBof;
    PHB_ITEM pToSkip;
@@ -848,7 +848,7 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, LONG lToSkip)
    hb_arraySetNL(thiswa->aInfo, AINFO_SKIPCOUNT, hb_arrayGetNL(thiswa->aInfo, AINFO_SKIPCOUNT) + lToSkip);
 
    if( thiswa->isam ) {
-      LONG lPosCache, lFound, lPreviousCacheStatus;
+      HB_LONG lPosCache, lFound, lPreviousCacheStatus;
       HB_BOOL bCurrentDeleted;
 
       lPosCache = hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE);
@@ -979,7 +979,7 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, LONG lToSkip)
          hb_arraySetL(thiswa->aInfo, AINFO_EOF, bEof);
          return ConcludeSkipraw(thiswa, lToSkip);
       } else if( hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip > 0 &&
-               hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip <= (LONG) hb_arrayLen(thiswa->aCache) ) {
+               hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip <= (HB_LONG) hb_arrayLen(thiswa->aCache) ) {
          sqlGetBufferFromCache2(thiswa, hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip);
          hb_arraySetL(thiswa->aInfo, AINFO_BOF, HB_FALSE);
          hb_arraySetL(thiswa->aInfo, AINFO_EOF, HB_FALSE);
@@ -999,7 +999,7 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, LONG lToSkip)
          thiswa->area.fBof = HB_TRUE;
          thiswa->area.fEof = HB_FALSE;
          return ConcludeSkipraw(thiswa, lToSkip);
-      } else if( hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip > (LONG) hb_arrayLen(thiswa->aCache) ) {
+      } else if( hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip > (HB_LONG) hb_arrayLen(thiswa->aCache) ) {
          hb_arraySetL(thiswa->aInfo, AINFO_BOF, HB_FALSE);
          sqlGetCleanBuffer(thiswa);
       }
@@ -1391,16 +1391,16 @@ static HB_ERRCODE sqlRecall(SQLAREAP thiswa)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlRecCount(SQLAREAP thiswa, ULONG * recCount)
+static HB_ERRCODE sqlRecCount(SQLAREAP thiswa, HB_ULONG * recCount)
 {
    if( thiswa->lpdbPendingRel ) {
       SELF_FORCEREL(&thiswa->area);
    }
 
    if( hb_arrayGetL(thiswa->aInfo, AINFO_ISINSERT) && hb_arrayGetL(thiswa->aInfo, AINFO_HOT) ) {
-      *recCount = (ULONG) (hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT) + 1);
+      *recCount = (HB_ULONG) (hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT) + 1);
    } else {
-      *recCount = (ULONG) (hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT));
+      *recCount = (HB_ULONG) (hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT));
    }
 
    //TraceLog(NULL, "sqlRecCount, returning %i\n", *recCount);
@@ -1414,7 +1414,7 @@ static HB_ERRCODE sqlRecCount(SQLAREAP thiswa, ULONG * recCount)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlRecNo(SQLAREAP thiswa, ULONG * recno)
+static HB_ERRCODE sqlRecNo(SQLAREAP thiswa, HB_ULONG * recno)
 {
 #ifdef SQLRDD_NWG_SPECIFIC
    if( hb_arrayGetNL(thiswa->aInfo, hb_arrayGetL( thiswa->aInfo, AINFO_ISINSERT)) ) {
@@ -1429,7 +1429,7 @@ static HB_ERRCODE sqlRecNo(SQLAREAP thiswa, ULONG * recno)
       thiswa->firstinteract = 0;
    }
 
-   *recno = (ULONG) hb_arrayGetNL(thiswa->aInfo, AINFO_RECNO);
+   *recno = (HB_ULONG) hb_arrayGetNL(thiswa->aInfo, AINFO_RECNO);
 
    //TraceLog(NULL, "sqlRecNo %i\n", hb_arrayGetNI(thiswa->aInfo, AINFO_RECNO));
 
@@ -1636,10 +1636,10 @@ static HB_ERRCODE sqlCreate(SQLAREAP thiswa, LPDBOPENINFO pCreateInfo)
    thiswa->isam = hb_itemGetL(hb_stackReturnItem());
 
    hb_objSendMsg(thiswa->oWorkArea, "HNRECNO", 0);
-   thiswa->ulhRecno = (ULONG) hb_itemGetNL(hb_stackReturnItem());
+   thiswa->ulhRecno = (HB_ULONG) hb_itemGetNL(hb_stackReturnItem());
 
    hb_objSendMsg(thiswa->oWorkArea, "HNDELETED", 0);
-   thiswa->ulhDeleted = (ULONG) hb_itemGetNL(hb_stackReturnItem());
+   thiswa->ulhDeleted = (HB_ULONG) hb_itemGetNL(hb_stackReturnItem());
 
    if( errCode != HB_SUCCESS ) {
       SELF_CLOSE(&thiswa->area);
@@ -2006,10 +2006,10 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
    }
 
    hb_objSendMsg(thiswa->oWorkArea, "HNRECNO", 0);
-   thiswa->ulhRecno = (ULONG) hb_itemGetNL(hb_stackReturnItem());
+   thiswa->ulhRecno = (HB_ULONG) hb_itemGetNL(hb_stackReturnItem());
 
    hb_objSendMsg(thiswa->oWorkArea, "HNDELETED", 0);
-   thiswa->ulhDeleted = (ULONG) hb_itemGetNL(hb_stackReturnItem());
+   thiswa->ulhDeleted = (HB_ULONG) hb_itemGetNL(hb_stackReturnItem());
 
    if( hb_setGetAutOpen() ) {
       if( HB_IS_OBJECT(thiswa->oWorkArea) ) {
@@ -2221,7 +2221,7 @@ static HB_ERRCODE sqlOrderListClear(SQLAREAP thiswa)
 static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
    PHB_ITEM pTag;
-   LONG lorder = 0;
+   HB_LONG lorder = 0;
 
    //TraceLog(NULL, "sqlOrderListFocus\n");
 
@@ -2344,7 +2344,7 @@ static HB_ERRCODE sqlOrderCreate(SQLAREAP thiswa, LPDBORDERCREATEINFO pOrderInfo
 static HB_ERRCODE sqlOrderDestroy(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
    PHB_ITEM pTag;
-   LONG lorder = 0;
+   HB_LONG lorder = 0;
 
    //TraceLog(NULL, "sqlOrderDestroy\n");
 
@@ -2377,7 +2377,7 @@ static HB_ERRCODE sqlOrderDestroy(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 
 /*------------------------------------------------------------------------*/
 /*
-static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, LONG * lorder)
+static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
 {
    PHB_ITEM pTag = NULL;
 
@@ -2391,7 +2391,7 @@ static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, LONG * lorder)
 
       if( hb_itemGetNL(hb_stackReturnItem()) ) {
          *lorder = hb_itemGetNL(hb_stackReturnItem());
-         pTag = hb_itemArrayGet(thiswa->aOrders, (ULONG) * lorder);
+         pTag = hb_itemArrayGet(thiswa->aOrders, (HB_ULONG) * lorder);
       }
    }
    return pTag;
@@ -2399,7 +2399,7 @@ static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, LONG * lorder)
 */
 /*------------------------------------------------------------------------*/
 
-PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, LONG * lorder)
+PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
 {
    PHB_ITEM pOrder = hb_itemNew(NULL);
    PHB_ITEM pTag = NULL;
@@ -2436,7 +2436,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, LONG * lorder)
    *lorder = hb_itemGetNL(hb_stackReturnItem());
 
    if( *lorder ) {
-      pTag = hb_itemArrayGet(thiswa->aOrders, (ULONG) * lorder);
+      pTag = hb_itemArrayGet(thiswa->aOrders, (HB_ULONG) * lorder);
    }
 
    hb_itemRelease(pOrder);
@@ -2470,7 +2470,7 @@ static HB_ERRCODE sqlSetServerSideIndexScope(SQLAREAP thiswa, int nScope, PHB_IT
 
 static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, USHORT uiIndex, LPDBORDERINFO pInfo)
 {
-   LONG lIndexes, lorder = 0;
+   HB_LONG lIndexes, lorder = 0;
    PHB_ITEM pTag, pTemp;
    PHB_MACRO pMacro;
 
@@ -2489,7 +2489,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, USHORT uiIndex, LPDBORDERINFO pI
    if( lIndexes ) { /* Exists opened orders ? */
       switch( uiIndex ) {
          case DBOI_KEYCOUNTRAW: {
-            ULONG ulRecCount = 0;
+            HB_ULONG ulRecCount = 0;
             SELF_RECCOUNT(&thiswa->area, &ulRecCount);
             hb_itemPutNL(pInfo->itmResult, ulRecCount);
             break;
@@ -2691,7 +2691,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, USHORT uiIndex, LPDBORDERINFO pI
    } else {
       switch( uiIndex ) {
          case DBOI_KEYCOUNTRAW: {
-            ULONG ulRecCount = 0;
+            HB_ULONG ulRecCount = 0;
             SELF_RECCOUNT(&thiswa->area, &ulRecCount);
             hb_itemPutND(pInfo->itmResult, ulRecCount);
             break;
@@ -2772,7 +2772,7 @@ static HB_ERRCODE sqlFilterText(SQLAREAP thiswa, PHB_ITEM pFilter)
 
 static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, USHORT nScope, PHB_ITEM pItem)
 {
-   LONG lIndexes, lorder;
+   HB_LONG lIndexes, lorder;
    PHB_ITEM pTag, pTemp;
 
    //TraceLog(NULL, "sqlScopeInfo, nScope: %i\n", nScope);
@@ -2791,7 +2791,7 @@ static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, USHORT nScope, PHB_ITEM pItem)
       }
       lorder = hb_itemGetNL(hb_stackReturnItem());
       if( lorder ) {
-         pTag = hb_itemArrayGet(thiswa->aOrders, (ULONG) lorder);
+         pTag = hb_itemArrayGet(thiswa->aOrders, (HB_ULONG) lorder);
          pTemp = hb_itemArrayGet(pTag, nScope ? BOTTOM_SCOPE : TOP_SCOPE);
          hb_itemCopy(pItem, pTemp);
          hb_itemRelease(pTag);
@@ -3042,7 +3042,7 @@ HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, USHORT uiIndex, ULONG ulConnect, PHB_ITEM pItem)
+static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, USHORT uiIndex, HB_ULONG ulConnect, PHB_ITEM pItem)
 {
    HB_TRACE(HB_TR_DEBUG, ("sqlRddInfo(%p, %hu, %lu, %p)", pRDD, uiIndex, ulConnect, pItem));
 
@@ -3077,7 +3077,7 @@ static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, USHORT uiIndex, ULONG ulConnect, PH
 static HB_BOOL ProcessFields(SQLAREAP thiswa)
 {
    DBFIELDINFO    field;
-   LONG           numFields;
+   HB_LONG           numFields;
    BYTE *         fieldType;
    USHORT         i;
    PHB_ITEM       thisfield;
@@ -3177,7 +3177,7 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
 
 static HB_BOOL SetFields(SQLAREAP thiswa)
 {
-   LONG           numFields;
+   HB_LONG           numFields;
    USHORT         i;
    PHB_ITEM       thisfield;
 

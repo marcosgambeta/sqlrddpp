@@ -241,7 +241,7 @@ HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
        || ( thiswa->recordListDirection == LIST_FORWARD && (!SeekBind->SeekFwdStmt ) )
        || ( thiswa->recordListDirection == LIST_BACKWARD && (!SeekBind->SeekBwdStmt ) ) ) {
 
-      pIndexRef = hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (ULONG) thiswa->sqlarea.hOrdCurrent);
+      pIndexRef = hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG) thiswa->sqlarea.hOrdCurrent);
       pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
       thiswa->indexColumns = hb_arrayLen(pColumns);
 

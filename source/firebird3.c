@@ -1192,11 +1192,11 @@ HB_FUNC( FBLINEPROCESSED3 )
       cols = hb_arrayLen(pFields);
 
       for( icol = 1; icol <= cols; icol++ ) {
-//        LONG lType;
+//        HB_LONG lType;
          temp = hb_itemNew(NULL);
          var = session->sqlda->sqlvar;
          lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), FIELD_ENUM);
-         //lType = (LONG) hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 6);
+         //lType = (HB_LONG) hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 6);
          lLen = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 3);
          lDec = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 4);
 
