@@ -183,7 +183,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       ELSE
          // DOON'T remove "+0"
          ::Exec("select a.rdb$field_name, b.rdb$field_precision + 0 from rdb$relation_fields a, rdb$fields b where a.rdb$relation_name = '" + StrTran(cTable, chr(34), "") + "' and a.rdb$field_source = b.rdb$field_name", .F., .T., @aLocalPrecision)
-         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + if(::lComments, " /* Open Workarea */", ""), .F.)
+         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          RETURN NIL
@@ -273,20 +273,20 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    nRet := FBConnect3(::cDtb, ::cUser, ::cPassword, ::cCharSet, @hEnv)
 
    IF nRet != SQL_SUCCESS
-      ::nRetCode = nRet
+      ::nRetCode := nRet
       SR_MsgLogFile("Connection Error: " + alltrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + " - Username : " + ::cUser + " (Password not shown for security)")
       RETURN SELF
    ELSE
       ::cConnect := cConnect
       cTargetDB := StrTran(FBVERSION3(hEnv), "(access method)", "")
       cSystemVers := SubStr(cTargetDB, at("Firebird ", cTargetDB) + 9, 3)
-      tracelog("cTargetDB", cTargetDB, "cSystemVers", cSystemVers)
+      //tracelog("cTargetDB", cTargetDB, "cSystemVers", cSystemVers)
    ENDIF
 
    nRet := FBBeginTransaction3(hEnv)
 
    IF nRet != SQL_SUCCESS
-      ::nRetCode = nRet
+      ::nRetCode := nRet
       SR_MsgLogFile("Transaction Start error : " + alltrim(str(nRet)))
       RETURN SELF
    ENDIF
@@ -306,13 +306,13 @@ METHOD End() CLASS SR_FIREBIRD3
    ::Commit()
    FBClose(::hEnv)
 
-RETURN ::super:End()
+RETURN ::Super:End()
 
 /*------------------------------------------------------------------------*/
 
 METHOD Commit() CLASS SR_FIREBIRD3
 
-   ::super:Commit()
+   ::Super:Commit()
    ::nRetCode := FBCOMMITTRANSACTION3(::hEnv)
 
 RETURN (::nRetCode := FBBeginTransaction3(::hEnv))
