@@ -6,12 +6,12 @@
 
 -inc
 
+-Iinclude
 -Isource
 -Isource/firebird
 -Isource/mysql
 -Isource/oci
 -Isource/pgsql
--Iinclude
 
 source/exprobjs.prg
 source/exprparser.prg
@@ -40,6 +40,7 @@ source/sqly.c
 
 source/compat.c
 source/firebird.c
+source/firebird3.c
 source/mysql.c
 source/pgs.c
 source/sqlact.c
