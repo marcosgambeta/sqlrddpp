@@ -134,7 +134,7 @@
 
       #define SQLNAME                              1
       #define SQLCTYPE                             2
-      #define SQLLEN                               3
+      //#define SQLLEN                               3 TODO: conflict with SQLLEN type
       #define SQLDEC                               4
       #define SQLNULL                              5
       #define SQLNTYPE                             6
