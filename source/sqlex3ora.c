@@ -615,7 +615,7 @@ void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
 
 /*------------------------------------------------------------------------*/
 
-HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, USHORT * iIndex, OCI_Statement ** hStmt, OCI_Resultset ** rs) // Returns HB_TRUE if any result found
+HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, HB_USHORT * iIndex, OCI_Statement ** hStmt, OCI_Resultset ** rs) // Returns HB_TRUE if any result found
 {
    int res;
    INDEXBINDORAP SeekBind;

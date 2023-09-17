@@ -664,7 +664,7 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 
 /*------------------------------------------------------------------------*/
 
-HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, USHORT * iIndex, HSTMT * hStmt) // Returns HB_TRUE if any result found
+HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT * iIndex, HSTMT * hStmt) // Returns HB_TRUE if any result found
 {
    SQLRETURN res;
    INDEXBINDP SeekBind;

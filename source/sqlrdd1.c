@@ -1102,7 +1102,7 @@ static HB_ERRCODE sqlDeleted(SQLAREAP thiswa, HB_BOOL * isDeleted)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlFieldCount(SQLAREAP thiswa, USHORT * fieldCount)
+static HB_ERRCODE sqlFieldCount(SQLAREAP thiswa, HB_USHORT * fieldCount)
 {
    *fieldCount = thiswa->area.uiFieldCount;
    // TraceLog(NULL, "sqlFieldCount, returning %i\n", thiswa->area.uiFieldCount);
@@ -1130,7 +1130,7 @@ static HB_ERRCODE sqlFlush(SQLAREAP thiswa)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value)
+static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM value)
 {
    PHB_ITEM itemTemp, itemTemp3;
    PHB_ITEM pFieldNum;
@@ -1251,13 +1251,13 @@ static HB_ERRCODE sqlGoCold(SQLAREAP thiswa)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value)
+static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM value)
 {
    PHB_ITEM pDest;
    LPFIELD pField;
    char * cfield;
    double dNum;
-   USHORT len, dec, fieldindex;
+   HB_USHORT len, dec, fieldindex;
    PHB_ITEM pFieldNum;
    //HB_BOOL bOk = HB_TRUE;
    //PHB_DYNS s_pSym_SR_FROMXML = NULL;
@@ -1272,7 +1272,7 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, USHORT fieldNum, PHB_ITEM value)
       SELF_FORCEREL(&thiswa->area);
    }
 
-   fieldindex = (USHORT)thiswa->uiBufferIndex[fieldNum - 1];
+   fieldindex = (HB_USHORT)thiswa->uiBufferIndex[fieldNum - 1];
    pDest = hb_itemArrayGet(thiswa->aBuffer, fieldindex);
 //                if( s_pSym_SR_FROMXML == NULL ) {
 //                   s_pSym_SR_FROMXML = hb_dynsymFindName("ESCREVE");
@@ -1460,7 +1460,7 @@ static HB_ERRCODE sqlRecId(SQLAREAP thiswa, PHB_ITEM recno)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlSetFieldExtent(SQLAREAP thiswa, USHORT uiFieldExtent)
+static HB_ERRCODE sqlSetFieldExtent(SQLAREAP thiswa, HB_USHORT uiFieldExtent)
 {
    HB_TRACE(HB_TR_DEBUG, ("sqlSetFieldExtent(%p, %hu)", thiswa, uiFieldExtent));
 
@@ -1656,7 +1656,7 @@ static HB_ERRCODE sqlCreate(SQLAREAP thiswa, LPDBOPENINFO pCreateInfo)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlInfo(SQLAREAP thiswa, USHORT uiIndex, PHB_ITEM pItem)
+static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
 {
    HB_BOOL flag = HB_TRUE;
 
@@ -2032,7 +2032,7 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlStructSize(SQLAREAP thiswa, USHORT * StructSize)
+static HB_ERRCODE sqlStructSize(SQLAREAP thiswa, HB_USHORT * StructSize)
 {
    HB_SYMBOL_UNUSED(thiswa);     /* Avoid compiler warning */
    *StructSize = sizeof(SQLAREA);
@@ -2468,7 +2468,7 @@ static HB_ERRCODE sqlSetServerSideIndexScope(SQLAREAP thiswa, int nScope, PHB_IT
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, USHORT uiIndex, LPDBORDERINFO pInfo)
+static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO pInfo)
 {
    HB_LONG lIndexes, lorder = 0;
    PHB_ITEM pTag, pTemp;
@@ -2770,7 +2770,7 @@ static HB_ERRCODE sqlFilterText(SQLAREAP thiswa, PHB_ITEM pFilter)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, USHORT nScope, PHB_ITEM pItem)
+static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem)
 {
    HB_LONG lIndexes, lorder;
    PHB_ITEM pTag, pTemp;
@@ -3042,7 +3042,7 @@ HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
 
 /*------------------------------------------------------------------------*/
 
-static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, USHORT uiIndex, HB_ULONG ulConnect, PHB_ITEM pItem)
+static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, HB_USHORT uiIndex, HB_ULONG ulConnect, PHB_ITEM pItem)
 {
    HB_TRACE(HB_TR_DEBUG, ("sqlRddInfo(%p, %hu, %lu, %p)", pRDD, uiIndex, ulConnect, pItem));
 
@@ -3079,7 +3079,7 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
    DBFIELDINFO    field;
    HB_LONG           numFields;
    BYTE *         fieldType;
-   USHORT         i;
+   HB_USHORT         i;
    PHB_ITEM       thisfield;
 
    if( hb_itemType(thiswa->aStruct) != HB_IT_ARRAY ) {
@@ -3094,9 +3094,9 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
       return HB_FALSE;
    }
 
-   SELF_SETFIELDEXTENT(&thiswa->area, (USHORT) numFields);
+   SELF_SETFIELDEXTENT(&thiswa->area, (HB_USHORT) numFields);
 
-   for( i = 1; i <= (USHORT) numFields; i++ ) {
+   for( i = 1; i <= (HB_USHORT) numFields; i++ ) {
       thisfield = hb_itemArrayGet(thiswa->aStruct, i);
 
       if( hb_itemType(thisfield) != HB_IT_ARRAY ) {
@@ -3108,13 +3108,13 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
       memset(&field, 0, sizeof(field));
 
       field.uiTypeExtended = 0;
-      field.atomName = hb_arrayGetC(thisfield, (USHORT) 1);
-      field.uiDec = (USHORT) 0;
-      field.uiLen = (USHORT)hb_arrayGetNI(thisfield, (USHORT) 3);
+      field.atomName = hb_arrayGetC(thisfield, (HB_USHORT) 1);
+      field.uiDec = (HB_USHORT) 0;
+      field.uiLen = (HB_USHORT)hb_arrayGetNI(thisfield, (HB_USHORT) 3);
 
-      thiswa->uiBufferIndex[i - 1] = (int) hb_arrayGetNI(thisfield, (USHORT) 5);
+      thiswa->uiBufferIndex[i - 1] = (int) hb_arrayGetNI(thisfield, (HB_USHORT) 5);
 
-      fieldType = (unsigned char *) hb_arrayGetCPtr(thisfield, (USHORT) 2);
+      fieldType = (unsigned char *) hb_arrayGetCPtr(thisfield, (HB_USHORT) 2);
 
       switch ( *fieldType ) {
       case 'c':
@@ -3128,7 +3128,7 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
       case 'n':
       case 'N':
          field.uiType = HB_FT_LONG;
-         field.uiDec = (USHORT) hb_arrayGetNI(thisfield, (USHORT) 4);
+         field.uiDec = (HB_USHORT) hb_arrayGetNI(thisfield, (HB_USHORT) 4);
          break;
       case 'l':
       case 'L':
@@ -3178,7 +3178,7 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
 static HB_BOOL SetFields(SQLAREAP thiswa)
 {
    HB_LONG           numFields;
-   USHORT         i;
+   HB_USHORT         i;
    PHB_ITEM       thisfield;
 
    if( hb_itemType(thiswa->aStruct) != HB_IT_ARRAY ) {
@@ -3193,7 +3193,7 @@ static HB_BOOL SetFields(SQLAREAP thiswa)
       return HB_FALSE;
    }
 
-   for( i = 1; i <= (USHORT) numFields; i++ ) {
+   for( i = 1; i <= (HB_USHORT) numFields; i++ ) {
       thisfield = hb_itemArrayGet(thiswa->aStruct, i);
 
       if( hb_itemType(thisfield) != HB_IT_ARRAY ) {
@@ -3201,7 +3201,7 @@ static HB_BOOL SetFields(SQLAREAP thiswa)
          return HB_FALSE;
       }
 
-      thiswa->uiBufferIndex[i - 1] = (int) hb_arrayGetNI(thisfield, (USHORT) 5);
+      thiswa->uiBufferIndex[i - 1] = (int) hb_arrayGetNI(thisfield, (HB_USHORT) 5);
       hb_itemRelease(thisfield);
    }
    return HB_TRUE;
@@ -3209,7 +3209,7 @@ static HB_BOOL SetFields(SQLAREAP thiswa)
 
 /*------------------------------------------------------------------------*/
 
-void commonError(AREAP thiswa, USHORT uiGenCode, USHORT uiSubCode, char * filename)
+void commonError(AREAP thiswa, HB_USHORT uiGenCode, HB_USHORT uiSubCode, char * filename)
 {
    PHB_ITEM pError = hb_errNew();
 
@@ -3448,11 +3448,11 @@ HB_FUNC( SQLRDD )
 HB_FUNC( SQLRDD_GETFUNCTABLE )
 {
    RDDFUNCS * pTable;
-   USHORT * uiCount;
+   HB_USHORT * uiCount;
 
    startSQLRDDSymbols();
 
-   uiCount = (USHORT *) hb_parptr(1);
+   uiCount = (HB_USHORT *) hb_parptr(1);
    pTable = (RDDFUNCS *) hb_parptr(2);
 
    HB_TRACE(HB_TR_DEBUG, ("SQLRDD_GETFUNCTABLE(%p, %p)", uiCount, pTable));

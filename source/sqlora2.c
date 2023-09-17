@@ -122,7 +122,7 @@ static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
 // } OCI_ORASESSION;   
 // typedef OCI_ORASESSION * POCI_ORASESSION;
 
-static USHORT OCI_initilized = 0;
+static HB_USHORT OCI_initilized = 0;
 
 #ifdef HAVE_USLEEP
 #  define SQLO2_USLEEP usleep(20000)
@@ -840,7 +840,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
 //   const char ** line;
 //   CONST unsigned int * lens;
 //   PHB_ITEM ret, temp;
-//   USHORT i;
+//   HB_USHORT i;
 //   SQLO2_stmt_handle_t stmtParamRes;
 //
 //   ret = hb_itemNew(NULL);

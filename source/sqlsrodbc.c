@@ -105,7 +105,7 @@
 static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
 static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
 void odbcErrorDiagRTE(SQLHSTMT hStmt, const char * routine, const char * szSql, SQLRETURN res, int line, const char * module);
-void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate, USHORT ui);
+void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate, HB_USHORT ui);
 //-----------------------------------------------------------------------------//
 
 #if defined(HB_OS_WIN_32) || defined(HB_OS_WIN)
@@ -581,7 +581,7 @@ HB_FUNC( SR_ODBCLINEPROCESSED )
 {
 //    HB_LONG lLen, lInitBuff, lIndex;
     HB_LONG lLen;
-    USHORT lIndex;
+    HB_USHORT lIndex;
 //    SQLLEN lLenOut;
 //    PTR  bBuffer, bOut;
 //    RETCODE wResult;
@@ -614,12 +614,12 @@ HB_FUNC( SR_ODBCLINEPROCESSED )
 
    for( i = 1; i <= cols; i++ ) {
       temp = hb_itemNew(NULL);
-      lIndex = (USHORT) hb_arrayGetNI(hb_arrayGetItemPtr(pFields, i), FIELD_ENUM);
+      lIndex = (HB_USHORT) hb_arrayGetNI(hb_arrayGetItemPtr(pFields, i), FIELD_ENUM);
 
       if( lIndex == 0 ) {
          hb_arraySetForward(pRet, i, temp);
       } else {
-         odbcGetData((SQLHSTMT) hb_parptr(1), (PHB_ITEM) hb_arrayGetItemPtr(pFields, i),(PHB_ITEM) temp, (HB_BOOL) bQueryOnly, (HB_ULONG) ulSystemID, (HB_BOOL) bTranslate, (USHORT) lIndex);
+         odbcGetData((SQLHSTMT) hb_parptr(1), (PHB_ITEM) hb_arrayGetItemPtr(pFields, i),(PHB_ITEM) temp, (HB_BOOL) bQueryOnly, (HB_ULONG) ulSystemID, (HB_BOOL) bTranslate, (HB_USHORT) lIndex);
          hb_arraySetForward(pRet, i, temp);
       }
       hb_itemRelease(temp);
@@ -1112,7 +1112,7 @@ HB_FUNC( SR_ODBCWRITEMEMO )
 
 //-----------------------------------------------------------------------------//
 
-void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate, USHORT ui)
+void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate, HB_USHORT ui)
 {
    HB_LONG lType;
    HB_SIZE  lDec,lLen;

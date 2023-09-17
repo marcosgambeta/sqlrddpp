@@ -292,7 +292,7 @@ void odbcFieldGet( PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLen
 char * QuoteTrimEscapeString( char * FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim, HB_ULONG * iSizeOut );
 char * quotedNull( PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL * bNullArgument );
 HB_BOOL SR_itemEmpty( PHB_ITEM pItem );
-void commonError( AREAP ThisDb, USHORT uiGenCode, USHORT uiSubCode, char* filename );
+void commonError( AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, char* filename );
 HB_ERRCODE SetBindEmptylValue( COLUMNBINDP BindStructure );
 HB_ERRCODE SetBindValue( PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hStmt );
 char * QualifyName( char * szName, SQLEXAREAP thiswa );
@@ -304,7 +304,7 @@ void setResultSetLimit( SQLEXAREAP thiswa, int iRows );
 void SetIndexBindStructure( SQLEXAREAP thiswa );
 void SetInsertRecordStructure( SQLEXAREAP thiswa );
 HB_ULONG GetCurrentRecordNum( SQLEXAREAP thiswa );
-extern void odbcGetData( SQLHSTMT hStmt, PHB_ITEM pField,PHB_ITEM pItem,  HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate,USHORT ui  );
+extern void odbcGetData( SQLHSTMT hStmt, PHB_ITEM pField,PHB_ITEM pItem,  HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate,HB_USHORT ui  );
 /* INSERT and UPDATE prototypes */
 
 void CreateInsertStmt( SQLEXAREAP thiswa );
@@ -321,6 +321,6 @@ HB_ERRCODE ExecuteUpdateStmt( SQLEXAREAP thiswa );
 HB_ERRCODE FeedSeekKeyToBindings( SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLevel );
 HB_BOOL CreateSeekStmt( SQLEXAREAP thiswa, int queryLevel );
 void BindSeekStmt( SQLEXAREAP thiswa, int queryLevel );
-HB_ERRCODE getPreparedSeek( SQLEXAREAP thiswa, int queryLevel, USHORT * iIndex, HSTMT * hStmt );
+HB_ERRCODE getPreparedSeek( SQLEXAREAP thiswa, int queryLevel, HB_USHORT * iIndex, HSTMT * hStmt );
 
 #endif

@@ -135,7 +135,7 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
    PHB_ITEM pIndex;
    PHB_ITEM pKeyVal;
    PHB_ITEM pIndIt;
-   USHORT uiPos;
+   HB_USHORT uiPos;
    int iOldArea;
    
    if( !thiswa->pIndexMgmnt ) {
@@ -162,8 +162,8 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
          hb_evalRelease(&info);
 
          // Get field position in ::aLocalBuffer
-         //uiPos = (USHORT) hb_itemGetNI(hb_arrayGetItemPtr(pIndex, INDEXMAN_SYNTH_COLPOS));
-         uiPos = (USHORT) hb_itemGetNI(hb_itemArrayGet(pIndex, INDEXMAN_SYNTH_COLPOS));
+         //uiPos = (HB_USHORT) hb_itemGetNI(hb_arrayGetItemPtr(pIndex, INDEXMAN_SYNTH_COLPOS));
+         uiPos = (HB_USHORT) hb_itemGetNI(hb_itemArrayGet(pIndex, INDEXMAN_SYNTH_COLPOS));
          thiswa->specialMask[uiPos] = '1';
 
          hb_arraySetForward(thiswa->aBuffer, uiPos, pKeyVal);
@@ -180,8 +180,8 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
          hb_evalRelease(&info);
 
          // Get field position in ::aLocalBuffer
-         //uiPos = (USHORT) hb_itemGetNI(hb_arrayGetItemPtr(pIndex, INDEXMAN_FOR_COLPOS));
-         uiPos = (USHORT) hb_itemGetNI(hb_itemArrayGet(pIndex, INDEXMAN_FOR_COLPOS));
+         //uiPos = (HB_USHORT) hb_itemGetNI(hb_arrayGetItemPtr(pIndex, INDEXMAN_FOR_COLPOS));
+         uiPos = (HB_USHORT) hb_itemGetNI(hb_itemArrayGet(pIndex, INDEXMAN_FOR_COLPOS));
          thiswa->specialMask[uiPos] = '1';
          hb_arraySetForward(thiswa->aBuffer, uiPos, pKeyVal);
          hb_itemRelease(pKeyVal);
@@ -228,7 +228,7 @@ void CreateInsertStmt(SQLEXAREAP thiswa)
    char cType;
    HB_BOOL bNullable, bMultiLang, bIsMemo;
    COLUMNBINDP InsertRecord;
-   USHORT uiPos;
+   HB_USHORT uiPos;
 
    iCols = hb_arrayLen(thiswa->aFields);
 
