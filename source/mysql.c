@@ -102,8 +102,8 @@ HB_FUNC( MYSCONNECT )
    const char * szUser = hb_parc(2);
    const char * szPass = hb_parc(3);
    const char * szDb = hb_parc(4);
-   UINT uiPort = HB_ISNUM(5) ? hb_parnl(5) : MYSQL_PORT;
-   UINT uiTimeout = HB_ISNUM(7) ? hb_parnl(7) : 3600;
+   HB_UINT uiPort = HB_ISNUM(5) ? hb_parnl(5) : MYSQL_PORT;
+   HB_UINT uiTimeout = HB_ISNUM(7) ? hb_parnl(7) : 3600;
    HB_BOOL lCompress = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
    mysql_library_init(0, NULL, NULL);
 //    memset(session, 0, sizeof(MYSQL_SESSION));
@@ -468,13 +468,13 @@ HB_FUNC( MYSSTATUS )
 
 HB_FUNC( MYSRESULTSTATUS )
 {
-   UINT ret;
+   HB_UINT ret;
    PMYSQL_SESSION session = (PMYSQL_SESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
    assert(session != NULL);
    assert(session->dbh != NULL);
 
-   ret = (UINT) mysql_errno(session->dbh);
+   ret = (HB_UINT) mysql_errno(session->dbh);
 
    switch (ret) {
    case MYSQL_OK:
@@ -485,7 +485,7 @@ HB_FUNC( MYSRESULTSTATUS )
    case CR_SERVER_GONE_ERROR:
    case CR_SERVER_LOST:
    case ER_NO_DB_ERROR:
-      ret = (UINT)SQL_ERROR;
+      ret = (HB_UINT)SQL_ERROR;
       break;
    }
    hb_retnl((HB_LONG) ret);
