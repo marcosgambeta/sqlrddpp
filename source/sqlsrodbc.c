@@ -222,7 +222,7 @@ HB_FUNC( SR_ALLOCCO )
 
 HB_FUNC( SR_DRIVERC )
 {
-   BYTE bBuffer1[1024] = {0};
+   HB_BYTE bBuffer1[1024] = {0};
    SQLSMALLINT wLen;
    #if defined(HB_OS_WIN_32) || defined(HB_OS_WIN)
    RETCODE ret = SQLDriverConnect((SQLHDBC) hb_parptr(1),
@@ -990,7 +990,7 @@ HB_FUNC( SR_GETCONNECTOPTION )
    hb_retni(SQLGetConnectAttr((SQLHDBC) hb_parptr(1), (SQLINTEGER) hb_parnl(2), (SQLPOINTER) buffer, (SQLINTEGER) sizeof(buffer), (SQLINTEGER *) &lLen));
    hb_storclen((char *) buffer, lLen, 3);
 #else
-   BYTE bBuffer[512] = {0};
+   HB_BYTE bBuffer[512] = {0};
    RETCODE wResult = SQLGetConnectOption((SQLHDBC) hb_parptr(1), (SQLSMALLINT) hb_parni(2), (SQLPOINTER) bBuffer);
    if( wResult == SQL_SUCCESS ) {
       hb_storclen((char *) bBuffer, 512, 3);

@@ -107,7 +107,7 @@ char * QualifyName(char * szName, SQLEXAREAP thiswa)
       case SYSTEMID_FIREBR:
       case SYSTEMID_IBMDB2:
       case SYSTEMID_ADABAS:
-         szName[i] = (char) toupper((BYTE) szName[i]);
+         szName[i] = (char) toupper((HB_BYTE) szName[i]);
          break;
       case SYSTEMID_INGRES:
       case SYSTEMID_POSTGR:
@@ -115,7 +115,7 @@ char * QualifyName(char * szName, SQLEXAREAP thiswa)
       case SYSTEMID_MARIADB:
       case SYSTEMID_OTERRO:
       case SYSTEMID_INFORM:
-         szName[i] = (char) tolower((BYTE) szName[i]);
+         szName[i] = (char) tolower((HB_BYTE) szName[i]);
          break;
       }
    }
