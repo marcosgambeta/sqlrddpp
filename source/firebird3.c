@@ -129,7 +129,7 @@ void isSelect(PFB_SESSION session)
 }
 
 
-void fb_log_status3(PFB_SESSION session, char * from)
+void fb_log_status3(PFB_SESSION session, const char * from)
 {
    const ISC_STATUS * pVect = session->status;
    HB_SCHAR s[1024] = {0};
