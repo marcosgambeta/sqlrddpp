@@ -1,7 +1,7 @@
 // SQLRDD
 // test with PostgreSQL
 // To compile:
-// hbmk2 pgsql1 ../sqlrddpp.hbc -llibpq
+// hbmk2 pgsql1 -llibpq
 
 #include "sqlrdd.ch"
 

@@ -1,7 +1,7 @@
 // SQLRDD
 // test with MySQL
 // To compile:
-// hbmk2 mysql2 ../sqlrddpp.hbc -llibmysql
+// hbmk2 mysql2 -llibmysql
 
 #include "sqlrdd.ch"
 #include "inkey.ch"

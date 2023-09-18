@@ -1,7 +1,7 @@
 // SQLRDD
 // test with ODBC/Firebird
 // To compile:
-// hbmk2 odbcfirebird2 ../sqlrddpp.hbc
+// hbmk2 odbcfirebird2
 
 #include "sqlrdd.ch"
 #include "inkey.ch"

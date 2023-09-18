@@ -1,7 +1,7 @@
 // SQLRDD
 // test with ODBC/Firebird
 // To compile:
-// hbmk2 odbcfirebird1 ../sqlrddpp.hbc
+// hbmk2 odbcfirebird1
 
 #include "sqlrdd.ch"
 
