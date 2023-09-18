@@ -34,6 +34,8 @@ PROCEDURE Main()
       alert("Connection error. See sqlerror.log for details.")
       QUIT
    ENDIF
+   
+   sr_StartLog(nConnection)
 
    IF !sr_ExistTable("test")
       dbCreate("test", {{"ID",      "N", 10, 0}, ;
