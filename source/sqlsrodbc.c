@@ -379,7 +379,13 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
                // hb_itemPutCLPtr(pItem, szResult, lLen);
                hb_itemPutTDT(pItem, 0, 0);
             } else {
-               if( ( ulSystemID == SYSTEMID_POSTGR ) || ( ulSystemID == SYSTEMID_ORACLE )|| ( ulSystemID == SYSTEMID_FIREBR ) || ( ulSystemID == SYSTEMID_MYSQL ) || ( ulSystemID ==  SYSTEMID_MARIADB ) || (  ulSystemID ==SYSTEMID_MSSQL7 && sr_lsql2008newTypes() ) ) {
+               if(    ( ulSystemID == SYSTEMID_POSTGR )
+                   || ( ulSystemID == SYSTEMID_ORACLE )
+                   || ( ulSystemID == SYSTEMID_FIREBR )
+                   || ( ulSystemID == SYSTEMID_FIREBR3 )
+                   || ( ulSystemID == SYSTEMID_MYSQL )
+                   || ( ulSystemID ==  SYSTEMID_MARIADB )
+                   || (  ulSystemID ==SYSTEMID_MSSQL7 && sr_lsql2008newTypes() ) ) {
                   hb_itemPutTDT(pItem, 0, 0);
                } else {
                   char dt[9] = {' ',' ',' ',' ',' ',' ',' ',' ','\0'};
@@ -475,7 +481,13 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
                hb_itemPutTDT(pItem, lJulian, lMilliSec);
 
                break;
-            } else if( ( (ulSystemID == SYSTEMID_POSTGR ) || ( ulSystemID == SYSTEMID_ORACLE ) || ( ulSystemID == SYSTEMID_FIREBR ) || ( ulSystemID == SYSTEMID_MYSQL ) || ( ulSystemID ==  SYSTEMID_MARIADB ) || (  ulSystemID ==SYSTEMID_MSSQL7 && sr_lsql2008newTypes() ) ) && (lType == SQL_TIMESTAMP|| lType == SQL_TYPE_TIMESTAMP) ) {
+            } else if(    ( (ulSystemID == SYSTEMID_POSTGR )
+                       || ( ulSystemID == SYSTEMID_ORACLE )
+                       || ( ulSystemID == SYSTEMID_FIREBR )
+                       || ( ulSystemID == SYSTEMID_FIREBR3 )
+                       || ( ulSystemID == SYSTEMID_MYSQL )
+                       || ( ulSystemID ==  SYSTEMID_MARIADB )
+                       || (  ulSystemID ==SYSTEMID_MSSQL7 && sr_lsql2008newTypes() ) ) && (lType == SQL_TIMESTAMP|| lType == SQL_TYPE_TIMESTAMP) ) {
             long lJulian, lMilliSec;
             hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
             hb_itemPutTDT(pItem, lJulian, lMilliSec);
