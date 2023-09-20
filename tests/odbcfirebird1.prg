@@ -77,5 +77,7 @@ PROCEDURE Main()
    browse()
 
    CLOSE DATABASE
+   
+   sr_StopLog(nConnection)
 
 RETURN
