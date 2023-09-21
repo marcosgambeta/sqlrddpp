@@ -46,6 +46,11 @@
 #ifndef ODBCRDD_H
 #define ODBCRDD_H
 
+// TODO: to be revised
+#if _MSC_VER >= 1900
+#pragma comment(lib, "legacy_stdio_definitions.lib")
+#endif
+
 #include <hbsetup.h>
 #include <hbapi.h>
 #include <hbapirdd.h>

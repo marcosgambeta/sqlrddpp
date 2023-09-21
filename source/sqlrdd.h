@@ -47,11 +47,14 @@
  */
 
 #ifndef SQLRDD_H
-
 #define SQLRDD_H
 
-#include "compat.h"
+// TODO: to be revised
+#if _MSC_VER >= 1900
+#pragma comment(lib, "legacy_stdio_definitions.lib")
+#endif
 
+#include "compat.h"
 #include <hbsetup.h>
 #include <hbapi.h>
 #include <hbapirdd.h>
