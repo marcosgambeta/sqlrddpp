@@ -117,5 +117,7 @@ PROCEDURE Main()
    CLOSE DATABASE
    
    sr_StopLog(nConnection)
+   
+   sr_EndConnection(nConnection)
 
 RETURN
