@@ -72,9 +72,10 @@
 #define DEFAULT_INDEX_COLUMN_MAX_LEN         200
 #define INITIAL_MEMO_ALLOC                   256
 
-//                                0 1 2 34 5 6 7 8 9 0 1 23 4 5 67 8 9
-static const char * openQuotes  = "\"\"\"[\"\"\"\"\"\"\"\"`\"\"\"`\"\"\"";
-static const char * closeQuotes = "\"\"\"]\"\"\"\"\"\"\"\"`\"\"\"`\"\"\"";
+//                                                    1 1 11 1 1 11 1 1 2
+//                                 0 1 2 34 5 6 7 8 9 0 1 23 4 5 67 8 9 0
+static const char * openQuotes  = "\"\"\"[\"\"\"\"\"\"\"\"`\"\"\"`\"\"\"\"";
+static const char * closeQuotes = "\"\"\"]\"\"\"\"\"\"\"\"`\"\"\"`\"\"\"\"";
 
 #define CHECK_SQL_N_OK(res)      ((res != SQL_SUCCESS) && (res != SQL_SUCCESS_WITH_INFO))
 #define OPEN_QUALIFIER(thiswa)   (openQuotes[thiswa->nSystemID])
