@@ -1,10 +1,7 @@
-/* $CATEGORY$SQLEX/HIDE$FILES$HIDE$
-* SQLEX Auxiliar File for SEEK routines
-* Copyright (c) 2009 - Marcelo Lombardo  <lombardo@uol.com.br>
-* All Rights Reserved
-*/
-
 /*
+ * SQLEX Auxiliar File for SEEK routines
+ * Copyright (c) 2009 - Marcelo Lombardo  <lombardo@uol.com.br>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
@@ -52,19 +49,15 @@
 
 #include "compat.h"
 #include <hbinit.h>
-
 #include "msg.ch"
 #include <rddsys.ch>
 #include <hbdbferr.h>
 #include "sqlrddsetup.ch"
 #include "sqlprototypes.h"
-
 #include <ctype.h>
 #include <assert.h>
 
-#if    defined(HB_OS_WIN_32) \
-    || defined(HB_OS_WIN_64) \
-    || defined(HB_OS_WIN)
+#if defined(HB_OS_WIN_32) || defined(HB_OS_WIN_64) || defined(HB_OS_WIN)
    #include <windows.h>
    #include <odbcinst.h>
 #else
@@ -81,7 +74,6 @@
 #include <sql.h>
 #include <sqlext.h>
 #include <sqltypes.h>
-
 #include "sqlex.h"
 
 /*------------------------------------------------------------------------*/
@@ -96,21 +88,20 @@ static void createSeekQuery(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints)
    }
    if( bUseOptimizerHints ) {
       sprintf(thiswa->sSql, "SELECT /*+ INDEX_ASC( A %s ) */ %s %s \nFROM %s A %s AND ROWNUM <= 1",
-                            thiswa->sOrderBy,     // thiswa->sOrderBy has the index name, not the index column list
-                            thiswa->sLimit1,
-                            thiswa->sFields,
-                            thiswa->sTable,
-                            thiswa->sWhere);
+         thiswa->sOrderBy, // thiswa->sOrderBy has the index name, not the index column list
+         thiswa->sLimit1,
+         thiswa->sFields,
+         thiswa->sTable,
+         thiswa->sWhere);
    } else {
       sprintf(thiswa->sSql, "SELECT %s %s \nFROM %s A %s %s %s",
-                            thiswa->sLimit1,
-                            thiswa->sFields,
-                            thiswa->sTable,
-                            thiswa->sWhere,
-                            thiswa->sOrderBy,     // thiswa->sOrderBy has the index column list
-                            thiswa->sLimit2);
+         thiswa->sLimit1,
+         thiswa->sFields,
+         thiswa->sTable,
+         thiswa->sWhere,
+         thiswa->sOrderBy, // thiswa->sOrderBy has the index column list
+         thiswa->sLimit2);
    }
-
 }
 
 /*------------------------------------------------------------------------*/
@@ -127,8 +118,8 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
    thiswa->sWhere[0] = '\0';
 
    SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
-   //Nao necessario esta aqui, fazia com que fosse para o ultimo item da chave
-   //SeekBind += (queryLevel - 1); // place offset
+   // Nao necessario esta aqui, fazia com que fosse para o ultimo item da chave
+   // SeekBind += (queryLevel - 1); // place offset
 
    thiswa->recordListDirection = (iListType == LIST_SKIP_FWD ? LIST_FORWARD : LIST_BACKWARD);
    bDirectionFWD = iListType == LIST_SKIP_FWD;
@@ -141,17 +132,23 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
       BindStructure = GetBindStruct(thiswa, SeekBind);
 
       if( BindStructure->isArgumentNull ) {
-         *bUseOptimizerHints = HB_FALSE;    // We cannot use this high speed solution
+         *bUseOptimizerHints = HB_FALSE; // We cannot use this high speed solution
                                          // because Oracle does not store NULLs in indexes
 
          if( BindStructure->iCType == SQL_C_DOUBLE ) {
             temp = hb_strdup((const char *) thiswa->sWhere);
-            sprintf(thiswa->sWhere, "%s %s ( A.%c%s%c %s %s OR A.%c%s%c IS NULL )", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
-                                                       OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa),
-                                                       iCol == queryLevel ? ( bDirectionFWD ? ">=" : "<=" ) : "IS",
-                                                       iCol == queryLevel ? "0" : "NULL",
-                                                       OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa));
-             hb_xfree(temp);
+            sprintf(thiswa->sWhere, "%s %s ( A.%c%s%c %s %s OR A.%c%s%c IS NULL )",
+               bWhere ? temp : "\nWHERE",
+               bWhere ? "AND" : "",
+               OPEN_QUALIFIER(thiswa),
+               BindStructure->colName,
+               CLOSE_QUALIFIER(thiswa),
+               iCol == queryLevel ? ( bDirectionFWD ? ">=" : "<=" ) : "IS",
+               iCol == queryLevel ? "0" : "NULL",
+               OPEN_QUALIFIER(thiswa),
+               BindStructure->colName,
+               CLOSE_QUALIFIER(thiswa));
+            hb_xfree(temp);
          } else {
             if( iCol == queryLevel && iListType == LIST_SKIP_FWD ) {
                // This condition should create a WHERE clause like "COLUMN >= NULL".
@@ -159,28 +156,37 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
                // or equal to NULL, so we do not add any restriction to WHERE clause.
             } else {
                temp = hb_strdup((const char *) thiswa->sWhere);
-               sprintf(thiswa->sWhere, "%s %s A.%c%s%c IS NULL", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
-                                                          OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa));
+               sprintf(thiswa->sWhere, "%s %s A.%c%s%c IS NULL",
+                  bWhere ? temp : "\nWHERE",
+                  bWhere ? "AND" : "",
+                  OPEN_QUALIFIER(thiswa),
+                  BindStructure->colName,
+                  CLOSE_QUALIFIER(thiswa));
                hb_xfree(temp);
             }
          }
       } else {
          temp = hb_strdup((const char *) thiswa->sWhere);
-         sprintf(thiswa->sWhere, "%s %s A.%c%s%c %s ?", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
-                                                    OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa),
-                                                    iCol == queryLevel ? (bDirectionFWD ? ">=" : "<=") : "=");
+         sprintf(thiswa->sWhere, "%s %s A.%c%s%c %s ?",
+            bWhere ? temp : "\nWHERE",
+            bWhere ? "AND" : "",
+            OPEN_QUALIFIER(thiswa),
+            BindStructure->colName,
+            CLOSE_QUALIFIER(thiswa),
+            iCol == queryLevel ? (bDirectionFWD ? ">=" : "<=") : "=");
          hb_xfree(temp);
       }
       bWhere = HB_TRUE;
       // Culik Movido a posicao do seekbind para essa posicao, onde estava assumuia que o inicio era o ultimo item da chave
-      SeekBind ++;         // place offset
+      SeekBind++; // place offset
    }
-   bWhere = strlen(thiswa->sWhere) >0;
+   bWhere = strlen(thiswa->sWhere) > 0;
    SolveFilters(thiswa, bWhere);
 
    return HB_SUCCESS;
 }
-/*
+
+#if 0
 static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int queryLevel, HB_BOOL * bUseOptimizerHints)
 {
    SqlExLog("getSeekWhereExpression()", 3);
@@ -195,8 +201,8 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
    thiswa->sWhere[0] = '\0';
 
    SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
-   //Nao necessario esta aqui, fazia com que fosse para o ultimo item da chave
-   //SeekBind += (queryLevel - 1);         // place offset
+   // Nao necessario esta aqui, fazia com que fosse para o ultimo item da chave
+   // SeekBind += (queryLevel - 1); // place offset
 
    thiswa->recordListDirection = (iListType == LIST_SKIP_FWD ? LIST_FORWARD : LIST_BACKWARD);
    bDirectionFWD = iListType == LIST_SKIP_FWD;
@@ -209,17 +215,23 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
       BindStructure = GetBindStruct(thiswa, SeekBind);
 
       if( BindStructure->isArgumentNull ) {
-         *bUseOptimizerHints = HB_FALSE;    // We cannot use this high speed solution
+         *bUseOptimizerHints = HB_FALSE; // We cannot use this high speed solution
                                          // because Oracle does not store NULLs in indexes
 
          if( BindStructure->iCType == SQL_C_DOUBLE ) {
             temp = hb_strdup((const char *) thiswa->sWhere);
-            sprintf(thiswa->sWhere, "%s %s ( A.%c%s%c %s %s OR A.%c%s%c IS NULL )", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
-                                                       OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa),
-                                                       iCol == queryLevel ? (bDirectionFWD ? ">=" : "<=") : "IS",
-                                                       iCol == queryLevel ? "0" : "NULL",
-                                                       OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa));
-             hb_xfree(temp);
+            sprintf(thiswa->sWhere, "%s %s ( A.%c%s%c %s %s OR A.%c%s%c IS NULL )",
+               bWhere ? temp : "\nWHERE",
+               bWhere ? "AND" : "",
+               OPEN_QUALIFIER(thiswa),
+               BindStructure->colName,
+               CLOSE_QUALIFIER(thiswa),
+               iCol == queryLevel ? (bDirectionFWD ? ">=" : "<=") : "IS",
+               iCol == queryLevel ? "0" : "NULL",
+               OPEN_QUALIFIER(thiswa),
+               BindStructure->colName,
+               CLOSE_QUALIFIER(thiswa));
+            hb_xfree(temp);
          } else {
             if( iCol == queryLevel && iListType == LIST_SKIP_FWD ) {
                // This condition should create a WHERE clause like "COLUMN >= NULL".
@@ -227,28 +239,37 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
                // or equal to NULL, so we do not add any restriction to WHERE clause.
             } else {
                temp = hb_strdup((const char *) thiswa->sWhere);
-               sprintf(thiswa->sWhere, "%s %s A.%c%s%c IS NULL", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
-                                                          OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa));
+               sprintf(thiswa->sWhere, "%s %s A.%c%s%c IS NULL",
+                  bWhere ? temp : "\nWHERE",
+                  bWhere ? "AND" : "",
+                  OPEN_QUALIFIER(thiswa),
+                  BindStructure->colName,
+                  CLOSE_QUALIFIER(thiswa));
                hb_xfree(temp);
             }
          }
       } else {
          temp = hb_strdup((const char *) thiswa->sWhere);
-         sprintf(thiswa->sWhere, "%s %s A.%c%s%c %s ?", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
-                                                    OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa),
-                                                    iCol == queryLevel ? ( bDirectionFWD ? ">=" : "<=" ) : "=");
+         sprintf(thiswa->sWhere, "%s %s A.%c%s%c %s ?",
+            bWhere ? temp : "\nWHERE",
+            bWhere ? "AND" : "",
+            OPEN_QUALIFIER(thiswa),
+            BindStructure->colName,
+            CLOSE_QUALIFIER(thiswa),
+            iCol == queryLevel ? ( bDirectionFWD ? ">=" : "<=" ) : "=");
          hb_xfree(temp);
       }
       bWhere = HB_TRUE;
       // Culik Movido a posicao do seekbind para essa posicao, onde estava assumuia que o inicio era o ultimo item da chave
-      SeekBind ++;         // place offset
+      SeekBind++; // place offset
    }
 
    SolveFilters(thiswa, bWhere);
 
    return HB_SUCCESS;
 }
-*/
+#endif
+
 /*------------------------------------------------------------------------*/
 
 HB_ERRCODE prepareSeekQuery(SQLEXAREAP thiswa, INDEXBINDP SeekBind)
@@ -277,6 +298,7 @@ HB_ERRCODE prepareSeekQuery(SQLEXAREAP thiswa, INDEXBINDP SeekBind)
       hb_xmemcpy(SeekBind->SeekBwdSql, thiswa->sSql, PREPARED_SQL_LEN - 1);
       SeekBind->SeekBwdSql[PREPARED_SQL_LEN - 1] = '\0';
    }
+
    return HB_SUCCESS;
 }
 
@@ -289,7 +311,7 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
    HB_BOOL bUseOptimizerHints;
 
    bUseOptimizerHints = thiswa->nSystemID == SYSTEMID_ORACLE;
-   thiswa->bConditionChanged1 = HB_TRUE;     // SKIP statements are no longer valid
+   thiswa->bConditionChanged1 = HB_TRUE; // SKIP statements are no longer valid
 
    // Alloc memory for binding structures, if first time
 
@@ -298,14 +320,14 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
    }
 
    SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
-   //SeekBind += (queryLevel - 1);         // place offset
+   // SeekBind += (queryLevel - 1); // place offset
 
    // Check if stmt must be created or recreated
 
    if(    thiswa->bConditionChanged2
        || thiswa->bRebuildSeekQuery
-       || ( thiswa->recordListDirection == LIST_FORWARD && (!SeekBind->SeekFwdStmt ) )
-       || ( thiswa->recordListDirection == LIST_BACKWARD && (!SeekBind->SeekBwdStmt ) ) ) {
+       || (thiswa->recordListDirection == LIST_FORWARD && (!SeekBind->SeekFwdStmt))
+       || (thiswa->recordListDirection == LIST_BACKWARD && (!SeekBind->SeekBwdStmt)) ) {
 
       pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG) thiswa->hOrdCurrent);
       pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
@@ -347,20 +369,20 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLe
 
    SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
 
-   if(  thiswa->hOrdCurrent != SeekBind->hIndexOrder ) { // || thiswa->bOrderChanged )
+   if( thiswa->hOrdCurrent != SeekBind->hIndexOrder ) { // || thiswa->bOrderChanged )
       // SeekBindings is not constructed based on same index order as
       // previous SEEK, so we must reconstruct thiswa->IndexBindings[thiswa->hOrdCurrent]
       // based on current index
 
-      thiswa->bConditionChanged2 = HB_TRUE;                 // Force SEEK query to be rebuilt
+      thiswa->bConditionChanged2 = HB_TRUE;         // Force SEEK query to be rebuilt
       SeekBind->hIndexOrder = thiswa->hOrdCurrent;  // Store latest prepared index order query
 
       for( iCol = 1; iCol <= thiswa->indexColumns; iCol++ ) {
          BindStructure = GetBindStruct(thiswa, SeekBind);
 
          if( !thiswa->uiFieldList[(BindStructure->lFieldPosDB) - 1] ) {
-            thiswa->uiFieldList[(BindStructure->lFieldPosDB) - 1] = HB_TRUE;         // Force index columns to be present in query
-                                                               // cos sqlKeyCompare will need it
+            thiswa->uiFieldList[(BindStructure->lFieldPosDB) - 1] = HB_TRUE; // Force index columns to be present in query
+                                                                             // cos sqlKeyCompare will need it
             thiswa->iColumnListStatus = FIELD_LIST_CHANGED;
          }
 
@@ -383,7 +405,7 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLe
 
          SeekBind++;
       }
-      SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];      // Reset position to 1st index column
+      SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent]; // Reset position to 1st index column
    }
 
    // Push pKey value splitted into SeekBindings structures
@@ -399,10 +421,10 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLe
          BindStructure = GetBindStruct(thiswa, SeekBind);
          size = 0;
 
-         switch ( BindStructure->iCType ) {
+         switch( BindStructure->iCType ) {
             case SQL_C_CHAR: {
                int nTrim, index;
-               size = lenKey > (int)(BindStructure->ColumnSize) ? ((int) (BindStructure->ColumnSize)) : lenKey;
+               size = lenKey > (int) (BindStructure->ColumnSize) ? ((int) (BindStructure->ColumnSize)) : lenKey;
                nTrim = size;
 
                // RTrim() the string value
@@ -424,7 +446,6 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLe
                      // Column cannot be NULL by definition, so
                      // SQLRDD uses 1 blank space in it
                      // This is an SQLRDD rule.
-
                      BindStructure->asChar.value[0] = ' ';
                      BindStructure->asChar.value[1] = '\0';
                   } else {
@@ -456,8 +477,8 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLe
 
                char datemask[9] = "10000101";
                char * mask = datemask;
-//DebugBreak();
-               size = lenKey > (int)(BindStructure->ColumnSize) ? ((int) (BindStructure->ColumnSize)) : lenKey;
+               // DebugBreak();
+               size = lenKey > (int) (BindStructure->ColumnSize) ? ((int) (BindStructure->ColumnSize)) : lenKey;
 
                // Must fix partial date seek
                for( iPos = 0; iPos < size; iPos++ ) {
@@ -514,7 +535,7 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLe
             break;
          }
 
-         SeekBind++;      // Advance to next index column in bind structure
+         SeekBind++; // Advance to next index column in bind structure
       }
    } else {
       *queryLevel = 1;
@@ -560,9 +581,9 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int * queryLe
          BindStructure->asLogical = (SQLCHAR) hb_itemGetL(pKey);
       }
    }
+
    return HB_SUCCESS;
 }
-
 
 /*------------------------------------------------------------------------*/
 
@@ -576,9 +597,9 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
    char * sSql;
 
    SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
-   //Culik
-   //removed, this line bellow make the data be the last field name
-//   SeekBind += (queryLevel - 1);         // place offset
+   // Culik
+   // removed, this line bellow make the data be the last field name
+   // SeekBind += (queryLevel - 1); // place offset
 
    hStmt = thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt : SeekBind->SeekBwdStmt;
    sSql = thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdSql : SeekBind->SeekBwdSql;
@@ -590,63 +611,83 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
       if( !BindStructure->isArgumentNull ) {
          // Corrigido 27/12/2013 09:53 - lpereira
          // Estava atribuindo o valor de SYSTEMID_ORACLE para thiswa->nSystemID.
-         //if( thiswa->nSystemID = SYSTEMID_ORACLE )
+         // if( thiswa->nSystemID = SYSTEMID_ORACLE )
          if( thiswa->nSystemID == SYSTEMID_ORACLE ) {
             if( BindStructure->iCType == SQL_C_TYPE_DATE ) {
-               BindStructure->iCType = SQL_C_TYPE_TIMESTAMP;        // May be DATE or TIMESTAMP
+               BindStructure->iCType = SQL_C_TYPE_TIMESTAMP; // May be DATE or TIMESTAMP
             }
          }
-         switch (BindStructure->iCType) {
+         switch( BindStructure->iCType ) {
             case SQL_C_CHAR: {
-               res = SQLBindParameter(hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter(hStmt,
+                                      (SQLUSMALLINT) iBind,
+                                      SQL_PARAM_INPUT,
                                       (SQLSMALLINT) BindStructure->iCType,
                                       (SQLSMALLINT) BindStructure->iSQLType,
                                       BindStructure->ColumnSize,
                                       BindStructure->DecimalDigits,
-                                      BindStructure->asChar.value, 0, NULL);
+                                      BindStructure->asChar.value,
+                                      0,
+                                      NULL);
                break;
             }
             case SQL_C_DOUBLE: {
-               res = SQLBindParameter(hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter(hStmt,
+                                      (SQLUSMALLINT) iBind,
+                                      SQL_PARAM_INPUT,
                                       (SQLSMALLINT) BindStructure->iCType,
                                       (SQLSMALLINT) BindStructure->iSQLType,
                                       BindStructure->ColumnSize,
                                       BindStructure->DecimalDigits,
-                                      &(BindStructure->asNumeric), 0, NULL);
+                                      &(BindStructure->asNumeric),
+                                      0,
+                                      NULL);
                break;
             }
             case SQL_C_TYPE_TIMESTAMP: {
-               //DebugBreak();
-               //res = SQLBindParameter(hStmt, iBind, SQL_PARAM_INPUT,
-               //                       SQL_C_TYPE_DATE,
-               //                       SQL_TYPE_DATE,
-               //                       SQL_TIMESTAMP_LEN,
-               //                       0,
-               //                       &(BindStructure->asTimestamp), 0, 0);
-               res = SQLBindParameter(hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+               // DebugBreak();
+               // res = SQLBindParameter(hStmt, iBind, SQL_PARAM_INPUT,
+               //                        SQL_C_TYPE_DATE,
+               //                        SQL_TYPE_DATE,
+               //                        SQL_TIMESTAMP_LEN,
+               //                        0,
+               //                        &(BindStructure->asTimestamp), 0, 0);
+               res = SQLBindParameter(hStmt,
+                                      (SQLUSMALLINT) iBind,
+                                      SQL_PARAM_INPUT,
                                       SQL_C_TYPE_TIMESTAMP,
                                       SQL_TYPE_TIMESTAMP,
                                       SQL_TIMESTAMP_LEN,
                                       thiswa->nSystemID == SYSTEMID_MSSQL7 ||thiswa->nSystemID == SYSTEMID_AZURE ? 3 : 0,
-                                      &(BindStructure->asTimestamp), 0, 0);
+                                      &(BindStructure->asTimestamp),
+                                      0,
+                                      0);
                break;
             }
             case SQL_C_TYPE_DATE: {
-               res = SQLBindParameter(hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter(hStmt,
+                                      (SQLUSMALLINT) iBind,
+                                      SQL_PARAM_INPUT,
                                       SQL_C_TYPE_DATE,
                                       SQL_TYPE_DATE,
                                       SQL_DATE_LEN,
                                       0,
-                                      &(BindStructure->asDate), 0, NULL);
+                                      &(BindStructure->asDate),
+                                      0,
+                                      NULL);
                break;
             }
             case SQL_C_BIT: {
-               res = SQLBindParameter(hStmt, (SQLUSMALLINT) iBind, SQL_PARAM_INPUT,
+               res = SQLBindParameter(hStmt,
+                                      (SQLUSMALLINT) iBind,
+                                      SQL_PARAM_INPUT,
                                       (SQLSMALLINT) BindStructure->iCType,
                                       (SQLSMALLINT) BindStructure->iSQLType,
                                       BindStructure->ColumnSize,
                                       BindStructure->DecimalDigits,
-                                      &(BindStructure->asLogical), 0, NULL);
+                                      &(BindStructure->asLogical),
+                                      0,
+                                      NULL);
                break;
             }
          }
@@ -657,8 +698,8 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
          BindStructure->iParNum = iBind;
       }
       SeekBindParam++;
-      //Culik Correct place so we can get the data from next field
-      SeekBind ++; //= (queryLevel - 1);         // place offset
+      // Culik Correct place so we can get the data from next field
+      SeekBind++; //= (queryLevel - 1); // place offset
    }
 }
 
@@ -670,8 +711,8 @@ HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT * iIndex
    INDEXBINDP SeekBind;
 
    SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
-   //this line bellow make the last field current
-   //SeekBind += (queryLevel - 1);         // place offset
+   // this line bellow make the last field current
+   // SeekBind += (queryLevel - 1); // place offset
    HB_SYMBOL_UNUSED(queryLevel);
 
    *hStmt = thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt : SeekBind->SeekBwdStmt;
@@ -680,7 +721,7 @@ HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT * iIndex
 
    if( CHECK_SQL_N_OK(res) ) {
       odbcErrorDiagRTE(*hStmt, "getPreparedSeek", "", res, __LINE__, __FILE__);
-      //SQLCloseCursor(*hStmt);
+      // SQLCloseCursor(*hStmt);
       SQLFreeStmt(*hStmt, SQL_CLOSE);
       return HB_FAILURE;
    }
@@ -705,7 +746,7 @@ HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT * iIndex
          return HB_FAILURE;
       } else {
          if( szValue[0] == 0 ) {
-            thiswa->deletedList[0] = ' ';    // MySQL driver climps spaces from right side
+            thiswa->deletedList[0] = ' '; // MySQL driver climps spaces from right side
          } else {
             thiswa->deletedList[0] = szValue[0];
          }
@@ -721,4 +762,3 @@ HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT * iIndex
 
    return HB_SUCCESS;
 }
-
