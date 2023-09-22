@@ -699,7 +699,7 @@ HB_FUNC( FBGETDATA3 )    // FBGetData(hEnv, nField, @uData)
             hb_storclen((char *) var->sqldata, var->sqllen, 3);
             break;
          case IB_SQL_BOOLEAN:
-            hb_storl(var->sqldata == "1" ? HB_TRUE : HB_FALSE, 3);
+            hb_storl(var->sqldata[0] == FB_TRUE ? HB_TRUE : HB_FALSE, 3);
             break;
          case IB_SQL_VARYING:
             vary = (VARY*) var->sqldata;
@@ -1217,8 +1217,9 @@ HB_FUNC( FBLINEPROCESSED3 )
                   hb_arraySetForward(pRet, icol, temp);
                   break;
                case IB_SQL_BOOLEAN: {
-                  ISC_UCHAR udata = *(ISC_UCHAR ISC_FAR*) var->sqldata;
-                  hb_itemPutL(temp, udata == (ISC_UCHAR) "T" || udata == (ISC_UCHAR) "t" || udata == 1 ? HB_TRUE : HB_FALSE);
+                  // ISC_UCHAR udata = *(ISC_UCHAR ISC_FAR*) var->sqldata;
+                  // hb_itemPutL(temp, udata == (ISC_UCHAR) "T" || udata == (ISC_UCHAR) "t" || udata == 1 ? HB_TRUE : HB_FALSE);
+                  hb_itemPutL(temp, (ISC_UCHAR) var->sqldata[0] == FB_TRUE ? HB_TRUE : HB_FALSE);
                   hb_arraySetForward(pRet, icol, temp);
                   break;
             }
