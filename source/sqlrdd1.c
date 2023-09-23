@@ -592,7 +592,7 @@ int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
       valbuf = (char *) hb_xgrab(9);
       val2 = hb_itemGetDS(pKey, valbuf);
    } else if( HB_IS_NUMBER(pKey) ) {
-      PHB_ITEM pLen = hb_itemPutNL(NULL, (const HB_LONG) len1);
+      PHB_ITEM pLen = hb_itemPutNL(NULL, (HB_LONG) len1);
       val2 = valbuf = hb_itemStr(pKey, pLen, NULL);
       len2 = (HB_BYTE) strlen(val2);
       hb_itemRelease(pLen);
