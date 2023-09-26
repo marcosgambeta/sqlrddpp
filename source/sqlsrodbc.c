@@ -1220,7 +1220,8 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQuery
          }
          break;
       }
-      case SQL_BIT: {
+      case SQL_BIT:
+      case SQL_TINYINT: {
          unsigned char val = 0;
          if( SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_BIT, &val, sizeof(val), &iLen)) ) {
             pItem = hb_itemPutL(pItem, val != 0);
