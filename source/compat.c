@@ -3,11 +3,6 @@
  * (c) copyright xHarbour.com Inc. http://www.xHarbour.com
  * Author: Przemyslaw Czerpak (druzus/at/poczta.onet.pl)
  *
- * This source file is an intellectual property of xHarbour.com Inc.
- * You may NOT forward or share this file under any conditions!
- */
-
-/*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)

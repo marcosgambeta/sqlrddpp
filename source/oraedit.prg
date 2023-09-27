@@ -14,10 +14,6 @@ STATIC TRACE_STRUCT   := { ;
                            }
 
 /*
- * $Id$
- */
-
-/*
  * xHarbour Project source code:
  * DBEDIT() function
  *
@@ -270,7 +266,7 @@ endif
   lAppend := .F.
 hHashData[nAliasTmp]:=hash()
   
-if nAliasTmp ==0 
+if nAliasTmp ==0
    cAlias := 'tmpedit'
    nAliasTmp++
    hHashData[nAliasTmp]:=hash()

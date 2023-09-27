@@ -1,11 +1,8 @@
-/* $CATEGORY$SQLRDD/MySQL$FILES$sql.lib$HIDE$
-* SQLRDD MySQL Native Connection Class
-* Copyright (c) 2003 - Marcelo Lombardo  <marcelo@xharbour.com.br>
-* Copyright (c) 2003 - Luiz Rafal Culik Guimarães <luiz@xharbour.com.br>
-* All Rights Reserved
-*/
-
 /*
+ * SQLRDD MySQL Native Connection Class
+ * Copyright (c) 2003 - Marcelo Lombardo  <marcelo@xharbour.com.br>
+ * Copyright (c) 2003 - Luiz Rafal Culik Guimarães <luiz@xharbour.com.br>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
