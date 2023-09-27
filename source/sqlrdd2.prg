@@ -6081,11 +6081,17 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
             ENDIF
             EXIT
          CASE SYSTEMID_MYSQL
-         CASE SYSTEMID_MARIADB
             IF cField == ::cRecnoName
                cSql += "BIGINT (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
             ELSE
                cSql += cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIF(lNotNull, " NOT NULL ", "")
+            ENDIF
+            EXIT
+         CASE SYSTEMID_MARIADB
+            IF cField == ::cRecnoName
+               cSql += "BIGINT (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
+            ELSE
+               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIF(lNotNull, " NOT NULL ", "")
             ENDIF
             EXIT
          CASE SYSTEMID_ORACLE
