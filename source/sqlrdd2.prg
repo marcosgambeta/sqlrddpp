@@ -7022,7 +7022,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
    IF !Empty(cVInd := SR_GetSVIndex())
       lSyntheticVirtual := ::oSql:nSystemID == SYSTEMID_ORACLE
       cPhysicalVIndexName := SubStr(cVInd, 1, 3) + SubStr(::cFileName, 1, 25)
-   ELSEIF len(cBagName) > 0 .AND. cBagName[4] == "@"
+   ELSEIF len(cBagName) > 0 .AND. substr(cBagName, 4, 1) == "@"
       lSyntheticVirtual := ::oSql:nSystemID == SYSTEMID_ORACLE
       cPhysicalVIndexName := SubStr(cBagName, 1, 3) + SubStr(::cFileName, 1, 25)
       cBagName := SubStr(cBagName, 5)
@@ -7148,7 +7148,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
 
       cXBase := ""
 
-      AADD(::aIndex, {"", "", {}, "", "", "", NIL, NIL, cOrdName, cBagName, , , , , , 0, ::aIndexMgmnt[nInd, INDEXMAN_SIGNATURE][19] == "D", cPhysicalVIndexName, , , ::aIndexMgmnt[nInd, INDEXMAN_IDXNAME]})
+      AADD(::aIndex, {"", "", {}, "", "", "", NIL, NIL, cOrdName, cBagName, , , , , , 0, substr(::aIndexMgmnt[nInd, INDEXMAN_SIGNATURE], 19, 1) == "D", cPhysicalVIndexName, , , ::aIndexMgmnt[nInd, INDEXMAN_IDXNAME]})
       nLen := Len(::aIndex)
 
       FOR i := 1 TO len(aCols)
