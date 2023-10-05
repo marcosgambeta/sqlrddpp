@@ -110,7 +110,7 @@ const double divider[19] = {1, 1E1, 1E2, 1E3, 1E4, 1E5, 1E6, 1E7, 1E8, 1E9, 1E10
 
 /*------------------------------------------------------------------------*/
 
-void fb_log_status(PFB_SESSION session, const char * from)
+static void fb_log_status(PFB_SESSION session, const char * from)
 {
    const ISC_STATUS * pVect = session->status;
    HB_SCHAR s[1024] = {0};
@@ -156,7 +156,7 @@ HB_FUNC( FBCONNECT ) // FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
    int  i, len;
 
    // PFB_SESSION session = (PFB_SESSION) hb_xgrab(sizeof(FB_SESSION));
-// 
+//
 //    memset(session, 0, sizeof(FB_SESSION));
    PFB_SESSION session = (PFB_SESSION) hb_xgrabz(sizeof(FB_SESSION));
    session->db = 0;
@@ -914,14 +914,14 @@ HB_FUNC( FBVERSION )
 
 /*------------------------------------------------------------------------*/
 
-void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate)
+static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate)
 {
    HB_LONG lType;
    HB_SIZE lLen, lDec;
    PHB_ITEM pTemp;
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
-   
+
    lType = (HB_LONG) hb_arrayGetNL(pField, 6);
    lLen = hb_arrayGetNL(pField, 3);
    lDec = hb_arrayGetNL(pField, 4);
@@ -1131,7 +1131,7 @@ HB_FUNC( FBLINEPROCESSED )
    HB_LONG lIndex;
 
    HB_SIZE lLen, lDec;
-   
+
 
    if( session ) {
       cols = hb_arrayLen(pFields);
