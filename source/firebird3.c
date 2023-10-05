@@ -111,7 +111,7 @@ const double divider3[19] = {1, 1E1, 1E2, 1E3, 1E4, 1E5, 1E6, 1E7, 1E8, 1E9, 1E1
 
 /*------------------------------------------------------------------------*/
 
-void isSelect(PFB_SESSION session)
+static void isSelect(PFB_SESSION session)
 {
     char acBuffer[9];
     char qType = isc_info_sql_stmt_type;
@@ -126,7 +126,7 @@ void isSelect(PFB_SESSION session)
 }
 
 
-void fb_log_status3(PFB_SESSION session, const char * from)
+static void fb_log_status3(PFB_SESSION session, const char * from)
 {
    const ISC_STATUS * pVect = session->status;
    HB_SCHAR s[1024] = {0};
@@ -478,7 +478,7 @@ HB_FUNC( FBEXECUTE3 ) // FBExecute(hEnv, cCmd, nDialect)
       if( CHECK_ERROR(session) ) {
          ERRORLOGANDEXIT(session, "FBEXECUTE5");
       }
-    
+
    }
 
    hb_retni(SQL_SUCCESS);
@@ -964,7 +964,7 @@ HB_FUNC( FBVERSION3 )
 
 /*------------------------------------------------------------------------*/
 
-void FBFieldGet3(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate)
+static void FBFieldGet3(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly, HB_ULONG ulSystemID, HB_BOOL bTranslate)
 {
    HB_LONG lType;
    HB_SIZE lLen, lDec;
