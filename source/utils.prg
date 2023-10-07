@@ -317,6 +317,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
               oWA:oSql:nSystemID == SYSTEMID_FIREBR ;
          .OR. oWA:oSql:nSystemID == SYSTEMID_FIREBR3 ;
          .OR. oWA:oSql:nSystemID == SYSTEMID_FIREBR4 ;
+         .OR. oWA:oSql:nSystemID == SYSTEMID_FIREBR5 ;
          .OR. oWA:oSql:nSystemID == SYSTEMID_MYSQL ;
          .OR. oWA:oSql:nSystemID == SYSTEMID_MARIADB ;
          .OR. oWA:oSql:nSystemID == SYSTEMID_ORACLE ;
@@ -610,6 +611,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       CASE SYSTEMID_FIREBR
       CASE SYSTEMID_FIREBR3
       CASE SYSTEMID_FIREBR4
+      CASE SYSTEMID_FIREBR5
          RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
       CASE SYSTEMID_CACHE
          RETURN "{d '" + transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
@@ -625,6 +627,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       CASE SYSTEMID_POSTGR
       CASE SYSTEMID_FIREBR3
       CASE SYSTEMID_FIREBR4
+      CASE SYSTEMID_FIREBR5
          RETURN iif(uData, "true", "false")
       CASE SYSTEMID_INFORM
          RETURN iif(uData, "'t'", "'f'")

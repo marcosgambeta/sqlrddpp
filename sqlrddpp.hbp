@@ -23,6 +23,7 @@ source/sqlconnection.prg
 source/sqlfirebird.prg
 source/sqlfirebird3.prg
 source/sqlfirebird4.prg
+source/sqlfirebird5.prg
 source/sqlgen1.prg
 source/sqlmaria.prg
 source/sqlmy.prg
@@ -43,6 +44,7 @@ source/compat.c
 source/firebird.c
 source/firebird3.c
 source/firebird4.c
+source/firebird5.c
 source/mysql.c
 source/pgs.c
 source/sqlact.c

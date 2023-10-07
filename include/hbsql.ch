@@ -190,6 +190,7 @@
    #define SYSTEMID_MARIADB              19
    #define SYSTEMID_FIREBR3              20
    #define SYSTEMID_FIREBR4              21
+   #define SYSTEMID_FIREBR5              22
 #endif
 
 /* Context Analisys Constants */

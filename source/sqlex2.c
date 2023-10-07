@@ -98,6 +98,7 @@ char * QualifyName(char * szName, SQLEXAREAP thiswa)
       case SYSTEMID_FIREBR:
       case SYSTEMID_FIREBR3:
       case SYSTEMID_FIREBR4:
+      case SYSTEMID_FIREBR5:
       case SYSTEMID_IBMDB2:
       case SYSTEMID_ADABAS:
          szName[i] = (char) toupper((HB_BYTE) szName[i]);
@@ -347,7 +348,8 @@ void CreateInsertStmt(SQLEXAREAP thiswa)
       }
       case SYSTEMID_FIREBR:
       case SYSTEMID_FIREBR3:
-      case SYSTEMID_FIREBR4: {
+      case SYSTEMID_FIREBR4:
+      case SYSTEMID_FIREBR5: {
          sprintf(ident, " RETURNING %s", thiswa->sRecnoName);
          break;
       }
@@ -621,10 +623,12 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
       case SYSTEMID_POSTGR:
       case SYSTEMID_FIREBR:
       case SYSTEMID_FIREBR3:
-      case SYSTEMID_FIREBR4: {
+      case SYSTEMID_FIREBR4:
+      case SYSTEMID_FIREBR5: {
          if(    thiswa->nSystemID != SYSTEMID_FIREBR
              && thiswa->nSystemID != SYSTEMID_FIREBR3
-             && thiswa->nSystemID != SYSTEMID_FIREBR4 ) {
+             && thiswa->nSystemID != SYSTEMID_FIREBR4
+             && thiswa->nSystemID != SYSTEMID_FIREBR5 ) {
             // #if defined(_MSC_VER)
             res = SQLMoreResults(thiswa->hStmtInsert);
             if( res != SQL_SUCCESS ) {

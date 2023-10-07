@@ -325,6 +325,7 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
    CASE SYSTEMID_FIREBR
    CASE SYSTEMID_FIREBR3
    CASE SYSTEMID_FIREBR4
+   CASE SYSTEMID_FIREBR5
       IF empty(cOwner)
          ::exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 order by RDB$RELATION_NAME", .T., .T., @aRet)
       ELSE
@@ -789,7 +790,9 @@ METHOD DetectTargetDb() CLASS SR_CONNECTION
    CASE "FIREBIRD" $ cTargetDb .OR. "INTERBASE" $ cTargetdb
       ::nSystemID := SYSTEMID_FIREBR
       aVers := hb_atokens(::cSystemVers, '.')
-      IF val(aVers[1]) >= 4
+      IF val(aVers[1]) >= 5
+         ::nSystemID := SYSTEMID_FIREBR5
+      ELSEIF val(aVers[1]) >= 4
          ::nSystemID := SYSTEMID_FIREBR4
       ELSEIF val(aVers[1]) >= 3
          ::nSystemID := SYSTEMID_FIREBR3
@@ -1105,6 +1108,8 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
          CASE "FIREBIRD3"
          CASE "FB4"
          CASE "FIREBIRD4"
+         CASE "FB5"
+         CASE "FIREBIRD5"
          CASE "IB"
          CASE "TNS"
          CASE "DATABASE"
@@ -1221,7 +1226,8 @@ METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
          .OR. ::nSystemID == SYSTEMID_MARIADB ;
          .OR. ::nSystemID == SYSTEMID_FIREBR ;
          .OR. ::nSystemID == SYSTEMID_FIREBR3 ;
-         .OR. ::nSystemID == SYSTEMID_FIREBR4
+         .OR. ::nSystemID == SYSTEMID_FIREBR4 ;
+         .OR. ::nSystemID == SYSTEMID_FIREBR5
          cType := "T"
       ELSE
          cType := "C"

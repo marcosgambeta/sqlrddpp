@@ -220,6 +220,7 @@ void setResultSetLimit(SQLEXAREAP thiswa, int iRows)
       case SYSTEMID_FIREBR:
       case SYSTEMID_FIREBR3:
       case SYSTEMID_FIREBR4:
+      case SYSTEMID_FIREBR5:
       case SYSTEMID_INFORM:
          fmt1 = "FIRST %i";
          fmt2 = "";

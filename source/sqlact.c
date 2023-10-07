@@ -544,6 +544,7 @@ HB_FUNC( SR_ESCAPESTRING )
          case SYSTEMID_FIREBR:
          case SYSTEMID_FIREBR3:
          case SYSTEMID_FIREBR4:
+         case SYSTEMID_FIREBR5:
             iSize = escape_firebird(ToBuffer, FromBuffer, iSize);
             break;
          case SYSTEMID_ORACLE:
@@ -590,6 +591,7 @@ char * QuoteTrimEscapeString(const char * FromBuffer, HB_SIZE iSize, int idataba
    case SYSTEMID_FIREBR:
    case SYSTEMID_FIREBR3:
    case SYSTEMID_FIREBR4:
+   case SYSTEMID_FIREBR5:
       iSize = escape_firebird(ToBuffer, FromBuffer, iSize);
       break;
    case SYSTEMID_ORACLE:
@@ -869,6 +871,7 @@ HB_FUNC( SR_DBQUALIFY )
       case SYSTEMID_FIREBR:
       case SYSTEMID_FIREBR3:
       case SYSTEMID_FIREBR4:
+      case SYSTEMID_FIREBR5:
       case SYSTEMID_IBMDB2:
       case SYSTEMID_ADABAS:
          szOut[0] = '"';

@@ -380,6 +380,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_FIREBR
             CASE SYSTEMID_FIREBR3
             CASE SYSTEMID_FIREBR4
+            CASE SYSTEMID_FIREBR5
             CASE SYSTEMID_POSTGR
                cSql += "CURRENT_DATE "
                EXIT
@@ -509,6 +510,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SYSTEMID_FIREBR
             CASE SYSTEMID_FIREBR3
             CASE SYSTEMID_FIREBR4
+            CASE SYSTEMID_FIREBR5
             CASE SYSTEMID_INFORM
                cSql += "FIRST " + ltrim(str(uData)) + " "
                EXIT
@@ -1300,6 +1302,7 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
       CASE SYSTEMID_FIREBR
       CASE SYSTEMID_FIREBR3
       CASE SYSTEMID_FIREBR4
+      CASE SYSTEMID_FIREBR5
          RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
       CASE SYSTEMID_CACHE
          RETURN "{d '" + transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
