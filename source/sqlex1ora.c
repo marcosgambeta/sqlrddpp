@@ -199,6 +199,7 @@ void setResultSetLimitOra(SQLEXORAAREAP thiswa, int iRows)
       break;
    case SYSTEMID_FIREBR:
    case SYSTEMID_FIREBR3:
+   case SYSTEMID_FIREBR4:
    case SYSTEMID_INFORM:
       fmt1 = "FIRST %i";
       fmt2 = "";

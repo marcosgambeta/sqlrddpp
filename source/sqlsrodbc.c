@@ -380,6 +380,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
                    || (ulSystemID == SYSTEMID_ORACLE)
                    || (ulSystemID == SYSTEMID_FIREBR)
                    || (ulSystemID == SYSTEMID_FIREBR3)
+                   || (ulSystemID == SYSTEMID_FIREBR4)
                    || (ulSystemID == SYSTEMID_MYSQL)
                    || (ulSystemID == SYSTEMID_MARIADB)
                    || (ulSystemID == SYSTEMID_MSSQL7 && sr_lsql2008newTypes()) ) {
@@ -480,6 +481,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
                        || (ulSystemID == SYSTEMID_ORACLE)
                        || (ulSystemID == SYSTEMID_FIREBR)
                        || (ulSystemID == SYSTEMID_FIREBR3)
+                       || (ulSystemID == SYSTEMID_FIREBR4)
                        || (ulSystemID == SYSTEMID_MYSQL)
                        || (ulSystemID ==  SYSTEMID_MARIADB)
                        || (ulSystemID == SYSTEMID_MSSQL7 && sr_lsql2008newTypes())) && (lType == SQL_TIMESTAMP || lType == SQL_TYPE_TIMESTAMP) ) {

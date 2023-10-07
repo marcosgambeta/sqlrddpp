@@ -69,6 +69,7 @@
 #define CONNECT_MARIA                  7
 #define CONNECT_ORACLE2                8
 #define CONNECT_FIREBIRD3              9
+#define CONNECT_FIREBIRD4              10
 
 #define CONNECT_QUERY_ONLY           100
 #define CONNECT_NOEXLOCK              50
@@ -82,6 +83,7 @@
 #define CONNECT_MARIA_QUERY_ONLY       7 + CONNECT_QUERY_ONLY
 #define CONNECT_ORACLE2_QUERY_ONLY     8 + CONNECT_QUERY_ONLY
 #define CONNECT_FIREBIRD3_QUERY_ONLY   9 + CONNECT_QUERY_ONLY
+#define CONNECT_FIREBIRD4_QUERY_ONLY   10 + CONNECT_QUERY_ONLY
 
 #define CONNECT_ODBC_NOEXLOCK          1 + CONNECT_NOEXLOCK
 #define CONNECT_RPC_NOEXLOCK           2 + CONNECT_NOEXLOCK
@@ -92,6 +94,8 @@
 #define CONNECT_MARIA_NOEXLOCK         7 + CONNECT_NOEXLOCK
 #define CONNECT_ORACLE2_NOEXLOCK       8 + CONNECT_NOEXLOCK
 #define CONNECT_FIREBIRD3_NOEXLOCK     9 + CONNECT_NOEXLOCK
+#define CONNECT_FIREBIRD4_NOEXLOCK     10 + CONNECT_NOEXLOCK
+
 #define CONNECT_CUSTOM               999
 
 /* some errors */
@@ -109,7 +113,7 @@
 
 /* supported RDBMS */
 
-#define SUPPORTED_DATABASES           21
+#define SUPPORTED_DATABASES           22
 
 #define SYSTEMID_UNKNOW                0
 #define SYSTEMID_ORACLE                1
@@ -132,6 +136,7 @@
 #define SYSTEMID_AZURE                18
 #define SYSTEMID_MARIADB              19
 #define SYSTEMID_FIREBR3              20
+#define SYSTEMID_FIREBR4              21
 
 #define LASTREC_POS             99999998
 

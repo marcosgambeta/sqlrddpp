@@ -190,7 +190,7 @@
 #define FIELD_PRIMARY_KEY              10
 #define FIELD_UNIQUE                   11
 
-#define SUPPORTED_DATABASES           21
+#define SUPPORTED_DATABASES           22
 
 #define SYSTEMID_UNKNOW                0
 #define SYSTEMID_ORACLE                1
@@ -213,4 +213,5 @@
 #define SYSTEMID_AZURE                18
 #define SYSTEMID_MARIADB              19
 #define SYSTEMID_FIREBR3              20
+#define SYSTEMID_FIREBR4              21
 #endif

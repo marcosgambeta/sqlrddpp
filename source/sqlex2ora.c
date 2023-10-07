@@ -96,6 +96,7 @@ char * QualifyName2(char * szName, SQLEXORAAREAP thiswa)
          case SYSTEMID_ORACLE:
          case SYSTEMID_FIREBR:
          case SYSTEMID_FIREBR3:
+         case SYSTEMID_FIREBR4:
          case SYSTEMID_IBMDB2:
          case SYSTEMID_ADABAS: {
             szName[i] = (char) toupper((int) szName[i]);
