@@ -1,7 +1,7 @@
 // SQLRDD
 // test with Firebird 3
 // To compile:
-// hbmk2 firebird1 -lfbclient
+// hbmk2 firebird1a -lfbclient
 
 #include "sqlrdd.ch"
 
