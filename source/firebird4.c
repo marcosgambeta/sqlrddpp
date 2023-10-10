@@ -51,18 +51,18 @@
 
 #include "sqlrddsetup.ch"
 #include "sqlprototypes.h"
-//#include "sqlodbc.ch" // TODO: fix redefinition of the constants below
-#define SQL_ERROR                           -1
-#define SQL_SUCCESS                          0
-#define SQL_NO_DATA_FOUND                  100
-#define SQL_BIT                             -7
-#define SQL_CHAR                             1
-#define SQL_DATETIME                        -40
-#define SQL_FAKE_NUM                        -102
-#define SQL_LONGVARCHAR                     -1
-#define SQL_NUMERIC                          2
-#define SQL_SMALLINT                         5
-#define SQL_TIME                            10
+#include "sqlodbc.ch" // TODO: fix redefinition of the constants below
+// #define SQL_ERROR                           -1
+// #define SQL_SUCCESS                          0
+// #define SQL_NO_DATA_FOUND                  100
+// #define SQL_BIT                             -7
+// #define SQL_CHAR                             1
+// #define SQL_DATETIME                        -40
+// #define SQL_FAKE_NUM                        -102
+// #define SQL_LONGVARCHAR                     -1
+// #define SQL_NUMERIC                          2
+// #define SQL_SMALLINT                         5
+// #define SQL_TIME                            10
 
 //#include "firebird.h"
 #include "firebird4/ibase.h"
