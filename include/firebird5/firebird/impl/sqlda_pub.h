@@ -64,32 +64,32 @@ typedef struct
 
 #define XSQLDA_LENGTH(n)	(sizeof (XSQLDA) + (n - 1) * sizeof (XSQLVAR))
 
-#define SQL_TEXT                           452
-#define SQL_VARYING                        448
-#define SQL_SHORT                          500
-#define SQL_LONG                           496
-#define SQL_FLOAT                          482
-#define SQL_DOUBLE                         480
-#define SQL_D_FLOAT                        530
-#define SQL_TIMESTAMP                      510
-#define SQL_BLOB                           520
-#define SQL_ARRAY                          540
-#define SQL_QUAD                           550
-#define SQL_TYPE_TIME                      560
-#define SQL_TYPE_DATE                      570
-#define SQL_INT64                          580
-#define SQL_TIMESTAMP_TZ_EX              32748
-#define SQL_TIME_TZ_EX                   32750
-#define SQL_INT128                       32752
-#define SQL_TIMESTAMP_TZ                 32754
-#define SQL_TIME_TZ                      32756
-#define SQL_DEC16                        32760
-#define SQL_DEC34                        32762
-#define SQL_BOOLEAN                      32764
-#define SQL_NULL                         32766
+// #define SQL_TEXT                           452
+// #define SQL_VARYING                        448
+// #define SQL_SHORT                          500
+// #define SQL_LONG                           496
+// #define SQL_FLOAT                          482
+// #define SQL_DOUBLE                         480
+// #define SQL_D_FLOAT                        530
+// #define SQL_TIMESTAMP                      510
+// #define SQL_BLOB                           520
+// #define SQL_ARRAY                          540
+// #define SQL_QUAD                           550
+// #define SQL_TYPE_TIME                      560
+// #define SQL_TYPE_DATE                      570
+// #define SQL_INT64                          580
+// #define SQL_TIMESTAMP_TZ_EX              32748
+// #define SQL_TIME_TZ_EX                   32750
+// #define SQL_INT128                       32752
+// #define SQL_TIMESTAMP_TZ                 32754
+// #define SQL_TIME_TZ                      32756
+// #define SQL_DEC16                        32760
+// #define SQL_DEC34                        32762
+// #define SQL_BOOLEAN                      32764
+// #define SQL_NULL                         32766
 
 /* Historical alias for pre v6 code */
-#define SQL_DATE                           SQL_TIMESTAMP
+// #define SQL_DATE                           SQL_TIMESTAMP
 
 /***************************/
 /* SQL Dialects            */
