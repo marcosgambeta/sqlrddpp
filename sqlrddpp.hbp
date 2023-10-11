@@ -57,8 +57,8 @@ source/sqlorax.c
 source/sqlrdd1.c
 source/sqlsrodbc.c
 
-{!xhb}-hbx=sqlrddpp.hbx
-{!xhb}sqlrddpp.hbx
+-hbx=sqlrddpp.hbx
+sqlrddpp.hbx
 
 # if necessary, add manually:
 # hbmk2 sqlrddpp.hbp -cflag=-fpermissive
