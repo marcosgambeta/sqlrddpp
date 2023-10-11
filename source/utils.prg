@@ -879,7 +879,7 @@ FUNCTION SR_BlankVar(cType, nLen, nDec)
       ENDIF
       RETURN 0
    CASE "T"
-      RETURN datetime(0, 0, 0, 0, 0, 0, 0)
+      RETURN hb_datetime(0, 0, 0, 0, 0, 0, 0)
    ENDSWITCH
 
 RETURN ""
