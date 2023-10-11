@@ -670,7 +670,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
       ELSE      // Retorno deve ser para Array !
 
-         AsizeAlloc(aArray, 300)
+         //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
 
          IF HB_ISARRAY(aArray)
             IF len(aArray) == 0

@@ -5246,7 +5246,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
    ::cRecnoName := SR_RecnoName()
    ::cDeletedName := SR_DeletedName()
 
-   AsizeAlloc(::aFetch, 50)
+   //AsizeAlloc(::aFetch, 50) // TODO: ASIZEALLOC does nothing in Harbour
 
    IF ::cWSID == NIL
       ::cWSID := SR_GetUniqueSystemID()
@@ -6570,7 +6570,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
       ::cWSID := SR_GetUniqueSystemID()
    ENDIF
 
-   AsizeAlloc(::aFetch, 50)
+   //AsizeAlloc(::aFetch, 50) // TODO: ASIZEALLOC does nothing in Harbour
 
    ::nThisArea := nArea
    ::cAlias := cAlias

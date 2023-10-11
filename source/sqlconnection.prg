@@ -580,7 +580,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
             ELSE      // Retorno deve ser para Array !
 
-               AsizeAlloc(aArray, 300)
+               //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
 
                IF HB_ISARRAY(aArray)
                   IF len(aArray) = 0
