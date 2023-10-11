@@ -43,7 +43,7 @@ hbmk2 <filename> sqlrddpp.hbc -lfbclient
 
 ## Links
 
-SQLRDD for xHarbour  
+SQLRDD for xHarbour and Harbour  
 https://github.com/xHarbour-org/xharbour  
 https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLRDD  
 
