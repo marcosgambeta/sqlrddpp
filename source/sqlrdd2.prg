@@ -1581,7 +1581,7 @@ METHOD sqlOpenAllIndexes() CLASS SR_WORKAREA
                   cXBase += "DTOS(" + ::aNames[nPos] + ") + "
                   EXIT
                CASE "T"
-                  cXBase += "TTOS(" + ::aNames[nPos] + ") + "
+                  cXBase += "TTOS(" + ::aNames[nPos] + ") + " // TODO: TTOS -> HB_TTOS
                   EXIT
                CASE "N"
                   cXBase += "STR(" + ::aNames[nPos] + ", " + alltrim(str(::aFields[nPos, 3])) + ", " + alltrim(str(::aFields[nPos, 4])) + ") + "
@@ -2113,10 +2113,10 @@ METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic) CLASS SR_WORKAREA
       IF nLen == 4
          RETURN "'" + HB_TSTOSTR(udata, .T.) + "'"
       ENDIF
-      //RETURN "'" + transform(ttos(uData), '@R 9999-99-99 99:99:99') + "'"
+      //RETURN "'" + transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
       RETURN "'" + HB_TSTOSTR(uData) + "'"
    CASE ctype == "T" .AND. ::oSql:nSystemID == SYSTEMID_ORACLE
-      RETURN " TIMESTAMP '" + transform(ttos(uData), '@R 9999-99-99 99:99:99') + "'"
+      RETURN " TIMESTAMP '" + transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
    CASE cType == "N" .AND. nLen == NIL
       RETURN ltrim(str(uData))
    CASE cType == "N" .AND. nLen != NIL
@@ -2184,10 +2184,10 @@ METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic) CLASS SR_WORKAREA
          IF nLen == 4
             RETURN "'" + HB_TSTOSTR(udata, .T.) + "'"
          ENDIF
-         //RETURN "'" + transform(ttos(uData), '@R 9999-99-99 99:99:99') + "'"
+         //RETURN "'" + transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
          RETURN "'" + HB_TSTOSTR(uData) + "'"
       CASE SYSTEMID_ORACLE
-         RETURN " TIMESTAMP '" + transform(ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+         RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       OTHERWISE
          cRet := SR_STRTOHEX(HB_Serialize(uData))
          RETURN ::Quoted(SQL_SERIALIZED_SIGNATURE + str(len(cRet), 10) + cRet, trim, nLen, nDec, nTargetDB)
@@ -2307,13 +2307,13 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
       IF nLen == 4
          RETURN "'" + HB_TSTOSTR(udata, .T.) + "'"
       ENDIF
-      //RETURN "'" + transform(ttos(uData), '@R 9999-99-99 99:99:99') + "'"
+      //RETURN "'" + transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
       RETURN "'" + HB_TSTOSTR(uData) + "'"
    CASE ctype == "T" .AND. ::oSql:nSystemID == SYSTEMID_ORACLE
       IF Empty(uData)
          RETURN "NULL"
       ENDIF
-      RETURN " TIMESTAMP '" + transform(ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+      RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
    CASE cType == "N" .AND. nLen != NIL .AND. (!lMemo)
       RETURN ltrim(str(uData, nLen + 1, nDec))
    CASE cType == "N" .AND. (!lMemo)
@@ -2395,10 +2395,10 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
          IF nLen == 4
             RETURN "'" + HB_TSTOSTR(udata, .T.) + "'"
          ENDIF
-         //RETURN "'" + transform(ttos(uData), '@R 9999-99-99 99:99:99') + "'"
+         //RETURN "'" + transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
          RETURN "'" + HB_TSTOSTR(uData) + "'"
       CASE SYSTEMID_ORACLE
-         RETURN " TIMESTAMP '" + transform(ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+         RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       OTHERWISE
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
          cRet := ttoc(uData)
@@ -4082,9 +4082,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (dtos(::aLocalBuffer[::aPosition[i]]) >= dtos(::aDat[i]))
                CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(ttos(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
                CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (ttos(::aLocalBuffer[::aPosition[i]]) >=  ttos(::aDat[i]))
+                  ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >=  hb_ttos(::aDat[i]))
                CASE valtype(::aLocalBuffer[::aPosition[i]]) != valtype(::aDat[i])
                   ::RuntimeErr("28")
                   Set(_SET_EXACT, uSet)
@@ -4358,9 +4358,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (dtos(::aLocalBuffer[::aPosition[i]]) >= dtos(::aDat[i]))
                CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(ttos(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
                CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (ttos(::aLocalBuffer[::aPosition[i]]) >= ttos(::aDat[i]))
+                  ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >= hb_ttos(::aDat[i]))
                CASE valtype(::aLocalBuffer[::aPosition[i]]) != valtype(::aDat[i])
                   ::RuntimeErr("28")
                   Set(_SET_EXACT, uSet)
@@ -4587,9 +4587,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (dtos(::aLocalBuffer[::aPosition[i]]) >= dtos(::aDat[i]))
                CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(ttos(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
                CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (ttos(::aLocalBuffer[::aPosition[i]]) >= ttos(::aDat[i]))
+                  ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >= hb_ttos(::aDat[i]))
                CASE valtype(::aLocalBuffer[::aPosition[i]]) != valtype(::aDat[i])
                   ::RuntimeErr("28")
                   Set(_SET_EXACT, uSet)
@@ -7229,7 +7229,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
                   cXBase += "DTOS(" + ::aNames[nPos] + ") + "
                   EXIT
                CASE "T"
-                  cXBase += "TTOS(" + ::aNames[nPos] + ") + "
+                  cXBase += "TTOS(" + ::aNames[nPos] + ") + " // TODO: TTOS -> HB_TTOS
                   EXIT
                CASE "N"
                   cXBase += "STR(" + ::aNames[nPos] + ", " + alltrim(str(::aFields[nPos, 3])) + ", " + alltrim(str(::aFields[nPos, 4])) + ") + "

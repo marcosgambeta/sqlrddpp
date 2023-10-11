@@ -559,12 +559,12 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN 'NULL'
       ENDIF
 
-      RETURN "'" + transform(ttos(uData), '@R 9999-99-99 99:99:99') + "'"
+      RETURN "'" + transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
    case ctype == "T" .AND. nSystemID == SYSTEMID_ORACLE
       IF Empty(uData)
          RETURN 'NULL'
       ENDIF
-      RETURN " TIMESTAMP '" + transform(ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+      RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
    Case cType == 'T'
       IF Empty(uData)
          RETURN 'NULL'
@@ -641,9 +641,9 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       ENDIF
       SWITCH nSystemID
       CASE SYSTEMID_POSTGR
-         RETURN "'" + transform(ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+         RETURN "'" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       CASE SYSTEMID_ORACLE
-         RETURN " TIMESTAMP '" + transform(ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+         RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       OTHERWISE
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
          cRet := ttoc(uData)
