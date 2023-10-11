@@ -69,9 +69,9 @@ RETURN NIL
 FUNCTION oGetWorkarea(cAlias)
 
    LOCAL result
-   LOCAL oerr
+   LOCAL oErr
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
    RECOVER USING oErr
       oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
@@ -485,7 +485,7 @@ METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
    // can be very slow with relations...
    nseconds := seconds()
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       if pcount() == 1 .AND. lIgnoreRelations
          save_slct := select()
          SelectFirstAreaNotInUse()

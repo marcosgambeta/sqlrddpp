@@ -836,7 +836,7 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql, cCount, c
 *            aVal := hb_atokens(cvalues, ",")
 *          (calias)->(dbappend())
 *          FOR i := 1 TO len(afield)
-*             BEGIN SEQUENCE
+*             BEGIN SEQUENCE WITH __BreakBlock()
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])), aval[i]))
 *             RECOVER
 *             END SEQUENCE
@@ -1432,7 +1432,7 @@ if len(aFields) > 0
            aVal := hb_atokens(cvalues, ",")
 *          (calias)->(dbappend())
 *          FOR i := 1 TO len(afield)
-*             BEGIN SEQUENCE
+*             BEGIN SEQUENCE WITH __BreakBlock()
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])), aval[i]))
 *             RECOVER
 *             END SEQUENCE
@@ -1505,7 +1505,7 @@ RETURN NIL
       
 *          (calias)->(dbappend())
 *          FOR i := 1 TO len(afield)
-*             BEGIN SEQUENCE
+*             BEGIN SEQUENCE WITH __BreakBlock()
 *               (calias)->(fieldput((calias)->(fieldpos(aField[i])), aval[i]))
 *             RECOVER
 *             END SEQUENCE
@@ -1619,7 +1619,7 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
    
    DEFAULT cComm to ""
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
 
       If !sr_phFile(cpre + "sqllog.dbf")
          dbCreate(cpre + "sqllog.dbf", TRACE_STRUCT, "DBFNTX")

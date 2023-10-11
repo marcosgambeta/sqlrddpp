@@ -178,7 +178,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
    IF oExpression:lSimplified
       RETURN oExpression
    ELSEIF ::Assessable(oExpression)
-      BEGIN SEQUENCE
+      BEGIN SEQUENCE WITH __BreakBlock()
          newValue := oExpression:oClipperExpression:Evaluate()
          lEvaluated := .T.
       RECOVER

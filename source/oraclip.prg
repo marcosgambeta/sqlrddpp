@@ -339,7 +339,7 @@ FUNCTION OraErrMsg()
    LOCAL c
    LOCAL e
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       c := SQLO_GETERRORDESCR(sr_getconnection():hDBC)
    RECOVER USING e
       c := "usuario nao conectado"
@@ -379,7 +379,7 @@ FUNCTION OraUpdate(nCursor, cTabAutos, aCols, aDadosAlt, cWhere, aChave)
       NEXT i
       cSql += " where " +  cwhere
    ENDIF
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       nError := sr_getconnection():exec(csql, , .F.)
       aOraClipCursors[nCursor]["error"] := 0
       aOraClipCursors[nCursor]["lastsql"] := cSql
@@ -444,7 +444,7 @@ FUNCTION OraLogoff(cCnxName)
    LOCAL e
    LOCAL hData
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       hData := aOraclipHash[cCnxName]
       IF !empty(hdata)
          sr_endconnection(hData["nRet"])
@@ -610,7 +610,7 @@ FUNCTION OraSingle(n, csql, adata)
       cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
    NEXT i
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       nError := sr_getconnection():exec(csql, , .T., @aret)
    RECOVER USING e
       nerror := -1
@@ -675,7 +675,7 @@ FUNCTION OraInsert(nCursor, cTable, aCols, aData)
    cValues := substr(cValues, 1, len(cValues)-1) + ")"
    cSql += cValues
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       nError := sr_getconnection():exec(csql, , .F.,)
       aOraClipCursors[nCursor]["error"] := 0
       aOraClipCursors[nCursor]["lastsql"] := cSql
@@ -797,7 +797,7 @@ FUNCTION OraPLSQL(nCursor, cPLSQL, aVarSust)
             OracleinBindParam(oSql:hdbc, i, 8, 12, , aItem[5])
          ENDIF
       NEXT i
-      BEGIN SEQUENCE
+      BEGIN SEQUENCE WITH __BreakBlock()
          nError := OracleExecDir(osql:hDbc)
          aOraClipCursors[nCursor]["error"] := nError
          aOraClipCursors[nCursor]["lastsql"] := cPlSql
@@ -1206,7 +1206,7 @@ FUNCTION OraSelNext(nCursor, aTableData, nRows)
 
    DEFAULT nRows TO -1
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       IF aOraClipCursors[nCursor]["completed"]
          aOraClipCursors[nCursor]["data"] := {}
          aTableData := {}
@@ -1274,7 +1274,7 @@ FUNCTION csExecSQL(nCursor, cSQL, aVarSust)
    LOCAL aItem
    LOCAL nerror
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       hData := aOraClipCursors[nCursor]
       osql := sr_getconnection()
       IF upper(substr(cSql, 6)) == "BEGIN "
@@ -1331,7 +1331,7 @@ FUNCTION csErrMsg(nCursor)
    LOCAL e
    LOCAL cRet := ""
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       hData := aOraClipCursors[nCursor]
       osql := sr_getconnection()
       cRet :=  hData["errormsg"]
@@ -1348,7 +1348,7 @@ FUNCTION CSVALIDCNX(nCursor)
    LOCAL e
    LOCAL cRet := ""
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       hData := aOraClipCursors[nCursor]
       osql := sr_getconnection()
       lRet := hData["nRet"] > 0
@@ -1365,7 +1365,7 @@ FUNCTION CSUSER(nCursor)
    LOCAL e
    LOCAL cRet := ""
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       hData := aOraClipCursors[nCursor]
       osql := sr_getconnection()
       cRet := hData["user"]
@@ -1381,7 +1381,7 @@ FUNCTION CSVALIDCURSOR(nCursor)
    LOCAL hDAta
    LOCAL e
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       hData := aOraClipCursors[nCursor]
       lRet := .T.
    RECOVER
@@ -1612,7 +1612,7 @@ FUNCTION oraGoto(n, aDados, nRow)
 
    DEFAULT aDados TO {}
    aOraClipCursors[n]["curpos"] := nRow
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       aOraClipCursors[n]["curpos"] := nRow
       aDados := aOraClipCursors[n]["ret"][aOraClipCursors[n]["curpos"]]
    RECOVER USING e
@@ -1678,7 +1678,7 @@ RETURN b
 
 STATIC FUNCTION ExecuteSql(csql, cursor, n)
 
-   // BEGIN SEQUENCE
+   // BEGIN SEQUENCE WITH __BreakBlock()
    //    nError := OraclePrepare(SR_GetConnection():hdbc, cSql, .T.)
    // RECOVER USING e
    //    nError := -1
@@ -1825,7 +1825,7 @@ STATIC FUNCTION closecursor(n)
    LOCAL osql := sr_getconnection()
    LOCAL hdbc := osql:hdbc
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       hDBCHandle := aOraClipCursors[n]["cursor"]
       IF aOraClipCursors[n]["cursoropen"]
          SETORAHANDLE(hDBC, hDBCHandle)

@@ -676,7 +676,7 @@ FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
 
    HB_SYMBOL_UNUSED(oCnn)
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
 
       IF !sr_PhFile("long_qry.dbf")
          dbCreate("long_qry.dbf", TRACE_STRUCT, "DBFNTX")
@@ -746,7 +746,7 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
 
    DEFAULT cComm TO ""
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
 
       IF !sr_phFile("sqllog.dbf")
          dbCreate("sqllog.dbf", TRACE_STRUCT, "DBFNTX")

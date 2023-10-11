@@ -536,7 +536,7 @@ METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE2
       OracleinBindParam(::hdbc, i, n, 12, 0)
    NEXT i
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       nError := OracleExecDir(::hDbc)
    RECOVER
       nerror := -1
@@ -592,7 +592,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    DEFAULT cRecnoName   TO SR_RecnoName()
    DEFAULT cDeletedName TO SR_DeletedName()
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       nError := ORACLE_PROCCURSOR2(::hDbc, cComm, cVar)
       //nError := ORACLE_BINDCURSOR(::hDbc, cComm, cVar)
       ::cLastComm := cComm
@@ -806,7 +806,7 @@ FUNCTION ExecuteSP2(cComm, aReturn)
 
    OracleinBindParam(oConn:hdbc, 1, -1, 12, 0)
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       nError := OracleExecDir(oConn:hDbc)
    RECOVER
       nerror := -1

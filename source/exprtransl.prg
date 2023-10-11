@@ -268,7 +268,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
    LOCAL resultFooter := ""
    LOCAL aFilters := {}
 
-   BEGIN SEQUENCE
+   BEGIN SEQUENCE WITH __BreakBlock()
       result := iif(pcount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
 
       IF oExpression:isKindOf("ConditionBase")
