@@ -2621,7 +2621,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                   nlen := len(oxml:tostring(HBXML_STYLE_NONEWLINE))
                   cVal := iif(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(oxml:tostring(HBXML_STYLE_NONEWLINE), .T., iIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                ELSEIF ::aFields[nthisField, 6] == SQL_VARBINARY .AND. ::osql:nsystemID ==SYSTEMID_MSSQL7
-                  cVal := '0x'+StrtoHex(aBuffer[nThisField])
+                  cVal := '0x'+hb_StrtoHex(aBuffer[nThisField])
                ELSE
                   LOOP
                ENDIF
@@ -2811,7 +2811,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                   EXIT
                CASE SQL_VARBINARY
                   IF ::osql:nsystemID ==SYSTEMID_MSSQL7
-                     cVal += iif(!lFirst, ", ", "( ") + "0x" + StrtoHex(cmemo)
+                     cVal += iif(!lFirst, ", ", "( ") + "0x" + hb_StrtoHex(cmemo)
                   ELSE
                      cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                   ENDIF
