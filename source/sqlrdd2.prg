@@ -2597,7 +2597,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                ((!::aOldBuffer[nThisField] == aBuffer[nThisField]) .AND. (nThisField != ::hnRecno))
 
                IF lML .AND. HB_ISSTRING(aBuffer[nThisField])
-                  aBuffer[nThisField] := Hash(SR_SetBaseLang(), aBuffer[nThisField])
+                  aBuffer[nThisField] := hb_Hash(SR_SetBaseLang(), aBuffer[nThisField])
                ENDIF
                IF (lMemo .OR. lML) .AND. (::oSql:nSystemID == SYSTEMID_ORACLE .OR. ::oSql:nSystemID == SYSTEMID_ADABAS .OR. ::oSql:nSystemID == SYSTEMID_IBMDB2) .AND. ::aFields[nThisField, 6] != SQL_FAKE_LOB  // .OR. ::oSql:nSystemID == SYSTEMID_CACHE
                   IF !HB_ISSTRING(aBuffer[nThisField])
@@ -3433,10 +3433,10 @@ METHOD IniFields(lReSelect, lLoadCache, aInfo) CLASS SR_WORKAREA
 
    IF ::oSQL:nTCCompat > 0
 
-      nPos := HGetPos(::oSql:aFieldModifier, ::cFileName)
+      nPos := hb_HPos(::oSql:aFieldModifier, ::cFileName)
 
       IF nPos > 0
-         aFlds := HGetValueAt(::oSql:aFieldModifier, nPos)
+         aFlds := hb_HValueAt(::oSql:aFieldModifier, nPos)
       ENDIF
 
       FOR n := 1 TO ::nFields
@@ -3518,7 +3518,7 @@ METHOD IniFields(lReSelect, lLoadCache, aInfo) CLASS SR_WORKAREA
          ::aNames[n] := cName
 
          IF ::aFields[n, FIELD_MULTILANG] .AND. SR_SetMultiLang()
-            ::aEmptyBuffer[n] := Hash()
+            ::aEmptyBuffer[n] := hb_Hash()
          ELSE
             ::aEmptyBuffer[n] := SR_BlankVar(::aFields[n, 2], ::aFields[n, 3], ::aFields[n, 4])
          ENDIF
@@ -3589,7 +3589,7 @@ METHOD IniFields(lReSelect, lLoadCache, aInfo) CLASS SR_WORKAREA
          ::aNames[n] := cName
 
          IF ::aFields[n, FIELD_MULTILANG] .AND. SR_SetMultiLang()
-            ::aEmptyBuffer[n] := Hash()
+            ::aEmptyBuffer[n] := hb_Hash()
          ELSE
             ::aEmptyBuffer[n] := SR_BlankVar(::aFields[n, 2], ::aFields[n, 3], ::aFields[n, 4])
          ENDIF
@@ -5332,10 +5332,10 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
 
    ::cQualifiedTableName := ::cOwner + SR_DBQUALIFY(::cFileName, ::oSql:nSystemID)
 
-   nPos := HGetPos(::oSql:aTableInfo, ::cOriginalFN)
+   nPos := hb_HPos(::oSql:aTableInfo, ::cOriginalFN)
    IF nPos > 0
       // REMOVE from cache
-      HDelAt(::oSql:aTableInfo, nPos)
+      hb_HDelAt(::oSql:aTableInfo, nPos)
    ENDIF
 
    IF len(::cFileName) > MAX_TABLE_NAME_LENGHT
@@ -6614,9 +6614,9 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
       aRet[TABLE_INFO_PRIMARY_KEY] := ""
       ::oSql:cNextQuery := NIL                     // Reset Next query
    ELSE
-      nPos := HGetPos(::oSql:aTableInfo, ::cOriginalFN)
+      nPos := hb_HPos(::oSql:aTableInfo, ::cOriginalFN)
       IF nPos > 0
-         aCacheInfo := aClone(HGetValueAt(::oSql:aTableInfo, nPos))
+         aCacheInfo := aClone(hb_HValueAt(::oSql:aTableInfo, nPos))
          aRet := aCacheInfo[CACHEINFO_TABINFO]
          ::cFileName := aCacheInfo[CACHEINFO_TABNAME]
          ::oSql := aCacheInfo[CACHEINFO_CONNECT]
@@ -11187,7 +11187,7 @@ FUNCTION SR_arraytoXml(a)
    LOCAL aItem
 
    nPosData := 0
-   hhash := hash()
+   hhash := hb_hash()
 
    hHash["version"] := "1.0"
 
@@ -11195,7 +11195,7 @@ FUNCTION SR_arraytoXml(a)
    oNode := tXMLNode():New(HBXML_TYPE_PI, "xml", hHash, ;
       "version=" + chr(34) + "1.0" + chr(34) + " encoding=" + chr(34) + "utf-8" + chr(34) + "")
    oXml:oRoot:Addbelow(oNode)
-   hhash := hash()
+   hhash := hb_hash()
    hhash["Type"] := valtype(a)
    hhash["Len"] := Alltrim(Str(Len(a)))
    hHash["Id"] := alltrim(str(nStartId))
@@ -11212,7 +11212,7 @@ RETURN oXml
 STATIC FUNCTION AddNode(a, oNode)
 
    LOCAL oNode1
-   LOCAL hHash := Hash()
+   LOCAL hHash := hb_Hash()
    //LOCAL oNode2
    LOCAL aItem
    //LOCAL theData

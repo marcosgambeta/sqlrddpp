@@ -583,7 +583,7 @@ FUNCTION SR_ReloadFieldModifiers(oConnect)
 
    IF oConnect:exec("SELECT FIELD_TABLE, FIELD_NAME, FIELD_TYPE, FIELD_PREC, FIELD_DEC FROM TOP_FIELD WHERE FIELD_TYPE != 'X' ORDER BY FIELD_TABLE, FIELD_NAME", .F., .T., @aRet) == SQL_SUCCESS
       oConnect:aFieldModifier := {=>}
-      HAllocate(oConnect:aFieldModifier, 10000)
+      hb_HAllocate(oConnect:aFieldModifier, 10000)
       oConnect:nTCCompat := 2
       IF len(aRet) > 0
          cLast := aRet[1, 1]
@@ -1120,8 +1120,8 @@ FUNCTION SR_ReloadMLHash(oConnect)
    oConnect:exec("SELECT TABLE_ , COLUMN_, TYPE_, LEN_, DEC_ FROM " + SR_GetToolsOwner() + "SR_MGMNTLANG", .F., .T., @aRet)
    oConnect:commit()
 
-   hMultilangColumns := Hash()
-   HAllocate(hMultilangColumns, max(10, len(aRet)))
+   hMultilangColumns := hb_Hash()
+   hb_HAllocate(hMultilangColumns, max(10, len(aRet)))
 
    FOR EACH aCol IN aRet
       hMultilangColumns[aCol[1] + aCol[2]] := aCol
@@ -1142,10 +1142,10 @@ RETURN NIL
 FUNCTION GetMLHash(cTab, cCol)
 
    LOCAL cKey := PadR(upper(cTab), 50) + PadR(upper(cCol), 50)
-   LOCAL nPos := HGetPos(hMultilangColumns, cKey)
+   LOCAL nPos := hb_HPos(hMultilangColumns, cKey)
 
    IF nPos > 0
-      RETURN HGetValueAt(hMultilangColumns, nPos)
+      RETURN hb_HValueAt(hMultilangColumns, nPos)
    ENDIF
 
 RETURN NIL

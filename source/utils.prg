@@ -1156,7 +1156,7 @@ ENDCLASS
 
 METHOD Haeval(bExpr) CLASS SqlFastHash
 
-RETURN Heval(::hHash, bExpr)
+RETURN hb_Heval(::hHash, bExpr)
 
 /*------------------------------------------------------------------------*/
 
@@ -1164,9 +1164,9 @@ METHOD New(nPartSize) CLASS SqlFastHash
 
    ::nPartSize := nPartSize
    ::hHash := {=>}
-   IF nPartSize != NIL
-      HSetPartition(::hHash, nPartSize)
-   ENDIF
+   //IF nPartSize != NIL // TODO: Harbour dont have HSetPartition
+   //   HSetPartition(::hHash, nPartSize)
+   //ENDIF
 
 RETURN Self
 
@@ -1189,10 +1189,10 @@ METHOD Find(uHashKey, nIndex, nPart) CLASS SqlFastHash
 
    LOCAL aData
 
-   nIndex := HGetPos(::hHash, uHashKey)
+   nIndex := hb_HPos(::hHash, uHashKey)
 
    IF nIndex > 0
-      aData := HGetValueAt(::hHash, nIndex)
+      aData := hb_HValueAt(::hHash, nIndex)
    ENDIF
 
    nPart := 1     /* Compatible with old version */
@@ -1205,10 +1205,10 @@ METHOD Delete(uHashKey) CLASS SqlFastHash
 
    LOCAL nIndex := 0
 
-   nIndex := HGetPos(::hHash, uHashKey)
+   nIndex := hb_HPos(::hHash, uHashKey)
 
    IF nIndex > 0
-      HDelAt(::hHash, nIndex)
+      hb_HDelAt(::hHash, nIndex)
       RETURN .T.
    ENDIF
 
@@ -1220,10 +1220,10 @@ METHOD Update(uHashKey, uValue) CLASS SqlFastHash
 
    LOCAL nIndex := 0
 
-   nIndex := HGetPos(::hHash, uHashKey)
+   nIndex := hb_HPos(::hHash, uHashKey)
 
    IF nIndex > 0
-      HSetValueAt(::hHash, nIndex, uValue)
+      hb_HValueAt(::hHash, nIndex, uValue)
       RETURN .T.
    ENDIF
 
@@ -1235,7 +1235,7 @@ METHOD UpdateIndex(nPos, nPart, uValue) CLASS SqlFastHash
 
    /* nPart not used - Compatible with old version */
    HB_SYMBOL_UNUSED(nPart)
-   HSetValueAt(::hHash, nPos, uValue)
+   hb_HValueAt(::hHash, nPos, uValue)
 
 RETURN .F.
 

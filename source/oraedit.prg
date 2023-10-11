@@ -1,7 +1,7 @@
 REQUEST ADS
 #include "ads.ch"
 
-STATIC hHashData :=hash()
+STATIC hHashData := hb_hash()
 
 STATIC TRACE_STRUCT   := { ;
                               { "USUARIO",    "C", 10, 0 },;
@@ -162,7 +162,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop,;
    LOCAL acolsadded := {}
    LOCAL cTmp
 
-//hHashData :=hash()
+//hHashData := hb_hash()
 set server local
 SR_SetRDDTemp("ADT")
  IF Empty(axColumns) .OR. !HB_ISARRAY(axColumns)
@@ -264,17 +264,17 @@ endif
   fclose(HB_FTEMPCREATE(".", "tmp", , @cFile))
   nRet := DE_CONT
   lAppend := .F.
-hHashData[nAliasTmp]:=hash()
+hHashData[nAliasTmp] := hb_hash()
   
 if nAliasTmp ==0
    cAlias := 'tmpedit'
    nAliasTmp++
-   hHashData[nAliasTmp]:=hash()
+   hHashData[nAliasTmp] := hb_hash()
    hHashData[nAliasTmp]["cFile"]:=strtran(cfile, ".tmp", "")
 else
    cAlias := 'tmpedit'+strzero(nAliasTmp, 3)
    nAliasTmp++
-   hHashData[nAliasTmp]:=hash()
+   hHashData[nAliasTmp] := hb_hash()
    hHashData[nAliasTmp]["cFile"]:=strtran(cfile, ".tmp", "")   
 endif   
 hHashData[nAliasTmp]["eof"] := .F.

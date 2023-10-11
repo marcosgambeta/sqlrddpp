@@ -48,8 +48,8 @@ REQUEST ADS
 #include "hbclass.ch"
 #include "ads.ch"
 
-STATIC aOraclipHash := hash()
-STATIC aOraClipCursors := hash()
+STATIC aOraclipHash := hb_hash()
+STATIC aOraClipCursors := hb_hash()
 STATIC nIdCursor := 1
 STATIC hplVars := {}
 STATIC nlasterror := 0
@@ -399,9 +399,9 @@ RETURN nError
 FUNCTION OraOpen(n, ncursor)
 
    nCursor := nIdCursor
-   aOraclipHash[n] := hash()
-   aOraclipHash[n][nIdCursor] := hash()
-   aOraClipCursors[nIdCursor] := hash()
+   aOraclipHash[n] := hb_hash()
+   aOraclipHash[n][nIdCursor] := hb_hash()
+   aOraClipCursors[nIdCursor] := hb_hash()
    aOraClipCursors[nIdCursor]["oraseek"] := .F.
    aOraClipCursors[nIdCursor]["cursoropen"] := .F.
    ++nIdCursor
@@ -426,7 +426,7 @@ FUNCTION OraLogon(cCnxName, cUser, cPwd, cAlias, nCnxType)
    nRet := sr_addconnection(CONNECT_ORACLE, cstring)
 
    IF nRet > 0
-      aOraclipHash[cCnxName] := hash()
+      aOraclipHash[cCnxName] := hb_hash()
       aOraclipHash[cCnxName]["nRet"] := nRet
       aOraclipHash[cCnxName]["alias"] := cAlias
       aOraclipHash[cCnxName]["time"] := dtoc(date()) + "-" + time()
@@ -885,9 +885,9 @@ RETURN OraOpentmp(n, @ncursor)
 FUNCTION OraOpentmp(n, ncursor)
 
    nCursor := nIdCursor
-   aOraclipHash[n] := hash()
-   aOraclipHash[n][nIdCursor] := hash()
-   aOraClipCursors[nIdCursor] := hash()
+   aOraclipHash[n] := hb_hash()
+   aOraclipHash[n][nIdCursor] := hb_hash()
+   aOraClipCursors[nIdCursor] := hb_hash()
    aOraClipCursors[nIdCursor]["cursoropen"] := .F.
    ++nIdCursor
 
