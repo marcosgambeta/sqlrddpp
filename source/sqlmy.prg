@@ -197,7 +197,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ::aFields := aFields
 
    FOR EACH aFld IN ::aFields
-      aFld[FIELD_ENUM] := hb_enumIndex()
+      aFld[FIELD_ENUM] := aFld:__enumIndex()
    NEXT
 
    If lReSelect .AND. !lLoadCache

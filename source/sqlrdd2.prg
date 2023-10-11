@@ -739,7 +739,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
             aThisIndex[INDEXMAN_FOR_EXPRESS] := ""
             aThisIndex[INDEXMAN_COLUMNS] := ""
             aThisIndex[INDEXMAN_TAG] := aInd[1]
-            aThisIndex[INDEXMAN_TAGNUM] := StrZero(HB_EnumIndex(), 6)
+            aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
             aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
             aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
             aThisIndex[INDEXMAN_FOR_COLPOS] := 0
@@ -804,7 +804,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
                aThisIndex[INDEXMAN_FOR_EXPRESS] := ""
                aThisIndex[INDEXMAN_COLUMNS] := ""
                aThisIndex[INDEXMAN_TAG] := rtrim(aInd[1])
-               aThisIndex[INDEXMAN_TAGNUM] := StrZero(HB_EnumIndex(), 6)
+               aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
                aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                aThisIndex[INDEXMAN_FOR_COLPOS] := 0
@@ -852,7 +852,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
                aThisIndex[INDEXMAN_FOR_EXPRESS] := ""
                aThisIndex[INDEXMAN_COLUMNS] := ""
                aThisIndex[INDEXMAN_TAG] := Upper(rtrim(aInd[2]))
-               aThisIndex[INDEXMAN_TAGNUM] := StrZero(HB_EnumIndex(), 6)
+               aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
                aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                aThisIndex[INDEXMAN_FOR_COLPOS] := 0
@@ -889,7 +889,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
                   aThisIndex[INDEXMAN_FOR_EXPRESS] := ""
                   aThisIndex[INDEXMAN_COLUMNS] := ""
                   aThisIndex[INDEXMAN_TAG] := rtrim(cLast)
-                  aThisIndex[INDEXMAN_TAGNUM] := StrZero(HB_EnumIndex(), 6)
+                  aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
                   aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                   aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                   aThisIndex[INDEXMAN_FOR_COLPOS] := 0
@@ -917,7 +917,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
                aThisIndex[INDEXMAN_FOR_EXPRESS] := ""
                aThisIndex[INDEXMAN_COLUMNS] := ""
                aThisIndex[INDEXMAN_TAG] := rtrim(cLast)
-               aThisIndex[INDEXMAN_TAGNUM] := StrZero(HB_EnumIndex(), 6)
+               aThisIndex[INDEXMAN_TAGNUM] := StrZero(HB_EnumIndex(), 6) // TODO: HB_ENUMINDEX outside of a FOR EACH
                aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                aThisIndex[INDEXMAN_FOR_COLPOS] := 0
@@ -959,7 +959,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
                aThisIndex[INDEXMAN_FOR_EXPRESS] := ""
                aThisIndex[INDEXMAN_COLUMNS] := ""
                aThisIndex[INDEXMAN_TAG] := rtrim(aInd[1])
-               aThisIndex[INDEXMAN_TAGNUM] := StrZero(HB_EnumIndex(), 6)
+               aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
                aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                aThisIndex[INDEXMAN_FOR_COLPOS] := 0
@@ -3125,24 +3125,24 @@ METHOD UpdateCache(aResultSet) CLASS SR_WORKAREA
    IF SR_SetMultiLang()
       IF ::aInfo[AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
-            IF HB_ISHASH(::aLocalBuffer[hb_enumIndex()])
-               IF ::aFields[hb_enumIndex(), FIELD_TYPE] $ "CM"
-                  (::aLocalBuffer[hb_enumIndex()])[SR_SetBaseLang()] := PadR(uVal, ::aFields[hb_enumIndex(), FIELD_LEN])
+            IF HB_ISHASH(::aLocalBuffer[uVal:__enumIndex()])
+               IF ::aFields[uVal:__enumIndex(), FIELD_TYPE] $ "CM"
+                  (::aLocalBuffer[uVal:__enumIndex()])[SR_SetBaseLang()] := PadR(uVal, ::aFields[uVal:__enumIndex(), FIELD_LEN])
                ELSE
-                  (::aLocalBuffer[hb_enumIndex()])[SR_SetBaseLang()] := uVal
+                  (::aLocalBuffer[uVal:__enumIndex()])[SR_SetBaseLang()] := uVal
                ENDIF
-               ::aOldBuffer[hb_enumIndex()] := ::aLocalBuffer[hb_enumIndex()]
+               ::aOldBuffer[uVal:__enumIndex()] := ::aLocalBuffer[uVal:__enumIndex()]
             ELSE
-               ::aLocalBuffer[hb_enumIndex()] := uVal
-               ::aOldBuffer[hb_enumIndex()] := uVal
+               ::aLocalBuffer[uVal:__enumIndex()] := uVal
+               ::aOldBuffer[uVal:__enumIndex()] := uVal
             ENDIF
          NEXT
       ENDIF
    ELSE
       IF ::aInfo[AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
-            ::aLocalBuffer[hb_enumIndex()] := uVal
-            ::aOldBuffer[hb_enumIndex()] := uVal
+            ::aLocalBuffer[uVal:__enumIndex()] := uVal
+            ::aOldBuffer[uVal:__enumIndex()] := uVal
          NEXT
       ENDIF
    ENDIF

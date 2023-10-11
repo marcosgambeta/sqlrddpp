@@ -275,8 +275,8 @@ else
    cAlias := 'tmpedit'+strzero(nAliasTmp, 3)
    nAliasTmp++
    hHashData[nAliasTmp] := hb_hash()
-   hHashData[nAliasTmp]["cFile"]:=strtran(cfile, ".tmp", "")   
-endif   
+   hHashData[nAliasTmp]["cFile"]:=strtran(cfile, ".tmp", "")
+endif
 hHashData[nAliasTmp]["eof"] := .F.
 refreshFullData(csql, cAlias, cfile, nHigerBound, nLowerBound, nStep)
 
@@ -314,7 +314,7 @@ nLowerBound +=nHigerBound
       axColumns := Array(FCount())
 
       FOR EACH i IN axColumns
-         i := FieldName(HB_EnumIndex())
+         i := FieldName(i:__EnumIndex())
       NEXT
 
   ENDIF
@@ -449,7 +449,7 @@ nLowerBound +=nHigerBound
 
     IF !Empty(i)
 
-       nIndex := HB_EnumIndex()
+       nIndex := i:__EnumIndex()
        cTmp := ""
        if "||" $ i
           n := Ascan(atempcols, { |x| x[3] == i })
