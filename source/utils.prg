@@ -570,7 +570,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN 'NULL'
       ENDIF
       Set(_SET_DATEFORMAT, "yyyy-mm-dd")
-      cRet := ttoc(uData)
+      cRet := hb_ttoc(uData)
       Set(_SET_DATEFORMAT, cOldSet)
       RETURN "'" + cRet + "'"
 
@@ -646,7 +646,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       OTHERWISE
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
-         cRet := ttoc(uData)
+         cRet := hb_ttoc(uData)
          Set(_SET_DATEFORMAT, cOldSet)
          RETURN "'" + cRet + "'"
       ENDSWITCH
@@ -820,7 +820,7 @@ FUNCTION SR_Val2CharQ(uData)
    CASE "D"
       RETURN dtoc(uData)
    CASE "T"
-      RETURN ttoc(uData)
+      RETURN hb_ttoc(uData)
    CASE "L"
       RETURN iif(uData, ".T.", ".F.")
    CASE "A"
@@ -1618,7 +1618,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          xMessage := DToC(xMessage)
          EXIT
       CASE "T"
-         xMessage := TToC(xMessage)
+         xMessage := hb_TToC(xMessage)
          EXIT
       CASE "L"
          xMessage := iif(xMessage, ".T.", ".F.")

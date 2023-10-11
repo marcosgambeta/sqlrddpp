@@ -2329,7 +2329,7 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
          RETURN "NULL"
       ENDIF
       Set(_SET_DATEFORMAT, "yyyy-mm-dd")
-      cRet := ttoc(uData)
+      cRet := hb_ttoc(uData)
       Set(_SET_DATEFORMAT, cOldSet)
       RETURN "'" + cRet + "'"
    OTHERWISE
@@ -2401,7 +2401,7 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
          RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       OTHERWISE
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
-         cRet := ttoc(uData)
+         cRet := hb_ttoc(uData)
          Set(_SET_DATEFORMAT, cOldSet)
          RETURN "'" + cRet + "'"
       ENDSWITCH
