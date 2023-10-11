@@ -687,7 +687,7 @@ FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
          IF !NetErr()
             exit
          ENDIF
-         ThreadSleep(500)
+         hb_idleSleep(500 / 1000)
       ENDDO
 
       LONG_QRY->(dbAppend())
@@ -757,7 +757,7 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
          IF !NetErr()
             EXIT
          ENDIF
-         ThreadSleep(500)
+         hb_idleSleep(500 / 1000)
       ENDDO
 
       SQLLOG->(dbAppend())

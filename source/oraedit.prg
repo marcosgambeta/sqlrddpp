@@ -1630,7 +1630,7 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
          If !NetErr()
             EXIT
          EndIf
-         ThreadSleep(500)
+         hb_idleSleep(500 / 1000)
       ENDDO
       if "INSERT" $ upper(cComm)
          SQLLOG->(dbAppend())
@@ -1663,7 +1663,7 @@ FUNCTION GetLastInsertCommand(cTable)
          IF !NetErr()
             EXIT
          ENDIF
-         ThreadSleep(500)
+         hb_idleSleep(500 / 1000)
       ENDDO
 
       SQLLOG->(dbgobottom())
