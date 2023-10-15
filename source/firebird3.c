@@ -54,7 +54,7 @@
 #include "sqlodbc.ch"
 
 //#include "firebird.h"
-#include "ibase3.h"
+#include "firebird3/ibase.h"
 #include "firebird3.ch"
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
