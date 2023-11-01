@@ -8,8 +8,8 @@
 
 -Iinclude
 -Iinclude/firebird
+-Iinclude/mysql
 -Isource
--Isource/mysql
 -Isource/oci
 -Isource/pgsql
 
