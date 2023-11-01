@@ -9,8 +9,8 @@
 -Iinclude
 -Iinclude/firebird
 -Iinclude/mysql
+-Iinclude/oci
 -Isource
--Isource/oci
 -Isource/pgsql
 
 source/exprobjs.prg
