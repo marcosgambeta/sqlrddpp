@@ -1897,4 +1897,4 @@ HB_FUNC( SETORAHANDLE )
    }
 }
 
-#pragma BEGINDUMP
+#pragma ENDDUMP
