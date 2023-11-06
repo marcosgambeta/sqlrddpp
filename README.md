@@ -61,3 +61,7 @@ https://www.postgresql.org
 
 Firebird  
 https://firebirdsql.org  
+
+SQLRDD++ v2  
+https://github.com/marcosgambeta/sqlrddpp-v2  
+C++ version for Harbour++
