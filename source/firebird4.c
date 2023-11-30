@@ -973,7 +973,7 @@ static void FBFieldGet4(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
 
-   lType = (HB_LONG) hb_arrayGetNL(pField, 6);
+   lType = hb_arrayGetNL(pField, 6);
    lLen = hb_arrayGetNL(pField, 3);
    lDec = hb_arrayGetNL(pField, 4);
 
@@ -1185,7 +1185,7 @@ HB_FUNC( FBLINEPROCESSED4 )
          temp = hb_itemNew(NULL);
          var = session->sqlda->sqlvar;
          lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), FIELD_ENUM);
-         //lType = (HB_LONG) hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 6);
+         //lType = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 6);
          lLen = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 3);
          lDec = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 4);
 
@@ -1301,7 +1301,7 @@ HB_FUNC( FBLINEPROCESSED4 )
                         //sprintf(p, "%*" ISC_INT64_FORMAT "d%", field_width, (ISC_INT64) value);
                         //hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d", field_width, (ISC_INT64) value);
                         PHB_ITEM pField = hb_arrayGetItemPtr(pFields, icol);
-                        HB_LONG lType = (HB_LONG) hb_arrayGetNL(pField, 6);
+                        HB_LONG lType = hb_arrayGetNL(pField, 6);
                         if( lType == SQL_BIT || lType == SQL_SMALLINT ) {
                            hb_itemPutL(temp, (HB_BOOL) value);
                         } else {

@@ -2437,7 +2437,7 @@ static HB_ERRCODE sqlExOraGoToId(SQLEXORAAREAP thiswa, PHB_ITEM pItem)
    }
 
    if( HB_IS_NUMERIC(pItem) ) {
-      return SELF_GOTO(&thiswa->sqlarea.area, (HB_LONG) hb_itemGetNL(pItem));
+      return SELF_GOTO(&thiswa->sqlarea.area, hb_itemGetNL(pItem));
    } else {
       commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
@@ -4331,9 +4331,9 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOn
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
 
-   lType = (HB_LONG) hb_arrayGetNL(pField, 6);
-   lLen = (HB_LONG) hb_arrayGetNL(pField, 3);
-   lDec = (HB_LONG) hb_arrayGetNL(pField, 4);
+   lType = hb_arrayGetNL(pField, 6);
+   lLen = hb_arrayGetNL(pField, 3);
+   lDec = hb_arrayGetNL(pField, 4);
 
    // if( lLenBuff <= 0 ) // database content is NULL
    if( OCI_IsNull(rs, iField) ) {

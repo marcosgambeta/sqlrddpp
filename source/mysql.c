@@ -227,7 +227,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_SIZE lLenB
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
 
-   lType = (HB_LONG) hb_arrayGetNL(pField, FIELD_DOMAIN);
+   lType = hb_arrayGetNL(pField, FIELD_DOMAIN);
    lLen = hb_arrayGetNL(pField, FIELD_LEN);
    lDec = hb_arrayGetNL(pField, FIELD_DEC);
 

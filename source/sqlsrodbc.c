@@ -330,7 +330,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char * bBuffer, HB_ISIZ lLenB
    PHB_ITEM pTemp;
 
    cType = (char *) hb_arrayGetCPtr(pField, FIELD_TYPE);
-   lType = (HB_LONG) hb_arrayGetNL(pField, FIELD_DOMAIN);
+   lType = hb_arrayGetNL(pField, FIELD_DOMAIN);
    lLen = hb_arrayGetNL(pField, FIELD_LEN);
    lDec = hb_arrayGetNL(pField, FIELD_DEC);
 
@@ -1140,7 +1140,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQuery
    SQLRETURN res;
 
    cType = (char *) hb_arrayGetCPtr(pField, FIELD_TYPE);
-   lType = (HB_LONG) hb_arrayGetNL(pField, FIELD_DOMAIN);
+   lType = hb_arrayGetNL(pField, FIELD_DOMAIN);
    lLen = hb_arrayGetNL(pField, FIELD_LEN);
    lDec = hb_arrayGetNL(pField, FIELD_DEC);
    iLen = SQL_NULL_DATA;

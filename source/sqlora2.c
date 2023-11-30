@@ -662,7 +662,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);
 
-   lType = (HB_LONG) hb_arrayGetNL(pField, 6);
+   lType = hb_arrayGetNL(pField, 6);
    lLen = hb_arrayGetNS(pField, 3);
    lDec = hb_arrayGetNS(pField, 4);
 

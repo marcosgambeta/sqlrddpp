@@ -491,7 +491,7 @@ static HB_ERRCODE sqlGoToId(SQLAREAP thiswa, PHB_ITEM pItem)
    thiswa->wasdel = 0;
 
    if( HB_IS_NUMERIC(pItem) ) {
-      return SELF_GOTO(&thiswa->area, (HB_LONG) hb_itemGetNL(pItem));
+      return SELF_GOTO(&thiswa->area, hb_itemGetNL(pItem));
    } else {
       if( hb_arrayGetL(thiswa->aInfo, AINFO_HOT) ) {
          hb_objSendMessage(thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0);
