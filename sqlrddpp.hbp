@@ -2,7 +2,7 @@
 
 -olib/${hb_plat}/${hb_comp}/${hb_name}
 
--prgflag=-n -w -es2 -gc3
+-prgflag=-n -w2 -es2 -gc3
 
 -inc
 
@@ -69,3 +69,5 @@ sqlrddpp.hbx
 {allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
 
 xhb.hbc
+
+$hb_pkg_install.hbm

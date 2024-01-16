@@ -8861,7 +8861,8 @@ RETURN cStr1 < cStr2
 
 /*------------------------------------------------------------------------*/
 
-STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound)
+#if 0
+STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound) // function not used
 
    LOCAL nRet := 0
    LOCAL first
@@ -8943,6 +8944,7 @@ STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound)
    ENDIF
 
 RETURN nRet
+#endif
 
 /*------------------------------------------------------------------------*/
 
