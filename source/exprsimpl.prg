@@ -115,6 +115,8 @@ METHOD SimplifyComposition(oExpression) CLASS ExpressionSimplifierBase
       newClipperString := newOperands[1]:oClipperExpression:cValue + " " + oExpression:oOperator:aSymbols[1] + " " + newOperands[2]:oClipperExpression:cValue
       RETURN ::NewComposedExpression(oExpression:cContext, newClipperString, newOperands[1], oExpression:oOperator, newOperands[2])
    ENDIF
+   
+   HB_SYMBOL_UNUSED(oSimpleExpression)
 
 RETURN oExpression
 
