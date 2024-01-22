@@ -207,7 +207,7 @@ CLASS Dictionary
    METHOD Clear()
 
    EXPORTED:
-   METHOD lContainsKey()
+   METHOD lContainsKey(xKey)
 
 ENDCLASS
 
