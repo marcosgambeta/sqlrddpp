@@ -452,10 +452,10 @@ CLASS ClipperExpression
    ACCESS nLength
 
    EXPORTED:
-   METHOD Evaluate()
+   METHOD Evaluate(lIgnoreRelations)
 
    EXPORTED:
-   METHOD new(pContext, pValue)
+   METHOD new(pContext, pValue, pIgnoreRelations)
 
 ENDCLASS
 
@@ -500,6 +500,8 @@ METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
       oErr:description += ";The value unseccessfully evaluated was : " + ::cValue   + ";"
       throw(oErr)
    END SEQUENCE
+   
+   HB_SYMBOL_UNUSED(nseconds)
 
 RETURN result
 
