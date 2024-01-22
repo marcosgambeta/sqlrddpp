@@ -59,7 +59,7 @@ CLASS ParserBase
    METHOD Parse(cExpression)
 
    PROTECTED:
-   METHOD InternParse(cExpression)
+   METHOD InternParse(cExpression, cAlias)
 
    PROTECTED:
    METHOD GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) VIRTUAL
