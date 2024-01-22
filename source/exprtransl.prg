@@ -106,10 +106,10 @@ CLASS ExpressionTranslator
    METHOD GetTranslation(oCondition)
 
    EXPORTED:
-   METHOD Translate(oExpression)
+   METHOD Translate(oExpression, x)
 
    PROTECTED:
-   METHOD InternalTranslate(oExpression)
+   METHOD InternalTranslate(oExpression, x)
 
    PROTECTED:
    METHOD TranslateCondition(oCondition)
@@ -130,13 +130,13 @@ CLASS ExpressionTranslator
    METHOD TranslateValueExpression(oValueExpression)
 
    PROTECTED:
-   METHOD TranslateComposition(oExpression)
+   METHOD TranslateComposition(oSerialComposition) //METHOD TranslateComposition(oExpression)
 
    PROTECTED:
    METHOD TranslateOperand(oOperand, oOperator)
 
-   PROTECTED:
-   METHOD new(pWorkarea, pFixVariables)
+   //PROTECTED:
+   //METHOD new(pWorkarea, pFixVariables) (disabled/duplicated)
 
    PROTECTED:
    METHOD GetSQLOperator(oOperator)
@@ -328,6 +328,8 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
       #endif
       result := NIL
    END SEQUENCE
+
+   HB_SYMBOL_UNUSED(oErr)
 
 RETURN result
 
@@ -557,8 +559,8 @@ CLASS MSSQLExpressionTranslator FROM ExpressionTranslator
    PROTECTED:
    DATA cFalse INIT "0"
 
-   EXPORTED:
-   METHOD new(pWorkarea, pFixVariables)
+   //EXPORTED:
+   //METHOD new(pWorkarea, pFixVariables) (disabled/duplicated)
 
    PROTECTED:
    METHOD GetFunctionName(oFunctionExpression)
