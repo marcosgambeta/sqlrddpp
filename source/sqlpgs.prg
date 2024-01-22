@@ -64,7 +64,7 @@ CLASS SR_PGS FROM SR_CONNECTION
    METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
    METHOD End()
    METHOD LastError()
-   METHOD Commit()
+   METHOD Commit(lNoLog)
    METHOD RollBack()
    METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
    METHOD ExecuteRaw(cCommand)
@@ -167,6 +167,14 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    LOCAL cVlr := ""
    LOCAL cTbl
    LOCAL cOwner := "public"
+   
+   HB_SYMBOL_UNUSED(nFields)
+   HB_SYMBOL_UNUSED(nType)
+   HB_SYMBOL_UNUSED(nLen)
+   HB_SYMBOL_UNUSED(nNull)
+   HB_SYMBOL_UNUSED(aFields)
+   HB_SYMBOL_UNUSED(nDec)
+   HB_SYMBOL_UNUSED(cVlr)
 
    DEFAULT lReSelect TO .T.
    DEFAULT lLoadCache TO .F.
@@ -243,6 +251,12 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL nlen
    LOCAL s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
    LOCAL cString
+   
+   HB_SYMBOL_UNUSED(hEnv)
+   HB_SYMBOL_UNUSED(hDbc)
+   HB_SYMBOL_UNUSED(cVersion)
+   HB_SYMBOL_UNUSED(cSystemVers)
+   HB_SYMBOL_UNUSED(cBuff)
 
    HB_SYMBOL_UNUSED(cDSN)
    HB_SYMBOL_UNUSED(cUser)
