@@ -60,6 +60,8 @@
 #define ARRAY_BLOCK                  500
 #define MINIMAL_MYSQL_SUPPORTED  40105
 
+#pragma -w2
+
 CLASS SR_MYSQL FROM SR_CONNECTION
 
    DATA aCurrLine
@@ -161,6 +163,13 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    LOCAL nRet
    LOCAL cVlr := ""
    LOCAL aFld
+   
+   HB_SYMBOL_UNUSED(nType)
+   HB_SYMBOL_UNUSED(nLen)
+   HB_SYMBOL_UNUSED(nNull)
+   HB_SYMBOL_UNUSED(aFields)
+   HB_SYMBOL_UNUSED(nDec)
+   HB_SYMBOL_UNUSED(cVlr)
 
    DEFAULT lReSelect    TO .T.
    DEFAULT lLoadCache   TO .F.
@@ -223,6 +232,19 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL cSystemVers := ""
    LOCAL cBuff := ""
    LOCAL nVersionp
+
+   /*
+   TOFIX:
+   -w3 warning
+   source\sqlmy.prg(...) Warning W0032  Variable 'NVERSIONP' is assigned but not used in function 'SR_MYSQL_CONNECTRAW(...)'
+   HB_SYMBOL_UNUSED(nVersionp) do not work
+   */
+
+   HB_SYMBOL_UNUSED(hEnv)
+   HB_SYMBOL_UNUSED(hDbc)
+   HB_SYMBOL_UNUSED(cVersion)
+   HB_SYMBOL_UNUSED(cSystemVers)
+   HB_SYMBOL_UNUSED(cBuff)
 
    HB_SYMBOL_UNUSED(cDSN)
    HB_SYMBOL_UNUSED(cUser)
