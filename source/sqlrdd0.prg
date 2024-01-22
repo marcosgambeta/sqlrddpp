@@ -623,6 +623,8 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
    LOCAL cStartingVersion
    LOCAL cSql
    LOCAL lOld
+   
+   HB_SYMBOL_UNUSED(cRet)
 
    FOR i := 1 TO 2
 
@@ -1454,7 +1456,7 @@ RETURN NIL
 FUNCTION SR_SetTimeTrace(nConnection, nMilisseconds)
 
    LOCAL nOld
-
+   
    DEFAULT nActiveConnection TO 0
    DEFAULT nConnection TO nActiveConnection
    DEFAULT aConnections TO {}
@@ -1462,6 +1464,8 @@ FUNCTION SR_SetTimeTrace(nConnection, nMilisseconds)
    DEFAULT nMilisseconds TO aConnections[nConnection]:nTimeTraceMin
    nOld := aConnections[nConnection]:nTimeTraceMin
    aConnections[nConnection]:nTimeTraceMin := nMilisseconds
+
+   HB_SYMBOL_UNUSED(nOld)
 
 RETURN NIL
 
@@ -1587,6 +1591,8 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
    LOCAL lTag := .F.
    LOCAL cIndex
    LOCAL ctempIndex := ""
+   
+   HB_SYMBOL_UNUSED(ctempIndex)
 
    oCnn := SR_GetConnection()
 
@@ -1690,6 +1696,8 @@ FUNCTION SR_DropTable(cFileName, cOwner)
    LOCAL oCnn
    LOCAL lRet
    LOCAL aRet := {}
+   
+   HB_SYMBOL_UNUSED(aRet)
 
    oCnn := SR_GetConnection()
 
@@ -1743,7 +1751,7 @@ FUNCTION SR_ListIndex(cFilename)
    LOCAL nRet
    LOCAL aRet := {}
    LOCAL i
-
+   
    oCnn := SR_GetConnection()
 
    aRet := eval(SR_GetIndexInfoBlock(), cFilename)
@@ -1755,6 +1763,8 @@ FUNCTION SR_ListIndex(cFilename)
    FOR i := 1 TO len(aRet)
       aRet[i, 1] := alltrim(aRet[i, 1])
    NEXT i
+
+   HB_SYMBOL_UNUSED(nRet)
 
 RETURN aRet
 
@@ -1799,6 +1809,7 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
 
    aRet := {}
    nRet := oCnn:exec("SELECT * FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES WHERE TABLE_ = '" + upper(cNewName) + "'", .F., .T., @aRet)
+   HB_SYMBOL_UNUSED(nRet)
    IF len(aRet) > 0
       // Destination EXISTS !!
       RETURN .F.
@@ -1818,6 +1829,7 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
    CASE SYSTEMID_MARIADB
       IF oCnn:nSystemID == SYSTEMID_POSTGR
          nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cTable + "_sq", oCnn:nSystemID) + " RENAME TO " + cOwner + SR_DBQUALIFY(cNewName+"_sq", oCnn:nSystemID), .F.)
+         HB_SYMBOL_UNUSED(nRet)
       ENDIF
 
       nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cTable, oCnn:nSystemID) + " RENAME TO " + cOwner + SR_DBQUALIFY(cNewName, oCnn:nSystemID), .F.)
@@ -1827,9 +1839,11 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
 
       IF oCnn:nSystemID == SYSTEMID_POSTGR
          nRet := oCnn:exec("ALTER TABLE " + cOwner + SR_DBQUALIFY(cNewName, oCnn:nSystemID) + " ALTER COLUMN " + SR_RecnoName() + " SET DEFAULT nextval('" + lower(cNewName) + "_sq'::regclass)")
+         HB_SYMBOL_UNUSED(nRet)
       ENDIF
       IF oCnn:nSystemID == SYSTEMID_ORACLE
          nRet := oCnn:exec("RENAME " + cOwner + cTable + "_sq" + " TO " + cOwner + cNewName+"_sq", .F.)
+         HB_SYMBOL_UNUSED(nRet)
       ENDIF
       EXIT
 
@@ -1862,6 +1876,8 @@ FUNCTION SR_ListCreatedTables()
    nRet := oCnn:exec("SELECT TABLE_ FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES", .F., .T., @aRet)
 
    aEval(aRet, {|x| aadd(aRet2, alltrim(x[1])) })
+
+   HB_SYMBOL_UNUSED(nRet)
 
 RETURN aRet2
 
