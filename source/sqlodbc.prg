@@ -71,7 +71,7 @@ CLASS SR_ODBC FROM SR_CONNECTION
    METHOD SetOptions(nType, uBuffer)
    METHOD GetOptions(nType)
    METHOD LastError()
-   METHOD Commit()
+   METHOD Commit(lNoLog)
    METHOD RollBack()
    METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
    METHOD ExecuteRaw(cCommand)
@@ -80,11 +80,12 @@ CLASS SR_ODBC FROM SR_CONNECTION
    METHOD FreeStatement()
    METHOD FetchRaw(lTranslate, aFields)
    METHOD FieldGet(nField, aFields, lTranslate)
-   METHOD MoreResults(aArray)
+   METHOD MoreResults(aArray, lTranslate)
    METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)
    METHOD DriverCatTables()
    METHOD Getline(aFields, lTranslate, aArray)
-   METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, nBlockPos, hnRecno, lFetchAll, aFetch, uRecord, nPos)
+   //METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, nBlockPos, hnRecno, lFetchAll, aFetch, uRecord, nPos)
+   METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos)
 
 ENDCLASS
 
@@ -168,6 +169,8 @@ METHOD DriverCatTables() CLASS SR_ODBC
    ::FreeStatement()
    aSize(aArray, n)
 
+   HB_SYMBOL_UNUSED(nBlocks)
+
 RETURN aArray
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
@@ -242,6 +245,8 @@ METHOD AllocStatement() CLASS SR_ODBC
 
    LOCAL hStmtLocal := NIL
    LOCAL nRet := 0
+   
+   HB_SYMBOL_UNUSED(nRet)
 
    ::FreeStatement()
 
@@ -283,6 +288,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    LOCAL cVlr := ""
    //LOCAL nBfLn
    //LOCAL nOut
+
+   HB_SYMBOL_UNUSED(aFields)
+   HB_SYMBOL_UNUSED(cVlr)
 
    DEFAULT lReSelect    TO .T.
    DEFAULT lLoadCache   TO .F.
@@ -372,6 +380,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       ::FreeStatement()
    ENDIF
 
+   HB_SYMBOL_UNUSED(_nLen)
+
 RETURN aFields
 
 METHOD LastError() CLASS SR_ODBC
@@ -394,6 +404,9 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL cSystemVers := ""
    LOCAL cBuff := ""
    LOCAL aRet := {}
+   
+   HB_SYMBOL_UNUSED(cVersion)
+   HB_SYMBOL_UNUSED(cBuff)
 
    HB_SYMBOL_UNUSED( cDSN)
    HB_SYMBOL_UNUSED(cUser)
