@@ -168,6 +168,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    LOCAL cVlr := ""
    LOCAL aLocalPrecision := {}
 
+   HB_SYMBOL_UNUSED(aFields)
+   HB_SYMBOL_UNUSED(cVlr)
+
    DEFAULT lReSelect TO .T.
    DEFAULT lLoadCache TO .F.
    DEFAULT cWhere TO ""
@@ -230,6 +233,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    IF lReSelect .AND. !lLoadCache
       ::FreeStatement()
    ENDIF
+
+   HB_SYMBOL_UNUSED(_nLen)
 
 RETURN aFields
 
