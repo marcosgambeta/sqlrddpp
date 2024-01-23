@@ -235,7 +235,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
    IF result == NIL
       result := oExpression
    ENDIF
-   result:lSimplified = .T.
+   result:lSimplified := .T.
 
 RETURN result
 

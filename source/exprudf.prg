@@ -137,7 +137,7 @@ PROCEDURE aAddDistinct(aArray1, xValue, bSelector)
    LOCAL id
 
    IF bSelector == NIL
-      bSelector = {|x|x}
+      bSelector := {|x|x}
    ENDIF
    id := eval(bSelector, xValue)
    IF ascan(aArray1, {|x|id == eval(bSelector, x)}) == 0

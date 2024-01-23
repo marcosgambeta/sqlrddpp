@@ -320,7 +320,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::hStmt := NIL
    nret :=  SQLO_CONNECT(::cUser + "/" + ::cPassWord + "@" + ::cDtb, @hDbc)
    IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-      ::nRetCode = nRet
+      ::nRetCode := nRet
       ::hDbc := hDbc
       SR_MsgLogFile("Connection Error: " + ::lastError() + " - Connection string: " + ::cUser + "/" + Replicate("*", len(::cPassWord) ) + "@" + ::cDtb)
       RETURN Self

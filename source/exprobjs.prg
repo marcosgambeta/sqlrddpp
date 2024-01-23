@@ -377,7 +377,7 @@ ENDCLASS
 
 METHOD new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2) CLASS ComposedConditionBase
 
-   ::lDenied_ = pDenied
+   ::lDenied_ := pDenied
 
 RETURN ::new(pContext, pClipperString, /*pExpr,*/ pOperand1, pOperator, pOperand2)
 
@@ -478,7 +478,7 @@ METHOD GetType() CLASS ValueExpression
          ENDIF
          EXIT
       OTHERWISE
-         ::cType = "U"
+         ::cType := "U"
       ENDSWITCH
    ENDIF
 

@@ -2174,7 +2174,7 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
 
    FOR EACH aItem IN aCon
       aToken := hb_atokens(aItem,"=")
-      cBuff = Upper(aToken[1])
+      cBuff := Upper(aToken[1])
       SWITCH cBuff
       CASE "OCI"
          RETURN CONNECT_ORACLE

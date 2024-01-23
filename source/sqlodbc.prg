@@ -251,7 +251,7 @@ METHOD AllocStatement() CLASS SR_ODBC
    ::FreeStatement()
 
    IF (nRet := SR_AllocSt(::hDbc, @hStmtLocal)) == SQL_SUCCESS
-      ::hStmt = hStmtLocal
+      ::hStmt := hStmtLocal
    ELSE
       ::nRetCode := nRet
       ::RunTimeErr("", "SQLAllocStmt [NEW] Error" + SR_CRLF + SR_CRLF + ::LastError() + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)

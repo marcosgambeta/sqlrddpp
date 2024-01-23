@@ -300,7 +300,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
                         aadd(addedAliases, lower(aInitRelations[i]:oWorkArea2:cAlias))
                         aadd(aSortedRelations, aInitRelations[i])
                         adel(aInitRelations, i, .T.)
-                        lProgress = .T.
+                        lProgress := .T.
                         i--
                      ENDIF
                   NEXT i
