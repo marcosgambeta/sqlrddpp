@@ -1839,7 +1839,8 @@ METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
             IF ::oSql:nRetCode != SQL_SUCCESS
                IF ::oSql:nRetCode == SQL_ERROR
                   DEFAULT ::cLastComm TO ::oSql:cLastComm
-                  ::RunTimeErr("999", "[FetchLine Failure][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+                  ::RunTimeErr("999", "[FetchLine Failure][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
+                     "Last command sent to database : " + SR_CRLF + ::cLastComm)
                ENDIF
                IF nDirection == ORD_DIR_FWD
                   ::aInfo[AINFO_EOF_AT] := uRecord
@@ -1891,7 +1892,8 @@ METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
    OTHERWISE
       ::lNoData := .T.
       DEFAULT ::cLastComm TO ::oSql:cLastComm
-      ::RunTimeErr("999", "[Fetch Failure/First][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+      ::RunTimeErr("999", "[Fetch Failure/First][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
+         "Last command sent to database : " + SR_CRLF + ::cLastComm)
 
    ENDSWITCH
 
@@ -2689,7 +2691,8 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
             ENDIF
 
             IF ::oSql:Execute(::cUpd + cRet + cWh, , ::nLogMode) != SQL_SUCCESS
-               ::RuntimeErr("16", SR_Msg(16) + ::oSql:LastError() + SR_CRLF + SR_CRLF + SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+               ::RuntimeErr("16", SR_Msg(16) + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
+                  SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                ::dNextDt := NIL
                RETURN .F.
             ENDIF
@@ -4988,7 +4991,8 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
             IF ::oSql:nRetCode != SQL_SUCCESS
                IF ::oSql:nRetCode == SQL_ERROR
                   DEFAULT ::cLastComm TO ::oSql:cLastComm
-                  ::RunTimeErr("999", "[FetchLine Failure][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+                  ::RunTimeErr("999", "[FetchLine Failure][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
+                     "Last command sent to database : " + SR_CRLF + ::cLastComm)
                ENDIF
                IF nDirection == ORD_DIR_FWD
                   ::aInfo[AINFO_EOF_AT] := uRecord
@@ -5041,7 +5045,8 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
    OTHERWISE
       ::lNoData := .T.
       DEFAULT ::cLastComm TO ::oSql:cLastComm
-      ::RunTimeErr("999", "[Fetch Failure/First][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+      ::RunTimeErr("999", "[Fetch Failure/First][" + alltrim(str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
+         "Last command sent to database : " + SR_CRLF + ::cLastComm)
    ENDSWITCH
 
    ::oSql:FreeStatement()
@@ -5061,15 +5066,15 @@ METHOD sqlRecall() CLASS SR_WORKAREA
    IF ::lCanDel .AND. SR_UseDeleteds()
       IF ::hnDeleted > 0
          IF ::nTCCompat >= 4
-            IF  (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = ' ', R_E_C_D_E_L_ = 0 " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
+            IF (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = ' ', R_E_C_D_E_L_ = 0 " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
                ::RuntimeErr("13", SR_Msg(13) + ::oSql:LastError() + SR_CRLF + ;
-                        SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+                  SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                RETURN .F.
             ENDIF
          ELSE
-            IF  (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = ' ' " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
+            IF (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = ' ' " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
                ::RuntimeErr("13", SR_Msg(13) + ::oSql:LastError() + SR_CRLF + ;
-                        SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+                  SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                RETURN .F.
             ENDIF
          ENDIF
@@ -5099,16 +5104,16 @@ METHOD sqlPack() CLASS SR_WORKAREA
       IF ::hnDeleted > 0
          IF ::nTCCompat >= 2
             nRet := ::oSql:Execute(::cDel + " WHERE " + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = '*'", , ::nLogMode)
-            IF  nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. nRet != SQL_NO_DATA_FOUND
+            IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. nRet != SQL_NO_DATA_FOUND
                ::RuntimeErr("13", SR_Msg(13) + ::oSql:LastError() + SR_CRLF + ;
-                        SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+                  SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                RETURN .F.
             ENDIF
          ELSE
             nRet := ::oSql:Execute(::cDel + " WHERE " + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = 'T'", , ::nLogMode)
-            IF  nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. nRet != SQL_NO_DATA_FOUND
+            IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. nRet != SQL_NO_DATA_FOUND
                ::RuntimeErr("13", SR_Msg(13) + ::oSql:LastError() + SR_CRLF + ;
-                        SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+                  SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                RETURN .F.
             ENDIF
          ENDIF
@@ -5136,22 +5141,22 @@ METHOD sqlDeleteRec() CLASS SR_WORKAREA
          IF ::hnDeleted > 0 .AND. SR_UseDeleteds()
             IF ::nTCCompat >= 2
                IF ::nTCCompat >= 4
-                  IF  (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = '*', R_E_C_D_E_L_ = R_E_C_N_O_ " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
+                  IF (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = '*', R_E_C_D_E_L_ = R_E_C_N_O_ " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
                      ::RuntimeErr("13", SR_Msg(13) + ::oSql:LastError() + SR_CRLF + ;
-                              SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+                        SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                      RETURN .F.
                   ENDIF
                ELSE
-                  IF  (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = '*' " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
+                  IF (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = '*' " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
                      ::RuntimeErr("13", SR_Msg(13) + ::oSql:LastError() + SR_CRLF + ;
-                              SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+                        SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                      RETURN .F.
                   ENDIF
                ENDIF
             ELSE
-               IF  (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = 'T' " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
+               IF (::oSql:Execute(::cUpd + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = 'T' " + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
                   ::RuntimeErr("13", SR_Msg(13) + ::oSql:LastError() + SR_CRLF + ;
-                           SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+                     SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                   RETURN .F.
                ENDIF
             ENDIF
@@ -5166,9 +5171,9 @@ METHOD sqlDeleteRec() CLASS SR_WORKAREA
             ENDIF
 
          ELSE
-            IF  (::oSql:Execute(::cDel + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
+            IF (::oSql:Execute(::cDel + ::WhereEqual(), , ::nLogMode)) != SQL_SUCCESS
                ::RuntimeErr("13", SR_Msg(13) + ::oSql:LastError() + SR_CRLF + ;
-                        SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
+                  SR_Msg(14) + SR_CRLF + ::oSql:cLastComm)
                RETURN .F.
             ENDIF
 

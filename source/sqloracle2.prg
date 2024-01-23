@@ -150,7 +150,8 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_ORACLE2
       ::nRetCode := SQLO2_FETCH(::hDBC)
       ::aCurrLine := NIL
    ELSE
-      ::RunTimeErr("", "SQLO2_FETCH - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+      ::RunTimeErr("", "SQLO2_FETCH - Invalid cursor state" + SR_CRLF + SR_CRLF + ;
+         "Last command sent to database : " + SR_CRLF + ::cLastComm)
    ENDIF
 
 RETURN ::nRetCode
@@ -161,7 +162,8 @@ METHOD FreeStatement() CLASS SR_ORACLE2
 
    IF ::hDBC != NIL .AND. ::hstmt != NIL
       IF SQLO2_CLOSESTMT(::hDBC) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLO2_CLOSESTMT error" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+         ::RunTimeErr("", "SQLO2_CLOSESTMT error" + SR_CRLF + SR_CRLF + ;
+            "Last command sent to database : " + SR_CRLF + ::cLastComm)
       ENDIF
       ::hstmt := NIL
    ENDIF
@@ -230,7 +232,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ::nFields := SQLO2_NUMCOLS(::hDBC)
 
    IF ::nFields < 0
-      ::RunTimeErr("", "SQLO2_NUMCOLS Error" + SR_CRLF + str(::nFields) + SR_CRLF + "Last command sent to database : " + ::cLastComm)
+      ::RunTimeErr("", "SQLO2_NUMCOLS Error" + SR_CRLF + str(::nFields) + SR_CRLF + ;
+         "Last command sent to database : " + ::cLastComm)
       RETURN NIL
    ENDIF
 
@@ -239,7 +242,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    FOR n := 1 TO ::nFields
 
       IF (::nRetCode := SQLO2_DESCRIBECOL(::hDBC, n, @cName, @nType, @nLen, @nDec, @nNull)) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + "Last command sent to database : " + ::cLastComm)
+         ::RunTimeErr("", "SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+            "Last command sent to database : " + ::cLastComm)
          RETURN NIL
       ELSE
          _nLen := nLen
@@ -801,7 +805,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
    IF nError < 0
       IF lFetch
-         ::RunTimeErr("", "SQLExecDirect Error in close cursor Statement" )
+         ::RunTimeErr("", "SQLExecDirect Error in close cursor Statement")
       ENDIF
    ENDIF
 

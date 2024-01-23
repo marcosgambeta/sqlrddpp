@@ -460,11 +460,12 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
          ::cSQLError := ""
          IF lMsg
             IF len(cCommand) > 10000
-               ::RunTimeErr("", "SQLExecDirect Error" + ;
-                        SR_CRLF + ::LastError() + SR_CRLF + "Command sent to database : " + SR_CRLF + SubStr(cCommand, 1, 2000) + " ... (command too long to display here)")
+               ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+                  "Command sent to database : " + SR_CRLF + SubStr(cCommand, 1, 2000) + ;
+                  " ... (command too long to display here)")
             ELSE
-               ::RunTimeErr("", "SQLExecDirect Error" + ;
-                        SR_CRLF + ::LastError() + SR_CRLF + "Command sent to database : " + SR_CRLF + cCommand)
+               ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+                  "Command sent to database : " + SR_CRLF + cCommand)
             ENDIF
          ELSE
             ::cSQLError := ::LastError()
@@ -710,11 +711,8 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
          ENDIF
 
          IF lErrMsg .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
-
-            ::RunTimeErr("", "SQLExecDirect Error" + ;
-                     SR_CRLF + ::LastError() + SR_CRLF + ;
-                     "Command : " + cCommand + SR_CRLF + ;
-                     "hStmt   : " + SR_Val2Char(::hStmt))
+            ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+               "Command : " + cCommand + SR_CRLF + "hStmt   : " + SR_Val2Char(::hStmt))
          ENDIF
 
          IF ::nAutoCommit > 0 .AND. Upper(SubStr(ltrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"

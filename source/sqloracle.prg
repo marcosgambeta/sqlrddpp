@@ -150,7 +150,8 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_ORACLE
       ::nRetCode := SQLO_FETCH(::hDBC)
       ::aCurrLine := NIL
    ELSE
-      ::RunTimeErr("", "SQLO_FETCH - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+      ::RunTimeErr("", "SQLO_FETCH - Invalid cursor state" + SR_CRLF + SR_CRLF + ;
+         "Last command sent to database : " + SR_CRLF + ::cLastComm)
    ENDIF
 
 RETURN ::nRetCode
@@ -161,7 +162,8 @@ METHOD FreeStatement() CLASS SR_ORACLE
 
    IF ::hDBC != NIL .AND. ::hstmt != NIL
       IF SQLO_CLOSESTMT(::hDBC) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLO_CLOSESTMT error" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+         ::RunTimeErr("", "SQLO_CLOSESTMT error" + SR_CRLF + SR_CRLF + ;
+            "Last command sent to database : " + SR_CRLF + ::cLastComm)
       ENDIF
       ::hstmt := NIL
    ENDIF
@@ -231,7 +233,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ::nFields := SQLO_NUMCOLS(::hDBC)
 
    IF ::nFields < 0
-      ::RunTimeErr("", "SQLO_NUMCOLS Error" + SR_CRLF + str(::nFields) + SR_CRLF + "Last command sent to database : " + ::cLastComm)
+      ::RunTimeErr("", "SQLO_NUMCOLS Error" + SR_CRLF + str(::nFields) + SR_CRLF + ;
+         "Last command sent to database : " + ::cLastComm)
       RETURN NIL
    ENDIF
 
@@ -240,7 +243,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    FOR n := 1 TO ::nFields
 
       IF (::nRetCode := SQLO_DESCRIBECOL(::hDBC, n, @cName, @nType, @nLen, @nDec, @nNull)) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + "Last command sent to database : " + ::cLastComm)
+         ::RunTimeErr("", "SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+            "Last command sent to database : " + ::cLastComm)
         RETURN NIL
       ELSE
          _nLen := nLen

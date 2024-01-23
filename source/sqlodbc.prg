@@ -225,7 +225,8 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_ODBC
       ::nRetCode := SR_Fetch(::hStmt)
       ::aCurrLine := NIL
    ELSE
-      ::RunTimeErr("", "SQLFetch - Invalid cursor state" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+      ::RunTimeErr("", "SQLFetch - Invalid cursor state" + SR_CRLF + SR_CRLF + ;
+         "Last command sent to database : " + SR_CRLF + ::cLastComm)
    ENDIF
 
 RETURN ::nRetCode
@@ -234,7 +235,8 @@ METHOD FreeStatement() CLASS SR_ODBC
 
    IF !empty(::hStmt) // != NIL // != 0
       IF SR_FreeStm(::hStmt, SQL_DROP) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLFreeStmt [DROP] error" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+         ::RunTimeErr("", "SQLFreeStmt [DROP] error" + SR_CRLF + SR_CRLF + ;
+            "Last command sent to database : " + SR_CRLF + ::cLastComm)
       ENDIF
       ::hStmt := NIL
    ENDIF
@@ -254,7 +256,8 @@ METHOD AllocStatement() CLASS SR_ODBC
       ::hStmt := hStmtLocal
    ELSE
       ::nRetCode := nRet
-      ::RunTimeErr("", "SQLAllocStmt [NEW] Error" + SR_CRLF + SR_CRLF + ::LastError() + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
+      ::RunTimeErr("", "SQLAllocStmt [NEW] Error" + SR_CRLF + SR_CRLF + ::LastError() + SR_CRLF + SR_CRLF + ;
+         "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
    ENDIF
 
