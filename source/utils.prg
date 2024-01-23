@@ -312,6 +312,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
                SR_LogFile("changestruct.log", {oWA:cFileName, "Will drop:", oWA:aFields[i, 1]})
             ENDIF
          ENDIF
+         HB_SYMBOL_UNUSED(n)
       NEXT i
       IF Len(aDirect) > 0 .AND. ( ;
               oWA:oSql:nSystemID == SYSTEMID_FIREBR ;
@@ -492,6 +493,8 @@ Return
 FUNCTION SR_SetCreateAsHistoric(l)
 
    LOCAL lOld := lCreateAsHistoric
+   
+   HB_SYMBOL_UNUSED(lOld)
 
    IF HB_ISLOGICAL(l) 
       lCreateAsHistoric := l
@@ -899,6 +902,7 @@ FUNCTION SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
    cAlias := "W" + StrZero(++_nCnt, 3)
    cAl1   := "W" + StrZero(++_nCnt, 3)
    cAl2   := "W" + StrZero(++_nCnt, 3)
+   HB_SYMBOL_UNUSED(cAl2)
 
    IF _nCnt >= 995
       _nCnt := 1
@@ -935,6 +939,7 @@ FUNCTION SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
 
    cAl1   := "W" + StrZero(++_nCnt, 3)
    cAl2   := "W" + StrZero(++_nCnt, 3)
+   HB_SYMBOL_UNUSED(cAl2)
 
    IF _nCnt >= 995
       _nCnt := 1
@@ -1204,6 +1209,8 @@ RETURN aData
 METHOD Delete(uHashKey) CLASS SqlFastHash
 
    LOCAL nIndex := 0
+   
+   HB_SYMBOL_UNUSED(nIndex)
 
    nIndex := hb_HPos(::hHash, uHashKey)
 
@@ -1219,6 +1226,8 @@ RETURN .F.
 METHOD Update(uHashKey, uValue) CLASS SqlFastHash
 
    LOCAL nIndex := 0
+   
+   HB_SYMBOL_UNUSED(nIndex)
 
    nIndex := hb_HPos(::hHash, uHashKey)
 
@@ -1642,6 +1651,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       FOR EACH xMessage IN aSay
 
          IF (nLen := Len(xMessage)) > 58
+            HB_SYMBOL_UNUSED(nLen)
             FOR nPos := 58 TO 1 STEP -1
                IF xMessage[nPos] $ (" " + Chr(9))
                   EXIT
@@ -1682,6 +1692,10 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                like Clipper.  2004/Sep/16 - Eduardo Fernandes <modalsist> */
 
       cColor11 := cColor12 := cColor21 := cColor22 := ""
+      HB_SYMBOL_UNUSED(cColor11)
+      HB_SYMBOL_UNUSED(cColor12)
+      HB_SYMBOL_UNUSED(cColor21)
+      HB_SYMBOL_UNUSED(cColor22)
 
       cColorStr := alltrim(StrTran(cColorNorm, " ", ""))
       nCommaSep := At(",", cColorStr)
