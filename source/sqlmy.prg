@@ -54,11 +54,10 @@
 #include "mysql.ch"
 #include "sqlrddsetup.ch"
 
-#define SR_CRLF   (chr(13) + chr(10))
-
-#define  DEBUGSESSION                .F.
-#define ARRAY_BLOCK                  500
-#define MINIMAL_MYSQL_SUPPORTED  40105
+#define SR_CRLF                   (chr(13) + chr(10))
+#define DEBUGSESSION              .F.
+#define ARRAY_BLOCK               500
+#define MINIMAL_MYSQL_SUPPORTED   40105
 
 CLASS SR_MYSQL FROM SR_CONNECTION
 
@@ -130,7 +129,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_MYSQL
 
    ::nRetCode := SQL_ERROR
 
-   DEFAULT aFields    TO ::aFields
+   DEFAULT aFields TO ::aFields
    DEFAULT lTranslate TO .T.
 
    IF ::hStmt != NIL
@@ -161,7 +160,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    LOCAL nRet
    LOCAL cVlr := ""
    LOCAL aFld
-   
+
    HB_SYMBOL_UNUSED(nType)
    HB_SYMBOL_UNUSED(nLen)
    HB_SYMBOL_UNUSED(nNull)
@@ -187,8 +186,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ENDIF
 
    IF MYSResultStatus(::hDbc) != SQL_SUCCESS
-      ::RunTimeErr("", "SqlNumResultCols Error" + SR_CRLF + SR_CRLF + ;
-         "Last command sent to database : " + SR_CRLF + ::cLastComm)
+      ::RunTimeErr("", "SqlNumResultCols Error" + SR_CRLF + SR_CRLF + "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
    ENDIF
 
@@ -207,9 +205,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       aFld[FIELD_ENUM] := aFld:__enumIndex()
    NEXT
 
-   If lReSelect .AND. !lLoadCache
+   IF lReSelect .AND. !lLoadCache
       ::FreeStatement()
-   EndIf
+   ENDIF
 
 RETURN aFields
 
@@ -230,13 +228,6 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL cSystemVers := ""
    LOCAL cBuff := ""
    LOCAL nVersionp
-
-   /*
-   TOFIX:
-   -w3 warning
-   source\sqlmy.prg(...) Warning W0032  Variable 'NVERSIONP' is assigned but not used in function 'SR_MYSQL_CONNECTRAW(...)'
-   HB_SYMBOL_UNUSED(nVersionp) do not work
-   */
 
    HB_SYMBOL_UNUSED(hEnv)
    HB_SYMBOL_UNUSED(hDbc)
