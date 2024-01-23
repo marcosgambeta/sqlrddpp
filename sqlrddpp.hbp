@@ -2,7 +2,7 @@
 
 -olib/${hb_plat}/${hb_comp}/${hb_name}
 
--prgflag=-n -w2 -es2 -gc3
+-prgflag=-n -w3 -es2 -gc3
 
 -inc
 
