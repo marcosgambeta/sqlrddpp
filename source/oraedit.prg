@@ -1430,7 +1430,7 @@ FUNCTION insertupdated(calias, ctable)
                ENDIF
                IF HB_ISCHAR(aval[npos])
                   cSql += " " + aTemp  + " = " +  aVal[nPos]
-               ELSEIF  HB_ISNUMERIC(aval[npos]) .OR. HB_ISDATE(aval[npos])
+               ELSEIF HB_ISNUMERIC(aval[npos]) .OR. HB_ISDATE(aval[npos])
                   cSql += " " + aTemp  + " = " +  sr_cdbvalue(aVal[nPos])
                ENDIF
                cSql += " AND "

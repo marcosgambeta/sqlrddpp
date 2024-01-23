@@ -611,7 +611,7 @@ METHOD SolveRestrictors() CLASS SR_WORKAREA
      ENDIF
    ENDIF
    /*
-   IF  SR_UseDeleteds() .AND. set(_SET_DELETED)
+   IF SR_UseDeleteds() .AND. set(_SET_DELETED)
       IF !empty(cRet)
          cRet += " AND "
       ENDIF
@@ -4455,8 +4455,8 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                   cKeyValue := Str(uKey, ::aFields[nFieldPos, 3]) + "%"
                   lLikeSep := .T.
                ENDIF
-            ENDIF   
-         ENDIF   
+            ENDIF
+         ENDIF
          IF !empty(cKeyValue)
             cQot := ::QuotedNull(cKeyValue, , nFLen, nFDec, , lNull)
          ELSE
@@ -5547,8 +5547,8 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
 
       CASE (aCreate[i, FIELD_TYPE] == "C") .AND. (::oSql:nSystemID == SYSTEMID_MSSQL6 .OR. ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_AZURE .OR. ::oSql:nSystemID == SYSTEMID_POSTGR .OR. ::oSql:nSystemID == SYSTEMID_CACHE .OR. ::oSql:nSystemID == SYSTEMID_ADABAS)
          IF ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_AZURE
-               IF  ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
-                  IF  aCreate[i, FIELD_LEN] > 10
+               IF ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
+                  IF aCreate[i, FIELD_LEN] > 10
                      cSql += "VARCHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") " + iif(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIF(lNotNull, " NOT NULL", "")
                   ELSE
                      cSql += "CHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") " + iif(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IF(lNotNull, " NOT NULL", "")
@@ -6746,7 +6746,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
    ::lCanSel := .T.
    IF Upper(Substr(::cFileName, 1, 6)) == "SELECT"
       ::lTableIsSelect := .T.
-   ENDIF   
+   ENDIF
    ::cQualifiedTableName := ::cOwner + SR_DBQUALIFY(::cFileName, ::oSql:nSystemID)
 
    ::cDel := "DELETE FROM " + ::cQualifiedTableName + " "
@@ -9758,7 +9758,7 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
 
          CASE (aCreate[i, FIELD_TYPE] == "C") .AND. (::oSql:nSystemID == SYSTEMID_MSSQL6 .OR. ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_POSTGR .OR. ::oSql:nSystemID == SYSTEMID_CACHE .OR. ::oSql:nSystemID == SYSTEMID_ADABAS .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
             IF ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_AZURE
-               IF  ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
+               IF ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
                   IF aCreate[i, FIELD_LEN] > 10
                      cSql += "VARCHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") " + iif(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIF(lNotNull, " NOT NULL", "")
                   ELSE

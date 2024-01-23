@@ -625,7 +625,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                      cSql += SR_CRLF
                   ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                      cSql += " AND "
-                  ELSEIF  outer:__enumIndex() > 1
+                  ELSEIF outer:__enumIndex() > 1
                      cSql += SR_CRLF
                   ENDIF
 
