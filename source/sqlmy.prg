@@ -60,8 +60,6 @@
 #define ARRAY_BLOCK                  500
 #define MINIMAL_MYSQL_SUPPORTED  40105
 
-#pragma -w2
-
 CLASS SR_MYSQL FROM SR_CONNECTION
 
    DATA aCurrLine
@@ -268,6 +266,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::nSystemID := 0
       SR_MsgLogFile("Connection Error")
       nVersionp := MINIMAL_MYSQL_SUPPORTED - 100
+      HB_SYMBOL_UNUSED(nVersionp)
       RETURN SELF
    ELSE
       ::cConnect  := cConnect
