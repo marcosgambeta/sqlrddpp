@@ -208,7 +208,7 @@ CLASS SR_WORKAREA
    METHOD GetNextRecordNumber()
 
    METHOD IniFields(lReSelect, lLoadCache, aInfo)
-   METHOD Refresh()
+   METHOD Refresh(lGoCold)
    METHOD GetBuffer(lClean, nCache)
    METHOD SolveSQLFilters(cAliasSQL)
    METHOD SolveRestrictors()
@@ -225,13 +225,16 @@ CLASS SR_WORKAREA
    METHOD SkipRawCache(nToSkip)
    METHOD Stabilize()
    METHOD FirstFetch(nDirection)
-   METHOD OrderBy(nOrder, lAscend)
-   METHOD ReadPage(nDirection)
+   METHOD OrderBy(nOrder, lAscend, lRec)
+   METHOD ReadPage(nDirection, lWasDel)
    METHOD WhereMajor()       // Retrieves an SQL/WHERE Major or equal the currente record
    METHOD WhereMinor()       // Retrieves an SQL/WHERE Minor or equal the currente record
-   METHOD WhereVMajor()       // Retrieves an SQL/WHERE Major or equal the currente record (Synthetic Virtual Index)
-   METHOD WhereVMinor()       // Retrieves an SQL/WHERE Minor or equal the currente record (Synthetic Virtual Index)
-   METHOD WherePgsMajor(aQuotedCols)    // Retrieves an SQL/WHERE Major or equal the currente record
+   //METHOD WhereVMajor()       // Retrieves an SQL/WHERE Major or equal the currente record (Synthetic Virtual Index)
+   METHOD WhereVMajor(cQot)
+   //METHOD WhereVMinor()       // Retrieves an SQL/WHERE Minor or equal the currente record (Synthetic Virtual Index)
+   METHOD WhereVMinor(cQot)
+   //METHOD WherePgsMajor(aQuotedCols)    // Retrieves an SQL/WHERE Major or equal the currente record
+   METHOD WherePgsMajor(aQuotedCols, lPartialSeek)
    METHOD WherePgsMinor(aQuotedCols)    // Retrieves an SQL/WHERE Minor or equal the currente record
    /* METHOD sqlKeyCompare(uKey)                       C level implemented - reads from ::aInfo */
    METHOD ParseIndexColInfo(cSQL)
@@ -243,8 +246,8 @@ CLASS SR_WORKAREA
 
    METHOD LoadRegisteredTags()
 
-   METHOD LockTable(lCheck)
-   METHOD UnlockTable()
+   METHOD LockTable(lCheck4ExcLock, lFLock) //METHOD LockTable(lCheck)
+   METHOD UnlockTable(lClosing) //METHOD UnlockTable()
 
    METHOD FCount() INLINE ::nFields
    METHOD SetNextDt(d) INLINE ::dNextDt := d
@@ -255,7 +258,7 @@ CLASS SR_WORKAREA
    METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
    //This is an new method for direct alter column
    METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove)
-   METHOD DropColumn(cColumn, lDisplayErrorMessage)
+   METHOD DropColumn(cColumn, lDisplayErrorMessage, lRemoveFromWA)
    METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes)
    METHOD AddRuleNotNull(cColumn)
    METHOD DropRuleNotNull(cColumn)
@@ -265,12 +268,13 @@ CLASS SR_WORKAREA
 
    /* Historic functionality specific methods */
 
-   METHOD HistExpression(cAlias, cAlias)
+   //METHOD HistExpression(cAlias, cAlias)
+   METHOD HistExpression(n, cAlias)
    METHOD DisableHistoric()
    METHOD EnableHistoric()
    METHOD SetCurrDate(d) INLINE iif(d == NIL, ::CurrDate, ::CurrDate := d)
 
-   METHOD LineCount()
+   METHOD LineCount(lMsg) //METHOD LineCount()
    METHOD CreateOrclFunctions(cOwner, cFileName)
 
    METHOD sqlOpenAllIndexes()
@@ -314,10 +318,11 @@ CLASS SR_WORKAREA
    /* METHOD sqlSetFieldExtent            Superclass does the job */
    /* METHOD sqlAlias                     Superclass does the job */
    METHOD sqlClose()
-   METHOD sqlCreate(aStruct, cFileName)
+   METHOD sqlCreate(aStruct, cFileName, cAlias, nArea)
    /* METHOD sqlInfo                      C level implemented - reads from ::aInfo */
    /* METHOD sqlNewArea                   Superclass does the job */
-   METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias) /* the constructor */
+   //METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias) /* the constructor */
+   METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection)
    /* METHOD sqlRelease                   Superclass does the job */
    /* METHOD sqlStructSize                C level implemented */
    /* METHOD sqlSysName                   C level implemented */
@@ -341,11 +346,11 @@ CLASS SR_WORKAREA
    METHOD sqlOrderListAdd(cBagName, cTag)
    METHOD sqlOrderListClear()
    /* METHOD sqlOrderListDelete           Superclass does the job */
-   METHOD sqlOrderListFocus(uOrder)
+   METHOD sqlOrderListFocus(uOrder, cBag)
    METHOD sqlOrderListNum(uOrder)       /* Used by sqlOrderInfo */
    /* METHOD sqlOrderListRebuild          Superclass does the job - UNSUPPORTED */
    METHOD sqlOrderCondition(cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc)
-   METHOD sqlOrderCreate(cIndexName, cColumns, cTag)
+   METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable, aTargetColumns, lEnable)
    METHOD sqlOrderDestroy(uOrder, cBag)
    /* METHOD sqlOrderInfo                 C level implemented - reads from ::aInfo and ::aIndex */
    METHOD sqlClearFilter()
@@ -372,14 +377,14 @@ CLASS SR_WORKAREA
    /* METHOD sqlReadDBHeader              Superclass does the job - UNSUPPORTED */
    /* METHOD sqlWriteDBHeader             Superclass does the job - UNSUPPORTED */
    /* METHOD sqlExit                      Superclass does the job */
-   METHOD sqlDrop()
-   METHOD sqlExists()
+   METHOD sqlDrop(cFileName)
+   METHOD sqlExists(cFileName)
    /* METHOD sqlWhoCares                  Superclass does the job */
 
    METHOD SetBOF()
-   METHOD sqlKeyCount()
+   METHOD sqlKeyCount(lFilters)
    METHOD sqlRecSize()
-   METHOD GetSyntheticVirtualExpr(aExpr)
+   METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
    METHOD GetSelectList()
    METHOD RecnoExpr()   // add recno filters
    // DESTRUCTOR WA_ENDED
@@ -757,6 +762,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
             IF (npos := Ascan(aCols, {|x|x[1] == aInd[3]})) == 0
                AADD(aCols, {aInd[3], ""})
             ENDIF
+            HB_SYMBOL_UNUSED(npos)
          NEXT
 
          FOR EACH aInd IN aCols
@@ -1218,6 +1224,8 @@ METHOD sqlKeyCount(lFilters) CLASS SR_WORKAREA
    LOCAL cSql
    LOCAL cRet := ""
 
+   HB_SYMBOL_UNUSED(cRet)
+
    DEFAULT lFilters TO .T.
 
    IF ::lISAM
@@ -1308,6 +1316,9 @@ METHOD LockTable(lCheck4ExcLock, lFLock) CLASS SR_WORKAREA
    LOCAL aResultSet := {}
    LOCAL i
 
+   HB_SYMBOL_UNUSED(aVet)
+   HB_SYMBOL_UNUSED(aResultSet)
+
    IF aScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0    // Table already exclusive by this application instance
       RETURN .T.
    ENDIF
@@ -1386,6 +1397,9 @@ METHOD UnlockTable(lClosing) CLASS SR_WORKAREA
    LOCAL aVet := {}
    LOCAL aResultSet := {}
    LOCAL nPos
+
+   HB_SYMBOL_UNUSED(aVet)
+   HB_SYMBOL_UNUSED(aResultSet)
 
    IF aScan(::aExclusive, {|x|x[1] == ::nThisArea}) == 0
       RETURN .T.
@@ -1671,6 +1685,8 @@ METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
    LOCAL nOldBg
    LOCAL nOldEnd
    LOCAL lCacheIsEmpty
+   
+   HB_SYMBOL_UNUSED(nBlockPos)
 
    DEFAULT nDirection TO ORD_INVALID
 
@@ -1891,6 +1907,8 @@ METHOD Stabilize() CLASS SR_WORKAREA
    LOCAL aPos
    LOCAL i
    LOCAL nLast := 0
+   
+   HB_SYMBOL_UNUSED(nLast)
 
    IF ::lStable .OR. ::aInfo[AINFO_INDEXORD] == 0 .OR. len(::aIndex) == 0 .AND. len(::aCache) > 0
       RETURN NIL
@@ -1971,6 +1989,8 @@ RETURN nRet
 METHOD SkipRawCache(nToSkip) CLASS SR_WORKAREA
 
    LOCAL nRet := 0
+   
+   HB_SYMBOL_UNUSED(nRet)
 
    DEFAULT nToSkip TO 1
 
@@ -2033,6 +2053,8 @@ RETURN NIL
 METHOD CheckCache(oWorkArea) CLASS SR_WORKAREA
 
    LOCAL nRecno := ::aLocalBuffer[::hnRecno]
+   
+   HB_SYMBOL_UNUSED(nRecno)
 
    IF oWorkArea:aInfo[AINFO_EOF]
       oWorkArea:aInfo[AINFO_NCACHEEND] := oWorkArea:aInfo[AINFO_NCACHEBEGIN] := 0
@@ -2462,6 +2484,7 @@ METHOD HistExpression(n, cAlias) CLASS SR_WORKAREA
 
    cAl1 := "W" + StrZero(++::nCnt, 3)
    cAl2 := "W" + StrZero(++::nCnt, 3)
+   HB_SYMBOL_UNUSED(cAl2)
 
    IF ::nCnt >= 997
       ::nCnt := 1
@@ -3966,6 +3989,10 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
    LOCAL cKeyValue
    LOCAL lIsIndKey := .F.
 
+   HB_SYMBOL_UNUSED(cType)
+   HB_SYMBOL_UNUSED(c1)
+   HB_SYMBOL_UNUSED(lBlockSearch)
+   HB_SYMBOL_UNUSED(lIsIndKey)
    HB_SYMBOL_UNUSED(lLast)
 
    IF ::lCollectingBehavior
@@ -4010,6 +4037,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          nCons := 0
          nLenKey := Len(uKey)
          cPart := ""
+         HB_SYMBOL_UNUSED(cPart)
 
          FOR i := 1 TO nLen
 
@@ -4021,7 +4049,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
             cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
             lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
             nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+            HB_SYMBOL_UNUSED(nFDec)
             nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+            HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= len(uKey)
                IF uKey == ""
@@ -4187,6 +4217,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          nCons := 0
          nLenKey := Len(uKey)
          cPart := ""
+         HB_SYMBOL_UNUSED(cPart)
 
          FOR i := 1 TO nLen
 
@@ -4198,7 +4229,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
             cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
             lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
             nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+            HB_SYMBOL_UNUSED(nFDec)
             nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+            HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= len(uKey)
                IF uKey == ""
@@ -4481,6 +4514,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          nCons := 0
          nLenKey := Len(uKey)
          cPart := ""
+         HB_SYMBOL_UNUSED(cPart)
 
          FOR i := 1 TO nLen
 
@@ -4491,8 +4525,11 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
 
             cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
             lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
+            HB_SYMBOL_UNUSED(lNull)
             nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+            HB_SYMBOL_UNUSED(nFDec)
             nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+            HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= len(uKey)
                IF uKey == ""
@@ -4720,6 +4757,8 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
    LOCAL nOldBg
    LOCAL nOldEnd
    LOCAL lCacheIsEmpty
+   
+   HB_SYMBOL_UNUSED(nBlockPos)
 
    //-------- Paging cache
 
@@ -5014,6 +5053,8 @@ RETURN NIL
 METHOD sqlRecall() CLASS SR_WORKAREA
 
    LOCAL nRecno := ::aInfo[AINFO_RECNO]
+   
+   HB_SYMBOL_UNUSED(nRecno)
 
    ::sqlGoCold()
 
@@ -5242,6 +5283,10 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
    LOCAL aCacheInfo := Array(CACHEINFO_LEN)
    LOCAL nPos
    LOCAL nMax := 0
+
+   HB_SYMBOL_UNUSED(lRecnoAdded)
+   HB_SYMBOL_UNUSED(lShared)
+   HB_SYMBOL_UNUSED(nMax)
 
    ::cRecnoName := SR_RecnoName()
    ::cDeletedName := SR_DeletedName()
@@ -6419,6 +6464,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
 
       IF len(cSql) > 0
          lRet := ::oSql:exec(cSql, .T.) == SQL_SUCCESS
+         HB_SYMBOL_UNUSED(lRet)
          ::oSql:Commit()
       ENDIF
    ENDIF
@@ -7042,6 +7088,8 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
    LOCAL lSyntheticVirtual := .F.
    LOCAL cPhysicalVIndexName
    LOCAL cVInd
+   
+   HB_SYMBOL_UNUSED(cList)
 
    IF !Empty(cVInd := SR_GetSVIndex())
       lSyntheticVirtual := ::oSql:nSystemID == SYSTEMID_ORACLE
@@ -7497,6 +7545,8 @@ RETURN nOrder
 METHOD sqlOrderListNum(uOrder) CLASS SR_WORKAREA
 
    LOCAL nOrder := 0
+   
+   HB_SYMBOL_UNUSED(nOrder)
 
    IF HB_ISCHAR(uOrder)      /* TAG order */
       nOrder := aScan(::aIndex, {|x|upper(alltrim(x[ORDER_TAG])) == upper(alltrim(uOrder))})
@@ -7566,6 +7616,8 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
    LOCAL aOldPhisNames := {}
    LOCAL cName
    LOCAL nKeySize := 0
+   
+   HB_SYMBOL_UNUSED(nKeySize)
 
    HB_SYMBOL_UNUSED(lEnable)
 
@@ -7821,6 +7873,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
    IF lSyntheticIndex
 
       lTagFound := .F.
+      HB_SYMBOL_UNUSED(lTagFound)
 
       IF len(cColumns) > 4 .AND. cColumns[4] == "@"
          cColumns := SubStr(cColumns, 5)
@@ -8001,6 +8054,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          ::oSql:Commit()
          cSql +=  + iif(::oSql:lComments, " /* Create regular Index */", "")
          lRet := ::oSql:exec(cSql, .T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
+         HB_SYMBOL_UNUSED(lRet)
          cSql := "CREATE DESCENDING INDEX " + cPhisicalName + "R ON " + ::cQualifiedTableName + " (" + cList + ")"
          ::oSql:Commit()
          cSql +=  + iif(::oSql:lComments, " /* Create regular Index */", "")
@@ -8131,6 +8185,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          ::oSql:Commit()
          cSql +=  + iif(::oSql:lComments, " /* Create regular Index */", "")
          lRet := ::oSql:exec(cSql, .T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
+         HB_SYMBOL_UNUSED(lRet)
          cSql := "CREATE DESCENDING INDEX " + cPhisicalName + "R ON " + ::cQualifiedTableName + " (" + cList + ")"
          ::oSql:Commit()
          cSql +=  + iif(::oSql:lComments, " /* Create regular Index */", "")
@@ -8249,6 +8304,8 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
    LOCAL cNam
    LOCAL nFeitos
    LOCAL lNull
+   
+   HB_SYMBOL_UNUSED(cType)
 
    IF len(::aIndex) > 0 .AND. ::aInfo[AINFO_INDEXORD] > 0
 
@@ -8327,6 +8384,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
             nCons  := 0
             nLenKey := Len(uKey)
             cPart := ""
+            HB_SYMBOL_UNUSED(cPart)
 
             /* First, split uKey in fields and values according to current index */
 
@@ -8344,7 +8402,9 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
                lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
                nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+               HB_SYMBOL_UNUSED(nFDec)
                nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+               HB_SYMBOL_UNUSED(nFLen)
 
                IF i == 1 .AND. nThis >= len(uKey)
                   IF uKey == ""
@@ -8472,6 +8532,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                nCons := 0
                nLenKey := Len(uKey)
                cPart := ""
+               HB_SYMBOL_UNUSED(cPart)
                cSep2 := iif(nScoping == TOPSCOPE, ">", "<")
 
                /* First, split uKey in fields and values according to current index */
@@ -8494,7 +8555,9 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                   cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
                   lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
                   nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+                  HB_SYMBOL_UNUSED(nFDec)
                   nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+                  HB_SYMBOL_UNUSED(nFLen)
 
                   IF i == 1 .AND. nThis >= len(uKey)
                      IF uKey == ""
@@ -8616,6 +8679,8 @@ METHOD sqlLock(nType, uRecord) CLASS SR_WORKAREA
    LOCAL lRet := .T.
    LOCAL aVet := {}
    LOCAL aResultSet := {}
+   
+   HB_SYMBOL_UNUSED(aVet)
 
    ::sqlGoCold()
 
@@ -8962,6 +9027,11 @@ METHOD WhereMajor() CLASS SR_WORKAREA
    LOCAL cRet2 := ""
    LOCAL j
    LOCAL aQuot := {}
+   
+   HB_SYMBOL_UNUSED(c3)
+   HB_SYMBOL_UNUSED(c4)
+   HB_SYMBOL_UNUSED(cRet2)
+   HB_SYMBOL_UNUSED(aQuot)
 
    IF ::aInfo[AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
@@ -9029,6 +9099,15 @@ METHOD WhereVMajor(cQot) CLASS SR_WORKAREA
    LOCAL c4 := ""
    LOCAL cRet2 := ""
    LOCAL aQuot := {}
+   
+   HB_SYMBOL_UNUSED(cRet)
+   
+   HB_SYMBOL_UNUSED(c1)
+   HB_SYMBOL_UNUSED(c2)
+   HB_SYMBOL_UNUSED(c3)
+   HB_SYMBOL_UNUSED(c4)
+   HB_SYMBOL_UNUSED(cRet2)
+   HB_SYMBOL_UNUSED(aQuot)
 
    IF ::aInfo[AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
@@ -9075,6 +9154,11 @@ METHOD WherePgsMajor(aQuotedCols, lPartialSeek) CLASS SR_WORKAREA
    LOCAL j
    LOCAL aQuot := {}
 
+   HB_SYMBOL_UNUSED(c1)
+   HB_SYMBOL_UNUSED(c3)
+   HB_SYMBOL_UNUSED(c4)
+   HB_SYMBOL_UNUSED(cRet2)
+
    DEFAULT lPartialSeek TO .T.
 
    IF ::aInfo[AINFO_INDEXORD] == 0
@@ -9109,6 +9193,7 @@ METHOD WherePgsMajor(aQuotedCols, lPartialSeek) CLASS SR_WORKAREA
 
          FOR i := 1 TO j
             lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
+            HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
             cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
 
@@ -9175,6 +9260,11 @@ METHOD WhereMinor() CLASS SR_WORKAREA
    LOCAL cRet2 := ""
    LOCAL j
    LOCAL aQuot := {}
+
+   HB_SYMBOL_UNUSED(c3)
+   HB_SYMBOL_UNUSED(c4)
+   HB_SYMBOL_UNUSED(cRet2)
+   HB_SYMBOL_UNUSED(aQuot)
 
    IF ::aInfo[AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
@@ -9243,6 +9333,14 @@ METHOD WhereVMinor(cQot) CLASS SR_WORKAREA
    LOCAL cRet2 := ""
    LOCAL aQuot := {}
 
+   HB_SYMBOL_UNUSED(cRet)
+   HB_SYMBOL_UNUSED(c1)
+   HB_SYMBOL_UNUSED(c2)
+   HB_SYMBOL_UNUSED(c3)
+   HB_SYMBOL_UNUSED(c4)
+   HB_SYMBOL_UNUSED(cRet2)
+   HB_SYMBOL_UNUSED(aQuot)
+
    IF ::aInfo[AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
@@ -9290,6 +9388,11 @@ METHOD WherePgsMinor(aQuotedCols) CLASS SR_WORKAREA
    LOCAL cRet2 := ""
    LOCAL j
    LOCAL aQuot := {}
+   
+   HB_SYMBOL_UNUSED(c1)
+   HB_SYMBOL_UNUSED(c3)
+   HB_SYMBOL_UNUSED(c4)
+   HB_SYMBOL_UNUSED(cRet2)
 
    IF ::aInfo[AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
@@ -9325,6 +9428,7 @@ METHOD WherePgsMinor(aQuotedCols) CLASS SR_WORKAREA
          FOR i := 1 TO j
 
             lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
+            HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
             cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
 
@@ -9379,7 +9483,7 @@ RETURN aRet
 
 METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WORKAREA
 
-   LOCAL aInd
+   LOCAL aInd := NIL
    LOCAL i
    LOCAL cPhisicalName
    LOCAL aIndexes
@@ -9433,6 +9537,7 @@ METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WOR
                EXIT
             CASE SYSTEMID_FIREBR
                nRet := ::oSql:exec("DROP INDEX " + cPhisicalName + iif(::oSql:lComments, " /* Drop index before drop column */", ""), lDisplayErrorMessage)
+               HB_SYMBOL_UNUSED(nRet)
                ::oSql:Commit()
                // DELETED THE DESCENDING INDEX
                nRet := ::oSql:exec("DROP INDEX " + cPhisicalName + "R" + iif(::oSql:lComments, " /* Drop index before drop column */", ""), lDisplayErrorMessage)
@@ -9546,8 +9651,10 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
    LOCAL aBack
    LOCAL lDataInBackup := .F.
    LOCAL cLobs := ""
-   LOCAL cTblName
+   LOCAL cTblName := NIL
    LOCAL lCurrentIsMultLang := .F.
+
+   HB_SYMBOL_UNUSED(lCurrentIsMultLang)
 
    DEFAULT lBakcup TO .T.
 
@@ -9980,11 +10087,13 @@ METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS
    LOCAL aBack
    LOCAL lDataInBackup := .F.
    LOCAL cLobs := ""
-   LOCAL cTblName
+   LOCAL cTblName := NIL
    LOCAL lCurrentIsMultLang := .F.
    LOCAL nPos
    LOCAL cSql2 := ""
    LOCAL cSql3 := ""
+
+   HB_SYMBOL_UNUSED(lCurrentIsMultLang)
 
    DEFAULT lBakcup TO .T.
 
@@ -10751,6 +10860,8 @@ METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColum
    LOCAL cSourceColumns := ""
    LOCAL cTargetColumns := ""
    LOCAL cCols
+   
+   HB_SYMBOL_UNUSED(lPk)
 
    cSourceTable := Upper(AllTrim(cSourceTable))
    cTargetTable := Upper(AllTrim(cTargetTable))
@@ -11153,6 +11264,8 @@ STATIC FUNCTION OracleMinVersion(cString)
    LOCAL nStart
    LOCAL nLen
    LOCAL cTemp := cString
+   
+   HB_SYMBOL_UNUSED(cTemp)
 
    IF s_reEnvVar == NIL
       s_reEnvVar := HB_RegexComp("(([2]([0-4][0-9]|[5][0-5])|[0-1]?[0-9]?[0-9])[.]){3}(([2]([0-4][0-9]|[5][0-5])|[0-1]?[0-9]?[0-9]))")
@@ -11207,6 +11320,7 @@ FUNCTION SR_arraytoXml(a)
       addNode(aItem, ONode)
    NEXT
    hhash := {}
+   HB_SYMBOL_UNUSED(hhash)
    oXml:oRoot:addBelow(oNode)
 
 RETURN oXml
@@ -11280,6 +11394,7 @@ FUNCTION SR_fromXml(oDoc, aRet, nLen, c)
    ENDIF
 
    oNode := oDoc:CurNode
+   HB_SYMBOL_UNUSED(oNode)
    oNode := oDoc:Next()
    DO WHILE oNode != NIL
       IF oNode:nType == 6 .OR. oNode:nType == 2
