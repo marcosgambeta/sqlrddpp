@@ -60,8 +60,6 @@
 #define ARRAY_BLOCK                  500
 #define MINIMAL_MYSQL_SUPPORTED  50100
 
-#pragma -w2
-
 /*------------------------------------------------------------------------*/
 
 CLASS SR_MARIA FROM SR_CONNECTION
@@ -247,13 +245,6 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL cBuff := ""
    LOCAL nVersionp
 
-   /*
-   TOFIX:
-   -w3 warning
-   source\sqlmaria.prg(...) Warning W0032  Variable 'NVERSIONP' is assigned but not used in function 'SR_MARIA_CONNECTRAW(...)'
-   HB_SYMBOL_UNUSED(nVersionp) do not work
-   */
-
    HB_SYMBOL_UNUSED(hEnv)
    HB_SYMBOL_UNUSED(hDbc)
    HB_SYMBOL_UNUSED(cVersion)
@@ -282,6 +273,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::nSystemID := 0
       SR_MsgLogFile("Connection Error")
       nVersionp := 4
+      HB_SYMBOL_UNUSED(nVersionp)
       RETURN Self
    else
       ::cConnect  = cConnect
@@ -290,7 +282,6 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       cTargetDB   = "MARIADB Native"
       cSystemVers = alltrim(str(MYSVERS(hDbc)))
       nVersionp  := MYSVERS(hDbc)
-
    EndIf
 
    If (!::lQueryOnly) .AND. nVersionp < MINIMAL_MYSQL_SUPPORTED
