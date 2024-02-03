@@ -43,34 +43,33 @@
  *
  */
 
-HB_FUNC_EXTERN( SR_DESERIALIZE );
+HB_FUNC_EXTERN(SR_DESERIALIZE);
 
-PHB_ITEM sr_escapeNumber( char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pRet );
-PHB_ITEM sr_getBaseLang( PHB_ITEM );
-PHB_ITEM sr_getSecondLang( PHB_ITEM );
-PHB_ITEM sr_getRootLang( PHB_ITEM );
-HB_BOOL HB_EXPORT sr_lSerializedAsString( void );
-HB_BOOL HB_EXPORT sr_lHideRecno( void );
-HB_BOOL HB_EXPORT sr_lHideHistoric( void );
-HB_BOOL HB_EXPORT sr_isMultilang( void );
-HB_BOOL HB_EXPORT sr_isShutdownProcess( void );
-HB_BOOL HB_EXPORT sr_UseDeleteds( void );
-HB_BOOL HB_EXPORT sr_lSerializeArrayAsJson( void );
-HB_BOOL HB_EXPORT sr_lsql2008newTypes( void );
-HB_BOOL HB_EXPORT sr_iOldPgsBehavior( void ) ;
-HB_BOOL HB_EXPORT sr_fShortasNum( void );
+PHB_ITEM sr_escapeNumber(char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pRet);
+PHB_ITEM sr_getBaseLang(PHB_ITEM);
+PHB_ITEM sr_getSecondLang(PHB_ITEM);
+PHB_ITEM sr_getRootLang(PHB_ITEM);
+HB_BOOL HB_EXPORT sr_lSerializedAsString(void);
+HB_BOOL HB_EXPORT sr_lHideRecno(void);
+HB_BOOL HB_EXPORT sr_lHideHistoric(void);
+HB_BOOL HB_EXPORT sr_isMultilang(void);
+HB_BOOL HB_EXPORT sr_isShutdownProcess(void);
+HB_BOOL HB_EXPORT sr_UseDeleteds(void);
+HB_BOOL HB_EXPORT sr_lSerializeArrayAsJson(void);
+HB_BOOL HB_EXPORT sr_lsql2008newTypes(void);
+HB_BOOL HB_EXPORT sr_iOldPgsBehavior(void);
+HB_BOOL HB_EXPORT sr_fShortasNum(void);
 #ifdef SQLRDD_COMPAT_PRE_1_1
-   HB_BOOL hb_arraySetNL( PHB_ITEM pArray, HB_ULONG ulIndex, HB_LONG ulVal );
-   HB_BOOL hb_arraySetL( PHB_ITEM pArray, HB_ULONG ulIndex, HB_BOOL lVal );
+HB_BOOL hb_arraySetNL(PHB_ITEM pArray, HB_ULONG ulIndex, HB_LONG ulVal);
+HB_BOOL hb_arraySetL(PHB_ITEM pArray, HB_ULONG ulIndex, HB_BOOL lVal);
 #endif
-HB_BOOL iTemCompEqual( PHB_ITEM pItem1, PHB_ITEM pItem2 );
-HB_BOOL hb_itemEmpty( PHB_ITEM pItem );
-HB_BOOL sr_GoTopOnScope( void );
+HB_BOOL iTemCompEqual(PHB_ITEM pItem1, PHB_ITEM pItem2);
+HB_BOOL hb_itemEmpty(PHB_ITEM pItem);
+HB_BOOL sr_GoTopOnScope(void);
 
 // SOme commom defines to ALL SQL RDDs
 
-#define FIELD_LIST_LEARNING         0
-#define FIELD_LIST_STABLE           1
-#define FIELD_LIST_CHANGED          2
-#define FIELD_LIST_NEW_VALUE_READ   3
-
+#define FIELD_LIST_LEARNING 0
+#define FIELD_LIST_STABLE 1
+#define FIELD_LIST_CHANGED 2
+#define FIELD_LIST_NEW_VALUE_READ 3
