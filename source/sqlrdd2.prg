@@ -7331,7 +7331,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
          ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")
       ENDIF
 
-      IF ::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS][1] != "#"
+      IF substr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
          ::aIndex[nLen, FOR_CLAUSE] := rtrim(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS])
       ELSE
          ::aIndex[nLen, FOR_CLAUSE] := "INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3) + " = 'T'"
