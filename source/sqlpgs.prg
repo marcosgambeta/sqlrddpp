@@ -55,13 +55,14 @@
 
 #define SR_CRLF   (chr(13) + chr(10))
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 CLASS SR_PGS FROM SR_CONNECTION
 
    Data aCurrLine
 
-   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
+   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+      nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
    METHOD End()
    METHOD LastError()
    METHOD Commit(lNoLog)
@@ -78,7 +79,7 @@ CLASS SR_PGS FROM SR_CONNECTION
 
 ENDCLASS
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_PGS
 
@@ -87,7 +88,7 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_PGS
 
 RETURN -1
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
 
@@ -113,7 +114,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
 
 RETURN aArray
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_PGS
 
@@ -125,7 +126,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_PGS
 
 RETURN ::aCurrLine[nField]
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_PGS
 
@@ -143,7 +144,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_PGS
 
 RETURN ::nRetCode
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD FreeStatement() CLASS SR_PGS
 
@@ -154,28 +155,28 @@ METHOD FreeStatement() CLASS SR_PGS
 
 RETURN NIL
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_PGS
 
-   LOCAL nFields := 0
-   LOCAL nType := 0
-   LOCAL nLen := 0
-   LOCAL nNull := 0
-   LOCAL aFields := {}
-   LOCAL nDec := 0
+   LOCAL nFields //:= 0 (value not used)
+   //LOCAL nType := 0 (variable not used)
+   //LOCAL nLen := 0 (variable not used)
+   //LOCAL nNull := 0 (variable not used)
+   LOCAL aFields //:= {} (value not used)
+   //LOCAL nDec := 0 (variable not used)
    LOCAL nRet
-   LOCAL cVlr := ""
+   //LOCAL cVlr := "" (variable not used)
    LOCAL cTbl
    LOCAL cOwner := "public"
-   
-   HB_SYMBOL_UNUSED(nFields)
-   HB_SYMBOL_UNUSED(nType)
-   HB_SYMBOL_UNUSED(nLen)
-   HB_SYMBOL_UNUSED(nNull)
-   HB_SYMBOL_UNUSED(aFields)
-   HB_SYMBOL_UNUSED(nDec)
-   HB_SYMBOL_UNUSED(cVlr)
+
+   //HB_SYMBOL_UNUSED(nFields)
+   //HB_SYMBOL_UNUSED(nType)
+   //HB_SYMBOL_UNUSED(nLen)
+   //HB_SYMBOL_UNUSED(nNull)
+   //HB_SYMBOL_UNUSED(aFields)
+   //HB_SYMBOL_UNUSED(nDec)
+   //HB_SYMBOL_UNUSED(cVlr)
 
    DEFAULT lReSelect TO .T.
    DEFAULT lLoadCache TO .F.
@@ -187,7 +188,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       IF !Empty(cCommand)
          nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       ELSE
-         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments, " /* Open Workarea */", ""), .F.)
+         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + ;
+            iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
+            iif(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          RETURN NIL
@@ -225,7 +228,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
 RETURN aFields
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD LastError() CLASS SR_PGS
 
@@ -235,17 +238,17 @@ METHOD LastError() CLASS SR_PGS
 
 RETURN "(" + alltrim(str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, ;
-   cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_PGS
+METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+   nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_PGS
 
-   LOCAL hEnv := 0
-   LOCAL hDbc := 0
+   //LOCAL hEnv := 0 (variable not used)
+   LOCAL hDbc //:= 0 (value not used)
    LOCAL nret
-   LOCAL cVersion := ""
-   LOCAL cSystemVers := ""
-   LOCAL cBuff := ""
+   //LOCAL cVersion := "" (variable not used)
+   LOCAL cSystemVers //:= "" (value not used)
+   //LOCAL cBuff := "" (variable not used)
    LOCAL aRet := {}
    LOCAL aVersion
    LOCAL cmatch
@@ -253,13 +256,14 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    LOCAL nlen
    LOCAL s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
    LOCAL cString
-   
-   HB_SYMBOL_UNUSED(hEnv)
-   HB_SYMBOL_UNUSED(hDbc)
-   HB_SYMBOL_UNUSED(cVersion)
-   HB_SYMBOL_UNUSED(cSystemVers)
-   HB_SYMBOL_UNUSED(cBuff)
 
+   //HB_SYMBOL_UNUSED(hEnv)
+   //HB_SYMBOL_UNUSED(hDbc)
+   //HB_SYMBOL_UNUSED(cVersion)
+   //HB_SYMBOL_UNUSED(cSystemVers)
+   //HB_SYMBOL_UNUSED(cBuff)
+
+   // parameters not used
    HB_SYMBOL_UNUSED(cDSN)
    HB_SYMBOL_UNUSED(cUser)
    HB_SYMBOL_UNUSED(cPassword)
@@ -276,10 +280,12 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    DEFAULT ::cPort TO 5432
 
-   cConnect := "host=" + ::cHost + " user=" + ::cUser + " password=" + ::cPassword + " dbname=" + ::cDTB + " port=" + str(::cPort, 6)
+   cConnect := "host=" + ::cHost + " user=" + ::cUser + " password=" + ::cPassword + " dbname=" + ::cDTB + ;
+      " port=" + str(::cPort, 6)
 
    IF !Empty(::sslcert)
-      cConnect += " sslmode=prefer sslcert=" + ::sslcert + " sslkey=" + ::sslkey + " sslrootcert=" + ::sslrootcert + " sslcrl=" + ::sslcrl
+      cConnect += " sslmode=prefer sslcert=" + ::sslcert + " sslkey=" + ::sslkey + " sslrootcert=" + ::sslrootcert + ;
+         " sslcrl=" + ::sslcrl
    ENDIF
 
    hDbc := PGSConnect(cConnect)
@@ -289,25 +295,25 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::nRetCode := nRet
       SR_MsgLogFile("Connection Error: " + alltrim(str(PGSStatus2(hDbc))) + " (see pgs.ch)")
       RETURN Self
-   ELSE
-      ::cConnect := cConnect
-      ::hStmt := NIL
-      ::hDbc := hDbc
-      cTargetDB := "PostgreSQL Native"
-      ::exec("select version()", .T., .T., @aRet)
-      IF len(aRet) > 0
-         cSystemVers := aRet[1, 1]
-         cString := aRet[1, 1]
-         cMatch := HB_AtX(s_reEnvVar, cString, , @nStart, @nLen)
-         IF !empty(cMatch)
-            aVersion := hb_atokens(cMatch, ".")
-         ELSE
-            aVersion := hb_atokens(strtran(Upper(aRet[1, 1]), "POSTGRESQL ", ""), ".")
-         ENDIF
+   ENDIF
+
+   ::cConnect := cConnect
+   ::hStmt := NIL
+   ::hDbc := hDbc
+   cTargetDB := "PostgreSQL Native"
+   ::exec("select version()", .T., .T., @aRet)
+   IF len(aRet) > 0
+      cSystemVers := aRet[1, 1]
+      cString := aRet[1, 1]
+      cMatch := HB_AtX(s_reEnvVar, cString, , @nStart, @nLen)
+      IF !empty(cMatch)
+         aVersion := hb_atokens(cMatch, ".")
       ELSE
-         cSystemVers := "??"
-         aVersion := {"6", "0"}
+         aVersion := hb_atokens(strtran(Upper(aRet[1, 1]), "POSTGRESQL ", ""), ".")
       ENDIF
+   ELSE
+      cSystemVers := "??"
+      aVersion := {"6", "0"}
    ENDIF
 
    ::cSystemName := cTargetDB
@@ -315,8 +321,9 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::nSystemID := SYSTEMID_POSTGR
    ::cTargetDB := Upper(cTargetDB)
 
-
-   // IF !("7.3" $ cSystemVers .OR. "7.4" $ cSystemVers .OR. "8.0" $ cSystemVers .OR. "8.1" $ cSystemVers .OR. "8.2" $ cSystemVers .OR. "8.3" $ cSystemVers .OR. "8.4" $ cSystemVers .OR. "9.0" $ cSystemVers or. "9.1" $ cSystemVers)
+   // IF !("7.3" $ cSystemVers .OR. "7.4" $ cSystemVers .OR. "8.0" $ cSystemVers .OR. "8.1" $ cSystemVers .OR. ;
+   //    "8.2" $ cSystemVers .OR. "8.3" $ cSystemVers .OR. "8.4" $ cSystemVers .OR. "9.0" $ cSystemVers .OR. ;
+   //    "9.1" $ cSystemVers)
 
    IF !((Val(aversion[1]) == 7 .AND. Val(aversion[2]) >= 3) .OR. (Val(aversion[1]) >= 8))
       ::End()
@@ -336,7 +343,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
 RETURN Self
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD End() CLASS SR_PGS
 
@@ -353,7 +360,7 @@ METHOD End() CLASS SR_PGS
 
 RETURN NIL
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD Commit(lNoLog) CLASS SR_PGS
 
@@ -361,7 +368,7 @@ METHOD Commit(lNoLog) CLASS SR_PGS
 
 RETURN (::nRetCode := ::exec("COMMIT;BEGIN", .F.))
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD RollBack() CLASS SR_PGS
 
@@ -371,7 +378,7 @@ METHOD RollBack() CLASS SR_PGS
 
 RETURN ::nRetCode
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD ExecuteRaw(cCommand) CLASS SR_PGS
 
@@ -385,25 +392,23 @@ METHOD ExecuteRaw(cCommand) CLASS SR_PGS
 
 RETURN PGSResultStatus(::hStmt)
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD AllocStatement() CLASS SR_PGS
 
    IF ::lSetNext
       IF ::nSetOpt == SQL_ATTR_QUERY_TIMEOUT
-/*
-         Commented 2005/02/04 - It's better to wait forever on a lock than have a corruct transaction
-         PGSExec(::hDbc, "set statement_timeout=" + str(::nSetValue * 1000))
-*/
+         // Commented 2005/02/04 - It's better to wait forever on a lock than have a corruct transaction
+         // PGSExec(::hDbc, "set statement_timeout=" + str(::nSetValue * 1000))
       ENDIF
       ::lSetNext := .F.
    ENDIF
 
 RETURN SQL_SUCCESS
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD GetAffectedRows()
 RETURN PGSAFFECTEDROWS(::hDbc)
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
