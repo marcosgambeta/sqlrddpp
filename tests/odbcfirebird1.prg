@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with ODBC/Firebird
 // To compile:
 // hbmk2 odbcfirebird1

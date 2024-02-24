@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with Firebird simulating CRUD
 // To compile:
 // hbmk2 firebirdcrud -lfbclient

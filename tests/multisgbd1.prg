@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with Firebird, MySQL and PostgreSQL
 // To compile:
 // hbmk2 multisgbd1 -lfbclient -llibmysql -llibpq

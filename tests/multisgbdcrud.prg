@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with Firebird, MySQL and PostgreSQL simulating CRUD
 // To compile:
 // hbmk2 multisgbdcrud -lfbclient -llibmysql -llibpq

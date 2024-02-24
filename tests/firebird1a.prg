@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with Firebird 3
 // To compile:
 // hbmk2 firebird1a -lfbclient
@@ -31,7 +31,7 @@ PROCEDURE Main()
       alert("Connection error. See sqlerror.log for details.")
       QUIT
    ENDIF
-   
+
    sr_StartLog(nConnection)
 
    IF !sr_ExistTable("test")
@@ -64,9 +64,9 @@ PROCEDURE Main()
    browse()
 
    CLOSE DATABASE
-   
+
    sr_StopLog(nConnection)
-   
+
    sr_EndConnection(nConnection)
 
 RETURN

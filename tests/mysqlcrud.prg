@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with MySQL simulating CRUD
 // To compile:
 // hbmk2 mysqlcrud -llibmysql

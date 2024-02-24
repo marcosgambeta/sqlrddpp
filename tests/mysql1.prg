@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with MySQL
 // To compile:
 // hbmk2 mysql1 -llibmysql

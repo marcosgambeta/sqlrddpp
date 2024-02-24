@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with PostgreSQL
 // To compile:
 // hbmk2 pgsql1 -llibpq

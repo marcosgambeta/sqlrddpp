@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with Firebird 3
 // To compile:
 // hbmk2 firebird2a -lfbclient

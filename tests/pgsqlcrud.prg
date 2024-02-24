@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with PostgreSQL simulating CRUD
 // To compile:
 // hbmk2 pgsqlcrud -llibpq

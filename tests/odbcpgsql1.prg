@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with ODBC/PostgreSQL
 // To compile:
 // hbmk2 odbcpgsql1

@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with PostgreSQL
 // To compile:
 // hbmk2 pgsql3 -llibpq
@@ -64,8 +64,8 @@ PROCEDURE Main()
    cQuery := "SELECT id, first, last FROM test LIMIT 50"
    USE (cQuery) VIA "SQLRDD" ALIAS test
    SET INDEX TO "id" // create a virtual index
-   SEEK 15 // FAILING
-   //LOCATE FOR id == 15 // WORKING
+   // SEEK 15 // ALWAYS RETURN .F.
+   LOCATE FOR id == 15 // WORKING
 
    browse()
 

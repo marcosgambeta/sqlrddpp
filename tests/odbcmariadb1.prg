@@ -1,4 +1,4 @@
-// SQLRDD
+// SQLRDD++
 // test with ODBC/MariaDB
 // To compile:
 // hbmk2 odbcmariadb1
