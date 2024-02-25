@@ -59,13 +59,14 @@
 #define ARRAY_BLOCK               500
 #define MINIMAL_MYSQL_SUPPORTED   50100
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 CLASS SR_MARIA FROM SR_CONNECTION
 
    DATA aCurrLine
 
-   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
+   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+      nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
    METHOD End()
    METHOD LastError()
    METHOD Commit(lNoLog)
@@ -82,20 +83,16 @@ CLASS SR_MARIA FROM SR_CONNECTION
 
 ENDCLASS
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_MARIA
-
-   LOCAL nRet
 
    HB_SYMBOL_UNUSED(aArray)
    HB_SYMBOL_UNUSED(lTranslate)
 
-   nRet := -1
+RETURN -1
 
-RETURN nRet
-
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MARIA
 
@@ -121,7 +118,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MARIA
 
 RETURN aArray
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_MARIA
 
@@ -133,7 +130,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_MARIA
 
 RETURN ::aCurrLine[nField]
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_MARIA
 
@@ -151,7 +148,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_MARIA
 
 RETURN ::nRetCode
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD FreeStatement() CLASS SR_MARIA
 
@@ -162,37 +159,39 @@ METHOD FreeStatement() CLASS SR_MARIA
 
 RETURN NIL
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_MARIA
 
-   LOCAL nType := 0
-   LOCAL nLen := 0
-   LOCAL nNull := 0
-   LOCAL aFields := {}
-   LOCAL nDec := 0
+   //LOCAL nType := 0 (variable not used)
+   //LOCAL nLen := 0 (variable not used)
+   //LOCAL nNull := 0 (variable not used)
+   LOCAL aFields //:= {} (value not used)
+   //LOCAL nDec := 0 (variable not used)
    LOCAL nRet
-   LOCAL cVlr := ""
+   //LOCAL cVlr := "" (variable not used)
    LOCAL aFld
 
-   HB_SYMBOL_UNUSED(nType)
-   HB_SYMBOL_UNUSED(nLen)
-   HB_SYMBOL_UNUSED(nNull)
-   HB_SYMBOL_UNUSED(aFields)
-   HB_SYMBOL_UNUSED(nDec)
-   HB_SYMBOL_UNUSED(cVlr)
+   //HB_SYMBOL_UNUSED(nType)
+   //HB_SYMBOL_UNUSED(nLen)
+   //HB_SYMBOL_UNUSED(nNull)
+   //HB_SYMBOL_UNUSED(aFields)
+   //HB_SYMBOL_UNUSED(nDec)
+   //HB_SYMBOL_UNUSED(cVlr)
 
-   DEFAULT lReSelect    TO .T.
-   DEFAULT lLoadCache   TO .F.
-   DEFAULT cWhere       TO ""
-   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT lReSelect TO .T.
+   DEFAULT lLoadCache TO .F.
+   DEFAULT cWhere TO ""
+   DEFAULT cRecnoName TO SR_RecnoName()
    DEFAULT cDeletedName TO SR_DeletedName()
 
    IF lReSelect
       IF !Empty(cCommand)
          nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       ELSE
-         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments, " /* Open Workarea */", ""), .F.)
+         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + ;
+            iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
+            iif(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          RETURN NIL
@@ -226,7 +225,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
 RETURN aFields
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD LastError() CLASS SR_MARIA
 
@@ -236,25 +235,26 @@ METHOD LastError() CLASS SR_MARIA
 
 RETURN "(" + alltrim(str(::nRetCode)) + ") " + MYSErrMsg(::hDbc)
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, ;
-   cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout) CLASS SR_MARIA
+METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+   nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout) CLASS SR_MARIA
 
-   LOCAL hEnv := 0
-   LOCAL hDbc := 0
+   //LOCAL hEnv := 0 (variable not used)
+   LOCAL hDbc //:= 0 (value not used)
    LOCAL nret
-   LOCAL cVersion := ""
-   LOCAL cSystemVers := ""
-   LOCAL cBuff := ""
+   //LOCAL cVersion := "" (variable not used)
+   LOCAL cSystemVers //:= "" (value not used)
+   //LOCAL cBuff := "" (variable not used)
    LOCAL nVersionp
 
-   HB_SYMBOL_UNUSED(hEnv)
-   HB_SYMBOL_UNUSED(hDbc)
-   HB_SYMBOL_UNUSED(cVersion)
-   HB_SYMBOL_UNUSED(cSystemVers)
-   HB_SYMBOL_UNUSED(cBuff)
+   //HB_SYMBOL_UNUSED(hEnv)
+   //HB_SYMBOL_UNUSED(hDbc)
+   //HB_SYMBOL_UNUSED(cVersion)
+   //HB_SYMBOL_UNUSED(cSystemVers)
+   //HB_SYMBOL_UNUSED(cBuff)
 
+   // parameters not used
    HB_SYMBOL_UNUSED(cDSN)
    HB_SYMBOL_UNUSED(cUser)
    HB_SYMBOL_UNUSED(cPassword)
@@ -276,20 +276,20 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::nRetCode := nRet
       ::nSystemID := 0
       SR_MsgLogFile("Connection Error")
-      nVersionp := 4
-      HB_SYMBOL_UNUSED(nVersionp)
+      //nVersionp := 4 (value not used)
       RETURN Self
-   ELSE
-      ::cConnect := cConnect
-      ::hStmt := NIL
-      ::hDbc := hDbc
-      cTargetDB := "MARIADB Native"
-      cSystemVers := alltrim(str(MYSVERS(hDbc)))
-      nVersionp := MYSVERS(hDbc)
    ENDIF
 
+   ::cConnect := cConnect
+   ::hStmt := NIL
+   ::hDbc := hDbc
+   cTargetDB := "MARIADB Native"
+   cSystemVers := alltrim(str(MYSVERS(hDbc)))
+   nVersionp := MYSVERS(hDbc)
+
    IF (!::lQueryOnly) .AND. nVersionp < MINIMAL_MYSQL_SUPPORTED
-      SR_MsgLogFile("Connection Error: MariaDB version not supported : " + cSystemVers + " / minimun is " + str(MINIMAL_MYSQL_SUPPORTED))
+      SR_MsgLogFile("Connection Error: MariaDB version not supported : " + cSystemVers + " / minimun is " + ;
+         str(MINIMAL_MYSQL_SUPPORTED))
       ::End()
       ::nSystemID := 0
       ::nRetCode := -1
@@ -298,14 +298,14 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    ::cSystemName := cTargetDB
    ::cSystemVers := cSystemVers
-   ::nSystemID   := SYSTEMID_MARIADB
-   ::cTargetDB   := Upper(cTargetDB)
-   ::uSid        := MYSGETCONNID(hDbc)
-   ::lMariaDb    :=.T.
+   ::nSystemID := SYSTEMID_MARIADB
+   ::cTargetDB := Upper(cTargetDB)
+   ::uSid := MYSGETCONNID(hDbc)
+   ::lMariaDb := .T.
 
 RETURN Self
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD End() CLASS SR_MARIA
 
@@ -318,7 +318,7 @@ METHOD End() CLASS SR_MARIA
 
 RETURN ::super:End()
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD Commit(lNoLog) CLASS SR_MARIA
 
@@ -326,7 +326,7 @@ METHOD Commit(lNoLog) CLASS SR_MARIA
 
 RETURN (::nRetCode := MYSCommit(::hDbc))
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD RollBack() CLASS SR_MARIA
 
@@ -334,7 +334,7 @@ METHOD RollBack() CLASS SR_MARIA
 
 RETURN (::nRetCode := MYSRollBack(::hDbc))
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD ExecuteRaw(cCommand) CLASS SR_MARIA
 
@@ -348,9 +348,9 @@ METHOD ExecuteRaw(cCommand) CLASS SR_MARIA
 
 RETURN MYSResultStatus(::hDbc)
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD GetAffectedRows() CLASS SR_MARIA
 RETURN MYSAFFECTEDROWS(::hDbc)
 
-/*------------------------------------------------------------------------*/
+//-------------------------------------------------------------------------------------------------------------------//
