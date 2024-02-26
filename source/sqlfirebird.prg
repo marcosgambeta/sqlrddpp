@@ -231,7 +231,6 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          ELSE
             aFields[n] := {cName, cType, nLenField, nDec, nNull >= 1, nType, , n, _nDec, ,}
          ENDIF
-
       ENDIF
 
    NEXT n
