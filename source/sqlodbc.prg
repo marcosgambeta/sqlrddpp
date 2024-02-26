@@ -61,11 +61,14 @@
 #define SQL_ATTR_LONGDATA_COMPAT    SQL_LONGDATA_COMPAT
 #define SQL_LD_COMPAT_YES            1
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 CLASS SR_ODBC FROM SR_CONNECTION
 
    Data aCurrLine
 
-   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
+   METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+      nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
    METHOD End()
    METHOD GetInfo(nType)
    METHOD SetOptions(nType, uBuffer)
@@ -84,16 +87,24 @@ CLASS SR_ODBC FROM SR_CONNECTION
    METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)
    METHOD DriverCatTables()
    METHOD Getline(aFields, lTranslate, aArray)
-   //METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, nBlockPos, hnRecno, lFetchAll, aFetch, uRecord, nPos)
-   METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos)
+   //METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, nBlockPos, hnRecno, ;
+   //   lFetchAll, aFetch, uRecord, nPos) (wrong declaration)
+   METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, ;
+      uRecord, nPos)
 
 ENDCLASS
 
-METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos) CLASS SR_ODBC
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD FetchMultiple(lTranslate, aFields, aCache, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, ;
+   uRecord, nPos) CLASS SR_ODBC
 
    DEFAULT lTranslate TO .T.
 
-RETURN SR_ODBCGETLINES(::hStmt, 4096, aFields, aCache, ::nSystemID, lTranslate, nCurrentFetch, aInfo, nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos)
+RETURN SR_ODBCGETLINES(::hStmt, 4096, aFields, aCache, ::nSystemID, lTranslate, nCurrentFetch, aInfo, nDirection, ;
+   hnRecno, lFetchAll, aFetch, uRecord, nPos)
+
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ODBC
 
@@ -119,6 +130,8 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ODBC
 
 RETURN aArray
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD DriverCatTables() CLASS SR_ODBC
 
    LOCAL nRet
@@ -134,9 +147,9 @@ METHOD DriverCatTables() CLASS SR_ODBC
    IF nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
 
       nAllocated := ARRAY_BLOCK1
-      nBlocks    := 1
-      n          := 0
-      aFields    := ::IniFields(.F.,,,,,,)
+      nBlocks := 1
+      n := 0
+      aFields := ::IniFields(.F.,,,,,,)
 
       DO WHILE (::nRetCode := ::Fetch()) = SQL_SUCCESS
 
@@ -163,7 +176,9 @@ METHOD DriverCatTables() CLASS SR_ODBC
          ENDIF
 
          aArray[n] := {::FieldGet(3, aFields, .F.)}
+
       ENDDO
+
    ENDIF
 
    ::FreeStatement()
@@ -172,6 +187,8 @@ METHOD DriverCatTables() CLASS SR_ODBC
    HB_SYMBOL_UNUSED(nBlocks)
 
 RETURN aArray
+
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
 
@@ -205,6 +222,8 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
 
 RETURN nRet
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ODBC
 
    IF ::aCurrLine == NIL
@@ -215,10 +234,12 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ODBC
 
 RETURN ::aCurrLine[nField]
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_ODBC
 
    ::nRetCode := SQL_ERROR
-   DEFAULT aFields    TO ::aFields
+   DEFAULT aFields TO ::aFields
    DEFAULT lTranslate TO .T.
 
    IF ::hStmt != NIL
@@ -230,6 +251,8 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_ODBC
    ENDIF
 
 RETURN ::nRetCode
+
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD FreeStatement() CLASS SR_ODBC
 
@@ -243,12 +266,14 @@ METHOD FreeStatement() CLASS SR_ODBC
 
 RETURN NIL
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD AllocStatement() CLASS SR_ODBC
 
    LOCAL hStmtLocal := NIL
-   LOCAL nRet := 0
-   
-   HB_SYMBOL_UNUSED(nRet)
+   LOCAL nRet //:= 0 (value not used)
+
+   //HB_SYMBOL_UNUSED(nRet)
 
    ::FreeStatement()
 
@@ -271,6 +296,8 @@ METHOD AllocStatement() CLASS SR_ODBC
 
 RETURN nRet
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_ODBC
 
    LOCAL n
@@ -279,33 +306,35 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    LOCAL nLen := 0
    LOCAL nNull := 0
    LOCAL cName
-   LOCAL _nLen
+   //LOCAL _nLen
    LOCAL _nDec
    LOCAL cType
    LOCAL nLenField
    LOCAL nNameLen
-   LOCAL aFields := {}
+   LOCAL aFields //:= {} (value not used)
    LOCAL nDec := 0
    LOCAL nSoma
    LOCAL nRet
-   LOCAL cVlr := ""
-   //LOCAL nBfLn
-   //LOCAL nOut
+   //LOCAL cVlr := "" (variable used in code disabled)
+   //LOCAL nBfLn      (variable used in code disabled)
+   //LOCAL nOut       (variable used in code disabled)
 
-   HB_SYMBOL_UNUSED(aFields)
-   HB_SYMBOL_UNUSED(cVlr)
+   //HB_SYMBOL_UNUSED(aFields)
+   //HB_SYMBOL_UNUSED(cVlr)
 
-   DEFAULT lReSelect    TO .T.
-   DEFAULT lLoadCache   TO .F.
-   DEFAULT cWhere       TO ""
-   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT lReSelect TO .T.
+   DEFAULT lLoadCache TO .F.
+   DEFAULT cWhere TO ""
+   DEFAULT cRecnoName TO SR_RecnoName()
    DEFAULT cDeletedName TO SR_DeletedName()
 
    IF lReSelect
       IF !Empty(cCommand)
          nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       ELSE
-         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + iif(::lComments, " /* Open Workarea */", ""), .F.)
+         nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + ;
+            iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
+            iif(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
 
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
@@ -327,12 +356,13 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       nDec := 0
       nSoma := 0
 
-      IF (::nRetCode := SR_Describ(::hStmt, n, @cName, 255, @nNameLen, @nType, @nLen, @nDec, @nNull, ::nSystemID)) != SQL_SUCCESS
+      IF (::nRetCode := SR_Describ(::hStmt, n, @cName, 255, @nNameLen, @nType, @nLen, @nDec, @nNull, ;
+         ::nSystemID)) != SQL_SUCCESS
          ::RunTimeErr("", "SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
             "Last command sent to database : " + ::cLastComm)
          RETURN NIL
       ELSE
-         _nLen := nLen
+         //_nLen := nLen (value not used)
          _nDec := nDec
          IF (nType == SQL_DOUBLE .OR. nType == SQL_FLOAT) .AND. nDec == 0
             nDec := 6
@@ -343,14 +373,17 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
             nType := SQL_FAKE_LOB
          ENDIF
 
-         IF ::nSystemID == SYSTEMID_ORACLE .AND. nLen == 19 .AND. (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME)
+         IF ::nSystemID == SYSTEMID_ORACLE .AND. nLen == 19 .AND. ;
+            (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME)
              nType := SQL_DATE
          ENDIF
          IF ::nsystemId ==  SYSTEMID_MSSQL7
             IF (ntype == SQL_TYPE_DATE) .AND. SR_GETSQL2008NEWTYPES() .AND. ::lSqlServer2008
                nType := SQL_DATE
-            ELSEIF (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME) .AND. SR_GETSQL2008NEWTYPES() .AND. ::lSqlServer2008
-            ELSEIF (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME) .AND. !SR_GETSQL2008NEWTYPES() //.AND. !::lSqlServer2008
+            ELSEIF (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME) .AND. ;
+               SR_GETSQL2008NEWTYPES() .AND. ::lSqlServer2008
+            ELSEIF (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME) .AND. ;
+               !SR_GETSQL2008NEWTYPES() //.AND. !::lSqlServer2008
                nType := SQL_DATE
             ENDIF
          ENDIF
@@ -358,7 +391,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          cName := upper(alltrim(cName))
          cType := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec) + nSoma
-         IF ::nSystemID == SYSTEMID_ORACLE .AND. (!::lQueryOnly) .AND. cType == "N" .AND. nLenField == 38 .AND. nDec == 0
+         IF ::nSystemID == SYSTEMID_ORACLE .AND. (!::lQueryOnly) .AND. cType == "N" .AND. nLenField == 38 ;
+            .AND. nDec == 0
             cType := "L"
             nLenField := 1
          ENDIF
@@ -383,9 +417,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       ::FreeStatement()
    ENDIF
 
-   HB_SYMBOL_UNUSED(_nLen)
+   //HB_SYMBOL_UNUSED(_nLen)
 
 RETURN aFields
+
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD LastError() CLASS SR_ODBC
 
@@ -398,20 +434,24 @@ METHOD LastError() CLASS SR_ODBC
 
 RETURN SR_Val2Char(cClassError) + " - " + AllTrim(SR_Val2Char(nType)) + " - " + SR_Val2Char(cMsgError)
 
-METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_ODBC
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+   nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_ODBC
 
    LOCAL hEnv := NIL
    LOCAL hDbc := NIL
    LOCAL nret
-   LOCAL cVersion := ""
+   //LOCAL cVersion := "" (variable not used)
    LOCAL cSystemVers := ""
-   LOCAL cBuff := ""
+   //LOCAL cBuff := "" (variable not used)
    LOCAL aRet := {}
-   
-   HB_SYMBOL_UNUSED(cVersion)
-   HB_SYMBOL_UNUSED(cBuff)
 
-   HB_SYMBOL_UNUSED( cDSN)
+   //HB_SYMBOL_UNUSED(cVersion)
+   //HB_SYMBOL_UNUSED(cBuff)
+
+   // parameters not used
+   HB_SYMBOL_UNUSED(cDSN)
    HB_SYMBOL_UNUSED(cUser)
    HB_SYMBOL_UNUSED(cPassword)
    HB_SYMBOL_UNUSED(nVersion)
@@ -480,6 +520,8 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
 RETURN SELF
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD End() CLASS SR_ODBC
 
    LOCAL nRet
@@ -500,6 +542,8 @@ METHOD End() CLASS SR_ODBC
 
 RETURN ::Super:End()
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD GetInfo(nType) CLASS SR_ODBC
 
    LOCAL cBuffer := Space(256)
@@ -507,6 +551,8 @@ METHOD GetInfo(nType) CLASS SR_ODBC
    ::nRetCode := SR_GetInfo(::hDbc, nType, @cBuffer)
 
 RETURN cBuffer
+
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD GetOptions(nType) CLASS SR_ODBC
 
@@ -516,13 +562,19 @@ METHOD GetOptions(nType) CLASS SR_ODBC
 
 RETURN cBuffer
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD SetOptions(nType, uBuffer) CLASS SR_ODBC
 
 RETURN (::nRetCode := SR_SetConnectOption(::hDbc, nType, uBuffer))
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD SetStmtOptions(nType, uBuffer) CLASS SR_ODBC
 
 RETURN (::nRetCode := SR_SetStmtOption(::hStmt, nType, uBuffer))
+
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD Commit(lNoLog) CLASS SR_ODBC
 
@@ -530,18 +582,26 @@ METHOD Commit(lNoLog) CLASS SR_ODBC
 
 RETURN (::nRetCode := SR_Commit(::hEnv, ::hDbc))
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD RollBack() CLASS SR_ODBC
 
    ::Super:RollBack()
 
 RETURN (::nRetCode := SR_RollBack(::hEnv, ::hDbc))
 
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD ExecuteRaw(cCommand) CLASS SR_ODBC
 
 RETURN SR_ExecDir(::hStmt, cCommand)
+
+//-------------------------------------------------------------------------------------------------------------------//
 
 METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData) CLASS SR_ODBC
 
    ::FreeStatement()
 
 RETURN SR_ODBCWriteMemo(::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData)
+
+//-------------------------------------------------------------------------------------------------------------------//
