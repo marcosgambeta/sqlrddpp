@@ -226,7 +226,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          nLenField := ::SQLLen(nType, nLen, @nDec)
          IF nPos > 0 .AND. aLocalPrecision[nPos, 2] > 0
             nLenField := aLocalPrecision[nPos, 2]
-         ELSEIF (nType == SQL_DOUBLE .OR. nType == SQL_FLOAT .OR. nType == SQL_NUMERIC)
+         ELSEIF nType == SQL_DOUBLE .OR. nType == SQL_FLOAT .OR. nType == SQL_NUMERIC
             nLenField := 19
          ENDIF
 
