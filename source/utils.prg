@@ -56,7 +56,7 @@
 #define SR_CRLF   (chr(13) + chr(10))
 
 REQUEST HB_Deserialize
-REQUEST HB_DeserialNext
+//REQUEST HB_DeserialNext
 #define FH_ALLOC_BLOCK     32
 
 Static DtAtiv, lHistorico
