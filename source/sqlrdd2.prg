@@ -6647,7 +6647,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
 
    ::oSql := SR_GetConnection(nDBConnection)
 
-   IF ::oSql:cNextQuery != NIL .OR. (Upper(Left(cFileName, 6)) == "SELECT" .AND. cFileName[7] $ " " + chr(9) + SR_CRLF)
+   IF ::oSql:cNextQuery != NIL .OR. (Upper(Left(cFileName, 6)) == "SELECT" .AND. substr(cFileName, 7, 1) $ " " + chr(9) + SR_CRLF)
       IF ::oSql:cNextQuery != NIL
          ::cFileName := ::oSql:cNextQuery
       ELSE
