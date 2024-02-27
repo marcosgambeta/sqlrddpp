@@ -212,25 +212,25 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          ::RunTimeErr("", "FBDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
             "Last command sent to database : " + ::cLastComm)
          RETURN NIL
+      ENDIF
+
+      //_nLen := nLen (value not used)
+      _nDec := nDec
+
+      cName := upper(alltrim(cName))
+      nPos := aScan(aLocalPrecision, {|x|rtrim(x[1]) == cName})
+      cType := ::SQLType(nType, cName, nLen)
+      nLenField := ::SQLLen(nType, nLen, @nDec)
+      IF nPos > 0 .AND. aLocalPrecision[nPos, 2] > 0
+         nLenField := aLocalPrecision[nPos, 2]
+      ELSEIF nType == SQL_DOUBLE .OR. nType == SQL_FLOAT .OR. nType == SQL_NUMERIC
+         nLenField := 19
+      ENDIF
+
+      IF cType == "U"
+         ::RuntimeErr("", SR_Msg(21) + cName + " : " + str(nType))
       ELSE
-         //_nLen := nLen (value not used)
-         _nDec := nDec
-
-         cName := upper(alltrim(cName))
-         nPos := aScan(aLocalPrecision, {|x|rtrim(x[1]) == cName})
-         cType := ::SQLType(nType, cName, nLen)
-         nLenField := ::SQLLen(nType, nLen, @nDec)
-         IF nPos > 0 .AND. aLocalPrecision[nPos, 2] > 0
-            nLenField := aLocalPrecision[nPos, 2]
-         ELSEIF nType == SQL_DOUBLE .OR. nType == SQL_FLOAT .OR. nType == SQL_NUMERIC
-            nLenField := 19
-         ENDIF
-
-         IF cType == "U"
-            ::RuntimeErr("", SR_Msg(21) + cName + " : " + str(nType))
-         ELSE
-            aFields[n] := {cName, cType, nLenField, nDec, nNull >= 1, nType, , n, _nDec, ,}
-         ENDIF
+         aFields[n] := {cName, cType, nLenField, nDec, nNull >= 1, nType, , n, _nDec, ,}
       ENDIF
 
    NEXT n
@@ -287,11 +287,11 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       SR_MsgLogFile("Connection Error: " + alltrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + ;
          " - Username : " + ::cUser + " (Password not shown for security)")
       RETURN SELF
-   ELSE
-      ::cConnect := cConnect
-      cTargetDB := StrTran(FBVERSION(hEnv), "(access method)", "")
-      cSystemVers := SubStr(cTargetDB, at("Firebird ", cTargetDB) + 9, 3)
    ENDIF
+
+   ::cConnect := cConnect
+   cTargetDB := StrTran(FBVERSION(hEnv), "(access method)", "")
+   cSystemVers := SubStr(cTargetDB, at("Firebird ", cTargetDB) + 9, 3)
 
    nRet := FBBeginTransaction(hEnv)
 
