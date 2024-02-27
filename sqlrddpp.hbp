@@ -70,4 +70,5 @@ sqlrddpp.hbx
 
 xhb.hbc
 
+# disable this line to NOT INSTALL the library in addons
 $hb_pkg_install.hbm
