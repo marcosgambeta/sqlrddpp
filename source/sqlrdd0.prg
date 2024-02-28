@@ -53,7 +53,7 @@
 #include "msg.ch"
 #define HB_FALSE 0
 #define HB_TRUE 1
-REQUEST XHB_LIB
+//REQUEST XHB_LIB
 REQUEST HB_Deserialize
 REQUEST HB_Serialize
 
