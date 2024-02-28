@@ -86,7 +86,7 @@ METHOD new(pFixVariables, pIgnoreRelations, pContext) CLASS ExpressionSimplifier
    IF pIgnoreRelations != NIL
       ::lIgnoreRelations := pIgnoreRelations
    ENDIF
-   ::cContext := upper(pContext)
+   ::cContext := Upper(pContext)
 
 RETURN SELF
 
@@ -103,9 +103,9 @@ METHOD SimplifyComposition(oExpression) CLASS ExpressionSimplifierBase
       IF newOperands[i]:lIsSimple
          oSimpleExpression := newOperands[i]:oExpression
          oAlgebraSet := AlgebraSet():new(oExpression:oOperator, oExpression:GetType())
-         IF oAlgebraSet:cIdentityElement == upper(newOperands[i]:Value)
+         IF oAlgebraSet:cIdentityElement == Upper(newOperands[i]:Value)
             RETURN iif(i == 1, ::Simplify(newOperands[2]), newOperands[1])
-         ELSEIF oAlgebraSet:cAbsorbentElement != NIL .AND. oAlgebraSet:cAbsorbentElement == upper(newOperands[i]:Value)
+         ELSEIF oAlgebraSet:cAbsorbentElement != NIL .AND. oAlgebraSet:cAbsorbentElement == Upper(newOperands[i]:Value)
             RETURN ::NewSimpleExpression(oExpression:cContext, oAlgebraSet:cAbsorbentElement)
          ENDIF
       ENDIF
@@ -209,7 +209,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
       ELSEIF oExpression:isKindOf("FunctionExpression")
          newParams := {}
          lAtLeastOneParamSimplified := .F.
-         FOR i := 1 TO len(oExpression:aParameters)
+         FOR i := 1 TO Len(oExpression:aParameters)
             oParameter := oExpression:aParameters[i]
             IF oParameter:oExpression:isKindOf("ConditionBase")
                simplifier := ::oConditionSimplifier
@@ -225,8 +225,8 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
          NEXT i
          IF lAtLeastOneParamSimplified
             newClipperString := oExpression:cFunctionName + "("
-            FOR i := 1 TO len(newParams)
-               newClipperString += newParams[i]:oExpression:oClipperExpression:cValue + iif(i == len(newParams), ")", ",")
+            FOR i := 1 TO Len(newParams)
+               newClipperString += newParams[i]:oExpression:oClipperExpression:cValue + iif(i == Len(newParams), ")", ",")
             NEXT i
             result := FunctionExpression():new(oExpression:cContext, newClipperString, oExpression:cFunctionName, newParams)
          ENDIF
@@ -271,7 +271,7 @@ METHOD ValueAssessable(oExpression) CLASS ExpressionSimplifier
       lRet := ::lFixVariables
       EXIT
    CASE "field"
-      lRet := (::lIgnoreRelations .OR. !::cContext == oExpression:cContext .AND. len(RelationManager():new():GetRelations(::cContext, oExpression:cContext)) == 0) .AND. ::lFixVariables
+      lRet := (::lIgnoreRelations .OR. !::cContext == oExpression:cContext .AND. Len(RelationManager():new():GetRelations(::cContext, oExpression:cContext)) == 0) .AND. ::lFixVariables
    ENDSWITCH
 
 RETURN lRet

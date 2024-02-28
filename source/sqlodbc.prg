@@ -113,9 +113,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ODBC
    DEFAULT lTranslate TO .T.
 
    IF aArray == NIL
-      aArray := Array(len(aFields))
-   ELSEIF len(aArray) < len(aFields)
-      aSize(aArray, len(aFields))
+      aArray := Array(Len(aFields))
+   ELSEIF Len(aArray) < Len(aFields)
+      aSize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -124,7 +124,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ODBC
       RETURN aArray
    ENDIF
 
-   FOR i := 1 TO len(aArray)
+   FOR i := 1 TO Len(aArray)
       aArray[i] := ::aCurrLine[i]
    NEXT i
 
@@ -211,8 +211,8 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
       ENDIF
 
       DO WHILE (::nRetCode := ::FetchRaw(lTranslate, aFieldsMore)) = SQL_SUCCESS
-         AADD(aArray, Array(len(aFieldsMore)))
-         FOR i := 1 TO len(aFieldsMore)
+         AADD(aArray, Array(Len(aFieldsMore)))
+         FOR i := 1 TO Len(aFieldsMore)
             aArray[n, i] := ::FieldGet(i, aFieldsMore, lTranslate)
          NEXT i
          n++
@@ -228,7 +228,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ODBC
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(LEN(aFields))
+      ::aCurrLine := array(Len(aFields))
       SR_ODBCLINEPROCESSED(::hStmt, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -388,7 +388,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
             ENDIF
          ENDIF
 
-         cName := upper(alltrim(cName))
+         cName := Upper(alltrim(cName))
          cType := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec) + nSoma
          IF ::nSystemID == SYSTEMID_ORACLE .AND. (!::lQueryOnly) .AND. cType == "N" .AND. nLenField == 38 ;
@@ -484,7 +484,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ENDIF
 
    IF !Empty(::cDTB)
-      SR_SetCOnnectAttr(hDbc, SQL_ATTR_CURRENT_CATALOG, ::cDTB, len(::cDTB))
+      SR_SetCOnnectAttr(hDbc, SQL_ATTR_CURRENT_CATALOG, ::cDTB, Len(::cDTB))
    ENDIF
 
    cConnect := alltrim(cConnect)
@@ -512,7 +512,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    CASE SYSTEMID_MSSQL7
    CASE SYSTEMID_AZURE
       ::exec("select cast( @@spid as numeric )", .T., .T., @aRet)
-      IF len(aRet) > 0
+      IF Len(aRet) > 0
          ::uSid := val(str(aRet[1, 1], 8, 0))
       ENDIF
       EXIT

@@ -101,9 +101,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MARIA
    DEFAULT lTranslate TO .T.
 
    IF aArray == NIL
-      aArray := Array(len(aFields))
-   ELSEIF len(aArray) < len(aFields)
-      aSize(aArray, len(aFields))
+      aArray := Array(Len(aFields))
+   ELSEIF Len(aArray) < Len(aFields)
+      aSize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -112,7 +112,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MARIA
       RETURN aArray
    ENDIF
 
-   FOR i := 1 TO len(aArray)
+   FOR i := 1 TO Len(aArray)
       aArray[i] := ::aCurrLine[i]
    NEXT i
 
@@ -124,7 +124,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_MARIA
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(LEN(aFields))
+      ::aCurrLine := array(Len(aFields))
       MYSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -338,7 +338,7 @@ RETURN (::nRetCode := MYSRollBack(::hDbc))
 
 METHOD ExecuteRaw(cCommand) CLASS SR_MARIA
 
-   IF upper(left(ltrim(cCommand), 6)) == "SELECT" .OR. upper(left(ltrim(cCommand), 5)) == "SHOW "
+   IF Upper(Left(ltrim(cCommand), 6)) == "SELECT" .OR. Upper(Left(ltrim(cCommand), 5)) == "SHOW "
       ::lResultSet := .T.
    ELSE
       ::lResultSet := .F.

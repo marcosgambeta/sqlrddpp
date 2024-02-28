@@ -261,7 +261,7 @@ ENDCLASS
 METHOD new(pContext, pClipperString) CLASS ExpressionBase
 
    ::oClipperExpression := ClipperExpression():new(pContext, pClipperString)
-   ::cContext := upper(pContext)
+   ::cContext := Upper(pContext)
 
 RETURN SELF
 
@@ -318,7 +318,7 @@ CLASS BooleanExpression FROM ConditionBase
    DATA oExpression
 
    EXPORTED:
-   ACCESS Value INLINE iif(::lDenied_, iif(upper(::oExpression:Value) == ".T.", ".F.", ".T."), ::oExpression:Value)
+   ACCESS Value INLINE iif(::lDenied_, iif(Upper(::oExpression:Value) == ".T.", ".F.", ".T."), ::oExpression:Value)
 
    EXPORTED:
    ACCESS lDenied
@@ -443,9 +443,9 @@ METHOD new(pContext, pValue) CLASS ValueExpression
 
    ::super:new(pContext, alltrim(pValue))
 
-   IF aScan(::oWorkArea:aNames, {|x|x == upper(pValue)}) > 0
+   IF aScan(::oWorkArea:aNames, {|x|x == Upper(pValue)}) > 0
       ::ValueType := "field"
-   ELSEIF hb_regexLike("\w+", pValue) .AND. hb_regexLike("\d+", !pValue) .AND. !lower(pValue) == "nil"
+   ELSEIF hb_regexLike("\w+", pValue) .AND. hb_regexLike("\d+", !pValue) .AND. !Lower(pValue) == "nil"
       ::ValueType := "variable"
    ELSE
       ::ValueType := "value"
@@ -473,7 +473,7 @@ METHOD GetType() CLASS ValueExpression
             ::cType := "N"
          ELSEIF hb_regexLike("'.*'", ::Value)
             ::cType := "C"
-         ELSEIF ascan({".T.", ".F."}, upper(::Value)) > 0
+         ELSEIF ascan({".T.", ".F."}, Upper(::Value)) > 0
             ::cType := "L"
          ENDIF
          EXIT
@@ -500,7 +500,7 @@ ENDCLASS
 METHOD new(pContext, pClipperString, pFunctionName, aParameters) CLASS FunctionExpression
 
    ::super:new(pContext, pClipperString)
-   ::cFunctionName := lower(pFunctionName)
+   ::cFunctionName := Lower(pFunctionName)
    ::aParameters := aParameters
 
 RETURN SELF
@@ -591,7 +591,7 @@ PROCEDURE Visualize(oExpression) // for debuging
       alert(oExpression:Value)
    ELSEIF oExpression:isKindOf("FunctionExpression")
       alert(oExpression:cFunctionName)
-      alert(cstr(len(oExpression:aParameters)) + " parameter(s) :")
+      alert(cstr(Len(oExpression:aParameters)) + " parameter(s) :")
       FOR EACH item IN oExpression:aParameters
          Visualize(item:oExpression)
       NEXT
@@ -603,7 +603,7 @@ FUNCTION CollectAliases(oExpression, aAliases)
 
    LOCAL item
 
-   aAddDistinct(aAliases, oExpression:cContext, {|x|lower(x)})
+   aAddDistinct(aAliases, oExpression:cContext, {|x|Lower(x)})
    IF oExpression:isKindOf("BooleanExpression")
       CollectAliases(oExpression:oExpression, aAliases)
    ELSEIF oExpression:isKindOf("Comparison") .OR. oExpression:isKindOf("ComposedCondition") .OR. oExpression:isKindOf("ComposedExpression")

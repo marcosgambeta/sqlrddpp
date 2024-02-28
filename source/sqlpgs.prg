@@ -97,9 +97,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
    DEFAULT lTranslate TO .T.
 
    IF aArray == NIL
-      aArray := Array(len(aFields))
-   ELSEIF len(aArray) != len(aFields)
-      aSize(aArray, len(aFields))
+      aArray := Array(Len(aFields))
+   ELSEIF Len(aArray) != Len(aFields)
+      aSize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -108,7 +108,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
       RETURN aArray
    ENDIF
 
-   FOR i := 1 TO len(aArray)
+   FOR i := 1 TO Len(aArray)
       aArray[i] := ::aCurrLine[i]
    NEXT i
 
@@ -120,7 +120,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_PGS
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(LEN(aFields))
+      ::aCurrLine := array(Len(aFields))
       PGSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -207,13 +207,13 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ::nFields := nFields
 
    IF !Empty(cTable) .AND. empty(cCommand)
-      cTbl := lower(cTable)
+      cTbl := Lower(cTable)
       IF "." $ cTbl
          cOwner := SubStr(cTbl, 1, at(".", cTbl) - 1)
          cTbl := SubStr(cTbl, at(".", cTbl) + 1)
       ENDIF
-      IF left(cTbl, 1) == chr(34) // "
-         cTbl := SubStr(cTbl, 2, len(cTbl) - 2)
+      IF Left(cTbl, 1) == chr(34) // "
+         cTbl := SubStr(cTbl, 2, Len(cTbl) - 2)
       ENDIF
       aFields := PGSTableAttr(::hDbc, cTbl, cOwner)
    ELSE
@@ -302,7 +302,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::hDbc := hDbc
    cTargetDB := "PostgreSQL Native"
    ::exec("select version()", .T., .T., @aRet)
-   IF len(aRet) > 0
+   IF Len(aRet) > 0
       cSystemVers := aRet[1, 1]
       cString := aRet[1, 1]
       cMatch := HB_AtX(s_reEnvVar, cString, , @nStart, @nLen)
@@ -337,7 +337,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    ::exec("select pg_backend_pid()", .T., .T., @aRet)
 
-   IF len(aRet) > 0
+   IF Len(aRet) > 0
       ::uSid := val(str(aRet[1, 1], 8, 0))
    ENDIF
 
@@ -382,7 +382,7 @@ RETURN ::nRetCode
 
 METHOD ExecuteRaw(cCommand) CLASS SR_PGS
 
-   IF upper(left(ltrim(cCommand), 6)) == "SELECT"
+   IF Upper(Left(ltrim(cCommand), 6)) == "SELECT"
       ::lResultSet := .T.
    ELSE
       ::lResultSet := .F.

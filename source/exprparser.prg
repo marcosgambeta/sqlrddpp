@@ -140,12 +140,12 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
    cAlias := iif((cNewAlias := ::ExtractAlias1(@cExpression)) != NIL, cNewAlias, cAlias)
 
    DO WHILE hb_regexLike("^\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*\?$", cExpression)
-      cExpression := alltrim(substr(cExpression, 2, len(cExpression) - 2))
+      cExpression := alltrim(substr(cExpression, 2, Len(cExpression) - 2))
       cAlias := iif((cNewAlias := ::ExtractAlias2(@cExpression)) != NIL, cNewAlias, cAlias)
       ::ResolveParenthesis(@cExpression)
    ENDDO
 
-   FOR i := 1 TO len(::SortedOperators)
+   FOR i := 1 TO Len(::SortedOperators)
       o := ::SortedOperators[i]
       cRegO := "^((?:[^\'\?]*(?:\'[^\']*\'|\?(?:[^\'\?]*(?:\'[^\']*\'))*[^\'\?]*\?))*?[^\'\?]*?)(" + o:cPattern + ")(\s*[^>].*)$"
       IF HB_RegExMatch(cRegO, cExpression, .F.)
@@ -166,7 +166,7 @@ METHOD ResolveParenthesis(cExpression) CLASS ParserBase
    LOCAL i
    LOCAL nParenthesisDeep := 0
 
-   FOR i := 1 TO len(cExpression)
+   FOR i := 1 TO Len(cExpression)
       SWITCH cExpression[i]
       CASE "'"
          DO WHILE cExpression[++i] != "'"
@@ -193,7 +193,7 @@ METHOD RestoreParenthesis(cExpression) CLASS ParserBase
    LOCAL cParenthesis := "("
    LOCAL i
 
-   FOR i := 1 TO len(cExpression)
+   FOR i := 1 TO Len(cExpression)
       IF cExpression[i] == "'"
          DO WHILE cExpression[++i] != "'"
          ENDDO

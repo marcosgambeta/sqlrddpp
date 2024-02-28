@@ -112,9 +112,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ORACLE
    DEFAULT lTranslate TO .T.
 
    IF aArray == NIL
-      aArray := Array(len(aFields))
-   ELSEIF len(aArray) < len(aFields)
-      aSize(aArray, len(aFields))
+      aArray := Array(Len(aFields))
+   ELSEIF Len(aArray) < Len(aFields)
+      aSize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -123,7 +123,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ORACLE
       RETURN aArray
    ENDIF
 
-   FOR i := 1 TO len(aArray)
+   FOR i := 1 TO Len(aArray)
       aArray[i] := ::aCurrLine[i]
    NEXT i
 
@@ -135,7 +135,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ORACLE
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(LEN(aFields))
+      ::aCurrLine := array(Len(aFields))
       SQLO_LINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -335,7 +335,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::nRetCode := nRet
       ::hDbc := hDbc
       SR_MsgLogFile("Connection Error: " + ::lastError() + " - Connection string: " + ::cUser + "/" + ;
-         Replicate("*", len(::cPassWord) ) + "@" + ::cDtb)
+         Replicate("*", Len(::cPassWord) ) + "@" + ::cDtb)
       RETURN Self
    ENDIF
 
@@ -352,7 +352,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::exec("select sid from " + IIf(::lCluster, "g", "") + ;
       "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
-   IF len(aRet) > 0
+   IF Len(aRet) > 0
       ::uSid := val(str(aRet[1, 1], 8, 0))
    ENDIF
 
@@ -397,7 +397,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE
 
    LOCAL nRet
 
-   IF upper(left(ltrim(cCommand), 6)) == "SELECT"
+   IF Upper(Left(ltrim(cCommand), 6)) == "SELECT"
       ::hStmt := ::hDBC
       nRet := SQLO_EXECUTE(::hDBC, cCommand)
       ::lResultSet := .T.
@@ -606,7 +606,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          IF Select(cAlias) == 0
             aDb := {}
             IF lNoRecno
-               FOR i := 1 TO len(aFields)
+               FOR i := 1 TO Len(aFields)
                   IF aFields[i, 1] != cRecnoName
                      AADD(aDb, aFields[i])
                   ELSE
@@ -630,11 +630,11 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             APPEND BLANK
 
             IF nFieldRec == NIL
-               FOR i := 1 TO len(aFields)
+               FOR i := 1 TO Len(aFields)
                   FieldPut(i, ::FieldGet(i, aFields, lTranslate))
                NEXT i
             ELSE
-               FOR i := 1 TO len(aFields)
+               FOR i := 1 TO Len(aFields)
                   DO CASE
                   CASE i = nFieldRec
                      ::FieldGet(i, aFields, lTranslate)
@@ -658,13 +658,13 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          n := 0
          aFields := ::IniFields(.F., , , , , cRecnoName, cDeletedName, .T.)
 
-         FOR i := 1 TO len(aFields)
-            ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), ;
-               iif(::lShowTxtMemo, 79, 30)), Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
+         FOR i := 1 TO Len(aFields)
+            ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), ;
+               iif(::lShowTxtMemo, 79, 30)), Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
          NEXT i
 
          ::cResult += SR_CRLF
-         aMemo := Array(len(aFields))
+         aMemo := Array(Len(aFields))
 
          DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
 
@@ -672,15 +672,15 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             nLenMemo := 0
             nLinesMemo := 0
 
-            FOR i := 1 TO len(aFields)
+            FOR i := 1 TO Len(aFields)
                cCampo := ::FieldGet(i, aFields, lTranslate)
                IF aFields[i, 2] == "M"
-                  nLenMemo := Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
+                  nLenMemo := Max(Len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
                   nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
                   cEste += memoline(cCampo, nLenMemo, 1) + " "
                   aMemo[i] := cCampo
                ELSE
-                  cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i, 1]), aFields[i, 3])) + " "
+                  cEste += PadR(SR_Val2Char(cCampo), Max(Len(aFields[i, 1]), aFields[i, 3])) + " "
                ENDIF
             NEXT i
 
@@ -690,11 +690,11 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             IF ::lShowTxtMemo .AND. nLinesMemo > 1
                FOR j := 2 TO nLinesMemo
                   cEste := ""
-                  FOR i := 1 TO len(aFields)
+                  FOR i := 1 TO Len(aFields)
                      IF aFields[i, 2] == "M"
                         cEste += memoline(aMemo[i], nLenMemo, j) + " "
                      ELSE
-                        cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
+                        cEste += Space(Max(Len(aFields[i, 1]), aFields[i, 3])) + " "
                      ENDIF
                   NEXT i
                   ::cResult += cEste + SR_CRLF
@@ -709,11 +709,11 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
          //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
 
          IF HB_ISARRAY(aArray)
-            IF len(aArray) == 0
+            IF Len(aArray) == 0
                aSize(aArray, ARRAY_BLOCK1)
                nAllocated := ARRAY_BLOCK1
             ELSE
-               nAllocated := len(aArray)
+               nAllocated := Len(aArray)
             ENDIF
          ELSE
             aArray := Array(ARRAY_BLOCK1)
@@ -746,8 +746,8 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                aSize(aArray, nAllocated)
             ENDIF
 
-            aArray[n] := array(len(aFields))
-            FOR i := 1 TO len(aFields)
+            aArray[n] := array(Len(aFields))
+            FOR i := 1 TO Len(aFields)
                aArray[n, i] := ::FieldGet(i, aFields, lTranslate)
             NEXT i
             IF n > nMaxRecords

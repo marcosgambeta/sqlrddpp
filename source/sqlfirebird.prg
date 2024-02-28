@@ -88,9 +88,9 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD
    DEFAULT lTranslate TO .T.
 
    IF aArray == NIL
-      aArray := Array(len(aFields))
-   ELSEIF len(aArray) != len(aFields)
-      aSize(aArray, len(aFields))
+      aArray := Array(Len(aFields))
+   ELSEIF Len(aArray) != Len(aFields)
+      aSize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -99,7 +99,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD
       RETURN aArray
    ENDIF
 
-   FOR i := 1 TO len(aArray)
+   FOR i := 1 TO Len(aArray)
       aArray[i] := ::aCurrLine[i]
    NEXT i
 
@@ -111,7 +111,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_FIREBIRD
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(LEN(aFields))
+      ::aCurrLine := array(Len(aFields))
       FBLINEPROCESSED(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -217,7 +217,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       //_nLen := nLen (value not used)
       _nDec := nDec
 
-      cName := upper(alltrim(cName))
+      cName := Upper(alltrim(cName))
       nPos := aScan(aLocalPrecision, {|x|rtrim(x[1]) == cName})
       cType := ::SQLType(nType, cName, nLen)
       nLenField := ::SQLLen(nType, nLen, @nDec)
@@ -341,7 +341,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_FIREBIRD
 
    LOCAL nRet
 
-   IF upper(left(ltrim(cCommand), 6)) == "SELECT"
+   IF Upper(Left(ltrim(cCommand), 6)) == "SELECT"
       nRet := FBExecute(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .T.
    ELSE

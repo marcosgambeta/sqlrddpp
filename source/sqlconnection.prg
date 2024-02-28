@@ -244,7 +244,7 @@ METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
          ::cQueryOwner := alltrim(::cOwner)
       ENDIF
 
-      IF (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
+      IF (!Empty(::cQueryOwner)) .AND. Right(::cQueryOwner, 1) != "."
          ::cQueryOwner += "."
       ENDIF
 
@@ -287,8 +287,8 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
 
    DEFAULT cOwner TO SR_SetGlobalOwner()
 
-   IF right(cOwner, 1) == "."
-      cOwner := SubStr(cOwner, 1, len(cOwner) - 1)
+   IF Right(cOwner, 1) == "."
+      cOwner := SubStr(cOwner, 1, Len(cOwner) - 1)
    ENDIF
 
    SWITCH ::nSystemID
@@ -336,9 +336,9 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
       EXIT
    ENDSWITCH
 
-   aRet2 := array(len(aRet))
-   FOR i := 1 TO len(aRet)
-      aRet2[i] := upper(rtrim(aRet[i, 1]))
+   aRet2 := array(Len(aRet))
+   FOR i := 1 TO Len(aRet)
+      aRet2[i] := Upper(rtrim(aRet[i, 1]))
    NEXT i
 
 RETURN aRet2
@@ -366,12 +366,12 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_CONNECTION
    LOCAL i
 
    IF aArray == NIL
-      aArray := Array(len(aFields))
-   ELSEIF len(aArray) < len(aFields)
-      aSize(aArray, len(aFields))
+      aArray := Array(Len(aFields))
+   ELSEIF Len(aArray) < Len(aFields)
+      aSize(aArray, Len(aFields))
    ENDIF
 
-   FOR i := 1 TO len(aFields)
+   FOR i := 1 TO Len(aFields)
       aArray[i] := ::FieldGet(i, aFields, lTranslate)
    NEXT i
 
@@ -454,12 +454,12 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
       lFetch := lFetch .AND. ::lResultSet
 
-      IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
+      IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ Upper(cCommand) .OR. "UPDATE " $ Upper(Left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
 
          ::nRetCode  := nRet
          ::cSQLError := ""
          IF lMsg
-            IF len(cCommand) > 10000
+            IF Len(cCommand) > 10000
                ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
                   "Command sent to database : " + SR_CRLF + SubStr(cCommand, 1, 2000) + ;
                   " ... (command too long to display here)")
@@ -487,7 +487,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                IF Select(cAlias) == 0
                   aDb := {}
                   IF lNoRecno
-                     FOR i := 1 TO len(aFields)
+                     FOR i := 1 TO Len(aFields)
                         IF aFields[i, 1] != cRecnoName
                            AADD(aDb, aFields[i])
                         ELSE
@@ -511,11 +511,11 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   APPEND BLANK
 
                   IF nFieldRec == NIL
-                     FOR i := 1 TO len(aFields)
+                     FOR i := 1 TO Len(aFields)
                         FieldPut(i, ::FieldGet(i, aFields, lTranslate))
                      NEXT i
                   ELSE
-                     FOR i := 1 TO len(aFields)
+                     FOR i := 1 TO Len(aFields)
                         DO CASE
                         CASE i = nFieldRec
                            ::FieldGet(i, aFields, lTranslate)
@@ -539,12 +539,12 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                n         := 0
                aFields   := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
-               FOR i := 1 TO len(aFields)
-                  ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)) , Max(len(aFields[i, 1]), aFields[i, 3])), "-") + " "
+               FOR i := 1 TO Len(aFields)
+                  ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)) , Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
                NEXT i
 
                ::cResult += SR_CRLF
-               aMemo     := Array(len(aFields))
+               aMemo     := Array(Len(aFields))
 
                DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
 
@@ -552,15 +552,15 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   nLenMemo   := 0
                   nLinesMemo := 0
 
-                  FOR i := 1 TO len(aFields)
+                  FOR i := 1 TO Len(aFields)
                      cCampo := ::FieldGet(i, aFields, lTranslate)
                      IF aFields[i, 2] == "M"
-                        nLenMemo   := Max(len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
+                        nLenMemo   := Max(Len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
                         nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
                         cEste += memoline(cCampo, nLenMemo, 1) + " "
                         aMemo[i] := cCampo
                      ELSE
-                        cEste += PadR(SR_Val2Char(cCampo), Max(len(aFields[i, 1]), aFields[i, 3])) + " "
+                        cEste += PadR(SR_Val2Char(cCampo), Max(Len(aFields[i, 1]), aFields[i, 3])) + " "
                      ENDIF
                   NEXT i
 
@@ -570,11 +570,11 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   IF ::lShowTxtMemo .AND. nLinesMemo > 1
                      FOR j := 2 TO nLinesMemo
                         cEste := ""
-                        FOR i := 1 TO len(aFields)
+                        FOR i := 1 TO Len(aFields)
                            IF aFields[i, 2] == "M"
                               cEste += memoline(aMemo[i], nLenMemo, j) + " "
                            ELSE
-                              cEste += Space(Max(len(aFields[i, 1]), aFields[i, 3])) + " "
+                              cEste += Space(Max(Len(aFields[i, 1]), aFields[i, 3])) + " "
                            ENDIF
                         NEXT i
                         ::cResult += cEste + SR_CRLF
@@ -589,11 +589,11 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
 
                IF HB_ISARRAY(aArray)
-                  IF len(aArray) = 0
+                  IF Len(aArray) = 0
                      aSize(aArray, ARRAY_BLOCK1)
                      nAllocated := ARRAY_BLOCK1
                   ELSE
-                     nAllocated := len(aArray)
+                     nAllocated := Len(aArray)
                   ENDIF
                ELSE
                   aArray := Array(ARRAY_BLOCK1)
@@ -627,8 +627,8 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                      aSize(aArray, nAllocated)
                   ENDIF
 
-                  aArray[n] := array(len(aFields))
-                  FOR i := 1 TO len(aFields)
+                  aArray[n] := array(Len(aFields))
+                  FOR i := 1 TO Len(aFields)
                      aArray[n, i] := ::FieldGet(i, aFields, lTranslate)
                   NEXT i
                   IF n > nMaxRecords
@@ -710,7 +710,7 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
             SR_WriteTimeLog(cCommand, SELF, ::nMiliseconds)
          ENDIF
 
-         IF lErrMsg .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ upper(cCommand) .OR. "UPDATE " $ upper(left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
+         IF lErrMsg .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ Upper(cCommand) .OR. "UPDATE " $ Upper(Left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
             ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
                "Command : " + cCommand + SR_CRLF + "hStmt   : " + SR_Val2Char(::hStmt))
          ENDIF
@@ -880,7 +880,7 @@ METHOD Commit(lNoLog) CLASS SR_CONNECTION
          ELSEIF !Empty(::oSql:cOwner)
             ::cQueryOwner := alltrim(::cOwner)
          ENDIF
-         IF (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
+         IF (!Empty(::cQueryOwner)) .AND. Right(::cQueryOwner, 1) != "."
             ::cQueryOwner += "."
          ENDIF
          IF Empty(::cQueryOwner)
@@ -920,7 +920,7 @@ METHOD RollBack() CLASS SR_CONNECTION
          ELSEIF !Empty(::oSql:cOwner)
             ::cQueryOwner := alltrim(::cOwner)
          ENDIF
-         IF (!Empty(::cQueryOwner)) .AND. right(::cQueryOwner, 1) != "."
+         IF (!Empty(::cQueryOwner)) .AND. Right(::cQueryOwner, 1) != "."
             ::cQueryOwner += "."
          ENDIF
          IF Empty(::cQueryOwner)
@@ -975,7 +975,7 @@ FUNCTION SR_AdjustNum(a)
    LOCAL b := aClone(a)
    LOCAL i
 
-   FOR i := 1 TO len(b)
+   FOR i := 1 TO Len(b)
 
       IF lNwgOldCompat
          IF b[i, 2] = "N"
@@ -1051,9 +1051,9 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
    ::lClustered   := .F.
 
    IF ::lCounter
-      ::lLowLevSqlDbg := (!Empty(GetEnv("QUERYDEBUGCOUNTER"))) .AND. upper(GetEnv("QUERYDEBUGCOUNTER")) $ "Y,S,TRUE"
+      ::lLowLevSqlDbg := (!Empty(GetEnv("QUERYDEBUGCOUNTER"))) .AND. Upper(GetEnv("QUERYDEBUGCOUNTER")) $ "Y,S,TRUE"
    ELSE
-      ::lLowLevSqlDbg := (!Empty(GetEnv("QUERYDEBUG"))) .AND. upper(GetEnv("QUERYDEBUG")) $ "Y,S,TRUE"
+      ::lLowLevSqlDbg := (!Empty(GetEnv("QUERYDEBUG"))) .AND. Upper(GetEnv("QUERYDEBUG")) $ "Y,S,TRUE"
    ENDIF
 
    ::oHashActiveWAs := SqlFastHash():new()
@@ -1073,7 +1073,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
 
          aToken := hb_atokens(aItem, "=")
          cBuff := alltrim(Upper(aToken[1]))
-         IF len(aToken) = 1
+         IF Len(aToken) = 1
             aadd(aToken, "")
          ENDIF
          SWITCH cBuff
@@ -1140,7 +1140,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
             EXIT
          CASE "OWNER" //.AND. empty(::cOwner)
             ::cOwner := aToken[2]
-            IF !Empty(::cOwner) .AND. right(::cOwner, 1) != "."
+            IF !Empty(::cOwner) .AND. Right(::cOwner, 1) != "."
                ::cOwner += "."
             ENDIF
             EXIT

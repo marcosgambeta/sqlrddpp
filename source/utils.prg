@@ -228,7 +228,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       SR_RuntimeErr(, "SR_ChengeStructure: Workarea not in use.")
    ENDIF
 
-   IF len(aNewStruct) < 1 .OR. !HB_ISARRAY(aNewStruct) .OR. !HB_ISARRAY(aNewStruct[1])
+   IF Len(aNewStruct) < 1 .OR. !HB_ISARRAY(aNewStruct) .OR. !HB_ISARRAY(aNewStruct[1])
       SR_RuntimeErr(, "SR_ChengeStructure: Invalid arguments [2].")
    ENDIF
 
@@ -236,7 +236,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
 
       oWA := dbInfo(DBI_INTERNAL_OBJECT)
 
-      IF (!Empty(cTableName)) .AND. oWA:cOriginalFN != upper(alltrim(cTableName))
+      IF (!Empty(cTableName)) .AND. oWA:cOriginalFN != Upper(alltrim(cTableName))
          SR_RuntimeErr(, "SR_ChengeStructure: Invalid arguments [1]: " + cTableName)
       ENDIF
 
@@ -251,11 +251,11 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       SR_LogFile("changestruct.log", {oWA:cFileName, "Original Structure:", e"\r\n" + sr_showVector(oWA:aFields)})
       SR_LogFile("changestruct.log", {oWA:cFileName, "New Structure:", e"\r\n" + sr_showVector(aNewStruct)})
 
-      FOR i := 1 TO len(aNewStruct)
+      FOR i := 1 TO Len(aNewStruct)
          aNewStruct[i, 1] := Upper(alltrim(aNewStruct[i, 1]))
          IF (n := aScan(oWA:aFields, {|x|x[1] == aNewStruct[i, 1]})) > 0
 
-            aSize(aNewStruct[i], max(len(aNewStruct[i]), 5))
+            aSize(aNewStruct[i], max(Len(aNewStruct[i]), 5))
 
             IF aNewStruct[i, 2] == oWA:aFields[n, 2] .AND. aNewStruct[i, 3] == oWA:aFields[n, 3] .AND. aNewStruct[i, 4] == oWA:aFields[n, 4]
                // Structure is identical. Only need to check for NOT NULL flag.
@@ -305,7 +305,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
          ENDIF
       NEXT i
 
-      FOR i := 1 TO len(oWA:aFields)
+      FOR i := 1 TO Len(oWA:aFields)
          IF (n := aScan(aNewStruct, {|x|x[1] == oWA:aFields[i, 1]})) == 0
             IF (!oWA:aFields[i, 1] == oWA:cRecnoName) .AND. (!oWA:aFields[i, 1] == oWA:cDeletedName) .AND. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
                aadd(aToDrop, aClone(oWA:aFields[i]))
@@ -329,11 +329,11 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
          oWA:AlterColumnsDirect(aDirect, .T., .F., @aTofix)
       ENDIF
 
-      IF len(aToFix) > 0
+      IF Len(aToFix) > 0
          oWA:AlterColumns(aToFix, .T.)
       ENDIF
 
-      FOR i := 1 TO len(aToDrop)
+      FOR i := 1 TO Len(aToDrop)
          IF aToDrop[i, 1] == "BACKUP_"
             oWA:DropColumn(aToDrop[i, 1], .F.)
          ELSE
@@ -413,7 +413,7 @@ FUNCTION SR_SetReverseIndex(nIndex, lSet)
 
    LOCAL lOldSet
 
-   IF IS_SQLRDD .AND. nIndex > 0 .AND. nIndex <= len((Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex)
+   IF IS_SQLRDD .AND. nIndex > 0 .AND. nIndex <= Len((Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex)
       lOldSet := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, DESCEND_INDEX_ORDER]
       IF HB_ISLOGICAL(lSet)
          (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, DESCEND_INDEX_ORDER] := lSet
@@ -579,7 +579,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    OtherWise
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(len(cRet), 10) + cRet, nSystemID)
+      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(Len(cRet), 10) + cRet, nSystemID)
    EndCase
 #endif
 
@@ -656,7 +656,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    OTHERWISE
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(len(cRet), 10) + cRet, nSystemID)
+      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(Len(cRet), 10) + cRet, nSystemID)
 
    ENDSWITCH
 
@@ -788,12 +788,12 @@ FUNCTION SR_ShowVector(a)
 
       cRet := "{"
 
-      FOR i := 1 TO len(a)
+      FOR i := 1 TO Len(a)
 
          IF HB_ISARRAY(a[i])
-            cRet += SR_showvector(a[i]) + iif(i == len(a), "", ",") + SR_CRLF
+            cRet += SR_showvector(a[i]) + iif(i == Len(a), "", ",") + SR_CRLF
          ELSE
-            cRet += SR_Val2CharQ(a[i]) + iif(i == len(a), "", ",")
+            cRet += SR_Val2CharQ(a[i]) + iif(i == Len(a), "", ",")
          ENDIF
 
       NEXT i
@@ -1179,7 +1179,7 @@ RETURN Self
 
 METHOD Insert(uHashKey, xValue) CLASS SqlFastHash
 
-   IF len(::hHash) > HASH_TABLE_SIZE
+   IF Len(::hHash) > HASH_TABLE_SIZE
       ::hHash := {=>}          /* Reset hash table */
       HB_GCALL(.T.)            /* Release memory blocks */
    ENDIF
