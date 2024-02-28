@@ -66,7 +66,7 @@
 #include <hbapicls.h>
 #include <hbapifs.h>
 #include <hbvm.h>
-#include "hbxml.h"
+#include "srxml.h"
 
 /* --- Static declarations --- */
 
