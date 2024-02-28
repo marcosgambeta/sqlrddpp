@@ -72,7 +72,7 @@ sqlrddpp.hbx
 
 {allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
 
-xhb.hbc
+#xhb.hbc
 
 # disable this line to NOT INSTALL the library in addons
 $hb_pkg_install.hbm
