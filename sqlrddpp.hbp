@@ -36,6 +36,7 @@ source/sqlrdd0.prg
 source/sqlrdd2.prg
 source/utils.prg
 source/utilslang.prg
+source/txml.prg
 
 #source/sql.y
 source/sqly.c
@@ -56,6 +57,7 @@ source/sqlora.c
 source/sqlorax.c
 source/sqlrdd1.c
 source/sqlsrodbc.c
+source/hbxml.c
 
 -hbx=sqlrddpp.hbx
 sqlrddpp.hbx
