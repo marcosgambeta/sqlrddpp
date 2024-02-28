@@ -10544,7 +10544,7 @@ METHOD ParseForClause(cFor) CLASS SR_WORKAREA
          ENDIF
 
          IF substr(cFor, i, 1) == "." .AND. Lower(substr(cFor, i + 1, 1)) $ "aon"       // .AND. .OR.
-            IF Lower(SubStr(cFor, i, 5)) == ".AND."
+            IF Lower(SubStr(cFor, i, 5)) == ".and."
                cOut += " AND "
                i += 4
                LOOP
@@ -10554,7 +10554,7 @@ METHOD ParseForClause(cFor) CLASS SR_WORKAREA
                i += 4
                LOOP
             ENDIF
-            IF Lower(SubStr(cFor, i, 4)) == ".OR."
+            IF Lower(SubStr(cFor, i, 4)) == ".or."
                cOut += " OR "
                i += 3
                LOOP
