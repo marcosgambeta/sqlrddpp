@@ -48,7 +48,9 @@
 #include "hbapiitm.h"
 #include "hbapierr.h"
 
-HB_FUNC( THROW )
+// NOTE: for internal usage - do not use in user code
+
+HB_FUNC( _SR_THROW )
 {
    PHB_ITEM pError = hb_param( 1, HB_IT_ANY );
 

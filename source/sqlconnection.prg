@@ -966,7 +966,7 @@ METHOD RuntimeErr(cOperation, cErr) CLASS SR_CONNECTION
 
    SR_LogFile("sqlerror.log", {cDescr, SR_GetStack()})
 
-   Throw(oErr)
+   _sr_Throw(oErr)
 
 RETURN NIL
 

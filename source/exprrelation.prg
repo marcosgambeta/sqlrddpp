@@ -75,7 +75,7 @@ FUNCTION oGetWorkarea(cAlias)
       result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
    RECOVER USING oErr
       oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
-      throw(oErr)
+      _sr_throw(oErr)
    END SEQUENCE
 
 RETURN result
@@ -498,7 +498,7 @@ METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
       ENDIF
    RECOVER USING oErr
       oErr:description += ";The value unseccessfully evaluated was : " + ::cValue   + ";"
-      throw(oErr)
+      _sr_throw(oErr)
    END SEQUENCE
    
    HB_SYMBOL_UNUSED(nseconds)

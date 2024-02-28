@@ -2046,7 +2046,7 @@ METHOD RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode) CLASS SR_WORKARE
 
    SR_LogFile("sqlerror.log", {cDescr})
 
-   Throw(oErr)
+   _sr_Throw(oErr)
 
 RETURN NIL
 

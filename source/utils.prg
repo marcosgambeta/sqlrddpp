@@ -1470,7 +1470,7 @@ FUNCTION SR_RuntimeErr(cOperation, cErr)
 
    SR_LogFile("sqlerror.log", {cDescr})
 
-   Throw(oErr)
+   _sr_Throw(oErr)
 
 RETURN NIL
 
