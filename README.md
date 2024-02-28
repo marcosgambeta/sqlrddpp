@@ -2,7 +2,7 @@
 
 SQLRDD for Harbour++ and Harbour
 
-## Notes
+## Building
 
 ### Windows - How to compile
 ```Batch
@@ -25,6 +25,18 @@ git clone https://github.com/marcosgambeta/sqlrddpp
 cd sqlrddpp
 hbmk2 sqlrddpp.hbp
 ```
+
+### Notes
+
+After compiled, the library is automatically installed in the addons folder.
+
+To disable this behaviour, edit the file sqlrddpp.hbp and disable the line below:
+
+```
+$hb_pkg_install.hbm
+```
+
+## Using
 
 ### Compiling with SQLRDD and MySQL
 ```Batch
