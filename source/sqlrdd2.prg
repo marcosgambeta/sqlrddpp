@@ -2643,8 +2643,8 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                   cRet += iif(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(aBuffer[nThisField], .T., iIf(lMemo, NIL, nLen), nDec, , lNull, lMemo) + " "
                ELSEIF ::aFields[nThisField, 6] ==SQL_LONGVARCHARXML
                   oXml := sr_arraytoXml(aBuffer[nThisField])
-                  nlen := Len(oxml:tostring(HBXML_STYLE_NONEWLINE))
-                  cVal := iif(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(oxml:tostring(HBXML_STYLE_NONEWLINE), .T., iIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
+                  nlen := Len(oxml:tostring(SRXML_STYLE_NONEWLINE))
+                  cVal := iif(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(oxml:tostring(SRXML_STYLE_NONEWLINE), .T., iIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                ELSEIF ::aFields[nthisField, 6] == SQL_VARBINARY .AND. ::osql:nsystemID ==SYSTEMID_MSSQL7
                   cVal := '0x'+hb_StrtoHex(aBuffer[nThisField])
                ELSE
@@ -2832,8 +2832,8 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
 #endif
                CASE SQL_LONGVARCHARXML
                   oXml := sr_arraytoXml(cMemo)
-                  nlen := Len(oxml:tostring(HBXML_STYLE_NONEWLINE))
-                  cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(oXml:tostring(HBXML_STYLE_NONEWLINE), .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
+                  nlen := Len(oxml:tostring(SRXML_STYLE_NONEWLINE))
+                  cVal += iif(!lFirst, ", ", "( ") + ::QuotedNull(oXml:tostring(SRXML_STYLE_NONEWLINE), .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                   EXIT
                CASE SQL_VARBINARY
                   IF ::osql:nsystemID ==SYSTEMID_MSSQL7
@@ -11312,7 +11312,7 @@ FUNCTION SR_arraytoXml(a)
    hHash["version"] := "1.0"
 
    hHash[ "encoding"] := "utf-8"
-   oNode := sr_tXMLNode():New(HBXML_TYPE_PI, "xml", hHash, ;
+   oNode := sr_tXMLNode():New(SRXML_TYPE_PI, "xml", hHash, ;
       "version=" + chr(34) + "1.0" + chr(34) + " encoding=" + chr(34) + "utf-8" + chr(34) + "")
    oXml:oRoot:Addbelow(oNode)
    hhash := hb_hash()
@@ -11320,7 +11320,7 @@ FUNCTION SR_arraytoXml(a)
    hhash["Len"] := Alltrim(Str(Len(a)))
    hHash["Id"] := alltrim(str(nStartId))
    hHash["FatherId"] := alltrim("-1")
-   oNode := sr_tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
+   oNode := sr_tXMLNode():New(SRXML_TYPE_TAG, "Array", hhash)
    FOR EACH aItem IN a
       addNode(aItem, ONode)
    NEXT
@@ -11351,7 +11351,7 @@ STATIC FUNCTION AddNode(a, oNode)
       aadd(aPos, nPosData)
 
       nPosData := 0
-      oNode1 := sr_tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
+      oNode1 := sr_tXMLNode():New(SRXML_TYPE_TAG, "Array", hhash)
       FOR EACH aItem IN a
          AddNode(aItem, oNode1)
          //oNode1:addbelow(onode2)
@@ -11373,7 +11373,7 @@ STATIC FUNCTION AddNode(a, oNode)
       ENDIF
       hHash["Pos"] := alltrim(Str(++nPosData))
       hHash["Id"] := alltrim(str(nStartId))
-      oNode1 := sr_tXMLNode():New(HBXML_TYPE_TAG, "Data", hhash)
+      oNode1 := sr_tXMLNode():New(SRXML_TYPE_TAG, "Data", hhash)
       oNode:addBelow(oNode1)
    ENDIF
 

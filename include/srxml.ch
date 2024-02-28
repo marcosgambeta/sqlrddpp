@@ -45,48 +45,48 @@
  */
 
 
-#ifndef HB_XML_CH
-#define HB_XML_CH
+#ifndef SR_XML_CH
+#define SR_XML_CH
 
 /* Styles */
-#define HBXML_STYLE_NOINDENT      0  /* no indent nodes and insert new line after each node */
-#define HBXML_STYLE_INDENT        1  /* indent nodes with 1 space and insert new line after each node (default) */
-#define HBXML_STYLE_TAB           2  /* indent nodes with tab spaces and insert new line after each node */
-#define HBXML_STYLE_THREESPACES   4  /* indent nodes with 3 spaces and insert new line after each node */
-#define HBXML_STYLE_NOESCAPE      8
-#define HBXML_STYLE_NONEWLINE     16 /* no indent and no insert newline */
+#define SRXML_STYLE_NOINDENT      0  /* no indent nodes and insert new line after each node */
+#define SRXML_STYLE_INDENT        1  /* indent nodes with 1 space and insert new line after each node (default) */
+#define SRXML_STYLE_TAB           2  /* indent nodes with tab spaces and insert new line after each node */
+#define SRXML_STYLE_THREESPACES   4  /* indent nodes with 3 spaces and insert new line after each node */
+#define SRXML_STYLE_NOESCAPE      8
+#define SRXML_STYLE_NONEWLINE     16 /* no indent and no insert newline */
 
 /* Status values */
-#define HBXML_STATUS_ERROR        0
-#define HBXML_STATUS_OK           1
-#define HBXML_STATUS_MORE         2
-#define HBXML_STATUS_DONE         3
-#define HBXML_STATUS_UNDEFINED    4
-#define HBXML_STATUS_MALFORMED    5
+#define SRXML_STATUS_ERROR        0
+#define SRXML_STATUS_OK           1
+#define SRXML_STATUS_MORE         2
+#define SRXML_STATUS_DONE         3
+#define SRXML_STATUS_UNDEFINED    4
+#define SRXML_STATUS_MALFORMED    5
 
 /* Error codes */
-#define HBXML_ERROR_NONE          0
-#define HBXML_ERROR_IO            1
-#define HBXML_ERROR_NOMEM         2
-#define HBXML_ERROR_OUTCHAR       3
-#define HBXML_ERROR_INVNODE       4
-#define HBXML_ERROR_INVATT        5
-#define HBXML_ERROR_MALFATT       6
-#define HBXML_ERROR_INVCHAR       7
-#define HBXML_ERROR_NAMETOOLONG   8
-#define HBXML_ERROR_ATTRIBTOOLONG 9
-#define HBXML_ERROR_VALATTOOLONG  10
-#define HBXML_ERROR_UNCLOSED      11
-#define HBXML_ERROR_UNCLOSEDENTITY   12
-#define HBXML_ERROR_WRONGENTITY      13
+#define SRXML_ERROR_NONE          0
+#define SRXML_ERROR_IO            1
+#define SRXML_ERROR_NOMEM         2
+#define SRXML_ERROR_OUTCHAR       3
+#define SRXML_ERROR_INVNODE       4
+#define SRXML_ERROR_INVATT        5
+#define SRXML_ERROR_MALFATT       6
+#define SRXML_ERROR_INVCHAR       7
+#define SRXML_ERROR_NAMETOOLONG   8
+#define SRXML_ERROR_ATTRIBTOOLONG 9
+#define SRXML_ERROR_VALATTOOLONG  10
+#define SRXML_ERROR_UNCLOSED      11
+#define SRXML_ERROR_UNCLOSEDENTITY   12
+#define SRXML_ERROR_WRONGENTITY      13
 
 /* Node types */
-#define HBXML_TYPE_TAG            0
-#define HBXML_TYPE_COMMENT        1
-#define HBXML_TYPE_PI             2
-#define HBXML_TYPE_DIRECTIVE      3
-#define HBXML_TYPE_DATA           4
-#define HBXML_TYPE_CDATA          5
-#define HBXML_TYPE_DOCUMENT       6
+#define SRXML_TYPE_TAG            0
+#define SRXML_TYPE_COMMENT        1
+#define SRXML_TYPE_PI             2
+#define SRXML_TYPE_DIRECTIVE      3
+#define SRXML_TYPE_DATA           4
+#define SRXML_TYPE_CDATA          5
+#define SRXML_TYPE_DOCUMENT       6
 
 #endif

@@ -92,7 +92,7 @@ ENDCLASS
 METHOD New( nType, cName, aAttributes, cData ) CLASS sr_TXmlNode
 
    IF nType == NIL
-      ::nType := HBXML_TYPE_TAG
+      ::nType := SRXML_TYPE_TAG
    ELSE
       ::nType := nType
    ENDIF
@@ -139,7 +139,7 @@ METHOD Depth() CLASS sr_TXmlNode
 
 METHOD Path() CLASS sr_TXmlNode
 
-   IF ::nType == HBXML_TYPE_DOCUMENT
+   IF ::nType == SRXML_TYPE_DOCUMENT
       RETURN ""
    ENDIF
 
@@ -219,7 +219,7 @@ METHOD Find( cName, cAttribute, cValue, cData ) CLASS sr_TXmlIterator
    ::cValue := cValue
    ::cData := cData
 
-   IF ::oNode:nType == HBXML_TYPE_DOCUMENT
+   IF ::oNode:nType == SRXML_TYPE_DOCUMENT
       IF ::oNode:oChild == NIL
          RETURN NIL
       ENDIF
@@ -373,13 +373,13 @@ ENDCLASS
 
 METHOD New( xElem, nStyle ) CLASS sr_TXMLDocument
 
-   ::nStatus := HBXML_STATUS_OK
-   ::nError := HBXML_ERROR_NONE
+   ::nStatus := SRXML_STATUS_OK
+   ::nError := SRXML_ERROR_NONE
    ::nLine := 1
    ::nNodeCount := 0
 
    IF xElem == NIL
-      ::oRoot := sr_TXMLNode():New( HBXML_TYPE_DOCUMENT )
+      ::oRoot := sr_TXMLNode():New( SRXML_TYPE_DOCUMENT )
    ELSE
       SWITCH ValType( xElem )
       CASE "O"
@@ -388,7 +388,7 @@ METHOD New( xElem, nStyle ) CLASS sr_TXMLDocument
 
       CASE "N"
       CASE "C"
-         ::oRoot := sr_TXMLNode():New( HBXML_TYPE_DOCUMENT )
+         ::oRoot := sr_TXMLNode():New( SRXML_TYPE_DOCUMENT )
          IF hb_FileExists( xElem )
             ::Read( hb_MemoRead( xElem ), nStyle )
          ELSE
@@ -406,7 +406,7 @@ METHOD New( xElem, nStyle ) CLASS sr_TXMLDocument
 
 METHOD Write( fHandle, nStyle ) CLASS sr_TXMLDocument
 
-   LOCAL nResult := HBXML_STATUS_ERROR
+   LOCAL nResult := SRXML_STATUS_ERROR
 
    IF HB_ISSTRING( fHandle )  // It's a filename!
       fHandle := FCreate( fHandle )
