@@ -64,8 +64,8 @@ PROCEDURE Main()
    cQuery := "SELECT id, first, last FROM test LIMIT 50"
    USE (cQuery) VIA "SQLRDD" ALIAS test
    SET INDEX TO "id" // create a virtual index
-   // SEEK 15 // ALWAYS RETURN .F.
-   LOCATE FOR id == 15 // WORKING
+   // SEEK 15 // Always return false, but is a behaviour and not a bug.
+   LOCATE FOR id == 15 // Working. Use as alternative to SEEK.
 
    browse()
 
