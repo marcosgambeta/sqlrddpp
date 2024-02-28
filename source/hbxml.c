@@ -505,7 +505,7 @@ static void mxml_node_unlink(PHB_ITEM pNode)
   hb_itemRelease(pNil);
 }
 
-HB_FUNC(HBXML_NODE_UNLINK)
+HB_FUNC(SRXML_NODE_UNLINK)
 {
   mxml_node_unlink(hb_param(1, HB_IT_OBJECT));
 }
@@ -557,7 +557,7 @@ static void mxml_node_insert_before(PHB_ITEM pTg, PHB_ITEM pNode)
   hb_itemRelease(pParent);
 }
 
-HB_FUNC(HBXML_NODE_INSERT_BEFORE)
+HB_FUNC(SRXML_NODE_INSERT_BEFORE)
 {
   mxml_node_insert_before(hb_param(1, HB_IT_OBJECT), hb_param(2, HB_IT_OBJECT));
 }
@@ -579,7 +579,7 @@ static void mxml_node_insert_after(PHB_ITEM pTg, PHB_ITEM pNode)
   hb_objSendMsg(pNode, "_OPARENT", 1, hb_param(-1, HB_IT_ANY));
 }
 
-HB_FUNC(HBXML_NODE_INSERT_AFTER)
+HB_FUNC(SRXML_NODE_INSERT_AFTER)
 {
   mxml_node_insert_after(hb_param(1, HB_IT_OBJECT), hb_param(2, HB_IT_OBJECT));
 }
@@ -609,7 +609,7 @@ static void mxml_node_insert_below(PHB_ITEM pTg, PHB_ITEM pNode)
   hb_itemRelease(pChild);
 }
 
-HB_FUNC(HBXML_NODE_INSERT_BELOW)
+HB_FUNC(SRXML_NODE_INSERT_BELOW)
 {
   mxml_node_insert_below(hb_param(1, HB_IT_OBJECT), hb_param(2, HB_IT_OBJECT));
 }
@@ -648,7 +648,7 @@ static void mxml_node_add_below(PHB_ITEM pTg, PHB_ITEM pNode)
   hb_itemRelease(pChild);
 }
 
-HB_FUNC(HBXML_NODE_ADD_BELOW)
+HB_FUNC(SRXML_NODE_ADD_BELOW)
 {
   mxml_node_add_below(hb_param(1, HB_IT_OBJECT), hb_param(2, HB_IT_OBJECT));
 }
@@ -683,7 +683,7 @@ static PHB_ITEM mxml_node_clone(PHB_ITEM pTg)
   return pNode;
 }
 
-HB_FUNC(HBXML_NODE_CLONE)
+HB_FUNC(SRXML_NODE_CLONE)
 {
   hb_itemReturnRelease(mxml_node_clone(hb_param(1, HB_IT_OBJECT)));
 }
@@ -720,7 +720,7 @@ static PHB_ITEM mxml_node_clone_tree(PHB_ITEM pTg)
   return pClone;
 }
 
-HB_FUNC(HBXML_NODE_CLONE_TREE)
+HB_FUNC(SRXML_NODE_CLONE_TREE)
 {
   hb_itemReturnRelease(mxml_node_clone_tree(hb_param(1, HB_IT_OBJECT)));
 }
@@ -2192,7 +2192,7 @@ static const char *mxml_error_desc(MXML_ERROR_CODE code)
  * a string containing an XML tree or NIL, in which case the
  * document is created empty.
  */
-HB_FUNC(HBXML_DATAREAD)
+HB_FUNC(SRXML_DATAREAD)
 {
   PHB_ITEM pParam = hb_param(2, HB_IT_ANY);
   PHB_ITEM pDoc = hb_param(1, HB_IT_OBJECT);
@@ -2227,7 +2227,7 @@ HB_FUNC(HBXML_DATAREAD)
 /* hb_XMLErrorDesc( nErrorNumber ) --> cErrorDesc
  * Returns a descriptive string telling what the error number is meaning.
  */
-HB_FUNC(HB_XMLERRORDESC)
+HB_FUNC(SR_XMLERRORDESC)
 {
   PHB_ITEM pNum = hb_param(1, HB_IT_NUMERIC);
 
@@ -2240,7 +2240,7 @@ HB_FUNC(HB_XMLERRORDESC)
 /* hbxml_node_to_string( xmlDocument [, nStyle] ) --> cXml | NIL
  * Writes an XML document to a string.
  */
-HB_FUNC(HBXML_NODE_TO_STRING)
+HB_FUNC(SRXML_NODE_TO_STRING)
 {
   PHB_ITEM pNode = hb_param(1, HB_IT_OBJECT);
   PHB_ITEM pStyle = hb_param(2, HB_IT_NUMERIC);
@@ -2272,7 +2272,7 @@ HB_FUNC(HBXML_NODE_TO_STRING)
 /* hbxml_node_write( xmlDocument, xFileHandle, nStyle ) --> nStatus
  * Writes an XML document to a file; returns the HB_XML status.
  */
-HB_FUNC(HBXML_NODE_WRITE)
+HB_FUNC(SRXML_NODE_WRITE)
 {
   PHB_ITEM pNode = hb_param(1, HB_IT_OBJECT);
   PHB_ITEM pHandle = hb_param(2, HB_IT_NUMERIC);

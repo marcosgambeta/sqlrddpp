@@ -63,16 +63,16 @@ CREATE CLASS sr_TXMLNode
    VAR oChild
 
    METHOD New( nType, cName, aAttributes, cData ) CONSTRUCTOR
-   METHOD Clone()                      INLINE hbxml_node_clone( Self )
-   METHOD CloneTree()                  INLINE hbxml_node_clone_tree( Self )
+   METHOD Clone()                      INLINE srxml_node_clone( Self )
+   METHOD CloneTree()                  INLINE srxml_node_clone_tree( Self )
 
-   METHOD Unlink()                     INLINE hbxml_node_unlink( Self )
+   METHOD Unlink()                     INLINE srxml_node_unlink( Self )
    METHOD NextInTree()
 
-   METHOD InsertBefore( oNode )        INLINE hbxml_node_insert_before( Self, oNode )
-   METHOD InsertAfter( oNode )         INLINE hbxml_node_insert_after( Self, oNode )
-   METHOD InsertBelow( oNode )         INLINE hbxml_node_insert_below( Self, oNode )
-   METHOD AddBelow( oNode )            INLINE hbxml_node_add_below( Self, oNode )
+   METHOD InsertBefore( oNode )        INLINE srxml_node_insert_before( Self, oNode )
+   METHOD InsertAfter( oNode )         INLINE srxml_node_insert_after( Self, oNode )
+   METHOD InsertBelow( oNode )         INLINE srxml_node_insert_below( Self, oNode )
+   METHOD AddBelow( oNode )            INLINE srxml_node_add_below( Self, oNode )
 
    METHOD GetAttribute( cAttrib )         INLINE iif( cAttrib $ ::aAttributes, ::aAttributes[ cAttrib ], NIL )
    METHOD SetAttribute( cAttrib, xValue ) INLINE ::aAttributes[ cAttrib ] := xValue
@@ -80,8 +80,8 @@ CREATE CLASS sr_TXMLNode
    METHOD Depth()
    METHOD Path()
 
-   METHOD ToString( nStyle )        INLINE hbxml_node_to_string( Self, nStyle )
-   METHOD Write( fHandle, nStyle )  INLINE hbxml_node_write( Self, fHandle, nStyle )
+   METHOD ToString( nStyle )        INLINE srxml_node_to_string( Self, nStyle )
+   METHOD Write( fHandle, nStyle )  INLINE srxml_node_write( Self, fHandle, nStyle )
 
    // Useful for debugging purposes
    METHOD ToArray()                 INLINE;
@@ -354,7 +354,7 @@ CREATE CLASS sr_TXMLDocument
    VAR nNodeCount
 
    METHOD New( xElem, nStyle )        CONSTRUCTOR
-   METHOD Read( xData, nStyle )       INLINE hbxml_dataread( Self, xData, nStyle )
+   METHOD Read( xData, nStyle )       INLINE srxml_dataread( Self, xData, nStyle )
    METHOD ToString( nStyle )          INLINE ::oRoot:ToString( nStyle )
    METHOD Write( fHandle, nStyle )
 
