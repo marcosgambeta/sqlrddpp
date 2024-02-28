@@ -57,7 +57,7 @@ source/sqlora.c
 source/sqlorax.c
 source/sqlrdd1.c
 source/sqlsrodbc.c
-source/hbxml.c
+source/srxml.c
 source/xhbenum.c
 source/xthrow.c
 
