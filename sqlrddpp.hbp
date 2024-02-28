@@ -58,6 +58,8 @@ source/sqlorax.c
 source/sqlrdd1.c
 source/sqlsrodbc.c
 source/hbxml.c
+source/xhbenum.c
+source/xthrow.c
 
 -hbx=sqlrddpp.hbx
 sqlrddpp.hbx
