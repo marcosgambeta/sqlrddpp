@@ -44,9 +44,9 @@
  *
  */
 
-#include "hbapi.h"
-#include "hbapiitm.h"
-#include "hbapierr.h"
+#include <hbapi.h>
+#include <hbapiitm.h>
+#include <hbapierr.h>
 
 // NOTE: for internal usage - do not use in user code
 
@@ -58,8 +58,12 @@ HB_FUNC( _SR_THROW )
    {
       PHB_ITEM pResult = hb_errLaunchSubst( pError );
       if( pResult )
+      {
          hb_itemReturnRelease( pResult );
+      }
    }
    else
+   {
       hb_errRT_BASE( EG_ARG, 9101, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS );
+   }
 }

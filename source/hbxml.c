@@ -60,14 +60,12 @@
  * Giancarlo Niccolai <giancarlo@niccolai.org>
  */
 
-#include "hbapi.h"
-#include "hbapierr.h"
-#include "hbapiitm.h"
-#include "hbapicls.h"
-#include "hbapifs.h"
-
-#include "hbvm.h"
-
+#include <hbapi.h>
+#include <hbapierr.h>
+#include <hbapiitm.h>
+#include <hbapicls.h>
+#include <hbapifs.h>
+#include <hbvm.h>
 #include "hbxml.h"
 
 /* --- Static declarations --- */

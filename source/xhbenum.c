@@ -44,10 +44,10 @@
  *
  */
 
-#include "hbvmint.h"
-#include "hbapi.h"
-#include "hbapiitm.h"
-#include "hbstack.h"
+#include <hbvmint.h>
+#include <hbapi.h>
+#include <hbapiitm.h>
+#include <hbstack.h>
 
 // NOTE: for internal usage - do not use in user code
 
