@@ -2325,7 +2325,7 @@ static int DEFUN(_save_oci_status, (dbp, action, object, lineno),
   *errbuf = '\0';
   dbp->errcode = dbp->status; /* preset with something usefull */
   TRACE(
-      3, if (dbp->status != OCI_SUCCESS) { fprintf(_get_trace_fp(dbp),            "_save_oci_status: %d\n", dbp->status); });
+      3, if (dbp->status != OCI_SUCCESS) { fprintf(_get_trace_fp(dbp), "_save_oci_status: %d\n", dbp->status); });
 
   switch (dbp->status)
   {

@@ -50,20 +50,20 @@
 
 // NOTE: for internal usage - do not use in user code
 
-HB_FUNC( _SR_THROW )
+HB_FUNC(_SR_THROW)
 {
-   PHB_ITEM pError = hb_param( 1, HB_IT_ANY );
+  PHB_ITEM pError = hb_param(1, HB_IT_ANY);
 
-   if( pError && HB_IS_OBJECT( pError ) )
-   {
-      PHB_ITEM pResult = hb_errLaunchSubst( pError );
-      if( pResult )
-      {
-         hb_itemReturnRelease( pResult );
-      }
-   }
-   else
-   {
-      hb_errRT_BASE( EG_ARG, 9101, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS );
-   }
+  if (pError && HB_IS_OBJECT(pError))
+  {
+    PHB_ITEM pResult = hb_errLaunchSubst(pError);
+    if (pResult)
+    {
+      hb_itemReturnRelease(pResult);
+    }
+  }
+  else
+  {
+    hb_errRT_BASE(EG_ARG, 9101, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS);
+  }
 }
