@@ -28,6 +28,8 @@ hbmk2 sqlrddpp.hbp
 
 ### Notes
 
+SQLRDD++ do not require xhb.hbc (contrib/xhb) to compile the library.
+
 After compiled, the library is automatically installed in the addons folder.
 
 To disable this behaviour, edit the file sqlrddpp.hbp and disable the line below:
@@ -52,6 +54,9 @@ hbmk2 <filename> sqlrddpp.hbc -llibpq
 ```Batch
 hbmk2 <filename> sqlrddpp.hbc -lfbclient
 ```
+### Notes
+
+SQLRDD++ do not require xhb.hbc (contrib/xhb) to use the library.
 
 ## Links
 
