@@ -46,7 +46,7 @@
  */
 
 #include "fileio.ch"
-#include "hbxml.ch"
+#include "srxml.ch"
 #include "hbclass.ch"
 
 CREATE CLASS sr_TXMLNode

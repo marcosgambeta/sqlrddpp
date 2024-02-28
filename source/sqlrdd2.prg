@@ -54,7 +54,7 @@
 #include "set.ch"
 #include "dbinfo.ch"
 #include "sqlrddsetup.ch"
-#include "hbxml.ch" // Culik added to support arrays as xml
+#include "srxml.ch" // Culik added to support arrays as xml
 
 #define DUPL_IND_DETECT                .F.
 #define SQLRDD_LEARNING_REPETITIONS     5
