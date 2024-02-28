@@ -49,7 +49,9 @@
 #include "hbapiitm.h"
 #include "hbstack.h"
 
-HB_FUNC( HB_ENUMINDEX )
+// NOTE: for internal usage - do not use in user code
+
+HB_FUNC( _SR_ENUMINDEX )
 {
    HB_ISIZ nFuncOffset = hb_stackBaseOffset() - 1, nIndex = 0;
 
