@@ -11301,7 +11301,7 @@ FUNCTION SR_arraytoXml(a)
 
    //LOCAL cItem
    LOCAL hHash
-   LOCAL oXml := TXmlDocument():new() // Cria um objeto Xml
+   LOCAL oXml := sr_TXmlDocument():new() // Cria um objeto Xml
    LOCAL oNode
    //LOCAL oNode1
    LOCAL aItem
@@ -11312,7 +11312,7 @@ FUNCTION SR_arraytoXml(a)
    hHash["version"] := "1.0"
 
    hHash[ "encoding"] := "utf-8"
-   oNode := tXMLNode():New(HBXML_TYPE_PI, "xml", hHash, ;
+   oNode := sr_tXMLNode():New(HBXML_TYPE_PI, "xml", hHash, ;
       "version=" + chr(34) + "1.0" + chr(34) + " encoding=" + chr(34) + "utf-8" + chr(34) + "")
    oXml:oRoot:Addbelow(oNode)
    hhash := hb_hash()
@@ -11320,7 +11320,7 @@ FUNCTION SR_arraytoXml(a)
    hhash["Len"] := Alltrim(Str(Len(a)))
    hHash["Id"] := alltrim(str(nStartId))
    hHash["FatherId"] := alltrim("-1")
-   oNode := tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
+   oNode := sr_tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
    FOR EACH aItem IN a
       addNode(aItem, ONode)
    NEXT
@@ -11351,7 +11351,7 @@ STATIC FUNCTION AddNode(a, oNode)
       aadd(aPos, nPosData)
 
       nPosData := 0
-      oNode1 := tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
+      oNode1 := sr_tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
       FOR EACH aItem IN a
          AddNode(aItem, oNode1)
          //oNode1:addbelow(onode2)
@@ -11373,7 +11373,7 @@ STATIC FUNCTION AddNode(a, oNode)
       ENDIF
       hHash["Pos"] := alltrim(Str(++nPosData))
       hHash["Id"] := alltrim(str(nStartId))
-      oNode1 := tXMLNode():New(HBXML_TYPE_TAG, "Data", hhash)
+      oNode1 := sr_tXMLNode():New(HBXML_TYPE_TAG, "Data", hhash)
       oNode:addBelow(oNode1)
    ENDIF
 
@@ -11395,7 +11395,7 @@ FUNCTION SR_fromXml(oDoc, aRet, nLen, c)
       c := "<?xml version=" + chr(34) + "1.0" + chr(34) + " encoding=" + chr(34) + "utf-8" + chr(34) + "?>" + c
    ENDIF
    IF oDoc == NIL
-      oDoc := txmldocument():new(c)
+      oDoc := sr_txmldocument():new(c)
    ENDIF
 
    oNode := oDoc:CurNode
