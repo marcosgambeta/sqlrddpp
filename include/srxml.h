@@ -61,8 +61,8 @@
  * Giancarlo Niccolai <giancarlo@niccolai.org>
  */
 
-#ifndef HB_XML_H
-#define HB_XML_H
+#ifndef SR_XML_H
+#define SR_XML_H
 
 /* Standard definitions */
 #ifdef HB_OS_MAC
