@@ -183,7 +183,7 @@ FUNCTION ProxStmt(h1)
 
    c := cBuffer
 
-   DO WHILE !empty(c) .AND. c[1] == chr(10)
+   DO WHILE !empty(c) .AND. SubStr(c, 1, 1) == chr(10)
       lLF := .T.
       c := subStr(c, 2)
    ENDDO
