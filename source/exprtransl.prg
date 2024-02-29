@@ -299,7 +299,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
                      IF Len(aWhere(aInitRelations[i]:aDependingContexts, {|x|!Lower(x) $ addedAliases})) == 1
                         aadd(addedAliases, Lower(aInitRelations[i]:oWorkArea2:cAlias))
                         aadd(aSortedRelations, aInitRelations[i])
-                        adel(aInitRelations, i, .T.)
+                        hb_adel(aInitRelations, i, .T.)
                         lProgress := .T.
                         i--
                      ENDIF

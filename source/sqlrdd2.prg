@@ -7473,7 +7473,7 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
          RETURN 0
       ELSE
          SR_DropIndex(::aIndex[nOrder, ORDER_TAG])
-         aDel(::aIndex, 12 ,.T.)
+         hb_aDel(::aIndex, 12, .T.)
          RETURN 0
       ENDIF
    ELSEIF HB_ISNUMERIC(uOrder)
@@ -7485,7 +7485,7 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
          RETURN 0
       ELSE
          SR_DropIndex(::aIndex[nOrder, ORDER_TAG])
-         aDel(::aIndex, 12, .T.)
+         hb_aDel(::aIndex, 12, .T.)
          RETURN 0
       ENDIF
 
@@ -10458,7 +10458,7 @@ METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS
       IF lRet2
          nPos := ascan(aRemove, {|x|Alltrim(Upper(x[1])) == allTrim(Upper(cField))})
          IF nPos >0
-            aDel(aRemove, nPos, .T.)
+            hb_aDel(aRemove, nPos, .T.)
          ENDIF
       ENDIF
 
@@ -11367,8 +11367,8 @@ STATIC FUNCTION AddNode(a, oNode)
       NEXT
       nStartId := aFather[Len(aFather)]
       nPosData := aPos[Len(aPos)]
-      adel(aFather, Len(aFather), .T.)
-      adel(aPos, Len(aPos), .T.)
+      hb_adel(aFather, Len(aFather), .T.)
+      hb_adel(aPos, Len(aPos), .T.)
       oNode:addbelow(oNode1)
    ELSE
       IF HB_ISNUMERIC(a) // TODO: switch ?
