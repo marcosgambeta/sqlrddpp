@@ -685,7 +685,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
 
    FOR EACH aInd IN ::aIndexMgmnt
       aSize(aInd, INDEXMAN_SIZE)
-      IF aInd[INDEXMAN_IDXKEY][4] == "@"
+      IF SubStr(aInd[INDEXMAN_IDXKEY], 4, 1) == "@"
          IF ::oSql:nSystemID == SYSTEMID_ORACLE
             aInd[INDEXMAN_VIRTUAL_SYNTH] := SubStr(aInd[INDEXMAN_IDXKEY], 1, 3) + SubStr(::cFileName, 1, 25)
          ENDIF
@@ -699,7 +699,7 @@ METHOD LoadRegisteredTags() CLASS SR_WORKAREA
       ENDIF
       aInd[INDEXMAN_IDXNAME] := alltrim(aInd[INDEXMAN_IDXNAME])
       aInd[INDEXMAN_TAG] := alltrim(aInd[INDEXMAN_TAG])
-      IF aInd[INDEXMAN_FOR_EXPRESS][1] == "#"
+      IF SubStr(aInd[INDEXMAN_FOR_EXPRESS], 1, 1) == "#"
          aInd[INDEXMAN_FOR_CODEBLOCK] := &( "{|| if(" + alltrim(SubStr(aInd[INDEXMAN_FOR_EXPRESS], 5)) + ",'T','F') }")     // FOR clause codeblock
          aInd[INDEXMAN_FOR_COLPOS] := aScan(::aNames, "INDFOR_" + SubStr(aInd[INDEXMAN_FOR_EXPRESS], 2, 3))   // Make life easier in odbcrdd2.c
       ENDIF
@@ -1535,7 +1535,7 @@ METHOD sqlOpenAllIndexes() CLASS SR_WORKAREA
          cPhysicalVIndexName := NIL
       ENDIF
 
-      ::aIndex[nInd] := {"", "", {}, "", "", "", NIL, NIL, cOrdName, cColumns, , , , , , 0, ::aIndexMgmnt[nInd, INDEXMAN_SIGNATURE][19] == "D", cPhysicalVIndexName, , , ::aIndexMgmnt[nInd, INDEXMAN_IDXNAME]}
+      ::aIndex[nInd] := {"", "", {}, "", "", "", NIL, NIL, cOrdName, cColumns, , , , , , 0, SubStr(::aIndexMgmnt[nInd, INDEXMAN_SIGNATURE], 19, 1) == "D", cPhysicalVIndexName, , , ::aIndexMgmnt[nInd, INDEXMAN_IDXNAME]}
       ::aIndex[nInd, INDEX_FIELDS] := Array(Len(aCols))
 
       FOR i := 1 TO Len(aCols)
@@ -1629,7 +1629,7 @@ METHOD sqlOpenAllIndexes() CLASS SR_WORKAREA
       ELSE
          ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")
       ENDIF
-      IF ::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS][1] != "#"
+      IF SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
          ::aIndex[nInd, FOR_CLAUSE] := rtrim(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS])
       ELSE
          ::aIndex[nInd, FOR_CLAUSE] := "INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3) + " = 'T'"
@@ -7621,7 +7621,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
    LOCAL aOldPhisNames := {}
    LOCAL cName
    LOCAL nKeySize := 0
-   
+
    HB_SYMBOL_UNUSED(nKeySize)
 
    HB_SYMBOL_UNUSED(lEnable)
@@ -7648,7 +7648,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
    IF !Empty(cVInd := SR_GetSVIndex())
       lSyntheticVirtual := ::oSql:nSystemID == SYSTEMID_ORACLE
       cPhysicalVIndexName := SubStr(cVInd, 1, 3) + SubStr(::cFileName, 1, 25)
-   ELSEIF Len(cColumns) > 4 .AND. cColumns[4] == "@"
+   ELSEIF Len(cColumns) > 4 .AND. SubStr(cColumns, 4, 1) == "@"
       lSyntheticVirtual := ::oSql:nSystemID == SYSTEMID_ORACLE
       cPhysicalVIndexName := SubStr(cColumns, 1, 3) + SubStr(::cFileName, 1, 25)
       cColumns := SubStr(cColumns, 5)
@@ -7674,7 +7674,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
             ELSEIF c $ "("       // dtos(otherfunc()) not allowed
                lSyntheticIndex := .T.
                EXIT
-            ELSEIF c == "-" .AND. cColumns[i+1] == ">"
+            ELSEIF c == "-" .AND. SubStr(cColumns, i + 1, 1) == ">"
                IF lAllowRelationsInIndx
                   lSyntheticIndex := .T.
                   EXIT
@@ -7708,7 +7708,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
                ENDIF
             ELSE
                IF c $ "|-;+-/*" .AND. !Empty(cWord)
-                  IF c == "-" .AND. cColumns[i+1] == ">"
+                  IF c == "-" .AND. SubStr(cColumns, i + 1, 1) == ">"
                      IF lAllowRelationsInIndx
                         lSyntheticIndex := .T.
                         EXIT
@@ -7812,10 +7812,10 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
       IF !Empty(::aIndexMgmnt[i, INDEXMAN_COLUMNS])
          ::DropColumn("INDKEY_" + alltrim(::aIndexMgmnt[i, INDEXMAN_COLUMNS]), .F.)
       ENDIF
-      IF ::aIndexMgmnt[i, INDEXMAN_FOR_EXPRESS][1] == "#"
+      IF SubStr(::aIndexMgmnt[i, INDEXMAN_FOR_EXPRESS], 1, 1) == "#"
          ::DropColumn("INDFOR_" + substr(::aIndexMgmnt[i, INDEXMAN_FOR_EXPRESS], 2, 3), .F., .T.)
       ENDIF
-      IF Len(::aIndexMgmnt[i, INDEXMAN_IDXKEY]) > 4 .AND. ::aIndexMgmnt[i, INDEXMAN_IDXKEY][4] == "@"
+      IF Len(::aIndexMgmnt[i, INDEXMAN_IDXKEY]) > 4 .AND. SubStr(::aIndexMgmnt[i, INDEXMAN_IDXKEY], 4, 1) == "@"
          cPrevPhysicalVIndexName := SubStr(::aIndexMgmnt[i, INDEXMAN_IDXKEY], 1, 3) + SubStr(::cFileName, 1, 25)
       ENDIF
    NEXT i
@@ -7871,8 +7871,8 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
    IF ::oSql:nSystemID == SYSTEMID_IBMDB2 .AND. Len(cPhisicalName) > 18     /* DB2 sucks! */
       cPhisicalName := Right(cPhisicalName, 18)
    ENDIF
-   IF cPhisicalName[1] == "_"
-      cPhisicalName[1] := "I"
+   IF SubStr(cPhisicalName, 1, 1) == "_"
+      cPhisicalName := "I" + SubStr(cPhisicalName, 2) // cPhisicalName[1] := "I"
    ENDIF
 
    IF lSyntheticIndex
@@ -7880,7 +7880,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
       lTagFound := .F.
       HB_SYMBOL_UNUSED(lTagFound)
 
-      IF Len(cColumns) > 4 .AND. cColumns[4] == "@"
+      IF Len(cColumns) > 4 .AND. SubStr(cColumns, 4, 1) == "@"
          cColumns := SubStr(cColumns, 5)
       ENDIF
 
@@ -9514,7 +9514,7 @@ METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WOR
 
             cPhisicalName := alltrim(aIndexes[i, 1])
 
-            IF aIndexes[i, 4][4] == "@"
+            IF SubStr(aIndexes[i, 4], 4, 1) == "@"
                cPhysicalVIndexName := SubStr(aInd[4], 1, 3) + SubStr(::cFileName, 1, 25)
             ELSE
                cPhysicalVIndexName := NIL
@@ -10050,7 +10050,7 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
             ::oSql:exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, 1], ::oSql:nSystemID) + " = RTRIM( BACKUP_ )", lDisplayErrorMessage)
          ELSE
             IF ::oSql:nSystemID == SYSTEMID_POSTGR .AND. ::aFields[nPos_, 2] != aBack[1, 2]
-               IF ::aFields[nPos_, 2] =="N" .AND. aBack[1, 2] == "C"
+               IF ::aFields[nPos_, 2] == "N" .AND. aBack[1, 2] == "C"
                   ::oSql:exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, 1], ::oSql:nSystemID) + " = BACKUP_::text::numeric::integer", lDisplayErrorMessage)
                //ELSEif ::aFields[nPos_, 2] =="C" .AND. aBack[1, 2] == "N"
                   //::oSql:exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, 1], ::oSql:nSystemID) + " = BACKUP_::numeric::integer::text", lDisplayErrorMessage)
