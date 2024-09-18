@@ -1,9 +1,8 @@
-/*
- * SQLRDD Oracle Native Connection Class
- * Copyright (c) 2003 - Marcelo Lombardo  <lombardo@uol.com.br>
- * Copyright (c) 2003 - Luiz Rafal Culik Guimarães <luiz@xharbour.com.br>
- *
- */
+//
+// SQLRDD Oracle Native Connection Class
+// Copyright (c) 2003 - Marcelo Lombardo  <lombardo@uol.com.br>
+// Copyright (c) 2003 - Luiz Rafal Culik Guimarães <luiz@xharbour.com.br>
+//
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

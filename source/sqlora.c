@@ -1,9 +1,9 @@
-/*
- * SQLRDD Oracle native routines
- * CONVERTED and (very) EXTENDED from Kai Poitschke's libsql8
- * to xHarbour by Marcelo Lombardo (marcelo@xharbour.com.br)
- * (c) 2005 - Marcelo Lombardo (marcelo@xharbour.com.br)
- */
+//
+// SQLRDD Oracle native routines
+// CONVERTED and (very) EXTENDED from Kai Poitschke's libsql8
+// to xHarbour by Marcelo Lombardo (marcelo@xharbour.com.br)
+// (c) 2005 - Marcelo Lombardo (marcelo@xharbour.com.br)
+//
 
 /**
  * @file sqlora.c

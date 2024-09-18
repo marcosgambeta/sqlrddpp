@@ -1,11 +1,10 @@
-/*
- * Main Connection Class
- * Copyright (c) 2003 - Marcelo Lombardo  <lombardo@uol.com.br>
- *
- * This class does not work alone. It should be superclass of
- * database-specific connection class
- *
- */
+//
+// Main Connection Class
+// Copyright (c) 2003 - Marcelo Lombardo  <lombardo@uol.com.br>
+//
+// This class does not work alone. It should be superclass of
+// database-specific connection class
+//
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

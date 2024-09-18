@@ -1,8 +1,7 @@
-/*
- * SQLRDD Firebird Native Access
- * Copyright (c) 2004 - Marcelo Lombardo  <lombardo@uol.com.br>
- *
- */
+//
+// SQLRDD Firebird Native Access
+// Copyright (c) 2004 - Marcelo Lombardo  <lombardo@uol.com.br>
+//
 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
