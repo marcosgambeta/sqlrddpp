@@ -71,24 +71,24 @@
 #define  MYSQL_VAR_STRING_TYPE   253
 #define  MYSQL_STRING_TYPE       254
 
-#define  MYSQL_FS_NAME           1     /* Name of column */
-#define  MYSQL_FS_TABLE          2     /* Table of column if column was a field */
-#define  MYSQL_FS_DEF            3     /* Default value (set by mysql_list_fields) */
-#define  MYSQL_FS_TYPE           4     /* Type of field. Se mysql_com.h for types */
-#define  MYSQL_FS_LENGTH         5     /* Width of column */
-#define  MYSQL_FS_MAXLEN         6     /* Max width of selected set */
-#define  MYSQL_FS_FLAGS          7     /* Div flags */
-#define  MYSQL_FS_DECIMALS       8     /* Number of decimals in field */
+#define  MYSQL_FS_NAME           1     // Name of column
+#define  MYSQL_FS_TABLE          2     // Table of column if column was a field
+#define  MYSQL_FS_DEF            3     // Default value (set by mysql_list_fields)
+#define  MYSQL_FS_TYPE           4     // Type of field. Se mysql_com.h for types
+#define  MYSQL_FS_LENGTH         5     // Width of column
+#define  MYSQL_FS_MAXLEN         6     // Max width of selected set
+#define  MYSQL_FS_FLAGS          7     // Div flags
+#define  MYSQL_FS_DECIMALS       8     // Number of decimals in field
 
 // MySQL field flags
 
-#define  NOT_NULL_FLAG           1     /* Field can't be NULL */
-#define  PRI_KEY_FLAG            2     /* Field is part of a primary key */
-#define  UNIQUE_KEY_FLAG         4		/* Field is part of a unique key */
-#define  MULTIPLE_KEY_FLAG       8		/* Field is part of a key */
-#define  BLOB_FLAG               16		/* Field is a blob */
-#define  UNSIGNED_FLAG           32		/* Field is unsigned */
-#define  ZEROFILL_FLAG           64		/* Field is zerofill */
+#define  NOT_NULL_FLAG           1     // Field can't be NULL
+#define  PRI_KEY_FLAG            2     // Field is part of a primary key
+#define  UNIQUE_KEY_FLAG         4		// Field is part of a unique key
+#define  MULTIPLE_KEY_FLAG       8		// Field is part of a key
+#define  BLOB_FLAG               16		// Field is a blob
+#define  UNSIGNED_FLAG           32		// Field is unsigned
+#define  ZEROFILL_FLAG           64		// Field is zerofill
 #define  BINARY_FLAG             128
 
 #endif

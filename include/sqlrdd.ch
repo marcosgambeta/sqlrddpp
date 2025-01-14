@@ -102,7 +102,7 @@
 
 #define CONNECT_CUSTOM               999
 
-/* some errors */
+// some errors
 #define ESQLRDD_OPEN                1001
 #define ESQLRDD_CLOSE               1002
 #define ESQLRDD_CREATE              1004
@@ -115,7 +115,7 @@
 #define ESQLRDD_READONLY            1025
 #define ESQLRDD_NOT_COMMITED_YET    1026
 
-/* supported RDBMS */
+// supported RDBMS
 
 #define SUPPORTED_DATABASES           23
 
@@ -145,37 +145,37 @@
 
 #define LASTREC_POS             99999998
 
-/* Log changes to SR_MGMNTLOGCHG - modes */
+// Log changes to SR_MGMNTLOGCHG - modes
 
-#define SQLLOGCHANGES_NOLOG                           0     /* Does not log */
-#define SQLLOGCHANGES_BEFORE_COMMAND                  1     /* May log wrong statements */
-#define SQLLOGCHANGES_AFTER_COMMAND                  10     /* Logs only if command was succefull */
-#define SQLLOGCHANGES_IN_TRANSACTION                100     /* Otherwise log goes by second connection, outside transaction control */
-#define SQLLOGCHANGES_LOCKS                        1000     /* Log Line LOCKS */
-#define SQLLOGCHANGES_DELETE_AFTER_TRANSACTION    10000     /* Delete all previous ocourrences from current database connection when transaction is finished */
-#define SQLLOGCHANGES_LOG_CALLSTACK              100000     /* Log Call Stack - good when looking for locked peers */
+#define SQLLOGCHANGES_NOLOG                           0     // Does not log
+#define SQLLOGCHANGES_BEFORE_COMMAND                  1     // May log wrong statements
+#define SQLLOGCHANGES_AFTER_COMMAND                  10     // Logs only if command was succefull
+#define SQLLOGCHANGES_IN_TRANSACTION                100     // Otherwise log goes by second connection, outside transaction control
+#define SQLLOGCHANGES_LOCKS                        1000     // Log Line LOCKS
+#define SQLLOGCHANGES_DELETE_AFTER_TRANSACTION    10000     // Delete all previous ocourrences from current database connection when transaction is finished
+#define SQLLOGCHANGES_LOG_CALLSTACK              100000     // Log Call Stack - good when looking for locked peers
 
 #define SQLLOGCHANGES_SIZE                            6
 
-/* SR_MGMNTLOGCHG type column */
+// SR_MGMNTLOGCHG type column
 
 #define SQLLOGCHANGES_TYPE_DML                "01"
 #define SQLLOGCHANGES_TYPE_DDL                "02"
 #define SQLLOGCHANGES_TYPE_LOCK               "03"
 
-/* Sequence per table */
+// Sequence per table
 
 #define SEQ_NOTDEFINED                         0
 #define SEQ_PER_TABLE                          1
 #define SEQ_PER_DATABASE                       2
 
-/* Workarea Type */
+// Workarea Type
 
 #define WATYPE_UNDEF                   0
 #define WATYPE_ISAM                    1
 // #define WATYPE_CACHE                   2     --  Deprecated
 
-/* eval( SQLGetTableInfoBlock(), cTableName ) return array constants */
+// eval( SQLGetTableInfoBlock(), cTableName ) return array constants
 
 #define TABLE_INFO_SIZE               16
 
@@ -196,19 +196,19 @@
 #define TABLE_INFO_QUALIFIED_NAME     15
 #define TABLE_INFO_NO_TRANSAC         16
 
-/* Table Relation Methods */
+// Table Relation Methods
 
 #define TABLE_INFO_RELATION_TYPE_SELECT     0
 #define TABLE_INFO_RELATION_TYPE_JOIN       1
 #define TABLE_INFO_RELATION_TYPE_OUTER_JOIN 2
 
-/* Historic management */
+// Historic management
 
 #define HISTORIC_ACTIVE_RECORD              0
 #define HISTORIC_LAST_RECORD                1
 #define HISTORIC_FIRST_RECORD               2
 
-/* dbCreate Record Array Structure */
+// dbCreate Record Array Structure
 
 #define FIELD_INFO_SIZE                11
 
@@ -217,10 +217,10 @@
 #define FIELD_LEN                       3
 #define FIELD_DEC                       4
 #define FIELD_NULLABLE                  5
-#define FIELD_DOMAIN                    6  /* Not used by dbCreate */
+#define FIELD_DOMAIN                    6  // Not used by dbCreate
 #define FIELD_MULTILANG                 7
-#define FIELD_ENUM                      8  /* Not used by dbCreate */
-#define FIELD_WAOFFSET                  9  /* Not used by dbCreate */
+#define FIELD_ENUM                      8  // Not used by dbCreate
+#define FIELD_WAOFFSET                  9  // Not used by dbCreate
 #define FIELD_PRIMARY_KEY              10
 #define FIELD_UNIQUE                   11
 

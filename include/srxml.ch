@@ -48,15 +48,15 @@
 #ifndef SR_XML_CH
 #define SR_XML_CH
 
-/* Styles */
-#define SRXML_STYLE_NOINDENT      0  /* no indent nodes and insert new line after each node */
-#define SRXML_STYLE_INDENT        1  /* indent nodes with 1 space and insert new line after each node (default) */
-#define SRXML_STYLE_TAB           2  /* indent nodes with tab spaces and insert new line after each node */
-#define SRXML_STYLE_THREESPACES   4  /* indent nodes with 3 spaces and insert new line after each node */
+// Styles
+#define SRXML_STYLE_NOINDENT      0  // no indent nodes and insert new line after each node
+#define SRXML_STYLE_INDENT        1  // indent nodes with 1 space and insert new line after each node (default)
+#define SRXML_STYLE_TAB           2  // indent nodes with tab spaces and insert new line after each node
+#define SRXML_STYLE_THREESPACES   4  // indent nodes with 3 spaces and insert new line after each node
 #define SRXML_STYLE_NOESCAPE      8
-#define SRXML_STYLE_NONEWLINE     16 /* no indent and no insert newline */
+#define SRXML_STYLE_NONEWLINE     16 // no indent and no insert newline
 
-/* Status values */
+// Status values
 #define SRXML_STATUS_ERROR        0
 #define SRXML_STATUS_OK           1
 #define SRXML_STATUS_MORE         2
@@ -64,7 +64,7 @@
 #define SRXML_STATUS_UNDEFINED    4
 #define SRXML_STATUS_MALFORMED    5
 
-/* Error codes */
+// Error codes
 #define SRXML_ERROR_NONE          0
 #define SRXML_ERROR_IO            1
 #define SRXML_ERROR_NOMEM         2
@@ -80,7 +80,7 @@
 #define SRXML_ERROR_UNCLOSEDENTITY   12
 #define SRXML_ERROR_WRONGENTITY      13
 
-/* Node types */
+// Node types
 #define SRXML_TYPE_TAG            0
 #define SRXML_TYPE_COMMENT        1
 #define SRXML_TYPE_PI             2

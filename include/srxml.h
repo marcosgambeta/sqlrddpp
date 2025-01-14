@@ -46,31 +46,29 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-/*
- * MXML (Mini XML) Library related copyright notice.
- * (referring to Harbour/xHarbour version).
- *
- * This source file contains a modified version of MXML (Mini XML)
- * library, developed by Giancarlo Niccolai. MXML is released under
- * LGPL license; this modified version (called HBXML) is released under
- * GPL with Harbour exception. HBXML license does not extends into
- * MXML; HBXML and any modification to HBXML is to be considered as
- * a part of Harbour or xHarbour projects, as it is modified to
- * be specifically working in the context of the compiler's RTL.
- *
- * Original MXML lib can be obtained requesting it at
- * Giancarlo Niccolai <giancarlo@niccolai.org>
- */
+// MXML (Mini XML) Library related copyright notice.
+// (referring to Harbour/xHarbour version).
+//
+// This source file contains a modified version of MXML (Mini XML)
+// library, developed by Giancarlo Niccolai. MXML is released under
+// LGPL license; this modified version (called HBXML) is released under
+// GPL with Harbour exception. HBXML license does not extends into
+// MXML; HBXML and any modification to HBXML is to be considered as
+// a part of Harbour or xHarbour projects, as it is modified to
+// be specifically working in the context of the compiler's RTL.
+//
+// Original MXML lib can be obtained requesting it at
+// Giancarlo Niccolai <giancarlo@niccolai.org>
 
 #ifndef SR_XML_H
 #define SR_XML_H
 
-/* Standard definitions */
+// Standard definitions
 #ifdef HB_OS_MAC
    #define MXML_LINE_TERMINATOR       '\r'
    #define MXML_SOFT_LINE_TERMINATOR  '\n'
 #else
-/* Notice, this works for both Unix and Windows */
+// Notice, this works for both Unix and Windows
    #define MXML_LINE_TERMINATOR       '\n'
    #define MXML_SOFT_LINE_TERMINATOR  '\r'
 #endif
@@ -80,14 +78,14 @@
 #define MXML_ALLOC_BLOCK              128
 #define MXML_MAX_DEPTH                64
 
-/* Styles */
+// Styles
 #define MXML_STYLE_INDENT             0x0001
 #define MXML_STYLE_TAB                0x0002
 #define MXML_STYLE_THREESPACES        0x0004
 #define MXML_STYLE_NOESCAPE           0x0008
 #define MXML_STYLE_NONEWLINE          0x0010
 
-/* Status values */
+// Status values
 
 typedef enum
 {
@@ -99,7 +97,7 @@ typedef enum
    MXML_STATUS_MALFORMED
 } MXML_STATUS;
 
-/* Error codes */
+// Error codes
 typedef enum
 {
    MXML_ERROR_NONE = 0,
@@ -119,7 +117,7 @@ typedef enum
    MXML_ERROR_WRONGENTITY
 } MXML_ERROR_CODE;
 
-/* Node types */
+// Node types
 
 typedef enum
 {
@@ -128,44 +126,44 @@ typedef enum
    MXML_TYPE_PI,
    MXML_TYPE_DIRECTIVE,
    MXML_TYPE_DATA,
-   MXML_TYPE_CDATA,     /* Used for <![CDATA[ nodes */
-   MXML_TYPE_DOCUMENT   /* used for document level root node */
+   MXML_TYPE_CDATA,     // Used for <![CDATA[ nodes
+   MXML_TYPE_DOCUMENT   // used for document level root node
 } MXML_NODE_TYPE;
 
-/* Refil function */
+// Refil function
 struct tag_mxml_refil;
 struct tag_mxml_output;
 
 typedef void ( *MXML_REFIL_FUNC )( struct tag_mxml_refil * ref );
 typedef void ( *MXML_OUTPUT_FUNC )( struct tag_mxml_output * out, const char * data, HB_ISIZ len );
 
-/* --- Structures holding the XML data --- */
+// --- Structures holding the XML data ---
 
-/* Re-filler */
+// Re-filler
 
 typedef struct tag_mxml_refil
 {
-   /* status variables */
+   // status variables
    MXML_STATUS     status;
    MXML_ERROR_CODE error;
 
-   /* buffer for reading data */
+   // buffer for reading data
    unsigned char * buffer;
-   HB_ISIZ         bufsize; /* size of the whole buffer */
-   HB_ISIZ         buflen;  /* valid characters in the current buffer */
-   HB_ISIZ         bufpos;  /* current position */
+   HB_ISIZ         bufsize; // size of the whole buffer
+   HB_ISIZ         buflen;  // valid characters in the current buffer
+   HB_ISIZ         bufpos;  // current position
 
-   /* length of the stream for implementing progress indicators */
+   // length of the stream for implementing progress indicators
    HB_ISIZ streampos;
    HB_ISIZ streamlen;
 
-   /* callback funcs */
+   // callback funcs
    MXML_REFIL_FUNC refil_func;
 
-   /* ungetc implementation */
+   // ungetc implementation
    int sparechar;
 
-   /* data available for callback functions */
+   // data available for callback functions
    union
    {
       HB_FHANDLE hFile;
@@ -177,18 +175,18 @@ typedef struct tag_mxml_refil
 
 typedef struct tag_mxml_output
 {
-   /* status variables */
+   // status variables
    MXML_STATUS     status;
    MXML_ERROR_CODE error;
 
-   /* output operation */
+   // output operation
    MXML_OUTPUT_FUNC output_func;
 
-   /* data to implement progress indicators */
+   // data to implement progress indicators
    int node_count;
    int node_done;
 
-   /* data available for callback functions */
+   // data available for callback functions
    union
    {
       HB_FHANDLE hFile;
@@ -197,7 +195,7 @@ typedef struct tag_mxml_output
 
 } MXML_OUTPUT;
 
-/* tag mxml self growing string */
+// tag mxml self growing string
 typedef struct
 {
    char *  buffer;
@@ -212,7 +210,7 @@ typedef struct
 } HBXML_ATTRIBUTE, * PHBXML_ATTRIBUTE;
 
 
-/* Allocator and deletor functions are meant to be redeclared by includers */
+// Allocator and deletor functions are meant to be redeclared by includers
 #ifndef MXML_ALLOCATOR
    #define MXML_ALLOCATOR    hb_xgrab
 #endif

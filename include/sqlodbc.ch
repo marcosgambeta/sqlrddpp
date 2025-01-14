@@ -230,11 +230,11 @@
 
       #define SQL_C_DEFAULT             99
 
-      /* SQLExtendedFetch "fFetchType" values */
+      // SQLExtendedFetch "fFetchType" values
 
       #define SQL_FETCH_BOOKMARK         8
 
-      /* SQLExtendedFetch "rgfRowStatus" element values */
+      // SQLExtendedFetch "rgfRowStatus" element values
 
       #define SQL_ROW_SUCCESS          0
       #define SQL_ROW_DELETED          1
@@ -243,37 +243,37 @@
       #define SQL_ROW_ADDED            4
       #define SQL_ROW_ERROR            5
 
-      /* SQL_CONCURRENCY options */
+      // SQL_CONCURRENCY options
 
       #define SQL_CONCUR_READ_ONLY      1
-      #define SQL_CONCUR_DEFAULT         SQL_CONCUR_READ_ONLY   /* Default value */
+      #define SQL_CONCUR_DEFAULT         SQL_CONCUR_READ_ONLY   // Default value
 
-      /* SQL_CURSOR_TYPE options */
+      // SQL_CURSOR_TYPE options
 
-      #define SQL_CURSOR_TYPE_DEFAULT      SQL_CURSOR_FORWARD_ONLY   /* Default value */
+      #define SQL_CURSOR_TYPE_DEFAULT      SQL_CURSOR_FORWARD_ONLY   // Default value
 
-      /* options for SQLGetStmtOption/SQLSetStmtOption */
+      // options for SQLGetStmtOption/SQLSetStmtOption
 
       #define SQL_KEYSET_SIZE          8
       #define SQL_SIMULATE_CURSOR       10
       #define SQL_RETRIEVE_DATA         11
       #define SQL_USE_BOOKMARKS         12
-      #define SQL_GET_BOOKMARK         13   /*   GetStmtOption Only */
+      #define SQL_GET_BOOKMARK         13   //   GetStmtOption Only
       #define SQL_STMT_OPT_MAX         SQL_ROW_NUMBER
       #define SQL_STMT_OPT_MIN         SQL_QUERY_TIMEOUT
 
-      /* Operations in SQLSetPos */
+      // Operations in SQLSetPos
 
       #define SQL_UPDATE               2
       #define SQL_DELETE               3
       #define SQL_ADD                  4
 
-      /* Lock options in SQLSetPos */
+      // Lock options in SQLSetPos
 
       #define SQL_LOCK_UNLOCK          2
       //#define SQL_C_DOUBLE               8
 
-      /* identifiers of fields in the SQL descriptor */
+      // identifiers of fields in the SQL descriptor
 
       #define SQL_DESC_COUNT                  1001
       #define SQL_DESC_TYPE                   1002
