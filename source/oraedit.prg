@@ -1,9 +1,9 @@
 REQUEST ADS
 #include "ads.ch"
 
-STATIC hHashData := hb_hash()
+STATIC s_hHashData := hb_hash()
 
-STATIC TRACE_STRUCT := { ;
+STATIC s_TRACE_STRUCT := { ;
                          {"USUARIO",    "C", 10, 0},;
                          {"DATA",       "D", 08, 0},;
                          {"HORA",       "C", 08, 0},;
@@ -109,7 +109,7 @@ STATIC TRACE_STRUCT := { ;
 
 #define HB_COMPAT_C53
 
-STATIC nAliasTmp := 0
+STATIC s_nAliasTmp := 0
 
 FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    nRight, axColumns, xUserFunc, acColumnSayPictures, acColumnHeaders, ;
@@ -154,7 +154,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    LOCAL acolsadded := {}
    LOCAL cTmp
 
-   //hHashData := hb_hash()
+   //s_hHashData := hb_hash()
    SET SERVER LOCAL
    SR_SetRDDTemp("ADT")
    IF Empty(axColumns) .OR. !HB_ISARRAY(axColumns)
@@ -254,20 +254,20 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    fclose(HB_FTEMPCREATE(".", "tmp", , @cFile))
    nRet := DE_CONT
    lAppend := .F.
-   hHashData[nAliasTmp] := hb_hash()
+   s_hHashData[s_nAliasTmp] := hb_hash()
 
-   IF nAliasTmp == 0
+   IF s_nAliasTmp == 0
       cAlias := "tmpedit"
-      nAliasTmp++
-      hHashData[nAliasTmp] := hb_hash()
-      hHashData[nAliasTmp]["cFile"] := StrTran(cfile, ".tmp", "")
+      s_nAliasTmp++
+      s_hHashData[s_nAliasTmp] := hb_hash()
+      s_hHashData[s_nAliasTmp]["cFile"] := StrTran(cfile, ".tmp", "")
    ELSE
-      cAlias := "tmpedit" + strzero(nAliasTmp, 3)
-      nAliasTmp++
-      hHashData[nAliasTmp] := hb_hash()
-      hHashData[nAliasTmp]["cFile"] := StrTran(cfile, ".tmp", "")
+      cAlias := "tmpedit" + strzero(s_nAliasTmp, 3)
+      s_nAliasTmp++
+      s_hHashData[s_nAliasTmp] := hb_hash()
+      s_hHashData[s_nAliasTmp]["cFile"] := StrTran(cfile, ".tmp", "")
    ENDIF
-   hHashData[nAliasTmp]["eof"] := .F.
+   s_hHashData[s_nAliasTmp]["eof"] := .F.
    refreshFullData(csql, cAlias, cfile, nHigerBound, nLowerBound, nStep)
 
    createkeyfrompk(calias, ctable, lDescIndex) //cria o indice temporatio em cima da pk
@@ -585,7 +585,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
       ENDIF
 
       oTBR:ForceStable()
-      IF (eof() .OR. hHashData[nAliasTmp]["eof"])
+      IF (eof() .OR. s_hHashData[s_nAliasTmp]["eof"])
 
          nRecno := recno()
 
@@ -603,7 +603,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
          ENDIF
          //oTbr:up():forcestable()
       ENDIF
-      hHashData[nAliasTmp]["eof"] := .F.
+      s_hHashData[s_nAliasTmp]["eof"] := .F.
       IF nRet = DE_CONT
 
          IF !lExcept
@@ -698,12 +698,12 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    IF nOldArea > 0
       select(nOldArea)
    ENDIF
-   IF file(hHashData[nAliasTmp]["cFile"] + "sqllog.dbf")
-      ferase(hHashData[nAliasTmp]["cFile"] + "sqllog.dbf")
-      ferase(hHashData[nAliasTmp]["cFile"] + "sqllog.dbt")
+   IF file(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbf")
+      ferase(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbf")
+      ferase(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbt")
    ENDIF
-   IF nAliasTmp > 0
-      nAliasTmp--
+   IF s_nAliasTmp > 0
+      s_nAliasTmp--
    ENDIF
    ferase(cFiletoDelete)
    IF file(StrTran(cFiletoDelete, ".tmp", ".adi"))
@@ -900,7 +900,7 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql, cCount, c
          dbskip(-1)
 
          oTBR:Up():forceStable()
-         //hHashData[calias]["eof"] := .F.
+         //s_hHashData[calias]["eof"] := .F.
          // // dbgobottom()
          //culik comentado para teste
          //nHigerBound += nStep
@@ -967,7 +967,7 @@ STATIC FUNCTION dbe_Skipper(nSkip, oTb, calias)
          dbskip(1)
          i++
          IF eof() .AND. !lAppend
-            hHashData[nAliastmp]["eof"] := .T.
+            s_hHashData[s_nAliastmp]["eof"] := .T.
             dbskip(-1)
             i--
             EXIT
@@ -1589,7 +1589,7 @@ STATIC FUNCTION Skipped(nRecs, lAppend)
 FUNCTION SR_WriteDbLog(cComm, oCnn)
 
    LOCAL nAlAtual := Select()
-   LOCAL cPre := hHashData[nAliasTmp]["cFile"]
+   LOCAL cPre := s_hHashData[s_nAliasTmp]["cFile"]
 
    HB_SYMBOL_UNUSED(oCnn)
 
@@ -1598,7 +1598,7 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
    BEGIN SEQUENCE WITH __BreakBlock()
 
       IF !sr_phFile(cpre + "sqllog.dbf")
-         dbCreate(cpre + "sqllog.dbf", TRACE_STRUCT, "DBFNTX")
+         dbCreate(cpre + "sqllog.dbf", s_TRACE_STRUCT, "DBFNTX")
       ENDIF
 
       DO WHILE .T.
@@ -1629,10 +1629,10 @@ FUNCTION GetLastInsertCommand(cTable)
 
    LOCAL CrET := ""
    LOCAL nAlAtual := Select()
-   LOCAL cPre := hHashData[nAliasTmp]["cFile"]
+   LOCAL cPre := s_hHashData[s_nAliasTmp]["cFile"]
 
    IF !sr_phFile(cpre + "sqllog.dbf")
-      dbCreate(cpre + "sqllog.dbf", TRACE_STRUCT, "DBFNTX")
+      dbCreate(cpre + "sqllog.dbf", s_TRACE_STRUCT, "DBFNTX")
    ENDIF
    DO WHILE .T.
       dbUseArea(.T., "DBFNTX", cpre + "sqllog.dbf", "SQLLOG", .T., .F.)
