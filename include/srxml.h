@@ -172,7 +172,6 @@ typedef struct tag_mxml_refil
 
 } MXML_REFIL;
 
-
 typedef struct tag_mxml_output
 {
    // status variables
@@ -209,7 +208,6 @@ typedef struct
    PHB_ITEM pValue;
 } HBXML_ATTRIBUTE, * PHBXML_ATTRIBUTE;
 
-
 // Allocator and deletor functions are meant to be redeclared by includers
 #ifndef MXML_ALLOCATOR
    #define MXML_ALLOCATOR    hb_xgrab
@@ -223,4 +221,4 @@ typedef struct
    #define MXML_REALLOCATOR  hb_xrealloc
 #endif
 
-#endif
+#endif // SR_XML_H
