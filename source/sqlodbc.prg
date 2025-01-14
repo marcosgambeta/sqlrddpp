@@ -116,7 +116,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ODBC
    IF aArray == NIL
       aArray := Array(Len(aFields))
    ELSEIF Len(aArray) < Len(aFields)
-      aSize(aArray, Len(aFields))
+      ASize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -173,7 +173,7 @@ METHOD DriverCatTables() CLASS SR_ODBC
                nAllocated += ARRAY_BLOCK5
             ENDSWITCH
 
-            aSize(aArray, nAllocated)
+            ASize(aArray, nAllocated)
          ENDIF
 
          aArray[n] := {::FieldGet(3, aFields, .F.)}
@@ -183,7 +183,7 @@ METHOD DriverCatTables() CLASS SR_ODBC
    ENDIF
 
    ::FreeStatement()
-   aSize(aArray, n)
+   ASize(aArray, n)
 
    HB_SYMBOL_UNUSED(nBlocks)
 
@@ -212,7 +212,7 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_ODBC
       ENDIF
 
       DO WHILE (::nRetCode := ::FetchRaw(lTranslate, aFieldsMore)) = SQL_SUCCESS
-         AADD(aArray, Array(Len(aFieldsMore)))
+         AAdd(aArray, Array(Len(aFieldsMore)))
          FOR i := 1 TO Len(aFieldsMore)
             aArray[n, i] := ::FieldGet(i, aFieldsMore, lTranslate)
          NEXT i
@@ -229,7 +229,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ODBC
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(Len(aFields))
+      ::aCurrLine := Array(Len(aFields))
       SR_ODBCLINEPROCESSED(::hStmt, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -291,7 +291,7 @@ METHOD AllocStatement() CLASS SR_ODBC
       ::lSetNext := .F.
       nRet := ::SetStmtOptions(::nSetOpt, ::nSetValue)
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         SR_MsgLogFile(SR_Msg(23) + " (" + alltrim(str(nRet)) + ") : " + ::LastError())
+         SR_MsgLogFile(SR_Msg(23) + " (" + AllTrim(str(nRet)) + ") : " + ::LastError())
       ENDIF
    ENDIF
 
@@ -389,7 +389,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
             ENDIF
          ENDIF
 
-         cName := Upper(alltrim(cName))
+         cName := Upper(AllTrim(cName))
          cType := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec) + nSoma
          IF ::nSystemID == SYSTEMID_ORACLE .AND. (!::lQueryOnly) .AND. cType == "N" .AND. nLenField == 38 ;
@@ -488,7 +488,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       SR_SetCOnnectAttr(hDbc, SQL_ATTR_CURRENT_CATALOG, ::cDTB, Len(::cDTB))
    ENDIF
 
-   cConnect := alltrim(cConnect)
+   cConnect := AllTrim(cConnect)
    nRet := SR_DriverC(hDbc, @cConnect)
 
    IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO

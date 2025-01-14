@@ -134,12 +134,12 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
    LOCAL cNewAlias
    LOCAL cRegO
 
-   cExpression := alltrim(cExpression)
+   cExpression := AllTrim(cExpression)
 
    cAlias := iif((cNewAlias := ::ExtractAlias1(@cExpression)) != NIL, cNewAlias, cAlias)
 
    DO WHILE hb_regexLike("^\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*\?$", cExpression)
-      cExpression := alltrim(substr(cExpression, 2, Len(cExpression) - 2))
+      cExpression := AllTrim(substr(cExpression, 2, Len(cExpression) - 2))
       cAlias := iif((cNewAlias := ::ExtractAlias2(@cExpression)) != NIL, cNewAlias, cAlias)
       ::ResolveParenthesis(@cExpression)
    ENDDO
@@ -294,11 +294,11 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
          ::ResolveParenthesis(@cParameters)
          DO WHILE HB_RegExMatch(cRegParams, cParameters, .F.)
             aParamGroups := HB_RegExAtX(cRegParams, cParameters)
-            aadd(aParameters, ::GetParameter(aParamGroups[2, 1], cAlias))
+            AAdd(aParameters, ::GetParameter(aParamGroups[2, 1], cAlias))
             cParameters := aParamGroups[3, 1]
          ENDDO
          IF !cParameters == ""
-            aadd(aParameters, ::GetParameter(cParameters, cAlias))
+            AAdd(aParameters, ::GetParameter(cParameters, cAlias))
          ENDIF
          oOperand1 := FunctionExpression():new(cAlias, ::RestoreParenthesis(cExpression), cFunctionName, aParameters)
       ELSEIF HB_RegExMatch(cRegMacro, cExpression, .F.)

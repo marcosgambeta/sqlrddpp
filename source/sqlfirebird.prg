@@ -91,7 +91,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD
    IF aArray == NIL
       aArray := Array(Len(aFields))
    ELSEIF Len(aArray) != Len(aFields)
-      aSize(aArray, Len(aFields))
+      ASize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -112,7 +112,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_FIREBIRD
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(Len(aFields))
+      ::aCurrLine := Array(Len(aFields))
       FBLINEPROCESSED(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -218,8 +218,8 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       //_nLen := nLen (value not used)
       _nDec := nDec
 
-      cName := Upper(alltrim(cName))
-      nPos := aScan(aLocalPrecision, {|x|rtrim(x[1]) == cName})
+      cName := Upper(AllTrim(cName))
+      nPos := AScan(aLocalPrecision, {|x|RTrim(x[1]) == cName})
       cType := ::SQLType(nType, cName, nLen)
       nLenField := ::SQLLen(nType, nLen, @nDec)
       IF nPos > 0 .AND. aLocalPrecision[nPos, 2] > 0
@@ -255,7 +255,7 @@ METHOD LastError() CLASS SR_FIREBIRD
 
    cMsgError := FBError(::hEnv, @nType)
 
-RETURN alltrim(cMsgError) + " - Native error code " + AllTrim(str(nType))
+RETURN AllTrim(cMsgError) + " - Native error code " + AllTrim(str(nType))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -285,7 +285,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    IF nRet != SQL_SUCCESS
       ::nRetCode := nRet
-      SR_MsgLogFile("Connection Error: " + alltrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + ;
+      SR_MsgLogFile("Connection Error: " + AllTrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + ;
          " - Username : " + ::cUser + " (Password not shown for security)")
       RETURN SELF
    ENDIF
@@ -298,7 +298,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    IF nRet != SQL_SUCCESS
       ::nRetCode := nRet
-      SR_MsgLogFile("Transaction Start error : " + alltrim(str(nRet)))
+      SR_MsgLogFile("Transaction Start error : " + AllTrim(str(nRet)))
       RETURN SELF
    ENDIF
 
@@ -342,7 +342,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_FIREBIRD
 
    LOCAL nRet
 
-   IF Upper(Left(ltrim(cCommand), 6)) == "SELECT"
+   IF Upper(Left(LTrim(cCommand), 6)) == "SELECT"
       nRet := FBExecute(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .T.
    ELSE

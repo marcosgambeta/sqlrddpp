@@ -440,9 +440,9 @@ ENDCLASS
 
 METHOD new(pContext, pValue) CLASS ValueExpression
 
-   ::super:new(pContext, alltrim(pValue))
+   ::super:new(pContext, AllTrim(pValue))
 
-   IF aScan(::oWorkArea:aNames, {|x|x == Upper(pValue)}) > 0
+   IF AScan(::oWorkArea:aNames, {|x|x == Upper(pValue)}) > 0
       ::ValueType := "field"
    ELSEIF hb_regexLike("\w+", pValue) .AND. hb_regexLike("\d+", !pValue) .AND. !Lower(pValue) == "nil"
       ::ValueType := "variable"
@@ -472,7 +472,7 @@ METHOD GetType() CLASS ValueExpression
             ::cType := "N"
          ELSEIF hb_regexLike("'.*'", ::Value)
             ::cType := "C"
-         ELSEIF ascan({".T.", ".F."}, Upper(::Value)) > 0
+         ELSEIF AScan({".T.", ".F."}, Upper(::Value)) > 0
             ::cType := "L"
          ENDIF
          EXIT
@@ -559,7 +559,7 @@ METHOD GetType() CLASS ComposedExpression
 
    IF ::cType == NIL
       cOperand1Type := ::oOperand1:GetType()
-      IF ascan({"plus", "minus"}, ::oOperator:cName) > 0 .AND. cOperand1Type == "N" // date + numeric
+      IF AScan({"plus", "minus"}, ::oOperator:cName) > 0 .AND. cOperand1Type == "N" // date + numeric
          ::cType := ::oOperand2:GetType()
       ELSE
          ::cType := cOperand1Type

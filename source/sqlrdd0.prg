@@ -534,7 +534,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       ENDIF
 
       // ToDo: Add MUTEX here
-      aadd(aConnections, oConnect)
+      AAdd(aConnections, oConnect)
       nRet := Len(aConnections)
 
       IF nActiveConnection == NIL .OR. nActiveConnection == 0
@@ -595,16 +595,16 @@ FUNCTION SR_ReloadFieldModifiers(oConnect)
                IF "." $ cLast
                   cLast := Upper(SubSTr(cLast, At(".", cLast) + 1))
                ENDIF
-               oConnect:aFieldModifier[alltrim(cLast)] := aFlds
+               oConnect:aFieldModifier[AllTrim(cLast)] := aFlds
                aFlds := {}
                cLast := aField[1]
             ENDIF
-            aadd(aFlds, {aField[2], aField[3], aField[4], aField[5]})
+            AAdd(aFlds, {aField[2], aField[3], aField[4], aField[5]})
          NEXT
          IF "." $ cLast
             cLast := Upper(SubSTr(cLast, At(".", cLast) + 1))
          ENDIF
-         oConnect:aFieldModifier[alltrim(cLast)] := aFlds
+         oConnect:aFieldModifier[AllTrim(cLast)] := aFlds
       ENDIF
    ELSE
       oConnect:Commit()
@@ -711,7 +711,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
             .F., .T., @aRet)
 
          IF Len(aRet) > 0
-            oCnn:cLoginTime := alltrim(aRet[1, 1])
+            oCnn:cLoginTime := AllTrim(aRet[1, 1])
          ENDIF
 
          oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + ;
@@ -808,7 +808,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
    oConnect:exec("SELECT VERSION_, SIGNATURE_ FROM " + SR_GetToolsOwner() + "SR_MGMNTVERSION", .F., .T., @aRet)
 
    IF Len(aRet) > 0
-      cStartingVersion := alltrim(aRet[1, 1])
+      cStartingVersion := AllTrim(aRet[1, 1])
    ELSE
       cStartingVersion := ""
    ENDIF
@@ -1258,7 +1258,7 @@ FUNCTION SR_RecnoName(cName)
    LOCAL cOld := RecnoName
 
    IF cName != NIL
-      RecnoName := Upper(Alltrim(cName))
+      RecnoName := Upper(AllTrim(cName))
    ENDIF
 
 RETURN cOld
@@ -1294,7 +1294,7 @@ FUNCTION SR_DeletedName(cName)
    LOCAL cOld := DeletedName
 
    IF cName != NIL
-      DeletedName := Upper(Alltrim(cName))
+      DeletedName := Upper(AllTrim(cName))
    ENDIF
 
 RETURN cOld
@@ -1313,9 +1313,9 @@ FUNCTION SR_ExistTable(cTableName, cOwner, oCnn)
    IF cOwner == NIL
       cOwner := aRet[TABLE_INFO_OWNER_NAME]
       IF !Empty(SR_GetGlobalOwner())
-         cOwner := alltrim(SR_GetGlobalOwner())
+         cOwner := AllTrim(SR_GetGlobalOwner())
       ELSEIF !Empty(oCnn:cOwner)
-         cOwner := alltrim(oCnn:cOwner)
+         cOwner := AllTrim(oCnn:cOwner)
       ELSEIF cOwner == NIL
          cOwner := ""
       ENDIF
@@ -1325,7 +1325,7 @@ FUNCTION SR_ExistTable(cTableName, cOwner, oCnn)
       cOwner += "."
    ENDIF
 
-   cFileName := SR_ParseFileName(alltrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cFileName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    IF oCnn:oSqlTransact == NIL
       nRet := oCnn:exec("SELECT * FROM " + cOwner + SR_DBQUALIFY(cFileName, oCnn:nSystemID) + " WHERE 0 = 2", .F.)
@@ -1354,13 +1354,13 @@ FUNCTION SR_ExistIndex(cIndexName, cOwner)
    oCnn := SR_GetConnection()
 
    aRet := eval(SR_GetIndexInfoBlock(), cIndexName)
-   aSize(aRet, TABLE_INFO_SIZE)
+   ASize(aRet, TABLE_INFO_SIZE)
 
    cIndexName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
 
    aRet := {}
    nRet := oCnn:exec("SELECT * FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE IDXNAME_ = '" + ;
-      Upper(Alltrim(cIndexName)) + "'", .F., .T., @aRet)
+      Upper(AllTrim(cIndexName)) + "'", .F., .T., @aRet)
 
    IF (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. Len(aRet) > 0
       RETURN .T.
@@ -1403,7 +1403,7 @@ FUNCTION SR_EndConnection(nConnection)
    oCnn := aConnections[nConnection]
 
    IF nConnection == Len(aConnections)
-      aSize(aConnections, Len(aConnections) - 1)
+      ASize(aConnections, Len(aConnections) - 1)
    ELSE
       aConnections[nConnection] := NIL
    ENDIF
@@ -1541,9 +1541,9 @@ FUNCTION _SR_UnRegister(oWA)
    aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
    IF HB_ISARRAY(aActiveWAs)
-      DO WHILE (n := aScan(aActiveWAs, {|x|x:nThisArea == oWA:nThisArea})) > 0
-         aDel(aActiveWAs, n)
-         aSize(aActiveWAs, Len(aActiveWAs) - 1)
+      DO WHILE (n := AScan(aActiveWAs, {|x|x:nThisArea == oWA:nThisArea})) > 0
+         ADel(aActiveWAs, n)
+         ASize(aActiveWAs, Len(aActiveWAs) - 1)
       ENDDO
    ENDIF
 
@@ -1558,7 +1558,7 @@ FUNCTION _SR_Register(oWA)
    aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
    IF HB_ISARRAY(aActiveWAs)
-      aadd(aActiveWAs, oWA)
+      AAdd(aActiveWAs, oWA)
    ELSE
       oWa:oSql:oHashActiveWAs:Insert(oWA:cFileName, {oWA})
    ENDIF
@@ -1572,7 +1572,7 @@ FUNCTION _SR_ScanExec(oWA, bExpr)
    LOCAL aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
    IF HB_ISARRAY(aActiveWAs)
-      aEval(aActiveWAs, bExpr)
+      AEval(aActiveWAs, bExpr)
    ENDIF
 
 RETURN NIL
@@ -1595,7 +1595,7 @@ FUNCTION SR_GetUniqueSystemID()
    i1 := HB_RANDOMINT(1, 99999999 )
    i2 := HB_RANDOMINT(1, 99999999 )
 
-RETURN alltrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + strZero(i1, 8) + "__" + strZero(i2, 8)
+RETURN AllTrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + strZero(i1, 8) + "__" + strZero(i2, 8)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -1611,7 +1611,7 @@ FUNCTION SR_GetInternalID()
    i1 := HB_RANDOMINT(1, 99999999 )
    i2 := HB_RANDOMINT(1, 99999999 )
 
-   cIntenalID := alltrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + strZero(i1, 8) + "__" + strZero(i2, 8)
+   cIntenalID := AllTrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + strZero(i1, 8) + "__" + strZero(i2, 8)
 
 RETURN cIntenalID
 
@@ -1649,14 +1649,14 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
 
    aRet := eval(SR_GetIndexInfoBlock(), cIndexName)
    ctempIndex := cIndexName
-   cIndexName := SR_ParseFileName(alltrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cIndexName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    IF cOwner == NIL
       cOwner := aRet[TABLE_INFO_OWNER_NAME]
       IF !Empty(SR_GetGlobalOwner())
-         cOwner := alltrim(SR_GetGlobalOwner())
+         cOwner := AllTrim(SR_GetGlobalOwner())
       ELSEIF !Empty(oCnn:cOwner)
-         cOwner := alltrim(oCnn:cOwner)
+         cOwner := AllTrim(oCnn:cOwner)
       ELSEIF cOwner == NIL
          cOwner := ""
       ENDIF
@@ -1668,16 +1668,16 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
 
    aRet := {}
    nRet := oCnn:exec("SELECT TABLE_, PHIS_NAME_, IDXNAME_, IDXCOL_, IDXFOR_, IDXKEY_ FROM " + SR_GetToolsOwner() + ;
-      "SR_MGMNTINDEXES WHERE IDXNAME_ = '" + Upper(Alltrim(cIndexName)) + "'", .F., .T., @aRet)
+      "SR_MGMNTINDEXES WHERE IDXNAME_ = '" + Upper(AllTrim(cIndexName)) + "'", .F., .T., @aRet)
    IF (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. Len(aRet) == 0
       // Index does not exist
       aRet := {}
       nRet := oCnn:exec("SELECT TABLE_, PHIS_NAME_, IDXNAME_, IDXCOL_, IDXFOR_, IDXKEY_ FROM " + SR_GetToolsOwner() + ;
-         "SR_MGMNTINDEXES WHERE PHIS_NAME_ = '" + Upper(Alltrim(cIndexName)) + "'", .F., .T., @aRet)
+         "SR_MGMNTINDEXES WHERE PHIS_NAME_ = '" + Upper(AllTrim(cIndexName)) + "'", .F., .T., @aRet)
       IF (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. Len(aRet) == 0
          aRet := {}
          nRet := oCnn:exec("SELECT TABLE_, PHIS_NAME_, IDXNAME_, IDXCOL_, IDXFOR_, IDXKEY_ FROM " + ;
-            SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TAG_ = '" + Alltrim(ctempIndex) + "'", .F., .T., @aRet)
+            SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TAG_ = '" + AllTrim(ctempIndex) + "'", .F., .T., @aRet)
          IF (nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO) .AND. Len(aRet) == 0
             RETURN .F.
          ELSE
@@ -1686,9 +1686,9 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
       ENDIF
    ENDIF
 
-   cFileName := rtrim(aRet[1, 1])
-   cIndex := rtrim(aRet[1, 2])
-   cIdxName := rtrim(aRet[1, 3])
+   cFileName := RTrim(aRet[1, 1])
+   cIndex := RTrim(aRet[1, 2])
+   cIdxName := RTrim(aRet[1, 3])
    IF lTag
       oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + cFileName + ;
          "' AND PHIS_NAME_ = '" + cIndex + "'" + IIf(oCnn:lComments," /* Wipe index info */",""), .F.)
@@ -1699,7 +1699,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
    oCnn:Commit()
 
    FOR EACH aIndex IN aRet
-      cPhisicalName := rtrim(aIndex[2])
+      cPhisicalName := RTrim(aIndex[2])
 
       SWITCH oCnn:nSystemID
       CASE SYSTEMID_MSSQL6
@@ -1733,7 +1733,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
          oWA := TEMPDROPCO->(dbInfo(DBI_INTERNAL_OBJECT))
 
          IF !Empty(aIndex[4])
-            oWA:DropColumn("INDKEY_" + alltrim(aIndex[4]), .F.)
+            oWA:DropColumn("INDKEY_" + AllTrim(aIndex[4]), .F.)
          ENDIF
          IF SubStr(aIndex[5], 1, 1) == "#"
             oWA:DropColumn("INDFOR_" + substr(aIndex[5], 2, 3), .F.)
@@ -1761,14 +1761,14 @@ FUNCTION SR_DropTable(cFileName, cOwner)
    oCnn := SR_GetConnection()
 
    aRet := eval(SR_GetTableInfoBlock(), cFileName)
-   cFileName := SR_ParseFileName(alltrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cFileName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    IF cOwner == NIL
       cOwner := aRet[TABLE_INFO_OWNER_NAME]
       IF !Empty(SR_GetGlobalOwner())
-         cOwner := alltrim(SR_GetGlobalOwner())
+         cOwner := AllTrim(SR_GetGlobalOwner())
       ELSEIF !Empty(oCnn:cOwner)
-         cOwner := alltrim(oCnn:cOwner)
+         cOwner := AllTrim(oCnn:cOwner)
       ELSEIF cOwner == NIL
          cOwner := ""
       ENDIF
@@ -1823,14 +1823,14 @@ FUNCTION SR_ListIndex(cFilename)
    oCnn := SR_GetConnection()
 
    aRet := eval(SR_GetIndexInfoBlock(), cFilename)
-   cFilename := SR_ParseFileName(alltrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cFilename := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    aRet := {}
    nRet := oCnn:exec("SELECT IDXNAME_,PHIS_NAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_ FROM " + SR_GetToolsOwner() + ;
-      "SR_MGMNTINDEXES WHERE TABLE_ = '" + alltrim(Upper(cFilename)) + "'", .F., .T., @aRet)
+      "SR_MGMNTINDEXES WHERE TABLE_ = '" + AllTrim(Upper(cFilename)) + "'", .F., .T., @aRet)
 
    FOR i := 1 TO Len(aRet)
-      aRet[i, 1] := alltrim(aRet[i, 1])
+      aRet[i, 1] := AllTrim(aRet[i, 1])
    NEXT i
 
    HB_SYMBOL_UNUSED(nRet)
@@ -1849,14 +1849,14 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
    oCnn := SR_GetConnection()
 
    aRet := eval(SR_GetTableInfoBlock(), cTable)
-   cTable := SR_ParseFileName(alltrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cTable := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    IF cOwner == NIL
       cOwner := aRet[TABLE_INFO_OWNER_NAME]
       IF !Empty(SR_GetGlobalOwner())
-         cOwner := alltrim(SR_GetGlobalOwner())
+         cOwner := AllTrim(SR_GetGlobalOwner())
       ELSEIF !Empty(oCnn:cOwner)
-         cOwner := alltrim(oCnn:cOwner)
+         cOwner := AllTrim(oCnn:cOwner)
       ELSEIF cOwner == NIL
          cOwner := ""
       ENDIF
@@ -1867,7 +1867,7 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
    ENDIF
 
    aRet := eval(SR_GetTableInfoBlock(), cNewName)
-   cNewName := SR_ParseFileName(alltrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cNewName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    aRet := {}
    nRet := oCnn:exec("SELECT * FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES WHERE TABLE_ = '" + ;
@@ -1951,7 +1951,7 @@ FUNCTION SR_ListCreatedTables()
    oCnn := SR_GetConnection()
    nRet := oCnn:exec("SELECT TABLE_ FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES", .F., .T., @aRet)
 
-   aEval(aRet, {|x| aadd(aRet2, alltrim(x[1])) })
+   AEval(aRet, {|x| AAdd(aRet2, AllTrim(x[1])) })
 
    HB_SYMBOL_UNUSED(nRet)
 
@@ -2135,7 +2135,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
       ENDIF
 
       IF nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
-         aadd(aAdded, cValue)
+         AAdd(aAdded, cValue)
       ELSE
          lRet := .F.
          EXIT
@@ -2491,7 +2491,7 @@ HB_FUNC( SETFIREBIRDUSESHORTASNUM )
 
 FUNCTION SR_Version()
 
-RETURN HB_SR__VERSION_STRING + ", Build " + alltrim(strzero(HB_SQLRDD_BUILD, 4)) + ", " + HB_SR__MGMNT_VERSION
+RETURN HB_SR__VERSION_STRING + ", Build " + AllTrim(strzero(HB_SQLRDD_BUILD, 4)) + ", " + HB_SR__MGMNT_VERSION
 
 //-------------------------------------------------------------------------------------------------------------------//
 

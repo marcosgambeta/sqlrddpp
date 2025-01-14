@@ -218,13 +218,13 @@ METHOD AddRelation(oFactory, pAlias1, pAlias2, pExpression) CLASS RelationManage
 
    LOCAL cAlias1 := Upper(pAlias1)
    LOCAL cAlias2 := Upper(pAlias2)
-   LOCAL n := ascan(::aDirectRelations, {|x|Upper(x:oWorkarea1:cAlias) == cAlias1 .AND. Upper(x:oWorkarea2:cAlias) == cAlias2})
+   LOCAL n := AScan(::aDirectRelations, {|x|Upper(x:oWorkarea1:cAlias) == cAlias1 .AND. Upper(x:oWorkarea2:cAlias) == cAlias2})
    LOCAL oNewRelation := oFactory:NewDirectRelation(cAlias1, cAlias2, pExpression)
 
    IF n > 0
       ::aDirectRelations[n] := oNewRelation
    ELSE
-      aadd(::aDirectRelations, oNewRelation)
+      AAdd(::aDirectRelations, oNewRelation)
    ENDIF
    ::oInternDictionary:Clear()
 
@@ -248,10 +248,10 @@ METHOD GetRelations(cAlias1, cAlias2) CLASS RelationManager
          oDirectRelation := ::aDirectRelations[i]
          IF cAlias1 == Upper(oDirectRelation:oWorkarea1:cAlias)
             IF cAlias2 == Upper(oDirectRelation:oWorkarea2:cAlias)
-               aadd(result, oDirectRelation)
+               AAdd(result, oDirectRelation)
             ELSE
                r := IndirectRelation():new()
-               aadd(r:aDirectRelations, oDirectRelation)
+               AAdd(r:aDirectRelations, oDirectRelation)
                aAddRange(result, ::BuildRelations(r, oDirectRelation:oWorkarea2:cAlias, cAlias2))
             ENDIF
          ENDIF
@@ -284,13 +284,13 @@ METHOD BuildRelations(oIndirectRelation, cAlias1, cAlias2) CLASS RelationManager
          oDirectRelation := ::aDirectRelations[i]
          r := IndirectRelation():new()
          FOR j := 1 TO Len(oIndirectRelation:aDirectRelations)
-             aadd(r:aDirectRelations, oIndirectRelation:aDirectRelations[j])
+             AAdd(r:aDirectRelations, oIndirectRelation:aDirectRelations[j])
          NEXT j
 
-         aadd(r:aDirectRelations, oDirectRelation)
+         AAdd(r:aDirectRelations, oDirectRelation)
 
          IF oDirectRelation:oWorkarea2:cAlias == cAlias2
-            aadd(result, r)
+            AAdd(result, r)
          ELSE
             aAddRange(result, ::BuildRelations(r, oDirectRelation:oWorkarea2:cAlias, cAlias2))
          ENDIF
@@ -370,10 +370,10 @@ METHOD aDbFields() CLASS DbIndex
       ::_aDbFields := {}
       IF ::lIsSynthetic()
          // ::oClipperExpression:nLength will evaluate the index expression which is a bit slow. It would be nice to have access to the legnth of a synthetic index.
-         aadd(::_aDbFields, DbField():new(HB_RegExAtX(".*\[(.*?)\]", ::_aInfos[1], .F.)[2, 1], "C", ::oClipperExpression:nLength)) //the way to get the name of the field that contains the synthetic index isn't very clean... We also suppose that the synthtic index has a fix length
+         AAdd(::_aDbFields, DbField():new(HB_RegExAtX(".*\[(.*?)\]", ::_aInfos[1], .F.)[2, 1], "C", ::oClipperExpression:nLength)) //the way to get the name of the field that contains the synthetic index isn't very clean... We also suppose that the synthtic index has a fix length
       ELSE
          FOR i := 1 TO Len(::_aInfos[3]) - 1 // not SR_RECNO
-            aadd(::_aDbFields, ::oWorkarea:GetFieldByName(::_aInfos[3][i][1]))
+            AAdd(::_aDbFields, ::oWorkarea:GetFieldByName(::_aInfos[3][i][1]))
          NEXT i
       ENDIF
    ENDIF
@@ -566,7 +566,7 @@ FUNCTION GetIndexes(lOrdered)
       ::aIndexes := {}
       FOR i := 1 TO Len(::aIndex)
          IF hb_regexLike("^\w+$", ::aIndex[i, 10])
-            aadd(::aIndexes, DbIndex():new(self, ::aIndex[i, 10]))
+            AAdd(::aIndexes, DbIndex():new(self, ::aIndex[i, 10]))
          ENDIF
       NEXT i
    ENDIF

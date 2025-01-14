@@ -62,7 +62,7 @@ FUNCTION OraExecSql(n, c, adata)
 
    IF aData != NIL .AND. HB_ISARRAY(adata)
       FOR i := Len(aData) TO 1 STEP -1
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          c := strtran(c, cBind, sr_cdbvalue(adata[i]))
       NEXT i
    ENDIF
@@ -193,7 +193,7 @@ FUNCTION OraSel1(n, aret, csql, adata)
    ENDIF
 
    FOR i := 1 TO Len(aData)
-      cBind := ":" + alltrim(str(i))
+      cBind := ":" + AllTrim(str(i))
       cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
    NEXT i
    //nError := sr_getconnection():exec(csql, , .T., @aret)
@@ -301,7 +301,7 @@ FUNCTION OraDelete(nCursor2, cTabOrgMat, cwhere, adata)
       cSql +=  " where " +  cwhere
    ELSEIF pCount() == 4
       FOR i := 1 TO Len(aData)
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          cwhere := strtran(cwhere, cBind, sr_cdbvalue(adata[i]))
       NEXT i
       cSql += " where " +  cwhere
@@ -357,7 +357,7 @@ FUNCTION OraUpdate(nCursor, cTabAutos, aCols, aDadosAlt, cWhere, aChave)
    LOCAL cbind
    LOCAL nPos
 
-   nPos := ascan(acols,{|x| Upper(x) == "ROWID"})
+   nPos := AScan(acols,{|x| Upper(x) == "ROWID"})
    FOR n := 1 TO Len(aDadosAlt)
       IF nPos >0
          IF nPos != n
@@ -373,7 +373,7 @@ FUNCTION OraUpdate(nCursor, cTabAutos, aCols, aDadosAlt, cWhere, aChave)
       csql +=  " where " +  cwhere
    ELSEIF pcount() == 6
       FOR i := Len(aChave) TO 1 STEP -1
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          cwhere := strtran(cwhere, cBind, sr_cdbvalue(aChave[i]))
       NEXT i
       cSql += " where " +  cwhere
@@ -605,7 +605,7 @@ FUNCTION OraSingle(n, csql, adata)
    ENDIF
 
    FOR i := 1 TO Len(aData)
-      cBind := ":" + alltrim(str(i))
+      cBind := ":" + AllTrim(str(i))
       cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
    NEXT i
 
@@ -711,7 +711,7 @@ FUNCTION OraCount(nCursor, cTabela, cWhere, aVarSust)
    ELSEIF pCount() == 4
       cSql := "select count(*) from " +cTabela
       FOR i := 1 TO Len(aVarSust)
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
@@ -755,7 +755,7 @@ FUNCTION OraSetVar(cVarName, cOraType, nLen, nDec, xInitValue)
       lReleaseBind := .F.
       hplvars := {}
    ENDIF
-   aadd(hplVars, {Upper(cVarName), Upper(cOraType), nLen + 5, nDec, xInitValue,})
+   AAdd(hplVars, {Upper(cVarName), Upper(cOraType), nLen + 5, nDec, xInitValue,})
 
 RETURN NIL
 
@@ -774,7 +774,7 @@ FUNCTION OraPLSQL(nCursor, cPLSQL, aVarSust)
    lReleaseBind := .T.
    IF HB_ISARRAY(aVarSust)
       FOR i := Len(aVarSust) TO 1 STEP -1
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          cPLSQL := strtran(cPLSQL, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
    ENDIF
@@ -824,7 +824,7 @@ FUNCTION oragetvar(c)
 
    LOCAL nPos
 
-   nPos := ascan(hplVars, {|x|alltrim(Upper(x[1])) == Alltrim(Upper(c))})
+   nPos := AScan(hplVars, {|x|AllTrim(Upper(x[1])) == AllTrim(Upper(c))})
    IF nPos > 0
       RETURN hplVars[nPos, 6]
    ENDIF
@@ -924,7 +924,7 @@ FUNCTION OraMax(nCursor, cTable, cColumn, cWhere, aVarSust)
       cSql +=  " where " + cwhere
    ELSEIF pCount() == 5
       FOR i := 1 TO Len(aVarSust)
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
@@ -989,12 +989,12 @@ FUNCTION OraSelect(n, aret, csql, adata, nRows)
             FOR nPos := 1 TO nRows
                OraFetchSelect(n)
                IF Len(aOraClipCursors[n]["data"]) > 0
-                  aadd(aRet, aOraClipCursors[n]["data"])
+                  AAdd(aRet, aOraClipCursors[n]["data"])
                ENDIF
             NEXT nPos
          ELSE
             DO WHILE OraFetchSelect(n) == 0
-               aadd(aRet, aOraClipCursors[n]["data"])
+               AAdd(aRet, aOraClipCursors[n]["data"])
             ENDDO
          ENDIF
 
@@ -1013,7 +1013,7 @@ FUNCTION OraSelect(n, aret, csql, adata, nRows)
          //   nlasterror := 0
          //   IF nRows > -1
          //      FOR EACH aTemp IN aRet
-         //         aadd(aDataRet, aTemp)
+         //         AAdd(aDataRet, aTemp)
          //         IF aTemp:__enumindex() == nRows
          //            EXIT
          //         ENDIF
@@ -1032,7 +1032,7 @@ FUNCTION OraSelect(n, aret, csql, adata, nRows)
    ENDIF
 
    FOR i := Len(aData) TO 1 STEP -1
-      cBind := ":" + alltrim(str(i))
+      cBind := ":" + AllTrim(str(i))
       cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
    NEXT i
    nError := ExecuteSql(csql, @cursor, n) // sr_getconnection():exec(csql, , .T., @aret)
@@ -1054,12 +1054,12 @@ FUNCTION OraSelect(n, aret, csql, adata, nRows)
          FOR nPos := 1 TO nRows
             OraFetchSelect(n)
             IF Len(aOraClipCursors[n]["data"]) > 0
-               aadd(aRet, aOraClipCursors[n]["data"])
+               AAdd(aRet, aOraClipCursors[n]["data"])
             ENDIF
          NEXT nPos
       ELSE
          DO WHILE OraFetchSelect(n) == 0
-            aadd(aRet, aOraClipCursors[n]["data"])
+            AAdd(aRet, aOraClipCursors[n]["data"])
          ENDDO
       ENDIF
 
@@ -1079,7 +1079,7 @@ FUNCTION OraSelect(n, aret, csql, adata, nRows)
 //       nlasterror := 0
 //       IF nRows > -1
 //          FOR EACH aTemp IN aRet
-//             aadd(aDataRet, aTemp)
+//             AAdd(aDataRet, aTemp)
 //             IF aTemp:__enumindex() == nRows
 //                EXIT
 //             ENDIF
@@ -1144,7 +1144,7 @@ FUNCTION Orasum(nCursor, cTable, cColumn , cWhere , aVarSust)
       cSql +=  " where " + cwhere
    ELSEIF pCount() == 5
       FOR i := 1 TO Len(aVarSust)
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
@@ -1215,13 +1215,13 @@ FUNCTION OraSelNext(nCursor, aTableData, nRows)
             FOR nPos := 1 TO nRows
                OraFetchSelect(nCursor)
                IF Len(aOraClipCursors[nCursor]["data"]) > 0
-                  aadd(aDataRet, aOraClipCursors[nCursor]["data"])
+                  AAdd(aDataRet, aOraClipCursors[nCursor]["data"])
                ENDIF
             NEXT nPos
          ELSE
             DO WHILE OraFetchSelect(nCursor) == 0
                IF Len(aOraClipCursors[nCursor]["data"]) > 0
-                  aadd(aDataRet, aOraClipCursors[nCursor]["data"])
+                  AAdd(aDataRet, aOraClipCursors[nCursor]["data"])
                ENDIF
             ENDDO
          ENDIF
@@ -1235,7 +1235,7 @@ FUNCTION OraSelNext(nCursor, aTableData, nRows)
       //
       //   IF nRows == -1
       //      DO WHILE nStart <= Len(aRet)
-      //         aadd(aDataRet, aRet[nStart])
+      //         AAdd(aDataRet, aRet[nStart])
       //         nStart ++
       //      ENDDO
       //      aTableData := aDataRet
@@ -1246,7 +1246,7 @@ FUNCTION OraSelNext(nCursor, aTableData, nRows)
       //      nEnd := hData["curpos"] + nRows
       //      ii := 0
       //      FOR nPos := nStart TO nEnd
-      //         aadd(aDataRet, aRet[nStart])
+      //         AAdd(aDataRet, aRet[nStart])
       //         ii++
       //         IF ii == nRows
       //            EXIT
@@ -1280,7 +1280,7 @@ FUNCTION csExecSQL(nCursor, cSQL, aVarSust)
          IF pCount() == 3
             IF HB_ISARRAY(aVarSust)
                FOR i := Len(aVarSust) TO 1 STEP -1
-                  cBind := ":" + alltrim(str(i) )
+                  cBind := ":" + AllTrim(str(i) )
                   cSQL := strtran(cSQL, cBind, sr_cdbvalue(aVarSust[i]))
                NEXT i
             ENDIF
@@ -1411,7 +1411,7 @@ FUNCTION OraExists(nCursor, cTable, cWhere, aVarSust)
       cSql +=  " where " + cwhere
    ELSEIF pCount() == 4
       FOR i := 1 TO Len(aVarSust)
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
@@ -1442,7 +1442,7 @@ FUNCTION OraMin(nCursor, cTable, cColumn , cWhere , aVarSust)
       cSql +=  " where " + cwhere
    ELSEIF pCount() == 5
       FOR i := Len(aVarSust) TO 1 STEP -1
-         cBind := ":" + alltrim(str(i))
+         cBind := ":" + AllTrim(str(i))
          cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
@@ -1504,9 +1504,9 @@ FUNCTION OraTBrowse(nCursor1, cSql, c, oBrowse, bBLock)
       obrowse:forcestable()
       aReg := {}
       FOR i := 1 TO fcount()
-         //aadd(aReg, eVal(obrowse:GetColumn(i):Block))
+         //AAdd(aReg, eVal(obrowse:GetColumn(i):Block))
          oCol := oBrowse:getcolumn(i)
-         aadd(aReg, fieldget(i))
+         AAdd(aReg, fieldget(i))
       NEXT i
       nKey := inkey(0)
       aRet := eval(bBLock, nkey, obrowse, aReg)
@@ -1633,7 +1633,7 @@ FUNCTION OraFName(n, nPos)
    ENDIF
    IF Len(aOraClipCursors[n]["aFields"]) >1 .AND. nPos <= Len(aOraClipCursors[n]["aFields"])
       aTmp := aOraClipCursors[n]["aFields"]
-      RETURN Alltrim(aTmp[nPos, 1])
+      RETURN AllTrim(aTmp[nPos, 1])
    ENDIF
 
    aOraClipCursors[n]["errormsg"] := "Indice do campo invalido"
@@ -1727,16 +1727,16 @@ STATIC FUNCTION OraFetch(n)
          FOR i := 1 TO Len(aDb)
             SWITCH adb[i, 2]
             CASE "C"
-               aadd(aOraClipCursors[n]["data"], "")
+               AAdd(aOraClipCursors[n]["data"], "")
                EXIT
             CASE "N"
-               aadd(aOraClipCursors[n]["data"], 0)
+               AAdd(aOraClipCursors[n]["data"], 0)
                EXIT
             CASE "D"
-               aadd(aOraClipCursors[n]["data"], ctod(""))
+               AAdd(aOraClipCursors[n]["data"], ctod(""))
                EXIT
             CASE "L"
-               aadd(aOraClipCursors[n]["data"], .F.)
+               AAdd(aOraClipCursors[n]["data"], .F.)
             ENDSWITCH
          NEXT i
          aOraClipCursors[n]["completed"] := .T.
@@ -1758,7 +1758,7 @@ STATIC FUNCTION OraFetch(n)
    ENDIF
    IF select(aOraClipCursors[n]["aliastmp"]) > 0
       FOR i := 1 TO Len(aOraClipCursors[n]["aFields"])
-         AADD(aOraClipCursors[n]["data"], (cAlias)->(FieldGet(i)))
+         AAdd(aOraClipCursors[n]["data"], (cAlias)->(FieldGet(i)))
       NEXT i
    ENDIF
 
@@ -1788,7 +1788,7 @@ STATIC FUNCTION OraFetchSelect(n)
       aArray := Array(Len(aOraClipCursors[n]["aFields"]))
 
       FOR i := 1 TO Len(aOraClipCursors[n]["aFields"])
-         aadd(aOraClipCursors[n]["data"], oSql:FieldGet(i, aOraClipCursors[n]["aFields"]) )
+         AAdd(aOraClipCursors[n]["data"], oSql:FieldGet(i, aOraClipCursors[n]["aFields"]) )
       NEXT i
 
    ELSE

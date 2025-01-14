@@ -115,7 +115,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ORACLE
    IF aArray == NIL
       aArray := Array(Len(aFields))
    ELSEIF Len(aArray) < Len(aFields)
-      aSize(aArray, Len(aFields))
+      ASize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -136,7 +136,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ORACLE
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(Len(aFields))
+      ::aCurrLine := Array(Len(aFields))
       SQLO_LINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -189,7 +189,7 @@ METHOD AllocStatement() CLASS SR_ORACLE
       ::lSetNext := .F.
       nRet := ::SetStmtOptions(::nSetOpt, ::nSetValue)
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         SR_MsgLogFile(SR_Msg(23) + " (" + alltrim(str(nRet)) + ") : " + ::LastError())
+         SR_MsgLogFile(SR_Msg(23) + " (" + AllTrim(str(nRet)) + ") : " + ::LastError())
       ENDIF
    ENDIF
 
@@ -256,7 +256,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
       //_nLen := nLen (value not used)
       //_nDec := nDec (value not used)
-      cName := Upper(alltrim(cName))
+      cName := Upper(AllTrim(cName))
 
       IF (nLen == 2000 .OR. nLen == 4000) .AND. SR_SetNwgCompat()
          nType := SQL_FAKE_LOB
@@ -398,7 +398,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE
 
    LOCAL nRet
 
-   IF Upper(Left(ltrim(cCommand), 6)) == "SELECT"
+   IF Upper(Left(LTrim(cCommand), 6)) == "SELECT"
       ::hStmt := ::hDBC
       nRet := SQLO_EXECUTE(::hDBC, cCommand)
       ::lResultSet := .T.
@@ -428,7 +428,7 @@ STATIC FUNCTION ProcessParams(cSql, nBound)
 
    FOR EACH xParam IN aItens
       nPos := xParam:__enumIndex()
-      cOriginal += alltrim(":P" + StrZero(nPos, 3)) + " "
+      cOriginal += AllTrim(":P" + StrZero(nPos, 3)) + " "
       nParamBound ++
    NEXT
 
@@ -521,7 +521,7 @@ METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE
    ELSE
    //IF nError >= 0
       FOR i := 1 TO nParam
-         AADD(aReturn, ORACLEGETBINDDATA(::hdbc, i))
+         AAdd(aReturn, ORACLEGETBINDDATA(::hdbc, i))
       NEXT i
    ENDIF
 
@@ -609,7 +609,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             IF lNoRecno
                FOR i := 1 TO Len(aFields)
                   IF aFields[i, 1] != cRecnoName
-                     AADD(aDb, aFields[i])
+                     AAdd(aDb, aFields[i])
                   ELSE
                      nFieldRec := i
                   ENDIF
@@ -711,7 +711,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          IF HB_ISARRAY(aArray)
             IF Len(aArray) == 0
-               aSize(aArray, ARRAY_BLOCK1)
+               ASize(aArray, ARRAY_BLOCK1)
                nAllocated := ARRAY_BLOCK1
             ELSE
                nAllocated := Len(aArray)
@@ -744,10 +744,10 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                OTHERWISE
                   nAllocated += ARRAY_BLOCK5
                ENDSWITCH
-               aSize(aArray, nAllocated)
+               ASize(aArray, nAllocated)
             ENDIF
 
-            aArray[n] := array(Len(aFields))
+            aArray[n] := Array(Len(aFields))
             FOR i := 1 TO Len(aFields)
                aArray[n, i] := ::FieldGet(i, aFields, lTranslate)
             NEXT i
@@ -755,7 +755,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                EXIT
             ENDIF
          ENDDO
-         aSize(aArray, n)
+         ASize(aArray, n)
       ENDIF
 
    ENDIF
@@ -799,7 +799,7 @@ FUNCTION ExecuteSP(cComm, aReturn)
    END SEQUENCE
 
    IF nError >= 0
-      AADD(aReturn, ORACLEGETBINDDATA(oConn:hdbc, 1))
+      AAdd(aReturn, ORACLEGETBINDDATA(oConn:hdbc, 1))
    ENDIF
 
    ORACLEFREEBIND(oConn:hdbc)

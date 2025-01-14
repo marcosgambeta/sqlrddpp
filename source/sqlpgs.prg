@@ -100,7 +100,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_PGS
    IF aArray == NIL
       aArray := Array(Len(aFields))
    ELSEIF Len(aArray) != Len(aFields)
-      aSize(aArray, Len(aFields))
+      ASize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -121,7 +121,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_PGS
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(Len(aFields))
+      ::aCurrLine := Array(Len(aFields))
       PGSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -234,10 +234,10 @@ RETURN aFields
 METHOD LastError() CLASS SR_PGS
 
    IF ::hStmt != NIL
-      RETURN "(" + alltrim(str(::nRetCode)) + ") " + PGSResStatus(::hDbc) + " - " + PGSErrMsg(::hDbc)
+      RETURN "(" + AllTrim(str(::nRetCode)) + ") " + PGSResStatus(::hDbc) + " - " + PGSErrMsg(::hDbc)
    ENDIF
 
-RETURN "(" + alltrim(str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
+RETURN "(" + AllTrim(str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -294,7 +294,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode := nRet
-      SR_MsgLogFile("Connection Error: " + alltrim(str(PGSStatus2(hDbc))) + " (see pgs.ch)")
+      SR_MsgLogFile("Connection Error: " + AllTrim(str(PGSStatus2(hDbc))) + " (see pgs.ch)")
       RETURN Self
    ENDIF
 
@@ -383,7 +383,7 @@ RETURN ::nRetCode
 
 METHOD ExecuteRaw(cCommand) CLASS SR_PGS
 
-   IF Upper(Left(ltrim(cCommand), 6)) == "SELECT"
+   IF Upper(Left(LTrim(cCommand), 6)) == "SELECT"
       ::lResultSet := .T.
    ELSE
       ::lResultSet := .F.

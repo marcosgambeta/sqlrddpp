@@ -104,7 +104,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_MYSQL
    IF aArray == NIL
       aArray := Array(Len(aFields))
    ELSEIF Len(aArray) < Len(aFields)
-      aSize(aArray, Len(aFields))
+      ASize(aArray, Len(aFields))
    ENDIF
 
    IF ::aCurrLine == NIL
@@ -125,7 +125,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_MYSQL
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
-      ::aCurrLine := array(Len(aFields))
+      ::aCurrLine := Array(Len(aFields))
       MYSLINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
@@ -232,10 +232,10 @@ RETURN aFields
 METHOD LastError() CLASS SR_MYSQL
 
    IF ::hStmt != NIL
-      RETURN "(" + alltrim(str(::nRetCode)) + ") " + MYSResStatus(::hDbc) + " - " + MYSErrMsg(::hDbc)
+      RETURN "(" + AllTrim(str(::nRetCode)) + ") " + MYSResStatus(::hDbc) + " - " + MYSErrMsg(::hDbc)
    ENDIF
 
-RETURN "(" + alltrim(str(::nRetCode)) + ") " + MYSErrMsg(::hDbc)
+RETURN "(" + AllTrim(str(::nRetCode)) + ") " + MYSErrMsg(::hDbc)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -286,7 +286,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::hStmt := NIL
    ::hDbc := hDbc
    cTargetDB := "MySql Native"
-   cSystemVers := alltrim(str(MYSVERS(hDbc)))
+   cSystemVers := AllTrim(str(MYSVERS(hDbc)))
    nVersionp := MYSVERS(hDbc)
 
    IF !::lQueryOnly .AND. nVersionp < MINIMAL_MYSQL_SUPPORTED
@@ -339,7 +339,7 @@ RETURN (::nRetCode := MYSRollBack(::hDbc))
 
 METHOD ExecuteRaw(cCommand) CLASS SR_MYSQL
 
-   IF Upper(Left(ltrim(cCommand), 6)) == "SELECT" .OR. Upper(Left(ltrim(cCommand), 5)) == "SHOW "
+   IF Upper(Left(LTrim(cCommand), 6)) == "SELECT" .OR. Upper(Left(LTrim(cCommand), 5)) == "SHOW "
       ::lResultSet := .T.
    ELSE
       ::lResultSet := .F.
