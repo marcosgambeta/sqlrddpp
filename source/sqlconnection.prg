@@ -60,7 +60,7 @@
 
 #define SR_CRLF   (chr(13) + chr(10))
 
-STATIC lNwgOldCompat := .F.
+STATIC s_lNwgOldCompat := .F.
 
 CLASS SR_CONNECTION
 
@@ -978,7 +978,7 @@ FUNCTION SR_AdjustNum(a)
 
    FOR i := 1 TO Len(b)
 
-      IF lNwgOldCompat
+      IF s_lNwgOldCompat
          IF b[i, 2] = "N"
             b[i, 3]++
          ENDIF
@@ -988,7 +988,7 @@ FUNCTION SR_AdjustNum(a)
          b[i, 3] := 19
       ENDIF
 
-      IF lNwgOldCompat
+      IF s_lNwgOldCompat
          IF b[i, 2] = "N" .AND. b[i, 4] >= (b[i, 3] - 1)
             b[i, 4] := abs(b[i, 3] - 2)
          ENDIF
@@ -1200,7 +1200,7 @@ METHOD SQLType(nType, cName, nLen) CLASS SR_CONNECTION
    CASE SQL_VARCHAR
    CASE SQL_NVARCHAR
    CASE SQL_GUID
-      IF IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
+      IF IIf(s_lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
          cType := "C"
       ENDIF
       EXIT
@@ -1283,7 +1283,7 @@ METHOD SQLLen(nType, nLen, nDec) CLASS SR_CONNECTION
    CASE SQL_CHAR
    CASE SQL_VARCHAR
    CASE SQL_NVARCHAR
-      IF IIf(lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
+      IF IIf(s_lNwgOldCompat, nLen != 4000 .AND. nLen != 2000, .T.)
       ENDIF
       EXIT
    CASE SQL_SMALLINT
@@ -1336,10 +1336,10 @@ RETURN nLen
 
 FUNCTION SR_SetNwgCompat(l)
 
-   LOCAL lOld := lNwgOldCompat
+   LOCAL lOld := s_lNwgOldCompat
 
    IF l != NIL
-      lNwgOldCompat := l
+      s_lNwgOldCompat := l
    ENDIF
 
 RETURN lOld
