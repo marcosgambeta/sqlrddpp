@@ -5,6 +5,7 @@
 // any later version.
 //
 
+// $BEGIN_LICENSE$
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2, or (at your option)
@@ -43,6 +44,7 @@
 // If you write modifications of your own for xHarbour, it is your choice
 // whether to permit this exception to apply to your modifications.
 // If you do not wish that, delete this exception notice.
+// $END_LICENSE$
 
 #ifndef _SQL_ORASTRU_H
 #define _SQL_ORASTRU_H
