@@ -180,7 +180,7 @@ CLASS ExpressionTranslator
    // METHOD CheckParams(oFunctionExpression)
 
    PROTECTED:
-   METHOD AaddRelations(aRelations) INLINE aAddRangeDistinct(::aRelations, xSelectMany(aRelations, {|y|iif(y:isKindOf("DirectRelation"), {y}, y:aDirectRelations)}), {|x|x:oWorkArea2:cAlias})
+   METHOD AaddRelations(aRelations) INLINE aAddRangeDistinct(::aRelations, xSelectMany(aRelations, {|y|IIf(y:isKindOf("DirectRelation"), {y}, y:aDirectRelations)}), {|x|x:oWorkArea2:cAlias})
 
    EXPORTED:
    METHOD new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
@@ -268,7 +268,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
    LOCAL aFilters := {}
 
    BEGIN SEQUENCE WITH __BreakBlock()
-      result := iif(pcount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
+      result := IIf(pcount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
 
       IF oExpression:isKindOf("ConditionBase")
          IF Len(::aRelations) > 0
@@ -317,7 +317,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
                   resultFooter += cOperatorAnd + oRelation:cSQLJoin
                NEXT
             ENDIF
-            resultFooter += iif(Len(aFilters) > 0, cOperatorAnd + cJoin(aFilters, cOperatorAnd), "") + ")"
+            resultFooter += IIf(Len(aFilters) > 0, cOperatorAnd + cJoin(aFilters, cOperatorAnd), "") + ")"
             result := resultHeader + " where " + result + resultFooter
          ENDIF
       ENDIF
@@ -477,7 +477,7 @@ METHOD TranslateValueExpression(oValueExpression) CLASS ExpressionTranslator
 RETURN result
 
 METHOD GetSQLAlias(oWorkArea) CLASS ExpressionTranslator
-RETURN iif(oWorkArea == ::_oDefaultContext, "A", Upper(oWorkArea:cAlias))
+RETURN IIf(oWorkArea == ::_oDefaultContext, "A", Upper(oWorkArea:cAlias))
 
 METHOD FormatField(oWorkArea, cFieldName) CLASS ExpressionTranslator
 RETURN ::GetSQLAlias(oWorkArea) + "." + Upper(AllTrim(cFieldName)) // SR_DBQUALIFY
@@ -601,12 +601,12 @@ RETURN ::super:new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpressio
 
 METHOD TranslateComparison(oComparison) CLASS MSSQLExpressionTranslator
 
-   LOCAL bLike := {|x|iif(hb_regexLike("^\'.*\'$", x), " like '%" + substr(x, 2, Len(x) - 2) + "%'", " like '%'+" + x + "+'")}
+   LOCAL bLike := {|x|IIf(hb_regexLike("^\'.*\'$", x), " like '%" + SubStr(x, 2, Len(x) - 2) + "%'", " like '%'+" + x + "+'")}
 
    IF oComparison:oOperator:cName == "included"
-      RETURN ::TranslateExpression(oComparison:oOperand2) + eval(bLike, ::TranslateExpression(oComparison:oOperand1))
+      RETURN ::TranslateExpression(oComparison:oOperand2) + Eval(bLike, ::TranslateExpression(oComparison:oOperand1))
    ELSEIF !set(_SET_EXACT) .AND. oComparison:oOperator:cName == "equal" .AND. oComparison:oOperand2:GetType() == "C"
-      RETURN ::TranslateExpression(oComparison:oOperand1) + eval(bLike, ::TranslateExpression(oComparison:oOperand2))
+      RETURN ::TranslateExpression(oComparison:oOperand1) + Eval(bLike, ::TranslateExpression(oComparison:oOperand2))
    ELSEIF oComparison:oOperand2:isKindOf("ValueExpression") .AND. Upper(oComparison:oOperand2:Value) == "NIL"
       IF oComparison:oOperator:cName == "equal" .OR. oComparison:oOperator:cName == "equalEqual"
          RETURN ::TranslateExpression(oComparison:oOperand1) + " IS NULL"
@@ -638,13 +638,13 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
 #if 0 // TODO: old code for reference (to be deleted)
    DO CASE
    CASE cFunctionName == "substr"
-      thirdParam := iif(Len(aParamExprs) == 3, ::InternalTranslate(aParamExprs[3]), "999999")
+      thirdParam := IIf(Len(aParamExprs) == 3, ::InternalTranslate(aParamExprs[3]), "999999")
       RETURN "substring(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + "," + thirdParam + ")"
    CASE cFunctionName == "cstr"
       RETURN "convert(char, " + ::InternalTranslate(aParamExprs[1]) + ")"
    CASE cFunctionName == "val"
       IF set(_SET_FIXED)
-         RETURN "convert(decimal(38," + AllTrim(str(set(_SET_DECIMALS))) + "), " + ::InternalTranslate(aParamExprs[1]) + ")"
+         RETURN "convert(decimal(38," + AllTrim(Str(set(_SET_DECIMALS))) + "), " + ::InternalTranslate(aParamExprs[1]) + ")"
       ENDIF
       RETURN "convert(float, " + ::InternalTranslate(aParamExprs[1]) + ")"
    CASE cFunctionName == "int"
@@ -668,7 +668,7 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
       RETURN "CASE WHEN " + ::InternalTranslate(aParamExprs[1]) + " THEN " + secondParam + " ELSE " + thirdParam + " END"
    CASE cFunctionName == "at"
       IF Len(aParamExprs) <= 3
-         RETURN "charindex(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + iif(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), "") + ")"
+         RETURN "charindex(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + IIf(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), "") + ")"
       ENDIF
    CASE cFunctionName == "islower" // http://www.simple-talk.com/sql/t-sql-programming/sql-string-user-function-workbench-part-1/
       RETURN ::InternalTranslate(aParamExprs[1]) + " like '[A-Z]%' COLLATE Latin1_General_CS_AI"
@@ -696,20 +696,20 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
       RETURN firstParam
    CASE cFunctionName == "strtran"
       IF Len(aParamExprs) < 3
-         RETURN "replace(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + iif(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), ", ''") + ")"
+         RETURN "replace(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + IIf(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), ", ''") + ")"
       ENDIF
    ENDCASE
 #endif
 
    SWITCH cFunctionName
    CASE "substr"
-      thirdParam := iif(Len(aParamExprs) == 3, ::InternalTranslate(aParamExprs[3]), "999999")
+      thirdParam := IIf(Len(aParamExprs) == 3, ::InternalTranslate(aParamExprs[3]), "999999")
       RETURN "substring(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + "," + thirdParam + ")"
    CASE "cstr"
       RETURN "convert(char, " + ::InternalTranslate(aParamExprs[1]) + ")"
    CASE "val"
       IF set(_SET_FIXED)
-         RETURN "convert(decimal(38," + AllTrim(str(set(_SET_DECIMALS))) + "), " + ::InternalTranslate(aParamExprs[1]) + ")"
+         RETURN "convert(decimal(38," + AllTrim(Str(set(_SET_DECIMALS))) + "), " + ::InternalTranslate(aParamExprs[1]) + ")"
       ENDIF
       RETURN "convert(float, " + ::InternalTranslate(aParamExprs[1]) + ")"
    CASE "int"
@@ -734,7 +734,7 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
       RETURN "CASE WHEN " + ::InternalTranslate(aParamExprs[1]) + " THEN " + secondParam + " ELSE " + thirdParam + " END"
    CASE "at"
       IF Len(aParamExprs) <= 3
-         RETURN "charindex(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + iif(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), "") + ")"
+         RETURN "charindex(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + IIf(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), "") + ")"
       ENDIF
       EXIT
    CASE "islower" // http://www.simple-talk.com/sql/t-sql-programming/sql-string-user-function-workbench-part-1/
@@ -763,7 +763,7 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
       RETURN firstParam
    CASE "strtran"
       IF Len(aParamExprs) < 3
-         RETURN "replace(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + iif(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), ", ''") + ")"
+         RETURN "replace(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + IIf(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), ", ''") + ")"
       ENDIF
    ENDSWITCH
 
@@ -904,7 +904,7 @@ METHOD new(pWorkarea1, pWorkarea2, pExpression) CLASS EnchancedDirectRelation
 
    ::super:new(pWorkarea1, pWorkarea2, pExpression)
    ::oSeekIndex := ::oWorkArea2:GetControllingIndex()
-   indexLength := iif(::oSeekIndex == NIL, 15, ::oSeekIndex:nLength)
+   indexLength := IIf(::oSeekIndex == NIL, 15, ::oSeekIndex:nLength)
    ::lSameLength := ::oClipperExpression:nLength == indexLength
    ::nMaxLength := min(::oClipperExpression:nLength, indexLength)
 
@@ -919,7 +919,7 @@ METHOD oExpression(xValue) CLASS EnchancedDirectRelation
    IF ::_oExpression == NIL
       cRelationExpr := ::oClipperExpression:cValue
       IF ::oClipperExpression:nLength > ::nMaxLength
-         cRelationExpr := "left(" + cRelationExpr + ", " + str(::nMaxLength) + ")"
+         cRelationExpr := "left(" + cRelationExpr + ", " + Str(::nMaxLength) + ")"
       ENDIF
       ::_oExpression := ExpressionParser():new(::oWorkarea1:cAlias):Parse(cRelationExpr)
    ENDIF
@@ -933,9 +933,9 @@ METHOD oIndexExpression(xValue) CLASS EnchancedDirectRelation
    HB_SYMBOL_UNUSED(xValue)
 
    IF ::_oIndexExpression == NIL
-      cIndexExpr := iif(::oSeekIndex:lIsSynthetic, ::oSeekIndex:aDbFields[1]:cName, ::oSeekIndex:oClipperExpression:cValue)
+      cIndexExpr := IIf(::oSeekIndex:lIsSynthetic, ::oSeekIndex:aDbFields[1]:cName, ::oSeekIndex:oClipperExpression:cValue)
       IF ::oSeekIndex:nLength > ::nMaxLength
-         cIndexExpr := "left(" + cIndexExpr + ", " + str(::nMaxLength) + ")"
+         cIndexExpr := "left(" + cIndexExpr + ", " + Str(::nMaxLength) + ")"
       ENDIF
       ::_oIndexExpression := ExpressionParser():new(::oWorkarea2:cAlias):Parse(cIndexExpr)
    ENDIF

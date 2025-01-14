@@ -188,11 +188,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    IF lReSelect
       IF !Empty(cCommand)
-         nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
+         nRet := ::Execute(cCommand + IIf(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       ELSE
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + ;
-            iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
-            iif(::lComments, " /* Open Workarea */", ""), .F.)
+            IIf(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
+            IIf(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          RETURN NIL
@@ -207,7 +207,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    ::nFields := MYSCols(::hDbc)
 
-   // IF (!Empty(cTable)) .AND. empty(cCommand)
+   // IF (!Empty(cTable)) .AND. Empty(cCommand)
    //    cTbl := cTable
    //    aFields := MYSTableAttr(::hDbc, cTbl)
    // ELSE
@@ -231,10 +231,10 @@ RETURN aFields
 METHOD LastError() CLASS SR_MARIA
 
    IF ::hStmt != NIL
-      RETURN "(" + AllTrim(str(::nRetCode)) + ") " + MYSResStatus(::hDbc) + " - " + MYSErrMsg(::hDbc)
+      RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + MYSResStatus(::hDbc) + " - " + MYSErrMsg(::hDbc)
    ENDIF
 
-RETURN "(" + AllTrim(str(::nRetCode)) + ") " + MYSErrMsg(::hDbc)
+RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + MYSErrMsg(::hDbc)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -285,12 +285,12 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::hStmt := NIL
    ::hDbc := hDbc
    cTargetDB := "MARIADB Native"
-   cSystemVers := AllTrim(str(MYSVERS(hDbc)))
+   cSystemVers := AllTrim(Str(MYSVERS(hDbc)))
    nVersionp := MYSVERS(hDbc)
 
    IF (!::lQueryOnly) .AND. nVersionp < MINIMAL_MYSQL_SUPPORTED
       SR_MsgLogFile("Connection Error: MariaDB version not supported : " + cSystemVers + " / minimun is " + ;
-         str(MINIMAL_MYSQL_SUPPORTED))
+         Str(MINIMAL_MYSQL_SUPPORTED))
       ::End()
       ::nSystemID := 0
       ::nRetCode := -1

@@ -187,11 +187,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    IF lReSelect
       IF !Empty(cCommand)
-         nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
+         nRet := ::Execute(cCommand + IIf(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       ELSE
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + ;
-            iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
-            iif(::lComments, " /* Open Workarea */", ""), .F.)
+            IIf(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
+            IIf(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          RETURN NIL
@@ -207,11 +207,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    nFields := PGSCols(::hStmt)
    ::nFields := nFields
 
-   IF !Empty(cTable) .AND. empty(cCommand)
+   IF !Empty(cTable) .AND. Empty(cCommand)
       cTbl := Lower(cTable)
       IF "." $ cTbl
-         cOwner := SubStr(cTbl, 1, at(".", cTbl) - 1)
-         cTbl := SubStr(cTbl, at(".", cTbl) + 1)
+         cOwner := SubStr(cTbl, 1, At(".", cTbl) - 1)
+         cTbl := SubStr(cTbl, At(".", cTbl) + 1)
       ENDIF
       IF Left(cTbl, 1) == chr(34) // "
          cTbl := SubStr(cTbl, 2, Len(cTbl) - 2)
@@ -234,10 +234,10 @@ RETURN aFields
 METHOD LastError() CLASS SR_PGS
 
    IF ::hStmt != NIL
-      RETURN "(" + AllTrim(str(::nRetCode)) + ") " + PGSResStatus(::hDbc) + " - " + PGSErrMsg(::hDbc)
+      RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + PGSResStatus(::hDbc) + " - " + PGSErrMsg(::hDbc)
    ENDIF
 
-RETURN "(" + AllTrim(str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
+RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -282,7 +282,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    DEFAULT ::cPort TO 5432
 
    cConnect := "host=" + ::cHost + " user=" + ::cUser + " password=" + ::cPassword + " dbname=" + ::cDTB + ;
-      " port=" + str(::cPort, 6)
+      " port=" + Str(::cPort, 6)
 
    IF !Empty(::sslcert)
       cConnect += " sslmode=prefer sslcert=" + ::sslcert + " sslkey=" + ::sslkey + " sslrootcert=" + ::sslrootcert + ;
@@ -294,7 +294,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode := nRet
-      SR_MsgLogFile("Connection Error: " + AllTrim(str(PGSStatus2(hDbc))) + " (see pgs.ch)")
+      SR_MsgLogFile("Connection Error: " + AllTrim(Str(PGSStatus2(hDbc))) + " (see pgs.ch)")
       RETURN Self
    ENDIF
 
@@ -307,10 +307,10 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       cSystemVers := aRet[1, 1]
       cString := aRet[1, 1]
       cMatch := HB_AtX(s_reEnvVar, cString, , @nStart, @nLen)
-      IF !empty(cMatch)
+      IF !Empty(cMatch)
          aVersion := hb_atokens(cMatch, ".")
       ELSE
-         aVersion := hb_atokens(strtran(Upper(aRet[1, 1]), "POSTGRESQL ", ""), ".")
+         aVersion := hb_atokens(StrTran(Upper(aRet[1, 1]), "POSTGRESQL ", ""), ".")
       ENDIF
    ELSE
       cSystemVers := "??"
@@ -339,7 +339,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::exec("select pg_backend_pid()", .T., .T., @aRet)
 
    IF Len(aRet) > 0
-      ::uSid := val(str(aRet[1, 1], 8, 0))
+      ::uSid := Val(Str(aRet[1, 1], 8, 0))
    ENDIF
 
 RETURN Self
@@ -400,7 +400,7 @@ METHOD AllocStatement() CLASS SR_PGS
    IF ::lSetNext
       IF ::nSetOpt == SQL_ATTR_QUERY_TIMEOUT
          // Commented 2005/02/04 - It's better to wait forever on a lock than have a corruct transaction
-         // PGSExec(::hDbc, "set statement_timeout=" + str(::nSetValue * 1000))
+         // PGSExec(::hDbc, "set statement_timeout=" + Str(::nSetValue * 1000))
       ENDIF
       ::lSetNext := .F.
    ENDIF

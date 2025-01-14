@@ -1670,7 +1670,7 @@ METHOD OrderBy(nOrder, lAscend, lRec) CLASS SR_WORKAREA
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          RETURN " "
       ENDIF
-      RETURN strtran(::aIndex[nOrder, IIf(lAscend, ORDER_ASCEND, ORDER_DESEND)], ", A." + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID), "")
+      RETURN StrTran(::aIndex[nOrder, IIf(lAscend, ORDER_ASCEND, ORDER_DESEND)], ", A." + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID), "")
    ENDIF
 
 RETURN NIL
@@ -4179,8 +4179,8 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                cField :=  Upper(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])
                IF "VAL(" $ CFIELD
 
-                  CfIELD := STRTRAN(CfIELD, "VAL(", "")
-                  CfIELD := STRTRAN(CfIELD, ")", "")
+                  CfIELD := StrTran(CfIELD, "VAL(", "")
+                  CfIELD := StrTran(CfIELD, ")", "")
                   nfieldPos := AScan(::aFields, {|x|x[1] == cField})
                   IF nFieldPos >0
                      cKeyValue := Str(uKey, ::aFields[nFieldPos, 3]) + "%"
@@ -4449,8 +4449,8 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
             cField :=  Upper(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])
             IF "VAL(" $ CFIELD
 
-               CfIELD := STRTRAN(CfIELD, "VAL(", "")
-               CfIELD := STRTRAN(CfIELD, ")", "")
+               CfIELD := StrTran(CfIELD, "VAL(", "")
+               CfIELD := StrTran(CfIELD, ")", "")
                nfieldPos := AScan(::aFields, {|x|x[1] == cField})
                IF nFieldPos >0
                   cKeyValue := Str(uKey, ::aFields[nFieldPos, 3]) + "%"
@@ -4584,9 +4584,9 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                   cSql += SR_CRLF + "UNION" + SR_CRLF
                ENDIF
             NEXT i
-            //cSql += strtran(::OrderBy(NIL, .T. ), "A.", "" ) + Eval(::Optmizer_ne, ::nCurrentFetch)
+            //cSql += StrTran(::OrderBy(NIL, .T. ), "A.", "" ) + Eval(::Optmizer_ne, ::nCurrentFetch)
             //test fix for seek last
-            cSql += strtran(::OrderBy(NIL, IIf(lLast, .F., .T.)), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch)
+            cSql += StrTran(::OrderBy(NIL, IIf(lLast, .F., .T.)), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch)
          ELSE
             //test fix for seek last
             //cSql := "SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + ::OrderBy(NIL, .T. ) + Eval(::Optmizer_ne, ::nCurrentFetch)
@@ -4821,7 +4821,7 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
             cSql += SR_CRLF + "UNION" + SR_CRLF
          ENDIF
       NEXT i
-      cSql += strtran(::OrderBy(NIL, nDirection == ORD_DIR_FWD), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch) +;
+      cSql += StrTran(::OrderBy(NIL, nDirection == ORD_DIR_FWD), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch) +;
               IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */","")
       EXIT
 
@@ -8625,7 +8625,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
 //                         IF ::oSql:nSystemID == SYSTEMID_POSTGR
 //                            IF 'INDKEY_' $ Upper(cNam)
 //                            altd()
-//                               cnam := "substr( " + cNam + ",1," + str(Len(cQot) - 3) + ")"
+//                               cnam := "substr( " + cNam + ",1," + Str(Len(cQot) - 3) + ")"
 //                           ENDIF
 //                         ENDIF
 
@@ -8947,7 +8947,7 @@ STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound) // function 
    exec := HB_ISBLOCK(nPos)
    first := 1
    last := Len(aVet)
-   mid := int((first + last) / 2)
+   mid := Int((first + last) / 2)
    lFound := .T.
 
    closest := mid
@@ -8999,7 +8999,7 @@ STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound) // function 
             closest := first
          ENDIF
 
-         mid := int((last + first) / 2)
+         mid := Int((last + first) / 2)
 
       ENDIF
 
@@ -9445,7 +9445,7 @@ METHOD WherePgsMinor(aQuotedCols) CLASS SR_WORKAREA
                cSep := " <= "
 //                IF 'INDKEY_' $ Upper(CNAM)
 //                altd()
-//                   cnam := "substr( " + cnam + ",1," + str(Len(cQot) - 3) + ")"
+//                   cnam := "substr( " + cnam + ",1," + Str(Len(cQot) - 3) + ")"
 //                ENDIF
 
             CASE i == j
@@ -9459,7 +9459,7 @@ METHOD WherePgsMinor(aQuotedCols) CLASS SR_WORKAREA
                   cSep := " <= "
 //                   IF "INDKEY_" $ Upper(CNAM)
 //                   altd()
-//                   cnam := "substr( " + cnam + ",1," + str(Len(cQot) - 3) + ")"
+//                   cnam := "substr( " + cnam + ",1," + Str(Len(cQot) - 3) + ")"
 //                   ENDIF
                ENDIF
             ENDCASE
@@ -9506,7 +9506,7 @@ METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WOR
 
    FOR i := 1 TO Len(aIndexes)
 
-      IF at(Chr(34) + cColumn + Chr(34), aIndexes[i, 3]) > 0 .OR. at("+" + cColumn + "+", "+" + AllTrim(aIndexes[i, 3]) + "+") > 0 .OR. ;
+      IF At(Chr(34) + cColumn + Chr(34), aIndexes[i, 3]) > 0 .OR. At("+" + cColumn + "+", "+" + AllTrim(aIndexes[i, 3]) + "+") > 0 .OR. ;
          (Left(cColumn, 7) == "INDKEY_" .AND. SubStr(cColumn, 8, 3) == SubStr(aIndexes[i, 2], 1, 3))
 
          // Drop the index
@@ -10582,7 +10582,7 @@ METHOD ParseForClause(cFor) CLASS SR_WORKAREA
       ENDIF
    ENDIF
 
-   IF Upper(strTran(cOut, " ", "")) == "!DELETED()"
+   IF Upper(StrTran(cOut, " ", "")) == "!DELETED()"
       cOut := "A." + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " = ' '"
    ENDIF
 
@@ -10963,12 +10963,12 @@ METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColum
          ENDIF
          EXIT
       CASE SYSTEMID_POSTGR
-         cSourceColumns := strtran(cSourceColumns, Chr(34), "")
-         cTargetColumns := strtran(cTargetColumns, Chr(34), "")
+         cSourceColumns := StrTran(cSourceColumns, Chr(34), "")
+         cTargetColumns := StrTran(cTargetColumns, Chr(34), "")
          IF lPk
-            cSql := "ALTER TABLE " + ::cOwner + strtran(SR_DBQUALIFY(cSourceTable,::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + StrTran(SR_DBQUALIFY(cSourceTable,::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
          ELSE
-            cSql := "ALTER TABLE " + ::cOwner + strtran(SR_DBQUALIFY(cSourceTable,::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + strtran(SR_DBQUALIFY(cTargetTable,::oSql:nSystemID), Chr(34), "") + " (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + StrTran(SR_DBQUALIFY(cSourceTable,::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + StrTran(SR_DBQUALIFY(cTargetTable,::oSql:nSystemID), Chr(34), "") + " (" + cTargetColumns + ")"
          ENDIF
          EXIT
       OTHERWISE

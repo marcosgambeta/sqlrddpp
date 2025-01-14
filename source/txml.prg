@@ -77,7 +77,7 @@ CREATE CLASS sr_TXMLNode
    METHOD InsertBelow(oNode) INLINE srxml_node_insert_below(Self, oNode)
    METHOD AddBelow(oNode) INLINE srxml_node_add_below(Self, oNode)
 
-   METHOD GetAttribute(cAttrib) INLINE iif(cAttrib $ ::aAttributes, ::aAttributes[cAttrib], NIL)
+   METHOD GetAttribute(cAttrib) INLINE IIf(cAttrib $ ::aAttributes, ::aAttributes[cAttrib], NIL)
    METHOD SetAttribute(cAttrib, xValue) INLINE ::aAttributes[cAttrib] := xValue
 
    METHOD Depth()

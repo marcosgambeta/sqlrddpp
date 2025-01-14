@@ -103,7 +103,7 @@ METHOD SimplifyComposition(oExpression) CLASS ExpressionSimplifierBase
          oSimpleExpression := newOperands[i]:oExpression
          oAlgebraSet := AlgebraSet():new(oExpression:oOperator, oExpression:GetType())
          IF oAlgebraSet:cIdentityElement == Upper(newOperands[i]:Value)
-            RETURN iif(i == 1, ::Simplify(newOperands[2]), newOperands[1])
+            RETURN IIf(i == 1, ::Simplify(newOperands[2]), newOperands[1])
          ELSEIF oAlgebraSet:cAbsorbentElement != NIL .AND. oAlgebraSet:cAbsorbentElement == Upper(newOperands[i]:Value)
             RETURN ::NewSimpleExpression(oExpression:cContext, oAlgebraSet:cAbsorbentElement)
          ENDIF
@@ -132,7 +132,7 @@ CLASS ExpressionSimplifier FROM ExpressionSimplifierBase
    DATA _oConditionSimplifier
 
    HIDDEN:
-   ACCESS oConditionSimplifier INLINE iif(::_oConditionSimplifier == NIL, (::_oConditionSimplifier := ConditionSimplifier():new(::lFixVariables, ::lIgnoreRelations, ::cContext)), ::_oConditionSimplifier)
+   ACCESS oConditionSimplifier INLINE IIf(::_oConditionSimplifier == NIL, (::_oConditionSimplifier := ConditionSimplifier():new(::lFixVariables, ::lIgnoreRelations, ::cContext)), ::_oConditionSimplifier)
 
    EXPORTED:
    METHOD Simplify(oExpression)
@@ -225,7 +225,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
          IF lAtLeastOneParamSimplified
             newClipperString := oExpression:cFunctionName + "("
             FOR i := 1 TO Len(newParams)
-               newClipperString += newParams[i]:oExpression:oClipperExpression:cValue + iif(i == Len(newParams), ")", ",")
+               newClipperString += newParams[i]:oExpression:oClipperExpression:cValue + IIf(i == Len(newParams), ")", ",")
             NEXT i
             result := FunctionExpression():new(oExpression:cContext, newClipperString, oExpression:cFunctionName, newParams)
          ENDIF

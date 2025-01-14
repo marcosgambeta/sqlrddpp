@@ -189,7 +189,7 @@ METHOD AllocStatement() CLASS SR_ORACLE
       ::lSetNext := .F.
       nRet := ::SetStmtOptions(::nSetOpt, ::nSetValue)
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         SR_MsgLogFile(SR_Msg(23) + " (" + AllTrim(str(nRet)) + ") : " + ::LastError())
+         SR_MsgLogFile(SR_Msg(23) + " (" + AllTrim(Str(nRet)) + ") : " + ::LastError())
       ENDIF
    ENDIF
 
@@ -224,11 +224,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    IF lReSelect
       IF !Empty(cCommand)
-         nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
+         nRet := ::Execute(cCommand + IIf(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       ELSE
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + ;
-            iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
-            iif(::lComments, " /* Open Workarea */", ""), .F.)
+            IIf(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
+            IIf(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
 
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
@@ -239,7 +239,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    ::nFields := SQLO_NUMCOLS(::hDBC)
 
    IF ::nFields < 0
-      ::RunTimeErr("", "SQLO_NUMCOLS Error" + SR_CRLF + str(::nFields) + SR_CRLF + ;
+      ::RunTimeErr("", "SQLO_NUMCOLS Error" + SR_CRLF + Str(::nFields) + SR_CRLF + ;
          "Last command sent to database : " + ::cLastComm)
       RETURN NIL
    ENDIF
@@ -272,7 +272,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       ENDIF
 
       IF cType == "U"
-         ::RuntimeErr("", SR_Msg(21) + cName + " : " + str(nType))
+         ::RuntimeErr("", SR_Msg(21) + cName + " : " + Str(nType))
       ELSE
          aFields[n] := {cName, cType, nLenField, nDec, nNull, nType, , n, , ,}
       ENDIF
@@ -295,7 +295,7 @@ RETURN aFields
 METHOD LastError() CLASS SR_ORACLE
 
 RETURN SQLO_GETERRORDESCR(::hDBC) + " retcode: " + sr_val2Char(::nRetCode) + " - " + ;
-   AllTrim(str(SQLO_GETERRORCODE(::hDBC)))
+   AllTrim(Str(SQLO_GETERRORCODE(::hDBC)))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -354,7 +354,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
    IF Len(aRet) > 0
-      ::uSid := val(str(aRet[1, 1], 8, 0))
+      ::uSid := Val(Str(aRet[1, 1], 8, 0))
    ENDIF
 
 RETURN Self
@@ -367,7 +367,7 @@ METHOD End() CLASS SR_ORACLE
 
    IF !Empty(::hDbc)
      IF (nRet := SQLO_DISCONNECT(::hDbc)) != SQL_SUCCESS
-        SR_MsgLogFile("Error disconnecting : " + str(nRet) + SR_CRLF + ::LastError())
+        SR_MsgLogFile("Error disconnecting : " + Str(nRet) + SR_CRLF + ::LastError())
      ENDIF
    ENDIF
 
@@ -415,9 +415,9 @@ RETURN nRet
 STATIC FUNCTION ProcessParams(cSql, nBound)
 
    LOCAL nPos
-   LOCAL cTemp := SubStr(cSql, 1, AT("?" , cSql) - 1)
-   LOCAL lHasParen := Rat(")", cSql) > 0
-   LOCAL lHasPointComma := Rat(";", cSql) > 0
+   LOCAL cTemp := SubStr(cSql, 1, At("?" , cSql) - 1)
+   LOCAL lHasParen := RAt(")", cSql) > 0
+   LOCAL lHasPointComma := RAt(";", cSql) > 0
    LOCAL aItens
    LOCAL cOriginal := cTemp + " "
    LOCAL xParam
@@ -517,7 +517,7 @@ METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE
    END SEQUENCE
 
    IF nError < 0
-      ::RunTimeErr("", str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR(::hDbc))
+      ::RunTimeErr("", Str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR(::hDbc))
    ELSE
    //IF nError >= 0
       FOR i := 1 TO nParam
@@ -582,7 +582,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
    IF nError < 0
       IF lFetch
        //::RunTimeErr("", "SQLExecDirect Error Erro na STORE PROCEDURE")
-       ::RunTimeErr("", str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR(::hDbc) + ::cLastComm)
+       ::RunTimeErr("", Str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR(::hDbc) + ::cLastComm)
       ENDIF
    ENDIF
 
@@ -661,7 +661,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          FOR i := 1 TO Len(aFields)
             ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), ;
-               iif(::lShowTxtMemo, 79, 30)), Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
+               IIf(::lShowTxtMemo, 79, 30)), Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
          NEXT i
 
          ::cResult += SR_CRLF
@@ -676,7 +676,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
             FOR i := 1 TO Len(aFields)
                cCampo := ::FieldGet(i, aFields, lTranslate)
                IF aFields[i, 2] == "M"
-                  nLenMemo := Max(Len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
+                  nLenMemo := Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30))
                   nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
                   cEste += memoline(cCampo, nLenMemo, 1) + " "
                   aMemo[i] := cCampo

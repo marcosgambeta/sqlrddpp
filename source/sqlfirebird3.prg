@@ -182,15 +182,15 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    IF lReSelect
       IF !Empty(cCommand)
-         nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
+         nRet := ::Execute(cCommand + IIf(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       ELSE
          // DOON'T remove "+0"
          ::Exec("select a.rdb$field_name, b.rdb$field_precision + 0 from rdb$relation_fields a, " + ;
             "rdb$fields b where a.rdb$relation_name = '" + StrTran(cTable, chr(34), "") + ;
             "' and a.rdb$field_source = b.rdb$field_name", .F., .T., @aLocalPrecision)
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + ;
-            iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
-            iif(::lComments, " /* Open Workarea */", ""), .F.)
+            IIf(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
+            IIf(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
          RETURN NIL
@@ -230,7 +230,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
       ENDIF
 
       IF cType == "U"
-         ::RuntimeErr("", SR_Msg(21) + cName + " : " + str(nType))
+         ::RuntimeErr("", SR_Msg(21) + cName + " : " + Str(nType))
       ELSE
          aFields[n] := {cName, cType, nLenField, nDec, nNull >= 1, nType, , n, _nDec, ,}
       ENDIF
@@ -256,7 +256,7 @@ METHOD LastError() CLASS SR_FIREBIRD3
 
    cMsgError := FBError3(::hEnv, @nType)
 
-RETURN AllTrim(cMsgError) + " - Native error code " + AllTrim(str(nType))
+RETURN AllTrim(cMsgError) + " - Native error code " + AllTrim(Str(nType))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -286,21 +286,21 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
    IF nRet != SQL_SUCCESS
       ::nRetCode := nRet
-      SR_MsgLogFile("Connection Error: " + AllTrim(str(nRet)) + " (check fb.log) - Database: " + ::cDtb + ;
+      SR_MsgLogFile("Connection Error: " + AllTrim(Str(nRet)) + " (check fb.log) - Database: " + ::cDtb + ;
          " - Username : " + ::cUser + " (Password not shown for security)")
       RETURN SELF
    ENDIF
 
    ::cConnect := cConnect
    cTargetDB := StrTran(FBVERSION3(hEnv), "(access method)", "")
-   cSystemVers := SubStr(cTargetDB, at("Firebird ", cTargetDB) + 9, 3)
+   cSystemVers := SubStr(cTargetDB, At("Firebird ", cTargetDB) + 9, 3)
    //tracelog("cTargetDB", cTargetDB, "cSystemVers", cSystemVers)
 
    nRet := FBBeginTransaction3(hEnv)
 
    IF nRet != SQL_SUCCESS
       ::nRetCode := nRet
-      SR_MsgLogFile("Transaction Start error : " + AllTrim(str(nRet)))
+      SR_MsgLogFile("Transaction Start error : " + AllTrim(Str(nRet)))
       RETURN SELF
    ENDIF
 

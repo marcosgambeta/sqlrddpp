@@ -255,24 +255,24 @@ METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
 
    ENDIF
 
-   IF substr(cMode, 4, 1) == "1" .OR. ::oSqlTransact == NIL
+   IF SubStr(cMode, 4, 1) == "1" .OR. ::oSqlTransact == NIL
       oSql := SELF
    ELSE
       oSql := ::oSqlTransact
    ENDIF
 
-   IF substr(cMode, 1, 1) == "1"
+   IF SubStr(cMode, 1, 1) == "1"
       cStack := sr_cDbValue(SR_GetStack(), ::nSystemID)
    ELSE
       cStack := " NULL"
    ENDIF
 
    cSql := "INSERT INTO " + ::cQueryOwner + "SR_MGMNTLOGCHG (SPID_, WPID_, TYPE_, APPUSER_, TIME_, QUERY_, CALLSTACK_, SITE_, CONTROL_, COST_ ) VALUES ( " + ;
-           str(::uSid) + "," + str(SR_GetCurrInstanceID()) + ", '" + cType + "','" + ::cAppUser + "','" + dtos(date()) + time() + strzero(seconds() * 1000, 8) + "'," + sr_cDbValue(cCommand, ::nSystemID) + "," + cStack + ",'" + ::cSite + "', NULL, " + str(nCost) + " )"
+           Str(::uSid) + "," + Str(SR_GetCurrInstanceID()) + ", '" + cType + "','" + ::cAppUser + "','" + dtos(date()) + time() + strzero(seconds() * 1000, 8) + "'," + sr_cDbValue(cCommand, ::nSystemID) + "," + cStack + ",'" + ::cSite + "', NULL, " + Str(nCost) + " )"
    oSql:execute(cSql, , , .T.)
    oSql:FreeStatement()
 
-   IF substr(cMode, 4, 1) != "1"
+   IF SubStr(cMode, 4, 1) != "1"
       oSql:Commit()
    ENDIF
 
@@ -295,21 +295,21 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
    SWITCH ::nSystemID
    CASE SYSTEMID_MSSQL7
    CASE SYSTEMID_SYBASE
-      IF empty(cOwner)
+      IF Empty(cOwner)
          ::exec("select name from sysobjects where type = N'U' order by name", .T., .T., @aRet)
       ELSE
          ::exec("select name from sysobjects where type = N'U' and user_name(uid) = '" + cOwner + "' order by name", .T., .T., @aRet)
       ENDIF
       EXIT
    CASE SYSTEMID_POSTGR
-      IF empty(cOwner)
+      IF Empty(cOwner)
          ::exec("select tablename from pg_tables where schemaname = 'public' order by tablename", .T., .T., @aRet)
       ELSE
          ::exec("select tablename from pg_tables where schemaname = '" + cOwner + "' order by tablename", .T., .T., @aRet)
       ENDIF
       EXIT
    CASE SYSTEMID_ORACLE
-      IF empty(cOwner)
+      IF Empty(cOwner)
          ::exec("select table_name from user_tables order by TABLE_NAME", .T., .T., @aRet)
       ELSE
          ::exec("select TABLE_NAME from all_tables where owner = '" + cOwner + "' order by TABLE_NAME", .T., .T., @aRet)
@@ -329,7 +329,7 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
    CASE SYSTEMID_FIREBR3
    CASE SYSTEMID_FIREBR4
    CASE SYSTEMID_FIREBR5
-      IF empty(cOwner)
+      IF Empty(cOwner)
          ::exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 order by RDB$RELATION_NAME", .T., .T., @aRet)
       ELSE
          ::exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 AND RDB$OWNER_NAME = '" + cOwner + "' order by RDB$RELATION_NAME", .T., .T., @aRet)
@@ -541,7 +541,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                aFields   := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
                FOR i := 1 TO Len(aFields)
-                  ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30)) , Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
+                  ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30)) , Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
                NEXT i
 
                ::cResult += SR_CRLF
@@ -556,7 +556,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   FOR i := 1 TO Len(aFields)
                      cCampo := ::FieldGet(i, aFields, lTranslate)
                      IF aFields[i, 2] == "M"
-                        nLenMemo   := Max(Len(aFields[i, 1]), iif(::lShowTxtMemo, 79, 30))
+                        nLenMemo   := Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30))
                         nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
                         cEste += memoline(cCampo, nLenMemo, 1) + " "
                         aMemo[i] := cCampo
@@ -753,18 +753,18 @@ METHOD DetectTargetDb() CLASS SR_CONNECTION
    CASE ("SQL Server" $ cTargetDB .AND. "00.53.0000" $ ::cSystemVers) .OR. ("MICROSOFT SQL SERVER" $ cTargetDB)
       ::nSystemID := SYSTEMID_MSSQL7
       aVers := hb_atokens(::cSystemVers, '.')
-      IF val(aVers[1]) >= 8
+      IF Val(aVers[1]) >= 8
          ::lClustered := .T.
       ENDIF
          //culik 30/12/2011 adicionado para indicar se e  sqlserver versao 2008 ou superior
-      IF val(aVers[1]) >= 10
+      IF Val(aVers[1]) >= 10
          ::lSqlServer2008 := .T.
       ENDIF
 
    CASE ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.("7.0" $ ::cSystemVers .OR. "8.0" $ ::cSystemVers .OR. "9.0" $ ::cSystemVers .OR. "10.00" $ ::cSystemVers .OR. "10.50" $ ::cSystemVers .OR. "11.00" $ ::cSystemVers)) //.OR. ( "SQL SERVER" $ cTargetDB .AND. !("SYBASE" $ cTargetDB))
       ::nSystemID := SYSTEMID_MSSQL7
       aVers := hb_atokens(::cSystemVers, '.')
-      IF val(aVers[1]) >= 8
+      IF Val(aVers[1]) >= 8
          ::lClustered := .T.
       ENDIF
    CASE "ANYWHERE" $ cTargetDB
@@ -798,11 +798,11 @@ METHOD DetectTargetDb() CLASS SR_CONNECTION
    CASE "FIREBIRD" $ cTargetDb .OR. "INTERBASE" $ cTargetdb
       ::nSystemID := SYSTEMID_FIREBR
       aVers := hb_atokens(::cSystemVers, '.')
-      IF val(aVers[1]) >= 5
+      IF Val(aVers[1]) >= 5
          ::nSystemID := SYSTEMID_FIREBR5
-      ELSEIF val(aVers[1]) >= 4
+      ELSEIF Val(aVers[1]) >= 4
          ::nSystemID := SYSTEMID_FIREBR4
-      ELSEIF val(aVers[1]) >= 3
+      ELSEIF Val(aVers[1]) >= 3
          ::nSystemID := SYSTEMID_FIREBR3
       ENDIF
    CASE "INTERSYSTEMS CACHE" $ cTargetDb
@@ -890,9 +890,9 @@ METHOD Commit(lNoLog) CLASS SR_CONNECTION
       ENDIF
 
       IF StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[4] == "1" .OR. ::oSqlTransact == NIL
-         SELF:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
+         SELF:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + Str(::uSid),,,, .T.)
       ELSE
-         ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
+         ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + Str(::uSid),,,, .T.)
          ::oSqlTransact:FreeStatement()
          ::oSqlTransact:commit(.T.)
       ENDIF
@@ -930,9 +930,9 @@ METHOD RollBack() CLASS SR_CONNECTION
       ENDIF
 
       IF StrZero(::nLogMode, SQLLOGCHANGES_SIZE)[4] == "1" .OR. ::oSqlTransact == NIL
-         SELF:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
+         SELF:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + Str(::uSid),,,, .T.)
       ELSE
-         ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + str(::uSid),,,, .T.)
+         ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + Str(::uSid),,,, .T.)
          ::oSqlTransact:FreeStatement()
          ::oSqlTransact:commit(.T.)
       ENDIF
@@ -1059,7 +1059,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
 
    ::oHashActiveWAs := SqlFastHash():new()
 
-   IF cConnect == NIL .OR. empty(cConnect)
+   IF cConnect == NIL .OR. Empty(cConnect)
       SR_MsgLogFile("Invalid connection string : " + SR_Val2Char(cConnect))
       ::nRetCode := SQL_ERROR
       RETURN SELF
@@ -1139,7 +1139,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
          CASE "CLUSTER"
             ::lCluster := Upper(aToken[2]) $ "Y,S,TRUE"
             EXIT
-         CASE "OWNER" //.AND. empty(::cOwner)
+         CASE "OWNER" //.AND. Empty(::cOwner)
             ::cOwner := aToken[2]
             IF !Empty(::cOwner) .AND. Right(::cOwner, 1) != "."
                ::cOwner += "."
@@ -1179,7 +1179,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
 
    SWITCH ::nSystemID
    CASE SYSTEMID_ORACLE
-      ::cLockWait := " WAIT " + str(int(::nLockWaitTime))
+      ::cLockWait := " WAIT " + Str(Int(::nLockWaitTime))
       EXIT
    OTHERWISE
       ::cLockWait := ""

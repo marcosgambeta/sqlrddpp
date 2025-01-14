@@ -82,7 +82,7 @@ RETURN NIL
 
 FUNCTION SR_WorkareaFileName()
 
-   IF empty(alias())
+   IF Empty(alias())
       RETURN ""
    ENDIF
 
@@ -96,7 +96,7 @@ RETURN dbInfo(DBI_INTERNAL_OBJECT):cFileName
 
 FUNCTION SR_dbStruct()
 
-   IF empty(alias())
+   IF Empty(alias())
       RETURN {}
    ENDIF
 
@@ -128,7 +128,7 @@ FUNCTION SR_Val2Char(a, n1, n2)
    CASE "D"
       RETURN dtoc(a)
    CASE "L"
-      RETURN iif(a, ".T.", ".F.")
+      RETURN IIf(a, ".T.", ".F.")
    ENDSWITCH
 
 RETURN ""
@@ -527,13 +527,13 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 #if 0 // TODO: old code for reference (to be deleted)
    Do Case
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_ORACLE
-      RETURN "'" + RTrim(strtran(uData, "'", "'||" + "CHR(39)" + "||'")) + "'"
+      RETURN "'" + RTrim(StrTran(uData, "'", "'||" + "CHR(39)" + "||'")) + "'"
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_MSSQL7
-      RETURN "'" + RTrim(strtran(uData, "'", "'" + "'")) + "'"
+      RETURN "'" + RTrim(StrTran(uData, "'", "'" + "'")) + "'"
    Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
-      RETURN "E'" + strtran(RTrim(strtran(uData, "'", "'" + "'")), "\", "\\") + "'"
+      RETURN "E'" + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
    Case cType $ "CM"
-      RETURN "'" + RTrim(strtran(uData, "'", "")) + "'"
+      RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
       RETURN "TO_DATE('" + RTrim(DtoS(uData)) + "','YYYYMMDD')"
    Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS)
@@ -547,17 +547,17 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
       RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
-      RETURN "{d '" + transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
+      RETURN "{d '" + transform(DtoS(IIf(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
    Case cType == "D"
       RETURN "'" + dtos(uData) + "'"
    Case cType == "N"
-      RETURN LTrim(str(uData))
+      RETURN LTrim(Str(uData))
    Case cType == "L" .AND. (nSystemID == SYSTEMID_POSTGR .OR. nSystemID == SYSTEMID_FIREBR3)
-      RETURN iif(uData, "true", "false")
+      RETURN IIf(uData, "true", "false")
    Case cType == "L" .AND. nSystemID == SYSTEMID_INFORM
-      RETURN iif(uData, "'t'", "'f'")
+      RETURN IIf(uData, "'t'", "'f'")
    Case cType == "L"
-      RETURN iif(uData, "1", "0")
+      RETURN IIf(uData, "1", "0")
    case ctype == "T"  .AND. nSystemID == SYSTEMID_POSTGR
       IF Empty(uData)
          RETURN 'NULL'
@@ -580,7 +580,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    OtherWise
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(Len(cRet), 10) + cRet, nSystemID)
+      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID)
    EndCase
 #endif
 
@@ -590,13 +590,13 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    CASE "M"
       SWITCH nSystemID
       CASE SYSTEMID_ORACLE
-         RETURN "'" + RTrim(strtran(uData, "'", "'||" + "CHR(39)" + "||'")) + "'"
+         RETURN "'" + RTrim(StrTran(uData, "'", "'||" + "CHR(39)" + "||'")) + "'"
       CASE SYSTEMID_MSSQL7
-         RETURN "'" + RTrim(strtran(uData, "'", "'" + "'")) + "'"
+         RETURN "'" + RTrim(StrTran(uData, "'", "'" + "'")) + "'"
       CASE SYSTEMID_POSTGR
-         RETURN "E'" + strtran(RTrim(strtran(uData, "'", "'" + "'")), "\", "\\") + "'"
+         RETURN "E'" + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
       OTHERWISE
-         RETURN "'" + RTrim(strtran(uData, "'", "")) + "'"
+         RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
       ENDSWITCH
 
    CASE "D"
@@ -618,13 +618,13 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       CASE SYSTEMID_FIREBR5
          RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
       CASE SYSTEMID_CACHE
-         RETURN "{d '" + transform(DtoS(iif(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
+         RETURN "{d '" + transform(DtoS(IIf(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
       OTHERWISE
          RETURN "'" + dtos(uData) + "'"
       ENDSWITCH
 
    CASE "N"
-      RETURN LTrim(str(uData))
+      RETURN LTrim(Str(uData))
 
    CASE "L"
       SWITCH nSystemID
@@ -632,11 +632,11 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       CASE SYSTEMID_FIREBR3
       CASE SYSTEMID_FIREBR4
       CASE SYSTEMID_FIREBR5
-         RETURN iif(uData, "true", "false")
+         RETURN IIf(uData, "true", "false")
       CASE SYSTEMID_INFORM
-         RETURN iif(uData, "'t'", "'f'")
+         RETURN IIf(uData, "'t'", "'f'")
       OTHERWISE
-         RETURN iif(uData, "1", "0")
+         RETURN IIf(uData, "1", "0")
       ENDSWITCH
 
    CASE "T"
@@ -657,7 +657,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    OTHERWISE
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + str(Len(cRet), 10) + cRet, nSystemID)
+      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID)
 
    ENDSWITCH
 
@@ -725,7 +725,7 @@ FUNCTION SR_uCharToVal(cVal, cType, nLen)
    CASE "D"
       RETURN ctod(cVal)
    CASE "N"
-      RETURN val(cVal)
+      RETURN Val(cVal)
    CASE "L"
       RETURN cVal $ "1.T.SYsy.t."
    ENDSWITCH
@@ -792,9 +792,9 @@ FUNCTION SR_ShowVector(a)
       FOR i := 1 TO Len(a)
 
          IF HB_ISARRAY(a[i])
-            cRet += SR_showvector(a[i]) + iif(i == Len(a), "", ",") + SR_CRLF
+            cRet += SR_showvector(a[i]) + IIf(i == Len(a), "", ",") + SR_CRLF
          ELSE
-            cRet += SR_Val2CharQ(a[i]) + iif(i == Len(a), "", ",")
+            cRet += SR_Val2CharQ(a[i]) + IIf(i == Len(a), "", ",")
          ENDIF
 
       NEXT i
@@ -826,7 +826,7 @@ FUNCTION SR_Val2CharQ(uData)
    CASE "T"
       RETURN hb_ttoc(uData)
    CASE "L"
-      RETURN iif(uData, ".T.", ".F.")
+      RETURN IIf(uData, ".T.", ".F.")
    CASE "A"
       RETURN "{Array}"
    CASE "O"
@@ -915,7 +915,7 @@ FUNCTION SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
 
    cRet := "SELECT " + cAlias + ".* FROM " + cTable + " " + cAlias + " WHERE " + SR_CRLF
 
-   cRet += "(" + cAlias + ".DT__HIST = (SELECT" + iif(n = 3, " MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
+   cRet += "(" + cAlias + ".DT__HIST = (SELECT" + IIf(n = 3, " MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
    cRet += cTable + " " + cAl1 + " WHERE " + cAlias + "." + cPK + "="
    cRet += cAl1 + "." + cPk
 
@@ -952,7 +952,7 @@ FUNCTION SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
 
    cRet := ""
 
-   cRet += "(" + cAlias + ".DT__HIST = (SELECT" + iif(n = 3, " MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
+   cRet += "(" + cAlias + ".DT__HIST = (SELECT" + IIf(n = 3, " MIN(", " MAX(") + cAl1 + ".DT__HIST) FROM "
    cRet += cTable + " " + cAl1 + " WHERE " + cAlias + "." + cPK + "="
    cRet += cAl1 + "." + cPk
 
@@ -1042,12 +1042,12 @@ FUNCTION SR_Deserialize(uData)
 
    // cTemp := udata
    // altd()
-   // cHex := SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10))))
+   // cHex := SR_HEXTOSTR(SubStr(uData, 21, Val(SubStr(uData, 11, 10))))
    // cdes := sr_Deserialize1(cHex)
    // tracelog(udata, chex, cdes)
    // RETURN cdes
 
-RETURN SR_Deserialize1(SR_HEXTOSTR(SubStr(uData, 21, val(substr(uData, 11, 10)))))
+RETURN SR_Deserialize1(SR_HEXTOSTR(SubStr(uData, 21, Val(SubStr(uData, 11, 10)))))
 
 /*------------------------------------------------------------------------*/
 
@@ -1494,7 +1494,7 @@ FUNCTION SR_GetStack()
 
    DO WHILE (i < 70)
       IF !Empty(ProcName(i))
-         cErrorLog += SR_CRLF + Trim(ProcName(i)) + "     Linha : " + AllTrim(str(ProcLine(i)))
+         cErrorLog += SR_CRLF + Trim(ProcName(i)) + "     Linha : " + AllTrim(Str(ProcLine(i)))
       ENDIF
       i++
    ENDDO
@@ -1631,7 +1631,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          xMessage := hb_TToC(xMessage)
          EXIT
       CASE "L"
-         xMessage := iif(xMessage, ".T.", ".F.")
+         xMessage := IIf(xMessage, ".T.", ".F.")
          EXIT
       CASE "O"
          xMessage := xMessage:className + " Object"
@@ -1729,7 +1729,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
         cColorNorm := cColor11
 
-        IF !empty(cColor12)
+        IF !Empty(cColor12)
 
             IF IsDigit(cColor12)
                cColor12 := COLORLETTER(cColor12)
@@ -1747,7 +1747,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
 
       // if second color pair exist, then xHarbour alert will handle properly.
-      IF !empty(cColorPair2)
+      IF !Empty(cColorPair2)
 
          nSlash := At("/", cColorPair2)
 
@@ -1767,7 +1767,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
             cColorHigh := cColor21
 
-            IF !empty(cColor22)
+            IF !Empty(cColor22)
 
                 IF IsDigit(cColor22)
                    cColor22 := COLORLETTER(cColor22)
@@ -1785,7 +1785,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          ENDIF
 
       ELSE // if does not exist the second color pair, xHarbour alert will behave like Clipper
-         IF empty(cColor11) .OR. empty(cColor12)
+         IF Empty(cColor11) .OR. Empty(cColor12)
             cColor11 := "B"
             cColor12 := "W+"
          ELSE
@@ -1827,7 +1827,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
    AEval(aOptionsOK, {|x|nOpWidth += Len(x) + 4})
 
    /* what's wider ? */
-   nWidth := Max(nWidth + 2 + iif(Len(aSay) == 1, 4, 0), nOpWidth + 2)
+   nWidth := Max(nWidth + 2 + IIf(Len(aSay) == 1, 4, 0), nOpWidth + 2)
 
    /* box coordinates */
    nInitRow := Int(((MaxRow() - (Len(aSay) + 4)) / 2) + .5)
@@ -2134,7 +2134,7 @@ FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
 
    oCnn := SR_GetConnection()
    IF HB_ISNUMERIC(cDefault)
-      cSql += AllTrim(str(cDefault))
+      cSql += AllTrim(Str(cDefault))
    ELSEIF HB_ISSTRING(cDefault)
       IF Empty(cDefault)
          cSql += "''"

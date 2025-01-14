@@ -505,7 +505,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
 #endif
       EXIT
    OTHERWISE
-      SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + str(nType))
+      SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + Str(nType))
       RETURN -1
    ENDSWITCH
 
@@ -513,7 +513,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       oConnect:Connect("", cUser, cPassword, 1, cOwner, 4000, .F., cDSN, 50, "ANSI", 0, 0, 0, lCounter, lAutoCommit, ;
          nTimeout)
    ELSE
-      SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + str(nType))
+      SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + Str(nType))
       RETURN -1
    ENDIF
 
@@ -544,11 +544,11 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       oConnect:nID := nRet
 
       IF !lNoSetEnv
-         IF empty(SR_SetEnvSQLRDD(oConnect))
+         IF Empty(SR_SetEnvSQLRDD(oConnect))
             RETURN -1
          ENDIF
       ELSE
-         IF empty(SR_SetEnvMinimal(oConnect))
+         IF Empty(SR_SetEnvMinimal(oConnect))
             RETURN -1
          ENDIF
       ENDIF
@@ -602,7 +602,7 @@ FUNCTION SR_ReloadFieldModifiers(oConnect)
             AAdd(aFlds, {aField[2], aField[3], aField[4], aField[5]})
          NEXT
          IF "." $ cLast
-            cLast := Upper(SubSTr(cLast, At(".", cLast) + 1))
+            cLast := Upper(SubStr(cLast, At(".", cLast) + 1))
          ENDIF
          oConnect:aFieldModifier[AllTrim(cLast)] := aFlds
       ENDIF
@@ -665,10 +665,10 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
             "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
          IF Len(aRet) > 0
-            oCnn:uSid := val(str(aRet[1, 1], 8, 0))
+            oCnn:uSid := Val(Str(aRet[1, 1], 8, 0))
          ENDIF
 
-         oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLOCKS WHERE SPID_ = " + str(oCnn:uSid) + ;
+         oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLOCKS WHERE SPID_ = " + Str(oCnn:uSid) + ;
             " OR SPID_ NOT IN (select " + chr(34) + "AUDSID" + chr(34) + " from " + ;
             IIf(oCnn:lCluster, "g", "") + "v$session)", .F.)
          oCnn:Commit()
@@ -1308,7 +1308,7 @@ FUNCTION SR_ExistTable(cTableName, cOwner, oCnn)
    LOCAL aRet
 
    DEFAULT oCnn TO SR_GetConnection()
-   aRet := eval(SR_GetTableInfoBlock(), cTableName)
+   aRet := Eval(SR_GetTableInfoBlock(), cTableName)
 
    IF cOwner == NIL
       cOwner := aRet[TABLE_INFO_OWNER_NAME]
@@ -1353,7 +1353,7 @@ FUNCTION SR_ExistIndex(cIndexName, cOwner)
 
    oCnn := SR_GetConnection()
 
-   aRet := eval(SR_GetIndexInfoBlock(), cIndexName)
+   aRet := Eval(SR_GetIndexInfoBlock(), cIndexName)
    ASize(aRet, TABLE_INFO_SIZE)
 
    cIndexName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
@@ -1647,7 +1647,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
 
    oCnn := SR_GetConnection()
 
-   aRet := eval(SR_GetIndexInfoBlock(), cIndexName)
+   aRet := Eval(SR_GetIndexInfoBlock(), cIndexName)
    ctempIndex := cIndexName
    cIndexName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
@@ -1736,7 +1736,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
             oWA:DropColumn("INDKEY_" + AllTrim(aIndex[4]), .F.)
          ENDIF
          IF SubStr(aIndex[5], 1, 1) == "#"
-            oWA:DropColumn("INDFOR_" + substr(aIndex[5], 2, 3), .F.)
+            oWA:DropColumn("INDFOR_" + SubStr(aIndex[5], 2, 3), .F.)
          ENDIF
 
          TEMPDROPCO->(dbCLoseArea())
@@ -1760,7 +1760,7 @@ FUNCTION SR_DropTable(cFileName, cOwner)
 
    oCnn := SR_GetConnection()
 
-   aRet := eval(SR_GetTableInfoBlock(), cFileName)
+   aRet := Eval(SR_GetTableInfoBlock(), cFileName)
    cFileName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    IF cOwner == NIL
@@ -1822,7 +1822,7 @@ FUNCTION SR_ListIndex(cFilename)
 
    oCnn := SR_GetConnection()
 
-   aRet := eval(SR_GetIndexInfoBlock(), cFilename)
+   aRet := Eval(SR_GetIndexInfoBlock(), cFilename)
    cFilename := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    aRet := {}
@@ -1848,7 +1848,7 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
 
    oCnn := SR_GetConnection()
 
-   aRet := eval(SR_GetTableInfoBlock(), cTable)
+   aRet := Eval(SR_GetTableInfoBlock(), cTable)
    cTable := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    IF cOwner == NIL
@@ -1866,7 +1866,7 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
       cOwner += "."
    ENDIF
 
-   aRet := eval(SR_GetTableInfoBlock(), cNewName)
+   aRet := Eval(SR_GetTableInfoBlock(), cNewName)
    cNewName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
 
    aRet := {}
@@ -2093,7 +2093,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
       CASE SYSTEMID_ORACLE
          cIns := "INSERT INTO " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS ( LOCK_, WSID_, SPID_ ) VALUES ( '" + cValue + "', '" + SR_GetInternalID() + ;
-            "', " + str(oCnn:uSid) + " )"
+            "', " + Str(oCnn:uSid) + " )"
          cDel := "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (select " + chr(34) + "AUDSID" + chr(34) + " from " + ;
             IIf(oCnn:lCluster, "g", "") + "v$session)"
          EXIT

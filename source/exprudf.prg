@@ -61,7 +61,7 @@ FUNCTION xSelect(aArray, bSelector)
 
    LOCAL newArray := Array(Len(aArray))
 
-   AEval(aArray, {|x, n|newArray[n] := eval(bSelector, x)})
+   AEval(aArray, {|x, n|newArray[n] := Eval(bSelector, x)})
 
 RETURN newArray
 
@@ -69,7 +69,7 @@ FUNCTION xSelectMany(aArray, bSelector)
 
    LOCAL newArray := {}
 
-   AEval(aArray, {|x|aAddRange(newArray, eval(bSelector, x))})
+   AEval(aArray, {|x|aAddRange(newArray, Eval(bSelector, x))})
 
 RETURN newArray
 
@@ -79,7 +79,7 @@ FUNCTION aWhere(aArray, bPredicate)
    LOCAL newArray := {}
 
    FOR EACH item IN aArray
-      IF eval(bPredicate, item)
+      IF Eval(bPredicate, item)
          AAdd(newArray, item)
       ENDIF
    NEXT
@@ -112,7 +112,7 @@ FUNCTION aDistinct(aArray, bSelector)
    LOCAL id
 
    FOR EACH item IN aArray
-      id := eval(bSelector, item)
+      id := Eval(bSelector, item)
       IF !(AScan(ids, id) > 0)
          AAdd(ids, id)
          AAdd(newArray, item)
@@ -138,8 +138,8 @@ PROCEDURE aAddDistinct(aArray1, xValue, bSelector)
    IF bSelector == NIL
       bSelector := {|x|x}
    ENDIF
-   id := eval(bSelector, xValue)
-   IF AScan(aArray1, {|x|id == eval(bSelector, x)}) == 0
+   id := Eval(bSelector, xValue)
+   IF AScan(aArray1, {|x|id == Eval(bSelector, x)}) == 0
       AAdd(aArray1, xValue)
    ENDIF
 
@@ -160,7 +160,7 @@ PROCEDURE RemoveAll(aArray, bPredicate)
    LOCAL i
 
    FOR i := 1 TO Len(aArray)
-      IF eval(bPredicate, aArray[i])
+      IF Eval(bPredicate, aArray[i])
           hb_ADel(aArray, i, .T.)
           i--
       ENDIF
@@ -169,7 +169,7 @@ PROCEDURE RemoveAll(aArray, bPredicate)
 RETURN
 
 FUNCTION aReplaceNilBy(aArray, xValue)
-RETURN AEval(aArray, {|x, n|iif(x == NIL, aArray[n] := xValue, NIL)})
+RETURN AEval(aArray, {|x, n|IIf(x == NIL, aArray[n] := xValue, NIL)})
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -303,7 +303,7 @@ FUNCTION ToDictionary(aArray, bKeySelector)
    LOCAL result := Dictionary():new()
 
    FOR EACH item IN aArray
-      result:aadd(eval(bKeySelector, item), item)
+      result:aadd(Eval(bKeySelector, item), item)
    NEXT
 
 RETURN result

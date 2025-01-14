@@ -317,7 +317,7 @@ CLASS BooleanExpression FROM ConditionBase
    DATA oExpression
 
    EXPORTED:
-   ACCESS Value INLINE iif(::lDenied_, iif(Upper(::oExpression:Value) == ".T.", ".F.", ".T."), ::oExpression:Value)
+   ACCESS Value INLINE IIf(::lDenied_, IIf(Upper(::oExpression:Value) == ".T.", ".F.", ".T."), ::oExpression:Value)
 
    EXPORTED:
    ACCESS lDenied

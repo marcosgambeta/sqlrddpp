@@ -62,8 +62,8 @@ FUNCTION OraExecSql(n, c, adata)
 
    IF aData != NIL .AND. HB_ISARRAY(adata)
       FOR i := Len(aData) TO 1 STEP -1
-         cBind := ":" + AllTrim(str(i))
-         c := strtran(c, cBind, sr_cdbvalue(adata[i]))
+         cBind := ":" + AllTrim(Str(i))
+         c := StrTran(c, cBind, sr_cdbvalue(adata[i]))
       NEXT i
    ENDIF
 
@@ -77,7 +77,7 @@ FUNCTION OraSeek(nCursor, aData, cTable, cWhere, aVarSust)
    LOCAL cSql := "select * from " + cTable
    LOCAL nRet
 
-   IF !empty(cWhere)
+   IF !Empty(cWhere)
       cSql += " where " + cWhere
    ENDIF
    aOraClipCursors[nCursor]["oraseek"] := .T.
@@ -135,12 +135,12 @@ FUNCTION OraSel1(n, aret, csql, adata)
             FOR EACH atmp IN aOraClipCursors[n]["aFields"]
                /*
                IF "TO_CHAR(" $ Upper(atmp[1])
-                  atmp[1] := substr(atmp[1], at("TO_DATE(", Upper(atmp[1])) + 9)
-                  atmp[1] := substr(atmp[1], 1, at(",", Upper(atmp[1])) - 1)
+                  atmp[1] := SubStr(atmp[1], At("TO_DATE(", Upper(atmp[1])) + 9)
+                  atmp[1] := SubStr(atmp[1], 1, At(",", Upper(atmp[1])) - 1)
                ENDIF
                if "DECODE(" $ Upper(atmp[1])
-                  atmp[1] := substr(atmp[1], at("DECODE(", Upper(atmp[1])) + 8)
-                  atmp[1] := substr(atmp[1], 1, at(",", Upper(atmp[1])) - 1)
+                  atmp[1] := SubStr(atmp[1], At("DECODE(", Upper(atmp[1])) + 8)
+                  atmp[1] := SubStr(atmp[1], 1, At(",", Upper(atmp[1])) - 1)
                   ENDIF
                */
                atmp[1] := "fld" + strzero(ncount++, 5)
@@ -148,8 +148,8 @@ FUNCTION OraSel1(n, aret, csql, adata)
 
             fclose(HB_FTEMPCREATE(".", "tmp", , @cTmpFile))
             aOraClipCursors[n]["aliastmp"] := StrTran(StrTran(cTmpFile, ".", ""), "\", "")
-            IF file(strtran(cTmpfile, ".\", ""))
-               ferase(strtran(cTmpfile, ".\", ""))
+            IF file(StrTran(cTmpfile, ".\", ""))
+               ferase(StrTran(cTmpfile, ".\", ""))
             ENDIF
             IF file(cTmpfile)
                ferase(cTmpfile)
@@ -157,7 +157,7 @@ FUNCTION OraSel1(n, aret, csql, adata)
             aOraClipCursors[n]["tmpfile"] := cTmpFile
             dbCreate(cTmpFile, SR_AdjustNum(aOraClipCursors[n]["aFields"]), SR_SetRDDTemp())
             dbuseArea(.T., SR_SetRDDTemp(), cTmpFile, aOraClipCursors[n]["aliastmp"])
-            cTmpFile := strtran(cTmpfile, ".\", "")
+            cTmpFile := StrTran(cTmpfile, ".\", "")
             OraFetch(n)
             aRet := aOraClipCursors[n]["data"]
 
@@ -193,8 +193,8 @@ FUNCTION OraSel1(n, aret, csql, adata)
    ENDIF
 
    FOR i := 1 TO Len(aData)
-      cBind := ":" + AllTrim(str(i))
-      cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
+      cBind := ":" + AllTrim(Str(i))
+      cSql := StrTran(cSql, cBind, sr_cdbvalue(adata[i]))
    NEXT i
    //nError := sr_getconnection():exec(csql, , .T., @aret)
    IF "ROWID" $ csql
@@ -223,8 +223,8 @@ FUNCTION OraSel1(n, aret, csql, adata)
          nlasterror := 0
          fclose(HB_FTEMPCREATE(".", "tmp", , @cTmpFile))
          aOraClipCursors[n]["aliastmp"] := StrTran(StrTran(cTmpFile, ".", ""), "\", "")
-         IF file(strtran(cTmpfile, ".\", ""))
-            ferase(strtran(cTmpfile, ".\", ""))
+         IF file(StrTran(cTmpfile, ".\", ""))
+            ferase(StrTran(cTmpfile, ".\", ""))
          ENDIF
          IF file(cTmpfile)
             ferase(cTmpfile)
@@ -232,12 +232,12 @@ FUNCTION OraSel1(n, aret, csql, adata)
          FOR EACH atmp IN aOraClipCursors[n]["aFields"]
             /*
             IF "TO_CHAR(" $ atmp[1]
-               atmp[1] := substr(atmp[1], at("TO_DATE(", Upper(atmp[1])) + 9)
-               atmp[1] := substr(atmp[1], 1, at(",", Upper(atmp[1])) - 1)
+               atmp[1] := SubStr(atmp[1], At("TO_DATE(", Upper(atmp[1])) + 9)
+               atmp[1] := SubStr(atmp[1], 1, At(",", Upper(atmp[1])) - 1)
             ENDIF
             IF "DECODE(" $ Upper(atmp[1])
-               atmp[1] := substr(atmp[1], at("DECODE(", Upper(atmp[1])) + 8)
-               atmp[1] := substr(atmp[1], 1, at(",", Upper(atmp[1])) - 1)
+               atmp[1] := SubStr(atmp[1], At("DECODE(", Upper(atmp[1])) + 8)
+               atmp[1] := SubStr(atmp[1], 1, At(",", Upper(atmp[1])) - 1)
             ENDIF
             */
             atmp[1] := "fld" + strzero(ncount++, 5)
@@ -246,7 +246,7 @@ FUNCTION OraSel1(n, aret, csql, adata)
          aOraClipCursors[n]["tmpfile"] := cTmpFile
          dbCreate(cTmpFile, SR_AdjustNum(aOraClipCursors[n]["aFields"]), SR_SetRDDTemp())
          dbuseArea(.T., SR_SetRDDTemp(), cTmpFile, aOraClipCursors[n]["aliastmp"])
-         cTmpFile := strtran(cTmpfile, ".\", "")
+         cTmpFile := StrTran(cTmpfile, ".\", "")
          orafetch(n)
          aret := aOraClipCursors[n]["data"]
       ELSE
@@ -301,8 +301,8 @@ FUNCTION OraDelete(nCursor2, cTabOrgMat, cwhere, adata)
       cSql +=  " where " +  cwhere
    ELSEIF pCount() == 4
       FOR i := 1 TO Len(aData)
-         cBind := ":" + AllTrim(str(i))
-         cwhere := strtran(cwhere, cBind, sr_cdbvalue(adata[i]))
+         cBind := ":" + AllTrim(Str(i))
+         cwhere := StrTran(cwhere, cBind, sr_cdbvalue(adata[i]))
       NEXT i
       cSql += " where " +  cwhere
    ENDIF
@@ -367,14 +367,14 @@ FUNCTION OraUpdate(nCursor, cTabAutos, aCols, aDadosAlt, cWhere, aChave)
          cSql += acols[n ] + "=" + sr_cdbvalue(aDadosAlt[n]) + ","
       ENDIF
    NEXT n
-   cSql := substr(csql, 1, Len(csql) - 1)
+   cSql := SubStr(csql, 1, Len(csql) - 1)
 
    IF pcount() == 5
       csql +=  " where " +  cwhere
    ELSEIF pcount() == 6
       FOR i := Len(aChave) TO 1 STEP -1
-         cBind := ":" + AllTrim(str(i))
-         cwhere := strtran(cwhere, cBind, sr_cdbvalue(aChave[i]))
+         cBind := ":" + AllTrim(Str(i))
+         cwhere := StrTran(cwhere, cBind, sr_cdbvalue(aChave[i]))
       NEXT i
       cSql += " where " +  cwhere
    ENDIF
@@ -419,7 +419,7 @@ FUNCTION OraLogon(cCnxName, cUser, cPwd, cAlias, nCnxType)
    LOCAL nRet
 
    cString := "UID=" + cUSer + ";PWD=" + cPwd
-   IF !empty(cAlias)
+   IF !Empty(cAlias)
       cString += ";TNS=" + cAlias
    ENDIF
    nRet := sr_addconnection(CONNECT_ORACLE, cstring)
@@ -433,7 +433,7 @@ FUNCTION OraLogon(cCnxName, cUser, cPwd, cAlias, nCnxType)
       aOraclipHash[cCnxName]["pwd"] := cPwd
    ENDIF
 
-RETURN iif(nRet > 0, 0, nret)
+RETURN IIf(nRet > 0, 0, nret)
 
 FUNCTION cslogoff(cCnxName)
 RETURN OraLogoff(cCnxName)
@@ -445,7 +445,7 @@ FUNCTION OraLogoff(cCnxName)
 
    BEGIN SEQUENCE WITH __BreakBlock()
       hData := aOraclipHash[cCnxName]
-      IF !empty(hdata)
+      IF !Empty(hdata)
          sr_endconnection(hData["nRet"])
          aOraclipHash[cCnxName]["nRet"] := NIL
       ENDIF
@@ -605,8 +605,8 @@ FUNCTION OraSingle(n, csql, adata)
    ENDIF
 
    FOR i := 1 TO Len(aData)
-      cBind := ":" + AllTrim(str(i))
-      cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
+      cBind := ":" + AllTrim(Str(i))
+      cSql := StrTran(cSql, cBind, sr_cdbvalue(adata[i]))
    NEXT i
 
    BEGIN SEQUENCE WITH __BreakBlock()
@@ -667,11 +667,11 @@ FUNCTION OraInsert(nCursor, cTable, aCols, aData)
    ENDIF
 
    IF Len(acols ) > 0
-      cSql := substr(cSql, 1, Len(cSql)-1) + ") VALUES ("
+      cSql := SubStr(cSql, 1, Len(cSql)-1) + ") VALUES ("
    ELSE
       csql += " values ( "
    ENDIF
-   cValues := substr(cValues, 1, Len(cValues)-1) + ")"
+   cValues := SubStr(cValues, 1, Len(cValues)-1) + ")"
    cSql += cValues
 
    BEGIN SEQUENCE WITH __BreakBlock()
@@ -711,8 +711,8 @@ FUNCTION OraCount(nCursor, cTabela, cWhere, aVarSust)
    ELSEIF pCount() == 4
       cSql := "select count(*) from " +cTabela
       FOR i := 1 TO Len(aVarSust)
-         cBind := ":" + AllTrim(str(i))
-         cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
+         cBind := ":" + AllTrim(Str(i))
+         cwhere := StrTran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
    ENDIF
@@ -774,8 +774,8 @@ FUNCTION OraPLSQL(nCursor, cPLSQL, aVarSust)
    lReleaseBind := .T.
    IF HB_ISARRAY(aVarSust)
       FOR i := Len(aVarSust) TO 1 STEP -1
-         cBind := ":" + AllTrim(str(i))
-         cPLSQL := strtran(cPLSQL, cBind, sr_cdbvalue(aVarSust[i]))
+         cBind := ":" + AllTrim(Str(i))
+         cPLSQL := StrTran(cPLSQL, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
    ENDIF
    IF Len(hplVars) > 0
@@ -863,7 +863,7 @@ FUNCTION CSXsetFILTER(a)
    IF Len(a) == 1
       (alias())->(sr_setfilter(a[1]))
    ELSEIF Len(a) == 2
-      cFilter := strtran(a[1], ":1", sr_cdbvalue(a[2]))
+      cFilter := StrTran(a[1], ":1", sr_cdbvalue(a[2]))
       (alias())->(sr_setfilter(a[1]))
    ENDIF
 
@@ -924,8 +924,8 @@ FUNCTION OraMax(nCursor, cTable, cColumn, cWhere, aVarSust)
       cSql +=  " where " + cwhere
    ELSEIF pCount() == 5
       FOR i := 1 TO Len(aVarSust)
-         cBind := ":" + AllTrim(str(i))
-         cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
+         cBind := ":" + AllTrim(Str(i))
+         cwhere := StrTran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
    ENDIF
@@ -1032,8 +1032,8 @@ FUNCTION OraSelect(n, aret, csql, adata, nRows)
    ENDIF
 
    FOR i := Len(aData) TO 1 STEP -1
-      cBind := ":" + AllTrim(str(i))
-      cSql := strtran(cSql, cBind, sr_cdbvalue(adata[i]))
+      cBind := ":" + AllTrim(Str(i))
+      cSql := StrTran(cSql, cBind, sr_cdbvalue(adata[i]))
    NEXT i
    nError := ExecuteSql(csql, @cursor, n) // sr_getconnection():exec(csql, , .T., @aret)
    IF nError == 0
@@ -1144,8 +1144,8 @@ FUNCTION Orasum(nCursor, cTable, cColumn , cWhere , aVarSust)
       cSql +=  " where " + cwhere
    ELSEIF pCount() == 5
       FOR i := 1 TO Len(aVarSust)
-         cBind := ":" + AllTrim(str(i))
-         cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
+         cBind := ":" + AllTrim(Str(i))
+         cwhere := StrTran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
    ENDIF
@@ -1174,7 +1174,7 @@ FUNCTION csxBegin()
    SR_BeginTransaction()
    oCnn := sr_getconnection()
 
-RETURN iif(oCnn:nTransacCount > 0, 0, -1)
+RETURN IIf(oCnn:nTransacCount > 0, 0, -1)
 
 FUNCTION CSXCOMMIT()
 
@@ -1276,12 +1276,12 @@ FUNCTION csExecSQL(nCursor, cSQL, aVarSust)
    BEGIN SEQUENCE WITH __BreakBlock()
       hData := aOraClipCursors[nCursor]
       osql := sr_getconnection()
-      IF Upper(substr(cSql, 6)) == "BEGIN "
+      IF Upper(SubStr(cSql, 6)) == "BEGIN "
          IF pCount() == 3
             IF HB_ISARRAY(aVarSust)
                FOR i := Len(aVarSust) TO 1 STEP -1
-                  cBind := ":" + AllTrim(str(i) )
-                  cSQL := strtran(cSQL, cBind, sr_cdbvalue(aVarSust[i]))
+                  cBind := ":" + AllTrim(Str(i) )
+                  cSQL := StrTran(cSQL, cBind, sr_cdbvalue(aVarSust[i]))
                NEXT i
             ENDIF
          ENDIF
@@ -1411,8 +1411,8 @@ FUNCTION OraExists(nCursor, cTable, cWhere, aVarSust)
       cSql +=  " where " + cwhere
    ELSEIF pCount() == 4
       FOR i := 1 TO Len(aVarSust)
-         cBind := ":" + AllTrim(str(i))
-         cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
+         cBind := ":" + AllTrim(Str(i))
+         cwhere := StrTran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
    ENDIF
@@ -1442,8 +1442,8 @@ FUNCTION OraMin(nCursor, cTable, cColumn , cWhere , aVarSust)
       cSql +=  " where " + cwhere
    ELSEIF pCount() == 5
       FOR i := Len(aVarSust) TO 1 STEP -1
-         cBind := ":" + AllTrim(str(i))
-         cwhere := strtran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
+         cBind := ":" + AllTrim(Str(i))
+         cwhere := StrTran(cwhere, cBind, sr_cdbvalue(aVarSust[i]))
       NEXT i
       cSql += " where " +  cwhere
    ENDIF
@@ -1504,12 +1504,12 @@ FUNCTION OraTBrowse(nCursor1, cSql, c, oBrowse, bBLock)
       obrowse:forcestable()
       aReg := {}
       FOR i := 1 TO fcount()
-         //AAdd(aReg, eVal(obrowse:GetColumn(i):Block))
+         //AAdd(aReg, Eval(obrowse:GetColumn(i):Block))
          oCol := oBrowse:getcolumn(i)
          AAdd(aReg, fieldget(i))
       NEXT i
       nKey := inkey(0)
-      aRet := eval(bBLock, nkey, obrowse, aReg)
+      aRet := Eval(bBLock, nkey, obrowse, aReg)
       IF Aret == NIL
          LOOP
       ENDIF

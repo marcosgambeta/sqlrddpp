@@ -257,7 +257,7 @@ RETURN ::nRetCode
 
 METHOD FreeStatement() CLASS SR_ODBC
 
-   IF !empty(::hStmt) // != NIL // != 0
+   IF !Empty(::hStmt) // != NIL // != 0
       IF SR_FreeStm(::hStmt, SQL_DROP) != SQL_SUCCESS
          ::RunTimeErr("", "SQLFreeStmt [DROP] error" + SR_CRLF + SR_CRLF + ;
             "Last command sent to database : " + SR_CRLF + ::cLastComm)
@@ -291,7 +291,7 @@ METHOD AllocStatement() CLASS SR_ODBC
       ::lSetNext := .F.
       nRet := ::SetStmtOptions(::nSetOpt, ::nSetValue)
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
-         SR_MsgLogFile(SR_Msg(23) + " (" + AllTrim(str(nRet)) + ") : " + ::LastError())
+         SR_MsgLogFile(SR_Msg(23) + " (" + AllTrim(Str(nRet)) + ") : " + ::LastError())
       ENDIF
    ENDIF
 
@@ -331,11 +331,11 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
    IF lReSelect
       IF !Empty(cCommand)
-         nRet := ::Execute(cCommand + iif(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
+         nRet := ::Execute(cCommand + IIf(::lComments, " /* Open Workarea with custom SQL command */", ""), .F.)
       ELSE
          nRet := ::Execute("SELECT A.* FROM " + cTable + " A " + ;
-            iif(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
-            iif(::lComments, " /* Open Workarea */", ""), .F.)
+            IIf(lLoadCache, cWhere + " ORDER BY A." + cRecnoName, " WHERE 1 = 0") + ;
+            IIf(::lComments, " /* Open Workarea */", ""), .F.)
       ENDIF
 
       IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
@@ -404,9 +404,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          ENDIF
 */
          IF cType == "U"
-            ::RuntimeErr("", SR_Msg(21) + cName + " : " + str(nType))
+            ::RuntimeErr("", SR_Msg(21) + cName + " : " + Str(nType))
          ELSE
-            aFields[n] := {cName, cType, nLenField, iif(cType == "D", 0, nDec), nNull >= 1, nType, nLen, n, _nDec}
+            aFields[n] := {cName, cType, nLenField, IIf(cType == "D", 0, nDec), nNull >= 1, nType, nLen, n, _nDec}
          ENDIF
       ENDIF
 
@@ -472,7 +472,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::hEnv := hEnv
    ELSE
       ::nRetCode := nRet
-      SR_MsgLogFile("SQLALLOCENV Error" + str(nRet))
+      SR_MsgLogFile("SQLALLOCENV Error" + Str(nRet))
       RETURN SELF
    ENDIF
 
@@ -480,7 +480,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::hDbc := hDbc
    ELSE
       ::nRetCode := nRet
-      SR_MsgLogFile("SQLALLOCCONNECT Error" + str(nRet))
+      SR_MsgLogFile("SQLALLOCCONNECT Error" + Str(nRet))
       RETURN SELF
    ENDIF
 
@@ -514,7 +514,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    CASE SYSTEMID_AZURE
       ::exec("select cast( @@spid as numeric )", .T., .T., @aRet)
       IF Len(aRet) > 0
-         ::uSid := val(str(aRet[1, 1], 8, 0))
+         ::uSid := Val(Str(aRet[1, 1], 8, 0))
       ENDIF
       EXIT
    ENDSWITCH
@@ -530,13 +530,13 @@ METHOD End() CLASS SR_ODBC
    ::Commit(.T.)
 
    IF (nRet := SR_Disconn(::hDbc)) != SQL_SUCCESS
-      SR_MsgLogFile("Error disconnecting : " + str(nRet) + SR_CRLF + ::LastError())
+      SR_MsgLogFile("Error disconnecting : " + Str(nRet) + SR_CRLF + ::LastError())
    ELSE
       IF (nRet := SR_FreeCon(::hDbc)) != SQL_SUCCESS
-         SR_MsgLogFile("Error in SR_FreeCon() : " + str(nRet) + SR_CRLF + ::LastError())
+         SR_MsgLogFile("Error in SR_FreeCon() : " + Str(nRet) + SR_CRLF + ::LastError())
       ELSE
          If (nRet := SR_FreeEnv(::hEnv)) != SQL_SUCCESS
-            SR_MsgLogFile("Error in SR_FreeEnv() : " + str(nRet) + SR_CRLF + ::LastError())
+            SR_MsgLogFile("Error in SR_FreeEnv() : " + Str(nRet) + SR_CRLF + ::LastError())
          EndIf
       ENDIF
    ENDIF

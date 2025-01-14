@@ -136,11 +136,11 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
 
    cExpression := AllTrim(cExpression)
 
-   cAlias := iif((cNewAlias := ::ExtractAlias1(@cExpression)) != NIL, cNewAlias, cAlias)
+   cAlias := IIf((cNewAlias := ::ExtractAlias1(@cExpression)) != NIL, cNewAlias, cAlias)
 
    DO WHILE hb_regexLike("^\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*\?$", cExpression)
-      cExpression := AllTrim(substr(cExpression, 2, Len(cExpression) - 2))
-      cAlias := iif((cNewAlias := ::ExtractAlias2(@cExpression)) != NIL, cNewAlias, cAlias)
+      cExpression := AllTrim(SubStr(cExpression, 2, Len(cExpression) - 2))
+      cAlias := IIf((cNewAlias := ::ExtractAlias2(@cExpression)) != NIL, cNewAlias, cAlias)
       ::ResolveParenthesis(@cExpression)
    ENDDO
 
@@ -156,7 +156,7 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
       ENDIF
    NEXT i
 
-   cAlias := iif((cNewAlias := ::ExtractAlias3(@cExpression)) != NIL, cNewAlias, cAlias)
+   cAlias := IIf((cNewAlias := ::ExtractAlias3(@cExpression)) != NIL, cNewAlias, cAlias)
 
 RETURN NIL
 
@@ -198,7 +198,7 @@ METHOD RestoreParenthesis(cExpression) CLASS ParserBase
          ENDDO
       ELSEIF cExpression[i] == "?"
          cExpression[i] := cParenthesis
-         cParenthesis := iif(cParenthesis == "(", ")", "(")
+         cParenthesis := IIf(cParenthesis == "(", ")", "(")
       ENDIF
    NEXT i
 
@@ -416,7 +416,7 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
          oOperand1 := ::InternParse(aGroups[3, 1], cAlias)
          oOperand1:lDenied := .T.
       ELSE
-         cAlias := iif((cNewAlias := ::ExtractAlias3(@cExpression)) != NIL, cNewAlias, cAlias)
+         cAlias := IIf((cNewAlias := ::ExtractAlias3(@cExpression)) != NIL, cNewAlias, cAlias)
 
          oExpressionParser := ExpressionParser():new(cAlias)
 
