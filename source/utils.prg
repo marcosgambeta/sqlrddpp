@@ -60,9 +60,9 @@ REQUEST HB_Deserialize
 //REQUEST HB_DeserialNext
 #define FH_ALLOC_BLOCK     32
 
-Static DtAtiv, lHistorico
-Static _nCnt := 1
-Static lCreateAsHistoric := .F.
+Static s_DtAtiv, s_lHistorico
+Static s__nCnt := 1
+Static s_lCreateAsHistoric := .F.
 
 #ifdef HB_C52_UNDOC
 STATIC s_lNoAlert
@@ -459,7 +459,7 @@ RETURN NIL
 
 FUNCTION SR_GetActiveDt()
 
-RETURN DtAtiv
+RETURN s_DtAtiv
 
 /*------------------------------------------------------------------------*/
 
@@ -467,16 +467,16 @@ FUNCTION SR_SetActiveDt(d)
 
    DEFAULT d TO date()
 
-RETURN DtAtiv := d
+RETURN s_DtAtiv := d
 
 /*------------------------------------------------------------------------*/
 
 FUNCTION SR_SetActiveDate(d)
 
-   LOCAL dOld := DtAtiv
+   LOCAL dOld := s_DtAtiv
 
    IF d != NIL
-      DtAtiv := d
+      s_DtAtiv := d
    ENDIF
 
 RETURN dOld
@@ -485,7 +485,7 @@ RETURN dOld
 
 Init Procedure SR_IniDtAtiv()
 
-   DtAtiv := date()
+   s_DtAtiv := date()
 
 Return
 
@@ -493,21 +493,21 @@ Return
 
 FUNCTION SR_SetCreateAsHistoric(l)
 
-   LOCAL lOld := lCreateAsHistoric
+   LOCAL lOld := s_lCreateAsHistoric
    
    HB_SYMBOL_UNUSED(lOld)
 
    IF HB_ISLOGICAL(l) 
-      lCreateAsHistoric := l
+      s_lCreateAsHistoric := l
    ENDIF
 
-RETURN lCreateAsHistoric
+RETURN s_lCreateAsHistoric
 
 /*------------------------------------------------------------------------*/
 
 FUNCTION SR_HasHistoric()
 
-RETURN (lHistorico := .T.)
+RETURN (s_lHistorico := .T.)
 
 /*------------------------------------------------------------------------*/
 
@@ -900,13 +900,13 @@ FUNCTION SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
 
    oCnn := SR_GetConnection()
 
-   cAlias := "W" + StrZero(++_nCnt, 3)
-   cAl1   := "W" + StrZero(++_nCnt, 3)
-   cAl2   := "W" + StrZero(++_nCnt, 3)
+   cAlias := "W" + StrZero(++s__nCnt, 3)
+   cAl1   := "W" + StrZero(++s__nCnt, 3)
+   cAl2   := "W" + StrZero(++s__nCnt, 3)
    HB_SYMBOL_UNUSED(cAl2)
 
-   IF _nCnt >= 995
-      _nCnt := 1
+   IF s__nCnt >= 995
+      s__nCnt := 1
    ENDIF
 
    DEFAULT CurrDate TO SR_GetActiveDt()
@@ -938,12 +938,12 @@ FUNCTION SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
 
    oCnn := SR_GetConnection()
 
-   cAl1   := "W" + StrZero(++_nCnt, 3)
-   cAl2   := "W" + StrZero(++_nCnt, 3)
+   cAl1   := "W" + StrZero(++s__nCnt, 3)
+   cAl2   := "W" + StrZero(++s__nCnt, 3)
    HB_SYMBOL_UNUSED(cAl2)
 
-   IF _nCnt >= 995
-      _nCnt := 1
+   IF s__nCnt >= 995
+      s__nCnt := 1
    ENDIF
 
    DEFAULT CurrDate TO SR_GetActiveDt()
