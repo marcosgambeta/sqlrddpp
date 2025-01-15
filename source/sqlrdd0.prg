@@ -669,7 +669,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          ENDIF
 
          oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLOCKS WHERE SPID_ = " + Str(oCnn:uSid) + ;
-            " OR SPID_ NOT IN (select " + chr(34) + "AUDSID" + chr(34) + " from " + ;
+            " OR SPID_ NOT IN (select " + Chr(34) + "AUDSID" + Chr(34) + " from " + ;
             IIf(oCnn:lCluster, "g", "") + "v$session)", .F.)
          oCnn:Commit()
          EXIT
@@ -830,7 +830,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
       ENDIF
 
       oConnect:exec("INSERT INTO " + SR_GetToolsOwner() + "SR_MGMNTVERSION (VERSION_, SIGNATURE_) VALUES ('" + ;
-         HB_SR__MGMNT_VERSION + "', '" + DTOS(DATE()) + " " + TIME() + "')", .T.)
+         HB_SR__MGMNT_VERSION + "', '" + DToS(Date()) + " " + Time() + "')", .T.)
       oConnect:commit()
       oConnect:exec("DROP TABLE " + SR_GetToolsOwner() + "SR_MGMNTINDEXES", .F.)
       oConnect:commit()
@@ -1014,7 +1014,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
 
       lOld := SR_UseDeleteds(.F.)
 
-      dbCreate("SR_MGMNTLOGCHG", { { "SPID_",        "N", 12, 0 }, ;
+      DBCreate("SR_MGMNTLOGCHG", { { "SPID_",        "N", 12, 0 }, ;
                                    { "WPID_",        "N", 12, 0 }, ;
                                    { "TYPE_",        "C",  2, 0 }, ;
                                    { "APPUSER_",     "C", 50, 0 }, ;
@@ -1171,7 +1171,7 @@ FUNCTION SR_ReloadMLHash(oConnect)
    oConnect:commit()
 
    s_hMultilangColumns := hb_Hash()
-   hb_HAllocate(s_hMultilangColumns, max(10, Len(aRet)))
+   hb_HAllocate(s_hMultilangColumns, Max(10, Len(aRet)))
 
    FOR EACH aCol IN aRet
       s_hMultilangColumns[aCol[1] + aCol[2]] := aCol
@@ -1595,7 +1595,7 @@ FUNCTION SR_GetUniqueSystemID()
    i1 := HB_RANDOMINT(1, 99999999 )
    i2 := HB_RANDOMINT(1, 99999999 )
 
-RETURN AllTrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + strZero(i1, 8) + "__" + strZero(i2, 8)
+RETURN AllTrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + StrZero(i1, 8) + "__" + StrZero(i2, 8)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -1611,7 +1611,7 @@ FUNCTION SR_GetInternalID()
    i1 := HB_RANDOMINT(1, 99999999 )
    i2 := HB_RANDOMINT(1, 99999999 )
 
-   s_cIntenalID := AllTrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + strZero(i1, 8) + "__" + strZero(i2, 8)
+   s_cIntenalID := AllTrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + StrZero(i1, 8) + "__" + StrZero(i2, 8)
 
 RETURN s_cIntenalID
 
@@ -1739,7 +1739,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
             oWA:DropColumn("INDFOR_" + SubStr(aIndex[5], 2, 3), .F.)
          ENDIF
 
-         TEMPDROPCO->(dbCLoseArea())
+         TEMPDROPCO->(DBCloseArea())
       ENDIF
    NEXT
 
@@ -2094,7 +2094,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
          cIns := "INSERT INTO " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS ( LOCK_, WSID_, SPID_ ) VALUES ( '" + cValue + "', '" + SR_GetInternalID() + ;
             "', " + Str(oCnn:uSid) + " )"
-         cDel := "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (select " + chr(34) + "AUDSID" + chr(34) + " from " + ;
+         cDel := "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (select " + Chr(34) + "AUDSID" + Chr(34) + " from " + ;
             IIf(oCnn:lCluster, "g", "") + "v$session)"
          EXIT
       CASE SYSTEMID_POSTGR
@@ -2222,7 +2222,7 @@ FUNCTION SR_ListLocks(oCnn, lAll)
    SWITCH oCnn:oSqlTransact:nSystemID
    CASE SYSTEMID_ORACLE
       oCnn:oSqlTransact:exec("DELETE FROM " + SR_GetToolsOwner() + ;
-         "SR_MGMNTLOCKS WHERE SPID_ NOT IN (select " + chr(34) + "SID" + chr(34) + " from " + ;
+         "SR_MGMNTLOCKS WHERE SPID_ NOT IN (select " + Chr(34) + "SID" + Chr(34) + " from " + ;
          IIf(oCnn:lCluster, "g", "") + "v$session)", .F.)
       EXIT
    CASE SYSTEMID_INGRES
@@ -2491,7 +2491,7 @@ HB_FUNC( SETFIREBIRDUSESHORTASNUM )
 
 FUNCTION SR_Version()
 
-RETURN HB_SR__VERSION_STRING + ", Build " + AllTrim(strzero(HB_SQLRDD_BUILD, 4)) + ", " + HB_SR__MGMNT_VERSION
+RETURN HB_SR__VERSION_STRING + ", Build " + AllTrim(StrZero(HB_SQLRDD_BUILD, 4)) + ", " + HB_SR__MGMNT_VERSION
 
 //-------------------------------------------------------------------------------------------------------------------//
 

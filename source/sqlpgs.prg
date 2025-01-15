@@ -54,7 +54,7 @@
 #include "pgs.ch"
 #include "sqlrddsetup.ch"
 
-#define SR_CRLF   (chr(13) + chr(10))
+#define SR_CRLF   (Chr(13) + Chr(10))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -213,7 +213,7 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          cOwner := SubStr(cTbl, 1, At(".", cTbl) - 1)
          cTbl := SubStr(cTbl, At(".", cTbl) + 1)
       ENDIF
-      IF Left(cTbl, 1) == chr(34) // "
+      IF Left(cTbl, 1) == Chr(34) // "
          cTbl := SubStr(cTbl, 2, Len(cTbl) - 2)
       ENDIF
       aFields := PGSTableAttr(::hDbc, cTbl, cOwner)

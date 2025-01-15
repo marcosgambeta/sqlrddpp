@@ -55,7 +55,7 @@
 #include "mysql.ch"
 #include "sqlrddsetup.ch"
 
-#define SR_CRLF                   (chr(13) + chr(10))
+#define SR_CRLF                   (Chr(13) + Chr(10))
 #define DEBUGSESSION              .F.
 #define ARRAY_BLOCK               500
 #define MINIMAL_MYSQL_SUPPORTED   50100

@@ -54,7 +54,7 @@
 #include "error.ch"
 #include "sqlrddsetup.ch"
 
-#define SR_CRLF   (chr(13) + chr(10))
+#define SR_CRLF   (Chr(13) + Chr(10))
 
 REQUEST HB_Deserialize
 //REQUEST HB_DeserialNext
@@ -82,7 +82,7 @@ RETURN NIL
 
 FUNCTION SR_WorkareaFileName()
 
-   IF Empty(alias())
+   IF Empty(Alias())
       RETURN ""
    ENDIF
 
@@ -96,7 +96,7 @@ RETURN dbInfo(DBI_INTERNAL_OBJECT):cFileName
 
 FUNCTION SR_dbStruct()
 
-   IF Empty(alias())
+   IF Empty(Alias())
       RETURN {}
    ENDIF
 
@@ -104,7 +104,7 @@ FUNCTION SR_dbStruct()
       RETURN {}
    ENDIF
 
-RETURN aclone(dbInfo(DBI_INTERNAL_OBJECT):aFields)
+RETURN AClone(dbInfo(DBI_INTERNAL_OBJECT):aFields)
 
 /*------------------------------------------------------------------------*/
 
@@ -116,7 +116,7 @@ RETURN NIL
 
 FUNCTION SR_Val2Char(a, n1, n2)
 
-   SWITCH valtype(a)
+   SWITCH ValType(a)
    CASE "C"
    CASE "M"
       RETURN a
@@ -126,7 +126,7 @@ FUNCTION SR_Val2Char(a, n1, n2)
       ENDIF
       RETURN Str(a)
    CASE "D"
-      RETURN dtoc(a)
+      RETURN DToC(a)
    CASE "L"
       RETURN IIf(a, ".T.", ".F.")
    ENDSWITCH
@@ -241,13 +241,13 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
          SR_RuntimeErr(, "SR_ChengeStructure: Invalid arguments [1]: " + cTableName)
       ENDIF
 
-      cAlias   := alias()
+      cAlias   := Alias()
       nAlias   := select()
       cTblName := oWA:cFileName
       nOrd     := IndexOrd()
-      nReg     := recno()
+      nReg     := RecNo()
 
-      dbSetOrder(0)
+      DBSetOrder(0)
 
       SR_LogFile("changestruct.log", {oWA:cFileName, "Original Structure:", e"\r\n" + sr_showVector(oWA:aFields)})
       SR_LogFile("changestruct.log", {oWA:cFileName, "New Structure:", e"\r\n" + sr_showVector(aNewStruct)})
@@ -256,7 +256,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
          aNewStruct[i, 1] := Upper(AllTrim(aNewStruct[i, 1]))
          IF (n := AScan(oWA:aFields, {|x|x[1] == aNewStruct[i, 1]})) > 0
 
-            ASize(aNewStruct[i], max(Len(aNewStruct[i]), 5))
+            ASize(aNewStruct[i], Max(Len(aNewStruct[i]), 5))
 
             IF aNewStruct[i, 2] == oWA:aFields[n, 2] .AND. aNewStruct[i, 3] == oWA:aFields[n, 3] .AND. aNewStruct[i, 4] == oWA:aFields[n, 4]
                // Structure is identical. Only need to check for NOT NULL flag.
@@ -272,19 +272,19 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
             ELSEIF oWA:oSql:nSystemID == SYSTEMID_IBMDB2
                SR_LogFile("changestruct.log", {oWA:cFileName, "Column cannot be changed:", aNewStruct[i, 1], " - Operation not supported by back end database"})
             ELSEIF aNewStruct[i, 2] == "M" .AND. oWA:aFields[n, 2] == "C"
-               AAdd(aToFix, aClone(aNewStruct[i]))
+               AAdd(aToFix, AClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", {oWA:cFileName, "Will Change data type of field:", aNewStruct[i, 1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ELSEIF aNewStruct[i, 2] == "C" .AND. oWA:aFields[n, 2] == "M"
-               AAdd(aToFix, aClone(aNewStruct[i]))
+               AAdd(aToFix, AClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", {oWA:cFileName, "Warning: Possible data loss changing data type:", aNewStruct[i, 1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ELSEIF aNewStruct[i, 2] != oWA:aFields[n, 2]
                IF aNewStruct[i, 2] $"CN" .AND. oWA:aFields[n, 2] $"CN" .AND. oWA:oSql:nSystemID == SYSTEMID_POSTGR
 
 *                   IF "8.4" $ oWA:oSql:cSystemVers .OR. "9.0" $ oWA:oSql:cSystemVers
                   IF oWA:oSql:lPostgresql8 .AND. !oWA:oSql:lPostgresql83
-                     AAdd(aDirect, aClone(aNewStruct[i]))
+                     AAdd(aDirect, AClone(aNewStruct[i]))
                   ELSE
-                     AAdd(aToFix, aClone(aNewStruct[i]))
+                     AAdd(aToFix, AClone(aNewStruct[i]))
                   ENDIF
                   SR_LogFile("changestruct.log", {oWA:cFileName, "Warning: Possible data loss changing field types:", aNewStruct[i, 1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
                ELSE
@@ -292,16 +292,16 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
                ENDIF
             ELSEIF aNewStruct[i, 3] >= oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"
 
-               AAdd(aDirect, aClone(aNewStruct[i]))
+               AAdd(aDirect, AClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", {oWA:cFileName, "Will Change field size:", aNewStruct[i, 1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3]})
             ELSEIF aNewStruct[i, 3] < oWA:aFields[n, 3] .AND. oWA:aFields[n, 2] $ "CN"
-               AAdd(aToFix, aClone(aNewStruct[i]))
+               AAdd(aToFix, AClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", {oWA:cFileName, "Warning: Possible data loss changing field size:", aNewStruct[i, 1], "from", oWA:aFields[n, 3], "to", aNewStruct[i, 3]})
             ELSE
                SR_LogFile("changestruct.log", {oWA:cFileName, "Column cannot be changed:", aNewStruct[i, 1]})
             ENDIF
          ELSE
-            AAdd(aToFix, aClone(aNewStruct[i]))
+            AAdd(aToFix, AClone(aNewStruct[i]))
             SR_LogFile("changestruct.log", {oWA:cFileName, "Will add column:", aNewStruct[i, 1]})
          ENDIF
       NEXT i
@@ -309,7 +309,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       FOR i := 1 TO Len(oWA:aFields)
          IF (n := AScan(aNewStruct, {|x|x[1] == oWA:aFields[i, 1]})) == 0
             IF (!oWA:aFields[i, 1] == oWA:cRecnoName) .AND. (!oWA:aFields[i, 1] == oWA:cDeletedName) .AND. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
-               AAdd(aToDrop, aClone(oWA:aFields[i]))
+               AAdd(aToDrop, AClone(oWA:aFields[i]))
                SR_LogFile("changestruct.log", {oWA:cFileName, "Will drop:", oWA:aFields[i, 1]})
             ENDIF
          ENDIF
@@ -343,18 +343,18 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       NEXT i
 
       SELECT (nALias)
-      dbCloseArea()
+      DBCloseArea()
 
       SR_CleanTabInfoCache()
 
       // recover table status
 
       SELECT (nAlias)
-      dbUseArea(.F., "SQLRDD", cTblName, cAlias)
+      DBUseArea(.F., "SQLRDD", cTblName, cAlias)
       IF OrdCount() >= nOrd
-         dbSetOrder(nOrd)
+         DBSetOrder(nOrd)
       ENDIF
-      dbGoTo(nReg)
+      DBGoTo(nReg)
 
    ELSE
       SR_RuntimeErr(, "SR_ChengeStructure: Not a SQLRDD workarea.")
@@ -465,7 +465,7 @@ RETURN s_DtAtiv
 
 FUNCTION SR_SetActiveDt(d)
 
-   DEFAULT d TO date()
+   DEFAULT d TO Date()
 
 RETURN s_DtAtiv := d
 
@@ -485,7 +485,7 @@ RETURN dOld
 
 Init Procedure SR_IniDtAtiv()
 
-   s_DtAtiv := date()
+   s_DtAtiv := Date()
 
 Return
 
@@ -515,7 +515,7 @@ FUNCTION SR_cDBValue(uData, nSystemID)
 
    default nSystemID TO SR_GetConnection():nSystemID
 
-RETURN SR_SubQuoted(valtype(uData), uData, nSystemID)
+RETURN SR_SubQuoted(ValType(uData), uData, nSystemID)
 
 /*------------------------------------------------------------------------*/
 
@@ -535,9 +535,9 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    Case cType $ "CM"
       RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
-      RETURN "TO_DATE('" + RTrim(DtoS(uData)) + "','YYYYMMDD')"
+      RETURN "TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')"
    Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS)
-        RETURN "'" + transform(DtoS(uData), "@R 9999-99-99") + "'"
+        RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
       RETURN "'" + SR_dtosDot(uData) + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
@@ -545,11 +545,11 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
       RETURN "'" + SR_dtoDot(uData) + "'"
    Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
-      RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
+      RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
    Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
-      RETURN "{d '" + transform(DtoS(IIf(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
+      RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
    Case cType == "D"
-      RETURN "'" + dtos(uData) + "'"
+      RETURN "'" + DToS(uData) + "'"
    Case cType == "N"
       RETURN LTrim(Str(uData))
    Case cType == "L" .AND. (nSystemID == SYSTEMID_POSTGR .OR. nSystemID == SYSTEMID_FIREBR3)
@@ -563,12 +563,12 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN 'NULL'
       ENDIF
 
-      RETURN "'" + transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
+      RETURN "'" + Transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
    case ctype == "T" .AND. nSystemID == SYSTEMID_ORACLE
       IF Empty(uData)
          RETURN 'NULL'
       ENDIF
-      RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+      RETURN " TIMESTAMP '" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
    Case cType == 'T'
       IF Empty(uData)
          RETURN 'NULL'
@@ -602,10 +602,10 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    CASE "D"
       SWITCH nSystemID
       CASE SYSTEMID_ORACLE
-         RETURN "TO_DATE('" + RTrim(DtoS(uData)) + "','YYYYMMDD')"
+         RETURN "TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')"
       CASE SYSTEMID_IBMDB2
       CASE SYSTEMID_ADABAS
-         RETURN "'" + transform(DtoS(uData), "@R 9999-99-99") + "'"
+         RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
       CASE SYSTEMID_SQLBAS
          RETURN "'" + SR_dtosDot(uData) + "'"
       CASE SYSTEMID_INFORM
@@ -616,11 +616,11 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       CASE SYSTEMID_FIREBR3
       CASE SYSTEMID_FIREBR4
       CASE SYSTEMID_FIREBR5
-         RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
+         RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
       CASE SYSTEMID_CACHE
-         RETURN "{d '" + transform(DtoS(IIf(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
+         RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
       OTHERWISE
-         RETURN "'" + dtos(uData) + "'"
+         RETURN "'" + DToS(uData) + "'"
       ENDSWITCH
 
    CASE "N"
@@ -645,9 +645,9 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       ENDIF
       SWITCH nSystemID
       CASE SYSTEMID_POSTGR
-         RETURN "'" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+         RETURN "'" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       CASE SYSTEMID_ORACLE
-         RETURN " TIMESTAMP '" + transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+         RETURN " TIMESTAMP '" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       OTHERWISE
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
          cRet := hb_ttoc(uData)
@@ -683,29 +683,29 @@ FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
    BEGIN SEQUENCE WITH __BreakBlock()
 
       IF !sr_PhFile("long_qry.dbf")
-         dbCreate("long_qry.dbf", TRACE_STRUCT, "DBFNTX")
+         DBCreate("long_qry.dbf", TRACE_STRUCT, "DBFNTX")
       ENDIF
 
       DO WHILE .T.
-         dbUseArea(.T., "DBFNTX", "long_qry.dbf", "LONG_QRY", .T., .F.)
+         DBUseArea(.T., "DBFNTX", "long_qry.dbf", "LONG_QRY", .T., .F.)
          IF !NetErr()
             exit
          ENDIF
          hb_idleSleep(500 / 1000)
       ENDDO
 
-      LONG_QRY->(dbAppend())
+      LONG_QRY->(DBAppend())
       Replace LONG_QRY->DATA         with Date()
       Replace LONG_QRY->HORA         with Time()
       Replace LONG_QRY->COMANDO      with cComm
       Replace LONG_QRY->CUSTO        with nLimisencos
-      LONG_QRY->(dbCloseArea())
+      LONG_QRY->(DBCloseArea())
 
    RECOVER
 
    END SEQUENCE
 
-   dbSelectArea(nAlAtual)
+   DBSelectArea(nAlAtual)
 
 RETURN NIL
 
@@ -723,7 +723,7 @@ FUNCTION SR_uCharToVal(cVal, cType, nLen)
    CASE "M"
       RETURN cVal
    CASE "D"
-      RETURN ctod(cVal)
+      RETURN CToD(cVal)
    CASE "N"
       RETURN Val(cVal)
    CASE "L"
@@ -753,28 +753,28 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
    BEGIN SEQUENCE WITH __BreakBlock()
 
       IF !sr_phFile("sqllog.dbf")
-         dbCreate("sqllog.dbf", TRACE_STRUCT, "DBFNTX")
+         DBCreate("sqllog.dbf", TRACE_STRUCT, "DBFNTX")
       ENDIF
 
       DO WHILE .T.
-         dbUseArea(.T., "DBFNTX", "sqllog.dbf", "SQLLOG", .T., .F.)
+         DBUseArea(.T., "DBFNTX", "sqllog.dbf", "SQLLOG", .T., .F.)
          IF !NetErr()
             EXIT
          ENDIF
          hb_idleSleep(500 / 1000)
       ENDDO
 
-      SQLLOG->(dbAppend())
+      SQLLOG->(DBAppend())
       Replace SQLLOG->DATA         with Date()
       Replace SQLLOG->HORA         with Time()
       Replace SQLLOG->COMANDO      with cComm
-      SQLLOG->(dbCloseArea())
+      SQLLOG->(DBCloseArea())
 
    RECOVER
 
    END SEQUENCE
 
-   dbSelectArea(nAlAtual)
+   DBSelectArea(nAlAtual)
 
 RETURN NIL
 
@@ -813,7 +813,7 @@ RETURN cRet
 
 FUNCTION SR_Val2CharQ(uData)
 
-   LOCAL cType := valtype(uData)
+   LOCAL cType := ValType(uData)
 
    SWITCH cType
    CASE "C"
@@ -822,7 +822,7 @@ FUNCTION SR_Val2CharQ(uData)
    CASE "N"
       RETURN AllTrim(Str(uData))
    CASE "D"
-      RETURN dtoc(uData)
+      RETURN DToC(uData)
    CASE "T"
       RETURN hb_ttoc(uData)
    CASE "L"
@@ -854,7 +854,7 @@ FUNCTION SR_BlankVar(cType, nLen, nDec)
    CASE "L"
       RETURN .F.
    CASE "D"
-      RETURN ctod("")
+      RETURN CToD("")
    CASE "N"
       IF nDec > 0
          SWITCH ndec

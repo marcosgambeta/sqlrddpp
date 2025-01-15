@@ -47,21 +47,21 @@
 FUNCTION NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
 
    DbSetRelation(cAlias, bRelation, cRelation, lScoped)
-   RelationManager():new():AddRelation(EnchancedRelationFactory():new(), alias(), cAlias, cRelation)
+   RelationManager():new():AddRelation(EnchancedRelationFactory():new(), Alias(), cAlias, cRelation)
 
 RETURN NIL
 
 FUNCTION NewdbClearRelation()
 
    dbClearRelation()
-   RelationManager():new():Clear(alias())
+   RelationManager():new():Clear(Alias())
 
 RETURN NIL
 
 FUNCTION Newdbclearfilter()
 
    dbclearfilter()
-   oGetWorkarea(alias()):cFilterExpression := ""
+   oGetWorkarea(Alias()):cFilterExpression := ""
 
 RETURN NIL
 
@@ -84,8 +84,8 @@ PROCEDURE SelectFirstAreaNotInUse()
    LOCAL nArea
 
    FOR nArea := 1 TO 65534
-      IF Empty(alias(nArea))
-         dbSelectArea(nArea)
+      IF Empty(Alias(nArea))
+         DBSelectArea(nArea)
          EXIT
       ENDIF
    NEXT
@@ -462,7 +462,7 @@ METHOD new(pContext, pValue, pIgnoreRelations) CLASS ClipperExpression
 
    ::cContext := pContext
    ::cValue := pValue
-   ::lIgnoreRelations := pcount() == 3 .AND. pIgnoreRelations
+   ::lIgnoreRelations := PCount() == 3 .AND. pIgnoreRelations
 
 RETURN SELF
 
@@ -482,10 +482,10 @@ METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
    LOCAL oErr
 
    // can be very slow with relations...
-   nseconds := seconds()
+   nseconds := Seconds()
 
    BEGIN SEQUENCE WITH __BreakBlock()
-      if pcount() == 1 .AND. lIgnoreRelations
+      IF PCount() == 1 .AND. lIgnoreRelations
          save_slct := select()
          SelectFirstAreaNotInUse()
          USE &(oGetWorkarea(::cContext):cFileName) VIA "SQLRDD" ALIAS "AliasWithoutRelation"
@@ -507,7 +507,7 @@ RETURN result
 METHOD cType() CLASS ClipperExpression
 
    IF ::_cType == NIL
-      ::_cType := valtype(::cEvaluation())
+      ::_cType := ValType(::cEvaluation())
    ENDIF
 
 RETURN ::_cType
@@ -571,7 +571,7 @@ FUNCTION GetIndexes(lOrdered)
       NEXT i
    ENDIF
    IF lOrdered // order can change with set order to => we could also redefine DbSetOrder() to sort aIndexes each time the order change.
-      asort(::aIndexes, {|x, y|&(::cAlias)->(OrdNumber(x:cName)) < &(::cAlias)->(OrdNumber(y:cName))})
+      ASort(::aIndexes, {|x, y|&(::cAlias)->(OrdNumber(x:cName)) < &(::cAlias)->(OrdNumber(y:cName))})
    ENDIF
 
 RETURN ::aIndexes
@@ -601,7 +601,7 @@ FUNCTION GetFields()
    IF ::aDbFields == NIL
       save_slct := select()
       select(::cAlias)
-      nCount := fcount()
+      nCount := FCount()
       _aTypes := Array(nCount)
       _aNames := Array(nCount)
       _aLengths := Array(nCount)

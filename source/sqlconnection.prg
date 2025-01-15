@@ -58,7 +58,7 @@
 
 #define DEBUGSESSION     .F.
 
-#define SR_CRLF   (chr(13) + chr(10))
+#define SR_CRLF   (Chr(13) + Chr(10))
 
 STATIC s_lNwgOldCompat := .F.
 
@@ -268,7 +268,7 @@ METHOD LogQuery(cCommand, cType, nLogMode, nCost) CLASS SR_CONNECTION
    ENDIF
 
    cSql := "INSERT INTO " + ::cQueryOwner + "SR_MGMNTLOGCHG (SPID_, WPID_, TYPE_, APPUSER_, TIME_, QUERY_, CALLSTACK_, SITE_, CONTROL_, COST_ ) VALUES ( " + ;
-           Str(::uSid) + "," + Str(SR_GetCurrInstanceID()) + ", '" + cType + "','" + ::cAppUser + "','" + dtos(date()) + time() + strzero(seconds() * 1000, 8) + "'," + sr_cDbValue(cCommand, ::nSystemID) + "," + cStack + ",'" + ::cSite + "', NULL, " + Str(nCost) + " )"
+           Str(::uSid) + "," + Str(SR_GetCurrInstanceID()) + ", '" + cType + "','" + ::cAppUser + "','" + DToS(Date()) + Time() + StrZero(Seconds() * 1000, 8) + "'," + sr_cDbValue(cCommand, ::nSystemID) + "," + cStack + ",'" + ::cSite + "', NULL, " + Str(nCost) + " )"
    oSql:execute(cSql, , , .T.)
    oSql:FreeStatement()
 
@@ -474,7 +474,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
       ELSE
 
          ::nRetCode     := nRet
-         ::nMiliseconds := (Seconds()*100) - ::nMiliseconds
+         ::nMiliseconds := (Seconds() * 100) - ::nMiliseconds
 
          IF ::nMiliseconds > ::nTimeTraceMin
             SR_WriteTimeLog(cCommand, SELF, ::nMiliseconds)
@@ -495,14 +495,14 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                            nFieldRec := i
                         ENDIF
                      NEXT i
-                     dbCreate(cFile, SR_AdjustNum(aDb), SR_SetRDDTemp())
+                     DBCreate(cFile, SR_AdjustNum(aDb), SR_SetRDDTemp())
                   ELSE
-                     dbCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
+                     DBCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
                   ENDIF
 
-                  dbUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
+                  DBUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
                ELSE
-                  dbSelectArea(cAlias)
+                  DBSelectArea(cAlias)
                ENDIF
 
                n := 1
@@ -532,7 +532,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
                EndDo
 
-               dbGoTop()
+               DBGoTop()
 
             ELSEIF aArray == NIL
 
@@ -701,7 +701,7 @@ METHOD Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog) CLASS SR_CONNECTIO
 
          nRet := ::ExecuteRaw(cCommand)
          ::nRetCode := nRet
-         ::nMiliseconds := (Seconds()*100) - ::nMiliseconds
+         ::nMiliseconds := (Seconds() * 100) - ::nMiliseconds
 
          IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[5] == "1" .AND. ((!Upper(SubStr(LTrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK) .AND. (!lNeverLog)
             ::LogQuery(cCommand, cType, nLogMode, ::nMiliseconds)
@@ -973,7 +973,7 @@ RETURN NIL
 
 FUNCTION SR_AdjustNum(a)
 
-   LOCAL b := aClone(a)
+   LOCAL b := AClone(a)
    LOCAL i
 
    FOR i := 1 TO Len(b)
@@ -990,7 +990,7 @@ FUNCTION SR_AdjustNum(a)
 
       IF s_lNwgOldCompat
          IF b[i, 2] = "N" .AND. b[i, 4] >= (b[i, 3] - 1)
-            b[i, 4] := abs(b[i, 3] - 2)
+            b[i, 4] := Abs(b[i, 3] - 2)
          ENDIF
       ENDIF
 
@@ -1308,8 +1308,8 @@ METHOD SQLLen(nType, nLen, nDec) CLASS SR_CONNECTION
          nDec := 6
       ENDIF
       IF !(nLen = 38 .AND. nDec = 0)
-         nLen := min(nLen, 20)
-         nLen := max(nLen, 1)
+         nLen := Min(nLen, 20)
+         nLen := Max(nLen, 1)
       ENDIF
       EXIT
    CASE SQL_DATE

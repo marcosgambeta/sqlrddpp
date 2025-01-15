@@ -51,7 +51,7 @@
 #include "hbsql.ch"
 #include "sqlrddsetup.ch"
 
-#define SR_CRLF   (chr(13) + chr(10))
+#define SR_CRLF   (Chr(13) + Chr(10))
 
 /*
 * Readble Macros
@@ -62,11 +62,11 @@
 #define  SKIPFWD            nIP++;uData:=apCode[nIP]
 #define  PARAM_SOLV         IIf(HB_ISBLOCK(aParam[uData+1]),Eval(aParam[uData+1]),aParam[uData+1])
 #define  RECURSIVE_CALL     nIP++;cSql+=SR_SQLCodeGen2(apCode,aParam,nSystemId,lIdent,@nIP,nContext,@nSpaces,lParseTableName);Exit
-#define  GETPARAM           cSql+=IIf(uData+1<=Len(aParam),PARAM_SOLV,"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_QUOTED    cSql+=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV, nSystemID),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_VALUE     cSql+=IIf(uData+1<=Len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_VAL_2     uData:=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV,nSystemID),"##PARAM_"+strzero(uData+1,3)+"_NOT_SUPPLIED##")
-#define  GETPARAM_VALNN     cSql+=IIf(uData+1<=Len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID,.T.),"##PARAM_"+strzero(uData+1,3)+"_NOT_NULL_NOT_SUPPLIED##");nIP++;Exit
+#define  GETPARAM           cSql+=IIf(uData+1<=Len(aParam),PARAM_SOLV,"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define  GETPARAM_QUOTED    cSql+=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV, nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define  GETPARAM_VALUE     cSql+=IIf(uData+1<=Len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define  GETPARAM_VAL_2     uData:=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV,nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##")
+#define  GETPARAM_VALNN     cSql+=IIf(uData+1<=Len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID,.T.),"##PARAM_"+StrZero(uData+1,3)+"_NOT_NULL_NOT_SUPPLIED##");nIP++;Exit
 #define  FIX_PRE_WHERE      IIf(nContext==SQL_CONTEXT_SELECT_PRE_WHERE,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" WHERE "),IIf(nContext==SQL_CONTEXT_SELECT_PRE_WHERE2,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" AND "),))
 #define  PASSTHROUGH        nIP++;EXIT
 #define  IDENTSPACE         space(nSpaces)
@@ -283,7 +283,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_TABLE_PARAM
             SKIPFWD
             IF lParseTableName
-               aRet := Eval(s_bTableInfo, IIf(uData + 1 <= Len(aParam), IIf(HB_ISBLOCK(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + strzero(uData + 1, 3) + "_NOT_SUPPLIED##"), nSystemId)
+               aRet := Eval(s_bTableInfo, IIf(uData + 1 <= Len(aParam), IIf(HB_ISBLOCK(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + StrZero(uData + 1, 3) + "_NOT_SUPPLIED##"), nSystemId)
                IF nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
                ELSE
@@ -301,7 +301,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql +=  NEWLINE + IDENTSPACE + "  "
                ENDIF
             ELSE
-               uData := IIf(uData + 1 <= Len(aParam), IIf(HB_ISBLOCK(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + strzero(uData + 1, 3) + "_NOT_SUPPLIED##")
+               uData := IIf(uData + 1 <= Len(aParam), IIf(HB_ISBLOCK(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + StrZero(uData + 1, 3) + "_NOT_SUPPLIED##")
                IF nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += uData
                ELSE
@@ -618,7 +618,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                cAtual := "$"
                cAtual2 := "$"
 
-               aSort(aOuters,,, {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
+               ASort(aOuters,,, {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
                FOR EACH outer IN aOuters
                   IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
@@ -725,7 +725,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql += NEWLINE + IDENTSPACE + "FROM" + NEWLINE + IDENTSPACE + "  "
                   cAtual := "$"
                   cAtual2 := "$"
-                  //aSort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
+                  //ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
                   FOR EACH outer IN aOuters
                      //IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
@@ -771,7 +771,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cAtual := "$"
                   cAtual2 := "$"
 
-                  aSort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
+                  ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
                   FOR EACH outer IN aOuters
                      IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
@@ -1068,7 +1068,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             cSql += NEWLINE + IDENTSPACE + "FROM" + NEWLINE + IDENTSPACE + "  "
             cAtual := "$"
             cAtual2 := "$"
-            //aSort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
+            //ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
             FOR EACH outer IN aOuters
                //IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
@@ -1114,7 +1114,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             cAtual := "$"
             cAtual2 := "$"
 
-            aSort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
+            ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
             FOR EACH outer IN aOuters
                IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
@@ -1224,7 +1224,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
 FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
-   LOCAL cType := valtype(uData)
+   LOCAL cType := ValType(uData)
    LOCAL uElement
    LOCAL cRet := ""
 
@@ -1245,9 +1245,9 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
    CASE cType $ "CM"
       RETURN "'" + RTrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
    CASE cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
-      RETURN ("TO_DATE('" + RTrim(DtoS(uData)) + "','YYYYMMDD')")
+      RETURN ("TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')")
    CASE cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS )
-      RETURN ("'" + transform(DtoS(uData), "@R 9999-99-99") + "'")
+      RETURN ("'" + Transform(DToS(uData), "@R 9999-99-99") + "'")
    CASE cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
       RETURN ("'" + SR_dtosdot(uData) + "'")
    CASE cType == "D" .AND. nSystemID == SYSTEMID_INFORM
@@ -1255,13 +1255,13 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
    CASE cType == "D" .AND. nSystemID == SYSTEMID_INGRES
       RETURN ("'" + SR_dtoDot(uData) + "'")
    CASE cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
-      RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
+      RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
    CASE cType == "D" .AND. nSystemID == SYSTEMID_CACHE
-      RETURN "{d '" + transform(DtoS(IIf(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
+      RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
    CASE cType == "D" .AND. (nSystemID == SYSTEMID_MYSQL .OR. nSystemID == SYSTEMID_MARIADB)
-      RETURN ("str_to_date( '" + dtos(uData) + "', '%Y%m%d' )")
+      RETURN ("str_to_date( '" + DToS(uData) + "', '%Y%m%d' )")
    CASE cType == "D"
-      RETURN ("'" + dtos(uData) + "'")
+      RETURN ("'" + DToS(uData) + "'")
    CASE cType == "N"
       RETURN LTrim(Str(uData))
    CASE cType == "L" .AND. nSystemID == SYSTEMID_POSTGR
@@ -1294,10 +1294,10 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
    CASE "D"
       SWITCH nSystemID
       CASE SYSTEMID_ORACLE
-         RETURN "TO_DATE('" + RTrim(DtoS(uData)) + "','YYYYMMDD')"
+         RETURN "TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')"
       CASE SYSTEMID_IBMDB2
       CASE SYSTEMID_ADABAS
-         RETURN "'" + transform(DtoS(uData), "@R 9999-99-99") + "'"
+         RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
       CASE SYSTEMID_SQLBAS
          RETURN "'" + SR_dtosdot(uData) + "'"
       CASE SYSTEMID_INFORM
@@ -1308,14 +1308,14 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
       CASE SYSTEMID_FIREBR3
       CASE SYSTEMID_FIREBR4
       CASE SYSTEMID_FIREBR5
-         RETURN "'" + transform(DtoS(uData), "@R 9999/99/99") + "'"
+         RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
       CASE SYSTEMID_CACHE
-         RETURN "{d '" + transform(DtoS(IIf(year(uData) < 1850, stod("18500101"), uData)), "@R 9999-99-99") + "'}"
+         RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
       CASE SYSTEMID_MYSQL
       CASE SYSTEMID_MARIADB
-         RETURN "str_to_date( '" + dtos(uData) + "', '%Y%m%d' )"
+         RETURN "str_to_date( '" + DToS(uData) + "', '%Y%m%d' )"
       OTHERWISE
-         RETURN "'" + dtos(uData) + "'"
+         RETURN "'" + DToS(uData) + "'"
       ENDSWITCH
 
    CASE "N"
@@ -1351,7 +1351,7 @@ RETURN "NULL"
 
 FUNCTION SR_dtosdot(dData)
 
-   LOCAL cData := dtos(dData)
+   LOCAL cData := DToS(dData)
 
 RETURN SubStr(cData, 1, 4) + "-" + SubStr(cData, 5, 2) + "-" + SubStr(cData, 7, 2)
 
@@ -1361,7 +1361,7 @@ RETURN SubStr(cData, 1, 4) + "-" + SubStr(cData, 5, 2) + "-" + SubStr(cData, 7, 
 
 FUNCTION SR_dtoDot(dData)
 
-   LOCAL cData := dtos(dData)
+   LOCAL cData := DToS(dData)
 
 RETURN SubStr(cData, 1, 4) + "." + SubStr(cData, 5, 2) + "." + SubStr(cData, 7, 2)
 
@@ -1371,7 +1371,7 @@ RETURN SubStr(cData, 1, 4) + "." + SubStr(cData, 5, 2) + "." + SubStr(cData, 7, 
 
 FUNCTION SR_dtous(dData)
 
-   LOCAL cData := dtos(dData)
+   LOCAL cData := DToS(dData)
 
 RETURN SubStr(cData, 5, 2) + SubStr(cData, 7, 2) + SubStr(cData, 1, 4)
 

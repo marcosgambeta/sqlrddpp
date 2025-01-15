@@ -268,7 +268,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
    LOCAL aFilters := {}
 
    BEGIN SEQUENCE WITH __BreakBlock()
-      result := IIf(pcount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
+      result := IIf(PCount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
 
       IF oExpression:isKindOf("ConditionBase")
          IF Len(::aRelations) > 0
@@ -290,7 +290,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
 
             IF ::lFetchJoin
                addedAliases := {Lower(::_oDefaultContext:cAlias)}
-               aInitRelations := aclone(::aRelations)
+               aInitRelations := AClone(::aRelations)
                aSortedRelations := {}
                DO WHILE Len(aInitRelations) > 0
                   lProgress := .F.
@@ -340,7 +340,7 @@ METHOD InternalTranslate(oExpression, x) CLASS ExpressionTranslator
       IF ::lSimplifyCondition
          oExpression := ::_oConditionSimplifier:Simplify(oExpression)
       ENDIF
-      IF pcount() == 2 .AND. oExpression:lIsSimple .AND. oExpression:oExpression:ValueType == "value"
+      IF PCount() == 2 .AND. oExpression:lIsSimple .AND. oExpression:oExpression:ValueType == "value"
          x := Upper(oExpression:Value) == ".T." // Value take denied into account.
       ENDIF
       result := ::TranslateCondition(oExpression)
@@ -689,7 +689,7 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
          cSavedFormat := set(_SET_DATEFORMAT)
          dDate := oFunctionExpression:oClipperExpression:Evaluate()
          SET DATE AMERICAN
-         result := "'" + dtoc(dDate) + "'"
+         result := "'" + DToC(dDate) + "'"
          SET DATE FORMAT cSavedFormat
          RETURN result
       ENDIF
@@ -756,7 +756,7 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
          cSavedFormat := set(_SET_DATEFORMAT)
          dDate := oFunctionExpression:oClipperExpression:Evaluate()
          SET DATE AMERICAN
-         result := "'" + dtoc(dDate) + "'"
+         result := "'" + DToC(dDate) + "'"
          SET DATE FORMAT cSavedFormat
          RETURN result
       ENDIF
@@ -906,7 +906,7 @@ METHOD new(pWorkarea1, pWorkarea2, pExpression) CLASS EnchancedDirectRelation
    ::oSeekIndex := ::oWorkArea2:GetControllingIndex()
    indexLength := IIf(::oSeekIndex == NIL, 15, ::oSeekIndex:nLength)
    ::lSameLength := ::oClipperExpression:nLength == indexLength
-   ::nMaxLength := min(::oClipperExpression:nLength, indexLength)
+   ::nMaxLength := Min(::oClipperExpression:nLength, indexLength)
 
 RETURN SELF
 

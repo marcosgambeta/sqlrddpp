@@ -53,7 +53,7 @@
 #include "msg.ch"
 #include "sqlrddsetup.ch"
 
-#define SR_CRLF   (chr(13) + chr(10))
+#define SR_CRLF   (Chr(13) + Chr(10))
 
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500
@@ -614,14 +614,14 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
                      nFieldRec := i
                   ENDIF
                NEXT i
-               dbCreate(cFile, SR_AdjustNum(aDb), SR_SetRDDTemp())
+               DBCreate(cFile, SR_AdjustNum(aDb), SR_SetRDDTemp())
             ELSE
-               dbCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
+               DBCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
             ENDIF
 
-            dbUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
+            DBUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
          ELSE
-            dbSelectArea(cAlias)
+            DBSelectArea(cAlias)
          ENDIF
 
          n := 1
@@ -651,7 +651,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          ENDDO
 
-         dbGoTop()
+         DBGoTop()
 
       ELSEIF aArray == NIL
 

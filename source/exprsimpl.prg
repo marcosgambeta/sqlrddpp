@@ -185,7 +185,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
       RECOVER
       END SEQUENCE
       IF lEvaluated
-         SWITCH valtype(newValue)
+         SWITCH ValType(newValue)
          CASE "C"
             newValue := "'" + newValue + "'"
             result := ValueExpression():new(oExpression:cContext, newValue)
@@ -197,7 +197,7 @@ METHOD Simplify(oExpression) CLASS ExpressionSimplifier
             result := ValueExpression():new(oExpression:cContext, newValue)
             EXIT
          CASE "D"
-            newValue := "'" + dtoc(newValue) + "'"
+            newValue := "'" + DToC(newValue) + "'"
             result := FunctionExpression():new(oExpression:cContext, "ctod(" + newValue + ")", "ctod", {Parameter():new(ValueExpression():new(oExpression:cContext, newValue), .F.)})
          ENDSWITCH
       ENDIF
