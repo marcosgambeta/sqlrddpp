@@ -13,83 +13,81 @@ STATIC s_TRACE_STRUCT := { ;
                          {"COMANDO",    "M", 10, 0} ;
                        }
 
-/*
- * xHarbour Project source code:
- * DBEDIT() function
- *
- * Copyright 2003 Mauricio Abre <maurifull@datafull.com>
- * www - http://www.xharbour.org
- * www - http://www.harbour-project.org
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307 USA (or visit the web site http://www.gnu.org/).
- *
- * As a special exception, the Harbour Project gives permission for
- * additional uses of the text contained in its release of Harbour.
- *
- * The exception is that, if you link the Harbour libraries with other
- * files to produce an executable, this does not by itself cause the
- * resulting executable to be covered by the GNU General Public License.
- * Your use of that executable is in no way restricted on account of
- * linking the Harbour library code into it.
- *
- * This exception does not however invalidate any other reasons why
- * the executable file might be covered by the GNU General Public License.
- *
- * This exception applies only to the code released by the Harbour
- * Project under the name Harbour.  If you copy code from other
- * Harbour Project or Free Software Foundation releases into a copy of
- * Harbour, as the General Public License permits, the exception does
- * not apply to the code that you add in this way.  To avoid misleading
- * anyone as to the status of such modified files, you must delete
- * this exception notice from them.
- *
- * If you write modifications of your own for Harbour, it is your choice
- * whether to permit this exception to apply to your modifications.
- * If you do not wish that, delete this exception notice.
- *
- */
+//
+// xHarbour Project source code:
+// DBEDIT() function
+//
+// Copyright 2003 Mauricio Abre <maurifull@datafull.com>
+// www - http://www.xharbour.org
+// www - http://www.harbour-project.org
+//
 
-/*
- * NOTE: This is a total rewrite with all features previous dbedit() had
- *       plus a few more.
- *       It works with or w/o 5.3 extensions
- *       + Using 5.3 extensions gives mouse event handling :)
- *       + Features previous dbedit() had are:
- *         - User func can be a codeblock
- *         - No coords = full screen
- *         - No columns = fill with db structure
- *       + New features in this version:
- *         - Any column can be also a codeblock instead of a string
- *         - Heading/footing separator is single line instead of double line
- *           (see below in the code)
- *         - Columns are movable via K_CTRL_UP / K_CTRL_DOWN
- *         - A column can be an array of 2 items
- *           In this case, the second is the codeblock to do coloring :)
- *         - Userfunc is called with a third parameter, the actual TBRowse object
- *           This is very useful, it increases A LOT the power of dbedit()
- *         - UserFunc is also called once with nMode == -1 (initialization)
- *           Prior to begin browsing
- *         - You can pass pre/post blocks for later using in user func
- *           (combinated with the GET system)
- *
- * DBEdit() is no more deprecated :)
- * Have fun
- *                      Mauricio
- *
- */
+// $BEGIN_LICENSE$
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this software; see the file COPYING.  If not, write to
+// the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+// Boston, MA 02111-1307 USA (or visit the web site http://www.gnu.org/).
+//
+// As a special exception, the Harbour Project gives permission for
+// additional uses of the text contained in its release of Harbour.
+//
+// The exception is that, if you link the Harbour libraries with other
+// files to produce an executable, this does not by itself cause the
+// resulting executable to be covered by the GNU General Public License.
+// Your use of that executable is in no way restricted on account of
+// linking the Harbour library code into it.
+//
+// This exception does not however invalidate any other reasons why
+// the executable file might be covered by the GNU General Public License.
+//
+// This exception applies only to the code released by the Harbour
+// Project under the name Harbour.  If you copy code from other
+// Harbour Project or Free Software Foundation releases into a copy of
+// Harbour, as the General Public License permits, the exception does
+// not apply to the code that you add in this way.  To avoid misleading
+// anyone as to the status of such modified files, you must delete
+// this exception notice from them.
+//
+// If you write modifications of your own for Harbour, it is your choice
+// whether to permit this exception to apply to your modifications.
+// If you do not wish that, delete this exception notice.
+// $END_LICENSE$
+
+// NOTE: This is a total rewrite with all features previous dbedit() had
+//       plus a few more.
+//       It works with or w/o 5.3 extensions
+//       + Using 5.3 extensions gives mouse event handling :)
+//       + Features previous dbedit() had are:
+//         - User func can be a codeblock
+//         - No coords = full screen
+//         - No columns = fill with db structure
+//       + New features in this version:
+//         - Any column can be also a codeblock instead of a string
+//         - Heading/footing separator is single line instead of double line
+//           (see below in the code)
+//         - Columns are movable via K_CTRL_UP / K_CTRL_DOWN
+//         - A column can be an array of 2 items
+//           In this case, the second is the codeblock to do coloring :)
+//         - Userfunc is called with a third parameter, the actual TBRowse object
+//           This is very useful, it increases A LOT the power of dbedit()
+//         - UserFunc is also called once with nMode == -1 (initialization)
+//           Prior to begin browsing
+//         - You can pass pre/post blocks for later using in user func
+//           (combinated with the GET system)
+//
+// DBEdit() is no more deprecated :)
+// Have fun
+//                      Mauricio
 
 #include "dbedit.ch"
 #include "inkey.ch"
@@ -98,10 +96,9 @@ STATIC s_TRACE_STRUCT := { ;
 #include "common.ch"
 #include "tbrowse.ch"
 
-/* E.F. 2006/04/22 - The #define DE_APPEND is for Append mode in dbEdit.
- * I have used tbrowse "cargo" to assign true/false for that.
- * (Append mode is undocumented Clipper's dbEdit feature)
- */
+// E.F. 2006/04/22 - The #define DE_APPEND is for Append mode in dbEdit.
+// I have used tbrowse "cargo" to assign true/false for that.
+// (Append mode is undocumented Clipper's dbEdit feature)
 
 #ifndef DE_APPEND
 #define DE_APPEND  3
@@ -276,13 +273,13 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
    IF !Used()
 #ifdef HB_C52_STRICT
-      DBGoBottom() /* Clipper compliance: call dbgobotom() to forces error message. */
+      DBGoBottom() // Clipper compliance: call dbgobotom() to forces error message.
 #else
-      /* Call Errorsys() with error 2001 if not database in use. */
+      // Call Errorsys() with error 2001 if not database in use.
       _sr_Throw(ErrorNew("DBCMD", 0, 2001, procname(), "Workarea not in use"))
 #endif
    ELSEIF Eof() .AND. LastRec() > 0
-      /* DbEdit() moves cursor to the bottom record if Eof() is reached at init. */
+      // DbEdit() moves cursor to the bottom record if Eof() is reached at init.
       DBGoBottom()
    ENDIF
 
@@ -309,16 +306,15 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
    ENDIF
 
-   /* 17/05/2006 - E.F. - Check parameters type before continue.
-    * 1) Clipper avoid argument values if it is invalid.
-    *    xHarbour call a run time error. IMHO this is better solution to
-         avoid old errors in code and bad practices inherited from Clipper's days.
-    * 2) There is no error base reserved to dbEdit function, then I have
-    *    assigned the 1127 for this.
-   */
+   // 17/05/2006 - E.F. - Check parameters type before continue.
+   // 1) Clipper avoid argument values if it is invalid.
+   //    xHarbour call a run time error. IMHO this is better solution to
+   //    avoid old errors in code and bad practices inherited from Clipper's days.
+   // 2) There is no error base reserved to dbEdit function, then I have
+   //    assigned the 1127 for this.
 
-   /* Note: The column's type doesn't need to verify. If any column type is
-           invalid or empty, then the dbEdit() will ignore it. */
+   // Note: The column's type doesn't need to verify. If any column type is
+   //       invalid or empty, then the dbEdit() will ignore it.
 
    IF !HB_IsNil(nTop) .AND. !HB_IsNumeric(nTop)
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nTop) + ">", Procname() + " <nTop>"))
@@ -338,9 +334,8 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    nBottom := Min(MaxRow(), nBottom)
    nRight  := Min(MaxCol(), nRight)
 
-   /* In Clipper the <cUserFunc> paramenter only can be a
-    * string or NIL, but in xHarbour can be a codeblock also.
-   */
+   // In Clipper the <cUserFunc> paramenter only can be a
+   // string or NIL, but in xHarbour can be a codeblock also.
    IF !HB_IsNil(xUserFunc) .AND. (!HB_IsString(xUserFunc) .AND. !HB_IsBlock(xUserFunc) .AND. !HB_IsLogical(xUserFunc))
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(xUserFunc) + ">", Procname() + " <xUserFunc>"))
    ELSE
@@ -401,16 +396,16 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
    IIf(HB_ISNIL(acFootingSep) .AND. !Empty(acColumnFootings), acFootingSep := Chr(196) + Chr(193) + Chr(196), .T.)
 
-   /* 2007/JAN/30 - EF - To avoid dbedit blinking. */
+   // 2007/JAN/30 - EF - To avoid dbedit blinking.
    DispBegin()
 
-   /* Create Tbrowse object */
+   // Create Tbrowse object
    oTBR := TBrowseDB(nTop, nLeft, nBottom, nRight)
 
-   /* E.F. 2006/04/22 - Set append mode off by default */
+   // E.F. 2006/04/22 - Set append mode off by default
    oTBR:Cargo := .F.
 
-   /* E.F. 2006/04/22 - Use a custom 'skipper' to handle append mode */
+   // E.F. 2006/04/22 - Use a custom 'skipper' to handle append mode
    oTBR:SkipBlock := {|x|dbe_Skipper(x, oTBR, calias)}
    //oTBR:SkipBlock := {|x|Skipped(x, lappend)}
 
@@ -710,7 +705,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
       FErase(StrTran(cFiletoDelete, ".tmp", ".adi"))
    ENDIF
 
-/* Clipper's NG says that DBEdit always returns NIL, but doesn't. */
+// Clipper's NG says that DBEdit always returns NIL, but doesn't.
 RETURN 0 //.T.
 
 //-----------------------------------------------------//
@@ -936,19 +931,16 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql, cCount, c
 
 RETURN nRet
 
-/***
-*
-*  dbe_Skipper()
-*
-*  Handle record movement requests from Tbrowse object.
-*
-*  This is a special "skipper" that handles append mode. It
-*  takes two parameters instead of the usual one. The second
-*  parameter is a reference to the Tbrowse object itself. The
-*  Tbrowse's "cargo" variable contains information on whether
-*  append mode is turned on. This function was based from:
-*  clipper\source\samples\tbdemo.prg
-*/
+// dbe_Skipper()
+//
+// Handle record movement requests from Tbrowse object.
+//
+// This is a special "skipper" that handles append mode. It
+// takes two parameters instead of the usual one. The second
+// parameter is a reference to the Tbrowse object itself. The
+// Tbrowse's "cargo" variable contains information on whether
+// append mode is turned on. This function was based from:
+// clipper\source\samples\tbdemo.prg
 
 //---------------------------------------//
 STATIC FUNCTION dbe_Skipper(nSkip, oTb, calias)

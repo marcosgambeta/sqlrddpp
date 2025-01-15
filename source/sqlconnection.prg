@@ -154,7 +154,7 @@ CLASS SR_CONNECTION
    DATA nSetOpt
    DATA nSetValue
    DATA nMiliseconds
-   DATA cPort, cHost, oSock, cDBS, cDrv, cDTB, cHandle       /* RPC stuff */
+   DATA cPort, cHost, oSock, cDBS, cDrv, cDTB, cHandle       // RPC stuff
    DATA cCharSet
    DATA cNetLibrary
    DATA cApp
@@ -1022,7 +1022,7 @@ METHOD Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, c
    DEFAULT nPreFetch   TO 0
    DEFAULT cDSN        TO ""
    DEFAULT lCounter    TO .F.
-   DEFAULT lAutoCommit TO .F. /* by default support transactions */
+   DEFAULT lAutoCommit TO .F. // by default support transactions
 
    ::lAutoCommit  := lAutoCommit
    ::nVersion     := nVersion

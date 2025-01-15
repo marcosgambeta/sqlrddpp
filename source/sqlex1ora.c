@@ -44,16 +44,14 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-/*
-Quick to do list, 2009 feb 23:
-
-    4.4 - Review all filter functionalities in WHERE clauses and fully
-          implement thiswa->bConditionChanged support
-    4.5 - Good idea to bind both input and output for recor list
-
-5 - Finish implementation of iColumnListStatus strategy described in
-    getColumnListOra() function
-*/
+// Quick to do list, 2009 feb 23:
+//
+//     4.4 - Review all filter functionalities in WHERE clauses and fully
+//           implement thiswa->bConditionChanged support
+//     4.5 - Good idea to bind both input and output for recor list
+//
+// 5 - Finish implementation of iColumnListStatus strategy described in
+//     getColumnListOra() function
 
 #include "compat.h"
 #include <hbinit.h>
@@ -108,7 +106,7 @@ HB_EXTERN_BEGIN
 extern PHB_ITEM loadTagDefault(SQLEXORAAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder);
 HB_EXTERN_END
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #if 0
 static char * sqlSolveRestrictors(SQLEXORAAREAP thiswa)
@@ -124,7 +122,7 @@ static char * sqlSolveRestrictors(SQLEXORAAREAP thiswa)
 
 #define LOGFILE "oci2.log"
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ULONGLONG GetCurrentRecordNumOra(SQLEXORAAREAP thiswa)
 {
@@ -138,7 +136,7 @@ HB_ULONGLONG GetCurrentRecordNumOra(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_BOOL IsItemNull2(PHB_ITEM pFieldData, SQLEXORAAREAP thiswa)
 {
@@ -151,7 +149,7 @@ HB_BOOL IsItemNull2(PHB_ITEM pFieldData, SQLEXORAAREAP thiswa)
   return HB_FALSE;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE ConcludeSkipraw(SQLEXORAAREAP thiswa)
 {
@@ -167,7 +165,7 @@ static HB_ERRCODE ConcludeSkipraw(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void sqlGetCleanBufferOra(SQLEXORAAREAP thiswa)
 {
@@ -190,7 +188,7 @@ static void sqlGetCleanBufferOra(SQLEXORAAREAP thiswa)
   thiswa->sqlarea.area.fEof = HB_TRUE;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void setResultSetLimitOra(SQLEXORAAREAP thiswa, int iRows)
 {
@@ -238,7 +236,7 @@ void setResultSetLimitOra(SQLEXORAAREAP thiswa, int iRows)
   sprintf(thiswa->sLimit2, (const char *)fmt2, iRows);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_LONG getMessageNL(PHB_ITEM obj, const char *message)
 {
@@ -252,7 +250,7 @@ static void *getMessagePtr(PHB_ITEM obj, const char *message)
   return hb_itemGetPtr(hb_stackReturnItem());
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_LONG getMessageNI(PHB_ITEM obj, const char *message)
 {
@@ -260,7 +258,7 @@ static HB_LONG getMessageNI(PHB_ITEM obj, const char *message)
   return hb_itemGetNI(hb_stackReturnItem());
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static char *getMessageC(PHB_ITEM obj, const char *message)
 {
@@ -268,7 +266,7 @@ static char *getMessageC(PHB_ITEM obj, const char *message)
   return hb_itemGetC(hb_stackReturnItem());
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_BOOL getMessageL(PHB_ITEM obj, const char *message)
 {
@@ -276,7 +274,7 @@ static HB_BOOL getMessageL(PHB_ITEM obj, const char *message)
   return hb_itemGetL(hb_stackReturnItem());
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static PHB_ITEM getMessageItem(PHB_ITEM obj, const char *message)
 {
@@ -284,7 +282,7 @@ static PHB_ITEM getMessageItem(PHB_ITEM obj, const char *message)
   return hb_itemNew(hb_stackReturnItem());
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void createRecodListQueryOra(SQLEXORAAREAP thiswa)
 {
@@ -325,7 +323,7 @@ static void createRecodListQueryOra(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void createCountQuery(SQLEXORAAREAP thiswa)
 {
@@ -337,7 +335,7 @@ static void createCountQuery(SQLEXORAAREAP thiswa)
           CLOSE_QUALIFIER(thiswa), thiswa->sTable, thiswa->sWhere);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void getOrderByExpressionOra(SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints)
 {
@@ -380,7 +378,7 @@ void getOrderByExpressionOra(SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE getMissingColumn(SQLEXORAAREAP thiswa, PHB_ITEM pFieldData, HB_LONG lFieldPosDB)
 {
@@ -490,7 +488,7 @@ static HB_ERRCODE getMissingColumn(SQLEXORAAREAP thiswa, PHB_ITEM pFieldData, HB
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE SetBindValue2(PHB_ITEM pFieldData, COLUMNBINDORAP BindStructure, OCI_Statement *hStmt)
 {
@@ -710,7 +708,7 @@ HB_ERRCODE SetBindValue2(PHB_ITEM pFieldData, COLUMNBINDORAP BindStructure, OCI_
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE SetBindEmptylValue2(COLUMNBINDORAP BindStructure)
 {
@@ -754,7 +752,7 @@ HB_ERRCODE SetBindEmptylValue2(COLUMNBINDORAP BindStructure)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void ReleaseInsertRecordStructureOra(SQLEXORAAREAP thiswa, int iCols)
 {
@@ -797,7 +795,7 @@ void ReleaseInsertRecordStructureOra(SQLEXORAAREAP thiswa, int iCols)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void ReleaseCurrRecordStructureOra(SQLEXORAAREAP thiswa, int iCols)
 {
@@ -836,7 +834,7 @@ void ReleaseCurrRecordStructureOra(SQLEXORAAREAP thiswa, int iCols)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void ReleaseColStatementsOra(SQLEXORAAREAP thiswa, int iCols)
 {
@@ -865,7 +863,7 @@ void ReleaseColStatementsOra(SQLEXORAAREAP thiswa, int iCols)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void SetColStatementsOra(SQLEXORAAREAP thiswa)
 {
@@ -875,7 +873,7 @@ void SetColStatementsOra(SQLEXORAAREAP thiswa)
   memset(thiswa->colStmt, 0, hb_arrayLen(thiswa->aFields) * sizeof(STATEMENT_DATA));
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void ReleaseIndexBindStructureOra(SQLEXORAAREAP thiswa)
 {
@@ -913,7 +911,7 @@ void ReleaseIndexBindStructureOra(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 COLUMNBINDORAP GetBindStructOra(SQLEXORAAREAP thiswa, INDEXBINDORAP IndexBind)
 {
@@ -922,7 +920,7 @@ COLUMNBINDORAP GetBindStructOra(SQLEXORAAREAP thiswa, INDEXBINDORAP IndexBind)
   return pBind;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void BindAllIndexStmts(SQLEXORAAREAP thiswa)
 {
@@ -1033,7 +1031,7 @@ static void BindAllIndexStmts(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void FeedCurrentRecordToBindings(SQLEXORAAREAP thiswa)
 {
@@ -1122,7 +1120,7 @@ static void FeedCurrentRecordToBindings(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void SolveFiltersOra(SQLEXORAAREAP thiswa, HB_BOOL bWhere)
 {
@@ -1244,7 +1242,7 @@ void SolveFiltersOra(SQLEXORAAREAP thiswa, HB_BOOL bWhere)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void SetIndexBindStructureOra(SQLEXORAAREAP thiswa)
 {
@@ -1291,7 +1289,7 @@ void SetIndexBindStructureOra(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void SetCurrRecordStructureOra(SQLEXORAAREAP thiswa)
 {
@@ -1390,7 +1388,7 @@ void SetCurrRecordStructureOra(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE getWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType)
 {
@@ -1545,7 +1543,7 @@ static HB_ERRCODE getWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE getWorkareaParamsOra(SQLEXORAAREAP thiswa)
 {
@@ -1586,7 +1584,7 @@ HB_ERRCODE getWorkareaParamsOra(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE getPreparedRecordList(SQLEXORAAREAP thiswa, int iMax) // Returns HB_TRUE if any result found
 {
@@ -1738,7 +1736,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXORAAREAP thiswa, int iMax) // Retur
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE getRecordList(SQLEXORAAREAP thiswa, int iMax) // Returns HB_TRUE if any result found
 {
@@ -1831,7 +1829,7 @@ static HB_ERRCODE getRecordList(SQLEXORAAREAP thiswa, int iMax) // Returns HB_TR
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE getFirstColumnAsLong(SQLEXORAAREAP thiswa, HB_ULONG *szValue) // Returns OK if result set could be get
 {
@@ -1875,7 +1873,7 @@ static HB_ERRCODE getFirstColumnAsLong(SQLEXORAAREAP thiswa, HB_ULONG *szValue) 
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_BOOL getColumnListOra(SQLEXORAAREAP thiswa)
 {
@@ -1885,28 +1883,27 @@ HB_BOOL getColumnListOra(SQLEXORAAREAP thiswa)
   char *fName, *temp;
   int len;
 
-  /* How iColumnListStatus works:
-
-  Initial status is FIELD_LIST_LEARNING. It means it will as for ALL columns
-  in query because we do not know what will the application need. It will remain
-  like this until:
-
-  1. Field value is read, so it turns to FIELD_LIST_NEW_VALUE_READ. It means
-     application has read WA field information, so we now have a clue of what's
-     really needed to be included in query column list
-
-  2. New field list was created by this function (getColumnListOra) so now
-     iColumnListStatus turns to FIELD_LIST_STABLE. It means same column list
-     will be used for further queries until application reads a new field
-     (that is not included in this list) and changes the iColumnListStatus
-     status like in 1.1
-
-  3. If situation in item 1 happens in more than 10% of 'pageReadSize' records,
-     after iColumnListStatus assumes the FIELD_LIST_STABLE status, iColumnListStatus
-     must be FIELD_LIST_CHANGED, so current Buffer Pool cache should be descarted
-     and new query generated with new column list
-     THIS IS STILL NOT IMPLEMENTED
-  */
+  // How iColumnListStatus works:
+  //
+  // Initial status is FIELD_LIST_LEARNING. It means it will as for ALL columns
+  // in query because we do not know what will the application need. It will remain
+  // like this until:
+  //
+  // 1. Field value is read, so it turns to FIELD_LIST_NEW_VALUE_READ. It means
+  //    application has read WA field information, so we now have a clue of what's
+  //    really needed to be included in query column list
+  //
+  // 2. New field list was created by this function (getColumnListOra) so now
+  //    iColumnListStatus turns to FIELD_LIST_STABLE. It means same column list
+  //    will be used for further queries until application reads a new field
+  //    (that is not included in this list) and changes the iColumnListStatus
+  //    status like in 1.1
+  //
+  // 3. If situation in item 1 happens in more than 10% of 'pageReadSize' records,
+  //    after iColumnListStatus assumes the FIELD_LIST_STABLE status, iColumnListStatus
+  //    must be FIELD_LIST_CHANGED, so current Buffer Pool cache should be descarted
+  //    and new query generated with new column list
+  //    THIS IS STILL NOT IMPLEMENTED
 
   colName = (char *)hb_xgrabz(HB_SYMBOL_NAME_LEN + 1);
 
@@ -2007,7 +2004,7 @@ HB_BOOL getColumnListOra(SQLEXORAAREAP thiswa)
   return HB_FALSE;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDeleted)
 {
@@ -2285,7 +2282,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE trySkippingOnCache(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
 {
@@ -2361,7 +2358,7 @@ static HB_ERRCODE trySkippingOnCache(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
   return HB_FAILURE;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE prepareRecordListQueryOra(SQLEXORAAREAP thiswa)
 {
@@ -2426,7 +2423,7 @@ HB_ERRCODE prepareRecordListQueryOra(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_BOOL CreateSkipStmtOra(SQLEXORAAREAP thiswa)
 {
@@ -2516,7 +2513,7 @@ static HB_BOOL CreateSkipStmtOra(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraBof(SQLEXORAAREAP thiswa, HB_BOOL *bof)
 {
@@ -2536,7 +2533,7 @@ static HB_ERRCODE sqlExOraBof(SQLEXORAAREAP thiswa, HB_BOOL *bof)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraEof(SQLEXORAAREAP thiswa, HB_BOOL *eof)
 {
@@ -2563,7 +2560,7 @@ static HB_ERRCODE sqlExOraEof(SQLEXORAAREAP thiswa, HB_BOOL *eof)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraFound(SQLEXORAAREAP thiswa, HB_BOOL *found)
 {
@@ -2577,7 +2574,7 @@ static HB_ERRCODE sqlExOraFound(SQLEXORAAREAP thiswa, HB_BOOL *found)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraGoBottom(SQLEXORAAREAP thiswa)
 {
@@ -2663,7 +2660,7 @@ static HB_ERRCODE sqlExOraGoBottom(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraGoTo(SQLEXORAAREAP thiswa, HB_LONG recno)
 {
@@ -2724,7 +2721,7 @@ static HB_ERRCODE sqlExOraGoTo(SQLEXORAAREAP thiswa, HB_LONG recno)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraGoToId(SQLEXORAAREAP thiswa, PHB_ITEM pItem)
 {
@@ -2747,7 +2744,7 @@ static HB_ERRCODE sqlExOraGoToId(SQLEXORAAREAP thiswa, PHB_ITEM pItem)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraGoTop(SQLEXORAAREAP thiswa)
 {
@@ -2837,7 +2834,7 @@ static HB_ERRCODE sqlExOraGoTop(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraSeek(SQLEXORAAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_BOOL bFindLast)
 {
@@ -3041,7 +3038,7 @@ static HB_ERRCODE sqlExOraSeek(SQLEXORAAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraSkip(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
 {
@@ -3111,7 +3108,7 @@ static HB_ERRCODE sqlExOraSkip(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraSkipFilter(SQLEXORAAREAP thiswa, HB_LONG lUpDown)
 {
@@ -3183,15 +3180,14 @@ static HB_ERRCODE sqlExOraSkipFilter(SQLEXORAAREAP thiswa, HB_LONG lUpDown)
   {
     if (fBottom)
     {
-      /* GOTO EOF (phantom) record -
-         this is the only one place where GOTO is used by xHarbour
-         directly and RDD which does not operate on numbers should
-         serve this method only as SELF_GOEOF() synonym. If it's a
-         problem then we can remove this if and always use SELF_GOTOP()
-         but it also means second table scan if all records filtered
-         are out of filter so I do not want to do that. I will prefer
-         explicit add SELF_GOEOF() method
-       */
+      // GOTO EOF (phantom) record -
+      // this is the only one place where GOTO is used by xHarbour
+      // directly and RDD which does not operate on numbers should
+      // serve this method only as SELF_GOEOF() synonym. If it's a
+      // problem then we can remove this if and always use SELF_GOTOP()
+      // but it also means second table scan if all records filtered
+      // are out of filter so I do not want to do that. I will prefer
+      // explicit add SELF_GOEOF() method
       uiError = SELF_GOTO(&thiswa->sqlarea.area, 0);
     }
     else
@@ -3208,7 +3204,7 @@ static HB_ERRCODE sqlExOraSkipFilter(SQLEXORAAREAP thiswa, HB_LONG lUpDown)
   return uiError;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraSkipRaw(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
 {
@@ -3329,11 +3325,11 @@ static HB_ERRCODE sqlExOraSkipRaw(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
   return ConcludeSkipraw(thiswa);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraAddField NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraAppend(SQLEXORAAREAP thiswa)
 {
@@ -3357,11 +3353,11 @@ static HB_ERRCODE sqlExOraAppend(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraCreateFields NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraDeleteRec(SQLEXORAAREAP thiswa)
 {
@@ -3434,7 +3430,7 @@ static HB_ERRCODE sqlExOraDeleteRec(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraDeleted(SQLEXORAAREAP thiswa, HB_BOOL *isDeleted)
 {
@@ -3461,25 +3457,25 @@ static HB_ERRCODE sqlExOraDeleted(SQLEXORAAREAP thiswa, HB_BOOL *isDeleted)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraFieldCount NULL
 #define sqlExOraFieldDisplay NULL
 #define sqlExOraFieldInfo NULL
 #define sqlExOraFieldName NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraFlush(SQLEXORAAREAP thiswa)
 {
   return SELF_GOCOLD(&thiswa->sqlarea.area);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraGetRec NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraGetValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM value)
 {
@@ -3590,11 +3586,11 @@ static HB_ERRCODE sqlExOraGetValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraGetVarLen NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraGoCold(SQLEXORAAREAP thiswa)
 {
@@ -3675,12 +3671,12 @@ static HB_ERRCODE sqlExOraGoCold(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraGoHot NULL
 #define sqlExOraPutRec NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM value)
 {
@@ -3796,7 +3792,7 @@ static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraRecall(SQLEXORAAREAP thiswa)
 {
@@ -3847,7 +3843,7 @@ static HB_ERRCODE sqlExOraRecall(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraRecCount(SQLEXORAAREAP thiswa, HB_ULONG *recCount)
 {
@@ -3870,11 +3866,11 @@ static HB_ERRCODE sqlExOraRecCount(SQLEXORAAREAP thiswa, HB_ULONG *recCount)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraRecInfo NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraRecNo(SQLEXORAAREAP thiswa, HB_ULONG *recno)
 {
@@ -3900,7 +3896,7 @@ static HB_ERRCODE sqlExOraRecNo(SQLEXORAAREAP thiswa, HB_ULONG *recno)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraRecId(SQLEXORAAREAP thiswa, PHB_ITEM recno)
 {
@@ -3933,12 +3929,12 @@ static HB_ERRCODE sqlExOraRecId(SQLEXORAAREAP thiswa, PHB_ITEM recno)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraSetFieldExtent NULL
 #define sqlExOraAlias NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraClose(SQLEXORAAREAP thiswa)
 {
@@ -4047,7 +4043,7 @@ static HB_ERRCODE sqlExOraClose(SQLEXORAAREAP thiswa)
   return code; // (SUPER_CLOSE(&thiswa->sqlarea.area));
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraCreate(SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo)
 {
@@ -4061,11 +4057,11 @@ static HB_ERRCODE sqlExOraCreate(SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo)
   // from super class
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraInfo NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraNewArea(SQLEXORAAREAP thiswa)
 {
@@ -4138,7 +4134,7 @@ static HB_ERRCODE sqlExOraNewArea(SQLEXORAAREAP thiswa)
   return errCode;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraOpen(SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo)
 {
@@ -4164,11 +4160,11 @@ static HB_ERRCODE sqlExOraOpen(SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo)
   return errCode;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraRelease NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraStructSize(SQLEXORAAREAP thiswa, HB_USHORT *StructSize)
 {
@@ -4177,7 +4173,7 @@ static HB_ERRCODE sqlExOraStructSize(SQLEXORAAREAP thiswa, HB_USHORT *StructSize
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraSysName NULL
 #define sqlExOraEval NULL
@@ -4198,7 +4194,7 @@ static HB_ERRCODE sqlExOraStructSize(SQLEXORAAREAP thiswa, HB_USHORT *StructSize
 #define sqlExOraRelText NULL
 #define sqlExOraSetRel NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraOrderListAdd(SQLEXORAAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
@@ -4219,7 +4215,7 @@ static HB_ERRCODE sqlExOraOrderListAdd(SQLEXORAAREAP thiswa, LPDBORDERINFO pOrde
   return err;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraOrderListClear(SQLEXORAAREAP thiswa)
 {
@@ -4235,11 +4231,11 @@ static HB_ERRCODE sqlExOraOrderListClear(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraOrderListDelete NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraOrderListFocus(SQLEXORAAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
@@ -4275,12 +4271,12 @@ static HB_ERRCODE sqlExOraOrderListFocus(SQLEXORAAREAP thiswa, LPDBORDERINFO pOr
   return err;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraOrderListRebuild NULL
 #define sqlExOraOrderCondition NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraOrderCreate(SQLEXORAAREAP thiswa, LPDBORDERCREATEINFO pOrderCreateInfo)
 {
@@ -4317,7 +4313,7 @@ static HB_ERRCODE sqlExOraOrderCreate(SQLEXORAAREAP thiswa, LPDBORDERCREATEINFO 
   return err;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraOrderDestroy(SQLEXORAAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
@@ -4330,7 +4326,7 @@ static HB_ERRCODE sqlExOraOrderDestroy(SQLEXORAAREAP thiswa, LPDBORDERINFO pOrde
   return SUPER_ORDDESTROY(&thiswa->sqlarea.area, pOrderInfo);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraOrderInfo(SQLEXORAAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO pInfo)
 {
@@ -4396,7 +4392,7 @@ static HB_ERRCODE sqlExOraOrderInfo(SQLEXORAAREAP thiswa, HB_USHORT uiIndex, LPD
   return uiError;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraClearFilter(SQLEXORAAREAP thiswa)
 {
@@ -4408,14 +4404,14 @@ static HB_ERRCODE sqlExOraClearFilter(SQLEXORAAREAP thiswa)
   return SUPER_CLEARFILTER(&thiswa->sqlarea.area);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraClearLocate NULL
 #define sqlExOraClearScope NULL
 #define sqlExOraCountScope NULL
 #define sqlExOraFilterText NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraScopeInfo(SQLEXORAAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem)
 {
@@ -4427,7 +4423,7 @@ static HB_ERRCODE sqlExOraScopeInfo(SQLEXORAAREAP thiswa, HB_USHORT nScope, PHB_
   return SUPER_SCOPEINFO(&thiswa->sqlarea.area, nScope, pItem);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 // #define sqlExOraSetFilter               NULL // Must be written to update thiswa->bConditionChanged
 // culik 2010/07/07 implemented sqlExOraSetFilter
@@ -4445,11 +4441,11 @@ static HB_ERRCODE sqlExOraSetFilter(SQLEXORAAREAP thiswa, LPDBFILTERINFO pFilter
   return ret;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraSetLocate NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraSetScope(SQLEXORAAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 {
@@ -4461,7 +4457,7 @@ static HB_ERRCODE sqlExOraSetScope(SQLEXORAAREAP thiswa, LPDBORDSCOPEINFO sInfo)
   return SUPER_SETSCOPE(&thiswa->sqlarea.area, sInfo);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraSkipScope NULL
 #define sqlExOraLocate NULL
@@ -4470,7 +4466,7 @@ static HB_ERRCODE sqlExOraSetScope(SQLEXORAAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 #define sqlExOraEvalBlock NULL
 #define sqlExOraRawLock NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraLock(SQLEXORAAREAP thiswa, LPDBLOCKINFO pLockInfo)
 {
@@ -4492,7 +4488,7 @@ static HB_ERRCODE sqlExOraLock(SQLEXORAAREAP thiswa, LPDBLOCKINFO pLockInfo)
   return SUPER_LOCK(&thiswa->sqlarea.area, pLockInfo);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE sqlExOraUnLock(SQLEXORAAREAP thiswa, PHB_ITEM pRecNo)
 {
@@ -4514,7 +4510,7 @@ static HB_ERRCODE sqlExOraUnLock(SQLEXORAAREAP thiswa, PHB_ITEM pRecNo)
   return SUPER_UNLOCK(&thiswa->sqlarea.area, pRecNo);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #define sqlExOraCloseMemFile NULL
 #define sqlExOraCreateMemFile NULL
@@ -4530,7 +4526,7 @@ static HB_ERRCODE sqlExOraUnLock(SQLEXORAAREAP thiswa, PHB_ITEM pRecNo)
 #define sqlExOraInfo NULL
 #define sqlExOraWhoCares NULL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static const RDDFUNCS sqlTable = {
     // Movement and positioning methods

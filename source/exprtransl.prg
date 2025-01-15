@@ -426,7 +426,7 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS ExpressionTranslat
 
 RETURN cSQLFunctionName + "(" + cJoin(aParameters, ",") + ")"
 
-/*
+#if 0
 METHOD CheckParams(oFunctionExpression) CLASS ExpressionTranslator
 
    IF AScan(oFunctionExpression:aParameters, {|x|x:lIsByRef}) > 0
@@ -434,7 +434,7 @@ METHOD CheckParams(oFunctionExpression) CLASS ExpressionTranslator
    ENDIF
 
 RETURN
-*/
+#endif
 
 METHOD TranslateValueExpression(oValueExpression) CLASS ExpressionTranslator
 

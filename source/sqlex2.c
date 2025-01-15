@@ -77,11 +77,11 @@
 #include <sqltypes.h>
 #include "sqlex.h"
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static PHB_DYNS s_pSym_Serial1 = NULL; // Pointer to serialization function
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 char *QualifyName(char *szName, SQLEXAREAP thiswa)
 {
@@ -120,7 +120,7 @@ char *QualifyName(char *szName, SQLEXAREAP thiswa)
   return szName;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void ResolveSpecialCols(SQLEXAREAP thiswa)
 {
@@ -195,7 +195,7 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void SerializeMemo(PHB_ITEM pFieldData)
 {
@@ -210,7 +210,7 @@ static void SerializeMemo(PHB_ITEM pFieldData)
   hb_itemMove(pFieldData, hb_stackReturnItem());
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void SetInsertRecordStructure(SQLEXAREAP thiswa)
 {
@@ -218,7 +218,7 @@ void SetInsertRecordStructure(SQLEXAREAP thiswa)
   memset(thiswa->InsertRecord, 0, hb_arrayLen(thiswa->aFields) * sizeof(COLUMNBIND));
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void CreateInsertStmt(SQLEXAREAP thiswa)
 {
@@ -421,7 +421,7 @@ void CreateInsertStmt(SQLEXAREAP thiswa)
   hb_xfree(sParams);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE PrepareInsertStmt(SQLEXAREAP thiswa)
 {
@@ -446,7 +446,7 @@ HB_ERRCODE PrepareInsertStmt(SQLEXAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE BindInsertColumns(SQLEXAREAP thiswa)
 {
@@ -528,7 +528,7 @@ HB_ERRCODE BindInsertColumns(SQLEXAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
 {
@@ -605,7 +605,7 @@ HB_ERRCODE FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
 {
@@ -746,7 +746,7 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE CreateUpdateStmt(SQLEXAREAP thiswa)
 {
@@ -904,7 +904,7 @@ HB_ERRCODE CreateUpdateStmt(SQLEXAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE ExecuteUpdateStmt(SQLEXAREAP thiswa)
 {
@@ -957,4 +957,4 @@ HB_ERRCODE ExecuteUpdateStmt(SQLEXAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------

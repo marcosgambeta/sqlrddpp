@@ -133,16 +133,16 @@ FUNCTION OraSel1(n, aret, csql, adata)
             s_aOraClipCursors[n]["eof"] := .F.
 
             FOR EACH atmp IN s_aOraClipCursors[n]["aFields"]
-               /*
+#if 0
                IF "TO_CHAR(" $ Upper(atmp[1])
                   atmp[1] := SubStr(atmp[1], At("TO_DATE(", Upper(atmp[1])) + 9)
                   atmp[1] := SubStr(atmp[1], 1, At(",", Upper(atmp[1])) - 1)
                ENDIF
-               if "DECODE(" $ Upper(atmp[1])
+               IF "DECODE(" $ Upper(atmp[1])
                   atmp[1] := SubStr(atmp[1], At("DECODE(", Upper(atmp[1])) + 8)
                   atmp[1] := SubStr(atmp[1], 1, At(",", Upper(atmp[1])) - 1)
-                  ENDIF
-               */
+               ENDIF
+#endif
                atmp[1] := "fld" + StrZero(ncount++, 5)
             NEXT
 
@@ -171,12 +171,12 @@ FUNCTION OraSel1(n, aret, csql, adata)
             s_aOraClipCursors[n]["eof"] := .F.
             s_nlasterror := 0
          ENDIF
-         /*
+#if 0
          IF Len(aRet) >= 1
             aDataRet := aRet[1]
             aret := AClone(aDataRet)
          ENDIF
-         */
+#endif
       ELSE
          s_aOraClipCursors[n]["eof"] := .T.
          s_aOraClipCursors[n]["error"] := SQLO_GETERRORCODE(SR_GetConnection():hDBC)
@@ -230,7 +230,7 @@ FUNCTION OraSel1(n, aret, csql, adata)
             FErase(cTmpfile)
          ENDIF
          FOR EACH atmp IN s_aOraClipCursors[n]["aFields"]
-            /*
+#if 0
             IF "TO_CHAR(" $ atmp[1]
                atmp[1] := SubStr(atmp[1], At("TO_DATE(", Upper(atmp[1])) + 9)
                atmp[1] := SubStr(atmp[1], 1, At(",", Upper(atmp[1])) - 1)
@@ -239,7 +239,7 @@ FUNCTION OraSel1(n, aret, csql, adata)
                atmp[1] := SubStr(atmp[1], At("DECODE(", Upper(atmp[1])) + 8)
                atmp[1] := SubStr(atmp[1], 1, At(",", Upper(atmp[1])) - 1)
             ENDIF
-            */
+#endif
             atmp[1] := "fld" + StrZero(ncount++, 5)
          NEXT
 
@@ -1112,7 +1112,7 @@ FUNCTION OraUpdIns(nCursor, cTable, aCols, aDataUpd, aDataIns, cWhere, aVarSust)
 
 RETURN nRet
 
-/*
+#if 0
 FUNCTION OraUpdIns(nCursor, cTable, aCols, aDataUpd, aDataIns, cWhere, aVarSust)
 
    LOCAL nRet
@@ -1124,7 +1124,7 @@ FUNCTION OraUpdIns(nCursor, cTable, aCols, aDataUpd, aDataIns, cWhere, aVarSust)
    ENDIF
 
 RETURN nRet
-*/
+#endif
 
 FUNCTION Orasum(nCursor, cTable, cColumn , cWhere , aVarSust)
 

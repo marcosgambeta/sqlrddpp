@@ -44,11 +44,10 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-/* this is workaround for problems with xHarbour core header files which
- * define _WINSOCKAPI_ what effectively breaks compilation of code using
- * sockets. It means that we have to include windows.h before xHarbour
- * header files.
- */
+// this is workaround for problems with xHarbour core header files which
+// define _WINSOCKAPI_ what effectively breaks compilation of code using
+// sockets. It means that we have to include windows.h before xHarbour
+// header files.
 #if defined(WINNT) || defined(_Windows) || defined(__NT__) || defined(_WIN32) || defined(_WINDOWS_) ||                 \
     defined(__WINDOWS_386__) || defined(__WIN32__)
 #include <windows.h>
@@ -170,7 +169,7 @@ HB_FUNC(MYSKILLCONNID)
 
 HB_FUNC(MYSEXEC)
 {
-  /* TraceLog(NULL, "mysqlExec : %s\n", hb_parc(2)); */
+  // TraceLog(NULL, "mysqlExec : %s\n", hb_parc(2));
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   const char *szQuery = hb_parc(2);
 
@@ -193,7 +192,7 @@ HB_FUNC(MYSEXEC)
   session->ifetch = -1;
 }
 
-HB_FUNC(MYSFETCH) /* MYSFetch(ConnHandle, ResultSet) => nStatus */
+HB_FUNC(MYSFETCH) // MYSFetch(ConnHandle, ResultSet) => nStatus
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int rows;
@@ -571,7 +570,7 @@ HB_FUNC(MYSCOLS)
   hb_retni(session->numcols);
 }
 
-HB_FUNC(MYSVERS) /* MYSVERS(hConnection) => nVersion */
+HB_FUNC(MYSVERS) // MYSVERS(hConnection) => nVersion
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session != NULL);
@@ -647,12 +646,12 @@ HB_FUNC(MYSQUERYATTR)
   for (row = 0; row < rows; row++)
   {
 
-    /* Column name */
+    // Column name
     field = mysql_fetch_field_direct(session->stmt, row);
     hb_arrayNew(atemp, FIELD_INFO_SIZE);
     hb_arraySetForward(atemp, FIELD_NAME, hb_itemPutC(temp, hb_strupr(field->name)));
 
-    /* Data type, len, dec */
+    // Data type, len, dec
     type = field->type;
     switch (type)
     {
@@ -737,9 +736,9 @@ HB_FUNC(MYSQUERYATTR)
       TraceLog(LOGFILE, "Invalid data type in query : %i\n", type);
     }
 
-    /* Nullable */
+    // Nullable
     hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, IS_NOT_NULL(field->flags) ? HB_FALSE : HB_TRUE));
-    /* add to main array */
+    // add to main array
     hb_arraySetForward(ret, row + 1, atemp);
   }
   hb_itemRelease(atemp);
@@ -786,12 +785,12 @@ HB_FUNC(MYSTABLEATTR)
   for (row = 0; row < rows; row++)
   {
     field = mysql_fetch_field_direct(session->stmt, row);
-    /* Column name */
+    // Column name
     hb_arrayNew(atemp, 6);
     hb_itemPutC(temp, hb_strupr(field->name));
     hb_arraySetForward(atemp, 1, temp);
 
-    /* Data type, len, dec */
+    // Data type, len, dec
     type = field->type;
 
     switch (type)
@@ -881,9 +880,9 @@ HB_FUNC(MYSTABLEATTR)
       break;
     }
 
-    /* Nullable */
+    // Nullable
     hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, IS_NOT_NULL(field->flags) ? HB_FALSE : HB_TRUE));
-    /* add to main array */
+    // add to main array
     hb_arraySetForward(ret, row + 1, atemp);
   }
   hb_itemRelease(atemp);

@@ -52,21 +52,21 @@
 
 #include <ctype.h>
 
-#include "sqly.h" /* Bison-generated include */
+#include "sqly.h" // Bison-generated include
 #include "msg.ch"
 #include "sqlrdd.h"
 #include "sqlrddsetup.ch"
 
 #define MAX_FIELD_NAME_LEN 63
 
-/* Prototypes */
+// Prototypes
 
 int SqlParse(sql_stmt *stmt, const char *query, int queryLen);
 int sql_yyparse(void *stmt);
 
-/* PRG Level Functions */
+// PRG Level Functions
 
-HB_FUNC(SR_SQLPARSE) /* SqlParse(cCommand, @nError, @nErrorPos) */
+HB_FUNC(SR_SQLPARSE) // SqlParse(cCommand, @nError, @nErrorPos)
 {
   HB_SIZE uLenPhrase = hb_parclen(1);
 
@@ -104,11 +104,7 @@ HB_FUNC(SR_SQLPARSE) /* SqlParse(cCommand, @nError, @nErrorPos) */
   }
 }
 
-/*
- *
- * Parser Entry Point
- *
- */
+// Parser Entry Point
 
 int SqlParse(sql_stmt *stmt, const char *query, int queryLen)
 {
@@ -141,11 +137,7 @@ int SqlParse(sql_stmt *stmt, const char *query, int queryLen)
   return 1;
 }
 
-/*
- *
- * pCode Generation and handling
- *
- */
+// pCode Generation and handling
 
 PHB_ITEM SQLpCodeGenInt(int code)
 {
@@ -413,11 +405,11 @@ static HB_SIZE escape_mysql(char *to, const char *from, HB_SIZE length)
   {
     switch (*from)
     {
-    case 0: /* Must be escaped for 'mysql' */
+    case 0: // Must be escaped for 'mysql'
       *to++ = '\\';
       *to++ = '0';
       break;
-    case '\n': /* Must be escaped for logs */
+    case '\n': // Must be escaped for logs
       *to++ = '\\';
       *to++ = 'n';
       break;
@@ -433,11 +425,11 @@ static HB_SIZE escape_mysql(char *to, const char *from, HB_SIZE length)
       *to++ = '\\';
       *to++ = '\'';
       break;
-    case '"': /* Better safe than sorry */
+    case '"': // Better safe than sorry
       *to++ = '\\';
       *to++ = '"';
       break;
-    case '\032': /* This gives problems on Win32 */
+    case '\032': // This gives problems on Win32
       *to++ = '\\';
       *to++ = 'Z';
       break;
@@ -1039,7 +1031,7 @@ HB_FUNC(SR_DBQUALIFY)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #ifdef SQLRDD_COMPAT_PRE_1_1
 
@@ -1053,7 +1045,7 @@ HB_BOOL hb_arraySetNL(PHB_ITEM pArray, HB_ULONG ulIndex, HB_LONG lVal)
   return ret;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_BOOL hb_arraySetL(PHB_ITEM pArray, HB_ULONG ulIndex, HB_BOOL lVal)
 {

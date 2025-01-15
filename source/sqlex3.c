@@ -77,7 +77,7 @@
 #include <sqltypes.h>
 #include "sqlex.h"
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void createSeekQuery(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints)
 {
@@ -104,7 +104,7 @@ static void createSeekQuery(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int queryLevel, HB_BOOL *bUseOptimizerHints)
 {
@@ -267,7 +267,7 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
 }
 #endif
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE prepareSeekQuery(SQLEXAREAP thiswa, INDEXBINDP SeekBind)
 {
@@ -304,7 +304,7 @@ HB_ERRCODE prepareSeekQuery(SQLEXAREAP thiswa, INDEXBINDP SeekBind)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 {
@@ -366,7 +366,7 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLevel)
 {
@@ -629,7 +629,7 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLev
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 {
@@ -718,7 +718,7 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex,
                            HSTMT *hStmt) // Returns HB_TRUE if any result found

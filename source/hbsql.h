@@ -74,7 +74,7 @@ typedef struct sql_stmt_s
   PHB_ITEM pTemp;
 } sql_stmt;
 
-/* Prototypes */
+// Prototypes
 
 PHB_ITEM SQLpCodeGenInt(int code);
 PHB_ITEM SQLpCodeGenItemInt(PHB_ITEM value, int code);
@@ -85,4 +85,4 @@ PHB_ITEM SQLpCodeGenArrayIntInt(PHB_ITEM pArray, int code, int code2);
 PHB_ITEM SQLpCodeGenArrayInt(PHB_ITEM pArray, int code);
 PHB_ITEM SQLpCodeGenArrayJoin(PHB_ITEM pArray1, PHB_ITEM pArray2);
 
-#endif
+#endif // SQL_PARSER_INCLUDED

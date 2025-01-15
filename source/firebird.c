@@ -112,7 +112,7 @@ typedef struct vary1
 const double divider[19] = {1,    1E1,  1E2,  1E3,  1E4,  1E5,  1E6,  1E7,  1E8, 1E9,
                             1E10, 1E11, 1E12, 1E13, 1E14, 1E15, 1E16, 1E17, 1E18};
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void fb_log_status(PFB_SESSION session, const char *from)
 {
@@ -153,7 +153,7 @@ static void fb_log_status(PFB_SESSION session, const char *from)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBCONNECT) // FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
 {
@@ -227,7 +227,7 @@ HB_FUNC(FBCONNECT) // FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBCLOSE) // FBClose(hEnv)
 {
@@ -267,7 +267,7 @@ HB_FUNC(FBCLOSE) // FBClose(hEnv)
   hb_retni(SQL_SUCCESS);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBBEGINTRANSACTION) // FBBeginTransaction(hEnv)
 {
@@ -340,7 +340,7 @@ HB_FUNC(FBBEGINTRANSACTION) // FBBeginTransaction(hEnv)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBCOMMITTRANSACTION) // FBBeginTransaction(hEnv)
 {
@@ -362,7 +362,7 @@ HB_FUNC(FBCOMMITTRANSACTION) // FBBeginTransaction(hEnv)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBROLLBACKTRANSACTION) // FBRollBackTransaction(hEnv)
 {
@@ -384,7 +384,7 @@ HB_FUNC(FBROLLBACKTRANSACTION) // FBRollBackTransaction(hEnv)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBEXECUTE) // FBExecute(hEnv, cCmd, nDialect)
 {
@@ -516,7 +516,7 @@ HB_FUNC(FBEXECUTE) // FBExecute(hEnv, cCmd, nDialect)
   hb_retni(SQL_SUCCESS);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBEXECUTEIMMEDIATE) // FBExecuteImmediate(hEnv, cCmd, nDialect)
 {
@@ -556,7 +556,7 @@ HB_FUNC(FBEXECUTEIMMEDIATE) // FBExecuteImmediate(hEnv, cCmd, nDialect)
   hb_retni(SQL_SUCCESS);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBDESCRIBECOL) // FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
 {
@@ -668,7 +668,7 @@ HB_FUNC(FBDESCRIBECOL) // FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDe
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBNUMRESULTCOLS) // FBNumResultCols(hEnv, @nResultSetColumnCount)
 {
@@ -685,7 +685,7 @@ HB_FUNC(FBNUMRESULTCOLS) // FBNumResultCols(hEnv, @nResultSetColumnCount)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBERROR) // FBError(hEnv)
 {
@@ -702,7 +702,7 @@ HB_FUNC(FBERROR) // FBError(hEnv)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBFETCH) // FBFetch(hEnv)
 {
@@ -725,7 +725,7 @@ HB_FUNC(FBFETCH) // FBFetch(hEnv)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBGETDATA) // FBGetData(hEnv, nField, @uData)
 {
@@ -942,7 +942,7 @@ HB_FUNC(FBGETDATA) // FBGetData(hEnv, nField, @uData)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBCREATEDB)
 {
@@ -1008,7 +1008,7 @@ HB_FUNC(FBCREATEDB)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void firebird_info_cb(void *arg, char const *s)
 {
@@ -1040,7 +1040,7 @@ HB_FUNC(FBVERSION)
   hb_retc(tmp);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
                        HB_ULONG ulSystemID, HB_BOOL bTranslate)
@@ -1164,10 +1164,9 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
         pTemp = hb_itemNew(NULL);
         hb_vmPush(pTemp);
         hb_vmDo(2);
-        /* TOFIX: What this code should do ???
-         * Now it's a dummy code which does not make anything usable.
-         * [druzus]
-         */
+        // TOFIX: What this code should do ???
+        // Now it's a dummy code which does not make anything usable.
+        // [druzus]
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
       }
@@ -1247,7 +1246,7 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_FUNC(FBLINEPROCESSED)
 {
@@ -1544,4 +1543,4 @@ HB_FUNC(FBLINEPROCESSED)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------

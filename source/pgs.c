@@ -80,7 +80,7 @@ static void myNoticeProcessor(void *arg, const char *message)
   //   TraceLog("sqlerror.log", "%s", message);
 }
 
-HB_FUNC(PGSCONNECT) /* PGSConnect(ConnectionString) => ConnHandle */
+HB_FUNC(PGSCONNECT) // PGSConnect(ConnectionString) => ConnHandle
 {
   // PPSQL_SESSION session = (PPSQL_SESSION) hb_xgrab(sizeof(PSQL_SESSION));
   PPSQL_SESSION session = (PPSQL_SESSION)hb_xgrabz(sizeof(PSQL_SESSION));
@@ -91,12 +91,12 @@ HB_FUNC(PGSCONNECT) /* PGSConnect(ConnectionString) => ConnHandle */
   session->dbh = PQconnectdb(szConn);
 
   session->ifetch = -2;
-  /* Setup Postgres Notice Processor */
+  // Setup Postgres Notice Processor
   PQsetNoticeProcessor(session->dbh, myNoticeProcessor, NULL);
   hb_retptr((void *)session);
 }
 
-HB_FUNC(PGSFINISH) /* PGSFinish(ConnHandle) */
+HB_FUNC(PGSFINISH) // PGSFinish(ConnHandle)
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != NULL);
@@ -105,7 +105,7 @@ HB_FUNC(PGSFINISH) /* PGSFinish(ConnHandle) */
   hb_ret();
 }
 
-HB_FUNC(PGSSTATUS) /* PGSStatus(ConnHandle) => nStatus */
+HB_FUNC(PGSSTATUS) // PGSStatus(ConnHandle) => nStatus
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != NULL);
@@ -120,14 +120,14 @@ HB_FUNC(PGSSTATUS) /* PGSStatus(ConnHandle) => nStatus */
   }
 }
 
-HB_FUNC(PGSSTATUS2) /* PGSStatus(ConnHandle) => nStatus */
+HB_FUNC(PGSSTATUS2) // PGSStatus(ConnHandle) => nStatus
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != NULL);
   hb_retni((int)PQstatus(session->dbh));
 }
 
-HB_FUNC(PGSRESULTSTATUS) /* PGSResultStatus(ResultSet) => nStatus */
+HB_FUNC(PGSRESULTSTATUS) // PGSResultStatus(ResultSet) => nStatus
 {
   int ret;
   PGresult *res = (PGresult *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
@@ -159,9 +159,9 @@ HB_FUNC(PGSRESULTSTATUS) /* PGSResultStatus(ResultSet) => nStatus */
   hb_retni(ret);
 }
 
-HB_FUNC(PGSEXEC) /* PGSExec(ConnHandle, cCommand) => ResultSet */
+HB_FUNC(PGSEXEC) // PGSExec(ConnHandle, cCommand) => ResultSet
 {
-  /* TraceLog(NULL, "PGSExec : %s\n", hb_parc(2)); */
+  // TraceLog(NULL, "PGSExec : %s\n", hb_parc(2));
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int ret;
   assert(session->dbh != NULL);
@@ -183,7 +183,7 @@ HB_FUNC(PGSEXEC) /* PGSExec(ConnHandle, cCommand) => ResultSet */
   }
 }
 
-HB_FUNC(PGSFETCH) /* PGSFetch(ResultSet) => nStatus */
+HB_FUNC(PGSFETCH) // PGSFetch(ResultSet) => nStatus
 {
   int iTpl;
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
@@ -219,7 +219,7 @@ HB_FUNC(PGSFETCH) /* PGSFetch(ResultSet) => nStatus */
   }
 }
 
-HB_FUNC(PGSRESSTATUS) /* PGSResStatus(ResultSet) => cErrMessage */
+HB_FUNC(PGSRESSTATUS) // PGSResStatus(ResultSet) => cErrMessage
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != NULL);
@@ -227,7 +227,7 @@ HB_FUNC(PGSRESSTATUS) /* PGSResStatus(ResultSet) => cErrMessage */
   hb_retc(PQresStatus(PQresultStatus(session->stmt)));
 }
 
-HB_FUNC(PGSCLEAR) /* PGSClear(ResultSet) */
+HB_FUNC(PGSCLEAR) // PGSClear(ResultSet)
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != NULL);
@@ -239,7 +239,7 @@ HB_FUNC(PGSCLEAR) /* PGSClear(ResultSet) */
   }
 }
 
-HB_FUNC(PGSGETDATA) /* PGSGetData(ResultSet, nColumn) => cValue */
+HB_FUNC(PGSGETDATA) // PGSGetData(ResultSet, nColumn) => cValue
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != NULL);
@@ -247,21 +247,21 @@ HB_FUNC(PGSGETDATA) /* PGSGetData(ResultSet, nColumn) => cValue */
   hb_retc(PQgetvalue(session->stmt, session->ifetch, hb_parnl(2) - 1));
 }
 
-HB_FUNC(PGSCOLS) /* PGSCols(ResultSet) => nColsInQuery */
+HB_FUNC(PGSCOLS) // PGSCols(ResultSet) => nColsInQuery
 {
   PGresult *res = (PGresult *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(res != NULL);
   hb_retnl((long)PQnfields(res));
 }
 
-HB_FUNC(PGSERRMSG) /* PGSErrMsg(ConnHandle) => cErrorMessage */
+HB_FUNC(PGSERRMSG) // PGSErrMsg(ConnHandle) => cErrorMessage
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != NULL);
   hb_retc(PQerrorMessage(session->dbh));
 }
 
-HB_FUNC(PGSCOMMIT) /* PGSCommit(ConnHandle) => nError */
+HB_FUNC(PGSCOMMIT) // PGSCommit(ConnHandle) => nError
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   PGresult *res;
@@ -277,7 +277,7 @@ HB_FUNC(PGSCOMMIT) /* PGSCommit(ConnHandle) => nError */
   }
 }
 
-HB_FUNC(PGSROLLBACK) /* PGSRollBack(ConnHandle) => nError */
+HB_FUNC(PGSROLLBACK) // PGSRollBack(ConnHandle) => nError
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   PGresult *res;
@@ -293,7 +293,7 @@ HB_FUNC(PGSROLLBACK) /* PGSRollBack(ConnHandle) => nError */
   }
 }
 
-HB_FUNC(PGSQUERYATTR) /* PGSQueryAttr(ResultSet) => aStruct */
+HB_FUNC(PGSQUERYATTR) // PGSQueryAttr(ResultSet) => aStruct
 {
   int row, rows, type;
 
@@ -320,13 +320,13 @@ HB_FUNC(PGSQUERYATTR) /* PGSQueryAttr(ResultSet) => aStruct */
   for (row = 0; row < rows; row++)
   {
     //      long nullable;
-    /* Column name */
+    // Column name
     hb_arrayNew(atemp, 11);
     hb_itemPutC(temp, hb_strupr(PQfname(session->stmt, row)));
     hb_arraySetForward(atemp, FIELD_NAME, temp);
     hb_arraySetNL(atemp, FIELD_ENUM, row + 1);
 
-    /* Data type, len, dec */
+    // Data type, len, dec
     type = (int)PQftype(session->stmt, row);
     typmod = PQfmod(session->stmt, row);
 
@@ -336,11 +336,12 @@ HB_FUNC(PGSQUERYATTR) /* PGSQueryAttr(ResultSet) => aStruct */
     {
       typmod = (HB_LONG)PQfsize(session->stmt, row);
     }
-    /*
-          if( typmod < 0L ) {
-             typmod = 20L;
-          }
-    */
+#if 0
+    if (typmod < 0L)
+    {
+      typmod = 20L;
+    }
+#endif
     switch (type)
     {
     case CHAROID:
@@ -466,9 +467,9 @@ HB_FUNC(PGSQUERYATTR) /* PGSQueryAttr(ResultSet) => aStruct */
       break;
     }
 
-    /* Nullable */
+    // Nullable
     hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, HB_FALSE));
-    /* add to main array */
+    // add to main array
     hb_arraySetForward(ret, row + 1, atemp);
   }
   hb_itemRelease(atemp);
@@ -477,7 +478,7 @@ HB_FUNC(PGSQUERYATTR) /* PGSQueryAttr(ResultSet) => aStruct */
   hb_itemRelease(ret);
 }
 
-HB_FUNC(PGSTABLEATTR) /* PGSTableAttr(ConnHandle, cTableName) => aStruct */
+HB_FUNC(PGSTABLEATTR) // PGSTableAttr(ConnHandle, cTableName) => aStruct
 {
   char attcmm[512];
   int row, rows;
@@ -520,13 +521,13 @@ HB_FUNC(PGSTABLEATTR) /* PGSTableAttr(ConnHandle, cTableName) => aStruct */
     long nullable;
     int type;
 
-    /* Column name */
+    // Column name
     hb_arrayNew(atemp, 11);
     hb_itemPutC(temp, hb_strupr(PQgetvalue(stmtTemp, row, 0)));
     hb_arraySetForward(atemp, 1, temp);
     hb_arraySetNL(atemp, FIELD_ENUM, row + 1);
 
-    /* Data type, len, dec */
+    // Data type, len, dec
 
     type = atoi(PQgetvalue(stmtTemp, row, 1));
     typmod = atol(PQgetvalue(stmtTemp, row, 2));
@@ -659,11 +660,11 @@ HB_FUNC(PGSTABLEATTR) /* PGSTableAttr(ConnHandle, cTableName) => aStruct */
       break;
     }
 
-    /* Nullable */
+    // Nullable
 
     hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, nullable));
 
-    /* add to main array */
+    // add to main array
     hb_arraySetForward(ret, row + 1, atemp);
   }
   hb_itemRelease(atemp);
@@ -794,7 +795,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
         pTemp = hb_itemNew(NULL);
         hb_vmPush(pTemp);
         hb_vmDo(2);
-        /* TOFIX: */
+        // TOFIX:
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
       }

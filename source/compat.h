@@ -99,4 +99,4 @@ HB_EXTERN_END
 // #define hb_dynsymLock()
 // #define hb_dynsymUnlock()
 
-#endif /* _SQL_RDD_COMPAT_H */
+#endif // _SQL_RDD_COMPAT_H

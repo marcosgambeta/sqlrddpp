@@ -74,13 +74,13 @@
 #include "ocilib.h"
 #include "sqlexora.h"
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static PHB_DYNS s_pSym_Serial1 = NULL; // Pointer to serialization function
 
 #define LOGFILE "oci2.log"
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 char *QualifyName2(char *szName, SQLEXORAAREAP thiswa)
 {
@@ -121,7 +121,7 @@ char *QualifyName2(char *szName, SQLEXORAAREAP thiswa)
   return szName;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void ResolveSpecialCols(SQLEXORAAREAP thiswa)
 {
@@ -186,7 +186,7 @@ static void ResolveSpecialCols(SQLEXORAAREAP thiswa)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void SerializeMemo(PHB_ITEM pFieldData)
 {
@@ -201,7 +201,7 @@ static void SerializeMemo(PHB_ITEM pFieldData)
   hb_itemMove(pFieldData, hb_stackReturnItem());
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void SetInsertRecordStructureOra(SQLEXORAAREAP thiswa)
 {
@@ -209,7 +209,7 @@ void SetInsertRecordStructureOra(SQLEXORAAREAP thiswa)
   // memset(thiswa->InsertRecord, 0, hb_arrayLen(thiswa->aFields) * sizeof(COLUMNBINDORA));
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
 {
@@ -363,7 +363,7 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
   hb_xfree(sParams);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE PrepareInsertStmtOra(SQLEXORAAREAP thiswa)
 {
@@ -387,7 +387,7 @@ HB_ERRCODE PrepareInsertStmtOra(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE BindInsertColumnsOra(SQLEXORAAREAP thiswa)
 {
@@ -506,7 +506,7 @@ HB_ERRCODE BindInsertColumnsOra(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
 {
@@ -579,7 +579,7 @@ HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
 {
@@ -708,7 +708,7 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE CreateUpdateStmtOra(SQLEXORAAREAP thiswa)
 {
@@ -943,7 +943,7 @@ HB_ERRCODE CreateUpdateStmtOra(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE ExecuteUpdateStmtOra(SQLEXORAAREAP thiswa)
 {
@@ -995,4 +995,4 @@ HB_ERRCODE ExecuteUpdateStmtOra(SQLEXORAAREAP thiswa)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------

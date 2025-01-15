@@ -58,11 +58,11 @@
 
 #define LOGFILE "oci2.log"
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 extern HB_ERRCODE FeedSeekStmtOra(SQLEXORAAREAP thiswa, int queryLevel);
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static void createSeekQueryOra(SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints)
 {
@@ -98,7 +98,7 @@ static void createSeekQueryOra(SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints)
   // TraceLog("aaa.log", "query %s\n", thiswa->sSql);
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 static HB_ERRCODE getSeekWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType, int queryLevel,
                                             HB_BOOL *bUseOptimizerHints)
@@ -178,7 +178,7 @@ static HB_ERRCODE getSeekWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType,
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE prepareSeekQueryOra(SQLEXORAAREAP thiswa, INDEXBINDORAP SeekBind)
 {
@@ -236,7 +236,7 @@ HB_ERRCODE prepareSeekQueryOra(SQLEXORAAREAP thiswa, INDEXBINDORAP SeekBind)
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
 {
@@ -298,7 +298,7 @@ HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *queryLevel)
 {
@@ -571,7 +571,7 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
   return HB_SUCCESS;
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
 {
@@ -681,7 +681,7 @@ void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
   }
 }
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, HB_USHORT *iIndex, OCI_Statement **hStmt,
                               OCI_Resultset **rs) // Returns HB_TRUE if any result found
