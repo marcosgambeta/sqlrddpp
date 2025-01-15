@@ -61,34 +61,34 @@ REQUEST HB_Serialize
 /* Need this modules linked */
 REQUEST SR_WORKAREA
 
-STATIC aConnections
-STATIC nActiveConnection
+STATIC s_aConnections
+STATIC s_nActiveConnection
 
-STATIC lTblMgmnt := .F.
-STATIC EvalFilters := .F.
-STATIC RecnoName := "SR_RECNO"
-STATIC DeletedName := "SR_DELETED"
-STATIC cCollation := ""
-STATIC cToolsOwner := ""
-STATIC cIntenalID := NIL
-STATIC lFastOpenWA := .T.
-STATIC nMaxRowCache := 1000
-STATIC nFetchSize := 10
-STATIC lSyntheticInd := .F.
-STATIC cSynthetiVInd := ""
-STATIC lCheckMgmntInd := .T.
-STATIC cRDDTemp := "DBFCDX"
+STATIC s_lTblMgmnt := .F.
+STATIC s_EvalFilters := .F.
+STATIC s_RecnoName := "SR_RECNO"
+STATIC s_DeletedName := "SR_DELETED"
+STATIC s_cCollation := ""
+STATIC s_cToolsOwner := ""
+STATIC s_cIntenalID := NIL
+STATIC s_lFastOpenWA := .T.
+STATIC s_nMaxRowCache := 1000
+STATIC s_nFetchSize := 10
+STATIC s_lSyntheticInd := .F.
+STATIC s_cSynthetiVInd := ""
+STATIC s_lCheckMgmntInd := .T.
+STATIC s_cRDDTemp := "DBFCDX"
 
-STATIC cTblSpaceData := ""
-STATIC cTblSpaceIndx := ""
-STATIC cTblSpaceLob := ""
+STATIC s_cTblSpaceData := ""
+STATIC s_cTblSpaceIndx := ""
+STATIC s_cTblSpaceLob := ""
 
-STATIC hMultilangColumns
-STATIC nSyntheticIndexMinimun := 3
+STATIC s_hMultilangColumns
+STATIC s_nSyntheticIndexMinimun := 3
 
-STATIC lErrorOnGotoToInvalidRecord := .F.
+STATIC s_lErrorOnGotoToInvalidRecord := .F.
 
-STATIC lUseNullsFirst := .T.
+STATIC s_lUseNullsFirst := .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -99,12 +99,12 @@ RETURN
 
 FUNCTION SR_GetCnn(nConnection)
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
 
    IF SR_CheckCnn(nConnection)
-      DEFAULT aConnections TO {}
-      RETURN aConnections[nConnection]
+      DEFAULT s_aConnections TO {}
+      RETURN s_aConnections[nConnection]
    ENDIF
 
 RETURN NIL
@@ -113,11 +113,11 @@ RETURN NIL
 
 FUNCTION SR_CheckCnn(nConnection)
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
 
-   IF nConnection > Len(aConnections) .OR. nConnection == 0
+   IF nConnection > Len(s_aConnections) .OR. nConnection == 0
       RETURN .F.
    ENDIF
 
@@ -127,27 +127,27 @@ RETURN .T.
 
 FUNCTION SR_GetConnection(nConnection)
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
 
    SR_CheckConnection(nConnection)
 
-RETURN aConnections[nConnection]
+RETURN s_aConnections[nConnection]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 FUNCTION SR_CheckConnection(nConnection)
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
 
-   IF nConnection > Len(aConnections) .OR. nConnection == 0 .OR. nConnection < 0
+   IF nConnection > Len(s_aConnections) .OR. nConnection == 0 .OR. nConnection < 0
       RETURN SR_RuntimeErr("SR_CheckConnection()", SR_Msg(7))
    ENDIF
 
-RETURN aConnections[nConnection]
+RETURN s_aConnections[nConnection]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -155,14 +155,14 @@ FUNCTION SR_SetNextQuery(cSql)
 
    LOCAL cOld
 
-   DEFAULT aConnections TO {}
-   DEFAULT nActiveConnection TO 0
+   DEFAULT s_aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
 
-   SR_CheckConnection(nActiveConnection)
-   cOld := aConnections[nActiveConnection]:cNextQuery
+   SR_CheckConnection(s_nActiveConnection)
+   cOld := s_aConnections[s_nActiveConnection]:cNextQuery
 
    IF cSql != NIL
-      aConnections[nActiveConnection]:cNextQuery := cSql
+      s_aConnections[s_nActiveConnection]:cNextQuery := cSql
    ENDIF
 
 RETURN cOld
@@ -171,12 +171,12 @@ RETURN cOld
 
 FUNCTION SR_GetSyntheticIndexMinimun()
 
-   LOCAL nRet := nSyntheticIndexMinimun
+   LOCAL nRet := s_nSyntheticIndexMinimun
 
-   DEFAULT aConnections TO {}
-   DEFAULT nActiveConnection TO 0
+   DEFAULT s_aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
 
-   SWITCH aConnections[nActiveConnection]:nSystemID
+   SWITCH s_aConnections[s_nActiveConnection]:nSystemID
    CASE SYSTEMID_POSTGR
    CASE SYSTEMID_ORACLE
       EXIT
@@ -190,10 +190,10 @@ RETURN nRet
 
 FUNCTION SR_SetSyntheticIndexMinimun(nSet)
 
-   LOCAL nOld := nSyntheticIndexMinimun
+   LOCAL nOld := s_nSyntheticIndexMinimun
 
    IF HB_ISNUMERIC(nSet)
-      nSyntheticIndexMinimun := Min(nSet, 10)
+      s_nSyntheticIndexMinimun := Min(nSet, 10)
    ENDIF
 
 RETURN nOld
@@ -202,10 +202,10 @@ RETURN nOld
 
 FUNCTION SR_CheckMgmntInd(nSet)
 
-   LOCAL nOld := lCheckMgmntInd
+   LOCAL nOld := s_lCheckMgmntInd
 
    IF HB_ISLOGICAL(nSet)
-      lCheckMgmntInd := nSet
+      s_lCheckMgmntInd := nSet
    ENDIF
 
 RETURN nOld
@@ -214,10 +214,10 @@ RETURN nOld
 
 FUNCTION SR_SetSyntheticIndex(lSet)
 
-   LOCAL lOld := lSyntheticInd
+   LOCAL lOld := s_lSyntheticInd
 
    IF HB_ISLOGICAL(lSet)
-      lSyntheticInd := lSet
+      s_lSyntheticInd := lSet
    ENDIF
 
 RETURN lOld
@@ -226,19 +226,19 @@ RETURN lOld
 
 FUNCTION SR_GetSyntheticIndex()
 
-RETURN lSyntheticInd
+RETURN s_lSyntheticInd
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 FUNCTION SR_SetSVIndex(cSet)
 
-   LOCAL cOld := cSynthetiVInd
+   LOCAL cOld := s_cSynthetiVInd
 
    IF HB_ISCHAR(cSet)
       IF Len(cSet) != 3 .OR. " " $ cSet .OR. "." $ cSet
          SR_RuntimeErr("SR_SetSVIndex()", "Invalid parameter: " + cSet)
       ENDIF
-      cSynthetiVInd := cSet
+      s_cSynthetiVInd := cSet
    ENDIF
 
 RETURN cOld
@@ -247,9 +247,9 @@ RETURN cOld
 
 FUNCTION SR_GetSVIndex()
 
-   LOCAL cRet := cSynthetiVInd
+   LOCAL cRet := s_cSynthetiVInd
 
-   cSynthetiVInd := ""
+   s_cSynthetiVInd := ""
 
 RETURN cRet
 
@@ -257,10 +257,10 @@ RETURN cRet
 
 FUNCTION SR_SetFastOpen(lSet)
 
-   LOCAL lOld := lFastOpenWA
+   LOCAL lOld := s_lFastOpenWA
 
    IF HB_ISLOGICAL(lSet)
-      lFastOpenWA := lSet
+      s_lFastOpenWA := lSet
    ENDIF
 
 RETURN lOld
@@ -269,10 +269,10 @@ RETURN lOld
 
 FUNCTION SR_SetExclusiveManagement(lSet)
 
-   LOCAL lOld := !lFastOpenWA
+   LOCAL lOld := !s_lFastOpenWA
 
    IF HB_ISLOGICAL(lSet)
-      lFastOpenWA := !lSet
+      s_lFastOpenWA := !lSet
    ENDIF
 
 RETURN lOld
@@ -281,12 +281,12 @@ RETURN lOld
 
 FUNCTION SR_SetTblSpaceData(cSet)
 
-   LOCAL cOld := cTblSpaceData
+   LOCAL cOld := s_cTblSpaceData
    LOCAL oSql
 
    IF HB_ISCHAR(cSet)
-      cTblSpaceData := cSet
-   ELSEIF Empty(cTblSpaceData)
+      s_cTblSpaceData := cSet
+   ELSEIF Empty(s_cTblSpaceData)
       oSql := SR_GetConnection()
       IF !Empty(oSql:cDsnTblData)
          RETURN oSql:cDsnTblData
@@ -299,12 +299,12 @@ RETURN cOld
 
 FUNCTION SR_SetTblSpaceIndx(cSet)
 
-   LOCAL cOld := cTblSpaceIndx
+   LOCAL cOld := s_cTblSpaceIndx
    LOCAL oSql
 
    IF HB_ISCHAR(cSet)
-      cTblSpaceIndx := cSet
-   ELSEIF Empty(cTblSpaceIndx)
+      s_cTblSpaceIndx := cSet
+   ELSEIF Empty(s_cTblSpaceIndx)
       oSql := SR_GetConnection()
       If !Empty(oSql:cDsnTblIndx)
          RETURN oSql:cDsnTblIndx
@@ -317,12 +317,12 @@ RETURN cOld
 
 FUNCTION SR_SetTblSpaceLob(cSet)
 
-   LOCAL cOld := cTblSpaceLob
+   LOCAL cOld := s_cTblSpaceLob
    LOCAL oSql
 
    IF HB_ISCHAR(cSet)
-      cTblSpaceLob := cSet
-   ELSEIF Empty(cTblSpaceLob)
+      s_cTblSpaceLob := cSet
+   ELSEIF Empty(s_cTblSpaceLob)
       oSql := SR_GetConnection()
       IF !Empty(oSql:cDsnTblLob)
          RETURN oSql:cDsnTblLob
@@ -335,10 +335,10 @@ RETURN cOld
 
 FUNCTION SR_SetRDDTemp(cSet)
 
-   LOCAL cOld := cRDDTemp
+   LOCAL cOld := s_cRDDTemp
 
    IF HB_ISCHAR(cSet)
-      cRDDTemp := cSet
+      s_cRDDTemp := cSet
    ENDIF
 
 RETURN cOld
@@ -347,15 +347,15 @@ RETURN cOld
 
 FUNCTION SR_GetFastOpen()
 
-RETURN lFastOpenWA
+RETURN s_lFastOpenWA
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 FUNCTION SR_GetActiveConnection()
 
-   DEFAULT nActiveConnection TO 0
+   DEFAULT s_nActiveConnection TO 0
 
-RETURN nActiveConnection
+RETURN s_nActiveConnection
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -363,13 +363,13 @@ FUNCTION SR_SetActiveConnection(nCnn)
 
    LOCAL nOld
 
-   DEFAULT nActiveConnection TO 0
-   nOld := nActiveConnection
+   DEFAULT s_nActiveConnection TO 0
+   nOld := s_nActiveConnection
    DEFAULT nCnn TO 1
-   DEFAULT aConnections TO {}
+   DEFAULT s_aConnections TO {}
 
-   IF nCnn != 0 .AND. nCnn <= Len(aConnections)
-      nActiveConnection := nCnn
+   IF nCnn != 0 .AND. nCnn <= Len(s_aConnections)
+      s_nActiveConnection := nCnn
    ELSE
       RETURN -1
    ENDIF
@@ -389,8 +389,8 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
    DEFAULT lCounter          TO .F.
    DEFAULT cOwner            TO ""
    DEFAULT lNoSetEnv         TO .F.
-   DEFAULT aConnections      TO {}
-   DEFAULT nActiveConnection TO 0
+   DEFAULT s_aConnections      TO {}
+   DEFAULT s_nActiveConnection TO 0
 
    /* The macro execution is used to NOT link the connection class if we don't need it
       The programmer MUST declare the needed connection class using REQUEST in PRG source */
@@ -534,11 +534,11 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       ENDIF
 
       // ToDo: Add MUTEX here
-      AAdd(aConnections, oConnect)
-      nRet := Len(aConnections)
+      AAdd(s_aConnections, oConnect)
+      nRet := Len(s_aConnections)
 
-      IF nActiveConnection == NIL .OR. nActiveConnection == 0
-         nActiveConnection := nRet
+      IF s_nActiveConnection == NIL .OR. s_nActiveConnection == 0
+         s_nActiveConnection := nRet
       ENDIF
 
       oConnect:nID := nRet
@@ -1170,11 +1170,11 @@ FUNCTION SR_ReloadMLHash(oConnect)
       "SR_MGMNTLANG", .F., .T., @aRet)
    oConnect:commit()
 
-   hMultilangColumns := hb_Hash()
-   hb_HAllocate(hMultilangColumns, max(10, Len(aRet)))
+   s_hMultilangColumns := hb_Hash()
+   hb_HAllocate(s_hMultilangColumns, max(10, Len(aRet)))
 
    FOR EACH aCol IN aRet
-      hMultilangColumns[aCol[1] + aCol[2]] := aCol
+      s_hMultilangColumns[aCol[1] + aCol[2]] := aCol
    NEXT
 
 RETURN NIL
@@ -1183,7 +1183,7 @@ RETURN NIL
 
 FUNCTION AddToMLHash(aField)
 
-   hMultilangColumns[PadR(aField[1], 50) + PadR(aField[2], 50)] := aField
+   s_hMultilangColumns[PadR(aField[1], 50) + PadR(aField[2], 50)] := aField
 
 RETURN NIL
 
@@ -1192,10 +1192,10 @@ RETURN NIL
 FUNCTION GetMLHash(cTab, cCol)
 
    LOCAL cKey := PadR(Upper(cTab), 50) + PadR(Upper(cCol), 50)
-   LOCAL nPos := hb_HPos(hMultilangColumns, cKey)
+   LOCAL nPos := hb_HPos(s_hMultilangColumns, cKey)
 
    IF nPos > 0
-      RETURN hb_HValueAt(hMultilangColumns, nPos)
+      RETURN hb_HValueAt(s_hMultilangColumns, nPos)
    ENDIF
 
 RETURN NIL
@@ -1204,10 +1204,10 @@ RETURN NIL
 
 FUNCTION SR_ErrorOnGotoToInvalidRecord(l)
 
-   LOCAL lOld := lErrorOnGotoToInvalidRecord
+   LOCAL lOld := s_lErrorOnGotoToInvalidRecord
 
    IF l != NIL
-      lErrorOnGotoToInvalidRecord := l
+      s_lErrorOnGotoToInvalidRecord := l
    ENDIF
 
 RETURN lOld
@@ -1216,10 +1216,10 @@ RETURN lOld
 
 FUNCTION SR_UseNullsFirst(l)
 
-   LOCAL lOld := lUseNullsFirst
+   LOCAL lOld := s_lUseNullsFirst
 
    IF l != NIL
-      lUseNullsFirst := l
+      s_lUseNullsFirst := l
    ENDIF
 
 RETURN lOld
@@ -1227,15 +1227,15 @@ RETURN lOld
 //-------------------------------------------------------------------------------------------------------------------//
 
 FUNCTION SR_TblMgmnt()
-RETURN lTblMgmnt
+RETURN s_lTblMgmnt
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 FUNCTION SR_SetTblMgmnt(lOpt)
 
-   LOCAL lOld := lTblMgmnt
+   LOCAL lOld := s_lTblMgmnt
 
-   lTblMgmnt := lOpt
+   s_lTblMgmnt := lOpt
 
 RETURN lOld
 
@@ -1243,10 +1243,10 @@ RETURN lOld
 
 FUNCTION SR_EvalFilters(lEval)
 
-   LOCAL lOld := EvalFilters
+   LOCAL lOld := s_EvalFilters
 
    If lEval != NIL
-      EvalFilters := lEval
+      s_EvalFilters := lEval
    EndIf
 
 RETURN lOld
@@ -1255,10 +1255,10 @@ RETURN lOld
 
 FUNCTION SR_RecnoName(cName)
 
-   LOCAL cOld := RecnoName
+   LOCAL cOld := s_RecnoName
 
    IF cName != NIL
-      RecnoName := Upper(AllTrim(cName))
+      s_RecnoName := Upper(AllTrim(cName))
    ENDIF
 
 RETURN cOld
@@ -1267,10 +1267,10 @@ RETURN cOld
 
 FUNCTION SR_MaxRowCache(n)
 
-   LOCAL cOld := nMaxRowCache
+   LOCAL cOld := s_nMaxRowCache
 
    IF n != NIL
-      nMaxRowCache := n
+      s_nMaxRowCache := n
    ENDIF
 
 RETURN cOld
@@ -1279,10 +1279,10 @@ RETURN cOld
 
 FUNCTION SR_FetchSize(n)
 
-   LOCAL cOld := nFetchSize
+   LOCAL cOld := s_nFetchSize
 
    IF n != NIL
-      nFetchSize := n
+      s_nFetchSize := n
    ENDIF
 
 RETURN cOld
@@ -1291,10 +1291,10 @@ RETURN cOld
 
 FUNCTION SR_DeletedName(cName)
 
-   LOCAL cOld := DeletedName
+   LOCAL cOld := s_DeletedName
 
    IF cName != NIL
-      DeletedName := Upper(AllTrim(cName))
+      s_DeletedName := Upper(AllTrim(cName))
    ENDIF
 
 RETURN cOld
@@ -1390,22 +1390,22 @@ FUNCTION SR_EndConnection(nConnection)
    LOCAL oCnn
    LOCAL uRet
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
 
    SR_CheckConnection(nConnection)
 
-   IF nConnection > Len(aConnections) .OR. nConnection == 0 .OR. nConnection < 0
+   IF nConnection > Len(s_aConnections) .OR. nConnection == 0 .OR. nConnection < 0
       RETURN NIL
    ENDIF
 
-   oCnn := aConnections[nConnection]
+   oCnn := s_aConnections[nConnection]
 
-   IF nConnection == Len(aConnections)
-      ASize(aConnections, Len(aConnections) - 1)
+   IF nConnection == Len(s_aConnections)
+      ASize(s_aConnections, Len(s_aConnections) - 1)
    ELSE
-      aConnections[nConnection] := NIL
+      s_aConnections[nConnection] := NIL
    ENDIF
 
    IF oCnn != NIL
@@ -1416,7 +1416,7 @@ FUNCTION SR_EndConnection(nConnection)
       uRet := oCnn:end()
    ENDIF
 
-   nActiveConnection := Len(aConnections)
+   s_nActiveConnection := Len(s_aConnections)
 
 RETURN uRet
 
@@ -1426,8 +1426,8 @@ FUNCTION SR_GetConnectionInfo(nConnection, nInfo)
 
    LOCAL oCnn
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
    SR_CheckConnection(nConnection)
    oCnn := SR_GetConnection()
 
@@ -1446,13 +1446,13 @@ RETURN ""
 
 FUNCTION SR_StartLog(nConnection)
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
-   aConnections[nConnection]:lTraceToDBF := .T.
-   IF aConnections[nConnection]:oSqlTransact != NIL
-      aConnections[nConnection]:oSqlTransact:lTraceToDBF := .T.
+   s_aConnections[nConnection]:lTraceToDBF := .T.
+   IF s_aConnections[nConnection]:oSqlTransact != NIL
+      s_aConnections[nConnection]:oSqlTransact:lTraceToDBF := .T.
    ENDIF
 
 RETURN .T.
@@ -1461,13 +1461,13 @@ RETURN .T.
 
 FUNCTION SR_StartTrace(nConnection)
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
-   aConnections[nConnection]:lTraceToScreen := .T.
-   IF aConnections[nConnection]:oSqlTransact != NIL
-      aConnections[nConnection]:oSqlTransact:lTraceToScreen := .T.
+   s_aConnections[nConnection]:lTraceToScreen := .T.
+   IF s_aConnections[nConnection]:oSqlTransact != NIL
+      s_aConnections[nConnection]:oSqlTransact:lTraceToScreen := .T.
    ENDIF
 
 RETURN .T.
@@ -1476,13 +1476,13 @@ RETURN .T.
 
 FUNCTION SR_StopLog(nConnection)
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
-   aConnections[nConnection]:lTraceToDBF := .F.
-   IF aConnections[nConnection]:oSqlTransact != NIL
-      aConnections[nConnection]:oSqlTransact:lTraceToDBF := .F.
+   s_aConnections[nConnection]:lTraceToDBF := .F.
+   IF s_aConnections[nConnection]:oSqlTransact != NIL
+      s_aConnections[nConnection]:oSqlTransact:lTraceToDBF := .F.
    ENDIF
 
 RETURN NIL
@@ -1491,13 +1491,13 @@ RETURN NIL
 
 FUNCTION SR_StopTrace(nConnection)
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
-   aConnections[nConnection]:lTraceToScreen := .F.
-   IF aConnections[nConnection]:oSqlTransact != NIL
-      aConnections[nConnection]:oSqlTransact:lTraceToScreen := .F.
+   s_aConnections[nConnection]:lTraceToScreen := .F.
+   IF s_aConnections[nConnection]:oSqlTransact != NIL
+      s_aConnections[nConnection]:oSqlTransact:lTraceToScreen := .F.
    ENDIF
 
 RETURN NIL
@@ -1508,13 +1508,13 @@ FUNCTION SR_SetTimeTrace(nConnection, nMilisseconds)
 
    LOCAL nOld
 
-   DEFAULT nActiveConnection TO 0
-   DEFAULT nConnection TO nActiveConnection
-   DEFAULT aConnections TO {}
+   DEFAULT s_nActiveConnection TO 0
+   DEFAULT nConnection TO s_nActiveConnection
+   DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
-   DEFAULT nMilisseconds TO aConnections[nConnection]:nTimeTraceMin
-   nOld := aConnections[nConnection]:nTimeTraceMin
-   aConnections[nConnection]:nTimeTraceMin := nMilisseconds
+   DEFAULT nMilisseconds TO s_aConnections[nConnection]:nTimeTraceMin
+   nOld := s_aConnections[nConnection]:nTimeTraceMin
+   s_aConnections[nConnection]:nTimeTraceMin := nMilisseconds
 
    HB_SYMBOL_UNUSED(nOld)
 
@@ -1524,9 +1524,9 @@ RETURN NIL
 
 Procedure SR_End()
 
-   DEFAULT aConnections TO {}
-   DO WHILE Len(aConnections) > 0
-      SR_EndConnection(Len(aConnections))
+   DEFAULT s_aConnections TO {}
+   DO WHILE Len(s_aConnections) > 0
+      SR_EndConnection(Len(s_aConnections))
    ENDDO
 
 Return
@@ -1604,25 +1604,25 @@ FUNCTION SR_GetInternalID()
    LOCAL i1
    LOCAL i2
 
-   IF cIntenalID != NIL
-      RETURN cIntenalID
+   IF s_cIntenalID != NIL
+      RETURN s_cIntenalID
    ENDIF
 
    i1 := HB_RANDOMINT(1, 99999999 )
    i2 := HB_RANDOMINT(1, 99999999 )
 
-   cIntenalID := AllTrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + strZero(i1, 8) + "__" + strZero(i2, 8)
+   s_cIntenalID := AllTrim(SR_Val2Char(SR_GetCurrInstanceID())) + "__" + strZero(i1, 8) + "__" + strZero(i2, 8)
 
-RETURN cIntenalID
+RETURN s_cIntenalID
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 FUNCTION SR_SetCollation(cName)
 
-   LOCAL cOld := cCollation
+   LOCAL cOld := s_cCollation
 
    IF HB_ISCHAR(cName)
-      cCollation := cName
+      s_cCollation := cName
    ENDIF
 
 RETURN cOld
@@ -1961,16 +1961,16 @@ RETURN aRet2
 
 FUNCTION SR_SetToolsOwner(cOwner)
 
-   LOCAL cOld := cToolsOwner
+   LOCAL cOld := s_cToolsOwner
    LOCAL oSql
 
    IF cOwner != NIL
-      cToolsOwner := cOwner
-      IF (!Empty(cOwner)) .AND. Right(cToolsOwner, 1) != "."
-         cToolsOwner += "."
+      s_cToolsOwner := cOwner
+      IF (!Empty(cOwner)) .AND. Right(s_cToolsOwner, 1) != "."
+         s_cToolsOwner += "."
       ENDIF
    ELSE
-      IF Empty(cToolsOwner)
+      IF Empty(s_cToolsOwner)
          oSql := SR_GetConnection()
          IF !Empty(oSql:cOwner)
             RETURN oSql:cOwner
@@ -1986,14 +1986,14 @@ FUNCTION SR_GetToolsOwner()
 
    LOCAL oSql
 
-   IF Empty(cToolsOwner)
+   IF Empty(s_cToolsOwner)
       oSql := SR_GetConnection()
       IF !Empty(oSql:cOwner)
          RETURN oSql:cOwner
       ENDIF
    ENDIF
 
-RETURN cToolsOwner
+RETURN s_cToolsOwner
 
 //-------------------------------------------------------------------------------------------------------------------//
 
