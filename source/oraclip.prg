@@ -148,11 +148,11 @@ FUNCTION OraSel1(n, aret, csql, adata)
 
             FClose(HB_FTEMPCREATE(".", "tmp", , @cTmpFile))
             s_aOraClipCursors[n]["aliastmp"] := StrTran(StrTran(cTmpFile, ".", ""), "\", "")
-            IF file(StrTran(cTmpfile, ".\", ""))
-               ferase(StrTran(cTmpfile, ".\", ""))
+            IF File(StrTran(cTmpfile, ".\", ""))
+               FErase(StrTran(cTmpfile, ".\", ""))
             ENDIF
-            IF file(cTmpfile)
-               ferase(cTmpfile)
+            IF File(cTmpfile)
+               FErase(cTmpfile)
             ENDIF
             s_aOraClipCursors[n]["tmpfile"] := cTmpFile
             DBCreate(cTmpFile, SR_AdjustNum(s_aOraClipCursors[n]["aFields"]), SR_SetRDDTemp())
@@ -186,7 +186,7 @@ FUNCTION OraSel1(n, aret, csql, adata)
          s_aOraClipCursors[n]["aFields"] := {}
       ENDIF
       IF nArea > 0
-         select(nArea)
+         Select(nArea)
       ENDIF
       RETURN nError
 
@@ -223,11 +223,11 @@ FUNCTION OraSel1(n, aret, csql, adata)
          s_nlasterror := 0
          FClose(HB_FTEMPCREATE(".", "tmp", , @cTmpFile))
          s_aOraClipCursors[n]["aliastmp"] := StrTran(StrTran(cTmpFile, ".", ""), "\", "")
-         IF file(StrTran(cTmpfile, ".\", ""))
-            ferase(StrTran(cTmpfile, ".\", ""))
+         IF File(StrTran(cTmpfile, ".\", ""))
+            FErase(StrTran(cTmpfile, ".\", ""))
          ENDIF
-         IF file(cTmpfile)
-            ferase(cTmpfile)
+         IF File(cTmpfile)
+            FErase(cTmpfile)
          ENDIF
          FOR EACH atmp IN s_aOraClipCursors[n]["aFields"]
             /*
@@ -267,7 +267,7 @@ FUNCTION OraSel1(n, aret, csql, adata)
       s_nlasterror := SQLO_GETERRORCODE(sr_getconnection():hDBC)
    ENDIF
    IF nArea > 0
-      select(nArea)
+      Select(nArea)
    ENDIF
 
 RETURN nError
@@ -357,7 +357,7 @@ FUNCTION OraUpdate(nCursor, cTabAutos, aCols, aDadosAlt, cWhere, aChave)
    LOCAL cbind
    LOCAL nPos
 
-   nPos := AScan(acols,{|x| Upper(x) == "ROWID"})
+   nPos := AScan(acols,{|x|Upper(x) == "ROWID"})
    FOR n := 1 TO Len(aDadosAlt)
       IF nPos >0
          IF nPos != n
@@ -553,7 +553,7 @@ FUNCTION orastruct(n, ctable)
    LOCAL csql := "select * from " + ctable + " where 1 == 1"
 
    USE (csql) NEW VIA "SQLRDD" ALIAS "ZZZZZZZZZZ"
-   aStru := zzzzzzzzzz->(dbstruct())
+   aStru := zzzzzzzzzz->(DBStruct())
    zzzzzzzzzz->(DBCloseArea())
 
 RETURN astru
@@ -1508,7 +1508,7 @@ FUNCTION OraTBrowse(nCursor1, cSql, c, oBrowse, bBLock)
          oCol := oBrowse:getcolumn(i)
          AAdd(aReg, FieldGet(i))
       NEXT i
-      nKey := inkey(0)
+      nKey := Inkey(0)
       aRet := Eval(bBLock, nkey, obrowse, aReg)
       IF Aret == NIL
          LOOP
@@ -1746,9 +1746,9 @@ STATIC FUNCTION OraFetch(n)
          s_aOraClipCursors[n]["cursoropen"] := .F.
          SQLO_CLOSESTMT(hDBC)
 
-         IF select(s_aOraClipCursors[n]["aliastmp"]) > 0
+         IF Select(s_aOraClipCursors[n]["aliastmp"]) > 0
             (s_aOraClipCursors[n]["aliastmp"])->(DBCloseArea())
-            ferase(s_aOraClipCursors[n]["tmpfile"])
+            FErase(s_aOraClipCursors[n]["tmpfile"])
          ENDIF
 
       ENDIF
@@ -1756,7 +1756,7 @@ STATIC FUNCTION OraFetch(n)
    ELSE
       (cAlias)->(DBGoTo(s_aOraClipCursors[n]["curpos"]))
    ENDIF
-   IF select(s_aOraClipCursors[n]["aliastmp"]) > 0
+   IF Select(s_aOraClipCursors[n]["aliastmp"]) > 0
       FOR i := 1 TO Len(s_aOraClipCursors[n]["aFields"])
          AAdd(s_aOraClipCursors[n]["data"], (cAlias)->(FieldGet(i)))
       NEXT i
@@ -1832,9 +1832,9 @@ STATIC FUNCTION closecursor(n)
          SQLO_CLOSESTMT(hDBC)
          s_aOraClipCursors[n]["cursoropen"] := .F.
       ENDIF
-      IF select(s_aOraClipCursors[n]["aliastmp"]) > 0
+      IF Select(s_aOraClipCursors[n]["aliastmp"]) > 0
          (s_aOraClipCursors[n]["aliastmp"])->(DBCloseArea())
-         ferase(s_aOraClipCursors[n]["tmpfile"])
+         FErase(s_aOraClipCursors[n]["tmpfile"])
       ENDIF
    RECOVER USING e
    END SEQUENCE

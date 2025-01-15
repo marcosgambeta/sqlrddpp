@@ -1951,7 +1951,7 @@ FUNCTION SR_ListCreatedTables()
    oCnn := SR_GetConnection()
    nRet := oCnn:exec("SELECT TABLE_ FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES", .F., .T., @aRet)
 
-   AEval(aRet, {|x| AAdd(aRet2, AllTrim(x[1])) })
+   AEval(aRet, {|x|AAdd(aRet2, AllTrim(x[1])) })
 
    HB_SYMBOL_UNUSED(nRet)
 

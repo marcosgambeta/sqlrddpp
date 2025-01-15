@@ -625,7 +625,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
             //nRet := dbe_CallUDF(bFunc, DE_EXCEPT, oTBR:colPos, GetCurValue(calias), oTBR, , , , , , , cTable)
             lExcept := .F.
-            IF lastkey() == K_ENTER
+            IF LastKey() == K_ENTER
                oTBR:RefreshCurrent()
             ENDIF
          ENDIF
@@ -662,7 +662,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
       oTBR:Hilite()
 
-      IF Nextkey() != 0
+      IF NextKey() != 0
          nKey := Inkey()
       ELSE
          nKey := Inkey(0)
@@ -692,22 +692,22 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
    SetCursor(nCursor)
    SetPos(row(), 0)
-   IF select(cAlias ) > 0
+   IF Select(cAlias ) > 0
       (cAlias)->(DBCloseArea())
    ENDIF
    IF nOldArea > 0
-      select(nOldArea)
+      Select(nOldArea)
    ENDIF
-   IF file(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbf")
-      ferase(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbf")
-      ferase(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbt")
+   IF File(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbf")
+      FErase(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbf")
+      FErase(s_hHashData[s_nAliasTmp]["cFile"] + "sqllog.dbt")
    ENDIF
    IF s_nAliasTmp > 0
       s_nAliasTmp--
    ENDIF
-   ferase(cFiletoDelete)
-   IF file(StrTran(cFiletoDelete, ".tmp", ".adi"))
-      ferase(StrTran(cFiletoDelete, ".tmp", ".adi"))
+   FErase(cFiletoDelete)
+   IF File(StrTran(cFiletoDelete, ".tmp", ".adi"))
+      FErase(StrTran(cFiletoDelete, ".tmp", ".adi"))
    ENDIF
 
 /* Clipper's NG says that DBEdit always returns NIL, but doesn't. */
@@ -736,12 +736,12 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql, cCount, c
       nKey := NextKey()
 
       IF nKey == K_ENTER .OR. nKey == K_ESC
-         inkey()
+         Inkey()
          RETURN DE_ABORT
       ENDIF
 
       DO WHILE nKey != 0
-         inkey()
+         Inkey()
          dbe_ProcessKey(nKey, oTBR)
          nRet := dbe_return(Eval(bFunc, DE_EXCEPT, nColPos, GetCurValue(calias)))
          IF nRet == DE_ABORT
@@ -771,7 +771,7 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql, cCount, c
    ELSEIF nMode == DE_IDLE .OR. nMode == DE_EMPTY
 
       KEYBOARD Chr(0)
-      inkey()
+      Inkey()
 
    ENDIF
 
@@ -781,7 +781,7 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql, cCount, c
 
    // Call UDF
    aValues := GetCurValue(calias)
-   nkey := lastkey()
+   nkey := LastKey()
    IF nKey == K_ENTER .OR. nKey == K_DEL
       GETREFRESHCURVALUE(cAlias, ctable)
       aValues := GetCurValue(calias)
@@ -859,7 +859,7 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql, cCount, c
 
       IF (cAlias)->(LastRec()) > nLastRec // append.
 
-         nKey := nextkey()
+         nKey := NextKey()
          //refreshFullData(csql, calias)
 
          IF (nKey != 0 .AND. !dbe_CursorKey(nKey)) .OR. (calias)->(ordkeyno()) < oTBR:RowPos
@@ -1164,7 +1164,7 @@ STATIC FUNCTION refreshFullData(csql, cAlias, cfile, nHigh, nLow, nStep)
 
    DEFAULT cFile TO (calias)->(dbinfo(10))
 
-   //IF select(caLias) > 0
+   //IF Select(caLias) > 0
    //   ZAP
    //ENDIF
    //cSql := StrTran(csql, ":HigerBound", Str(nHigh))
@@ -1173,7 +1173,7 @@ STATIC FUNCTION refreshFullData(csql, cAlias, cfile, nHigh, nLow, nStep)
    //sr_getconnection():exec(cSql, , .T., , cfile, cAlias)
    //(calias)->(DBGoTop())
    nBeforeTotRec := (calias)->(RecCount())
-   IF select(caLias) > 0
+   IF Select(caLias) > 0
       IF (calias)->(Eof())
          nRecno := nBeforeTotRec
       ELSE
@@ -1226,7 +1226,7 @@ FUNCTION GETREFRESHCURVALUE(calias, ctable)
    LOCAL i := 1
    LOCAL cSql := ""
    LOCAL aret := {}
-   LOCAL adb := (calias)->(dbstruct())
+   LOCAL adb := (calias)->(DBStruct())
    LOCAL nPos
    LOCAL ckey
    LOCAL aTmp
@@ -1373,7 +1373,7 @@ FUNCTION insertupdated(calias, ctable)
    LOCAL cSqlTmp := ""
    LOCAL aTemp
    LOCAL atemp2 := {}
-   LOCAL adb := (calias)->(dbstruct())
+   LOCAL adb := (calias)->(DBStruct())
    LOCAL nPos
    LOCAL i := 1
    LOCAL nrec
@@ -1479,7 +1479,7 @@ FUNCTION insertupdated(calias, ctable)
    ENDIF
 
    //(calias)->(DBGoTo((calias)->(LastRec())))
-   select(calias)
+   Select(calias)
 
 RETURN NIL
 
@@ -1497,7 +1497,7 @@ FUNCTION createkeyfrompk(calias, ctable, lDescIndex)
    LOCAL aTemp
    LOCAL ckey := ""
    LOCAL i := 1
-   LOCAL aDb := (calias)->(dbstruct())
+   LOCAL aDb := (calias)->(DBStruct())
    LOCAL lnumtostr := .F.
    LOCAL lDatetoStr := .F.
    LOCAL nPos

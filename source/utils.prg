@@ -225,7 +225,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
    LOCAL nOrd
    LOCAL aDirect := {}
 
-   IF select() == 0
+   IF Select() == 0
       SR_RuntimeErr(, "SR_ChengeStructure: Workarea not in use.")
    ENDIF
 
@@ -242,7 +242,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       ENDIF
 
       cAlias   := Alias()
-      nAlias   := select()
+      nAlias   := Select()
       cTblName := oWA:cFileName
       nOrd     := IndexOrd()
       nReg     := RecNo()
@@ -695,10 +695,10 @@ FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
       ENDDO
 
       LONG_QRY->(DBAppend())
-      Replace LONG_QRY->DATA         with Date()
-      Replace LONG_QRY->HORA         with Time()
-      Replace LONG_QRY->COMANDO      with cComm
-      Replace LONG_QRY->CUSTO        with nLimisencos
+      REPLACE LONG_QRY->DATA         WITH Date()
+      REPLACE LONG_QRY->HORA         WITH Time()
+      REPLACE LONG_QRY->COMANDO      WITH cComm
+      REPLACE LONG_QRY->CUSTO        WITH nLimisencos
       LONG_QRY->(DBCloseArea())
 
    RECOVER
@@ -765,9 +765,9 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
       ENDDO
 
       SQLLOG->(DBAppend())
-      Replace SQLLOG->DATA         with Date()
-      Replace SQLLOG->HORA         with Time()
-      Replace SQLLOG->COMANDO      with cComm
+      REPLACE SQLLOG->DATA         WITH Date()
+      REPLACE SQLLOG->HORA         WITH Time()
+      REPLACE SQLLOG->COMANDO      WITH cComm
       SQLLOG->(DBCloseArea())
 
    RECOVER

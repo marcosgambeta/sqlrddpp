@@ -530,7 +530,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
                   n++
 
-               EndDo
+               ENDDO
 
                DBGoTop()
 
@@ -583,7 +583,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                      NEXT j
                   ENDIF
 
-               EndDo
+               ENDDO
 
             ELSE      // Retorno deve ser para Array !
 
@@ -635,7 +635,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                   IF n > nMaxRecords
                      EXIT
                   ENDIF
-               EndDo
+               ENDDO
                ASize(aArray, n)
             ENDIF
          ENDIF

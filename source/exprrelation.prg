@@ -486,12 +486,12 @@ METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
 
    BEGIN SEQUENCE WITH __BreakBlock()
       IF PCount() == 1 .AND. lIgnoreRelations
-         save_slct := select()
+         save_slct := Select()
          SelectFirstAreaNotInUse()
          USE &(oGetWorkarea(::cContext):cFileName) VIA "SQLRDD" ALIAS "AliasWithoutRelation"
          result := &(::cValue)
          CLOSE ("AliasWithoutRelation")
-         select(save_slct)
+         Select(save_slct)
       ELSE
          result := &(::cContext)->(&(::cValue))
       ENDIF
@@ -599,8 +599,8 @@ FUNCTION GetFields()
    LOCAL _aLengths
 
    IF ::aDbFields == NIL
-      save_slct := select()
-      select(::cAlias)
+      save_slct := Select()
+      Select(::cAlias)
       nCount := FCount()
       _aTypes := Array(nCount)
       _aNames := Array(nCount)
@@ -610,7 +610,7 @@ FUNCTION GetFields()
       FOR i := 1 TO nCount
          ::aDbFields[i] := DbField():new(_aNames[i], _aTypes[i], _aLengths[i])
       NEXT i
-      select(save_slct)
+      Select(save_slct)
    ENDIF
 
 RETURN ::aDbFields
