@@ -296,28 +296,28 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
    CASE SYSTEMID_MSSQL7
    CASE SYSTEMID_SYBASE
       IF Empty(cOwner)
-         ::exec("select name from sysobjects where type = N'U' order by name", .T., .T., @aRet)
+         ::Exec("select name from sysobjects where type = N'U' order by name", .T., .T., @aRet)
       ELSE
-         ::exec("select name from sysobjects where type = N'U' and user_name(uid) = '" + cOwner + "' order by name", .T., .T., @aRet)
+         ::Exec("select name from sysobjects where type = N'U' and user_name(uid) = '" + cOwner + "' order by name", .T., .T., @aRet)
       ENDIF
       EXIT
    CASE SYSTEMID_POSTGR
       IF Empty(cOwner)
-         ::exec("select tablename from pg_tables where schemaname = 'public' order by tablename", .T., .T., @aRet)
+         ::Exec("select tablename from pg_tables where schemaname = 'public' order by tablename", .T., .T., @aRet)
       ELSE
-         ::exec("select tablename from pg_tables where schemaname = '" + cOwner + "' order by tablename", .T., .T., @aRet)
+         ::Exec("select tablename from pg_tables where schemaname = '" + cOwner + "' order by tablename", .T., .T., @aRet)
       ENDIF
       EXIT
    CASE SYSTEMID_ORACLE
       IF Empty(cOwner)
-         ::exec("select table_name from user_tables order by TABLE_NAME", .T., .T., @aRet)
+         ::Exec("select table_name from user_tables order by TABLE_NAME", .T., .T., @aRet)
       ELSE
-         ::exec("select TABLE_NAME from all_tables where owner = '" + cOwner + "' order by TABLE_NAME", .T., .T., @aRet)
+         ::Exec("select TABLE_NAME from all_tables where owner = '" + cOwner + "' order by TABLE_NAME", .T., .T., @aRet)
       ENDIF
       EXIT
    CASE SYSTEMID_MYSQL
    CASE SYSTEMID_MARIADB
-      ::exec("show tables", .T., .T., @aRet)
+      ::Exec("show tables", .T., .T., @aRet)
       EXIT
    CASE SYSTEMID_ADABAS
    CASE SYSTEMID_IBMDB2
@@ -330,9 +330,9 @@ METHOD ListCatTables(cOwner) CLASS SR_CONNECTION
    CASE SYSTEMID_FIREBR4
    CASE SYSTEMID_FIREBR5
       IF Empty(cOwner)
-         ::exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 order by RDB$RELATION_NAME", .T., .T., @aRet)
+         ::Exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 order by RDB$RELATION_NAME", .T., .T., @aRet)
       ELSE
-         ::exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 AND RDB$OWNER_NAME = '" + cOwner + "' order by RDB$RELATION_NAME", .T., .T., @aRet)
+         ::Exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 AND RDB$OWNER_NAME = '" + cOwner + "' order by RDB$RELATION_NAME", .T., .T., @aRet)
       ENDIF
       EXIT
    ENDSWITCH
@@ -894,7 +894,7 @@ METHOD Commit(lNoLog) CLASS SR_CONNECTION
       ELSE
          ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + Str(::uSid),,,, .T.)
          ::oSqlTransact:FreeStatement()
-         ::oSqlTransact:commit(.T.)
+         ::oSqlTransact:Commit(.T.)
       ENDIF
    ENDIF
 
@@ -934,7 +934,7 @@ METHOD RollBack() CLASS SR_CONNECTION
       ELSE
          ::oSqlTransact:execute("DELETE FROM " + ::cQueryOwner + "SR_MGMNTLOGCHG WHERE SPID_ = " + Str(::uSid),,,, .T.)
          ::oSqlTransact:FreeStatement()
-         ::oSqlTransact:commit(.T.)
+         ::oSqlTransact:Commit(.T.)
       ENDIF
    ENDIF
 

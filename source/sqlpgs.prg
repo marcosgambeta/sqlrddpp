@@ -302,7 +302,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
    ::hStmt := NIL
    ::hDbc := hDbc
    cTargetDB := "PostgreSQL Native"
-   ::exec("select version()", .T., .T., @aRet)
+   ::Exec("select version()", .T., .T., @aRet)
    IF Len(aRet) > 0
       cSystemVers := aRet[1, 1]
       cString := aRet[1, 1]
@@ -336,7 +336,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       ::lPostgresql83 := (Val(aversion[1]) == 8 .AND. Val(aversion[2]) == 3)
    ENDIF
 
-   ::exec("select pg_backend_pid()", .T., .T., @aRet)
+   ::Exec("select pg_backend_pid()", .T., .T., @aRet)
 
    IF Len(aRet) > 0
       ::uSid := Val(Str(aRet[1, 1], 8, 0))
@@ -367,7 +367,7 @@ METHOD Commit(lNoLog) CLASS SR_PGS
 
    ::Super:Commit(lNoLog)
 
-RETURN (::nRetCode := ::exec("COMMIT;BEGIN", .F.))
+RETURN (::nRetCode := ::Exec("COMMIT;BEGIN", .F.))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -375,7 +375,7 @@ METHOD RollBack() CLASS SR_PGS
 
    ::Super:RollBack()
    ::nRetCode := PGSRollBack(::hDbc)
-   ::exec("BEGIN", .F.)
+   ::Exec("BEGIN", .F.)
 
 RETURN ::nRetCode
 

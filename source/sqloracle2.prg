@@ -359,7 +359,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       aVersion := hb_atokens(StrTran(Upper(aRet[1, 1]), "ORACLE ", ""), ".")
    ENDIF
 
-   ::exec("select sid from " + IIf(::lCluster, "g", "") + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
+   ::Exec("select sid from " + IIf(::lCluster, "g", "") + "v$session where AUDSID = sys_context('USERENV','sessionid')", .T., .T., @aRet)
 
    IF Len(aRet) > 0
       ::uSid := Val(Str(aRet[1, 1], 8, 0))

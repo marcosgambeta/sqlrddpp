@@ -512,7 +512,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       EXIT
    CASE SYSTEMID_MSSQL7
    CASE SYSTEMID_AZURE
-      ::exec("select cast( @@spid as numeric )", .T., .T., @aRet)
+      ::Exec("select cast( @@spid as numeric )", .T., .T., @aRet)
       IF Len(aRet) > 0
          ::uSid := Val(Str(aRet[1, 1], 8, 0))
       ENDIF

@@ -232,7 +232,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    ENDIF
 
    cSql :=  "select * from ( select a.*, rownum r from ( " + cSql + ") a where rownum <= :HigerBound  ) where r >= :LowerBound"
-   SR_GetConnection():exec(ccount, , .T., @aret)
+   SR_GetConnection():Exec(ccount, , .T., @aret)
    IF Len(aRet) > 0
       IF aret[1, 1] < 100
          nHigerBound := aret[1, 1]
@@ -584,7 +584,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
          nRecno := RecNo()
 
-         SR_GetConnection():exec(ccount, , .T., @aret)
+         SR_GetConnection():Exec(ccount, , .T., @aret)
          IF Len(aRet) >0
             IF (calias)->(LastRec()) < aret[1, 1]
                nHigerBound += nStep
@@ -1162,7 +1162,7 @@ STATIC FUNCTION refreshFullData(csql, cAlias, cfile, nHigh, nLow, nStep)
    //cSql := StrTran(csql, ":HigerBound", Str(nHigh))
    //cSql := StrTran(csql, ":LowerBound", Str(nLow))
    //
-   //SR_GetConnection():exec(cSql, , .T., , cfile, cAlias)
+   //SR_GetConnection():Exec(cSql, , .T., , cfile, cAlias)
    //(calias)->(DBGoTop())
    nBeforeTotRec := (calias)->(RecCount())
    IF Select(caLias) > 0
@@ -1175,7 +1175,7 @@ STATIC FUNCTION refreshFullData(csql, cAlias, cfile, nHigh, nLow, nStep)
    cSql := StrTran(csql, ":HigerBound", Str(nHigh))
    cSql := StrTran(csql, ":LowerBound", Str(nLow))
 
-   SR_GetConnection():exec(cSql, , .T., , cfile, cAlias)
+   SR_GetConnection():Exec(cSql, , .T., , cfile, cAlias)
    nAfterRec := (calias)->(RecCount())
 
    IF nAfterRec > nrecno .AND. nBeforeTotRec<nAfterRec
@@ -1200,7 +1200,7 @@ FUNCTION GETPRIMARYKEY(cTable)
    ELSE
       CSQL :=  "SELECT cols.table_name, cols.column_name, cols.position, cons.status, cons.owner FROM all_constraints cons, all_cons_columns cols WHERE cols.table_name = " + sr_cdbvalue(Upper(AllTrim(cTable)) ) + " AND cons.constraint_type = 'P' AND cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner ORDER BY cols.table_name, cols.position"
    ENDIF
-   SR_GetConnection():exec(cSql, , .T., @aret)
+   SR_GetConnection():Exec(cSql, , .T., @aret)
    IF Len(aRet) > 0
       FOR EACH aTemp IN aRet
          AAdd(aFields, AllTrim(aTemp[2]))
@@ -1238,7 +1238,7 @@ FUNCTION GETREFRESHCURVALUE(calias, ctable)
       NEXT
       cSql := SubStr(cSql, 1, Len(csql) - 4)
 
-      SR_GetConnection():exec(cSql, , .T., @aret)
+      SR_GetConnection():Exec(cSql, , .T., @aret)
       aFields2 := SR_GetConnection():aFields
       IF Len(aret) > 0
          (calias)->(RLock())
@@ -1286,11 +1286,11 @@ FUNCTION GETREFRESHCURINSVALUE(calias, ctable, calias2)
 
       cSql := SubStr(cSql, 1, Len(csql) - 4)
       //corrigido neste ponto
-      //SR_GetConnection():exec(cSql, , .T., , cfile, cAlias2, 1)
+      //SR_GetConnection():Exec(cSql, , .T., , cfile, cAlias2, 1)
       //(calias2)->(DBGoBottom())
       //endif
 
-      SR_GetConnection():exec(cSql, , .T., @aret)
+      SR_GetConnection():Exec(cSql, , .T., @aret)
       aFields2 := SR_GetConnection():aFields
 
       IF Len(aret) > 0
@@ -1345,7 +1345,7 @@ FUNCTION IsPrimaryKeyDeleted(calias, cTable)
       NEXT
       cSql := SubStr(cSql, 1, Len(csql) - 4)
 
-      SR_GetConnection():exec(cSql, , .T., @aret)
+      SR_GetConnection():Exec(cSql, , .T., @aret)
       IF Len(aRet ) == 0
          RETURN .T.
       ENDIF

@@ -1268,8 +1268,8 @@ FUNCTION SR_BeginTransaction(nCnn)
       oCnn:nTransacCount ++
 
       IF oCnn:nSystemID == SYSTEMID_CACHE
-         oCnn:exec("START TRANSACTION %COMMITMODE EXPLICIT ISOLATION LEVEL READ COMMITTED")
-//         oCnn:exec("START TRANSACTION %COMMITMODE EXPLICIT")
+         oCnn:Exec("START TRANSACTION %COMMITMODE EXPLICIT ISOLATION LEVEL READ COMMITTED")
+//         oCnn:Exec("START TRANSACTION %COMMITMODE EXPLICIT")
       ENDIF
 
    ENDIF
@@ -2139,7 +2139,7 @@ FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
       ENDIF
    ENDIF
    IF oCnn:nSystemId == SYSTEMID_POSTGR
-      oCnn:exec(cSql, , .F.)
+      oCnn:Exec(cSql, , .F.)
       oCnn:Commit()
    ENDIF
 
