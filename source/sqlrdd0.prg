@@ -2408,7 +2408,7 @@ HB_BOOL HB_EXPORT sr_UseDeleteds(void)
   return s_fUseDeleteds;
 }
 
-HB_FUNC( SR_USEDELETEDS )
+HB_FUNC(SR_USEDELETEDS)
 {
   hb_retl(s_fUseDeleteds);
   if (HB_ISLOG(1))
@@ -2422,7 +2422,7 @@ HB_BOOL HB_EXPORT sr_lSerializeArrayAsJson(void)
   return s_fSerializeArrayAsJson;
 }
 
-HB_FUNC( SR_SETSERIALIZEARRAYASJSON )
+HB_FUNC(SR_SETSERIALIZEARRAYASJSON)
 {
   hb_retl(s_fSerializeArrayAsJson);
   if (HB_ISLOG(1))
@@ -2441,12 +2441,12 @@ HB_BOOL HB_EXPORT sr_iOldPgsBehavior(void)
   return s_iOldPgsBehavior;
 }
 
-HB_FUNC( SR_GETSQL2008NEWTYPES )
+HB_FUNC(SR_GETSQL2008NEWTYPES)
 {
   hb_retl(s_fSql2008newTypes);
 }
 
-HB_FUNC( SR_SETSQL2008NEWTYPES )
+HB_FUNC(SR_SETSQL2008NEWTYPES)
 {
   hb_retl(s_fSql2008newTypes);
   if (HB_ISLOG(1))
@@ -2471,7 +2471,7 @@ HB_BOOL HB_EXPORT sr_fShortasNum(void)
   return s_fShortasNum;
 }
 
-HB_FUNC( SETFIREBIRDUSESHORTASNUM )
+HB_FUNC(SETFIREBIRDUSESHORTASNUM)
 {
   int iOld = s_fShortasNum;
   if (HB_ISLOG(1))

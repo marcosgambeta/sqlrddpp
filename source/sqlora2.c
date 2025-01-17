@@ -929,34 +929,37 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
 }
 
 //-----------------------------------------------------------------------------//
-//
-// HB_FUNC( SQLO2_LINE )
-//{
-//   POCI_ORASESSION session = (POCI_ORASESSION) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-//   const char ** line;
-//   CONST unsigned int * lens;
-//   PHB_ITEM ret, temp;
-//   HB_USHORT i;
-//   SQLO2_stmt_handle_t stmtParamRes;
-//
-//   ret = hb_itemNew(NULL);
-//
-//   if( session ) {
-//      stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
-//      line = SQLO2_values(stmtParamRes, NULL, 0);
-//      lens = SQLO2_value_lens(stmtParamRes, NULL);
-//      hb_arrayNew(ret, session->numcols);
-//
-//      for( i = 0; i < session->numcols; i++ ) {
-//         temp = hb_itemNew(NULL);
-//         hb_arraySetForward(ret, i + 1, hb_itemPutCL(temp, (char *) line[i], lens[i]));
-//         hb_itemRelease(temp);
-//      }
-//   }
-//   hb_itemReturnForward(ret);
-//   hb_itemRelease(ret);
-//}
-//
+
+#if 0
+HB_FUNC(SQLO2_LINE)
+{
+  POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  const char **line;
+  CONST unsigned int *lens;
+  PHB_ITEM ret, temp;
+  HB_USHORT i;
+  SQLO2_stmt_handle_t stmtParamRes;
+
+  ret = hb_itemNew(NULL);
+
+  if (session)
+  {
+    stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
+    line = SQLO2_values(stmtParamRes, NULL, 0);
+    lens = SQLO2_value_lens(stmtParamRes, NULL);
+    hb_arrayNew(ret, session->numcols);
+
+    for (i = 0; i < session->numcols; i++)
+    {
+      temp = hb_itemNew(NULL);
+      hb_arraySetForward(ret, i + 1, hb_itemPutCL(temp, (char *)line[i], lens[i]));
+      hb_itemRelease(temp);
+    }
+  }
+  hb_itemReturnForward(ret);
+  hb_itemRelease(ret);
+}
+#endif
 
 HB_FUNC(SQLO2_LINEPROCESSED)
 {

@@ -1850,50 +1850,52 @@ typedef int sqlo_stmt_handle_t;
 
 typedef struct _ORA_BIND_COLS
 {
-   char * col_name;
-   short sVal;
-   double dValue;
-   int iType;
-   ULONG ulValue;
-   char sDate[7];
-   int iValue;
-   char sValue[31];
-//    OCIRowId * RowId;
-} ORA_BIND_COLS ;
+  char *col_name;
+  short sVal;
+  double dValue;
+  int iType;
+  ULONG ulValue;
+  char sDate[7];
+  int iValue;
+  char sValue[31];
+  // OCIRowId *RowId;
+} ORA_BIND_COLS;
 
 typedef struct _OCI_SESSION
 {
-   int dbh;                      // Connection handler
-   int stmt;                     // Current statement handler
-   int status;                   // Execution return value
-   int numcols;                  // Result set columns
-   char server_version[128];
-   //bellow for bind vars
-   sqlo_stmt_handle_t stmtParam;
-   ORA_BIND_COLS * pLink;
-   unsigned int ubBindNum;
-   sqlo_stmt_handle_t stmtParamRes;
-   unsigned int uRows;
+  int dbh;                      // Connection handler
+  int stmt;                     // Current statement handler
+  int status;                   // Execution return value
+  int numcols;                  // Result set columns
+  char server_version[128];
+  // bellow for bind vars
+  sqlo_stmt_handle_t stmtParam;
+  ORA_BIND_COLS *pLink;
+  unsigned int ubBindNum;
+  sqlo_stmt_handle_t stmtParamRes;
+  unsigned int uRows;
 } OCI_SESSION;
 
 typedef OCI_SESSION * POCI_SESSION;
 
-HB_FUNC( GETORAHANDLE )
+HB_FUNC(GETORAHANDLE)
 {
-   OCI_SESSION * p = (OCI_SESSION *) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  OCI_SESSION *p = (OCI_SESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-   if( p ) {
-      hb_retni(p->stmt);
-   }
+  if (p)
+  {
+    hb_retni(p->stmt);
+  }
 }
 
-HB_FUNC( SETORAHANDLE )
+HB_FUNC(SETORAHANDLE)
 {
-   OCI_SESSION * p  = (OCI_SESSION *) hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  OCI_SESSION *p  = (OCI_SESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-   if( p ) {
-      p->stmt = hb_parni(2);
-   }
+  if (p)
+  {
+    p->stmt = hb_parni(2);
+  }
 }
 
 #pragma ENDDUMP
