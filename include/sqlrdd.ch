@@ -235,4 +235,4 @@
 #define IS_SQLRDD   (Select() > 0 .AND. (RddName()=="SQLRDD" .OR. RddName()=="SQLEX"))
 #endif
 
-#endif
+#endif // SQLRDD_CH
