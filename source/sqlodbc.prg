@@ -397,12 +397,12 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
             cType := "L"
             nLenField := 1
          ENDIF
-/*
+#if 0
          IF ::nSystemID == SYSTEMID_POSTGR
             nRet := SR_ColAttribute(::hStmt, n, SQL_DESC_NULLABLE, @cVlr, 64, @nBfLn, @nOut)
             nNull := nOut
          ENDIF
-*/
+#endif
          IF cType == "U"
             ::RuntimeErr("", SR_Msg(21) + cName + " : " + Str(nType))
          ELSE

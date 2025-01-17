@@ -58,7 +58,7 @@
 REQUEST HB_Deserialize
 REQUEST HB_Serialize
 
-/* Need this modules linked */
+// Need this modules linked
 REQUEST SR_WORKAREA
 
 STATIC s_aConnections
@@ -392,8 +392,8 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
    DEFAULT s_aConnections      TO {}
    DEFAULT s_nActiveConnection TO 0
 
-   /* The macro execution is used to NOT link the connection class if we don't need it
-      The programmer MUST declare the needed connection class using REQUEST in PRG source */
+   // The macro execution is used to NOT link the connection class if we don't need it
+   // The programmer MUST declare the needed connection class using REQUEST in PRG source
 
    SWITCH nType
    CASE CONNECT_ODBC
@@ -521,7 +521,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
 
       oConnect:nConnectionType := nType
 
-      /* Create other connections to the database */
+      // Create other connections to the database
 
       IF nType < CONNECT_NOEXLOCK
          oConnect:oSqlTransact := oConnect2:Connect("", cUser, cPassword, 1, cOwner, 4000, .F., cDSN, 50, "ANSI", ;
@@ -658,7 +658,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
             oCnn:exec("ALTER SESSION SET NLS_DATE_FORMAT='yyyymmdd'", .F.)
             oCnn:exec("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='yyyymmdd HH.MI.SSXFF AM'", .F.)
          ENDIF
-         /* Locking system housekeeping */
+         // Locking system housekeeping
 
          aRet := {}
          oCnn:exec("select sid from " + IIf(oCnn:lCluster, "g", "") + ;
@@ -680,7 +680,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          EXIT
 
       CASE SYSTEMID_IBMDB2
-         /*
+#if 0
          IF SR_UseSequences() .AND. i == 1
             aRet := {}
             oCnn:exec("VALUES NEXTVAL FOR N_RECNO", .F., .T., @aRet)
@@ -688,7 +688,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
                oCnn:exec("CREATE SEQUENCE N_RECNO START WITH 1 INCREMENT BY 1 NOMAXVALUE NOCYCLE")
             ENDIF
          ENDIF
-         */
+#endif
          EXIT
 
       CASE SYSTEMID_SYBASE
@@ -705,7 +705,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          oCnn:Commit()
          oCnn:exec("SET QUOTED_IDENTIFIER ON")
          oCnn:exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED")
-         /* Locking system housekeeping */
+         // Locking system housekeeping
          aRet := {}
          oCnn:exec("SELECT convert( char(30), login_time, 21 ) FROM MASTER.DBO.SYSPROCESSES where SPID = @@SPID", ;
             .F., .T., @aRet)
@@ -734,7 +734,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          ENDIF
          oCnn:exec("SET CLIENT_ENCODING to 'LATIN1'", .F., .T., @aRet)
          oCnn:exec("SET xmloption to 'DOCUMENT'", .F., .T., @aRet)
-         /* Locking system housekeeping */
+         // Locking system housekeeping
          oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS WHERE SPID_ = (select pg_backend_pid()) OR SPID_ NOT IN (select pg_stat_get_backend_pid(pg_stat_get_backend_idset()))", .F.)
          oCnn:Commit()
@@ -803,7 +803,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
       ENDSWITCH
    NEXT i
 
-   /* check for the control tables */
+   // check for the control tables
    aRet := {}
    oConnect:exec("SELECT VERSION_, SIGNATURE_ FROM " + SR_GetToolsOwner() + "SR_MGMNTVERSION", .F., .T., @aRet)
 
@@ -814,7 +814,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
    ENDIF
 
    IF cStartingVersion < "MGMNT 1.02"
-      /* Only use BASIC types and commands to be 100% darabase independent */
+      // Only use BASIC types and commands to be 100% darabase independent
       oConnect:commit()
       oConnect:exec("DROP TABLE " + SR_GetToolsOwner() + "SR_MGMNTVERSION", .F.)
       oConnect:commit()
@@ -1034,7 +1034,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
 
       SR_UseDeleteds(lOld)
 
-/*
+#if 0
       SWITCH oConnect:nSystemID
       CASE SYSTEMID_MSSQL7
       CASE SYSTEMID_SYBASE
@@ -1075,7 +1075,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
       oConnect:commit()
       oConnect:exec("CREATE INDEX " + IIf(oConnect:nSystemID != SYSTEMID_ORACLE, "", SR_GetToolsOwner()) + "SR_MGMNTLOGCHG04 ON " + SR_GetToolsOwner() + "SR_MGMNTLOGCHG ( TYPE_, TIME_ )", .F.)
       oConnect:commit()
-*/
+#endif
 
       oConnect:exec("UPDATE " + SR_GetToolsOwner() + "SR_MGMNTVERSION SET VERSION_ = '" + HB_SR__MGMNT_VERSION + "'")
       oConnect:commit()
@@ -1691,10 +1691,10 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
    cIdxName := RTrim(aRet[1, 3])
    IF lTag
       oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + cFileName + ;
-         "' AND PHIS_NAME_ = '" + cIndex + "'" + IIf(oCnn:lComments," /* Wipe index info */",""), .F.)
+         "' AND PHIS_NAME_ = '" + cIndex + "'" + IIf(oCnn:lComments, " /* Wipe index info */", ""), .F.)
    ELSE
       oCnn:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + cFileName + ;
-         "' AND IDXNAME_ = '" + cIdxName + "'" + IIf(oCnn:lComments," /* Wipe index info */",""), .F.)
+         "' AND IDXNAME_ = '" + cIdxName + "'" + IIf(oCnn:lComments, " /* Wipe index info */", ""), .F.)
    ENDIF
    oCnn:Commit()
 
@@ -1778,7 +1778,7 @@ FUNCTION SR_DropTable(cFileName, cOwner)
       cOwner += "."
    ENDIF
 
-   /* Drop the table */
+   // Drop the table
 
    lRet := oCnn:exec("DROP TABLE " + cOwner + SR_DBQUALIFY(cFileName, oCnn:nSystemID) + ;
       IIf(oCnn:nSystemID == SYSTEMID_ORACLE, " CASCADE CONSTRAINTS", "") + ;
@@ -1997,57 +1997,53 @@ RETURN s_cToolsOwner
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-/*
-
-SQLRDD Exclusive Lock management and Lock behavior
---------------------------------------------------
-
-We use internally 2 different connections to manage locks.
-Connection information:
-
-1 - Transactional connection (regular queries)
-2 - Autocommit connection (used for counters and "one query" transactions)
-
-SetLocks function steps, using SQLRDD system table SR_MGMNTLOCKS:
-
-* For Microsoft SQL Server:
----------------------------
-
-At application startup, perform the following housekeeping routine:
-
-"DELETE FROM SR_MGMNTLOCKS WHERE SPID_ = @@SPID OR SPID_ + LOGIN_TIME_ NOT IN (SELECT SPID + LOGIN_TIME FROM MASTER.DBO.SYSPROCESSES)"
-
-1 - Try to INSERT the string to be locked using connection 2; Commit;
-2 - If success, LOCK is acquired
-3 - If it fails, run housekeeping "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (SELECT SPID FROM MASTER.DBO.SYSPROCESSES)"; Commit;
-4 - Try INSERT again;
-5 - If succefull, lock is acquired;
-6 - If not succefull, lock is denied;
-
-* For Oracle:
--------------
-
-Housekeeping expression is:
-"DELETE FROM SR_MGMNTLOCKS WHERE SPID_ = sys_context('USERENV','sessionid') OR SPID_ NOT IN (select "AUDSID" from v$session)"
-
-Step 3 query is:
-"DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (select "AUDSID" from v$session)"; Commit;
-
-* For Postgres:
----------------
-
-Housekeeping expression is:
-"DELETE FROM SR_MGMNTLOCKS WHERE SPID_ = (select pg_backend_pid()) OR SPID_ NOT IN (select pg_stat_get_backend_pid(pg_stat_get_backend_idset()))"
-
-Step 3 query is:
-"DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (select pg_stat_get_backend_pid(pg_stat_get_backend_idset()))"; Commit;
-
-
-ReleaseLocks function steps:
-
-1 - Delete the line using connection 2; Commit;
-
-*/
+// SQLRDD Exclusive Lock management and Lock behavior
+// --------------------------------------------------
+//
+// We use internally 2 different connections to manage locks.
+// Connection information:
+//
+// 1 - Transactional connection (regular queries)
+// 2 - Autocommit connection (used for counters and "one query" transactions)
+//
+// SetLocks function steps, using SQLRDD system table SR_MGMNTLOCKS:
+//
+// * For Microsoft SQL Server:
+// ---------------------------
+//
+// At application startup, perform the following housekeeping routine:
+//
+// "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ = @@SPID OR SPID_ + LOGIN_TIME_ NOT IN (SELECT SPID + LOGIN_TIME FROM MASTER.DBO.SYSPROCESSES)"
+//
+// 1 - Try to INSERT the string to be locked using connection 2; Commit;
+// 2 - If success, LOCK is acquired
+// 3 - If it fails, run housekeeping "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (SELECT SPID FROM MASTER.DBO.SYSPROCESSES)"; Commit;
+// 4 - Try INSERT again;
+// 5 - If succefull, lock is acquired;
+// 6 - If not succefull, lock is denied;
+//
+// * For Oracle:
+// -------------
+//
+// Housekeeping expression is:
+// "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ = sys_context('USERENV','sessionid') OR SPID_ NOT IN (select "AUDSID" from v$session)"
+//
+// Step 3 query is:
+// "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (select "AUDSID" from v$session)"; Commit;
+//
+// * For Postgres:
+// ---------------
+//
+// Housekeeping expression is:
+// "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ = (select pg_backend_pid()) OR SPID_ NOT IN (select pg_stat_get_backend_pid(pg_stat_get_backend_idset()))"
+//
+// Step 3 query is:
+// "DELETE FROM SR_MGMNTLOCKS WHERE SPID_ NOT IN (select pg_stat_get_backend_pid(pg_stat_get_backend_idset()))"; Commit;
+//
+//
+// ReleaseLocks function steps:
+//
+// 1 - Delete the line using connection 2; Commit;
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -2315,9 +2311,9 @@ static HB_BOOL s_fSerializedAsString = HB_FALSE;
 static HB_BOOL s_fHideRecno = HB_TRUE;
 static HB_BOOL s_fHideHistoric = HB_FALSE;
 static HB_BOOL s_fUseDeleteds = HB_TRUE;
-/* Culik added new global to tell if we will serialize arrays as json or xml */
+// Culik added new global to tell if we will serialize arrays as json or xml
 static HB_BOOL s_fSerializeArrayAsJson = HB_FALSE;
-/* Culik added new global to tell if we are using sqlverser 2008 or newer */
+// Culik added new global to tell if we are using sqlverser 2008 or newer
 static HB_BOOL s_fSql2008newTypes = HB_FALSE;
 
 static HB_BOOL s_iOldPgsBehavior = HB_FALSE;

@@ -193,7 +193,7 @@ CLASS SR_WORKAREA
    DATA cUpd
    DATA cIns
    DATA nPosDtHist
-   DATA dNextDt                              /* Date value for next INSERT with Historic */
+   DATA dNextDt                              // Date value for next INSERT with Historic
 
    DATA aPosition
    DATA aQuoted
@@ -203,7 +203,7 @@ CLASS SR_WORKAREA
    // For Self recno filter
    Data aRecnoFilter AS ARRAY INIT {}
 
-   /* SQL Methods */
+   // SQL Methods
 
    METHOD ResetStatistics() INLINE (::nCurrentFetch := SR_FetchSize(), ::aInfo[AINFO_SKIPCOUNT] := 0, ::cLastMove := "OPEN")
    METHOD GetNextRecordNumber()
@@ -237,7 +237,7 @@ CLASS SR_WORKAREA
    //METHOD WherePgsMajor(aQuotedCols)    // Retrieves an SQL/WHERE Major or equal the currente record
    METHOD WherePgsMajor(aQuotedCols, lPartialSeek)
    METHOD WherePgsMinor(aQuotedCols)    // Retrieves an SQL/WHERE Minor or equal the currente record
-   /* METHOD sqlKeyCompare(uKey)                       C level implemented - reads from ::aInfo */
+   // METHOD sqlKeyCompare(uKey)                       C level implemented - reads from ::aInfo
    METHOD ParseIndexColInfo(cSQL)
    METHOD HasFilters()
    METHOD ParseForClause(cFor)
@@ -254,7 +254,7 @@ CLASS SR_WORKAREA
    METHOD SetNextDt(d) INLINE ::dNextDt := d
    METHOD SetQuickAppend(l) INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld)
 
-   /* Table maintanance stuff */
+   // Table maintanance stuff
 
    METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
    //This is an new method for direct alter column
@@ -267,7 +267,7 @@ CLASS SR_WORKAREA
    METHOD DropConstraint(cTable, cConstraintName, lFKs, cConstrType)
    METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
 
-   /* Historic functionality specific methods */
+   // Historic functionality specific methods
 
    //METHOD HistExpression(cAlias, cAlias)
    METHOD HistExpression(n, cAlias)
@@ -281,106 +281,106 @@ CLASS SR_WORKAREA
    METHOD sqlOpenAllIndexes()
    METHOD IncludeAllMethods()
 
-   /* Workarea methods reflexion */
+   // Workarea methods reflexion
 
-   /* METHOD sqlBof                       C level implemented - reads from ::aInfo */
-   /* METHOD sqlEof                       C level implemented - reads from ::aInfo */
-   /* METHOD qlFound                      C level implemented - reads from ::aInfo */
+   // METHOD sqlBof                       C level implemented - reads from ::aInfo
+   // METHOD sqlEof                       C level implemented - reads from ::aInfo
+   // METHOD qlFound                      C level implemented - reads from ::aInfo
    METHOD sqlGoBottom()
    METHOD sqlGoPhantom()
    METHOD sqlGoTo(uRecord, lNoOptimize)
-   /* METHOD sqlGoToId                    C level implemented - maps to sqlGoTo() */
+   // METHOD sqlGoToId                    C level implemented - maps to sqlGoTo()
    METHOD sqlGoTop()
    METHOD sqlSeek(uKey, lSoft, lLast)
-   /* METHOD sqlSkip                      C level implemented */
-   /* METHOD sqlSkipFilter                Superclass does the job */
-   /* METHOD sqlSkipRaw                   C level implemented */
-   /* METHOD sqlAddField                  Superclass does the job */
-   /* METHOD sqlAppend()                  C level implemented */
-   /* METHOD sqlCreateFields              Superclass does the job */
+   // METHOD sqlSkip                      C level implemented
+   // METHOD sqlSkipFilter                Superclass does the job
+   // METHOD sqlSkipRaw                   C level implemented
+   // METHOD sqlAddField                  Superclass does the job
+   // METHOD sqlAppend()                  C level implemented
+   // METHOD sqlCreateFields              Superclass does the job
    METHOD sqlDeleteRec()
-   /* METHOD sqlDeleted                   C level implemented - reads from ::aInfo */
-   /* METHOD sqlFieldCount                C level implemented - reads from ::aInfo */
-   /* METHOD sqlFieldDisplay              Superclass does the job */
-   /* METHOD sqlFieldInfo                 Superclass does the job */
-   /* METHOD sqlFieldName                 Superclass does the job */
+   // METHOD sqlDeleted                   C level implemented - reads from ::aInfo
+   // METHOD sqlFieldCount                C level implemented - reads from ::aInfo
+   // METHOD sqlFieldDisplay              Superclass does the job
+   // METHOD sqlFieldInfo                 Superclass does the job 
+   // METHOD sqlFieldName                 Superclass does the job
    METHOD sqlFlush()
-   /* METHOD sqlGetRec                    Superclass does the job */
+   // METHOD sqlGetRec                    Superclass does the job
    METHOD sqlGetValue(nField)
-   /* METHOD sqlGetVarLen                 C level implemented - reads from aLocalBuffer */
-   METHOD sqlGoCold()                     /* NOT called from SQLRDD1.C */
-   /* METHOD sqlGoHot                     C level implemented - writes to ::aInfo */
-   /* METHOD sqlPutRec                    Superclass does the job */
-   /* METHOD sqlPutValue                  C level implemented - writes to aLocalBuffer */
+   // METHOD sqlGetVarLen                 C level implemented - reads from aLocalBuffer
+   METHOD sqlGoCold()                     // NOT called from SQLRDD1.C
+   // METHOD sqlGoHot                     C level implemented - writes to ::aInfo
+   // METHOD sqlPutRec                    Superclass does the job
+   // METHOD sqlPutValue                  C level implemented - writes to aLocalBuffer
    METHOD sqlRecall()
-   /* METHOD sqlRecCount                  C level implemented - reads from ::aInfo */
-   /* METHOD sqlRecInfo                   Superclass does the job */
-   /* METHOD sqlRecNo                     C level implemented - reads from ::aInfo */
-   /* METHOD sqlSetFieldExtent            Superclass does the job */
-   /* METHOD sqlAlias                     Superclass does the job */
+   // METHOD sqlRecCount                  C level implemented - reads from ::aInfo
+   // METHOD sqlRecInfo                   Superclass does the job
+   // METHOD sqlRecNo                     C level implemented - reads from ::aInfo
+   // METHOD sqlSetFieldExtent            Superclass does the job
+   // METHOD sqlAlias                     Superclass does the job
    METHOD sqlClose()
    METHOD sqlCreate(aStruct, cFileName, cAlias, nArea)
-   /* METHOD sqlInfo                      C level implemented - reads from ::aInfo */
-   /* METHOD sqlNewArea                   Superclass does the job */
-   //METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias) /* the constructor */
+   // METHOD sqlInfo                      C level implemented - reads from ::aInfo
+   // METHOD sqlNewArea                   Superclass does the job
+   //METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias) // the constructor
    METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection)
-   /* METHOD sqlRelease                   Superclass does the job */
-   /* METHOD sqlStructSize                C level implemented */
-   /* METHOD sqlSysName                   C level implemented */
-   /* METHOD sqlEval                      Superclass does the job */
+   // METHOD sqlRelease                   Superclass does the job
+   // METHOD sqlStructSize                C level implemented
+   // METHOD sqlSysName                   C level implemented
+   // METHOD sqlEval                      Superclass does the job
    METHOD sqlPack()
-   /* METHOD sqlPackRec                   Superclass does the job */
-   /* METHOD sqlSort                      Superclass does the job - UNSUPPORTED */
-   /* METHOD sqlTrans                     Superclass does the job */
-   /* METHOD sqlTransRec                  Superclass does the job */
+   // METHOD sqlPackRec                   Superclass does the job
+   // METHOD sqlSort                      Superclass does the job - UNSUPPORTED 
+   // METHOD sqlTrans                     Superclass does the job
+   // METHOD sqlTransRec                  Superclass does the job
    METHOD sqlZap()
-   /* METHOD sqlChildEnd                  C level implemented */
-   /* METHOD sqlChildStart                C level implemented */
-   /* METHOD sqlChildSync                 C level implemented */
-   /* METHOD sqlSyncChildren              C level implemented */
-   /* METHOD sqlClearRel                  C level implemented */
-   /* METHOD sqlForceRel                  C level implemented */
-   /* METHOD sqlRelArea                   Superclass does the job */
-   /* METHOD sqlRelEval                   Superclass does the job */
-   /* METHOD sqlRelText                   Superclass does the job */
-   /* METHOD sqlSetRel                    C level implemented */
+   // METHOD sqlChildEnd                  C level implemented
+   // METHOD sqlChildStart                C level implemented
+   // METHOD sqlChildSync                 C level implemented
+   // METHOD sqlSyncChildren              C level implemented 
+   // METHOD sqlClearRel                  C level implemented 
+   // METHOD sqlForceRel                  C level implemented 
+   // METHOD sqlRelArea                   Superclass does the job
+   // METHOD sqlRelEval                   Superclass does the job
+   // METHOD sqlRelText                   Superclass does the job 
+   // METHOD sqlSetRel                    C level implemented
    METHOD sqlOrderListAdd(cBagName, cTag)
    METHOD sqlOrderListClear()
-   /* METHOD sqlOrderListDelete           Superclass does the job */
+   // METHOD sqlOrderListDelete           Superclass does the job
    METHOD sqlOrderListFocus(uOrder, cBag)
-   METHOD sqlOrderListNum(uOrder)       /* Used by sqlOrderInfo */
-   /* METHOD sqlOrderListRebuild          Superclass does the job - UNSUPPORTED */
+   METHOD sqlOrderListNum(uOrder)       // Used by sqlOrderInfo
+   // METHOD sqlOrderListRebuild          Superclass does the job - UNSUPPORTED
    METHOD sqlOrderCondition(cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc)
    METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable, aTargetColumns, lEnable)
    METHOD sqlOrderDestroy(uOrder, cBag)
-   /* METHOD sqlOrderInfo                 C level implemented - reads from ::aInfo and ::aIndex */
+   // METHOD sqlOrderInfo                 C level implemented - reads from ::aInfo and ::aIndex
    METHOD sqlClearFilter()
-   /* METHOD sqlClearLocate               Superclass does the job */
+   // METHOD sqlClearLocate               Superclass does the job
    METHOD sqlClearScope()
-   /* METHOD sqlCountScope                Superclass does the job */
+   // METHOD sqlCountScope                Superclass does the job
    METHOD sqlFilterText()
-   /* METHOD sqlScopeInfo                 C level implemented */
+   // METHOD sqlScopeInfo                 C level implemented
    METHOD sqlSetFilter(cFilter)
-   /* METHOD sqlSetLocate                 Superclass does the job */
+   // METHOD sqlSetLocate                 Superclass does the job
    METHOD sqlSetScope(nType, uValue)
-   /* METHOD sqlSkipScope                 Superclass does the job */
-   /* METHOD sqlCompile                   Superclass does the job */
-   /* METHOD sqlError                     Superclass does the job */
-   /* METHOD sqlEvalBlock                 Superclass does the job */
-   /* METHOD sqlRawLock                   Superclass does the job */
+   // METHOD sqlSkipScope                 Superclass does the job
+   // METHOD sqlCompile                   Superclass does the job
+   // METHOD sqlError                     Superclass does the job
+   // METHOD sqlEvalBlock                 Superclass does the job
+   // METHOD sqlRawLock                   Superclass does the job
    METHOD sqlLock(nType, uRecord)
    METHOD sqlUnLock(uRecord)
-   /* METHOD sqlCloseMemFile              Superclass does the job - UNSUPPORTED */
-   /* METHOD sqlCreateMemFile             Superclass does the job - UNSUPPORTED */
-   /* METHOD sqlGetValueFile              Superclass does the job - UNSUPPORTED */
-   /* METHOD sqlOpenMemFile               Superclass does the job - UNSUPPORTED */
-   /* METHOD sqlPutValueFile              Superclass does the job - UNSUPPORTED */
-   /* METHOD sqlReadDBHeader              Superclass does the job - UNSUPPORTED */
-   /* METHOD sqlWriteDBHeader             Superclass does the job - UNSUPPORTED */
-   /* METHOD sqlExit                      Superclass does the job */
+   // METHOD sqlCloseMemFile              Superclass does the job - UNSUPPORTED
+   // METHOD sqlCreateMemFile             Superclass does the job - UNSUPPORTED
+   // METHOD sqlGetValueFile              Superclass does the job - UNSUPPORTED
+   // METHOD sqlOpenMemFile               Superclass does the job - UNSUPPORTED
+   // METHOD sqlPutValueFile              Superclass does the job - UNSUPPORTED
+   // METHOD sqlReadDBHeader              Superclass does the job - UNSUPPORTED
+   // METHOD sqlWriteDBHeader             Superclass does the job - UNSUPPORTED
+   // METHOD sqlExit                      Superclass does the job
    METHOD sqlDrop(cFileName)
    METHOD sqlExists(cFileName)
-   /* METHOD sqlWhoCares                  Superclass does the job */
+   // METHOD sqlWhoCares                  Superclass does the job
 
    METHOD SetBOF()
    METHOD sqlKeyCount(lFilters)
@@ -611,14 +611,14 @@ METHOD SolveRestrictors() CLASS SR_WORKAREA
          cRet += ::RecnoExpr()
      ENDIF
    ENDIF
-   /*
+#if 0
    IF SR_UseDeleteds() .AND. set(_SET_DELETED)
       IF !Empty(cRet)
          cRet += " AND "
       ENDIF
       cRet += " (" + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID) + " IS NULL  OR "  + SR_DBQUALIFY(::cDeletedName, ::oSql:nSystemID)  + " != " + IIf(::nTCCompat > 0, "'*'", "'T'") + " ) "
    ENDIF
-   */
+#endif
 
 RETURN cRet
 
@@ -1264,7 +1264,7 @@ RETURN nRet
 
 METHOD IncludeAllMethods() CLASS SR_WORKAREA
 
-   /* Any methods referenced by startSQLRDDSymbols() should be added here */
+   // Any methods referenced by startSQLRDDSymbols() should be added here
 
    ::sqlGetValue()
    ::READPAGE()
@@ -1344,12 +1344,12 @@ METHOD LockTable(lCheck4ExcLock, lFLock) CLASS SR_WORKAREA
 
          IF lCheck4ExcLock
 
-            /* Step 1: Try to create a LOCK to check If someone have this table EXCLUSIVE
-               Lock format is: EXCLUSIVE_TABLE_LOCK_SIGN + TableName */
+            // Step 1: Try to create a LOCK to check If someone have this table EXCLUSIVE
+            // Lock format is: EXCLUSIVE_TABLE_LOCK_SIGN + TableName
 
             lRet := SR_SetLocks(EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql, 4)
 
-            /* Step 2: If LOCK acquired, RELEASE IT and return TRUE, else LOOP */
+            // Step 2: If LOCK acquired, RELEASE IT and return TRUE, else LOOP
 
             IF lRet
                // Ok, nobody have it EXCLUSIVE !
@@ -1358,9 +1358,9 @@ METHOD LockTable(lCheck4ExcLock, lFLock) CLASS SR_WORKAREA
 
          ELSE
 
-            /* Try to create a LOCK to this table
-               Lock format is: EXCLUSIVE_TABLE_LOCK_SIGN + TableName
-               IF LOCK acquired, return TRUE. Lock MUST be removed at workarea close */
+            // Try to create a LOCK to this table
+            // Lock format is: EXCLUSIVE_TABLE_LOCK_SIGN + TableName
+            // IF LOCK acquired, return TRUE. Lock MUST be removed at workarea close
 
             IF lFLock
                lRet := SR_SetLocks(FLOCK_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql, 4)
@@ -1607,7 +1607,7 @@ METHOD sqlOpenAllIndexes() CLASS SR_WORKAREA
             ENDIF
          ELSE
             ::RunTimeErr("18", SR_Msg(18) + cCol + " Table : " + ::cFileName)
-            RETURN 0       /* error exit */
+            RETURN 0       // error exit
          ENDIF
 
          ::aIndex[nInd, INDEX_FIELDS, i] := {aCols[i], nPos}
@@ -1917,9 +1917,9 @@ METHOD Stabilize() CLASS SR_WORKAREA
       RETURN NIL
    ENDIF
 
-   /* Stabilize means re-order the workarea cache */
+   // Stabilize means re-order the workarea cache
 
-   nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) /* - 1      // This "-1" is to removes the NRECNO column */
+   nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) // - 1      // This "-1" is to removes the NRECNO column
    nRec := ::aLocalBuffer[::hnRecno]
 
    IF nLen == 1      // One field index is easy and fast !
@@ -1956,24 +1956,22 @@ METHOD Normalize(nDirection) CLASS SR_WORKAREA
 
    LOCAL nRet := 1
 
-   /*
-   * Returns : 0 - Nothing, 1 Ok, 2 GoOut()
-   */
+   // Returns : 0 - Nothing, 1 Ok, 2 GoOut()
 
    DEFAULT nDirection TO 1
 
-   /* Can the actual record pass the filters ?_*/
+   // Can the actual record pass the filters ?_
 
    DO WHILE !(Eval(::bScope, ::aLocalBuffer) .AND. Eval(::bFilter, ::aLocalBuffer))
       nRet := ::SkipRawCache(nDirection)
       IF nRet != 1
-         /* EOF or BOF */
+         // EOF or BOF
          EXIT
       ENDIF
    ENDDO
 
    DO CASE
-   CASE nDirection < 0 .AND. nRet == 0      /* BOF */
+   CASE nDirection < 0 .AND. nRet == 0      // BOF
       nDirection := 1
       DO WHILE !(Eval(::bScope, ::aLocalBuffer) .AND. Eval(::bFilter, ::aLocalBuffer))
          nRet := ::SkipRawCache(nDirection)
@@ -2467,11 +2465,9 @@ RETURN ""
 
 METHOD HistExpression(n, cAlias) CLASS SR_WORKAREA
 
-   /*
-   parameter n +- 0 -> (default) active record at current date
-               |- 1 -> record last version
-               +- 2 -> record first version
-   */
+   // parameter n +- 0 -> (default) active record at current date
+   //             |- 1 -> record last version
+   //             +- 2 -> record first version
 
    LOCAL cRet := ""
    LOCAL cAl1
@@ -2658,7 +2654,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
 
          IF !lFirst            // Smth has been updated
 
-            /* Write the index columns */
+            // Write the index columns
 
             IF !lFirst
                FOR nInd := 1 TO Len(::aIndexMgmnt)
@@ -2716,7 +2712,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
          ASize(::aCache[::aInfo[AINFO_NPOSCACHE]], ::nFields)
          ACopy(::aLocalBuffer, ::aCache[::aInfo[AINFO_NPOSCACHE]])
 
-         /* Sync with other workareas opening the same table */
+         // Sync with other workareas opening the same table
 
          _SR_ScanExec(Self, {|x|IIf(x:nThisArea != ::nThisArea, ::CheckCache(x), NIL)})
 
@@ -2850,7 +2846,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
             ENDIF
          NEXT i
 
-         /* Write the index columns */
+         // Write the index columns
 
          FOR nInd := 1 TO Len(::aIndexMgmnt)
             IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
@@ -2921,7 +2917,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
             RETURN .F.
          ENDIF
 
-         /* If using sequences, try to find the record number */
+         // If using sequences, try to find the record number
 
          IF ::oSql:lUseSequences .AND. ::lUseSequences .AND. !::lQuickAppend
 
@@ -3076,20 +3072,20 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
             ENDIF
          ENDIF
 
-         /* Record should remain Locked */
+         // Record should remain Locked
 
          IF ::aInfo[AINFO_SHARED] .AND. Len(::aLocked) < MAXIMUN_LOCKS
             AAdd(::aLocked, aBuffer[::hnRecno])
          ENDIF
 
-         /* Sets info array */
+         // Sets info array
 
          ::lEmptyTable := .F.
          ::aInfo[AINFO_RCOUNT] := aBuffer[::hnRecno]
          ::nLastRecordAded := aBuffer[::hnRecno]
 
-         /* Cache insertion is disabled because INSERTED lines usually
-         are discarded by cache engine */
+         // Cache insertion is disabled because INSERTED lines usually
+         // are discarded by cache engine
 
          ::aInfo[AINFO_BOF] := .F.
          ::aInfo[AINFO_EOF] := .F.
@@ -3192,7 +3188,7 @@ METHOD Default() CLASS SR_WORKAREA
       ::aInfo[AINFO_EOF] := .F.
       ::aInfo[AINFO_RCOUNT] := ::nLastRec
       ::lNoData := .F.
-      ::GetBuffer(.F.)                        /* Use the first record */
+      ::GetBuffer(.F.)                        // Use the first record
       IF ::hnRecno != NIL .AND. ::hnRecno != 0
          ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
       ELSE
@@ -3249,7 +3245,7 @@ METHOD Refresh(lGoCold) CLASS SR_WORKAREA
    DEFAULT lGoCold TO .T.
 
    IF lGoCold
-      ::sqlGoCold()     /* writes any change in the buffer to the database */
+      ::sqlGoCold()     // writes any change in the buffer to the database
    ELSE
       ::aInfo[AINFO_HOT] := .F.
       ::GetBuffer(.T.)         // Clean Buffer
@@ -3278,7 +3274,7 @@ METHOD Refresh(lGoCold) CLASS SR_WORKAREA
 
       ::IniFields(.T., .T.)
 
-      /* Load the cache to ::aCache */
+      // Load the cache to ::aCache
 
       ASize(::aCache, ARRAY_BLOCK2)
       nAllocated := ARRAY_BLOCK2
@@ -3390,7 +3386,7 @@ METHOD GetBuffer(lClean, nCache) CLASS SR_WORKAREA
       ::aInfo[AINFO_EOF] := .T.
    ENDIF
 
-   /* Take a picture of the buffer */
+   // Take a picture of the buffer
 
    IF Len(::aOldBuffer) == 0
       ASize(::aOldBuffer, Len(::aLocalBuffer))
@@ -3490,7 +3486,7 @@ METHOD IniFields(lReSelect, lLoadCache, aInfo) CLASS SR_WORKAREA
             ENDIF
          ELSEIF cName == ::cDeletedName
             ::hnDeleted := n
-            ::aFields[n, 5] := .F. /* NOT NULL */
+            ::aFields[n, 5] := .F. // NOT NULL
          ELSEIF cName == "DT__HIST" .AND. ::lISAM
             ::nPosDtHist := n
             ::lHistoric := .T.
@@ -3587,7 +3583,7 @@ METHOD IniFields(lReSelect, lLoadCache, aInfo) CLASS SR_WORKAREA
             ENDIF
          ELSEIF cName == ::cDeletedName
             ::hnDeleted := n
-            ::aFields[n, 5] := .F. /* NOT NULL */
+            ::aFields[n, 5] := .F. // NOT NULL
          ELSEIF cName == "DT__HIST" .AND. ::lISAM
             ::nPosDtHist := n
             ::lHistoric := .T.
@@ -3921,7 +3917,7 @@ METHOD sqlGoTop() CLASS SR_WORKAREA
 
    ELSE
 
-      /* ALL_IN_CACHE */
+      // ALL_IN_CACHE
 
       IF ::lNoData
          RETURN NIL
@@ -4016,8 +4012,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
    ::aInfo[AINFO_FOUND] := .F.
    ::aInfo[AINFO_DETECT1_COUNT] := 0
 
-
-   /* reset static data */
+   // reset static data
 
    ::aQuoted := {}
    ::aDat := {}
@@ -4158,7 +4153,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
 
    ELSEIF ::lISAM .AND. ::oSql:nSystemID != SYSTEMID_POSTGR
 
-      IF ValType(uKey) $ "NDLT"       /* One field seek, piece of cake! */
+      IF ValType(uKey) $ "NDLT"       // One field seek, piece of cake!
 
          lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], 5]
          nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], 4]
@@ -4414,7 +4409,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
       ENDIF
 
       IF ::aInfo[AINFO_FOUND]
-         ::aInfo[AINFO_EOF] := .F. /* 06/01/2004 - fixing skip after dbseek */
+         ::aInfo[AINFO_EOF] := .F. // 06/01/2004 - fixing skip after dbseek
          ::aInfo[AINFO_BOF] := .F.
          ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
       ELSE
@@ -4437,7 +4432,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
 
    ELSEIF ::lISAM .AND. ::oSql:nSystemID == SYSTEMID_POSTGR
 
-      IF ValType(uKey) $ "NDLT"       /* One field seek, piece of cake! */
+      IF ValType(uKey) $ "NDLT"       // One field seek, piece of cake!
 
          lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], 5]
          nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], 4]
@@ -4505,10 +4500,10 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          cJoin3 := ::GetSelectList()
 
          IF ::lFetchAll
-            //::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL,.T.) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
-            ::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
+            //::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, .T.) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */", ""))
+            ::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */", ""))
          ELSE
-            //::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL,.T.) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
+            //::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, .T.) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */", ""))
             ::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
          ENDIF
 
@@ -5181,7 +5176,7 @@ METHOD sqlDeleteRec() CLASS SR_WORKAREA
             ::oSql:FreeStatement()
 
             IF nRecno == ::aInfo[AINFO_EOF_AT]
-/*
+#if 0
                nPos := ::aInfo[AINFO_NPOSCACHE] - 1
                IF nPos > CAHCE_PAGE_SIZE
                   nPos := 1
@@ -5190,12 +5185,12 @@ METHOD sqlDeleteRec() CLASS SR_WORKAREA
                   (::aInfo[AINFO_NCACHEBEGIN] > ::aInfo[AINFO_NCACHEEND] .AND. (nPos >= ::aInfo[AINFO_NCACHEBEGIN] .OR. nPos < ::aInfo[AINFO_NCACHEEND]))
                   ::aInfo[AINFO_EOF_AT] := ::aCache[nPos, ::hnRecno]
                ENDIF
-*/
+#endif
                ::aInfo[AINFO_EOF_AT] := 0
             ENDIF
 
             IF nRecno == ::aInfo[AINFO_BOF_AT]
-/*
+#if 0
                nPos := ::aInfo[AINFO_NPOSCACHE] + 1
                IF nPos > CAHCE_PAGE_SIZE
                   nPos := 1
@@ -5204,7 +5199,7 @@ METHOD sqlDeleteRec() CLASS SR_WORKAREA
                   (::aInfo[AINFO_NCACHEBEGIN] > ::aInfo[AINFO_NCACHEEND] .AND. (nPos > ::aInfo[AINFO_NCACHEBEGIN] .OR. nPos <= ::aInfo[AINFO_NCACHEEND]))
                   ::aInfo[AINFO_BOF_AT] := ::aCache[nPos, ::hnRecno]
                ENDIF
-*/
+#endif
                ::aInfo[AINFO_EOF_AT] := 0
 
             ENDIF
@@ -5241,7 +5236,7 @@ RETURN NIL
 METHOD sqlClose() CLASS SR_WORKAREA
 
    IF ::oSql != NIL
-      ::sqlFlush()      /* commit when close WA */
+      ::sqlFlush()      // commit when close WA
       IF ::nThisArea > 0
          IF !::lCreating //
             _SR_UnRegister(Self)
@@ -5410,7 +5405,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
       ::oSql:SetOptions(SQL_AUTOCOMMIT, SQL_AUTOCOMMIT_ON)
    ENDIF
 
-   /* Drop the table */
+   // Drop the table
 
    IF ::oSql:nSystemID == SYSTEMID_POSTGR
       ::oSql:exec("DROP TABLE " + ::cOwner + SR_DBQUALIFY(cTblName, ::oSql:nSystemID) + " CASCADE" + IIf(::oSql:lComments, " /* create table */", ""), .F.)
@@ -5419,7 +5414,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
    ENDIF
    ::oSql:Commit()
 
-   /* Catalogs cleanup */
+   // Catalogs cleanup
 
    ::oSql:exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(::cFileName) + "'" + IIf(::oSql:lComments, " /* Wipe index info */", ""), .F.)
    ::oSql:Commit()
@@ -5451,7 +5446,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
    ENDIF
    ::oSql:Commit()
 
-   /* If Postgres, create SEQUENCE per table */
+   // If Postgres, create SEQUENCE per table
 
    IF ::oSql:nSystemID == SYSTEMID_POSTGR
       ::oSql:Commit()
@@ -5461,7 +5456,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
       ::oSql:Commit()
    ENDIF
 
-   /* Create the new table */
+   // Create the new table 
 
    aPK := {}
    aCreate := {}
@@ -6381,14 +6376,14 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
    lRet := nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
    ::oSql:Commit()
 
-   IF lRet .AND. ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_POSTGR .OR. ::oSql:nSystemID == SYSTEMID_ADABAS .OR. ::oSql:nSystemID == SYSTEMID_AZURE // .OR. ::oSql:nSystemID == SYSTEMID_CACHE /* Create SR_RECNO INDEX */
+   IF lRet .AND. ::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ::oSql:nSystemID == SYSTEMID_POSTGR .OR. ::oSql:nSystemID == SYSTEMID_ADABAS .OR. ::oSql:nSystemID == SYSTEMID_AZURE // .OR. ::oSql:nSystemID == SYSTEMID_CACHE // Create SR_RECNO INDEX
    // Culik 18/10/2010 se o server suporta clustered index, adicionamos o mesmo na criacao
       cSql := "CREATE " + IIf(::oSql:lClustered, " CLUSTERED " , " ") + "INDEX " + LimitLen(::cFileName, 3) + "_SR ON " + ::cOwner + SR_DBQUALIFY(cTblName, ::oSql:nSystemID) + "(" + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + ") " + IIf(::oSql:lComments, " /* Unique Index */", "")
       lRet := ::oSql:exec(cSql, .T.) == SQL_SUCCESS
       ::oSql:Commit()
    ENDIF
 
-   IF lRet .AND. ::oSql:nSystemID == SYSTEMID_ORACLE .AND. ::oSql:lUseSequences  /* Create RECNO Trigger */
+   IF lRet .AND. ::oSql:nSystemID == SYSTEMID_ORACLE .AND. ::oSql:lUseSequences  // Create RECNO Trigger
       ::oSql:exec("DROP SEQUENCE " + ::cOwner + LimitLen(::cFileName, 3) + "_SQ", .F.)
       ::oSql:commit()
       ::oSql:exec("CREATE SEQUENCE " + ::cOwner + LimitLen(::cFileName, 3) + "_SQ START WITH 1")
@@ -6401,7 +6396,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
       ::oSql:Commit()
    ENDIF
 
-   IF lRet .AND. ::oSql:nSystemID == SYSTEMID_INGRES .AND. ::oSql:lUseSequences  /* Create RECNO Trigger */
+   IF lRet .AND. ::oSql:nSystemID == SYSTEMID_INGRES .AND. ::oSql:lUseSequences  // Create RECNO Trigger
       ::oSql:Commit()
       ::oSql:exec("modify " + ::cOwner + SR_DBQUALIFY(cTblName, ::oSql:nSystemID) + " to btree with page_size = " + cRowSize, .T.) // + "unique on " + ::cRecnoName
       ::oSql:Commit()
@@ -6411,7 +6406,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
       ::oSql:commit()
    ENDIF
 
-   IF lRet .AND. ::oSql:nSystemID == SYSTEMID_FIREBR .AND. ::oSql:lUseSequences  /* Create RECNO Trigger */
+   IF lRet .AND. ::oSql:nSystemID == SYSTEMID_FIREBR .AND. ::oSql:lUseSequences  // Create RECNO Trigger
       ::oSql:Commit()
 
       IF ::oSql:exec("SELECT gen_id( " + ::cOwner+cTblName + ", 1) FROM RDB$DATABASE", .F.) != SQL_SUCCESS
@@ -6434,7 +6429,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
 
    ENDIF
 
-   IF lRet .AND. Len(aPk) > 0     /* Creates the primary key */
+   IF lRet .AND. Len(aPk) > 0     // Creates the primary key
 
       ASort(aPk, , , {|x, y|x[1] < y[1]})
       cSql := ""
@@ -6509,7 +6504,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
 //   aFill(::aCache, Array(Len(::aLocalBuffer)))
    AEval(::aCache, {|x, i|HB_SYMBOL_UNUSED(x), ::aCache[i] := array(Len(::aLocalBuffer))})
 
-   ::GetBuffer(.T.)         /* Clean Buffer */
+   ::GetBuffer(.T.)         // Clean Buffer
    ::aInfo[AINFO_BOF] := .T.
 
    ::nCurrentFetch := ::nFetchSize
@@ -6730,7 +6725,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
       ::cDeletedName := aRet[TABLE_INFO_DELETED_NAME]
    ENDIF
 
-   IF !Empty(::cCustomSQL)      /* Custom SQL Commands requires ALL_DATA_IN_CACHE workarea */
+   IF !Empty(::cCustomSQL)      // Custom SQL Commands requires ALL_DATA_IN_CACHE workarea
       ::lISAM := .F.
    ENDIF
 
@@ -6753,7 +6748,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
    ::cDel := "DELETE FROM " + ::cQualifiedTableName + " "
    ::cUpd := "UPDATE " + ::cQualifiedTableName + " SET "
 
-   /* Search the registered indexes and creates KEY codeblock */
+   // Search the registered indexes and creates KEY codeblock
 
    IF Empty(::cCustomSQL)
       IF nPos > 0
@@ -6788,7 +6783,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
       ASize(::aIndexMgmnt, 0)
    ENDIF
 
-   IF !::lISAM    /* load the result set to memory */
+   IF !::lISAM    // load the result set to memory
       ::lGoTopOnFirstInteract := .T.
       ::IniFields(.T., .T., @aCacheInfo)
 
@@ -6798,7 +6793,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
          RETURN Self
       ENDIF
 
-      /* Load the cache to ::aCache */
+      // Load the cache to ::aCache
 
       ASize(::aCache, ARRAY_BLOCK2)
       nAllocated := ARRAY_BLOCK2
@@ -6888,7 +6883,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
 
       AEval(::aCache, {|x, i|HB_SYMBOL_UNUSED(x), ::aCache[i] := Array(Len(::aLocalBuffer))})
 
-      ::GetBuffer(.T.)         /* Clean Buffer */
+      ::GetBuffer(.T.)         // Clean Buffer
       ::aInfo[AINFO_BOF] := .T.
 
       ::nCurrentFetch := ::nFetchSize
@@ -6964,7 +6959,7 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
          ENDIF
          ::lSharedLock := .T. // EXCLUSIVE open have EXC and SHARED locks.
       ELSE
-        IF !::LockTable(.T.)   /* Test If can Lock the file for a moment in current ID */
+        IF !::LockTable(.T.)   // Test If can Lock the file for a moment in current ID
             ::lOpened := .F.
          ELSE
             ::lSharedLock := SR_SetLocks(SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
@@ -7048,7 +7043,7 @@ METHOD sqlZap() CLASS SR_WORKAREA
          ::oSql:Commit()
       ENDIF
 
-/*
+#if 0
       IF ::oSql:nSystemID == SYSTEMID_ORACLE .AND. .AND. ::lUseSequences
          ::oSql:commit()
          ::oSql:exec("DROP SEQUENCE " + ::cOwner + LimitLen(::cFileName, 3) + "_SQ", .F.)
@@ -7056,7 +7051,7 @@ METHOD sqlZap() CLASS SR_WORKAREA
          ::oSql:exec("CREATE SEQUENCE " + ::cOwner + LimitLen(::cFileName, 3) + "_SQ START WITH 1")
          ::oSql:commit()
       ENDIF
-*/
+#endif
       ::sqlFlush()
 
       ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
@@ -7111,16 +7106,16 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
 
       IF cTag == NIL .OR. Empty(AllTrim(cTag))
 
-         /* Check If the index is already open */
+         // Check If the index is already open
 
          nInd := AScan(::aIndex, {|x|AllTrim(Upper(x[10])) == AllTrim(Upper(cBagName))})
 
          IF nInd > 0 .AND. DUPL_IND_DETECT
-            /* Index already opened */
+            // Index already opened
             RETURN nInd
          ENDIF
 
-         /* Not opened, than try find it in the orders management */
+         // Not opened, than try find it in the orders management
 
          nInd := AScan(::aIndexMgmnt, {|x|AllTrim(Upper(x[INDEXMAN_IDXNAME])) == AllTrim(Upper(cBagName))})
          IF nInd > 0
@@ -7139,13 +7134,13 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
       ELSE
          nInd := AScan(::aIndexMgmnt, {|x|AllTrim(Upper(x[INDEXMAN_IDXNAME])) == AllTrim(Upper(cBagName)) .AND. AllTrim(Upper(x[INDEXMAN_TAG])) == AllTrim(Upper(cTag))})
          IF nInd > 0
-            /* Index already opened */
+            // Index already opened
             AAdd(aInd, nInd)
          ENDIF
       ENDIF
    ENDIF
 
-   /* Check if BagName is a list of fields or a real index name */
+   // Check if BagName is a list of fields or a real index name
 
    cCol := ""
 
@@ -7294,7 +7289,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
             ENDIF
          ELSE
             ::RunTimeErr("18", SR_Msg(18) + cCol + " Table : " + ::cFileName)
-            RETURN 0       /* error exit */
+            RETURN 0       // error exit
          ENDIF
 
          AAdd(::aIndex[nLen, INDEX_FIELDS], {aCols[i], nPos})
@@ -7385,13 +7380,13 @@ METHOD sqlOrderListFocus(uOrder, cBag) CLASS SR_WORKAREA
 
    HB_SYMBOL_UNUSED(cBag)
 
-   IF HB_ISCHAR(uOrder)      /* TAG order */
+   IF HB_ISCHAR(uOrder)      // TAG order
       nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[ORDER_TAG])) == Upper(AllTrim(uOrder))})
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          ::cFor := ""
          ::aInfo[AINFO_INDEXORD] := 0
          ::RuntimeErr("19", SR_Msg(19) + SR_Val2Char(uOrder))
-         RETURN 0 /* error exit */
+         RETURN 0 // error exit
       ENDIF
    ELSEIF HB_ISNUMERIC(uOrder)
       nOrder := uOrder
@@ -7491,7 +7486,8 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
       ENDIF
 
    ENDIF
-/*
+
+#if 0
    IF nOrder == 0 .OR. nOrder > Len(::aIndex)
 
       ::cFor := ""
@@ -7542,7 +7538,7 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
    FOR i := 1 TO Len(aInd)
       ::aSelectList[aInd[i, 2]] := 1
    NEXT i
-*/
+#endif
 
 RETURN nOrder
 
@@ -7554,10 +7550,10 @@ METHOD sqlOrderListNum(uOrder) CLASS SR_WORKAREA
 
    HB_SYMBOL_UNUSED(nOrder)
 
-   IF HB_ISCHAR(uOrder)      /* TAG order */
+   IF HB_ISCHAR(uOrder)      // TAG order
       nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[ORDER_TAG])) == Upper(AllTrim(uOrder))})
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
-         RETURN 0 /* error exit */
+         RETURN 0 // error exit
       ENDIF
    ELSEIF HB_ISNUMERIC(uOrder)
       nOrder := uOrder
@@ -7566,7 +7562,7 @@ METHOD sqlOrderListNum(uOrder) CLASS SR_WORKAREA
    ENDIF
 
    IF nOrder == 0 .OR. nOrder > Len(::aIndex)
-      RETURN 0 /* error exit */
+      RETURN 0 // error exit
    ENDIF
 
 RETURN nOrder
@@ -7803,7 +7799,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
       ::oSql:SetOptions(SQL_AUTOCOMMIT, SQL_AUTOCOMMIT_ON)
    ENDIF
 
-   /* Removes from the control structures */
+   // Removes from the control structures
 
    ASize(::aIndexMgmnt, 0)
    ::oSql:exec("SELECT TABLE_,SIGNATURE_,IDXNAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_,PHIS_NAME_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES  WHERE TABLE_ = '" + Upper(::cFileName) + "' AND IDXNAME_ = '" + Upper(AllTrim(cIndexName)) + "'" + IIf(lHaveTag, " AND TAG_ = '" + cTag + "'", "") + " ORDER BY IDXNAME_, TAGNUM_", .T., .T., @::aIndexMgmnt)
@@ -7856,9 +7852,9 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
 
    cNextTagNum := StrZero(Val(IIf(Len(::aIndexMgmnt) == 0, "0", ::aIndexMgmnt[Len(::aIndexMgmnt), INDEXMAN_TAGNUM])) + 1, 6)
 
-   /* Create the index */
+   // Create the index
 
-   ::oSql:Commit()      /* All Locks should be released to INDEX a table */
+   ::oSql:Commit()      // All Locks should be released to INDEX a table
 
    nLenTag := Len(IIf(lHaveTag, "_" + cTag, "_" + cNextTagNum))
    cPhisicalName := cIndexName + IIf(lHaveTag, "_" + cTag, "_" + cNextTagNum)
@@ -7866,10 +7862,10 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
    IF Len(cIndexName) + nLenTag > 30
       cPhisicalName := Left(cIndexName, 30 - nLenTag) + IIf(lHaveTag, "_" + cTag, "_" + cNextTagNum)
    ENDIF
-   IF ::oSql:nSystemID == SYSTEMID_ORACLE .AND. Len(cPhisicalName) > 30     /* Oracle sucks! */
+   IF ::oSql:nSystemID == SYSTEMID_ORACLE .AND. Len(cPhisicalName) > 30     // Oracle sucks!
       cPhisicalName := Right(cPhisicalName, 30)
    ENDIF
-   IF ::oSql:nSystemID == SYSTEMID_IBMDB2 .AND. Len(cPhisicalName) > 18     /* DB2 sucks! */
+   IF ::oSql:nSystemID == SYSTEMID_IBMDB2 .AND. Len(cPhisicalName) > 18     // DB2 sucks!
       cPhisicalName := Right(cPhisicalName, 18)
    ENDIF
    IF SubStr(cPhisicalName, 1, 1) == "_"
@@ -7885,7 +7881,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          cColumns := SubStr(cColumns, 5)
       ENDIF
 
-      /* look for an empty tag column */
+      // look for an empty tag column
 
       FOR nNewTag := 1 TO 120
          lTagFound := .T.
@@ -7906,7 +7902,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
 
       bIndexKey := &("{|| " + AllTrim(cColumns) + " }")
 
-      /* Update all records with the index key */
+      // Update all records with the index key
 
       nOldOrd := (::cAlias)->(IndexOrd())
 
@@ -7915,7 +7911,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
 
       nKeySize := Len(SR_Val2Char(Eval(bIndexKey))) +15
 
-      /* Create the index column in the table and add it to aCols */
+      // Create the index column in the table and add it to aCols
       IF ::oSql:nSystemID == SYSTEMID_FIREBR
          ::AlterColumns({{cColIndx, "C", Min(nKeySize, 180), 0, , SQL_CHAR}}, .F., .F.)
       ELSE
@@ -7925,7 +7921,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
       ::Refresh()
 //       bIndexKey := &("{|| " + AllTrim(cColumns) + " }")
 //
-//       /* Update all records with the index key */
+//       // Update all records with the index key
 //
 //       nOldOrd := (::cAlias)->(IndexOrd())
 //
@@ -7982,8 +7978,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          NEXT i
       ENDIF
       
-
-      /* Drop the index */
+      // Drop the index
 
       IF !Empty(AllTrim(cConstraintName))
          IF ::oSql:nSystemID == SYSTEMID_ORACLE .OR. (::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB)
@@ -8114,7 +8109,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          NEXT i
       ENDIF
 
-      /* Drop the index */
+      // Drop the index
 
       IF !Empty(AllTrim(cConstraintName))
          IF ::oSql:nSystemID == SYSTEMID_ORACLE .OR. (::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB)
@@ -8344,10 +8339,10 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
          ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
          EXIT
       OTHERWISE
-         RETURN -1         /* Error */
+         RETURN -1         // Error
       ENDSWITCH
 
-      /* Create the SQL expression based on the scope data */
+      // Create the SQL expression based on the scope data
 
       ::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR] := NIL
       ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_UP] := NIL
@@ -8356,9 +8351,9 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
       IF nType == TOP_BOTTOM_SCOPE .OR. (::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] != NIL .AND. ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] != NIL .AND.;
          ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] == ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE])
 
-         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      /* -1 to remove RECNO from index key */
+         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // -1 to remove RECNO from index key
 
-         IF ValType(uKey) $ "NDL"       /* One field, piece of cake! */
+         IF ValType(uKey) $ "NDL"       // One field, piece of cake!
 
             lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], 5]
             nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], 4]
@@ -8392,7 +8387,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
             cPart := ""
             HB_SYMBOL_UNUSED(cPart)
 
-            /* First, split uKey in fields and values according to current index */
+            // First, split uKey in fields and values according to current index
 
             FOR i := 1 TO nLen
 
@@ -8464,7 +8459,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
             ENDIF
 
          ELSEIF ValType(uKey) == "U"
-            /* Clear scope */
+            // Clear scope
 
          ELSE
             ::RuntimeErr("26")
@@ -8473,7 +8468,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
 
       ELSEIF ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] != NIL .OR. ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] != NIL
 
-         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      /* -1 to remove RECNO from index key */
+         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // -1 to remove RECNO from index key
          aNulls := {}
          aNotNulls := {}
 
@@ -8486,7 +8481,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                ENDIF
             ENDIF
 
-            IF ValType(uKey) $ "NDL"       /* One field, piece of cake! */
+            IF ValType(uKey) $ "NDL"       // One field, piece of cake!
 
                lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], 5]
                nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], 4]
@@ -8541,7 +8536,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                HB_SYMBOL_UNUSED(cPart)
                cSep2 := IIf(nScoping == TOPSCOPE, ">", "<")
 
-               /* First, split uKey in fields and values according to current index */
+               // First, split uKey in fields and values according to current index
 
                FOR i := 1 TO nLen
 
@@ -8645,7 +8640,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                cRet += " )   )"
 
             ELSEIF ValType(uKey) == "U"
-               /* Clear scope */
+               // Clear scope
             ELSE
                ::RuntimeErr("26")
                RETURN -1
@@ -8672,11 +8667,11 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
 
       ::Refresh()
 
-      RETURN 0    /* Success */
+      RETURN 0    // Success
 
    ENDIF
 
-RETURN -1         /* Failure */
+RETURN -1         // Failure
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -8701,7 +8696,7 @@ METHOD sqlLock(nType, uRecord) CLASS SR_WORKAREA
       ASize(::aLocked, 0)
    ENDIF
 
-   /* Sets the timeout to LOCK_TIMEOUT seconds */
+   // Sets the timeout to LOCK_TIMEOUT seconds
 
    ::oSql:SetNextOpt(SQL_ATTR_QUERY_TIMEOUT, LOCK_TIMEOUT)
 
@@ -8727,8 +8722,8 @@ METHOD sqlLock(nType, uRecord) CLASS SR_WORKAREA
       ENDIF
       EXIT
 
-      /*
-      Commented 2005/02/04 - It's better to wait forever on a lock than have a corrupt transaction
+#if 0
+      // Commented 2005/02/04 - It's better to wait forever on a lock than have a corrupt transaction
 
       IF ::oSql:nSystemID == SYSTEMID_POSTGR .AND. !lRet
          // This will BREAK transaction control, but it's the only way to have Postgres responding again
@@ -8738,7 +8733,7 @@ METHOD sqlLock(nType, uRecord) CLASS SR_WORKAREA
          ENDIF
          ::oSql:commit()
       ENDIF
-      */
+#endif
 
    CASE SYSTEMID_FIREBR
       IF nType < 3
@@ -8862,7 +8857,7 @@ Quit 1
       ::lTableLocked := .T.
    ENDIF
 
-   /* Reset stmt timeout */
+   // Reset stmt timeout
    ::oSql:SetNextOpt(SQL_ATTR_QUERY_TIMEOUT, 0)
 
 RETURN lRet
@@ -8879,7 +8874,7 @@ METHOD sqlUnLock(uRecord) CLASS SR_WORKAREA
       IF Len(::aLocked) > 0 .OR. ::lTableLocked
          ASize(::aLocked, 0)
          IF ::lCanICommitNow()
-            ::oSql:Commit()      /* This will release all Locks in SQL database */
+            ::oSql:Commit()      // This will release all Locks in SQL database
          ENDIF
       ENDIF
       IF ::lTableLocked
@@ -9555,7 +9550,7 @@ METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WOR
 
             ::oSql:Commit()
 
-            /* Remove from catalogs */
+            // Remove from catalogs
 
             IF nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
 
@@ -9673,7 +9668,7 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
 
    DEFAULT lDisplayErrorMessage TO .T.
 
-   /* Check existing column */
+   // Check existing column
 
    FOR i := 1 TO Len(aCreate)
 
@@ -10113,7 +10108,7 @@ METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS
 
    DEFAULT lDisplayErrorMessage TO .T.
 
-   /* Check existing column */
+   // Check existing column
 
    FOR i := 1 TO Len(aCreate)
 
@@ -10893,17 +10888,17 @@ METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColum
          cTargetColumns += IIf(i == Len(aTargetColumns), "", ",")
       NEXT i
 
-      IF ::oSql:nSystemID == SYSTEMID_ORACLE .AND. Len(cConstraintName) > 30     /* Oracle sucks! */
+      IF ::oSql:nSystemID == SYSTEMID_ORACLE .AND. Len(cConstraintName) > 30     // Oracle sucks!
          cConstraintName := Right(cConstraintName, 30)
       ENDIF
 
-      IF ::oSql:nSystemID == SYSTEMID_IBMDB2 .AND. Len(cConstraintName) > 18     /* DB2 sucks! */
+      IF ::oSql:nSystemID == SYSTEMID_IBMDB2 .AND. Len(cConstraintName) > 18     // DB2 sucks!
          cConstraintName := Right(cConstraintName, 18)
       ENDIF
       // ? "OK", AllTrim(::cFileName) , AllTrim(cTargetTable) , Upper(AllTrim(cSourceColumns)) , Upper(AllTrim(cTargetColumns))
       lPk := (AllTrim(::cFileName) == AllTrim(cTargetTable) .AND. Upper(AllTrim(cSourceColumns)) == Upper(AllTrim(cTargetColumns)))
 
-      IF lPk   /* primary key, so lets perform an alter column setting not null property first... */
+      IF lPk   // primary key, so lets perform an alter column setting not null property first...
 
          FOR i := 1 TO Len(aTargetColumns)
 

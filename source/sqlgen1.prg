@@ -53,9 +53,7 @@
 
 #define SR_CRLF   (Chr(13) + Chr(10))
 
-/*
-* Readble Macros
-*/
+// Readble Macros
 
 #define cJoinWords(nType, nSystemID)    s_aJoinWords[nSystemID,nType]
 
@@ -86,9 +84,7 @@ STATIC s_nRecordNum := 0
 STATIC s_bNextRecord
 STATIC s_aJoinWords
 
-/*
-* SQL Code generation
-*/
+// SQL Code generation
 
 FUNCTION SR_SQLCodeGen(apCode, aParam, nSystemId, lIdent, lParseTableName)
 RETURN   SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, , , , lParseTableName)
@@ -112,9 +108,9 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
    LOCAL lLocking := .F.
    LOCAL nLen := Len(apCode)
    LOCAL bError := Errorblock()
-   LOCAL aLJoins := {}             /* A, B, Expression */
-   LOCAL aTables := {}             /* TableName */
-   LOCAL aQualifiedTables := {}             /* Owner.TableName */
+   LOCAL aLJoins := {}             // A, B, Expression
+   LOCAL aTables := {}             // TableName
+   LOCAL aQualifiedTables := {}             // Owner.TableName
    LOCAL aAlias := {}
    LOCAL aOuters := {}
    LOCAL cSqlCols := ""
@@ -142,7 +138,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
       DO WHILE .T.
 
-         IF nIp > nLen .OR. nDepht < 0    /* nDepht controls recursivity */
+         IF nIp > nLen .OR. nDepht < 0    // nDepht controls recursivity
             EXIT
          ENDIF
 
@@ -608,7 +604,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             PASSTHROUGH
          CASE SQL_PCODE_SELECT_UNION
 
-            /* FROM and JOIN will be included now */
+            // FROM and JOIN will be included now
 
             IF !Empty(cSqlCols)
 
@@ -702,8 +698,8 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             cSql += NEWLINE + IDENTSPACE + " UNION" + NEWLINE + IDENTSPACE + "  "
 
-            aLJoins := {}             /* A, B, Expression */
-            aTables := {}             /* TableName */
+            aLJoins := {}             // A, B, Expression
+            aTables := {}             // TableName
             aQualifiedTables := {}
             aAlias := {}
             aOuters := {}
@@ -714,7 +710,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
          CASE SQL_PCODE_SELECT_UNION_ALL
 
-            /* FROM and JOIN will be included now */
+            // FROM and JOIN will be included now
 
             IF !Empty(cSqlCols)
 
@@ -855,8 +851,8 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             ENDIF
 
-            aLJoins := {}             /* A, B, Expression */
-            aTables := {}             /* TableName */
+            aLJoins := {}             // A, B, Expression
+            aTables := {}             // TableName
             aQualifiedTables := {}
             aAlias := {}
             aOuters := {}
@@ -1057,7 +1053,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
       cSql += SELECT_OPTIMIZER2
 
-      /* FROM and JOIN will be included now */
+      // FROM and JOIN will be included now
 
       IF !Empty(cSqlCols)
 
@@ -1218,9 +1214,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
    RETURN cSQL
 
-/*
-* Quoting xBase DataTypes
-*/
+// Quoting xBase DataTypes
 
 FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
@@ -1345,9 +1339,7 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
 RETURN "NULL"
 
-/*
-*   SQLBASE date format
-*/
+// SQLBASE date format
 
 FUNCTION SR_dtosdot(dData)
 
@@ -1355,9 +1347,7 @@ FUNCTION SR_dtosdot(dData)
 
 RETURN SubStr(cData, 1, 4) + "-" + SubStr(cData, 5, 2) + "-" + SubStr(cData, 7, 2)
 
-/*
-*  YYYY.MM.DD
-*/
+// YYYY.MM.DD
 
 FUNCTION SR_dtoDot(dData)
 
@@ -1365,9 +1355,7 @@ FUNCTION SR_dtoDot(dData)
 
 RETURN SubStr(cData, 1, 4) + "." + SubStr(cData, 5, 2) + "." + SubStr(cData, 7, 2)
 
-/*
-*  MMDDYYYY
-*/
+// MMDDYYYY
 
 FUNCTION SR_dtous(dData)
 
@@ -1375,9 +1363,7 @@ FUNCTION SR_dtous(dData)
 
 RETURN SubStr(cData, 5, 2) + SubStr(cData, 7, 2) + SubStr(cData, 1, 4)
 
-/*
-* Error Handler
-*/
+// Error Handler
 
 STATIC FUNCTION SR_SQLParseError(arg1, arg2, cDescr, nCode, cOper, oError)
 
@@ -1406,12 +1392,9 @@ STATIC FUNCTION SR_SQLParseError(arg1, arg2, cDescr, nCode, cOper, oError)
 
 RETURN uRet
 
-/*
-* SQL Filters
-*
-*  Expected filter format example:  "<ALIAS>.ColumnName IS NULL"
-*
-*/
+// SQL Filters
+//
+//  Expected filter format example:  "<ALIAS>.ColumnName IS NULL"
 
 STATIC FUNCTION SR_SolveFilters(aFilters, aRet, cAlias, nSystemID)
 
@@ -1434,9 +1417,7 @@ STATIC FUNCTION SR_SolveFilters(aFilters, aRet, cAlias, nSystemID)
 
 RETURN .T.
 
-/*
-* Startup settings
-*/
+// Startup settings
 
 PROCEDURE __SR_StartSQL()
 
@@ -1448,7 +1429,7 @@ PROCEDURE __SR_StartSQL()
 
 RETURN
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_SetTableInfoBlock(b)
 
@@ -1460,7 +1441,7 @@ FUNCTION SR_SetTableInfoBlock(b)
 
 RETURN .T.
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_SetIndexInfoBlock(b)
 
@@ -1472,19 +1453,19 @@ FUNCTION SR_SetIndexInfoBlock(b)
 
 RETURN .T.
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_GetTableInfoBlock()
 
 RETURN s_bTableInfo
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_GetIndexInfoBlock()
 
 RETURN s_bIndexInfo
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_SetNextRecordBlock(b)
 
@@ -1496,15 +1477,13 @@ FUNCTION SR_SetNextRecordBlock(b)
 
 RETURN .T.
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_GetNextRecordBlock()
 
 RETURN s_bNextRecord
 
-/*
-* Version Report
-*/
+// Version Report
 
 FUNCTION SR_ParserVersion()
 
@@ -1512,12 +1491,7 @@ FUNCTION SR_ParserVersion()
 
 RETURN nVers
 
-
-/*
-*
-*   Debug Functions
-*
-*/
+// Debug Functions
 
 FUNCTION SR_pCodeDescr(nCode)
 
@@ -1617,11 +1591,11 @@ FUNCTION SR_pCodeDescr(nCode)
 
 RETURN nCode
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_TableAttr(cTableName, nSystemID)
 
-   /* Translates "c:\data\accounts\chart.dbf" to "DATA_ACCONTS_CHART" */
+   // Translates "c:\data\accounts\chart.dbf" to "DATA_ACCONTS_CHART"
 
    LOCAL aRet
    LOCAL cOwner := ""
@@ -1630,7 +1604,7 @@ FUNCTION SR_TableAttr(cTableName, nSystemID)
    HB_SYMBOL_UNUSED(cOwner)
 
    IF SubStr(cTableName, 2, 1) == ":"
-      /* Remove drive letter */
+      // Remove drive letter
       cTableName := SubStr(cTableName, 3)
    ENDIF
 
@@ -1683,11 +1657,11 @@ FUNCTION SR_TableAttr(cTableName, nSystemID)
 
 RETURN aRet
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_IndexAttr(cTableName, nSystemID)
 
-   /* Translates "c:\data\accounts\chart.dbf" to "DATA_ACCONTS_CHART" */
+   // Translates "c:\data\accounts\chart.dbf" to "DATA_ACCONTS_CHART"
 
    LOCAL aRet
    LOCAL cSlash
@@ -1695,7 +1669,7 @@ FUNCTION SR_IndexAttr(cTableName, nSystemID)
    HB_SYMBOL_UNUSED(nSystemID)
 
    IF SubStr(cTableName, 2, 1) == ":"
-      /* Remove drive letter */
+      // Remove drive letter
       cTableName := SubStr(cTableName, 3)
    ENDIF
 
@@ -1729,7 +1703,7 @@ FUNCTION SR_IndexAttr(cTableName, nSystemID)
 
 RETURN aRet
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 STATIC FUNCTION SR_IsComparOp(nOp)
 
@@ -1749,7 +1723,7 @@ STATIC FUNCTION SR_IsComparOp(nOp)
 
 RETURN .F.
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 STATIC FUNCTION SR_IsComparNullOp(nOp)
 
@@ -1761,7 +1735,7 @@ STATIC FUNCTION SR_IsComparNullOp(nOp)
 
 RETURN .F.
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 STATIC FUNCTION SR_ComparOpText(nOp)
 
@@ -1802,4 +1776,4 @@ STATIC FUNCTION SR_ComparOpText(nOp)
 
 RETURN cSql
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------

@@ -652,7 +652,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
         pTemp = hb_itemNew(NULL);
         hb_vmPush(pTemp);
         hb_vmDo(2);
-        /* TOFIX: */
+        // TOFIX:
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
       }
@@ -858,7 +858,7 @@ HB_FUNC(ORACLEWRITEMEMO)
   }
 }
 
-/* Oracle Bind utility functions for usage with stored procedures with out parameters */
+// Oracle Bind utility functions for usage with stored procedures with out parameters
 void OracleFreeLink(int num_recs, POCI_SESSION p)
 {
   int i;
@@ -880,19 +880,17 @@ void OracleFreeLink(int num_recs, POCI_SESSION p)
   }
 }
 
-/*
-Bind an Parameter to Oracle stord procedure
-usage
-ORACLEINBINDPARAM(hDbc,nParamnum,nParamType,iFieldSize,iFieldDec,xData)
-   OracleinBindParam(oSql:hdbc, 1, 2, 12, 0, 8)
-type 6->refcursor
-type 2 ->double
-type 4 -> integer
-type 8 -> date
-type 9 -> datetime
-type 3 -> bool
-type any->char
-*/
+// Bind an Parameter to Oracle stord procedure
+// usage
+// ORACLEINBINDPARAM(hDbc,nParamnum,nParamType,iFieldSize,iFieldDec,xData)
+//    OracleinBindParam(oSql:hdbc, 1, 2, 12, 0, 8)
+// type 6->refcursor
+// type 2 ->double
+// type 4 -> integer
+// type 8 -> date
+// type 9 -> datetime
+// type 3 -> bool
+// type any->char
 HB_FUNC(ORACLEINBINDPARAM)
 {
 
@@ -1027,10 +1025,9 @@ HB_FUNC(ORACLEINBINDPARAM)
 
   hb_retni(ret);
 }
-/*
- Get the content of an binded parameter returned from stored procedure
-usage : ORACLEGETBINDDATA(hDbc,nParameterNumber)
-*/
+
+// Get the content of an binded parameter returned from stored procedure
+//  usage : ORACLEGETBINDDATA(hDbc,nParameterNumber)
 HB_FUNC(ORACLEGETBINDDATA)
 {
 
@@ -1070,7 +1067,7 @@ HB_FUNC(ORACLEGETBINDDATA)
         sec = p->pLink[iPos - 1].sDate[6] - 1;
         if (p->pLink[iPos - 1].iType == 8)
         {
-          hb_retd(year, month, day); /* returns a date */
+          hb_retd(year, month, day); // returns a date
         }
         else
         {
@@ -1092,12 +1089,9 @@ HB_FUNC(ORACLEGETBINDDATA)
   hb_retc("");
 }
 
-/*
-Free all Binded Parameters memory allocated
-usage
-ORACLEFREEBIND(nOrahandle)
-*/
-
+// Free all Binded Parameters memory allocated
+// usage
+// ORACLEFREEBIND(nOrahandle)
 HB_FUNC(ORACLEFREEBIND)
 {
   POCI_SESSION Stmt = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
@@ -1107,10 +1101,8 @@ HB_FUNC(ORACLEFREEBIND)
   }
 }
 
-/*
-Prepare an stored procedure for execution
-usage ORACLEPREPARE(nOracleHandle,cSql) -> nPreparedHandle)
-*/
+// Prepare an stored procedure for execution
+// usage ORACLEPREPARE(nOracleHandle,cSql) -> nPreparedHandle)
 HB_FUNC(ORACLEPREPARE)
 {
   POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
@@ -1134,11 +1126,9 @@ HB_FUNC(ORACLEPREPARE)
   hb_retni(-1);
 }
 
-/*
-Execute the  Stored Procedure
-usage
-ORACLEEXECDIR(nOraHandle[,nPreparedHandle]) ->nStatus
-*/
+// Execute the  Stored Procedure
+// usage
+// ORACLEEXECDIR(nOraHandle[,nPreparedHandle]) ->nStatus
 HB_FUNC(ORACLEEXECDIR)
 {
   POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
@@ -1155,7 +1145,7 @@ HB_FUNC(ORACLE_PROCCURSOR)
 {
   POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
-  sqlo_stmt_handle_t st2h = SQLO_STH_INIT; /* handle of the ref cursor */
+  sqlo_stmt_handle_t st2h = SQLO_STH_INIT; // handle of the ref cursor
 
   int ret = SQL_ERROR;
 
@@ -1164,14 +1154,14 @@ HB_FUNC(ORACLE_PROCCURSOR)
 
   if (session)
   {
-    /* parse the statement */
+    // parse the statement
     ret = sqlo_prepare(session->dbh, stmt);
 
     if (ret >= SQLO_SUCCESS)
     {
       if (0 <= (sth = ret))
       {
-        /* bind all variables */
+        // bind all variables
         if (SQLO_SUCCESS != sqlo_bind_ref_cursor(sth, parc, &st2h))
         {
           hb_retni(SQL_ERROR);
@@ -1182,13 +1172,13 @@ HB_FUNC(ORACLE_PROCCURSOR)
       session->stmtParam = sth;
       session->stmtParamRes = st2h;
 
-      /* execute the PL/SQL block */
+      // execute the PL/SQL block
       if (SQLO_SUCCESS != sqlo_execute(sth, 1))
       {
         hb_retni(SQL_ERROR);
         return;
       }
-      /* execute the refcursor */
+      // execute the refcursor
       if (SQLO_SUCCESS != sqlo_execute(st2h, 1))
       {
         hb_retni(SQL_ERROR);
@@ -1229,10 +1219,13 @@ HB_FUNC(ORACLE_CLOSE_FCURSOR)
     return;
   }
 
-  /* if( SQLO_SUCCESS != sqlo_close(session->stmtParam) ) {
-      hb_retni(SQL_ERROR);
-      return; }
-  */
+#if 0
+  if (SQLO_SUCCESS != sqlo_close(session->stmtParam))
+  {
+    hb_retni(SQL_ERROR);
+    return;
+  }
+#endif
 
   hb_retni(SQLO_SUCCESS);
 }
@@ -1264,11 +1257,9 @@ HB_FUNC(ORACLEEXECDIRCURSOR)
   }
 }
 
-/*
-Prepare the necessary data for Binded Parameters
-usage
-ORACLEBINDALLOC(noraHandle,nNumberofParameters)
-*/
+// Prepare the necessary data for Binded Parameters
+// usage
+// ORACLEBINDALLOC(noraHandle,nNumberofParameters)
 HB_FUNC(ORACLEBINDALLOC)
 {
   POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
@@ -1289,7 +1280,7 @@ HB_FUNC(ORACLE_BINDCURSOR)
 {
   POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
-  sqlo_stmt_handle_t st2h = SQLO_STH_INIT; /* handle of the ref cursor */
+  sqlo_stmt_handle_t st2h = SQLO_STH_INIT; // handle of the ref cursor
 
   int ret = SQL_ERROR;
 
@@ -1298,13 +1289,13 @@ HB_FUNC(ORACLE_BINDCURSOR)
 
   if (session)
   {
-    /* parse the statement */
+    // parse the statement
     ret = sqlo_prepare(session->dbh, stmt);
     if (ret == SQLO_SUCCESS)
     {
       if (0 <= (sth = ret))
       {
-        /* bind all variables */
+        // bind all variables
         if (SQLO_SUCCESS != sqlo_bind_ref_cursor(sth, parc, &st2h))
         {
           hb_retni(SQL_ERROR);
@@ -1324,14 +1315,14 @@ HB_FUNC(ORACLE_EXECCURSOR)
 {
   POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int ret = 1;
-  /* execute the PL/SQL block */
+  // execute the PL/SQL block
   if (SQLO_SUCCESS != sqlo_execute(session->stmtParam, 1))
   {
 
     hb_retni(SQL_ERROR);
     return;
   }
-  /* execute the refcursor */
+  // execute the refcursor
   if (SQLO_SUCCESS != sqlo_execute(session->stmtParamRes, 1))
   {
 

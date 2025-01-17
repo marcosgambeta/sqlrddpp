@@ -305,7 +305,7 @@ STATIC s_aMsg7 := ;
 
 STATIC s_aMsg
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 INIT PROCEDURE SR_Init2
 
   s_aMsg := { s_aMsg1, s_aMsg2, s_aMsg3, s_aMsg4, s_aMsg5, s_aMsg6, s_aMsg7 }
@@ -318,7 +318,7 @@ INIT PROCEDURE SR_Init2
 
 RETURN
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_Msg(nMsg)
    Local nBaseLang := SR_SetBaseLang()
@@ -329,13 +329,13 @@ FUNCTION SR_Msg(nMsg)
 
 RETURN ""
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 FUNCTION SR_GetErrMessageMax()
 
 RETURN s_nMessages
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 #pragma BEGINDUMP
 
@@ -348,60 +348,64 @@ static int s_iRootLang   = 0;
 
 PHB_ITEM HB_EXPORT sr_getBaseLang(PHB_ITEM pLangItm)
 {
-   return hb_itemPutNI(pLangItm, s_iBaseLang);
+  return hb_itemPutNI(pLangItm, s_iBaseLang);
 }
 
 PHB_ITEM HB_EXPORT sr_getSecondLang(PHB_ITEM pLangItm)
 {
-   return hb_itemPutNI(pLangItm, s_iSecondLang);
+  return hb_itemPutNI(pLangItm, s_iSecondLang);
 }
 
 PHB_ITEM HB_EXPORT sr_getRootLang(PHB_ITEM pLangItm)
 {
-   return hb_itemPutNI(pLangItm, s_iRootLang);
+  return hb_itemPutNI(pLangItm, s_iRootLang);
 }
 
 HB_FUNC_STATIC( SR_SETMSGCOUNT )
 {
-   hb_retni(s_iMsgCount);
-   if( HB_ISNUM(1) ) {
-      s_iMsgCount = hb_parni(1);
-   }
+  hb_retni(s_iMsgCount);
+  if (HB_ISNUM(1))
+  {
+    s_iMsgCount = hb_parni(1);
+  }
 }
 
 HB_FUNC( SR_SETBASELANG )
 {
-   int iLang = hb_parni(1);
+  int iLang = hb_parni(1);
 
-   hb_retni(s_iBaseLang);
+  hb_retni(s_iBaseLang);
 
-   if( iLang > 0 && iLang <= s_iMsgCount ) {
-      s_iBaseLang = iLang;
-   }
+  if (iLang > 0 && iLang <= s_iMsgCount)
+  {
+    s_iBaseLang = iLang;
+  }
 }
 
 HB_FUNC( SR_SETSECONDLANG )
 {
-   int iLang = hb_parni(1);
+  int iLang = hb_parni(1);
 
-   hb_retni(s_iSecondLang);
+  hb_retni(s_iSecondLang);
 
-   if( iLang > 0 && iLang <= s_iMsgCount ) {
-      s_iSecondLang = iLang;
-   }
+  if (iLang > 0 && iLang <= s_iMsgCount)
+  {
+    s_iSecondLang = iLang;
+  }
 }
 
 HB_FUNC( SR_SETROOTLANG )
 {
-   int iLang = hb_parni(1);
+  int iLang = hb_parni(1);
 
-   hb_retni(s_iRootLang);
+  hb_retni(s_iRootLang);
 
-   if( iLang > 0 && iLang <= s_iMsgCount ) {
-      s_iRootLang = iLang;
-   }
+  if (iLang > 0 && iLang <= s_iMsgCount)
+  {
+    s_iRootLang = iLang;
+  }
 }
 
 #pragma ENDDUMP
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------

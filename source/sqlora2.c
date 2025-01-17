@@ -49,14 +49,14 @@
 
 enum sqlo_status_codes
 {
-  SQLO_SUCCESS = 0,             /**< General success code (maps to OCI_SUCCESS) */
-  SQLO_ERROR = -1,              /**< General error code (maps to OCI_ERROR) */
-  SQLO_INVALID_HANDLE = -2,     /**< Maps to OCI_INVALID_HANDLE */
-  SQLO_STILL_EXECUTING = -3123, /**< Maps to OCI_STILL_EXECUTING */
-  SQLO_CONTINUE = -24200,       /**< Maps to OCI_CONTINUE */
-  SQLO_SUCCESS_WITH_INFO = 1,   /**< Maps to OCI_SUCCESS_WITH_INFO */
-  SQLO_NEED_DATA = 99,          /**< Maps to OCI_NEED_DATA */
-  SQLO_NO_DATA = 100            /**< Maps to OCI_NO_DATA */
+  SQLO_SUCCESS = 0,             //*< General success code (maps to OCI_SUCCESS)
+  SQLO_ERROR = -1,              //*< General error code (maps to OCI_ERROR)
+  SQLO_INVALID_HANDLE = -2,     //*< Maps to OCI_INVALID_HANDLE
+  SQLO_STILL_EXECUTING = -3123, //*< Maps to OCI_STILL_EXECUTING
+  SQLO_CONTINUE = -24200,       //*< Maps to OCI_CONTINUE
+  SQLO_SUCCESS_WITH_INFO = 1,   //*< Maps to OCI_SUCCESS_WITH_INFO
+  SQLO_NEED_DATA = 99,          //*< Maps to OCI_NEED_DATA
+  SQLO_NO_DATA = 100            //*< Maps to OCI_NO_DATA
 };
 
 #if !defined(__GNUC__) && defined(WIN32)
@@ -77,14 +77,14 @@ enum sqlo_status_codes
 #define LOGFILE "oci2.log"
 enum SQLO2_iStatus_codes
 {
-  SQLO2_SUCCESS = 0,             /**< General success code (maps to OCI_SUCCESS) */
-  SQLO2_ERROR = -1,              /**< General error code (maps to OCI_ERROR) */
-  SQLO2_INVALID_HANDLE = -2,     /**< Maps to OCI_INVALID_HANDLE */
-  SQLO2_STILL_EXECUTING = -3123, /**< Maps to OCI_STILL_EXECUTING */
-  SQLO2_CONTINUE = -24200,       /**< Maps to OCI_CONTINUE */
-  SQLO2_SUCCESS_WITH_INFO = 1,   /**< Maps to OCI_SUCCESS_WITH_INFO */
-  SQLO2_NEED_DATA = 99,          /**< Maps to OCI_NEED_DATA */
-  SQLO2_NO_DATA = 100            /**< Maps to OCI_NO_DATA */
+  SQLO2_SUCCESS = 0,             //*< General success code (maps to OCI_SUCCESS)
+  SQLO2_ERROR = -1,              //*< General error code (maps to OCI_ERROR)
+  SQLO2_INVALID_HANDLE = -2,     //*< Maps to OCI_INVALID_HANDLE
+  SQLO2_STILL_EXECUTING = -3123, //*< Maps to OCI_STILL_EXECUTING
+  SQLO2_CONTINUE = -24200,       //*< Maps to OCI_CONTINUE
+  SQLO2_SUCCESS_WITH_INFO = 1,   //*< Maps to OCI_SUCCESS_WITH_INFO
+  SQLO2_NEED_DATA = 99,          //*< Maps to OCI_NEED_DATA
+  SQLO2_NO_DATA = 100            //*< Maps to OCI_NO_DATA
 };
 
 static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
@@ -851,7 +851,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
         pTemp = hb_itemNew(NULL);
         hb_vmPush(pTemp);
         hb_vmDo(2);
-        /* TOFIX: */
+        // TOFIX:
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
       }
@@ -1265,7 +1265,7 @@ HB_FUNC(ORACLE_PROCCURSOR2)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   //  SQLO2_stmt_handle_t sth = SQLO2_STH_INIT;
-  //  SQLO2_stmt_handle_t st2h;                     /* handle of the ref cursor */
+  //  SQLO2_stmt_handle_t st2h;                     // handle of the ref cursor
 
   int ret = SQL_ERROR;
 
@@ -1274,7 +1274,7 @@ HB_FUNC(ORACLE_PROCCURSOR2)
 
   if (session)
   {
-    /* parse the statement */
+    // parse the statement
     // ret = SQLO2_prepare(session->dbh, stmt);
     session->stmt = OCI_StatementCreate(session->cn);
     session->stmtParamRes = OCI_StatementCreate(session->cn);
@@ -1284,7 +1284,7 @@ HB_FUNC(ORACLE_PROCCURSOR2)
     {
       // if( 0 <= (sth = ret) )
       //{
-      /* bind all variables */
+      // bind all variables
       if (!OCI_BindStatement(session->stmt, parc, session->stmtParamRes))
       {
         hb_retni(SQL_ERROR);

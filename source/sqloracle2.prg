@@ -58,7 +58,7 @@
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 CLASS SR_ORACLE2 FROM SR_CONNECTION
 
@@ -92,7 +92,7 @@ CLASS SR_ORACLE2 FROM SR_CONNECTION
 
 ENDCLASS
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD MoreResults(aArray, lTranslate) CLASS SR_ORACLE2
 
@@ -101,7 +101,7 @@ METHOD MoreResults(aArray, lTranslate) CLASS SR_ORACLE2
 
 RETURN -1
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ORACLE2
 
@@ -127,7 +127,7 @@ METHOD Getline(aFields, lTranslate, aArray) CLASS SR_ORACLE2
 
 RETURN aArray
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ORACLE2
 
@@ -139,7 +139,7 @@ METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_ORACLE2
 
 RETURN ::aCurrLine[nField]
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_ORACLE2
 
@@ -157,7 +157,7 @@ METHOD FetchRaw(lTranslate, aFields) CLASS SR_ORACLE2
 
 RETURN ::nRetCode
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD FreeStatement() CLASS SR_ORACLE2
 
@@ -171,7 +171,7 @@ METHOD FreeStatement() CLASS SR_ORACLE2
 
 RETURN NIL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD AllocStatement() CLASS SR_ORACLE2
 
@@ -192,7 +192,7 @@ METHOD AllocStatement() CLASS SR_ORACLE2
 
 RETURN nRet
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_ORACLE2
 
@@ -284,13 +284,13 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
 
 RETURN aFields
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD LastError() CLASS SR_ORACLE2
 
 RETURN SQLO2_GETERRORDESCR(::hDBC) + " retcode: " + sr_val2Char(::nRetCode) + " - " + AllTrim(Str(SQLO2_GETERRORCODE(::hDBC)))
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_ORACLE2
 
@@ -369,7 +369,7 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
 
 RETURN SELF
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD End() CLASS SR_ORACLE2
 
@@ -386,7 +386,7 @@ METHOD End() CLASS SR_ORACLE2
 
 RETURN NIL
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD Commit(lNoLog) CLASS SR_ORACLE2
 
@@ -394,7 +394,7 @@ METHOD Commit(lNoLog) CLASS SR_ORACLE2
 
 RETURN (::nRetcode := SQLO2_COMMIT(::hdbc))
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD RollBack() CLASS SR_ORACLE2
 
@@ -402,7 +402,7 @@ METHOD RollBack() CLASS SR_ORACLE2
 
 RETURN (::nRetCode := SQLO2_ROLLBACK(::hDbc))
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
 
@@ -458,7 +458,7 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
 
 RETURN nRet
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 STATIC FUNCTION ProcessParams(cSql, nBound)
 
@@ -492,7 +492,7 @@ STATIC FUNCTION ProcessParams(cSql, nBound)
 
 RETURN cOriginal
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet) CLASS SR_ORACLE2
 
@@ -514,7 +514,7 @@ METHOD BINDPARAM(lStart, lIn, nLen, cRet, nLenRet) CLASS SR_ORACLE2
 
 RETURN SELF
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD ConvertParams(c) CLASS SR_ORACLE2
 
@@ -523,13 +523,13 @@ METHOD ConvertParams(c) CLASS SR_ORACLE2
 
 RETURN cRet
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData) CLASS SR_ORACLE2
 
 RETURN OracleWriteMemo2(::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData)
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE2
 
@@ -577,7 +577,7 @@ METHOD ExecSP(cComm, aReturn, nParam, aType) CLASS SR_ORACLE2
 
 RETURN nError
 
-/*------------------------------------------------------------------------*/
+//------------------------------------------------------------------------
 
 METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, lNoRecno, cRecnoName, cDeletedName, lTranslate, nLogMode) CLASS SR_ORACLE2
 
