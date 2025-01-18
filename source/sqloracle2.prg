@@ -144,7 +144,7 @@ RETURN ::aCurrLine[nField]
 METHOD FetchRaw(lTranslate, aFields) CLASS SR_ORACLE2
 
    ::nRetCode := SQL_ERROR
-   DEFAULT aFields    TO ::aFields
+   DEFAULT aFields TO ::aFields
    DEFAULT lTranslate TO .T.
 
    IF ::hDBC != NIL
@@ -213,10 +213,10 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
    HB_SYMBOL_UNUSED(aFields)
    HB_SYMBOL_UNUSED(cVlr)
 
-   DEFAULT lReSelect    TO .T.
-   DEFAULT lLoadCache   TO .F.
-   DEFAULT cWhere       TO ""
-   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT lReSelect TO .T.
+   DEFAULT lLoadCache TO .F.
+   DEFAULT cWhere TO ""
+   DEFAULT cRecnoName TO SR_RecnoName()
    DEFAULT cDeletedName TO SR_DeletedName()
 
    IF lReSelect
@@ -259,9 +259,9 @@ METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cD
          cType := ::SQLType(nType, cName, nLen)
 
          IF !::lQueryOnly .AND. cType == "N" .AND. nLenField == 38 .AND. nDec == 0
-            cType     := "L"
+            cType := "L"
             nLenField := 1
-            nType     := SQL_BIT
+            nType := SQL_BIT
          ENDIF
 
          IF cType == "U"
@@ -340,16 +340,16 @@ METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace
       SR_MsgLogFile("Connection Error: " + ::lastError() + " - Connection string: " + ::cUser + "/" + Replicate("*", Len(::cPassWord)) + "@" + ::cDtb)
       RETURN SELF
    ELSE
-      ::cConnect  := cConnect
-      ::hDbc      := hDbc
-      cTargetDB   := "Oracle"
+      ::cConnect := cConnect
+      ::hDbc := hDbc
+      cTargetDB := "Oracle"
       cSystemVers := SQLO2_DBMSNAME(hDbc)
    ENDIF
 
    ::cSystemName := cTargetDB
    ::cSystemVers := cSystemVers
-   ::nSystemID   := SYSTEMID_ORACLE
-   ::cTargetDB   := Upper(cTargetDB)
+   ::nSystemID := SYSTEMID_ORACLE
+   ::cTargetDB := Upper(cTargetDB)
 
    aRet := {{cSystemVers}}
    cMatch := HB_AtX(s_reEnvVar, cSystemVers, , @nStart, @nLen)
@@ -608,11 +608,11 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
    ::AllocStatement()
 
-   DEFAULT lMsg         TO .T.
-   DEFAULT lFetch       TO .F.
-   DEFAULT nMaxRecords  TO 99999999999999
-   DEFAULT lNoRecno     TO .F.
-   DEFAULT cRecnoName   TO SR_RecnoName()
+   DEFAULT lMsg TO .T.
+   DEFAULT lFetch TO .F.
+   DEFAULT nMaxRecords TO 99999999999999
+   DEFAULT lNoRecno TO .F.
+   DEFAULT cRecnoName TO SR_RecnoName()
    DEFAULT cDeletedName TO SR_DeletedName()
 
    BEGIN SEQUENCE WITH __BreakBlock()
@@ -712,8 +712,8 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
 
-            cEste      := ""
-            nLenMemo   := 0
+            cEste := ""
+            nLenMemo := 0
             nLinesMemo := 0
 
             FOR i := 1 TO Len(aFields)

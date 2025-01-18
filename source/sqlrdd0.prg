@@ -384,12 +384,12 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
    LOCAL oConnect
    LOCAL oConnect2
 
-   DEFAULT nType             TO CONNECT_ODBC
-   DEFAULT lAutoCommit       TO .F.
-   DEFAULT lCounter          TO .F.
-   DEFAULT cOwner            TO ""
-   DEFAULT lNoSetEnv         TO .F.
-   DEFAULT s_aConnections      TO {}
+   DEFAULT nType TO CONNECT_ODBC
+   DEFAULT lAutoCommit TO .F.
+   DEFAULT lCounter TO .F.
+   DEFAULT cOwner TO ""
+   DEFAULT lNoSetEnv TO .F.
+   DEFAULT s_aConnections TO {}
    DEFAULT s_nActiveConnection TO 0
 
    // The macro execution is used to NOT link the connection class if we don't need it
@@ -2058,7 +2058,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
    LOCAL cIns
    LOCAL cDel
 
-   DEFAULT oCnn     TO SR_GetConnection()
+   DEFAULT oCnn TO SR_GetConnection()
    DEFAULT nRetries TO 0
 
    IF oCnn:oSqlTransact == NIL

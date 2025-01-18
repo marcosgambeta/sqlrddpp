@@ -1657,7 +1657,7 @@ RETURN 0
 METHOD OrderBy(nOrder, lAscend, lRec) CLASS SR_WORKAREA
 
    DEFAULT nOrder TO ::aInfo[AINFO_INDEXORD]
-   DEFAULT lRec   TO .T.
+   DEFAULT lRec TO .T.
 
    lAscend := IIf(::aInfo[AINFO_REVERSE_INDEX], !lAscend, lAscend)
 
@@ -2017,9 +2017,9 @@ METHOD RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode) CLASS SR_WORKARE
    LOCAL cDescr
 
    DEFAULT cOperation TO RddName()  // ::ClassName()
-   DEFAULT nOSCode    TO 0
-   DEFAULT nGenCode   TO 99
-   DEFAULT SubCode    TO Val(cOperation)
+   DEFAULT nOSCode TO 0
+   DEFAULT nGenCode TO 99
+   DEFAULT SubCode TO Val(cOperation)
 
    IF SubCode > 0 .AND. SubCode <= SR_GetErrMessageMax()
       DEFAULT cErr TO SR_Msg(SubCode)
@@ -2045,7 +2045,7 @@ METHOD RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode) CLASS SR_WORKARE
 
    SR_LogFile("sqlerror.log", {cDescr})
 
-   _sr_Throw(oErr)
+   _SR_Throw(oErr)
 
 RETURN NIL
 
@@ -2256,10 +2256,10 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
    LOCAL cRet
    LOCAL cOldSet := SET(_SET_DATEFORMAT)
 
-   DEFAULT trim      TO .F.
+   DEFAULT trim TO .F.
    DEFAULT nTargetDB TO ::oSql:nSystemID
-   DEFAULT lNull     TO .T.
-   DEFAULT lMemo     TO .F.
+   DEFAULT lNull TO .T.
+   DEFAULT lMemo TO .F.
 
    IF Empty(uData) .AND. (!cType $ "AOH") .AND. ((nTargetDB == SYSTEMID_POSTGR .AND. cType $ "DCMNT" .AND. cType != "L") .OR. (nTargetDB != SYSTEMID_POSTGR .AND. cType != "L"))
       IF lNull
@@ -4465,7 +4465,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
             cSep := IIf(cQot == "NULL", " IS ", IIf(lSoft, " >= ", IIf(lLikeSep, " Like ", " = ")))
          ENDIF
 
-         cNam  := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
 
          AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2])
          AAdd(::aQuoted, ::QuotedNull(uKey))
@@ -8382,7 +8382,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
             ::aQuoted := {}
             ::aDat := {}
             ::aPosition := {}
-            nCons  := 0
+            nCons := 0
             nLenKey := Len(uKey)
             cPart := ""
             HB_SYMBOL_UNUSED(cPart)
@@ -9676,8 +9676,8 @@ METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
       cLobs := ""
 
       DEFAULT aCreate[i, FIELD_PRIMARY_KEY] TO 0
-      DEFAULT aCreate[i, FIELD_NULLABLE]    TO .T.
-      DEFAULT aCreate[i, FIELD_MULTILANG]   TO MULTILANG_FIELD_OFF
+      DEFAULT aCreate[i, FIELD_NULLABLE] TO .T.
+      DEFAULT aCreate[i, FIELD_MULTILANG] TO MULTILANG_FIELD_OFF
 
       aCreate[i, FIELD_NAME] := Upper(AllTrim(aCreate[i, FIELD_NAME]))
       cField := aCreate[i, FIELD_NAME]
@@ -10116,11 +10116,11 @@ METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS
       cLobs := ""
 
       DEFAULT aCreate[i, FIELD_PRIMARY_KEY] TO 0
-      DEFAULT aCreate[i, FIELD_NULLABLE]    TO .T.
-      DEFAULT aCreate[i, FIELD_MULTILANG]   TO MULTILANG_FIELD_OFF
+      DEFAULT aCreate[i, FIELD_NULLABLE] TO .T.
+      DEFAULT aCreate[i, FIELD_MULTILANG] TO MULTILANG_FIELD_OFF
 
       aCreate[i, FIELD_NAME] := Upper(AllTrim(aCreate[i, FIELD_NAME]))
-      cField  := aCreate[i, FIELD_NAME]
+      cField := aCreate[i, FIELD_NAME]
       lPrimary := aCreate[i, FIELD_PRIMARY_KEY] > 0
 
       IF (nPos_ := AScan(::aNames, {|x| AllTrim(Upper(x)) == cField})) > 0

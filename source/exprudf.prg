@@ -224,7 +224,7 @@ METHOD aAdd(xKey, xValue, nMode) CLASS Dictionary
    CASE !lContainsKey
       AAdd(::aInternArray, KeyValuePair():new(xKey, xValue))
    CASE nMode == 1 .AND. lContainsKey
-      _sr_Throw(ErrorNew(, , , , "The given key already exists in the dictionary"))
+      _SR_Throw(ErrorNew(, , , , "The given key already exists in the dictionary"))
    CASE nMode == 3 .AND. lContainsKey
       ::SetValue(xKey, xValue)
    ENDCASE
@@ -236,7 +236,7 @@ METHOD GetKeyValuePair(xKey) CLASS Dictionary
    LOCAL result := xFirst(::aInternArray, {|y|y:xKey == xKey})
 
    IF result == NIL
-      _sr_Throw(ErrorNew(, , , , "The key " + cstr(xKey) + " was not found."))
+      _SR_Throw(ErrorNew(, , , , "The key " + cstr(xKey) + " was not found."))
    ENDIF
 
 RETURN result
@@ -261,7 +261,7 @@ METHOD Remove(xKey) CLASS Dictionary
    LOCAL nIndex := ::nIndexOfKey(xKey)
 
    IF nIndex == 0
-      _sr_Throw(ErrorNew(,,,, "The key " + cstr(xKey) + " was not found."))
+      _SR_Throw(ErrorNew(, , , , "The key " + cstr(xKey) + " was not found."))
    ENDIF
 
 RETURN hb_ADel(::aInternArray, nIndex, .T.)
@@ -317,7 +317,7 @@ FUNCTION GetFileName(cPath)
       aGroups := HB_RegExAtX(cRegEx, cPath)
       RETURN aGroups[4, 1]
    ELSE
-      _sr_Throw(ErrorNew(, , , , cPath + " is not a valid path"))
+      _SR_Throw(ErrorNew(, , , , cPath + " is not a valid path"))
    ENDIF
 
 RETURN NIL

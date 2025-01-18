@@ -276,7 +276,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
       DBGoBottom() // Clipper compliance: call dbgobotom() to forces error message.
 #else
       // Call Errorsys() with error 2001 if not database in use.
-      _sr_Throw(ErrorNew("DBCMD", 0, 2001, procname(), "Workarea not in use"))
+      _SR_Throw(ErrorNew("DBCMD", 0, 2001, procname(), "Workarea not in use"))
 #endif
    ELSEIF Eof() .AND. LastRec() > 0
       // DbEdit() moves cursor to the bottom record if Eof() is reached at init.
@@ -293,7 +293,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    //       so the output is ugly with them
    //
    DEFAULT acHeadingSep TO Chr(196) + Chr(194) + Chr(196)
-   DEFAULT acColumnSep  TO " " + Chr(179) + " "
+   DEFAULT acColumnSep TO " " + Chr(179) + " "
    DEFAULT acColumnFootings TO ""
 
    IF Empty(axColumns) .OR. !HB_IsArray(axColumns)
@@ -317,27 +317,27 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    //       invalid or empty, then the dbEdit() will ignore it.
 
    IF nTop != NIL .AND. !HB_IsNumeric(nTop)
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nTop) + ">", Procname() + " <nTop>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nTop) + ">", Procname() + " <nTop>"))
    ENDIF
    IF nLeft != NIL .AND. !HB_IsNumeric(nLeft)
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nLeft) + ">", Procname() + " <nLeft>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nLeft) + ">", Procname() + " <nLeft>"))
    ENDIF
    IF nBottom != NIL .AND. !HB_IsNumeric(nBottom)
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nBottom) + ">", Procname() + " <nBottom>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nBottom) + ">", Procname() + " <nBottom>"))
    ENDIF
    IF nRight != NIL .AND. !HB_IsNumeric(nRight)
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nRight) + ">", Procname() + " <nRight>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nRight) + ">", Procname() + " <nRight>"))
    ENDIF
 
-   nTop    := Max(0, nTop)
-   nLeft   := Max(0, nLeft)
+   nTop := Max(0, nTop)
+   nLeft := Max(0, nLeft)
    nBottom := Min(MaxRow(), nBottom)
-   nRight  := Min(MaxCol(), nRight)
+   nRight := Min(MaxCol(), nRight)
 
    // In Clipper the <cUserFunc> paramenter only can be a
    // string or NIL, but in xHarbour can be a codeblock also.
    IF xUserFunc != NIL .AND. (!HB_IsString(xUserFunc) .AND. !HB_IsBlock(xUserFunc) .AND. !HB_IsLogical(xUserFunc))
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(xUserFunc) + ">", Procname() + " <xUserFunc>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(xUserFunc) + ">", Procname() + " <xUserFunc>"))
    ELSE
       IF HB_IsString(xUserFunc) .AND. Empty(xUserFunc)
          xUserFunc := NIL
@@ -348,35 +348,35 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    ENDIF
 
    IF acColumnSayPictures != NIL .AND. (!HB_IsString(acColumnSayPictures) .AND. !HB_IsArray(acColumnSayPictures))
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnSayPictures) + ">", Procname() + " <acColumnSayPictures|cColumnSayPicture>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnSayPictures) + ">", Procname() + " <acColumnSayPictures|cColumnSayPicture>"))
    ENDIF
 
    IF acColumnHeaders != NIL .AND. (!HB_IsString(acColumnHeaders) .AND. !HB_IsArray(acColumnHeaders))
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnHeaders) + ">", Procname() + " <acColumnHeaders|cColumnHeader>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnHeaders) + ">", Procname() + " <acColumnHeaders|cColumnHeader>"))
    ENDIF
 
    IF acHeadingSep != NIL .AND. (!HB_IsString(acHeadingSep) .AND. !HB_IsArray(acHeadingSep))
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acHeadingSep) + ">", Procname() + " <acHeadingSeparators|cHeadingSeparator>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acHeadingSep) + ">", Procname() + " <acHeadingSeparators|cHeadingSeparator>"))
    ENDIF
 
    IF acColumnSep != NIL .AND. (!HB_IsString(acColumnSep) .AND. !HB_IsArray(acColumnSep))
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnSep) + ">", Procname() + " <acColumnSeparators|cColumnSeparator>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnSep) + ">", Procname() + " <acColumnSeparators|cColumnSeparator>"))
    ENDIF
 
    IF acFootingSep != NIL .AND. (!HB_IsString(acFootingSep) .AND. !HB_IsArray(acFootingSep))
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acFootingSep) + ">", Procname() + " <acFootingSeparators|cFootingSeparator>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acFootingSep) + ">", Procname() + " <acFootingSeparators|cFootingSeparator>"))
    ENDIF
 
    IF acColumnFootings != NIL .AND. (!HB_IsString(acColumnFootings) .AND. !HB_IsArray(acColumnFootings))
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnFootings) + ">", Procname() + " <acColumnFootings|cColumnFooting>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnFootings) + ">", Procname() + " <acColumnFootings|cColumnFooting>"))
    ENDIF
 
    IF bPreBlock != NIL .AND. !HB_IsBlock(bPreBlock)
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(bPreBlock) + ">", Procname() + " <bPreBlockBlock>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(bPreBlock) + ">", Procname() + " <bPreBlockBlock>"))
    ENDIF
 
    IF bPostBlock != NIL .AND. !HB_IsBlock(bPostBlock)
-      _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(bPostBlock) + ">", Procname() + " <bPostBlockBlock>"))
+      _SR_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(bPostBlock) + ">", Procname() + " <bPostBlockBlock>"))
    ENDIF
 
    IF HB_IsBlock(bPreBlock)
@@ -388,7 +388,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    IF HB_IsBlock(bPostBlock)
       i := bPostBlock
       bPostBlock := Array(Len(axColumns))
-      aFill(bPostBlock, i)
+      AFill(bPostBlock, i)
    END
 
    // Save previous cursor shape and position.
@@ -771,7 +771,7 @@ STATIC FUNCTION dbe_CallUDF(bFunc, nMode, nColPos, avalue, oTBR, csql, cCount, c
    ENDIF
 
    lDeleted := Deleted()
-   nRec     := RecNo()
+   nRec := RecNo()
    nLastRec := (cAlias)->(LastRec())
 
    // Call UDF

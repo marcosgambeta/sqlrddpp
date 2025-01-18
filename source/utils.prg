@@ -241,11 +241,11 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
          SR_RuntimeErr(, "SR_ChengeStructure: Invalid arguments [1]: " + cTableName)
       ENDIF
 
-      cAlias   := Alias()
-      nAlias   := Select()
+      cAlias := Alias()
+      nAlias := Select()
       cTblName := oWA:cFileName
-      nOrd     := IndexOrd()
-      nReg     := RecNo()
+      nOrd := IndexOrd()
+      nReg := RecNo()
 
       DBSetOrder(0)
 
@@ -901,8 +901,8 @@ FUNCTION SR_HistExpression(n, cTable, cPK, CurrDate, nSystem)
    oCnn := SR_GetConnection()
 
    cAlias := "W" + StrZero(++s__nCnt, 3)
-   cAl1   := "W" + StrZero(++s__nCnt, 3)
-   cAl2   := "W" + StrZero(++s__nCnt, 3)
+   cAl1 := "W" + StrZero(++s__nCnt, 3)
+   cAl2 := "W" + StrZero(++s__nCnt, 3)
    HB_SYMBOL_UNUSED(cAl2)
 
    IF s__nCnt >= 995
@@ -938,8 +938,8 @@ FUNCTION SR_HistExpressionWhere(n, cTable, cPK, CurrDate, nSystem, cAlias)
 
    oCnn := SR_GetConnection()
 
-   cAl1   := "W" + StrZero(++s__nCnt, 3)
-   cAl2   := "W" + StrZero(++s__nCnt, 3)
+   cAl1 := "W" + StrZero(++s__nCnt, 3)
+   cAl2 := "W" + StrZero(++s__nCnt, 3)
    HB_SYMBOL_UNUSED(cAl2)
 
    IF s__nCnt >= 995
@@ -1459,19 +1459,19 @@ FUNCTION SR_RuntimeErr(cOperation, cErr)
 
    cDescr := AllTrim(cErr)
 
-   oErr:genCode       := 99
-   oErr:CanDefault    := .F.
-   oErr:Severity      := ES_ERROR
-   oErr:CanRetry      := .T.
+   oErr:genCode := 99
+   oErr:CanDefault := .F.
+   oErr:Severity := ES_ERROR
+   oErr:CanRetry := .T.
    oErr:CanSubstitute := .F.
-   oErr:Description   := cDescr + " - RollBack executed."
-   oErr:subSystem     := "SQLRDD"
-   oErr:operation     := cOperation
-   oErr:OsCode        := 0
+   oErr:Description := cDescr + " - RollBack executed."
+   oErr:subSystem := "SQLRDD"
+   oErr:operation := cOperation
+   oErr:OsCode := 0
 
    SR_LogFile("sqlerror.log", {cDescr})
 
-   _sr_Throw(oErr)
+   _SR_Throw(oErr)
 
 RETURN NIL
 
@@ -1869,12 +1869,12 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             EXIT
          CASE K_ESC
             nChoice := 0
-            lWhile  := .F.
+            lWhile := .F.
             EXIT
          OTHERWISE
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := AScan(aHotkey, {|x|x == Upper(Chr(nKey))})
-               lWhile  := .F.
+               lWhile := .F.
             ENDIF
          ENDSWITCH
 
@@ -1924,13 +1924,13 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             EXIT
          CASE K_ESC
             nChoice := 0
-            lWhile  := .F.
+            lWhile := .F.
             EXIT
 #ifdef HB_COMPAT_C53
          CASE K_LBUTTONDOWN
-            nMRow  := MRow()
-            nMCol  := MCol()
-            nPos   := 0
+            nMRow := MRow()
+            nMCol := MCol()
+            nPos := 0
             nCount := Len(aSay)
             FOR EACH cEval IN aOptionsOK
                IF nMRow == nInitRow + nCount + 2 .AND. ;
@@ -1968,7 +1968,7 @@ FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
          OTHERWISE
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := AScan(aHotkey, {|x|x == Upper(Chr(nKey))})
-               lWhile  := .F.
+               lWhile := .F.
             ENDIF
          ENDSWITCH
 

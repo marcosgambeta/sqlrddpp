@@ -304,7 +304,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
                      ENDIF
                   NEXT i
                   if !lProgress
-                     _sr_Throw(ErrorNew(,,,, "Circular dependency in the relations. Pass the parameter lFetchJoin to .F. to avoid this problem."))
+                     _SR_Throw(ErrorNew(, , , , "Circular dependency in the relations. Pass the parameter lFetchJoin to .F. to avoid this problem."))
                   ENDIF
                ENDDO
 
@@ -323,7 +323,7 @@ METHOD Translate(oExpression, x) CLASS ExpressionTranslator
       ENDIF
    RECOVER USING oErr
       #ifdef DEBUG
-         _sr_throw(oErr)
+         _SR_Throw(oErr)
       #endif
       result := NIL
    END SEQUENCE
@@ -430,7 +430,7 @@ RETURN cSQLFunctionName + "(" + cJoin(aParameters, ",") + ")"
 METHOD CheckParams(oFunctionExpression) CLASS ExpressionTranslator
 
    IF AScan(oFunctionExpression:aParameters, {|x|x:lIsByRef}) > 0
-      _sr_Throw(ErrorNew(,,,, "The expression cannot be translated because " + oFunctionExpression:cFunctionName + " contains a parameter passed by reference"))
+      _SR_Throw(ErrorNew(, , , , "The expression cannot be translated because " + oFunctionExpression:cFunctionName + " contains a parameter passed by reference"))
    ENDIF
 
 RETURN
@@ -446,7 +446,7 @@ METHOD TranslateValueExpression(oValueExpression) CLASS ExpressionTranslator
       IF Upper(::_oDefaultContext:cAlias) != oValueExpression:cContext
          aRelations := RelationManager():new():GetRelations(::_oDefaultContext:cAlias, oValueExpression:cContext)
          IF Len(aRelations) > 1
-            _sr_Throw(ErrorNew(, , , , "There is several relations between " + ::_oDefaultContext:cAlias + " and " + oValueExpression:cContext + ". Translation impossible."))
+            _SR_Throw(ErrorNew(, , , , "There is several relations between " + ::_oDefaultContext:cAlias + " and " + oValueExpression:cContext + ". Translation impossible."))
          ELSEIF Len(aRelations) == 1
             ::AaddRelations(aRelations)
          ENDIF
@@ -455,7 +455,7 @@ METHOD TranslateValueExpression(oValueExpression) CLASS ExpressionTranslator
       EXIT
    CASE "variable"
       IF !::lFixVariables
-         _sr_Throw(ErrorNew(, , , , "The variable " + oValueExpression:Value + " isn't SQL valid"))
+         _SR_Throw(ErrorNew(, , , , "The variable " + oValueExpression:Value + " isn't SQL valid"))
       ENDIF
       EXIT
    CASE "value"
@@ -511,7 +511,7 @@ METHOD TranslateRelationExpression(oDirectRelation) CLASS ExpressionTranslator
    LOCAL oTranslator := ::GetNewTranslator()
 
    IF !::lIndexExpression .AND. !oDirectRelation:lSameLength
-      _sr_Throw(ErrorNew(, , , , "Joint between " + oDirectRelation:oWorkArea1:cAlias + " and " + oDirectRelation:oWorkArea2:cAlias + " hasn't be made because it required complex expressions that can be slow to evaluate on the server side. To force the joint, pass the property 'lIndexExpression' of the translator to .T."))
+      _SR_Throw(ErrorNew(, , , , "Joint between " + oDirectRelation:oWorkArea1:cAlias + " and " + oDirectRelation:oWorkArea2:cAlias + " hasn't be made because it required complex expressions that can be slow to evaluate on the server side. To force the joint, pass the property 'lIndexExpression' of the translator to .T."))
    ENDIF
 
    oDirectRelation:SimplifyExpression(::_oExpressionSimplifier)
@@ -532,7 +532,7 @@ METHOD TranslateRelationExpression(oDirectRelation) CLASS ExpressionTranslator
    cRelationExpr := oTranslator:Translate(oDirectRelation:oExpression)
 
    IF cRelationExpr == NIL
-      _sr_Throw(ErrorNew(, , , , "The translation of the relation expression on " + oDirectRelation:oWorkArea1:cAlias + " into " + oDirectRelation:oWorkArea2:cAlias + " has failed"))
+      _SR_Throw(ErrorNew(, , , , "The translation of the relation expression on " + oDirectRelation:oWorkArea1:cAlias + " into " + oDirectRelation:oWorkArea2:cAlias + " has failed"))
    ENDIF
 
    ::AaddRelations(oTranslator:aRelations) // There can be a field of a workearea in relation in the relation expression ?
@@ -540,7 +540,7 @@ METHOD TranslateRelationExpression(oDirectRelation) CLASS ExpressionTranslator
    cIndexExpr := oTranslator:Translate(oDirectRelation:oIndexExpression)
 
    IF cIndexExpr == NIL
-      _sr_Throw(ErrorNew(, , , , "The translation of the index expression of " + oDirectRelation:oWorkArea2:cAlias + "   has failed"))
+      _SR_Throw(ErrorNew(, , , , "The translation of the index expression of " + oDirectRelation:oWorkArea2:cAlias + "   has failed"))
    ENDIF
 
 RETURN cRelationExpr + " " + ::GetComparisonOperatorSymbol("equal") + " " + cIndexExpr
@@ -613,7 +613,7 @@ METHOD TranslateComparison(oComparison) CLASS MSSQLExpressionTranslator
       ELSEIF oComparison:oOperator:cName == "different"
          RETURN ::TranslateExpression(oComparison:oOperand1) + " IS NOT NULL"
       ELSE
-         _sr_throw(ErrorNew(, , , , "null value cannot be compared with the operator " + oComparison:oOperator:cName))
+         _SR_throw(ErrorNew(, , , , "null value cannot be compared with the operator " + oComparison:oOperator:cName))
       ENDIF
    ELSE
       RETURN ::super:TranslateComparison(oComparison)
@@ -659,7 +659,7 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
             secondParam := ::super:TranslateBooleanExpression(aParamExprs[2])
             thirdParam := ::super:TranslateBooleanExpression(aParamExprs[3])
          ELSE
-            _sr_Throw(ErrorNew(,,,, "TSQL doesn't support condition as the second or third parameter of the 'CASE WHEN ELSE END' structure"))
+            _SR_Throw(ErrorNew(, , , , "TSQL doesn't support condition as the second or third parameter of the 'CASE WHEN ELSE END' structure"))
          ENDIF
       ELSE
          secondParam := ::InternalTranslate(aParamExprs[2])
@@ -725,7 +725,7 @@ METHOD TranslateFunctionExpression(oFunctionExpression) CLASS MSSQLExpressionTra
             secondParam := ::super:TranslateBooleanExpression(aParamExprs[2])
             thirdParam := ::super:TranslateBooleanExpression(aParamExprs[3])
          ELSE
-            _sr_Throw(ErrorNew(, , , , "TSQL doesn't support condition as the second or third parameter of the 'CASE WHEN ELSE END' structure"))
+            _SR_Throw(ErrorNew(, , , , "TSQL doesn't support condition as the second or third parameter of the 'CASE WHEN ELSE END' structure"))
          ENDIF
       ELSE
          secondParam := ::InternalTranslate(aParamExprs[2])
@@ -786,7 +786,7 @@ METHOD GetFunctionName(oFunctionExpression) CLASS MSSQLExpressionTranslator
    CASE cFunctionName == "date"
       RETURN "getdate"
    OTHERWISE
-      _sr_Throw(ErrorNew(, , , , "No SQL function corresponding to " + cFunctionName + " has been defined!")) // all functions translation should be specified. We could RETURN oFunctionExpression:cFunctionName, but we would have no way to check if the SQL is valid before testing it.
+      _SR_Throw(ErrorNew(, , , , "No SQL function corresponding to " + cFunctionName + " has been defined!")) // all functions translation should be specified. We could RETURN oFunctionExpression:cFunctionName, but we would have no way to check if the SQL is valid before testing it.
    ENDCASE
 
 RETURN NIL

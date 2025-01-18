@@ -201,7 +201,7 @@ ENDCLASS
 
 METHOD New(oNodeTop) CLASS sr_TXmlIterator
 
-   ::oTop  := oNodeTop
+   ::oTop := oNodeTop
    ::oNode := oNodeTop
    ::nTopLevel := oNodeTop:Depth()
 
