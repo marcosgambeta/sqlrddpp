@@ -179,7 +179,7 @@ RETURN NIL
 FUNCTION SR_FilterStatus(lEnable)
 
    IF IS_SQLRDD
-      IF HB_ISLOGICAL(lEnable) 
+      IF HB_IsLogical(lEnable) 
          RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lDisableFlts := !lEnable
       ELSE
          RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):lDisableFlts
@@ -229,7 +229,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
       SR_RuntimeErr(, "SR_ChengeStructure: Workarea not in use.")
    ENDIF
 
-   IF Len(aNewStruct) < 1 .OR. !HB_ISARRAY(aNewStruct) .OR. !HB_ISARRAY(aNewStruct[1])
+   IF Len(aNewStruct) < 1 .OR. !HB_IsArray(aNewStruct) .OR. !HB_IsArray(aNewStruct[1])
       SR_RuntimeErr(, "SR_ChengeStructure: Invalid arguments [2].")
    ENDIF
 
@@ -416,7 +416,7 @@ FUNCTION SR_SetReverseIndex(nIndex, lSet)
 
    IF IS_SQLRDD .AND. nIndex > 0 .AND. nIndex <= Len((Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex)
       lOldSet := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, DESCEND_INDEX_ORDER]
-      IF HB_ISLOGICAL(lSet)
+      IF HB_IsLogical(lSet)
          (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, DESCEND_INDEX_ORDER] := lSet
       ENDIF
    ENDIF
@@ -497,7 +497,7 @@ FUNCTION SR_SetCreateAsHistoric(l)
    
    HB_SYMBOL_UNUSED(lOld)
 
-   IF HB_ISLOGICAL(l) 
+   IF HB_IsLogical(l) 
       s_lCreateAsHistoric := l
    ENDIF
 
@@ -785,13 +785,13 @@ FUNCTION SR_ShowVector(a)
    LOCAL cRet := ""
    LOCAL i
 
-   IF HB_ISARRAY(a) 
+   IF HB_IsArray(a) 
 
       cRet := "{"
 
       FOR i := 1 TO Len(a)
 
-         IF HB_ISARRAY(a[i])
+         IF HB_IsArray(a[i])
             cRet += SR_showvector(a[i]) + IIf(i == Len(a), "", ",") + SR_CRLF
          ELSE
             cRet += SR_Val2CharQ(a[i]) + IIf(i == Len(a), "", ",")
@@ -1086,7 +1086,7 @@ FUNCTION SR_SetFilter(cFlt)
       IF !Empty(cFlt)
          oWA:cFilter := cFlt
          oWA:Refresh()
-      ELSEIF HB_ISSTRING(cFlt) 
+      ELSEIF HB_IsString(cFlt) 
          oWA:cFilter := ""
       ENDIF
    ENDIF
@@ -1255,7 +1255,7 @@ FUNCTION SR_BeginTransaction(nCnn)
 
    LOCAL oCnn
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -1282,7 +1282,7 @@ FUNCTION SR_CommitTransaction(nCnn)
 
    LOCAL oCnn
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -1306,7 +1306,7 @@ FUNCTION SR_SetAppSite(nCnn, cSite)
    LOCAL oCnn
    LOCAL cOld
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -1328,7 +1328,7 @@ FUNCTION SR_SetConnectionLogChanges(nCnn, nOpt)
    LOCAL oCnn
    LOCAL nOld
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -1350,7 +1350,7 @@ FUNCTION SR_SetAppUser(nCnn, cUsername)
    LOCAL oCnn
    LOCAL cOld
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -1372,7 +1372,7 @@ FUNCTION SR_SetALockWait(nCnn, nSeconds)
    LOCAL oCnn
    LOCAL nOld
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -1391,7 +1391,7 @@ FUNCTION SR_RollBackTransaction(nCnn)
 
    LOCAL oCnn
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -1414,7 +1414,7 @@ FUNCTION SR_TransactionCount(nCnn)
 
    LOCAL oCnn
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -1432,7 +1432,7 @@ FUNCTION SR_EndTransaction(nCnn)
 
    LOCAL oCnn
 
-   IF HB_ISOBJECT(nCnn)
+   IF HB_IsObject(nCnn)
       oCnn := nCnn
    ELSE
       oCnn := SR_GetConnection(nCnn)
@@ -2129,9 +2129,9 @@ FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
    LOCAL cSql := "ALTER TABLE " + cTable + " ALTER COLUMN " + cField + " SET DEFAULT "
 
    oCnn := SR_GetConnection()
-   IF HB_ISNUMERIC(cDefault)
+   IF HB_IsNumeric(cDefault)
       cSql += AllTrim(Str(cDefault))
-   ELSEIF HB_ISSTRING(cDefault)
+   ELSEIF HB_IsString(cDefault)
       IF Empty(cDefault)
          cSql += "''"
       ELSE

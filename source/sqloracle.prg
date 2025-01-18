@@ -709,7 +709,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
 
-         IF HB_ISARRAY(aArray)
+         IF HB_IsArray(aArray)
             IF Len(aArray) == 0
                ASize(aArray, ARRAY_BLOCK1)
                nAllocated := ARRAY_BLOCK1

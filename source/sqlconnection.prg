@@ -346,7 +346,7 @@ RETURN aRet2
 
 METHOD Fetch(aLine, lTranslate, aFields) CLASS SR_CONNECTION
 
-   LOCAL lResults := HB_ISARRAY(aLine)
+   LOCAL lResults := HB_IsArray(aLine)
    LOCAL i
    LOCAL nRet := ::FetchRaw(lTranslate, aFields)
 
@@ -589,7 +589,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
 
                //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
 
-               IF HB_ISARRAY(aArray)
+               IF HB_IsArray(aArray)
                   IF Len(aArray) = 0
                      ASize(aArray, ARRAY_BLOCK1)
                      nAllocated := ARRAY_BLOCK1
@@ -1353,7 +1353,7 @@ FUNCTION SR_AutoCommit(nSet)
 
    nOld := oSql:nAutoCommit
 
-   IF HB_ISNUMERIC(nSet)
+   IF HB_IsNumeric(nSet)
       oSql:nAutoCommit := nSet
    ENDIF
 
@@ -1368,7 +1368,7 @@ FUNCTION SR_AllInCache(lSet)
 
    lOld := oSql:lAllInCache
 
-   IF HB_ISLOGICAL(lSet)
+   IF HB_IsLogical(lSet)
       oSql:lAllInCache := lSet
    ENDIF
 
@@ -1383,7 +1383,7 @@ FUNCTION SR_SetTraceLog(cLog)
 
    cOld := oSql:cLowLevLogFile
 
-   IF HB_ISCHAR(cLog)
+   IF HB_IsChar(cLog)
       oSql:cLowLevLogFile := cLog
    ENDIF
 

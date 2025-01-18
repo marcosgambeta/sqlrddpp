@@ -192,7 +192,7 @@ FUNCTION SR_SetSyntheticIndexMinimun(nSet)
 
    LOCAL nOld := s_nSyntheticIndexMinimun
 
-   IF HB_ISNUMERIC(nSet)
+   IF HB_IsNumeric(nSet)
       s_nSyntheticIndexMinimun := Min(nSet, 10)
    ENDIF
 
@@ -204,7 +204,7 @@ FUNCTION SR_CheckMgmntInd(nSet)
 
    LOCAL nOld := s_lCheckMgmntInd
 
-   IF HB_ISLOGICAL(nSet)
+   IF HB_IsLogical(nSet)
       s_lCheckMgmntInd := nSet
    ENDIF
 
@@ -216,7 +216,7 @@ FUNCTION SR_SetSyntheticIndex(lSet)
 
    LOCAL lOld := s_lSyntheticInd
 
-   IF HB_ISLOGICAL(lSet)
+   IF HB_IsLogical(lSet)
       s_lSyntheticInd := lSet
    ENDIF
 
@@ -234,7 +234,7 @@ FUNCTION SR_SetSVIndex(cSet)
 
    LOCAL cOld := s_cSynthetiVInd
 
-   IF HB_ISCHAR(cSet)
+   IF HB_IsChar(cSet)
       IF Len(cSet) != 3 .OR. " " $ cSet .OR. "." $ cSet
          SR_RuntimeErr("SR_SetSVIndex()", "Invalid parameter: " + cSet)
       ENDIF
@@ -259,7 +259,7 @@ FUNCTION SR_SetFastOpen(lSet)
 
    LOCAL lOld := s_lFastOpenWA
 
-   IF HB_ISLOGICAL(lSet)
+   IF HB_IsLogical(lSet)
       s_lFastOpenWA := lSet
    ENDIF
 
@@ -271,7 +271,7 @@ FUNCTION SR_SetExclusiveManagement(lSet)
 
    LOCAL lOld := !s_lFastOpenWA
 
-   IF HB_ISLOGICAL(lSet)
+   IF HB_IsLogical(lSet)
       s_lFastOpenWA := !lSet
    ENDIF
 
@@ -284,7 +284,7 @@ FUNCTION SR_SetTblSpaceData(cSet)
    LOCAL cOld := s_cTblSpaceData
    LOCAL oSql
 
-   IF HB_ISCHAR(cSet)
+   IF HB_IsChar(cSet)
       s_cTblSpaceData := cSet
    ELSEIF Empty(s_cTblSpaceData)
       oSql := SR_GetConnection()
@@ -302,7 +302,7 @@ FUNCTION SR_SetTblSpaceIndx(cSet)
    LOCAL cOld := s_cTblSpaceIndx
    LOCAL oSql
 
-   IF HB_ISCHAR(cSet)
+   IF HB_IsChar(cSet)
       s_cTblSpaceIndx := cSet
    ELSEIF Empty(s_cTblSpaceIndx)
       oSql := SR_GetConnection()
@@ -320,7 +320,7 @@ FUNCTION SR_SetTblSpaceLob(cSet)
    LOCAL cOld := s_cTblSpaceLob
    LOCAL oSql
 
-   IF HB_ISCHAR(cSet)
+   IF HB_IsChar(cSet)
       s_cTblSpaceLob := cSet
    ELSEIF Empty(s_cTblSpaceLob)
       oSql := SR_GetConnection()
@@ -337,7 +337,7 @@ FUNCTION SR_SetRDDTemp(cSet)
 
    LOCAL cOld := s_cRDDTemp
 
-   IF HB_ISCHAR(cSet)
+   IF HB_IsChar(cSet)
       s_cRDDTemp := cSet
    ENDIF
 
@@ -509,7 +509,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       RETURN -1
    ENDSWITCH
 
-   IF HB_ISOBJECT(oConnect)
+   IF HB_IsObject(oConnect)
       oConnect:Connect("", cUser, cPassword, 1, cOwner, 4000, .F., cDSN, 50, "ANSI", 0, 0, 0, lCounter, lAutoCommit, ;
          nTimeout)
    ELSE
@@ -1540,7 +1540,7 @@ FUNCTION _SR_UnRegister(oWA)
 
    aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
-   IF HB_ISARRAY(aActiveWAs)
+   IF HB_IsArray(aActiveWAs)
       DO WHILE (n := AScan(aActiveWAs, {|x|x:nThisArea == oWA:nThisArea})) > 0
          ADel(aActiveWAs, n)
          ASize(aActiveWAs, Len(aActiveWAs) - 1)
@@ -1557,7 +1557,7 @@ FUNCTION _SR_Register(oWA)
 
    aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
-   IF HB_ISARRAY(aActiveWAs)
+   IF HB_IsArray(aActiveWAs)
       AAdd(aActiveWAs, oWA)
    ELSE
       oWa:oSql:oHashActiveWAs:Insert(oWA:cFileName, {oWA})
@@ -1571,7 +1571,7 @@ FUNCTION _SR_ScanExec(oWA, bExpr)
 
    LOCAL aActiveWAs := oWa:oSql:oHashActiveWAs:Find(oWA:cFileName)
 
-   IF HB_ISARRAY(aActiveWAs)
+   IF HB_IsArray(aActiveWAs)
       AEval(aActiveWAs, bExpr)
    ENDIF
 
@@ -1621,7 +1621,7 @@ FUNCTION SR_SetCollation(cName)
 
    LOCAL cOld := s_cCollation
 
-   IF HB_ISCHAR(cName)
+   IF HB_IsChar(cName)
       s_cCollation := cName
    ENDIF
 
@@ -2066,9 +2066,9 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
    ENDIF
 
    DO CASE
-   CASE HB_ISCHAR(uLocks)
+   CASE HB_IsChar(uLocks)
       aLocks := {uLocks}
-   CASE HB_ISARRAY(uLocks)
+   CASE HB_IsArray(uLocks)
       aLocks := uLocks
    OTHERWISE
       aLocks := {SR_Val2Char(uLocks)}
@@ -2173,9 +2173,9 @@ FUNCTION SR_ReleaseLocks(uLocks, oCnn)
    ENDIF
 
    DO CASE
-   CASE HB_ISCHAR(uLocks)
+   CASE HB_IsChar(uLocks)
       aLocks := {uLocks}
-   CASE HB_ISARRAY(uLocks)
+   CASE HB_IsArray(uLocks)
       aLocks := uLocks
    OTHERWISE
       aLocks := {SR_Val2Char(uLocks)}

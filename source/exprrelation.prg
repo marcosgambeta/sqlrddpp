@@ -133,12 +133,12 @@ ENDCLASS
 
 METHOD new(pWorkarea1, pWorkarea2, pExpression) CLASS DirectRelation
 
-   IF HB_ISCHAR(pWorkarea1)
+   IF HB_IsChar(pWorkarea1)
       ::oWorkarea1 := oGetWorkarea(pWorkarea1)
    ELSE
       ::oWorkarea1 := pWorkarea1
    ENDIF
-   IF HB_ISCHAR(pWorkarea2)
+   IF HB_IsChar(pWorkarea2)
       ::oWorkarea2 := oGetWorkarea(pWorkarea2)
    ELSE
       ::oWorkarea2 := pWorkarea2
@@ -343,7 +343,7 @@ ENDCLASS
 
 METHOD new(pWorkarea, pName) CLASS DbIndex
 
-   IF HB_ISCHAR(pWorkarea)
+   IF HB_IsChar(pWorkarea)
       ::oWorkarea := oGetWorkarea(pWorkarea)
    ELSE
       ::oWorkarea := pWorkarea

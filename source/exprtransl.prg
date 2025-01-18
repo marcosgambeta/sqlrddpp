@@ -189,7 +189,7 @@ ENDCLASS
 
 METHOD new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression) CLASS ExpressionTranslator
 
-   IF HB_ISCHAR(pWorkarea)
+   IF HB_IsChar(pWorkarea)
       ::_oDefaultContext := oGetWorkarea(pWorkarea)
    ELSE
       ::_oDefaultContext := pWorkarea

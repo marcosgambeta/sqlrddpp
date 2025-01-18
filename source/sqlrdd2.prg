@@ -1462,7 +1462,7 @@ METHOD LineCount(lMsg) CLASS SR_WORKAREA
            ::oSql:Exec("SELECT MAX( " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " ) FROM " + ::cQualifiedTableName + IIf(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
          ENDSWITCH
 
-         IF Len(aRet) > 0 .AND. !HB_ISNUMERIC(aRet[1, 1])
+         IF Len(aRet) > 0 .AND. !HB_IsNumeric(aRet[1, 1])
             ::oSql:Exec("SELECT COUNT( " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " ) FROM " + ::cQualifiedTableName + IIf(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
          ENDIF
 
@@ -2151,7 +2151,7 @@ METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic) CLASS SR_WORKAREA
    CASE cType == "L"
       RETURN IIf(uData, "1", "0")
    OTHERWISE
-      IF HB_ISARRAY(uData) .AND. SR_SetSerializeArrayAsJson()
+      IF HB_IsArray(uData) .AND. SR_SetSerializeArrayAsJson()
          cRet := hb_jsonencode(uData,.F.)
          RETURN ::Quoted(cRet, trim, nLen, nDec, nTargetDB)
       ENDIF
@@ -2237,7 +2237,7 @@ METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic) CLASS SR_WORKAREA
       ENDSWITCH
 
    OTHERWISE
-      IF HB_ISARRAY(uData) .AND. SR_SetSerializeArrayAsJson()
+      IF HB_IsArray(uData) .AND. SR_SetSerializeArrayAsJson()
          cRet := hb_jsonencode(uData,.F.)
          RETURN ::Quoted(cRet, trim, nLen, nDec, nTargetDB)
       ENDIF
@@ -2356,7 +2356,7 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
       Set(_SET_DATEFORMAT, cOldSet)
       RETURN "'" + cRet + "'"
    OTHERWISE
-      IF HB_ISARRAY(uData) .AND. SR_SetSerializeArrayAsJson()
+      IF HB_IsArray(uData) .AND. SR_SetSerializeArrayAsJson()
          cRet := hb_jsonencode(uData, .F.)
          RETURN ::Quoted(cRet, .F., , , nTargetDB)
       ENDIF
@@ -2450,7 +2450,7 @@ METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WOR
       RETURN ::Quoted(SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, .F., , , nTargetDB)
 
    OTHERWISE
-      IF HB_ISARRAY(uData) .AND. SR_SetSerializeArrayAsJson()
+      IF HB_IsArray(uData) .AND. SR_SetSerializeArrayAsJson()
          cRet := hb_jsonencode(uData, .F.)
          RETURN ::Quoted(cRet, .F., , , nTargetDB)
       ENDIF
@@ -2615,14 +2615,14 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
             ENDIF
             IF lML .OR. ;
                (::aOldBuffer[nThisField] == NIL) .OR.;
-               (lMemo .AND. (!HB_ISCHAR(::aOldBuffer[nThisField]) .OR. !HB_ISCHAR(aBuffer[nThisField]))) .OR.;
+               (lMemo .AND. (!HB_IsChar(::aOldBuffer[nThisField]) .OR. !HB_IsChar(aBuffer[nThisField]))) .OR.;
                ((!::aOldBuffer[nThisField] == aBuffer[nThisField]) .AND. (nThisField != ::hnRecno))
 
-               IF lML .AND. HB_ISSTRING(aBuffer[nThisField])
+               IF lML .AND. HB_IsString(aBuffer[nThisField])
                   aBuffer[nThisField] := hb_Hash(SR_SetBaseLang(), aBuffer[nThisField])
                ENDIF
                IF (lMemo .OR. lML) .AND. (::oSql:nSystemID == SYSTEMID_ORACLE .OR. ::oSql:nSystemID == SYSTEMID_ADABAS .OR. ::oSql:nSystemID == SYSTEMID_IBMDB2) .AND. ::aFields[nThisField, 6] != SQL_FAKE_LOB  // .OR. ::oSql:nSystemID == SYSTEMID_CACHE
-                  IF !HB_ISSTRING(aBuffer[nThisField])
+                  IF !HB_IsString(aBuffer[nThisField])
                      cMemo := SR_STRTOHEX(HB_Serialize(aBuffer[nThisField]))
                      cMemo := SQL_SERIALIZED_SIGNATURE + Str(Len(cMemo), 10) + cMemo
                   ELSE
@@ -2738,7 +2738,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                lMemo := .F.
             ENDIF
 
-            IF lML .AND. HB_ISSTRING(aBuffer[i])
+            IF lML .AND. HB_IsString(aBuffer[i])
                aBuffer[i] := {SR_SetBaseLang() => aBuffer[i]}
             ENDIF
 
@@ -2788,7 +2788,7 @@ METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
                ENDIF
             ELSE
                IF lMemo .OR. lML
-                  IF !HB_ISSTRING(aBuffer[i])
+                  IF !HB_IsString(aBuffer[i])
                      cMemo := SR_STRTOHEX(HB_Serialize(aBuffer[i]))
                      cMemo := SQL_SERIALIZED_SIGNATURE + Str(Len(cMemo), 10) + cMemo
                   ELSE
@@ -3148,7 +3148,7 @@ METHOD UpdateCache(aResultSet) CLASS SR_WORKAREA
    IF SR_SetMultiLang()
       IF ::aInfo[AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
-            IF HB_ISHASH(::aLocalBuffer[uVal:__enumIndex()])
+            IF HB_IsHash(::aLocalBuffer[uVal:__enumIndex()])
                IF ::aFields[uVal:__enumIndex(), FIELD_TYPE] $ "CM"
                   (::aLocalBuffer[uVal:__enumIndex()])[SR_SetBaseLang()] := PadR(uVal, ::aFields[uVal:__enumIndex(), FIELD_LEN])
                ELSE
@@ -3799,7 +3799,7 @@ METHOD sqlGoTo(uRecord, lNoOptimize) CLASS SR_WORKAREA
    ::aInfo[AINFO_SKIPCOUNT] := 0
    ::aInfo[AINFO_DETECT1_COUNT] := 0
 
-   IF Empty(uRecord) .OR. ( HB_ISNUMERIC(uRecord) .AND. uRecord == LASTREC_POS + 1)
+   IF Empty(uRecord) .OR. ( HB_IsNumeric(uRecord) .AND. uRecord == LASTREC_POS + 1)
       ::GetBuffer(.T.)
       IF ::aInfo[AINFO_ISINSERT]
          ::aInfo[AINFO_RECNO] := ::GetNextRecordNumber()
@@ -4030,7 +4030,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
    ::aInfo[AINFO_SKIPCOUNT] := 0
    uSet := Set(_SET_EXACT, .F.)
 
-   IF lSoft .AND. ::lISAM .AND. ::oSql:nSystemID == SYSTEMID_ORACLE .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL .AND. HB_ISCHAR(uKey)
+   IF lSoft .AND. ::lISAM .AND. ::oSql:nSystemID == SYSTEMID_ORACLE .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL .AND. HB_IsChar(uKey)
 
          nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
@@ -4093,26 +4093,26 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          ::aInfo[AINFO_FOUND] := .F.
       ELSE
 
-         IF HB_ISCHAR(uKey) .AND. uKey == ""
+         IF HB_IsChar(uKey) .AND. uKey == ""
             ::aInfo[AINFO_FOUND] := .T.
          ELSE
             FOR i := 1 TO Len(::aQuoted)
                DO CASE
-               CASE HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i]) .AND. (::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ( ::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB) .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
+               CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i]) .AND. (::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. ( ::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB) .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
                   ::aInfo[AINFO_FOUND] := (Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]))
-               CASE HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
+               CASE HB_IsNumeric(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
-               CASE HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISNUMERIC(::aDat[i])
+               CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsNumeric(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
-               CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
+               CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
-               CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
+               CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >=  hb_ttos(::aDat[i]))
                CASE ValType(::aLocalBuffer[::aPosition[i]]) != ValType(::aDat[i])
                   ::RuntimeErr("28")
@@ -4161,7 +4161,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
 
          cRet := " WHERE (( "
 
-         IF ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2] == ::hnDeleted .AND. HB_ISLOGICAL(uKey)
+         IF ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2] == ::hnDeleted .AND. HB_IsLogical(uKey)
             IF ::nTCCompat > 0
                cQot := IIf(uKey, "'*'", "' '")
                AAdd(::aDat, IIf(uKey, "*", " "))
@@ -4170,7 +4170,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
                AAdd(::aDat, IIf(uKey, "T", " "))
             ENDIF
          ELSE
-            IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_ISNUMERIC(uKey)
+            IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_IsNumeric(uKey)
                cField :=  Upper(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])
                IF "VAL(" $ CFIELD
 
@@ -4210,7 +4210,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
             cRet += cNam + cSep + cQot + " "
          ENDIF
 
-      ELSEIF HB_ISCHAR(uKey)
+      ELSEIF HB_IsChar(uKey)
 
          nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
@@ -4372,26 +4372,26 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          ::aInfo[AINFO_FOUND] := .F.
       ELSE
 
-         IF HB_ISCHAR(uKey) .AND. uKey == ""
+         IF HB_IsChar(uKey) .AND. uKey == ""
             ::aInfo[AINFO_FOUND] := .T.
          ELSE
             FOR i := 1 TO Len(::aQuoted)
                DO CASE
-               CASE HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i]) .AND. (::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. (::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB) .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
+               CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i]) .AND. (::oSql:nSystemID == SYSTEMID_MSSQL7 .OR. (::oSql:nSystemID == SYSTEMID_MYSQL .OR. ::oSql:nSystemID == SYSTEMID_MARIADB) .OR. ::oSql:nSystemID == SYSTEMID_AZURE)
                   ::aInfo[AINFO_FOUND] := (Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]))
-               CASE HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
+               CASE HB_IsNumeric(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
-               CASE HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISNUMERIC(::aDat[i])
+               CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsNumeric(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
-               CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
+               CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
-               CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
+               CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >= hb_ttos(::aDat[i]))
                CASE ValType(::aLocalBuffer[::aPosition[i]]) != ValType(::aDat[i])
                   ::RuntimeErr("28")
@@ -4440,7 +4440,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
 
          cRet := " WHERE (( "
 
-         IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_ISNUMERIC(uKey)
+         IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_IsNumeric(uKey)
             cField :=  Upper(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])
             IF "VAL(" $ CFIELD
 
@@ -4507,7 +4507,7 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
             ::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
          ENDIF
 
-      ELSEIF HB_ISCHAR(uKey)
+      ELSEIF HB_IsChar(uKey)
 
          nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
@@ -4605,33 +4605,33 @@ METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
          ::aInfo[AINFO_FOUND] := .F.
       ELSE
 
-         IF HB_ISCHAR(uKey) .AND. uKey == ""
+         IF HB_IsChar(uKey) .AND. uKey == ""
             ::aInfo[AINFO_FOUND] := .T.
          ELSE
             FOR i := 1 TO Len(::aQuoted)
                DO CASE
-               CASE HB_ISNUMERIC(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
+               CASE HB_IsNumeric(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
-               CASE HB_ISCHAR(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISNUMERIC(::aDat[i])
+               CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsNumeric(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
-               CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISCHAR(::aDat[i])
+               CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = hb_stot(::aDat[i]))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
-               CASE HB_ISDATE(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATE(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
+               CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
-               CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
+               CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
                   ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
-               CASE HB_ISDATETIME(::aLocalBuffer[::aPosition[i]]) .AND. HB_ISDATETIME(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
+               CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
                   ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >= hb_ttos(::aDat[i]))
                CASE ValType(::aLocalBuffer[::aPosition[i]]) != ValType(::aDat[i])
                   ::RuntimeErr("28")
                   Set(_SET_EXACT, uSet)
                   RETURN NIL
                OTHERWISE
-                  IF HB_ISCHAR(::aLocalBuffer[::aPosition[i]])
+                  IF HB_IsChar(::aLocalBuffer[::aPosition[i]])
                      ::aInfo[AINFO_FOUND] := (Left(::aLocalBuffer[::aPosition[i]], Len(::aDat[i])) == ::aDat[i])
                   ELSE
                      ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = ::aDat[i])
@@ -5468,7 +5468,7 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
       aRec[FIELD_NAME] := AllTrim(Upper(aRec[FIELD_NAME]))
       aRec[FIELD_TYPE] := AllTrim(Upper(aRec[FIELD_TYPE]))
 
-      IF aRec[FIELD_NULLABLE] == NIL .OR. !HB_ISLOGICAL(aRec[FIELD_NULLABLE])
+      IF aRec[FIELD_NULLABLE] == NIL .OR. !HB_IsLogical(aRec[FIELD_NULLABLE])
          aRec[FIELD_NULLABLE] := .T.
       ENDIF
       IF aRec[FIELD_UNIQUE] == NIL
@@ -7185,7 +7185,7 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS]}
       ELSE
-         IF HB_ISCHAR(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY])
+         IF HB_IsChar(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY])
             aCols := &("{" + ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY] + "}")
          ELSE
             aCols := ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY]
@@ -7380,7 +7380,7 @@ METHOD sqlOrderListFocus(uOrder, cBag) CLASS SR_WORKAREA
 
    HB_SYMBOL_UNUSED(cBag)
 
-   IF HB_ISCHAR(uOrder)      // TAG order
+   IF HB_IsChar(uOrder)      // TAG order
       nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[ORDER_TAG])) == Upper(AllTrim(uOrder))})
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          ::cFor := ""
@@ -7388,7 +7388,7 @@ METHOD sqlOrderListFocus(uOrder, cBag) CLASS SR_WORKAREA
          ::RuntimeErr("19", SR_Msg(19) + SR_Val2Char(uOrder))
          RETURN 0 // error exit
       ENDIF
-   ELSEIF HB_ISNUMERIC(uOrder)
+   ELSEIF HB_IsNumeric(uOrder)
       nOrder := uOrder
    ENDIF
 
@@ -7460,7 +7460,7 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
    HB_SYMBOL_UNUSED(cBag)
    //HB_SYMBOL_UNUSED(uOrder)
 
-   IF HB_ISCHAR(uOrder)      // TAG order
+   IF HB_IsChar(uOrder)      // TAG order
       nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[ORDER_TAG])) == Upper(AllTrim(uOrder))})
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          ::cFor := ""
@@ -7472,7 +7472,7 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
          hb_ADel(::aIndex, 12, .T.)
          RETURN 0
       ENDIF
-   ELSEIF HB_ISNUMERIC(uOrder)
+   ELSEIF HB_IsNumeric(uOrder)
       nOrder := uOrder
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          ::cFor := ""
@@ -7550,12 +7550,12 @@ METHOD sqlOrderListNum(uOrder) CLASS SR_WORKAREA
 
    HB_SYMBOL_UNUSED(nOrder)
 
-   IF HB_ISCHAR(uOrder)      // TAG order
+   IF HB_IsChar(uOrder)      // TAG order
       nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[ORDER_TAG])) == Upper(AllTrim(uOrder))})
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          RETURN 0 // error exit
       ENDIF
-   ELSEIF HB_ISNUMERIC(uOrder)
+   ELSEIF HB_IsNumeric(uOrder)
       nOrder := uOrder
    ELSE
       nOrder := ::aInfo[AINFO_INDEXORD]
@@ -7623,7 +7623,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
 
    HB_SYMBOL_UNUSED(lEnable)
 
-   IF HB_ISARRAY(aTargetColumns) .AND. Len(aTargetColumns) > 0 .AND. HB_ISARRAY(aTargetColumns[1])
+   IF HB_IsArray(aTargetColumns) .AND. Len(aTargetColumns) > 0 .AND. HB_IsArray(aTargetColumns[1])
       aTargetColumns := aTargetColumns[1]
    ENDIF
 
@@ -7817,7 +7817,7 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
       ENDIF
    NEXT i
 
-   IF HB_ISARRAY(::aLastOrdCond) .AND. Len(::aLastOrdCond) > 1
+   IF HB_IsArray(::aLastOrdCond) .AND. Len(::aLastOrdCond) > 1
       IF ::aLastOrdCond[1] != NIL
          // Try to create an easy xBase => SQL translation
          cFor := ::ParseForClause(::aLastOrdCond[1])
@@ -8310,11 +8310,11 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
 
    IF Len(::aIndex) > 0 .AND. ::aInfo[AINFO_INDEXORD] > 0
 
-      IF HB_ISBLOCK(uValue)
+      IF HB_IsBlock(uValue)
          uKey := Eval(uValue)
       ELSE
          uKey := uValue
-         IF HB_ISCHAR(uKey)
+         IF HB_IsChar(uKey)
             IF Len(uKey) == 0
                uKey := NIL
             ENDIF
@@ -8329,7 +8329,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
          ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
 
          IF ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] == ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE]
-            IF HB_ISCHAR(uKey)
+            IF HB_IsChar(uKey)
                ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey + "|"
             ENDIF
          ENDIF
@@ -8366,9 +8366,9 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
             cRet := " " + cNam + cSep + cQot + " "
 
             IF cQot == "NULL"
-               IF HB_ISNUMERIC(uKey)
+               IF HB_IsNumeric(uKey)
                   cRet := "( " + cRet + " OR " + cNam + " = 0 )"
-               ELSEIF HB_ISDATE(uKey) //ValType(uKey) == "D"
+               ELSEIF HB_IsDate(uKey) //ValType(uKey) == "D"
                   cRet := "( " + cRet + " OR " + cNam + " <= " + ::QuotedNull(SToD("19000101"), , nFLen, nFDec, , lNull) + " )"
                ENDIF
             ENDIF
@@ -8377,7 +8377,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                ::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR] := " ( " + cRet + " ) "
             ENDIF
 
-         ELSEIF HB_ISCHAR(uKey)
+         ELSEIF HB_IsChar(uKey)
 
             ::aQuoted := {}
             ::aDat := {}
@@ -8475,7 +8475,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
          FOR nScoping := TOPSCOPE TO BOTTOMSCOPE
 
             uKey := ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE + nScoping]
-            IF HB_ISSTRING(uKey) //ValType(uKey) == "C"
+            IF HB_IsString(uKey) //ValType(uKey) == "C"
                IF Right(uKey, 1) == "|" // TODO:
                   uKey := Left(uKey, Len(uKey) - 1)
                ENDIF
@@ -8495,9 +8495,9 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                   cRet := " " + cNam + cSep + cQot + " "
 
                   IF cQot == "NULL"
-                     IF HB_ISNUMERIC(uKey)
+                     IF HB_IsNumeric(uKey)
                         cRet := "( " + cRet + " OR " + cNam + " >= 0 )"
-                     ELSEIF HB_ISDATE(uKey) //ValType(uKey) == "D"
+                     ELSEIF HB_IsDate(uKey) //ValType(uKey) == "D"
                         cRet := "( " + cRet + " OR " + cNam + " >= " + ::QuotedNull(SToD("19000101"), , nFLen, nFDec, , lNull) + " )"
                      ENDIF
                   ENDIF
@@ -8511,9 +8511,9 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                   cRet2 := " " + cNam + cSep + cQot + " "
 
                   IF cQot == "NULL"
-                     IF HB_ISNUMERIC(uKey)
+                     IF HB_IsNumeric(uKey)
                         cRet2 := "( " + cRet2 + " OR " + cNam + " <= 0 )"
-                     ELSEIF HB_ISDATE(uKey) //ValType(uKey) == "D"
+                     ELSEIF HB_IsDate(uKey) //ValType(uKey) == "D"
                         cRet2 := "( " + cRet2 + " OR " + cNam + " <= " + ::QuotedNull(SToD("19000101"), , nFLen, nFDec, , lNull) + " )"
                      ENDIF
                   ENDIF
@@ -8525,7 +8525,7 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
                   ENDIF
                ENDIF
 
-            ELSEIF HB_ISSTRING(ukey) //ValType(uKey) == "C"
+            ELSEIF HB_IsString(ukey) //ValType(uKey) == "C"
 
                ::aQuoted := {}
                ::aDat := {}
@@ -8914,7 +8914,7 @@ STATIC FUNCTION aOrd(x, y, aPos)
    LOCAL cStr2 := ""
 
    FOR i := 1 TO Len(aPos)
-      IF HB_ISDATE(x[aPos[i]])
+      IF HB_IsDate(x[aPos[i]])
          cStr1 += DToS(x[aPos[i]])
          cStr2 += DToS(y[aPos[i]])
       ELSE
@@ -8939,7 +8939,7 @@ STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound) // function 
    LOCAL exec
    LOCAL nRegress
 
-   exec := HB_ISBLOCK(nPos)
+   exec := HB_IsBlock(nPos)
    first := 1
    last := Len(aVet)
    mid := Int((first + last) / 2)
@@ -10870,7 +10870,7 @@ METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColum
    cConstraintName := Upper(AllTrim(cConstraintName))
 
    // You can pass constraint KEY as a list or as array
-   IF HB_ISARRAY(aTargetColumns) .AND. Len(aTargetColumns) > 0 .AND. HB_ISARRAY(aTargetColumns[1])
+   IF HB_IsArray(aTargetColumns) .AND. Len(aTargetColumns) > 0 .AND. HB_IsArray(aTargetColumns[1])
       aTargetColumns := aTargetColumns[1]
    ENDIF
 
@@ -11068,7 +11068,7 @@ FUNCTION SR_CleanTabInfoCache()
 
    LOCAL oCnn := SR_GetConnection()
 
-   IF HB_ISOBJECT(oCnn)
+   IF HB_IsObject(oCnn)
       oCnn:aTableInfo := {=>}
    ENDIF
 
@@ -11138,7 +11138,7 @@ FUNCTION SR_SetGlobalOwner(cOwner)
    ELSE
       IF Empty(s_cGlobalOwner)
          oSql := SR_GetCnn()
-         IF HB_ISOBJECT(oSql) .AND. (!Empty(oSql:cOwner))
+         IF HB_IsObject(oSql) .AND. (!Empty(oSql:cOwner))
             RETURN oSql:cOwner
          ENDIF
       ENDIF
@@ -11152,7 +11152,7 @@ FUNCTION SR_UseSequences(oCnn)
 
    DEFAULT oCnn TO SR_GetConnection()
 
-   IF HB_ISOBJECT(oCnn)
+   IF HB_IsObject(oCnn)
       RETURN oCnn:lUseSequences
    ENDIF
 
@@ -11166,7 +11166,7 @@ FUNCTION SR_SetUseSequences(lOpt, oCnn)
 
    DEFAULT oCnn TO SR_GetConnection()
 
-   IF HB_ISOBJECT(oCnn)
+   IF HB_IsObject(oCnn)
       lOld := oCnn:lUseSequences
       oCnn:lUseSequences := lOpt
    ENDIF
@@ -11345,7 +11345,7 @@ STATIC FUNCTION AddNode(a, oNode)
 
    hhash["Type"] := ValType(a)
 
-   IF HB_ISARRAY(a)
+   IF HB_IsArray(a)
       hhash["Len"] := AllTrim(Str(Len(a)))
       hhash["Type"] := ValType(a)
       AAdd(s_aFather, s_nStartId)
@@ -11367,11 +11367,11 @@ STATIC FUNCTION AddNode(a, oNode)
       hb_ADel(s_aPos, Len(s_aPos), .T.)
       oNode:addbelow(oNode1)
    ELSE
-      IF HB_ISNUMERIC(a) // TODO: switch ?
+      IF HB_IsNumeric(a) // TODO: switch ?
          hHash["Value"] := AllTrim(Str(a))
-      ELSEIF HB_ISLOGICAL(a)
+      ELSEIF HB_IsLogical(a)
          hHash["Value"] := IIf(a, "T", "F")
-      ELSEIF HB_ISDATE(a)
+      ELSEIF HB_IsDate(a)
          hHash["Value"] := DToS(a)
       ELSE
          hHash["Value"] := a

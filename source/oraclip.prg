@@ -60,7 +60,7 @@ FUNCTION OraExecSql(n, c, adata)
    LOCAL cbind
    LOCAL i
 
-   IF aData != NIL .AND. HB_ISARRAY(adata)
+   IF aData != NIL .AND. HB_IsArray(adata)
       FOR i := Len(aData) TO 1 STEP -1
          cBind := ":" + AllTrim(Str(i))
          c := StrTran(c, cBind, sr_cdbvalue(adata[i]))
@@ -772,7 +772,7 @@ FUNCTION OraPLSQL(nCursor, cPLSQL, aVarSust)
    LOCAL oSql
 
    s_lReleaseBind := .T.
-   IF HB_ISARRAY(aVarSust)
+   IF HB_IsArray(aVarSust)
       FOR i := Len(aVarSust) TO 1 STEP -1
          cBind := ":" + AllTrim(Str(i))
          cPLSQL := StrTran(cPLSQL, cBind, sr_cdbvalue(aVarSust[i]))
@@ -1278,7 +1278,7 @@ FUNCTION csExecSQL(nCursor, cSQL, aVarSust)
       osql := SR_GetConnection()
       IF Upper(SubStr(cSql, 6)) == "BEGIN "
          IF PCount() == 3
-            IF HB_ISARRAY(aVarSust)
+            IF HB_IsArray(aVarSust)
                FOR i := Len(aVarSust) TO 1 STEP -1
                   cBind := ":" + AllTrim(Str(i) )
                   cSQL := StrTran(cSQL, cBind, sr_cdbvalue(aVarSust[i]))
@@ -1804,13 +1804,13 @@ RETURN nError
 
 STATIC FUNCTION GerGhost(uDat)
 
-   IF HB_ISCHAR(uDat)
+   IF HB_IsChar(uDat)
       RETURN ""
-   ELSEIF HB_ISNUMERIC(uDat)
+   ELSEIF HB_IsNumeric(uDat)
       RETURN 0
-   ELSEIF HB_ISLOGICAL(uDat)
+   ELSEIF HB_IsLogical(uDat)
       RETURN .F.
-   ELSEIF HB_ISDATE(uDat)
+   ELSEIF HB_IsDate(uDat)
       RETURN CToD("")
    ENDIF
 

@@ -154,7 +154,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    //s_hHashData := hb_hash()
    SET SERVER LOCAL
    SR_SetRDDTemp("ADT")
-   IF Empty(axColumns) .OR. !HB_ISARRAY(axColumns)
+   IF Empty(axColumns) .OR. !HB_IsArray(axColumns)
       cCols := " * "
    ELSE
       FOR EACH i IN axColumns
@@ -189,7 +189,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    cSql := "Select  " + cCols + "  from " + cTable
    cCount := "select count(*) from " + cTable
 
-   IF !Empty(cWhere) .AND. HB_ISARRAY(aVarSust)
+   IF !Empty(cWhere) .AND. HB_IsArray(aVarSust)
 
       FOR i := 1 TO Len(aVarSust)
          cBind := ":" + AllTrim(Str(i))
@@ -296,7 +296,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    DEFAULT acColumnSep  TO " " + Chr(179) + " "
    DEFAULT acColumnFootings TO ""
 
-   IF Empty(axColumns) .OR. !HB_ISARRAY(axColumns)
+   IF Empty(axColumns) .OR. !HB_IsArray(axColumns)
 
       axColumns := Array(FCount())
 
@@ -379,13 +379,13 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(bPostBlock) + ">", Procname() + " <bPostBlockBlock>"))
    ENDIF
 
-   IF HB_ISBLOCK(bPreBlock)
+   IF HB_IsBlock(bPreBlock)
       i := bPreBlock
       bPreBlock := Array(Len(axColumns))
       AFill(bPreBlock, i)
    END
 
-   IF HB_ISBLOCK(bPostBlock)
+   IF HB_IsBlock(bPostBlock)
       i := bPostBlock
       bPostBlock := Array(Len(axColumns))
       aFill(bPostBlock, i)
@@ -409,15 +409,15 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    oTBR:SkipBlock := {|x|dbe_Skipper(x, oTBR, calias)}
    //oTBR:SkipBlock := {|x|Skipped(x, lappend)}
 
-   IF HB_ISSTRING(acHeadingSep)
+   IF HB_IsString(acHeadingSep)
       oTBR:headSep := acHeadingSep
    END
 
-   IF HB_ISSTRING(acFootingSep)
+   IF HB_IsString(acFootingSep)
       oTBR:footSep := acFootingSep
    END
 
-   IF HB_ISSTRING(acColumnSep)
+   IF HB_IsString(acColumnSep)
      oTBR:colSep := acColumnSep
    END
 
@@ -442,65 +442,65 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
             ENDIF
          ENDIF
 
-         IF HB_ISARRAY(i)
-            bFunc := IIf(HB_ISBLOCK(i[1]), i[1], &("{||" + i[1] + "}"))
+         IF HB_IsArray(i)
+            bFunc := IIf(HB_IsBlock(i[1]), i[1], &("{||" + i[1] + "}"))
          ELSE
             IF !Empty(cTmp)
-               bFunc := IIf(HB_ISBLOCK(cTmp), cTmp, &("{||" + cTmp + "}"))
+               bFunc := IIf(HB_IsBlock(cTmp), cTmp, &("{||" + cTmp + "}"))
             ELSE
-               bFunc := IIf(HB_ISBLOCK(i), i, &("{||" + i + '}'))
+               bFunc := IIf(HB_IsBlock(i), i, &("{||" + i + '}'))
             ENDIF
          ENDIF
 
-         IF HB_ISMEMO(Eval(bFunc))
+         IF HB_IsMemo(Eval(bFunc))
             bFunc := {||"  <Memo>  "}
          ENDIF
 
          cHdr := i
 
-         IF HB_ISSTRING(acColumnHeaders)
+         IF HB_IsString(acColumnHeaders)
             cHdr := acColumnHeaders
-         ELSEIF HB_ISARRAY(acColumnHeaders) .AND. Len(acColumnHeaders) >= nIndex .AND. acColumnHeaders[nIndex] != NIL // handle empty column headers
+         ELSEIF HB_IsArray(acColumnHeaders) .AND. Len(acColumnHeaders) >= nIndex .AND. acColumnHeaders[nIndex] != NIL // handle empty column headers
             cHdr := acColumnHeaders[nIndex]
          ENDIF
 
-         IF HB_ISBLOCK(cHdr)
+         IF HB_IsBlock(cHdr)
             cHdr := "<block>"
          ENDIF
 
          oTBC := TBColumnNew(cHdr, bFunc)
 
-         IF HB_ISARRAY(i)
+         IF HB_IsArray(i)
             oTBC:colorBlock := i[2]
          ENDIF
 
-         IF HB_ISARRAY(acColumnSep)
+         IF HB_IsArray(acColumnSep)
             oTBC:colSep := acColumnSep[nIndex]
          ENDIF
 
-         IF HB_ISARRAY(acHeadingSep)
+         IF HB_IsArray(acHeadingSep)
             oTBC:headSep := acHeadingSep[nIndex]
          ENDIF
 
-         IF HB_ISARRAY(acFootingSep)
+         IF HB_IsArray(acFootingSep)
             oTBC:footSep := acFootingSep[nIndex]
          ENDIF
 
-         IF HB_ISARRAY(acColumnFootings)
+         IF HB_IsArray(acColumnFootings)
             oTBC:footing := acColumnFootings[nIndex]
-         ELSEIF HB_ISSTRING(acColumnFootings)
+         ELSEIF HB_IsString(acColumnFootings)
             oTBC:footing := acColumnFootings
          ENDIF
 
-         IF HB_ISARRAY(acColumnSayPictures) .AND. Len(acColumnSayPictures) >= nIndex
+         IF HB_IsArray(acColumnSayPictures) .AND. Len(acColumnSayPictures) >= nIndex
             oTBC:picture := acColumnSayPictures[nIndex]
-         ELSEIF HB_ISSTRING(acColumnSayPictures)
+         ELSEIF HB_IsString(acColumnSayPictures)
             oTBC:picture := acColumnSayPictures
          ENDIF
 
-         IF HB_ISARRAY(bPreBlock)
+         IF HB_IsArray(bPreBlock)
 
-            IF HB_ISLOGICAL(bPreBlock[nIndex])
+            IF HB_IsLogical(bPreBlock[nIndex])
                bPreBlock[nIndex] := IIf(bPreBlock[nIndex], {||.T.}, {||.F.})
             ENDIF
 
@@ -508,9 +508,9 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
          ENDIF
 
-         IF HB_ISARRAY(bPostBlock)
+         IF HB_IsArray(bPostBlock)
 
-            IF HB_ISLOGICAL(bPostBlock[nIndex])
+            IF HB_IsLogical(bPostBlock[nIndex])
                bPostBlock[nIndex] := IIf(bPostBlock[nIndex], {||.T.}, {||.F.})
             ENDIF
 
@@ -532,9 +532,9 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    ENDIF
 
    IF Empty(xUserFunc)
-      bFunc := {||IIf(HB_ISNUMERIC(nKey) .AND. (Chr(LastKey()) $ Chr(K_ESC) + Chr(K_ENTER)), DE_ABORT, DE_CONT)}
+      bFunc := {||IIf(HB_IsNumeric(nKey) .AND. (Chr(LastKey()) $ Chr(K_ESC) + Chr(K_ENTER)), DE_ABORT, DE_CONT)}
    ELSEIF !HB_IsLogical(xUserFunc)
-      bFunc := IIf(HB_ISBLOCK(xUserFunc), xUserFunc, &("{|x, y, z|" + xUserFunc + "(x,y,z)}"))
+      bFunc := IIf(HB_IsBlock(xUserFunc), xUserFunc, &("{|x, y, z|" + xUserFunc + "(x,y,z)}"))
       oTBR:setKey(K_ESC, NIL)
    ENDIF
 
@@ -675,7 +675,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
             EXIT
          ENDIF
 
-         IF HB_ISBLOCK(SetKey(nKey))
+         IF HB_IsBlock(SetKey(nKey))
             Eval(SetKey(nKey), ProcName(1), ProcLine(1), "")
          ENDIF
 
@@ -1420,9 +1420,9 @@ FUNCTION insertupdated(calias, ctable)
                   aval[npos] := StrTran(aval[npos], "'", "")
                   aval[npos] := SToD(aval[npos])
                ENDIF
-               IF HB_ISCHAR(aval[npos])
+               IF HB_IsChar(aval[npos])
                   cSql += " " + aTemp  + " = " +  aVal[nPos]
-               ELSEIF HB_ISNUMERIC(aval[npos]) .OR. HB_ISDATE(aval[npos])
+               ELSEIF HB_IsNumeric(aval[npos]) .OR. HB_IsDate(aval[npos])
                   cSql += " " + aTemp  + " = " +  sr_cdbvalue(aVal[nPos])
                ENDIF
                cSql += " AND "

@@ -58,7 +58,7 @@
 #define cJoinWords(nType, nSystemID)    s_aJoinWords[nSystemID,nType]
 
 #define  SKIPFWD            nIP++;uData:=apCode[nIP]
-#define  PARAM_SOLV         IIf(HB_ISBLOCK(aParam[uData+1]),Eval(aParam[uData+1]),aParam[uData+1])
+#define  PARAM_SOLV         IIf(HB_IsBlock(aParam[uData+1]),Eval(aParam[uData+1]),aParam[uData+1])
 #define  RECURSIVE_CALL     nIP++;cSql+=SR_SQLCodeGen2(apCode,aParam,nSystemId,lIdent,@nIP,nContext,@nSpaces,lParseTableName);Exit
 #define  GETPARAM           cSql+=IIf(uData+1<=Len(aParam),PARAM_SOLV,"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
 #define  GETPARAM_QUOTED    cSql+=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV, nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
@@ -279,7 +279,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_TABLE_PARAM
             SKIPFWD
             IF lParseTableName
-               aRet := Eval(s_bTableInfo, IIf(uData + 1 <= Len(aParam), IIf(HB_ISBLOCK(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + StrZero(uData + 1, 3) + "_NOT_SUPPLIED##"), nSystemId)
+               aRet := Eval(s_bTableInfo, IIf(uData + 1 <= Len(aParam), IIf(HB_IsBlock(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + StrZero(uData + 1, 3) + "_NOT_SUPPLIED##"), nSystemId)
                IF nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
                ELSE
@@ -297,7 +297,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql +=  NEWLINE + IDENTSPACE + "  "
                ENDIF
             ELSE
-               uData := IIf(uData + 1 <= Len(aParam), IIf(HB_ISBLOCK(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + StrZero(uData + 1, 3) + "_NOT_SUPPLIED##")
+               uData := IIf(uData + 1 <= Len(aParam), IIf(HB_IsBlock(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + StrZero(uData + 1, 3) + "_NOT_SUPPLIED##")
                IF nContext != SQL_CONTEXT_SELECT_FROM
                   cSql += uData
                ELSE
@@ -1196,7 +1196,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
    RECOVER USING nErrorId
 
-      IF HB_ISOBJECT(nErrorId)
+      IF HB_IsObject(nErrorId)
          Eval(bError, nErrorId)
       ELSE
          SR_SQLParseError(, , "", nErrorId, , bError)
@@ -1400,7 +1400,7 @@ STATIC FUNCTION SR_SolveFilters(aFilters, aRet, cAlias, nSystemID)
 
    LOCAL i
 
-   IF !(HB_ISARRAY(aRet) .AND. Len(aRet) >= 2 .AND. HB_ISCHAR(aRet[1]))
+   IF !(HB_IsArray(aRet) .AND. Len(aRet) >= 2 .AND. HB_IsChar(aRet[1]))
       RETURN .F.
    ENDIF
 
@@ -1433,7 +1433,7 @@ RETURN
 
 FUNCTION SR_SetTableInfoBlock(b)
 
-   IF !HB_ISBLOCK(b)
+   IF !HB_IsBlock(b)
       RETURN .F.
    ENDIF
 
@@ -1445,7 +1445,7 @@ RETURN .T.
 
 FUNCTION SR_SetIndexInfoBlock(b)
 
-   IF !HB_ISBLOCK(b)
+   IF !HB_IsBlock(b)
       RETURN .F.
    ENDIF
 
@@ -1469,7 +1469,7 @@ RETURN s_bIndexInfo
 
 FUNCTION SR_SetNextRecordBlock(b)
 
-   IF !HB_ISBLOCK(b)
+   IF !HB_IsBlock(b)
       RETURN .F.
    ENDIF
 
@@ -1579,7 +1579,7 @@ FUNCTION SR_pCodeDescr(nCode)
                      {"SQL_PCODE_OPERATOR_LEFT_OUTER_JOIN",   1101}, ;
                      {"SQL_PCODE_OPERATOR_RIGHT_OUTER_JOIN",  1102}}
 
-   IF !HB_ISNUMERIC(nCode)
+   IF !HB_IsNumeric(nCode)
       RETURN nCode
    ENDIF
 

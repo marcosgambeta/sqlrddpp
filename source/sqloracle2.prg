@@ -419,22 +419,22 @@ METHOD ExecuteRaw(cCommand) CLASS SR_ORACLE2
          ORACLEPREPARE2(::hDBC, ::cSqlPrepare, .T.)
          ORACLEBINDALLOC2(::hDBC, Len(::aBindParameters))
          FOR i := 1 TO Len(::aBindParameters )
-            IF HB_ISARRAY(::aBindParameters[i])
-               IF HB_ISCHAR(::aBindParameters[i, 2])
+            IF HB_IsArray(::aBindParameters[i])
+               IF HB_IsChar(::aBindParameters[i, 2])
                   ORACLEINBINDPARAM2(::hDBC, i, -1, ::aBindParameters[i, 3], 0, ::aBindParameters[i, 2], .T.)
-               ELSEIF HB_ISDATE(::aBindParameters[i, 2])
+               ELSEIF HB_IsDate(::aBindParameters[i, 2])
                   ORACLEINBINDPARAM2(::hDBC, i, 8, ::aBindParameters[i, 3], 0, ::aBindParameters[i, 2], .T.)
-               ELSEIF HB_ISLOGICAL(::aBindParameters[i])
+               ELSEIF HB_IsLogical(::aBindParameters[i])
                   ORACLEINBINDPARAM2(::hDBC, i, 3, ::aBindParameters[i, 3], 0, ::aBindParameters[i, 2], .T.)
                ELSE
                   ORACLEINBINDPARAM2(::hDBC, i, 2, 15, 0, ::aBindParameters[i, 2], .T.)
                ENDIF
             ELSE
-               IF HB_ISCHAR(::aBindParameters[i])
+               IF HB_IsChar(::aBindParameters[i])
                   ORACLEINBINDPARAM2(::hDBC, i, -1, Len(::aBindParameters[i]), 0, ::aBindParameters[i], .T.)
-               ELSEIF HB_ISDATE(::aBindParameters[i])
+               ELSEIF HB_IsDate(::aBindParameters[i])
                   ORACLEINBINDPARAM2(::hDBC, i, 8, ::aBindParameters[i], 0, ::aBindParameters[i], .T.)
-               ELSEIF HB_ISLOGICAL(::aBindParameters[i])
+               ELSEIF HB_IsLogical(::aBindParameters[i])
                   ORACLEINBINDPARAM2(::hDBC, i, 3, ::aBindParameters[i], 0, ::aBindParameters[i], .T.)
                ELSE
                   ORACLEINBINDPARAM2(::hDBC, i, 2, 15, 0, ::aBindParameters[i], .T.)
@@ -752,7 +752,7 @@ METHOD ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMaxRecords, l
 
          //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
 
-         IF HB_ISARRAY(aArray)
+         IF HB_IsArray(aArray)
             IF Len(aArray) == 0
                ASize(aArray, ARRAY_BLOCK1)
                nAllocated := ARRAY_BLOCK1
