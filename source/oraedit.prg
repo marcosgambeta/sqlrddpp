@@ -316,16 +316,16 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
    // Note: The column's type doesn't need to verify. If any column type is
    //       invalid or empty, then the dbEdit() will ignore it.
 
-   IF !HB_IsNil(nTop) .AND. !HB_IsNumeric(nTop)
+   IF nTop != NIL .AND. !HB_IsNumeric(nTop)
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nTop) + ">", Procname() + " <nTop>"))
    ENDIF
-   IF !HB_IsNil(nLeft) .AND. !HB_IsNumeric(nLeft)
+   IF nLeft != NIL .AND. !HB_IsNumeric(nLeft)
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nLeft) + ">", Procname() + " <nLeft>"))
    ENDIF
-   IF !HB_IsNil(nBottom) .AND. !HB_IsNumeric(nBottom)
+   IF nBottom != NIL .AND. !HB_IsNumeric(nBottom)
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nBottom) + ">", Procname() + " <nBottom>"))
    ENDIF
-   IF !HB_IsNil(nRight) .AND. !HB_IsNumeric(nRight)
+   IF nRight != NIL .AND. !HB_IsNumeric(nRight)
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(nRight) + ">", Procname() + " <nRight>"))
    ENDIF
 
@@ -336,7 +336,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
    // In Clipper the <cUserFunc> paramenter only can be a
    // string or NIL, but in xHarbour can be a codeblock also.
-   IF !HB_IsNil(xUserFunc) .AND. (!HB_IsString(xUserFunc) .AND. !HB_IsBlock(xUserFunc) .AND. !HB_IsLogical(xUserFunc))
+   IF xUserFunc != NIL .AND. (!HB_IsString(xUserFunc) .AND. !HB_IsBlock(xUserFunc) .AND. !HB_IsLogical(xUserFunc))
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(xUserFunc) + ">", Procname() + " <xUserFunc>"))
    ELSE
       IF HB_IsString(xUserFunc) .AND. Empty(xUserFunc)
@@ -347,35 +347,35 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
       ENDIF
    ENDIF
 
-   IF !HB_IsNil(acColumnSayPictures) .AND. (!HB_IsString(acColumnSayPictures) .AND. !HB_IsArray(acColumnSayPictures))
+   IF acColumnSayPictures != NIL .AND. (!HB_IsString(acColumnSayPictures) .AND. !HB_IsArray(acColumnSayPictures))
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnSayPictures) + ">", Procname() + " <acColumnSayPictures|cColumnSayPicture>"))
    ENDIF
 
-   IF !HB_IsNil(acColumnHeaders) .AND. (!HB_IsString(acColumnHeaders) .AND. !HB_IsArray(acColumnHeaders))
+   IF acColumnHeaders != NIL .AND. (!HB_IsString(acColumnHeaders) .AND. !HB_IsArray(acColumnHeaders))
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnHeaders) + ">", Procname() + " <acColumnHeaders|cColumnHeader>"))
    ENDIF
 
-   IF !HB_IsNil(acHeadingSep) .AND. (!HB_IsString(acHeadingSep) .AND. !HB_IsArray(acHeadingSep))
+   IF acHeadingSep != NIL .AND. (!HB_IsString(acHeadingSep) .AND. !HB_IsArray(acHeadingSep))
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acHeadingSep) + ">", Procname() + " <acHeadingSeparators|cHeadingSeparator>"))
    ENDIF
 
-   IF !HB_IsNil(acColumnSep) .AND. (!HB_IsString(acColumnSep) .AND. !HB_IsArray(acColumnSep))
+   IF acColumnSep != NIL .AND. (!HB_IsString(acColumnSep) .AND. !HB_IsArray(acColumnSep))
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnSep) + ">", Procname() + " <acColumnSeparators|cColumnSeparator>"))
    ENDIF
 
-   IF !HB_IsNil(acFootingSep) .AND. (!HB_IsString(acFootingSep) .AND. !HB_IsArray(acFootingSep))
+   IF acFootingSep != NIL .AND. (!HB_IsString(acFootingSep) .AND. !HB_IsArray(acFootingSep))
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acFootingSep) + ">", Procname() + " <acFootingSeparators|cFootingSeparator>"))
    ENDIF
 
-   IF !HB_IsNil(acColumnFootings) .AND. (!HB_IsString(acColumnFootings) .AND. !HB_IsArray(acColumnFootings))
+   IF acColumnFootings != NIL .AND. (!HB_IsString(acColumnFootings) .AND. !HB_IsArray(acColumnFootings))
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(acColumnFootings) + ">", Procname() + " <acColumnFootings|cColumnFooting>"))
    ENDIF
 
-   IF !HB_IsNil(bPreBlock) .AND. !HB_IsBlock(bPreBlock)
+   IF bPreBlock != NIL .AND. !HB_IsBlock(bPreBlock)
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(bPreBlock) + ">", Procname() + " <bPreBlockBlock>"))
    ENDIF
 
-   IF !HB_IsNil(bPostBlock) .AND. !HB_IsBlock(bPostBlock)
+   IF bPostBlock != NIL .AND. !HB_IsBlock(bPostBlock)
       _sr_Throw(ErrorNew("BASE", 0, 1127, "Argument type error <" + ValType(bPostBlock) + ">", Procname() + " <bPostBlockBlock>"))
    ENDIF
 
