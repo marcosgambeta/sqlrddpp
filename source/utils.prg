@@ -1293,7 +1293,7 @@ FUNCTION SR_CommitTransaction(nCnn)
          oCnn:Commit()
          oCnn:nTransacCount := 0
       ELSEIF (oCnn:nTransacCount - 1) > 0
-         oCnn:nTransacCount --
+         oCnn:nTransacCount--
       ENDIF
    ENDIF
 
