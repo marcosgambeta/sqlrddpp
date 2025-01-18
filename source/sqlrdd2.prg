@@ -1859,7 +1859,7 @@ METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
                   nPos -= (CAHCE_PAGE_SIZE * 3)
                ENDIF
             ELSE
-               nPos --
+               nPos--
                IF nPos < 1
                   nPos += (CAHCE_PAGE_SIZE * 3)
                ENDIF
@@ -5006,7 +5006,7 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
                   nPos -= (CAHCE_PAGE_SIZE * 3)
                ENDIF
             ELSE
-               nPos --
+               nPos--
                IF nPos < 1
                   nPos += (CAHCE_PAGE_SIZE * 3)
                ENDIF
