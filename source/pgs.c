@@ -361,7 +361,17 @@ HB_FUNC(PGSQUERYATTR) // PGSQueryAttr(ResultSet) => aStruct
       // case TIMESTAMPTZOID:
       hb_itemPutC(temp, "C");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, typmod - 4));
+      
+      int fieldLen = 0;
+      if (typmod >= 4)
+        fieldLen = typmod - 4;
+      else {
+        fieldLen = (int)PQfsize(session->stmt, row);
+        if (fieldLen <= 0)
+          fieldLen = 254;
+      }
+
+      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, fieldLen));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
