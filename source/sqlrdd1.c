@@ -614,7 +614,7 @@ int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 
   // sr_TraceLog(SR_NULLPTR, "sqlKeyCompare\n");
 
-  pTag = loadTagDefault((SQLAREAP)thiswa, NULL, &lorder);
+  pTag = loadTagDefault((SQLAREAP)thiswa, SR_NULLPTR, &lorder);
   if (pTag)
   {
     if (((SQLAREAP)thiswa)->firstinteract)
@@ -655,7 +655,7 @@ int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   else if (HB_IS_NUMBER(pKey))
   {
     PHB_ITEM pLen = hb_itemPutNL(SR_NULLPTR, (HB_LONG)len1);
-    val2 = valbuf = hb_itemStr(pKey, pLen, NULL);
+    val2 = valbuf = hb_itemStr(pKey, pLen, SR_NULLPTR);
     len2 = (HB_BYTE)strlen(val2);
     hb_itemRelease(pLen);
   }
@@ -724,7 +724,7 @@ int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 
 static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_BOOL bFindLast)
 {
-  PHB_ITEM pNewKey = NULL, pItem, pItem2;
+  PHB_ITEM pNewKey = SR_NULLPTR, pItem, pItem2;
   HB_ERRCODE retvalue = HB_SUCCESS;
 
   // sr_TraceLog(SR_NULLPTR, "sqlSeek(%p, %d, %p, %d)", thiswa, bSoftSeek, pKey, bFindLast);
@@ -1348,7 +1348,7 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
       }
       else
       {
-        hb_itemPutC(value, NULL);
+        hb_itemPutC(value, SR_NULLPTR);
       }
       hb_itemRelease(pLangItem);
     }
@@ -2475,7 +2475,7 @@ HB_ERRCODE sqlForceRel(SQLAREAP thiswa)
 
 static HB_ERRCODE sqlOrderListAdd(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
-  PHB_ITEM pNIL = NULL, pIndex, pTag;
+  PHB_ITEM pNIL = SR_NULLPTR, pIndex, pTag;
 
   // sr_TraceLog(SR_NULLPTR, "sqlOrderListAdd\n");
 
@@ -2541,7 +2541,7 @@ static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
   // sr_TraceLog(SR_NULLPTR, "sqlOrderListFocus\n");
 
   // BagName.type = HB_IT_NIL;
-  pTag = loadTagDefault(thiswa, NULL, &lorder);
+  pTag = loadTagDefault(thiswa, SR_NULLPTR, &lorder);
 
   if (pTag)
   {
@@ -2684,7 +2684,7 @@ static HB_ERRCODE sqlOrderDestroy(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
     return HB_FAILURE;
   }
 
-  pTag = loadTagDefault(thiswa, NULL, &lorder);
+  pTag = loadTagDefault(thiswa, SR_NULLPTR, &lorder);
 
   if (!pTag)
   {
@@ -3030,14 +3030,14 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       pTag = loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag)
       {
-        sqlSetServerSideIndexScope((SQLAREAP)thiswa, 0, NULL);
+        sqlSetServerSideIndexScope((SQLAREAP)thiswa, 0, SR_NULLPTR);
       }
       break;
     case DBOI_SCOPEBOTTOMCLEAR:
       pTag = loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag)
       {
-        sqlSetServerSideIndexScope((SQLAREAP)thiswa, 1, NULL);
+        sqlSetServerSideIndexScope((SQLAREAP)thiswa, 1, SR_NULLPTR);
       }
       break;
     case DBOI_SCOPESET:
@@ -3499,7 +3499,7 @@ static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, HB_USHORT uiIndex, HB_ULONG ulConne
   case RDDI_ORDBAGEXT:
   case RDDI_ORDEREXT:
   case RDDI_ORDSTRUCTEXT: {
-    hb_itemPutC(pItem, NULL);
+    hb_itemPutC(pItem, SR_NULLPTR);
     break;
   }
 
@@ -3899,7 +3899,7 @@ static const RDDFUNCS sqlTable =
   (DBENTRYP_R)sqlExit,
   (DBENTRYP_RVVL)sqlDrop,
   (DBENTRYP_RVVL)sqlExists,
-  (DBENTRYP_RVVVL)NULL, // sqlRename
+  (DBENTRYP_RVVVL)SR_NULLPTR, // sqlRename
   (DBENTRYP_RSLV)sqlRddInfo,
 
   // Special and reserved methods
@@ -3932,7 +3932,7 @@ HB_FUNC(SQLRDD_GETFUNCTABLE)
     {
       *uiCount = RDDFUNCSCOUNT;
     }
-    errCode = hb_rddInherit(pTable, &sqlTable, &sqlrddSuper, NULL);
+    errCode = hb_rddInherit(pTable, &sqlTable, &sqlrddSuper, SR_NULLPTR);
     hb_retni(errCode);
   }
   else
@@ -3979,19 +3979,19 @@ static void hb_sqlrddRddInit(void *cargo)
     return;
   }
 
-  hb_errInternal(HB_EI_RDDINVALID, NULL, NULL, NULL);
+  hb_errInternal(HB_EI_RDDINVALID, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
 }
 
 // clang-format off
 HB_INIT_SYMBOLS_BEGIN(sqlrdd1__InitSymbols)
-  {"SQLRDD", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD)}, NULL},
-  {"SQLRDD_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD_GETFUNCTABLE)}, NULL}
+  {"SQLRDD", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD)}, SR_NULLPTR},
+  {"SQLRDD_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD_GETFUNCTABLE)}, SR_NULLPTR}
 HB_INIT_SYMBOLS_END(sqlrdd1__InitSymbols)
 // clang-format on
 
 // clang-format off
 HB_CALL_ON_STARTUP_BEGIN(_hb_sqlrdd_rdd_init_)
-  hb_vmAtInit(hb_sqlrddRddInit, NULL);
+  hb_vmAtInit(hb_sqlrddRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlrdd_rdd_init_)
 // clang-format on
 

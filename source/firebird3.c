@@ -522,12 +522,12 @@ HB_FUNC(FBEXECUTE3) // FBExecute(hEnv, cCmd, nDialect)
     // if( isc_dsql_execute(session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL) )
     if (session->queryType == isc_info_sql_stmt_exec_procedure)
     {
-      isc_dsql_execute2(session->status, &(session->transac), &(session->stmt), (unsigned short)hb_parni(3), NULL,
-                        NULL);
+      isc_dsql_execute2(session->status, &(session->transac), &(session->stmt), (unsigned short)hb_parni(3), SR_NULLPTR,
+                        SR_NULLPTR);
     }
     else
     {
-      isc_dsql_execute(session->status, &(session->transac), &(session->stmt), (unsigned short)hb_parni(3), NULL);
+      isc_dsql_execute(session->status, &(session->transac), &(session->stmt), (unsigned short)hb_parni(3), SR_NULLPTR);
     }
 
     if (CHECK_ERROR(session))
@@ -541,7 +541,7 @@ HB_FUNC(FBEXECUTE3) // FBExecute(hEnv, cCmd, nDialect)
     // ISC_STATUS r; ,
     if (session->queryType == isc_info_sql_stmt_exec_procedure)
     {
-      isc_dsql_execute2(session->status, &(session->transac), &(session->stmt), (unsigned short)hb_parni(3), NULL,
+      isc_dsql_execute2(session->status, &(session->transac), &(session->stmt), (unsigned short)hb_parni(3), SR_NULLPTR,
                         session->sqlda);
     }
     else
@@ -588,7 +588,7 @@ HB_FUNC(FBEXECUTEIMMEDIATE3) // FBExecuteImmediate(hEnv, cCmd, nDialect)
   //    ERRORLOGANDEXIT(session, (char *) command);
   // }
   isc_dsql_execute_immediate(session->status, &(session->db), &(session->transac), 0, command,
-                             (unsigned short)hb_parni(3), NULL);
+                             (unsigned short)hb_parni(3), SR_NULLPTR);
 
   if (CHECK_ERROR(session))
   {
@@ -835,7 +835,7 @@ HB_FUNC(FBGETDATA3) // FBGetData(hEnv, nField, @uData)
         hb_snprintf(date_s, sizeof(date_s), "%02d:%02d:%02d.%04d", times.tm_hour, times.tm_min, times.tm_sec,
                     (int)((*((ISC_TIME *)var->sqldata)) % 10000));
         // hb_storc(date_s, 3);
-        lMilliSec = hb_timeUnformat(date_s, NULL); // TOCHECK:
+        lMilliSec = hb_timeUnformat(date_s, SR_NULLPTR); // TOCHECK:
         // hb_itemPutTDT(pItem, 0, lMilliSec);
         hb_stortdt(0, lMilliSec, 3); // TOCHECK:
         break;
@@ -913,7 +913,7 @@ HB_FUNC(FBGETDATA3) // FBGetData(hEnv, nField, @uData)
       case IB_SQL_ARRAY:
       case IB_SQL_QUAD:
         blob_id = (ISC_QUAD *)var->sqldata;
-        if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, NULL))
+        if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, SR_NULLPTR))
         {
           ERRORLOGANDEXIT(session, "FBGETDATA1");
         }
@@ -1036,7 +1036,7 @@ HB_FUNC(FBCREATEDB3)
                 passwd /*, page, charset*/);
   }
 
-  if (isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, (unsigned short)dialect, NULL))
+  if (isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, (unsigned short)dialect, SR_NULLPTR))
   {
     hb_retni(SQL_ERROR);
     sr_TraceLog(LOGFILE, "FireBird Error: %s - code: %i (see iberr.h)\n", "create database", status[1]);
@@ -1268,7 +1268,7 @@ static void FBFieldGet3(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
 #endif
     case SQL_TIME: {
       long lMilliSec;
-      lMilliSec = hb_timeUnformat(bBuffer, NULL); // TOCHECK:
+      lMilliSec = hb_timeUnformat(bBuffer, SR_NULLPTR); // TOCHECK:
       hb_itemPutTDT(pItem, 0, lMilliSec);
       break;
     }
@@ -1488,7 +1488,7 @@ HB_FUNC(FBLINEPROCESSED3)
           case IB_SQL_ARRAY:
           case IB_SQL_QUAD:
             blob_id = (ISC_QUAD *)var->sqldata;
-            if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, NULL))
+            if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, SR_NULLPTR))
             {
               ERRORLOGANDEXIT(session, "FBGETDATA1");
             }

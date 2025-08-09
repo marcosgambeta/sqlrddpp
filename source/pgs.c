@@ -93,7 +93,7 @@ HB_FUNC(PGSCONNECT) // PGSConnect(ConnectionString) => ConnHandle
 
   session->ifetch = -2;
   // Setup Postgres Notice Processor
-  PQsetNoticeProcessor(session->dbh, myNoticeProcessor, NULL);
+  PQsetNoticeProcessor(session->dbh, myNoticeProcessor, SR_NULLPTR);
   hb_retptr((void *)session);
 }
 
@@ -901,7 +901,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
     }
     case SQL_TIME: {
       long lMilliSec;
-      lMilliSec = hb_timeUnformat(bBuffer, NULL); // TOCHECK:
+      lMilliSec = hb_timeUnformat(bBuffer, SR_NULLPTR); // TOCHECK:
       hb_itemPutTDT(pItem, 0, lMilliSec);
       break;
     }

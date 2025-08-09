@@ -951,11 +951,11 @@ char *DEFUN(strdup, (s), const char *s)
   SQLORA_ || upper(<param_name>)
 ---------------------------------------------------------------------------*/
 /* Parameters, sort them by name */
-static sqlora_param_t g_params[] = {{"PREFETCH_ROWS", INTEGER, (VOID *)&_num_prefetch_rows, NULL},
-                                    {"LONGSIZE", INTEGER, (VOID *)&_max_long_size, NULL},
-                                    {"TRACE_FILE", STRING, _trace_file, NULL},
-                                    {"TRACE_LEVEL", INTEGER, &_trace_level, NULL},
-                                    {NULL, INTEGER, NULL, NULL}};
+static sqlora_param_t g_params[] = {{"PREFETCH_ROWS", INTEGER, (VOID *)&_num_prefetch_rows, SR_NULLPTR},
+                                    {"LONGSIZE", INTEGER, (VOID *)&_max_long_size, SR_NULLPTR},
+                                    {"TRACE_FILE", STRING, _trace_file, SR_NULLPTR},
+                                    {"TRACE_LEVEL", INTEGER, &_trace_level, SR_NULLPTR},
+                                    {SR_NULLPTR, INTEGER, SR_NULLPTR, SR_NULLPTR}};
 
 /*-------------------------------------------------------------------------
  * STATIC FUNCTIONS
@@ -976,7 +976,7 @@ static inline int DEFUN(_mutex_init, (mutex), sqlo_mutex_t *mutex)
 
 #ifdef ENABLE_PTHREADS
 
-  pthread_mutex_init(mutex, NULL);
+  pthread_mutex_init(mutex, SR_NULLPTR);
 
 #elif ENABLE_ORATHREADS
 
@@ -1108,7 +1108,7 @@ static inline int DEFUN_VOID(_init_init_mux)
 
 #ifdef ENABLE_PTHREADS
 
-  pthread_mutex_init(&_init_mux, NULL);
+  pthread_mutex_init(&_init_mux, SR_NULLPTR);
 
 #elif ENABLE_ORATHREADS
 
@@ -2335,7 +2335,7 @@ static int DEFUN(_save_oci_status, (dbp, action, object, lineno),
     break;
 
   case OCI_SUCCESS_WITH_INFO:
-    (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)NULL, &dbp->errcode, (text *)errbuf, (ub4)sizeof(errbuf),
+    (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)SR_NULLPTR, &dbp->errcode, (text *)errbuf, (ub4)sizeof(errbuf),
                       OCI_HTYPE_ERROR);
 #ifndef NDEBUG
     sprintf(dbp->errmsg, "%s\n(line: %d)\n", errbuf, lineno);
@@ -2354,7 +2354,7 @@ static int DEFUN(_save_oci_status, (dbp, action, object, lineno),
     break;
 
   case OCI_ERROR:
-    (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)NULL, &dbp->errcode, (text *)errbuf, (ub4)sizeof(errbuf),
+    (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)SR_NULLPTR, &dbp->errcode, (text *)errbuf, (ub4)sizeof(errbuf),
                       OCI_HTYPE_ERROR);
 #ifndef NDEBUG
     sprintf(dbp->errmsg, "%s\n(line: %d)\n", errbuf, lineno);
@@ -2701,7 +2701,7 @@ static inline int DEFUN(_get_errcode, (dbp), sqlo_db_struct_ptr_t dbp)
 {
   assert((dbp != SR_NULLPTR));
 
-  (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)NULL, &dbp->errcode, NULL, (ub4)0, OCI_HTYPE_ERROR);
+  (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)SR_NULLPTR, &dbp->errcode, SR_NULLPTR, (ub4)0, OCI_HTYPE_ERROR);
 
   return dbp->errcode;
 }
@@ -2750,7 +2750,7 @@ static inline int DEFUN(_bind_by_pos, (stp, param_pos, param_type, param_addr, p
         OCIBindByPos(stp->stmthp, bindp_addr, dbp->errhp, (ub4)param_pos, (dvoid *)param_addr, (sword)param_size,
                      param_type, (dvoid *)ind_addr, (ub2 *)0, (ub2)0, (ub4)0, (ub4 *)0, OCI_DEFAULT);
 
-    CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_bind_by_pos. Cannot bind", NULL);
+    CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_bind_by_pos. Cannot bind", SR_NULLPTR);
     if (is_array)
     {
       dbp->status = OCIBindArrayOfStruct(*bindp_addr, dbp->errhp, param_size, ind_addr ? sizeof(short) : 0, 0, 0);
@@ -2817,7 +2817,7 @@ static inline int DEFUN(
         OCIBindByPos(stp->stmthp, bindp_addr, dbp->errhp, (ub4)param_pos, (dvoid *)param_addr, (sword)param_size,
                      (ub2)param_type, (dvoid *)ind_addr, (ub2 *)0, (ub2 *)rcode_addr, (ub4)0, (ub4 *)0, OCI_DEFAULT);
 
-    CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_bind_by_pos. Cannot bind", NULL);
+    CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_bind_by_pos. Cannot bind", SR_NULLPTR);
 
     if (skip_size > 0)
     {
@@ -2879,7 +2879,7 @@ static inline int DEFUN(
                                  (ub1 *)value_addr, (sword)value_size, value_type, (dvoid *)ind_addr, (ub2 *)rlen_addr,
                                  (ub2 *)rcode_addr, OCI_DEFAULT);
 
-    CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_by_pos2: Cannot define", NULL);
+    CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_by_pos2: Cannot define", SR_NULLPTR);
 
     if (skip_size)
     {
@@ -2939,7 +2939,7 @@ static inline int DEFUN(
                                  (ub1 *)value_addr, (sword)value_size, value_type, (dvoid *)ind_addr, (ub2 *)rlen_addr,
                                  (ub2 *)rcode_addr, OCI_DEFAULT);
 
-    CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_by_pos: Cannot define", NULL);
+    CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_by_pos: Cannot define", SR_NULLPTR);
 
     if (is_array)
     {
@@ -3571,7 +3571,7 @@ static int DEFUN(_define_ocol_by_pos, (stp, colp, pos),
       // stp->outv_size[col_idx], buffer_size, stp->rlenv[col_idx]);
 
       dbp->status = _define_by_pos(stp, pos, SQLT_STR, stp->outv[col_idx], stp->outv_size[col_idx],
-                                   (short *)&stp->oindv[col_idx], (ub4 *)&stp->outv_size[col_idx], NULL, 0);
+                                   (short *)&stp->oindv[col_idx], (ub4 *)&stp->outv_size[col_idx], SR_NULLPTR, 0);
       stp->outv_size[col_idx] = stp->outv_size[col_idx] - 1;
 
       // sr_TraceLog(LOGFILE, "_define_by_pos col %i, OUT length %i\n", col_idx, stp->outv_size[col_idx]);
@@ -3588,7 +3588,7 @@ static int DEFUN(_define_ocol_by_pos, (stp, colp, pos),
         // sr_TraceLog(LOGFILE, "col %i, OCIDescriptorAlloc %p\n", col_idx, colp->loblp);
       }
 
-      dbp->status = _define_by_pos(stp, pos, SQLOT_CLOB, &(colp->loblp), 0, (short *)&stp->oindv[col_idx], 0, NULL, 0);
+      dbp->status = _define_by_pos(stp, pos, SQLOT_CLOB, &(colp->loblp), 0, (short *)&stp->oindv[col_idx], 0, SR_NULLPTR, 0);
     }
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_ocol_by_pos", "_define_by_pos");
   }
@@ -3616,7 +3616,7 @@ static inline sqlo_stmt_struct_ptr_t DEFUN(_sth2stp, (sth, func_name), int sth A
   real_sth = DECODE_STH(sth);
   dbh = DECODE_DBH(sth);
 
-  CHECK_DBHANDLE(dbp, dbh, ((CONST char *)func_name), NULL);
+  CHECK_DBHANDLE(dbp, dbh, ((CONST char *)func_name), SR_NULLPTR);
 
   TRACE(3, fprintf(_get_trace_fp(dbp), "_sth2stp: sth %d -> sth=%u, dbh=%u\n", sth, real_sth, dbh););
 
@@ -4146,7 +4146,7 @@ static int DEFUN(_sqlo_reopen, (stp, argc, argv), sqlo_stmt_struct_ptr_t stp AND
 CONST char *DEFUN(sqlo_get_stmt, (sth), sqlo_stmt_handle_t sth)
 {
   sqlo_stmt_struct_ptr_t stp;
-  CHECK_STHANDLE(stp, sth, "sqlo_get_stmt", NULL);
+  CHECK_STHANDLE(stp, sth, "sqlo_get_stmt", SR_NULLPTR);
 
   assert(stp != SR_NULLPTR);
 
@@ -4254,7 +4254,7 @@ int DEFUN(sqlo_init, (threaded_mode, max_db, max_cursors),
 #ifdef ENABLE_ORATHREADS
 
 #ifdef HAVE_OCIENVCREATE
-    status = OCIEnvCreate(&_oci_envhp, _oci_init_mode, NULL, NULL, NULL, NULL, 0, NULL);
+    status = OCIEnvCreate(&_oci_envhp, _oci_init_mode, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR, 0, SR_NULLPTR);
     if (status)
     {
       EXEC_WHEN_THREADING(_init_unlock();); /* end of critical section */
@@ -4314,11 +4314,11 @@ int DEFUN(sqlo_trace, (dbh, on), sqlo_db_handle_t dbh AND int on)
   int stat;
   if (on)
   {
-    stat = sqlo_exec(dbh, "ALTER SESSION SET SQL_TRACE TRUE", NULL);
+    stat = sqlo_exec(dbh, "ALTER SESSION SET SQL_TRACE TRUE", SR_NULLPTR);
   }
   else
   {
-    stat = sqlo_exec(dbh, "ALTER SESSION SET SQL_TRACE FALSE", NULL);
+    stat = sqlo_exec(dbh, "ALTER SESSION SET SQL_TRACE FALSE", SR_NULLPTR);
   }
 
   return stat;
@@ -4371,7 +4371,7 @@ CONST char *DEFUN(sqlo_geterror, (dbh), sqlo_db_handle_t dbh)
 
     if ('\0' == *dbp->errmsg)
     {
-      (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)NULL, &dbp->errcode, (text *)dbp->errmsg,
+      (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)SR_NULLPTR, &dbp->errcode, (text *)dbp->errmsg,
                         (ub4)SQLO_MAX_ERRMSG_LEN * sizeof(char), OCI_HTYPE_ERROR);
 #ifndef NDEBUG
       sprintf(dbp->errmsg, "%s\n(line: %d)\n", dbp->errmsg, __LINE__);
@@ -4569,7 +4569,7 @@ int DEFUN(sqlo_count, (dbh, table, colname, colval, where),
   }
   else if (status == 0)
   {
-    v = sqlo_values(sth, NULL, 1);
+    v = sqlo_values(sth, SR_NULLPTR, 1);
     cnt = atoi(*v);
   }
   else
@@ -5064,7 +5064,7 @@ CONST char **DEFUN(sqlo_values, (sth, num, do_strip_string),
 {
   sqlo_stmt_struct_ptr_t stp;
 
-  CHECK_STHANDLE(stp, sth, "sqlo_values", NULL);
+  CHECK_STHANDLE(stp, sth, "sqlo_values", SR_NULLPTR);
 
   if (!_is_query(stp) || !_is_opened(stp))
   {
@@ -5178,7 +5178,7 @@ CONST char *DEFUN(sqlo_command, (sth), sqlo_stmt_handle_t sth)
 {
   sqlo_stmt_struct_ptr_t stp;
 
-  CHECK_STHANDLE(stp, sth, "sqlo_command", NULL);
+  CHECK_STHANDLE(stp, sth, "sqlo_command", SR_NULLPTR);
   return (CONST char *)_get_stmt_string(stp);
 }
 
@@ -5424,7 +5424,7 @@ int DEFUN(sqlo_server_attach, (dbhp, tnsname), sqlo_db_handle_t *dbhp AND const 
   EXEC_WHEN_THREADING(_env_lock(););
 
 #ifdef HAVE_OCIENVCREATE
-  dbp->status = OCIEnvCreate(&dbp->envhp, _oci_init_mode, NULL, NULL, NULL, NULL, 0, NULL);
+  dbp->status = OCIEnvCreate(&dbp->envhp, _oci_init_mode, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR, 0, SR_NULLPTR);
   CHECK_OCI_STATUS(dbp, dbp->status, "sqlo_server_attach", "OCIEnvCreate");
 #else
   dbp->status = OCIEnvInit((OCIEnv **)((dvoid *)&dbp->envhp), _oci_init_mode, 0, (dvoid **)0);
@@ -6361,7 +6361,7 @@ CONST char **DEFUN(sqlo_ocol_names, (sth, num), sqlo_stmt_handle_t sth AND int *
   sqlo_stmt_struct_ptr_t stp;
   sqlo_db_struct_ptr_t dbp;
 
-  CHECK_STHANDLE(stp, sth, "sqlo_ocol_names", NULL);
+  CHECK_STHANDLE(stp, sth, "sqlo_ocol_names", SR_NULLPTR);
   assert(stp->dbp);
   dbp = stp->dbp;
 
@@ -6437,7 +6437,7 @@ CONST int *DEFUN(sqlo_ocol_name_lens, (sth, num), sqlo_stmt_handle_t sth AND int
   sqlo_stmt_struct_ptr_t stp;
   sqlo_db_struct_ptr_t dbp;
 
-  CHECK_STHANDLE(stp, sth, "sqlo_ocol_name_lens", NULL);
+  CHECK_STHANDLE(stp, sth, "sqlo_ocol_name_lens", SR_NULLPTR);
   assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
@@ -6470,7 +6470,7 @@ CONST unsigned int *DEFUN(sqlo_value_lens, (sth, num), sqlo_stmt_handle_t sth AN
   sqlo_stmt_struct_ptr_t stp;
   sqlo_db_struct_ptr_t dbp;
 
-  CHECK_STHANDLE(stp, sth, "sqlo_value_lens", NULL);
+  CHECK_STHANDLE(stp, sth, "sqlo_value_lens", SR_NULLPTR);
   assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
@@ -6780,7 +6780,7 @@ int DEFUN(sqlo_lob_write_buffer, (dbh, loblp, loblen, bufp, bufl, piece),
   }
 
   dbp->status = OCILobWrite(dbp->svchp, dbp->errhp, (OCILobLocator *)loblp, &amtp, offset, (dvoid *)bufp, (ub4)nbytes,
-                            p, (dvoid *)0, (OCICallbackLobWrite)NULL, (ub2)0, (ub1)SQLCS_IMPLICIT);
+                            p, (dvoid *)0, (OCICallbackLobWrite)SR_NULLPTR, (ub2)0, (ub1)SQLCS_IMPLICIT);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_lob_write_buffer", "OCILobWrite");
 
@@ -6820,7 +6820,7 @@ int DEFUN(sqlo_lob_append_buffer, (dbh, loblp, loblen, bufp, bufl, piece),
   }
 
   dbp->status = OCILobWriteAppend(dbp->svchp, dbp->errhp, (OCILobLocator *)loblp, &amtp, (dvoid *)bufp, (ub4)nbytes, p,
-                                  (dvoid *)0, (OCICallbackLobWrite)NULL, (ub2)0, (ub1)SQLCS_IMPLICIT);
+                                  (dvoid *)0, (OCICallbackLobWrite)SR_NULLPTR, (ub2)0, (ub1)SQLCS_IMPLICIT);
 
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_lob_append_buffer", "OCILobWriteAppend");
 
@@ -7050,7 +7050,7 @@ int DEFUN(sqlo_lob_read_buffer, (dbh, loblp, loblen, bufp, bufl),
   amtp = loblen;
 
   dbp->status = OCILobRead(dbp->svchp, dbp->errhp, (OCILobLocator *)loblp, &amtp, offset, (dvoid *)bufp,
-                           (ub4)(loblen < bufl ? loblen : bufl), (dvoid *)0, (OCICallbackLobRead)NULL, (ub2)0,
+                           (ub4)(loblen < bufl ? loblen : bufl), (dvoid *)0, (OCICallbackLobRead)SR_NULLPTR, (ub2)0,
                            (ub1)SQLCS_IMPLICIT);
 
   TRACE(3, fprintf(_get_trace_fp(dbp), "sqlo_lob_read_buffer: amtp=%u\n", amtp););

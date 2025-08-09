@@ -656,7 +656,7 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
       odbcErrorDiagRTE(thiswa->hStmtInsert, "ExecuteInsertStmt/Fetch", thiswa->sSql, res, __LINE__, __FILE__);
       return HB_FAILURE;
     }
-    res = SQLGetData(thiswa->hStmtInsert, 1, SQL_C_ULONG, &(thiswa->recordList[0]), sizeof(SQL_C_ULONG), NULL);
+    res = SQLGetData(thiswa->hStmtInsert, 1, SQL_C_ULONG, &(thiswa->recordList[0]), sizeof(SQL_C_ULONG), SR_NULLPTR);
     if (CHECK_SQL_N_OK(res))
     {
       odbcErrorDiagRTE(thiswa->hStmtInsert, "ExecuteInsertStmt/GetData", thiswa->sSql, res, __LINE__, __FILE__);
@@ -720,7 +720,7 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
       odbcErrorDiagRTE(thiswa->hStmtNextval, "ExecuteInsertStmt/Fetch", ident, _res, __LINE__, __FILE__);
       return HB_FAILURE;
     }
-    _res = SQLGetData(thiswa->hStmtNextval, 1, SQL_C_ULONG, &(thiswa->recordList[0]), sizeof(SQL_C_ULONG), NULL);
+    _res = SQLGetData(thiswa->hStmtNextval, 1, SQL_C_ULONG, &(thiswa->recordList[0]), sizeof(SQL_C_ULONG), SR_NULLPTR);
     if (CHECK_SQL_N_OK(_res))
     {
       odbcErrorDiagRTE(thiswa->hStmtNextval, "ExecuteInsertStmt/GetData", ident, _res, __LINE__, __FILE__);
@@ -847,7 +847,7 @@ HB_ERRCODE CreateUpdateStmt(SQLEXAREAP thiswa)
       case SQL_C_BIT: {
         res = SQLBindParameter(thiswa->hStmtUpdate, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT,
                                (SQLSMALLINT)CurrRecord->iCType, (SQLSMALLINT)CurrRecord->iSQLType,
-                               CurrRecord->ColumnSize, CurrRecord->DecimalDigits, &(CurrRecord->asLogical), 0, NULL);
+                               CurrRecord->ColumnSize, CurrRecord->DecimalDigits, &(CurrRecord->asLogical), 0, SR_NULLPTR);
         break;
       }
       }
@@ -873,7 +873,7 @@ HB_ERRCODE CreateUpdateStmt(SQLEXAREAP thiswa)
           CLOSE_QUALIFIER(thiswa));
   hb_xfree(temp);
   res = SQLBindParameter(thiswa->hStmtUpdate, (SQLUSMALLINT)++iBind, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 15, 0,
-                         &(thiswa->lUpdatedRecord), 0, NULL);
+                         &(thiswa->lUpdatedRecord), 0, SR_NULLPTR);
   if (CHECK_SQL_N_OK(res))
   {
     odbcErrorDiagRTE(thiswa->hStmtUpdate, "BindUpdateColumns", thiswa->sSql, res, __LINE__, __FILE__);
@@ -951,7 +951,7 @@ HB_ERRCODE ExecuteUpdateStmt(SQLEXAREAP thiswa)
   if (hb_hashScan(thiswa->hBufferPool, pKey, &lPos))
   {
     aRecord = hb_hashGetValueAt(thiswa->hBufferPool, lPos);
-    hb_arrayCopy(thiswa->aBuffer, aRecord, NULL, NULL, NULL);
+    hb_arrayCopy(thiswa->aBuffer, aRecord, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
   }
   hb_itemRelease(pKey);
 

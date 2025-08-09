@@ -2415,7 +2415,7 @@ HB_FUNC(SRXML_DATAREAD)
 
   if (hb_itemGetWriteCL(pParam, &buf, &nLen))
   {
-    mxml_refil_setup(&refil, NULL, buf, nLen, nLen);
+    mxml_refil_setup(&refil, SR_NULLPTR, buf, nLen, nLen);
   }
   else // can only be an integer, that is, a file handle
   {

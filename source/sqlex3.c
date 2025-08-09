@@ -514,13 +514,13 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLev
           datemask[iPos] = szKey[iPos];
         }
 
-        hb_compStrToNum(datemask, 4, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(datemask, 4, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asTimestamp.year = (SQLSMALLINT)lVal;
         mask += 4;
-        hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asTimestamp.month = (SQLUSMALLINT)lVal;
         mask += 2;
-        hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asTimestamp.day = (SQLUSMALLINT)lVal;
         BindStructure->asTimestamp.hour = 0;
         BindStructure->asTimestamp.minute = 0;
@@ -544,13 +544,13 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLev
           datemask[iPos] = szKey[iPos];
         }
 
-        hb_compStrToNum(datemask, 4, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(datemask, 4, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asDate.year = (SQLSMALLINT)lVal;
         mask += 4;
-        hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asDate.month = (SQLUSMALLINT)lVal;
         mask += 2;
-        hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asDate.day = (SQLUSMALLINT)lVal;
 
         break;
@@ -671,13 +671,13 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
       case SQL_C_CHAR: {
         res = SQLBindParameter(hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, (SQLSMALLINT)BindStructure->iCType,
                                (SQLSMALLINT)BindStructure->iSQLType, BindStructure->ColumnSize,
-                               BindStructure->DecimalDigits, BindStructure->asChar.value, 0, NULL);
+                               BindStructure->DecimalDigits, BindStructure->asChar.value, 0, SR_NULLPTR);
         break;
       }
       case SQL_C_DOUBLE: {
         res = SQLBindParameter(hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, (SQLSMALLINT)BindStructure->iCType,
                                (SQLSMALLINT)BindStructure->iSQLType, BindStructure->ColumnSize,
-                               BindStructure->DecimalDigits, &(BindStructure->asNumeric), 0, NULL);
+                               BindStructure->DecimalDigits, &(BindStructure->asNumeric), 0, SR_NULLPTR);
         break;
       }
       case SQL_C_TYPE_TIMESTAMP: {
@@ -696,13 +696,13 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
       }
       case SQL_C_TYPE_DATE: {
         res = SQLBindParameter(hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, SQL_C_TYPE_DATE, SQL_TYPE_DATE,
-                               SQL_DATE_LEN, 0, &(BindStructure->asDate), 0, NULL);
+                               SQL_DATE_LEN, 0, &(BindStructure->asDate), 0, SR_NULLPTR);
         break;
       }
       case SQL_C_BIT: {
         res = SQLBindParameter(hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, (SQLSMALLINT)BindStructure->iCType,
                                (SQLSMALLINT)BindStructure->iSQLType, BindStructure->ColumnSize,
-                               BindStructure->DecimalDigits, &(BindStructure->asLogical), 0, NULL);
+                               BindStructure->DecimalDigits, &(BindStructure->asLogical), 0, SR_NULLPTR);
         break;
       }
       }
@@ -750,7 +750,7 @@ HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex,
     return HB_FAILURE;
   }
 
-  res = SQLGetData(*hStmt, 1, SQL_C_ULONG, &(thiswa->recordList[0]), sizeof(SQL_C_ULONG), NULL);
+  res = SQLGetData(*hStmt, 1, SQL_C_ULONG, &(thiswa->recordList[0]), sizeof(SQL_C_ULONG), SR_NULLPTR);
 
   if (res == SQL_ERROR)
   {
@@ -761,7 +761,7 @@ HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex,
   if (thiswa->ulhDeleted > 0)
   {
     SQLCHAR szValue[2];
-    res = SQLGetData(*hStmt, 2, SQL_C_CHAR, szValue, 2, NULL);
+    res = SQLGetData(*hStmt, 2, SQL_C_CHAR, szValue, 2, SR_NULLPTR);
     if (res == SQL_ERROR)
     {
       SQLFreeStmt(*hStmt, SQL_CLOSE);

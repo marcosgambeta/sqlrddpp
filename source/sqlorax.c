@@ -268,7 +268,7 @@ HB_FUNC(SQLO_EXECUTE)
     else
     {
       while (SQLO_STILL_EXECUTING ==
-             (session->status = sqlo_open2(&(session->stmt), session->dbh, hb_parcx(2), 0, NULL)))
+             (session->status = sqlo_open2(&(session->stmt), session->dbh, hb_parcx(2), 0, SR_NULLPTR)))
       {
         SQLO_USLEEP;
       }
@@ -739,8 +739,8 @@ HB_FUNC(SQLO_LINE)
   if (session)
   {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
-    line = sqlo_values(stmtParamRes, NULL, 0);
-    lens = sqlo_value_lens(stmtParamRes, NULL);
+    line = sqlo_values(stmtParamRes, SR_NULLPTR, 0);
+    lens = sqlo_value_lens(stmtParamRes, SR_NULLPTR);
     hb_arrayNew(ret, session->numcols);
 
     for (i = 0; i < session->numcols; i++)
@@ -774,8 +774,8 @@ HB_FUNC(SQLO_LINEPROCESSED)
   if (session)
   {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
-    line = sqlo_values(stmtParamRes, NULL, 0);
-    lens = sqlo_value_lens(stmtParamRes, NULL);
+    line = sqlo_values(stmtParamRes, SR_NULLPTR, 0);
+    lens = sqlo_value_lens(stmtParamRes, SR_NULLPTR);
 
     cols = hb_arrayLen(pFields);
 
@@ -831,7 +831,7 @@ HB_FUNC(ORACLEWRITEMEMO)
 
       sth = sqlo_prepare(session->dbh, szSql);
       sqlo_alloc_lob_desc(session->dbh, &loblp);
-      sqlo_bind_by_pos(sth, 1, SQLOT_CLOB, &loblp, 0, NULL, 0);
+      sqlo_bind_by_pos(sth, 1, SQLOT_CLOB, &loblp, 0, SR_NULLPTR, 0);
       status = sqlo_execute(sth, 1);
 
       if (SQLO_SUCCESS != status)

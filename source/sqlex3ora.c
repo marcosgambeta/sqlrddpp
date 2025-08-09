@@ -449,13 +449,13 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
           datemask[iPos] = szKey[iPos];
         }
 
-        hb_compStrToNum(datemask, 4, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(datemask, 4, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asTimestamp.year = (unsigned int)lVal;
         mask += 4;
-        hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asTimestamp.month = (unsigned int)lVal;
         mask += 2;
-        hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asTimestamp.day = (unsigned int)lVal;
         BindStructure->asTimestamp.hour = 0;
         BindStructure->asTimestamp.minute = 0;
@@ -479,13 +479,13 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
           datemask[iPos] = szKey[iPos];
         }
 
-        hb_compStrToNum(datemask, 4, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(datemask, 4, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asDate.year = (unsigned int)lVal;
         mask += 4;
-        hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asDate.month = (unsigned int)lVal;
         mask += 2;
-        hb_compStrToNum(mask, 2, &lVal, &dVal, NULL, NULL);
+        hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
         BindStructure->asDate.day = (unsigned int)lVal;
 
         break;

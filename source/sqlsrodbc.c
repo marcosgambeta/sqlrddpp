@@ -1162,7 +1162,7 @@ void odbcErrorDiag(SQLHSTMT hStmt, const char *routine, const char *szSql, int l
 HB_FUNC(SR_TABLES)
 {
   RETCODE ret;
-  ret = SQLTables((SQLHSTMT)hb_parptr(1), NULL, SQL_NTS, NULL, SQL_NTS, NULL, SQL_NTS, (SQLCHAR *)"TABLE", 5);
+  ret = SQLTables((SQLHSTMT)hb_parptr(1), SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS, (SQLCHAR *)"TABLE", 5);
   hb_retni(ret);
 }
 
@@ -1276,7 +1276,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQuery
     {
       if ((int)lLenOut == SQL_NULL_DATA || lLenOut == 0)
       {
-        odbcFieldGet(pField, pItem, NULL, -1, bQueryOnly, ulSystemID, bTranslate);
+        odbcFieldGet(pField, pItem, SR_NULLPTR, -1, bQueryOnly, ulSystemID, bTranslate);
       }
       else if (lLenOut > 0)
       {

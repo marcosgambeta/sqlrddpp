@@ -2036,7 +2036,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
     if (hb_hashScan(thiswa->hBufferPool, pKey, &lPos))
     {
       aRecord = hb_hashGetValueAt(thiswa->hBufferPool, lPos);
-      hb_arrayCopy(aRecord, thiswa->sqlarea.aBuffer, NULL, NULL, NULL);
+      hb_arrayCopy(aRecord, thiswa->sqlarea.aBuffer, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
       hb_itemRelease(pKey);
       return HB_SUCCESS;
     }
@@ -2259,7 +2259,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
     // Feeds current record when it is found
     if (((thiswa->recordList[thiswa->recordListPos])) == lCurrRecord)
     {
-      hb_arrayCopy(aRecord, thiswa->sqlarea.aBuffer, NULL, NULL, NULL);
+      hb_arrayCopy(aRecord, thiswa->sqlarea.aBuffer, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
     }
     hb_itemRelease(aRecord);
     // hb_xfree((char *) bBuffer);
@@ -2967,7 +2967,7 @@ static HB_ERRCODE sqlExOraSeek(SQLEXORAAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM
     }
     // hb_xfree((char *) bBuffer);
 
-    hb_arrayCopy(aRecord, thiswa->sqlarea.aBuffer, NULL, NULL, NULL);
+    hb_arrayCopy(aRecord, thiswa->sqlarea.aBuffer, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
     hb_itemRelease(aRecord);
     // hb_xfree((char *) bBuffer);
     // OCI_StatementFree(hStmt);
@@ -3529,7 +3529,7 @@ static HB_ERRCODE sqlExOraGetValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB
       }
       else
       {
-        hb_itemPutC(pLangItem, NULL);
+        hb_itemPutC(pLangItem, SR_NULLPTR);
         hb_itemMove(value, pLangItem);
       }
       hb_itemRelease(pLangItem);
@@ -4595,7 +4595,7 @@ static const RDDFUNCS sqlTable = {
     // non WorkArea functions
 
     (DBENTRYP_R)sqlExOraInit, (DBENTRYP_R)sqlExOraExit, (DBENTRYP_RVVL)sqlExOraDrop, (DBENTRYP_RVVL)sqlExOraExists,
-    (DBENTRYP_RVVVL)NULL, // sqlExOraRename
+    (DBENTRYP_RVVVL)SR_NULLPTR, // sqlExOraRename
     (DBENTRYP_RSLV)sqlExOraInfo,
 
     // Special and reserved methods
@@ -4670,20 +4670,20 @@ static void hb_sqlExOraRddInitora(void *cargo)
     }
   }
 
-  hb_errInternal(HB_EI_RDDINVALID, NULL, NULL, NULL);
+  hb_errInternal(HB_EI_RDDINVALID, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
 
   // not executed, only to force DBF RDD linking
   HB_FUNC_EXEC(SQLRDD);
 }
 
 HB_INIT_SYMBOLS_BEGIN(sqlExOra1Ora__InitSymbols){
-    "SQLEXORA", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEXORA)}, NULL},
+    "SQLEXORA", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEXORA)}, SR_NULLPTR},
     {"SQLEXORA_GETFUNCTABLE",
      {HB_FS_PUBLIC | HB_FS_LOCAL},
      {HB_FUNCNAME(SQLEXORA_GETFUNCTABLE)},
      NULL} HB_INIT_SYMBOLS_END(sqlExOra1Ora__InitSymbols)
 
-        HB_CALL_ON_STARTUP_BEGIN(_hb_sqlExOraora_rdd_init_) hb_vmAtInit(hb_sqlExOraRddInitora, NULL);
+        HB_CALL_ON_STARTUP_BEGIN(_hb_sqlExOraora_rdd_init_) hb_vmAtInit(hb_sqlExOraRddInitora, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlExOraora_rdd_init_)
 
 #if defined(HB_PRAGMA_STARTUP)
@@ -4723,7 +4723,7 @@ static int sqlKeyCompareEx(SQLEXORAAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 
   // sr_TraceLog(SR_NULLPTR, "sqlKeyCompare\n");
 
-  pTag = loadTagDefault(thiswa, NULL, &lorder);
+  pTag = loadTagDefault(thiswa, SR_NULLPTR, &lorder);
   if (pTag)
   {
     if (thiswa->sqlarea.firstinteract)
@@ -4772,7 +4772,7 @@ static int sqlKeyCompareEx(SQLEXORAAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   else if (HB_IS_NUMBER(pKey))
   {
     PHB_ITEM pLen = hb_itemPutNL(SR_NULLPTR, (HB_LONG)len1);
-    val2 = valbuf = hb_itemStr(pKey, pLen, NULL);
+    val2 = valbuf = hb_itemStr(pKey, pLen, SR_NULLPTR);
     len2 = (HB_SIZE)strlen(val2);
     hb_itemRelease(pLen);
   }

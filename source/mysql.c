@@ -98,7 +98,7 @@ HB_FUNC(MYSCONNECT)
   HB_UINT uiPort = HB_ISNUM(5) ? hb_parnl(5) : MYSQL_PORT;
   HB_UINT uiTimeout = HB_ISNUM(7) ? hb_parnl(7) : 3600;
   HB_BOOL lCompress = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
-  mysql_library_init(0, NULL, NULL);
+  mysql_library_init(0, SR_NULLPTR, SR_NULLPTR);
   //    memset(session, 0, sizeof(MYSQL_SESSION));
 
   session->dbh = mysql_init((MYSQL *)0);
@@ -110,11 +110,11 @@ HB_FUNC(MYSCONNECT)
     mysql_options(session->dbh, MYSQL_OPT_CONNECT_TIMEOUT, (const char *)&uiTimeout);
     if (lCompress)
     {
-      mysql_real_connect(session->dbh, szHost, szUser, szPass, szDb, uiPort, NULL, CLIENT_ALL_FLAGS);
+      mysql_real_connect(session->dbh, szHost, szUser, szPass, szDb, uiPort, SR_NULLPTR, CLIENT_ALL_FLAGS);
     }
     else
     {
-      mysql_real_connect(session->dbh, szHost, szUser, szPass, szDb, uiPort, NULL, CLIENT_ALL_FLAGS2);
+      mysql_real_connect(session->dbh, szHost, szUser, szPass, szDb, uiPort, SR_NULLPTR, CLIENT_ALL_FLAGS2);
     }
     hb_retptr((void *)session);
   }
@@ -414,7 +414,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBu
     }
     case SQL_TIME: {
       long lMilliSec;
-      lMilliSec = hb_timeUnformat(bBuffer, NULL); // TOCHECK:
+      lMilliSec = hb_timeUnformat(bBuffer, SR_NULLPTR); // TOCHECK:
       hb_itemPutTDT(pItem, 0, lMilliSec);
       break;
     }

@@ -990,7 +990,7 @@ HB_ERRCODE ExecuteUpdateStmtOra(SQLEXORAAREAP thiswa)
   if (hb_hashScan(thiswa->hBufferPool, pKey, &lPos))
   {
     aRecord = hb_hashGetValueAt(thiswa->hBufferPool, lPos);
-    hb_arrayCopy(thiswa->sqlarea.aBuffer, aRecord, NULL, NULL, NULL);
+    hb_arrayCopy(thiswa->sqlarea.aBuffer, aRecord, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
   }
   hb_itemRelease(pKey);
   return HB_SUCCESS;

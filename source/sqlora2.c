@@ -947,8 +947,8 @@ HB_FUNC(SQLO2_LINE)
   if (session)
   {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
-    line = SQLO2_values(stmtParamRes, NULL, 0);
-    lens = SQLO2_value_lens(stmtParamRes, NULL);
+    line = SQLO2_values(stmtParamRes, SR_NULLPTR, 0);
+    lens = SQLO2_value_lens(stmtParamRes, SR_NULLPTR);
     hb_arrayNew(ret, session->numcols);
 
     for (i = 0; i < session->numcols; i++)
