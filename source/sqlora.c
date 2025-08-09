@@ -43,6 +43,7 @@ const char *_sqlo_sqloraID = "$Id$";
 #include "config.h"
 #endif
 
+#include "sqlrddpp.h"
 #include "compat.h"
 
 #include <limits.h>
@@ -1342,10 +1343,10 @@ static inline int DEFUN(_set_prefetch_rows, (stp, nrows), sqlo_stmt_struct_ptr_t
   unsigned int prefetch_rows = nrows;
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp != NULL);
-  assert(stp->dbp != NULL);
-  assert(stp->stmthp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp != SR_NULLPTR);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->stmthp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
   dbp = stp->dbp;
 
   dbp->status = OCIAttrSet((dvoid *)stp->stmthp, (ub4)OCI_HTYPE_STMT, &prefetch_rows, (ub4)sizeof(prefetch_rows),
@@ -1391,12 +1392,12 @@ static inline int DEFUN(_get_stmt_state, (stp), sqlo_stmt_struct_ptr_t stp)
   ub4 st = 0;
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp != NULL);
-  assert(stp->dbp != NULL);
+  assert(stp != SR_NULLPTR);
+  assert(stp->dbp != SR_NULLPTR);
 
   dbp = stp->dbp;
-  assert(dbp->stmthp != NULL);
-  assert(dbp->errhp != NULL);
+  assert(dbp->stmthp != SR_NULLPTR);
+  assert(dbp->errhp != SR_NULLPTR);
 
   /* OCI_ATTR_STMT_STATE is not defined in Oracle < 9i
    * I define this here, to make it compile with Oracle 8,8i,
@@ -1892,7 +1893,7 @@ static int DEFUN(_alloc_bindp, (stp, size), sqlo_stmt_struct_ptr_t stp AND unsig
   /* register */ int num_new;
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   dbp->status = SQLO_SUCCESS;
@@ -1959,7 +1960,7 @@ static void DEFUN(_dealloc_bindp, (stp), sqlo_stmt_struct_ptr_t stp)
 {
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   TRACE(4,
@@ -1967,8 +1968,8 @@ static void DEFUN(_dealloc_bindp, (stp), sqlo_stmt_struct_ptr_t stp)
 
   if (stp->bindpv_size > 0)
   {
-    assert(stp->bindpv != NULL);
-    assert(stp->indpv != NULL);
+    assert(stp->bindpv != SR_NULLPTR);
+    assert(stp->indpv != SR_NULLPTR);
 
     XFREE(stp->bindpv, __LINE__); /* bind pointer array */
     XFREE(stp->indpv, __LINE__);  /* indicator var. pointer array */
@@ -1999,7 +2000,7 @@ static int DEFUN(_alloc_definep, (stp, size), sqlo_stmt_struct_ptr_t stp AND uns
   /* register */ int num_new; /* number of new elements in the arrays */
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   dbp->status = SQLO_SUCCESS;
@@ -2084,7 +2085,7 @@ static void DEFUN(_dealloc_definep, (stp), sqlo_stmt_struct_ptr_t stp)
   sqlo_db_struct_ptr_t dbp;
   unsigned int col_idx;
 
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   TRACE(4, fprintf(_get_trace_fp(dbp), "_dealloc_definep: dealloc sth: %u defnpv_size: %u\n", stp->sth,
@@ -2092,14 +2093,14 @@ static void DEFUN(_dealloc_definep, (stp), sqlo_stmt_struct_ptr_t stp)
 
   if (stp->defnpv_size > 0)
   {
-    assert(stp->defnpv != NULL);
-    assert(stp->ocolsv != NULL);
-    assert(stp->outv != NULL);
-    assert(stp->outv_size != NULL);
-    assert(stp->oindv != NULL);
-    assert(stp->rlenv != NULL);
-    assert(stp->ocol_namev != NULL);
-    assert(stp->ocol_namev_size != NULL);
+    assert(stp->defnpv != SR_NULLPTR);
+    assert(stp->ocolsv != SR_NULLPTR);
+    assert(stp->outv != SR_NULLPTR);
+    assert(stp->outv_size != SR_NULLPTR);
+    assert(stp->oindv != SR_NULLPTR);
+    assert(stp->rlenv != SR_NULLPTR);
+    assert(stp->ocol_namev != SR_NULLPTR);
+    assert(stp->ocol_namev_size != SR_NULLPTR);
 
     /* free all column names */
     for (col_idx = 0; col_idx < stp->defnpv_size; ++col_idx)
@@ -2698,7 +2699,7 @@ static inline void DEFUN(_strip_string, (s, len), char *s AND unsigned int len)
 #endif
 static inline int DEFUN(_get_errcode, (dbp), sqlo_db_struct_ptr_t dbp)
 {
-  assert((dbp != NULL));
+  assert((dbp != SR_NULLPTR));
 
   (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)NULL, &dbp->errcode, NULL, (ub4)0, OCI_HTYPE_ERROR);
 
@@ -2728,8 +2729,8 @@ static inline int DEFUN(_bind_by_pos, (stp, param_pos, param_type, param_addr, p
                    _get_data_type_str(param_type), param_size););
 
   assert(param_pos > 0);
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -2795,8 +2796,8 @@ static inline int DEFUN(
                    _get_data_type_str(param_type), param_size););
 
   assert(param_pos > 0);
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -2860,8 +2861,8 @@ static inline int DEFUN(
                    value_type, _get_data_type_str(value_type), value_size, skip_size, stp->num_defnpv););
 
   assert(value_pos > 0);
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -2922,7 +2923,7 @@ static inline int DEFUN(
                    value_pos, value_type, _get_data_type_str(value_type), value_size, is_array, stp->num_defnpv););
 
   assert(value_pos > 0);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   if (_is_prepared(stp))
@@ -2981,7 +2982,7 @@ static int DEFUN(_bind_argv, (stp, argc, argv), sqlo_stmt_struct_ptr_t stp AND u
   unsigned int size;
   /* register */ short *ind_ptr;
 
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   /* allocate the necessary intput bind variables */
@@ -3037,7 +3038,7 @@ static inline int DEFUN(_calc_obuf_size, (bufsizep, data_type, prec, scale, dbsi
   unsigned int buffer_size = 0;
   int status = SQLO_SUCCESS;
 
-  assert(bufsizep != NULL);
+  assert(bufsizep != SR_NULLPTR);
 
   switch (data_type)
   {
@@ -3124,10 +3125,10 @@ static int DEFUN(_get_ocol_db_data_type, (stp, pos, dtypep),
   sqlo_db_struct_ptr_t dbp;
   OCIParam *paramd;
 
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
   assert(pos > 0);
-  assert(dtypep != NULL);
+  assert(dtypep != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -3167,10 +3168,10 @@ static int DEFUN(_get_ocol_db_size, (stp, pos, sizep), sqlo_stmt_struct_ptr_t st
   sqlo_db_struct_ptr_t dbp;
   OCIParam *paramd;
 
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
   assert(pos > 0);
-  assert(sizep != NULL);
+  assert(sizep != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -3208,10 +3209,10 @@ static int DEFUN(_get_ocol_db_prec, (stp, pos, precp), sqlo_stmt_struct_ptr_t st
   sqlo_db_struct_ptr_t dbp;
   OCIParam *paramd;
 
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
   assert(pos > 0);
-  assert(precp != NULL);
+  assert(precp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -3251,10 +3252,10 @@ static int DEFUN(_get_ocol_db_scale, (stp, pos, scalep),
   sqlo_db_struct_ptr_t dbp;
   OCIParam *paramd;
 
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
   assert(pos > 0);
-  assert(scalep != NULL);
+  assert(scalep != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -3294,10 +3295,10 @@ static int DEFUN(_get_ocol_db_is_null, (stp, colp, pos, is_nullp),
   sqlo_db_struct_ptr_t dbp;
   OCIParam *paramd;
 
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
   assert(pos > 0);
-  assert(is_nullp != NULL);
+  assert(is_nullp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -3341,10 +3342,10 @@ static int DEFUN(_set_ocol_name, (stp, colp, pos),
   /* register */ unsigned int col_idx; /* the index into our arrays */
   OCIParam *paramd;
 
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
   assert(pos > 0);
-  assert(colp != NULL);
+  assert(colp != SR_NULLPTR);
 
   dbp = stp->dbp;
   col_idx = pos - 1;
@@ -3418,8 +3419,8 @@ static int DEFUN(_set_all_ocol_names, (stp), sqlo_stmt_struct_ptr_t stp)
   sqlo_col_struct_ptr_t colp;
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -3467,9 +3468,9 @@ static int DEFUN(_alloc_ocol_buffer, (stp, pos, buffer_size),
 {
   int col_idx;
   unsigned int buf_size = buffer_size;
-  assert(stp != NULL);
+  assert(stp != SR_NULLPTR);
   assert(pos > 0);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
 
   col_idx = pos - 1;
 
@@ -3537,7 +3538,7 @@ static int DEFUN(_define_ocol_by_pos, (stp, colp, pos),
   /* register */ unsigned int col_idx; /* the index into our arrays */
 
   assert(pos > 0);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
 
   dbp = stp->dbp;
   col_idx = pos - 1;
@@ -3647,7 +3648,7 @@ static int DEFUN(_define_output, (stp), sqlo_stmt_struct_ptr_t stp)
   sqlo_col_struct_ptr_t colp;
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -3929,9 +3930,9 @@ static int DEFUN(_get_stmt_type, (stp, stmt_typep), sqlo_stmt_struct_ptr_t stp A
 {
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp != NULL);
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp != SR_NULLPTR);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -3971,9 +3972,9 @@ static int DEFUN(_prepare, (stp, stmt, stmt_type), sqlo_stmt_struct_ptr_t stp AN
 {
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp != NULL);
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp != SR_NULLPTR);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -4017,9 +4018,9 @@ static int DEFUN(_sqlo_reopen, (stp, argc, argv), sqlo_stmt_struct_ptr_t stp AND
 
   sqlo_db_struct_ptr_t dbp;
 
-  assert(stp != NULL);
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp != SR_NULLPTR);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -4147,7 +4148,7 @@ CONST char *DEFUN(sqlo_get_stmt, (sth), sqlo_stmt_handle_t sth)
   sqlo_stmt_struct_ptr_t stp;
   CHECK_STHANDLE(stp, sth, "sqlo_get_stmt", NULL);
 
-  assert(stp != NULL);
+  assert(stp != SR_NULLPTR);
 
   if (_get_stmt_string(stp))
     return stp->stmt;
@@ -4163,7 +4164,7 @@ int DEFUN(sqlo_get_stmt_state, (sth), sqlo_stmt_handle_t sth)
   sqlo_stmt_struct_ptr_t stp;
   CHECK_STHANDLE(stp, sth, "sqlo_get_stmt_state", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp != NULL);
+  assert(stp != SR_NULLPTR);
 
   return _get_stmt_state(stp);
 }
@@ -4390,7 +4391,7 @@ int DEFUN(sqlo_geterrcode, (dbh), sqlo_db_handle_t dbh)
 
   CHECK_DBHANDLE(dbp, dbh, "sqlo_geterrcode", SQLO_INVALID_DB_HANDLE);
 
-  assert(dbp != NULL);
+  assert(dbp != SR_NULLPTR);
 
   return _get_errcode(dbp);
 }
@@ -4661,8 +4662,8 @@ int DEFUN(sqlo_exec, (dbh, stmt, rr), sqlo_db_handle_t dbh AND const char *stmt 
 
   CHECK_DBHANDLE(dbp, dbh, "sqlo_exec", SQLO_INVALID_DB_HANDLE);
 
-  assert(dbp != NULL);
-  assert(stmt != NULL);
+  assert(dbp != SR_NULLPTR);
+  assert(stmt != SR_NULLPTR);
 
   /* we can use a local variable, because we will never return a
    * SQLO_OCI_STILL_EXECUTING
@@ -4945,10 +4946,10 @@ int DEFUN(sqlo_fetch, (sth, nrows), sqlo_stmt_handle_t sth AND unsigned int nrow
 
   CHECK_STHANDLE(stp, sth, "sqlo_fetch", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp->dbp != NULL);
-  assert(stp->stmthp != NULL);
-  assert(stp->dbp->errhp != NULL);
-  assert(stp->dbp->svchp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->stmthp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
+  assert(stp->dbp->svchp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -5096,9 +5097,9 @@ int DEFUN(sqlo_prows, (sth), sqlo_stmt_handle_t sth)
 
   CHECK_STHANDLE(stp, sth, "sqlo_prows", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp->dbp != NULL);
-  assert(stp->stmthp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->stmthp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -5133,10 +5134,10 @@ int DEFUN(sqlo_ncols, (sth, in), sqlo_stmt_handle_t sth AND int in)
 
   CHECK_STHANDLE(stp, sth, "sqlo_ncols", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp->dbp != NULL);
-  assert(stp->stmthp != NULL);
-  assert(stp->dbp->errhp != NULL);
-  assert(stp->dbp->svchp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->stmthp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
+  assert(stp->dbp->svchp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -5193,7 +5194,7 @@ int DEFUN(sqlo_close, (sth), sqlo_stmt_handle_t sth)
 
   CHECK_STHANDLE(stp, sth, "sqlo_close", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_close [%2u]: %.60s\n", stp->sth, _get_stmt_string(stp)););
@@ -5546,7 +5547,7 @@ int DEFUN(sqlo_session_begin, (dbh, username, password),
   dbp = _dbv[dbh]; /* setup the pointer to the db structure */
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_session_begin[%d] starts\n", dbh););
 
-  assert(dbp != NULL);
+  assert(dbp != SR_NULLPTR);
 
   if (!username || !password)
   {
@@ -5639,7 +5640,7 @@ int DEFUN(sqlo_server_detach, (dbh), sqlo_db_handle_t dbh)
 
   dbp = _dbv[dbh]; /* setup the pointer to the db structure */
 
-  assert(dbp != NULL);
+  assert(dbp != SR_NULLPTR);
 
   /* forgot to call sqlo_session_end ? */
   if (dbp->session_created)
@@ -5678,7 +5679,7 @@ int DEFUN(sqlo_server_free, (dbh), sqlo_db_handle_t dbh)
   CHECK_DBHANDLE(dbp, dbh, "sqlo_server_free", SQLO_INVALID_DB_HANDLE);
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_server_free[%d] starts\n", dbh););
-  assert(dbp != NULL);
+  assert(dbp != SR_NULLPTR);
 
   if (dbp->attached)
   {
@@ -5706,7 +5707,7 @@ int DEFUN(sqlo_session_end, (dbh), sqlo_db_handle_t dbh)
   }
 
   dbp = _dbv[dbh]; /* setup the pointer to the db structure */
-  assert(dbp != NULL);
+  assert(dbp != SR_NULLPTR);
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_session_end[%d] starts\n", dbh););
 
@@ -5940,7 +5941,7 @@ int DEFUN(sqlo_prepare, (dbh, stmt), sqlo_db_handle_t dbh AND const char *stmt)
   sqlo_stmt_struct_ptr_t stp;
 
   CHECK_DBHANDLE(dbp, dbh, "sqlo_prepare", SQLO_INVALID_DB_HANDLE);
-  assert(dbp != NULL);
+  assert(dbp != SR_NULLPTR);
 
   _stmt_new(dbp, stmt, &stp);
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_prepare", "_stmt_new");
@@ -5978,8 +5979,8 @@ int DEFUN(sqlo_bind_by_name, (sth, param_name, param_type, param_addr, param_siz
 
   CHECK_STHANDLE(stp, sth, "sqlo_bind_by_name", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp->dbp != NULL);
-  assert(stp->dbp->errhp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
   dbp = stp->dbp;
 
   TRACE(3, fprintf(_get_trace_fp(dbp),
@@ -6091,8 +6092,8 @@ int DEFUN(sqlo_define_ntable, (sth, pos, sth2p),
   sqlo_db_struct_ptr_t dbp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_define_ntable", SQLO_INVALID_STMT_HANDLE);
-  assert(stp != NULL);
-  assert(stp->dbp != NULL);
+  assert(stp != SR_NULLPTR);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   TRACE(3,
@@ -6204,7 +6205,7 @@ int DEFUN(sqlo_define_by_pos2,
   /* register */ sqlo_stmt_struct_ptr_t stp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_define_by_pos2", SQLO_INVALID_STMT_HANDLE);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
 
   TRACE(3, fprintf(_get_trace_fp(stp->dbp),
                    "sqlo_define_by_pos [%2d]: pos: %d type: %d (%s), "
@@ -6224,7 +6225,7 @@ int DEFUN(sqlo_execute, (sth, iterations), sqlo_stmt_handle_t sth AND unsigned i
   sqlo_db_struct_ptr_t dbp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_execute", SQLO_INVALID_STMT_HANDLE);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   TRACE(3, fprintf(_get_trace_fp(dbp), "sqlo_execute [%2d]: iter=%u, stmt=%.80s\n", sth, iterations,
@@ -6291,7 +6292,7 @@ int DEFUN(sqlo_executeselect, (sth, iterations), sqlo_stmt_handle_t sth AND unsi
   //   int Ret;
 
   CHECK_STHANDLE(stp, sth, "sqlo_execute", SQLO_INVALID_STMT_HANDLE);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   TRACE(3, fprintf(_get_trace_fp(dbp), "sqlo_execute [%2d]: iter=%u, stmt=%.80s\n", sth, iterations,
@@ -6398,7 +6399,7 @@ int DEFUN(sqlo_ocol_names2, (sth, num, ocol_names), sqlo_stmt_handle_t sth AND i
 
   CHECK_STHANDLE(stp, sth, "sqlo_ocol_names2", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   if (!_is_query(stp) || !_is_opened(stp))
@@ -6437,7 +6438,7 @@ CONST int *DEFUN(sqlo_ocol_name_lens, (sth, num), sqlo_stmt_handle_t sth AND int
   sqlo_db_struct_ptr_t dbp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_ocol_name_lens", NULL);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   if (!_is_query(stp) || !_is_opened(stp))
@@ -6470,7 +6471,7 @@ CONST unsigned int *DEFUN(sqlo_value_lens, (sth, num), sqlo_stmt_handle_t sth AN
   sqlo_db_struct_ptr_t dbp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_value_lens", NULL);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   if (!_is_query(stp) || !_is_opened(stp))
@@ -7178,7 +7179,7 @@ int DEFUN(sqlo_set_prefetch_rows, (sth, nrows), sqlo_stmt_handle_t sth AND unsig
   sqlo_db_struct_ptr_t dbp;
 
   CHECK_STHANDLE(stp, sth, "sqlo_set_prefetch_rows", SQLO_INVALID_STMT_HANDLE);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
   _set_prefetch_rows(stp, nrows);
   CHECK_OCI_STATUS_RETURN(stp->dbp, dbp->status, "sqlo_set_prefetch_rows", "");
@@ -7214,7 +7215,7 @@ int DEFUN(sqlo_get_ocol_dtype, (sth, pos), sqlo_stmt_handle_t sth AND unsigned i
   assert(pos > 0);
 
   CHECK_STHANDLE(stp, sth, "sqlo_get_ocol_dtype", SQLO_INVALID_STMT_HANDLE);
-  assert(stp->dbp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
 
   TRACE(3, fprintf(_get_trace_fp(dbp), "sqlo_get_ocol_dtype: Getting datatype of col: %u\n", pos););
@@ -7306,15 +7307,15 @@ static void DEFUN(_terminate_ocols, (stp, do_strip_string), sqlo_stmt_struct_ptr
   /* register */ short *indp;
 
   colp = stp->ocolsv;
-  assert(colp != NULL);
+  assert(colp != SR_NULLPTR);
 
   outpp = stp->outv;     /* points to the vector of output column values */
   lenp = stp->outv_size; /* points to the vector of returned lengths */
   indp = stp->oindv;     /* points to the vector of indicator variables */
 
-  assert(outpp != NULL);
-  assert(lenp != NULL);
-  assert(indp != NULL);
+  assert(outpp != SR_NULLPTR);
+  assert(lenp != SR_NULLPTR);
+  assert(indp != SR_NULLPTR);
 
   /* scan thru all output columns and terminate and optionally strip them */
   for (col_idx = 0; col_idx < stp->num_defnpv; ++col_idx, ++colp, ++outpp, ++lenp, ++indp)
@@ -7384,10 +7385,10 @@ int DEFUN(sqlo_query_result, (sth, ncols, values, value_lens, colnames, colname_
 
   CHECK_STHANDLE(stp, sth, "sqlo_query_result", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp->dbp != NULL);
-  assert(stp->stmthp != NULL);
-  assert(stp->dbp->errhp != NULL);
-  assert(stp->dbp->svchp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->stmthp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
+  assert(stp->dbp->svchp != SR_NULLPTR);
 
   dbp = stp->dbp;
 
@@ -7508,10 +7509,10 @@ int DEFUN(sqlo_describecol, (sth, col, dType, name, namelen, prec, scale, dbsize
 
   CHECK_STHANDLE(stp, sth, "sqlo_describecol", SQLO_INVALID_STMT_HANDLE);
 
-  assert(stp->dbp != NULL);
-  assert(stp->stmthp != NULL);
-  assert(stp->dbp->errhp != NULL);
-  assert(stp->dbp->svchp != NULL);
+  assert(stp->dbp != SR_NULLPTR);
+  assert(stp->stmthp != SR_NULLPTR);
+  assert(stp->dbp->errhp != SR_NULLPTR);
+  assert(stp->dbp->svchp != SR_NULLPTR);
 
   dbp = stp->dbp;
 

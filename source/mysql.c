@@ -134,8 +134,8 @@ HB_FUNC(MYSCONNECT)
 HB_FUNC(MYSFINISH)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
   mysql_close(session->dbh);
 
   hb_xfree(session);
@@ -152,8 +152,8 @@ HB_FUNC(MYSGETCONNID)
 
   HB_ULONG ulThreadID;
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
   ulThreadID = mysql_thread_id(session->dbh);
   hb_retnl(ulThreadID);
 }
@@ -163,8 +163,8 @@ HB_FUNC(MYSKILLCONNID)
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   HB_ULONG ulThreadID = (HB_ULONG)hb_itemGetNL(hb_param(2, HB_IT_LONG));
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
   hb_retni(mysql_kill(session->dbh, ulThreadID));
 }
 
@@ -174,8 +174,8 @@ HB_FUNC(MYSEXEC)
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   const char *szQuery = hb_parc(2);
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
   session->ulAffected_rows = 0;
   // mysql_query(session->dbh, szQuery);
   mysql_real_query(session->dbh, szQuery, hb_parclen(2));
@@ -198,9 +198,9 @@ HB_FUNC(MYSFETCH) // MYSFetch(ConnHandle, ResultSet) => nStatus
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int rows;
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
-  assert(session->stmt != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
+  assert(session->stmt != SR_NULLPTR);
 
   session->status = mysql_errno(session->dbh);
 
@@ -442,9 +442,9 @@ HB_FUNC(MYSLINEPROCESSED)
   HB_BOOL bTranslate = hb_parl(6);
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
-  assert(session->stmt != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
+  assert(session->stmt != SR_NULLPTR);
 
   session->status = mysql_errno(session->dbh);
 
@@ -496,8 +496,8 @@ HB_FUNC(MYSSTATUS)
   int ret;
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
 
   ret = mysql_errno(session->dbh);
 
@@ -517,8 +517,8 @@ HB_FUNC(MYSRESULTSTATUS)
   HB_UINT ret;
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
 
   ret = (HB_UINT)mysql_errno(session->dbh);
 
@@ -542,8 +542,8 @@ HB_FUNC(MYSRESSTATUS)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
   hb_retc((char *)mysql_error(session->dbh));
 }
 
@@ -551,8 +551,8 @@ HB_FUNC(MYSCLEAR)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
 
   if (session->stmt)
   {
@@ -566,24 +566,24 @@ HB_FUNC(MYSCOLS)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
   hb_retni(session->numcols);
 }
 
 HB_FUNC(MYSVERS) // MYSVERS(hConnection) => nVersion
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
   hb_retnl((long)mysql_get_server_version(session->dbh));
 }
 
 HB_FUNC(MYSERRMSG)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
   hb_retc((char *)mysql_error(session->dbh));
 }
 
@@ -591,8 +591,8 @@ HB_FUNC(MYSCOMMIT)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
 
   if (mysql_commit(session->dbh))
   {
@@ -608,8 +608,8 @@ HB_FUNC(MYSROLLBACK)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  assert(session != NULL);
-  assert(session->dbh != NULL);
+  assert(session != SR_NULLPTR);
+  assert(session->dbh != SR_NULLPTR);
 
   if (mysql_rollback(session->dbh))
   {
@@ -634,8 +634,8 @@ HB_FUNC(MYSQUERYATTR)
   }
 
   session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(session->dbh != NULL);
-  assert(session->stmt != NULL);
+  assert(session->dbh != SR_NULLPTR);
+  assert(session->stmt != SR_NULLPTR);
 
   rows = session->numcols;
   ret = hb_itemNew(SR_NULLPTR);
@@ -763,7 +763,7 @@ HB_FUNC(MYSTABLEATTR)
   }
 
   session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(session->dbh != NULL);
+  assert(session->dbh != SR_NULLPTR);
 
   sprintf(attcmm, "select * from %s where 0 = 1", hb_parc(2));
 
