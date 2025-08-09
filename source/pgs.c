@@ -162,7 +162,7 @@ HB_FUNC(PGSRESULTSTATUS) // PGSResultStatus(ResultSet) => nStatus
 
 HB_FUNC(PGSEXEC) // PGSExec(ConnHandle, cCommand) => ResultSet
 {
-  // TraceLog(NULL, "PGSExec : %s\n", hb_parc(2));
+  // TraceLog(SR_NULLPTR, "PGSExec : %s\n", hb_parc(2));
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int ret;
   assert(session->dbh != NULL);

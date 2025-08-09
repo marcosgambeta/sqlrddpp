@@ -170,7 +170,7 @@ HB_FUNC(MYSKILLCONNID)
 
 HB_FUNC(MYSEXEC)
 {
-  // TraceLog(NULL, "mysqlExec : %s\n", hb_parc(2));
+  // TraceLog(SR_NULLPTR, "mysqlExec : %s\n", hb_parc(2));
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   const char *szQuery = hb_parc(2);
 

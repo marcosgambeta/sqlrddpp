@@ -3576,7 +3576,7 @@ static HB_ERRCODE sqlExOraGetValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB
   else
   {
     // if( HB_IS_NIL(itemTemp) ) {
-    //    TraceLog(NULL, "Empty buffer found at position %i, fieldpos %i\n", (int)
+    //    TraceLog(SR_NULLPTR, "Empty buffer found at position %i, fieldpos %i\n", (int)
     //    thiswa->sqlarea.uiBufferIndex[fieldNum - 1], (int) fieldNum);
     // }
     hb_itemMove(value, itemTemp);
@@ -3687,7 +3687,7 @@ static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB
   double dNum;
   HB_USHORT len, dec, fieldindex;
 
-  // TraceLog(NULL, "sqlPutValue, writing column %i\n", fieldNum);
+  // TraceLog(SR_NULLPTR, "sqlPutValue, writing column %i\n", fieldNum);
 
   if (thiswa->sqlarea.firstinteract)
   {
@@ -4721,7 +4721,7 @@ static int sqlKeyCompareEx(SQLEXORAAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   const char *val1, *val2;
   char *valbuf = NULL;
 
-  // TraceLog(NULL, "sqlKeyCompare\n");
+  // TraceLog(SR_NULLPTR, "sqlKeyCompare\n");
 
   pTag = loadTagDefault(thiswa, NULL, &lorder);
   if (pTag)
