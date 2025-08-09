@@ -12,17 +12,17 @@
 #if __cplusplus >= 201103L
 #define SR_NULLPTR nullptr
 #else
-#define SR_NULLPTR NULL
+#define SR_NULLPTR ((void *)0)
 #endif
 #else
 #ifdef __STDC_VERSION__
 #if __STDC_VERSION__ >= 202311L
 #define SR_NULLPTR nullptr
 #else
-#define SR_NULLPTR NULL
+#define SR_NULLPTR ((void *)0)
 #endif
 #else
-#define SR_NULLPTR NULL
+#define SR_NULLPTR ((void *)0)
 #endif
 #endif
 
