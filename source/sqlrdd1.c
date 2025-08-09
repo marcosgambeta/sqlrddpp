@@ -1174,7 +1174,7 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
 
 //------------------------------------------------------------------------
 
-#define sqlAddField NULL
+#define sqlAddField SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -1274,9 +1274,9 @@ static HB_ERRCODE sqlFieldCount(SQLAREAP thiswa, HB_USHORT *fieldCount)
 
 //------------------------------------------------------------------------
 
-#define sqlFieldDisplay NULL
-#define sqlFieldInfo NULL
-#define sqlFieldName NULL
+#define sqlFieldDisplay SR_NULLPTR
+#define sqlFieldInfo SR_NULLPTR
+#define sqlFieldName SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -1289,7 +1289,7 @@ static HB_ERRCODE sqlFlush(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlGetRec NULL // leave it unUsed
+#define sqlGetRec SR_NULLPTR // leave it unUsed
 
 //------------------------------------------------------------------------
 
@@ -1421,7 +1421,7 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
 
 //------------------------------------------------------------------------
 
-#define sqlGetVarLen NULL
+#define sqlGetVarLen SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -1436,8 +1436,8 @@ static HB_ERRCODE sqlGoCold(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlGoHot NULL
-#define sqlPutRec NULL
+#define sqlGoHot SR_NULLPTR
+#define sqlPutRec SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -1620,7 +1620,7 @@ static HB_ERRCODE sqlRecCount(SQLAREAP thiswa, HB_ULONG *recCount)
 
 //------------------------------------------------------------------------
 
-#define sqlRecInfo NULL
+#define sqlRecInfo SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -1710,7 +1710,7 @@ static HB_ERRCODE sqlSetFieldExtent(SQLAREAP thiswa, HB_USHORT uiFieldExtent)
 
 //------------------------------------------------------------------------
 
-#define sqlAlias NULL
+#define sqlAlias SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -2332,7 +2332,7 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
 
 //------------------------------------------------------------------------
 
-#define sqlRelease NULL
+#define sqlRelease SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -2345,8 +2345,8 @@ static HB_ERRCODE sqlStructSize(SQLAREAP thiswa, HB_USHORT *StructSize)
 
 //------------------------------------------------------------------------
 
-#define sqlSysName NULL
-#define sqlEval NULL
+#define sqlSysName SR_NULLPTR
+#define sqlEval SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -2360,10 +2360,10 @@ static HB_ERRCODE sqlPack(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlPackRec NULL
-#define sqlSort NULL
-#define sqlTrans NULL
-#define sqlTransRec NULL
+#define sqlPackRec SR_NULLPTR
+#define sqlSort SR_NULLPTR
+#define sqlTrans SR_NULLPTR
+#define sqlTransRec SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -2437,11 +2437,11 @@ HB_ERRCODE sqlChildSync(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 
 //------------------------------------------------------------------------
 
-#define sqlSyncChildren NULL
+#define sqlSyncChildren SR_NULLPTR
 
 //------------------------------------------------------------------------
 
-#define sqlClearRel NULL
+#define sqlClearRel SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -2466,10 +2466,10 @@ HB_ERRCODE sqlForceRel(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlRelArea NULL
-#define sqlRelEval NULL
-#define sqlRelText NULL
-#define sqlSetRel NULL
+#define sqlRelArea SR_NULLPTR
+#define sqlRelEval SR_NULLPTR
+#define sqlRelText SR_NULLPTR
+#define sqlSetRel SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -2529,7 +2529,7 @@ static HB_ERRCODE sqlOrderListClear(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlOrderListDelete NULL
+#define sqlOrderListDelete SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -2569,7 +2569,7 @@ static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 
 //------------------------------------------------------------------------
 
-#define sqlOrderListRebuild NULL
+#define sqlOrderListRebuild SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3156,15 +3156,15 @@ static HB_ERRCODE sqlClearFilter(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlClearLocate NULL
+#define sqlClearLocate SR_NULLPTR
 
 //------------------------------------------------------------------------
 
-#define sqlClearScope NULL
+#define sqlClearScope SR_NULLPTR
 
 //------------------------------------------------------------------------
 
-#define sqlCountScope NULL
+#define sqlCountScope SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3258,7 +3258,7 @@ static HB_ERRCODE sqlSetFilter(SQLAREAP thiswa, LPDBFILTERINFO pFilterInfo)
 
 //------------------------------------------------------------------------
 
-#define sqlSetLocate NULL
+#define sqlSetLocate SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3301,7 +3301,7 @@ static HB_ERRCODE sqlSetScope(SQLAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 
 //------------------------------------------------------------------------
 
-#define sqlSkipScope NULL
+#define sqlSkipScope SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3317,10 +3317,10 @@ static HB_ERRCODE sqlLocate(SQLAREAP thiswa, HB_BOOL fContinue)
 
 //------------------------------------------------------------------------
 
-#define sqlCompile NULL
-#define sqlError NULL
-#define sqlEvalBlock NULL
-#define sqlRawLock NULL
+#define sqlCompile SR_NULLPTR
+#define sqlError SR_NULLPTR
+#define sqlEvalBlock SR_NULLPTR
+#define sqlRawLock SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3404,14 +3404,14 @@ static HB_ERRCODE sqlUnLock(SQLAREAP thiswa, PHB_ITEM pRecNo)
 
 //------------------------------------------------------------------------
 
-#define sqlCloseMemFile NULL
-#define sqlCreateMemFile NULL
-#define sqlGetValueFile NULL
-#define sqlOpenMemFile NULL
-#define sqlPutValueFile NULL
-#define sqlReadDBHeader NULL
-#define sqlWriteDBHeader NULL
-#define sqlInit NULL
+#define sqlCloseMemFile SR_NULLPTR
+#define sqlCreateMemFile SR_NULLPTR
+#define sqlGetValueFile SR_NULLPTR
+#define sqlOpenMemFile SR_NULLPTR
+#define sqlPutValueFile SR_NULLPTR
+#define sqlReadDBHeader SR_NULLPTR
+#define sqlWriteDBHeader SR_NULLPTR
+#define sqlInit SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3519,7 +3519,7 @@ static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, HB_USHORT uiIndex, HB_ULONG ulConne
 
 //------------------------------------------------------------------------
 
-#define sqlWhoCares NULL
+#define sqlWhoCares SR_NULLPTR
 
 //------------------------------------------------------------------------
 

@@ -3328,7 +3328,7 @@ static HB_ERRCODE sqlExOraSkipRaw(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraAddField NULL
+#define sqlExOraAddField SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3356,7 +3356,7 @@ static HB_ERRCODE sqlExOraAppend(SQLEXORAAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraCreateFields NULL
+#define sqlExOraCreateFields SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3460,10 +3460,10 @@ static HB_ERRCODE sqlExOraDeleted(SQLEXORAAREAP thiswa, HB_BOOL *isDeleted)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraFieldCount NULL
-#define sqlExOraFieldDisplay NULL
-#define sqlExOraFieldInfo NULL
-#define sqlExOraFieldName NULL
+#define sqlExOraFieldCount SR_NULLPTR
+#define sqlExOraFieldDisplay SR_NULLPTR
+#define sqlExOraFieldInfo SR_NULLPTR
+#define sqlExOraFieldName SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3474,7 +3474,7 @@ static HB_ERRCODE sqlExOraFlush(SQLEXORAAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraGetRec NULL
+#define sqlExOraGetRec SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3589,7 +3589,7 @@ static HB_ERRCODE sqlExOraGetValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB
 
 //------------------------------------------------------------------------
 
-#define sqlExOraGetVarLen NULL
+#define sqlExOraGetVarLen SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3674,8 +3674,8 @@ static HB_ERRCODE sqlExOraGoCold(SQLEXORAAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraGoHot NULL
-#define sqlExOraPutRec NULL
+#define sqlExOraGoHot SR_NULLPTR
+#define sqlExOraPutRec SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3869,7 +3869,7 @@ static HB_ERRCODE sqlExOraRecCount(SQLEXORAAREAP thiswa, HB_ULONG *recCount)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraRecInfo NULL
+#define sqlExOraRecInfo SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -3932,8 +3932,8 @@ static HB_ERRCODE sqlExOraRecId(SQLEXORAAREAP thiswa, PHB_ITEM recno)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraSetFieldExtent NULL
-#define sqlExOraAlias NULL
+#define sqlExOraSetFieldExtent SR_NULLPTR
+#define sqlExOraAlias SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4060,7 +4060,7 @@ static HB_ERRCODE sqlExOraCreate(SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraInfo NULL
+#define sqlExOraInfo SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4163,7 +4163,7 @@ static HB_ERRCODE sqlExOraOpen(SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraRelease NULL
+#define sqlExOraRelease SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4176,24 +4176,24 @@ static HB_ERRCODE sqlExOraStructSize(SQLEXORAAREAP thiswa, HB_USHORT *StructSize
 
 //------------------------------------------------------------------------
 
-#define sqlExOraSysName NULL
-#define sqlExOraEval NULL
-#define sqlExOraPack NULL
-#define sqlExOraPackRec NULL
-#define sqlExOraSort NULL
-#define sqlExOraTrans NULL
-#define sqlExOraTransRec NULL
-#define sqlExOraZap NULL
-#define sqlExOraChildEnd NULL
-#define sqlExOraChildStart NULL
-#define sqlExOraChildSync NULL
-#define sqlExOraSyncChildren NULL
-#define sqlExOraClearRel NULL
-#define sqlExOraForceRel NULL
-#define sqlExOraRelArea NULL
-#define sqlExOraRelEval NULL
-#define sqlExOraRelText NULL
-#define sqlExOraSetRel NULL
+#define sqlExOraSysName SR_NULLPTR
+#define sqlExOraEval SR_NULLPTR
+#define sqlExOraPack SR_NULLPTR
+#define sqlExOraPackRec SR_NULLPTR
+#define sqlExOraSort SR_NULLPTR
+#define sqlExOraTrans SR_NULLPTR
+#define sqlExOraTransRec SR_NULLPTR
+#define sqlExOraZap SR_NULLPTR
+#define sqlExOraChildEnd SR_NULLPTR
+#define sqlExOraChildStart SR_NULLPTR
+#define sqlExOraChildSync SR_NULLPTR
+#define sqlExOraSyncChildren SR_NULLPTR
+#define sqlExOraClearRel SR_NULLPTR
+#define sqlExOraForceRel SR_NULLPTR
+#define sqlExOraRelArea SR_NULLPTR
+#define sqlExOraRelEval SR_NULLPTR
+#define sqlExOraRelText SR_NULLPTR
+#define sqlExOraSetRel SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4234,7 +4234,7 @@ static HB_ERRCODE sqlExOraOrderListClear(SQLEXORAAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraOrderListDelete NULL
+#define sqlExOraOrderListDelete SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4274,8 +4274,8 @@ static HB_ERRCODE sqlExOraOrderListFocus(SQLEXORAAREAP thiswa, LPDBORDERINFO pOr
 
 //------------------------------------------------------------------------
 
-#define sqlExOraOrderListRebuild NULL
-#define sqlExOraOrderCondition NULL
+#define sqlExOraOrderListRebuild SR_NULLPTR
+#define sqlExOraOrderCondition SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4407,10 +4407,10 @@ static HB_ERRCODE sqlExOraClearFilter(SQLEXORAAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraClearLocate NULL
-#define sqlExOraClearScope NULL
-#define sqlExOraCountScope NULL
-#define sqlExOraFilterText NULL
+#define sqlExOraClearLocate SR_NULLPTR
+#define sqlExOraClearScope SR_NULLPTR
+#define sqlExOraCountScope SR_NULLPTR
+#define sqlExOraFilterText SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4426,7 +4426,7 @@ static HB_ERRCODE sqlExOraScopeInfo(SQLEXORAAREAP thiswa, HB_USHORT nScope, PHB_
 
 //------------------------------------------------------------------------
 
-// #define sqlExOraSetFilter               NULL // Must be written to update thiswa->bConditionChanged
+// #define sqlExOraSetFilter               SR_NULLPTR // Must be written to update thiswa->bConditionChanged
 // culik 2010/07/07 implemented sqlExOraSetFilter
 
 static HB_ERRCODE sqlExOraSetFilter(SQLEXORAAREAP thiswa, LPDBFILTERINFO pFilterInfo)
@@ -4444,7 +4444,7 @@ static HB_ERRCODE sqlExOraSetFilter(SQLEXORAAREAP thiswa, LPDBFILTERINFO pFilter
 
 //------------------------------------------------------------------------
 
-#define sqlExOraSetLocate NULL
+#define sqlExOraSetLocate SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4460,12 +4460,12 @@ static HB_ERRCODE sqlExOraSetScope(SQLEXORAAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraSkipScope NULL
-#define sqlExOraLocate NULL
-#define sqlExOraCompile NULL
-#define sqlExOraError NULL
-#define sqlExOraEvalBlock NULL
-#define sqlExOraRawLock NULL
+#define sqlExOraSkipScope SR_NULLPTR
+#define sqlExOraLocate SR_NULLPTR
+#define sqlExOraCompile SR_NULLPTR
+#define sqlExOraError SR_NULLPTR
+#define sqlExOraEvalBlock SR_NULLPTR
+#define sqlExOraRawLock SR_NULLPTR
 
 //------------------------------------------------------------------------
 
@@ -4513,19 +4513,19 @@ static HB_ERRCODE sqlExOraUnLock(SQLEXORAAREAP thiswa, PHB_ITEM pRecNo)
 
 //------------------------------------------------------------------------
 
-#define sqlExOraCloseMemFile NULL
-#define sqlExOraCreateMemFile NULL
-#define sqlExOraGetValueFile NULL
-#define sqlExOraOpenMemFile NULL
-#define sqlExOraPutValueFile NULL
-#define sqlExOraReadDBHeader NULL
-#define sqlExOraWriteDBHeader NULL
-#define sqlExOraInit NULL
-#define sqlExOraExit NULL
-#define sqlExOraDrop NULL
-#define sqlExOraExists NULL
-#define sqlExOraInfo NULL
-#define sqlExOraWhoCares NULL
+#define sqlExOraCloseMemFile SR_NULLPTR
+#define sqlExOraCreateMemFile SR_NULLPTR
+#define sqlExOraGetValueFile SR_NULLPTR
+#define sqlExOraOpenMemFile SR_NULLPTR
+#define sqlExOraPutValueFile SR_NULLPTR
+#define sqlExOraReadDBHeader SR_NULLPTR
+#define sqlExOraWriteDBHeader SR_NULLPTR
+#define sqlExOraInit SR_NULLPTR
+#define sqlExOraExit SR_NULLPTR
+#define sqlExOraDrop SR_NULLPTR
+#define sqlExOraExists SR_NULLPTR
+#define sqlExOraInfo SR_NULLPTR
+#define sqlExOraWhoCares SR_NULLPTR
 
 //------------------------------------------------------------------------
 
