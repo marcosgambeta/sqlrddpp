@@ -3878,7 +3878,7 @@ static HB_ERRCODE sqlExOraRecNo(SQLEXORAAREAP thiswa, HB_ULONG *recno)
 #ifdef SQLRDD_NWG_SPECIFIC
   if (thiswa->bIsInsert)
   {
-    commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_NOT_COMMITED_YET, NULL);
+    commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
     return HB_FAILURE;
   }
 #endif

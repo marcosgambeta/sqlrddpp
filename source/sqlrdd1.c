@@ -1629,7 +1629,7 @@ static HB_ERRCODE sqlRecNo(SQLAREAP thiswa, HB_ULONG *recno)
 #ifdef SQLRDD_NWG_SPECIFIC
   if (hb_arrayGetNL(thiswa->aInfo, hb_arrayGetL(thiswa->aInfo, AINFO_ISINSERT)))
   {
-    commonError(&thiswa->area, EG_ARG, ESQLRDD_NOT_COMMITED_YET, NULL);
+    commonError(&thiswa->area, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
     return HB_FAILURE;
   }
 #endif
@@ -1737,7 +1737,7 @@ static HB_ERRCODE sqlClose(SQLAREAP thiswa)
 #if 0
   else
   {
-    commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+    commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
     return HB_FAILURE;
   }
 #endif
@@ -1965,7 +1965,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
     }
     else
     {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
     hb_itemMove(pItem, hb_stackReturnItem());
@@ -1987,7 +1987,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
     }
     else
     {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
     hb_itemMove(pItem, hb_stackReturnItem());
@@ -2001,7 +2001,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
     }
     else
     {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
     hb_itemMove(pItem, hb_stackReturnItem());
@@ -2318,7 +2318,7 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
     }
     else
     {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
 
@@ -2727,7 +2727,7 @@ static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
     }
     else
     {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return NULL;
     }
 
@@ -2760,7 +2760,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
       }
       else
       {
-        commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+        commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
         return NULL;
       }
     }
@@ -2773,7 +2773,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
       else
       {
         hb_itemRelease(pOrder);
-        commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+        commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
         return NULL;
       }
     }
@@ -2787,7 +2787,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
     else
     {
       hb_itemRelease(pOrder);
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return NULL;
     }
   }
@@ -3204,7 +3204,7 @@ static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem
     }
     else
     {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
     lorder = hb_itemGetNL(hb_stackReturnItem());
@@ -3446,7 +3446,7 @@ static HB_ERRCODE sqlDrop(PHB_ITEM pItemTable)
   }
   else
   {
-    commonError(NULL, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+    commonError(SR_NULLPTR, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
     return HB_FAILURE;
   }
 
@@ -3481,7 +3481,7 @@ HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
   }
   else
   {
-    commonError(NULL, EG_DATATYPE, ESQLRDD_DATATYPE, NULL);
+    commonError(SR_NULLPTR, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
     return HB_FAILURE;
   }
 

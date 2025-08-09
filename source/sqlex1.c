@@ -3799,7 +3799,7 @@ static HB_ERRCODE sqlExRecNo(SQLEXAREAP thiswa, HB_ULONG *recno)
 #ifdef SQLRDD_NWG_SPECIFIC
   if (thiswa->bIsInsert)
   {
-    commonError((AREAP)thiswa, EG_ARG, ESQLRDD_NOT_COMMITED_YET, NULL);
+    commonError((AREAP)thiswa, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
     return HB_FAILURE;
   }
 #endif
