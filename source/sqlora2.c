@@ -89,8 +89,8 @@ enum SQLO2_iStatus_codes
   SQLO2_NO_DATA = 100            //*< Maps to OCI_NO_DATA
 };
 
-static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
-static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
+static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
+static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
 // static OCI_ConnPool * pool = NULL;
 //-----------------------------------------------------------------------------//
@@ -639,7 +639,7 @@ HB_FUNC(ORACLEEXECDIR2)
     if (ret1)
     {
       OCI_StatementFree(session->stmt);
-      session->stmt = NULL;
+      session->stmt = SR_NULLPTR;
       //          session->rs = OCI_GetResultset(session->stmt);
       hb_retni(0);
       return;
@@ -715,7 +715,7 @@ void OracleFreeLink2(int num_recs, POCI_ORASESSION p)
     }
 
     hb_xfree(p->pLink);
-    p->pLink = NULL;
+    p->pLink = SR_NULLPTR;
     p->ubBindNum = 0;
   }
 }
@@ -1174,7 +1174,7 @@ HB_FUNC(SQLO2_CLOSESTMT)
     if (session->stmtParamRes)
     {
       OCI_StatementFree(session->stmtParamRes);
-      session->stmtParamRes = NULL;
+      session->stmtParamRes = SR_NULLPTR;
     }
     if (session->stmt)
     {
@@ -1184,7 +1184,7 @@ HB_FUNC(SQLO2_CLOSESTMT)
     {
       session->iStatus = 1;
     }
-    session->stmt = NULL;
+    session->stmt = SR_NULLPTR;
     hb_retni(session->iStatus);
   }
   hb_retni(SQL_SUCCESS);

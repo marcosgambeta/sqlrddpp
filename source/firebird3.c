@@ -85,8 +85,8 @@
 #define ISC_INT64_FORMAT PFLL
 #endif
 
-static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
-static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
+static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
+static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
 static char isc_tpb[] = {isc_tpb_version3, isc_tpb_write, isc_tpb_read_committed, isc_tpb_rec_version, isc_tpb_nowait};
 
@@ -194,7 +194,7 @@ HB_FUNC(FBCONNECT3) // FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
 
   for (i = 0, var = session->sqlda->sqlvar; i < MAX_COLUMNS_IN_QUERY; i++, var++)
   {
-    var->sqldata = NULL;
+    var->sqldata = SR_NULLPTR;
   }
 
   db_connect = hb_parcx(1);

@@ -64,8 +64,8 @@
 #define MAX_CURSORS 65535
 #define MAX_COLUMNS 1024
 
-static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
-static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
+static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
+static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
 //-----------------------------------------------------------------------------//
 
@@ -876,7 +876,7 @@ void OracleFreeLink(int num_recs, POCI_SESSION p)
     }
 
     hb_xfree(p->pLink);
-    p->pLink = NULL;
+    p->pLink = SR_NULLPTR;
     p->ubBindNum = 0;
   }
 }

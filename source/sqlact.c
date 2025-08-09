@@ -1124,7 +1124,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
   char *sValue, sDate[9];
   HB_SIZE iSizeOut;
   int iTrim, iPos, iSize;
-  sValue = NULL;
+  sValue = SR_NULLPTR;
 
   *bNullArgument = HB_FALSE;
 

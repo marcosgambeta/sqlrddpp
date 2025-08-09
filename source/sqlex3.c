@@ -48,6 +48,7 @@
 #pragma warning(disable : 4201)
 #endif
 
+#include "sqlrddpp.h"
 #include "compat.h"
 #include <hbinit.h>
 #include "msg.ch"
@@ -341,13 +342,13 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
     if (SeekBind->SeekFwdStmt)
     {
       SQLFreeStmt(SeekBind->SeekFwdStmt, SQL_DROP);
-      SeekBind->SeekFwdStmt = NULL;
+      SeekBind->SeekFwdStmt = SR_NULLPTR;
     }
 
     if (SeekBind->SeekBwdStmt)
     {
       SQLFreeStmt(SeekBind->SeekBwdStmt, SQL_DROP);
-      SeekBind->SeekBwdStmt = NULL;
+      SeekBind->SeekBwdStmt = SR_NULLPTR;
     }
 
     getSeekWhereExpression(thiswa, thiswa->recordListDirection == LIST_FORWARD ? LIST_SKIP_FWD : LIST_SKIP_BWD,
@@ -406,13 +407,13 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLev
       if (SeekBind->SeekFwdStmt)
       {
         SQLFreeStmt(SeekBind->SeekFwdStmt, SQL_DROP);
-        SeekBind->SeekFwdStmt = NULL;
+        SeekBind->SeekFwdStmt = SR_NULLPTR;
         thiswa->bRebuildSeekQuery = HB_TRUE;
       }
       if (SeekBind->SeekBwdStmt)
       {
         SQLFreeStmt(SeekBind->SeekBwdStmt, SQL_DROP);
-        SeekBind->SeekBwdStmt = NULL;
+        SeekBind->SeekBwdStmt = SR_NULLPTR;
         thiswa->bRebuildSeekQuery = HB_TRUE;
       }
 

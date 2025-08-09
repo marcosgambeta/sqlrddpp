@@ -128,9 +128,9 @@ static PHB_DYNS s_pSym_SQLSETFILTER;
 static PHB_DYNS s_pSym_SQLCLEARFILTER;
 static PHB_DYNS s_pSym_SQLFILTERTEXT;
 
-static PHB_DYNS s_pSym_SQLINIT = NULL;
-static PHB_DYNS s_pSym_SQLEXIT = NULL;
-static PHB_DYNS s_pSym_WORKAREA = NULL;
+static PHB_DYNS s_pSym_SQLINIT = SR_NULLPTR;
+static PHB_DYNS s_pSym_SQLEXIT = SR_NULLPTR;
+static PHB_DYNS s_pSym_WORKAREA = SR_NULLPTR;
 
 //------------------------------------------------------------------------
 
@@ -456,7 +456,7 @@ static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
 
   // sr_TraceLog(SR_NULLPTR, "sqlGoBottom\n");
 
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
@@ -504,7 +504,7 @@ static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, HB_LONG recno)
   // sr_TraceLog(SR_NULLPTR, "sqlGoTo %i\n", recno);
 
   // Reset parent rel struct
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
@@ -562,7 +562,7 @@ static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
 
   // sr_TraceLog(SR_NULLPTR, "sqlGoTop\n");
 
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
@@ -609,7 +609,7 @@ int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   PHB_ITEM pTag, pKeyVal, itemTemp;
   int iLimit, iResult = 0;
   HB_BYTE len1, len2;
-  char *valbuf = NULL;
+  char *valbuf = SR_NULLPTR;
   const char *val1, *val2;
 
   // sr_TraceLog(SR_NULLPTR, "sqlKeyCompare\n");
@@ -729,7 +729,7 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
 
   // sr_TraceLog(SR_NULLPTR, "sqlSeek(%p, %d, %p, %d)", thiswa, bSoftSeek, pKey, bFindLast);
 
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
@@ -1185,7 +1185,7 @@ static HB_ERRCODE sqlAppend(SQLAREAP thiswa)
   // sr_TraceLog(SR_NULLPTR, "sqlAppend\n");
 
   // Reset parent rel struct
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
@@ -1721,7 +1721,7 @@ static HB_ERRCODE sqlClose(SQLAREAP thiswa)
   // sr_TraceLog(SR_NULLPTR, "sqlClose\n");
 
   // Reset parent rel struct
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
 
   if (thiswa->oWorkArea && HB_IS_OBJECT(thiswa->oWorkArea))
   {
@@ -1756,25 +1756,25 @@ static HB_ERRCODE sqlClose(SQLAREAP thiswa)
   if (thiswa->szDataFileName)
   {
     hb_xfree(thiswa->szDataFileName);
-    thiswa->szDataFileName = NULL;
+    thiswa->szDataFileName = SR_NULLPTR;
   }
 
   if (thiswa->uiBufferIndex)
   {
     hb_xfree(thiswa->uiBufferIndex);
-    thiswa->uiBufferIndex = NULL;
+    thiswa->uiBufferIndex = SR_NULLPTR;
   }
 
   if (thiswa->uiFieldList)
   {
     hb_xfree(thiswa->uiFieldList);
-    thiswa->uiFieldList = NULL;
+    thiswa->uiFieldList = SR_NULLPTR;
   }
 
   if (thiswa->oWorkArea && HB_IS_OBJECT(thiswa->oWorkArea))
   {
     hb_itemRelease(thiswa->oWorkArea);
-    thiswa->oWorkArea = NULL;
+    thiswa->oWorkArea = SR_NULLPTR;
   }
   return uiError;
 }
@@ -2169,8 +2169,8 @@ static HB_ERRCODE sqlNewArea(SQLAREAP thiswa)
     return HB_FAILURE;
   }
 
-  thiswa->uiBufferIndex = NULL;
-  thiswa->uiFieldList = NULL;
+  thiswa->uiBufferIndex = SR_NULLPTR;
+  thiswa->uiFieldList = SR_NULLPTR;
   return HB_SUCCESS;
 }
 
@@ -2455,7 +2455,7 @@ HB_ERRCODE sqlForceRel(SQLAREAP thiswa)
   if (thiswa->lpdbPendingRel)
   {
     lpdbPendingRel = thiswa->lpdbPendingRel;
-    thiswa->lpdbPendingRel = NULL;
+    thiswa->lpdbPendingRel = SR_NULLPTR;
     uiError = SELF_RELEVAL(&thiswa->area, lpdbPendingRel);
     thiswa->firstinteract = HB_FALSE;
     thiswa->wasdel = HB_FALSE;
@@ -2717,7 +2717,7 @@ static HB_ERRCODE sqlOrderDestroy(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 #if 0
 static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
 {
-  PHB_ITEM pTag = NULL;
+  PHB_ITEM pTag = SR_NULLPTR;
 
   if (pInfo && pInfo->itmOrder)
   {
@@ -2746,7 +2746,7 @@ static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
 PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
 {
   PHB_ITEM pOrder = hb_itemNew(SR_NULLPTR);
-  PHB_ITEM pTag = NULL;
+  PHB_ITEM pTag = SR_NULLPTR;
 
   //   Order.type = HB_IT_NIL;
 

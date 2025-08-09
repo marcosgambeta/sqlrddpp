@@ -118,7 +118,7 @@ static int bufferPoolSize = BUFFER_POOL_SIZE;
 static HB_BOOL CreateSkipStmt(SQLEXAREAP thiswa);
 static int bOldReverseIndex = 0;
 static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact);
-static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
+static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 // static HB_BOOL _SqlExIsLogFirst = HB_TRUE; not used
 static HB_BOOL _SqlExIsLogFile = HB_FALSE;
 
@@ -870,7 +870,7 @@ void ReleaseIndexBindStructure(SQLEXAREAP thiswa)
         IndexBind++;
       }
       hb_xfree(thiswa->IndexBindings[i]);
-      thiswa->IndexBindings[i] = NULL;
+      thiswa->IndexBindings[i] = SR_NULLPTR;
     }
   }
 }
@@ -1424,8 +1424,8 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
       {
         BindStructure = GetBindStruct(thiswa, IndexBind);
 
-        pTemp = NULL;
-        pFieldData = NULL;
+        pTemp = SR_NULLPTR;
+        pFieldData = SR_NULLPTR;
 
         if (BindStructure->lFieldPosWA > 0)
         {
@@ -2387,13 +2387,13 @@ static HB_BOOL CreateSkipStmt(SQLEXAREAP thiswa)
       if (IndexBind->SkipFwdStmt)
       {
         SQLFreeStmt(IndexBind->SkipFwdStmt, SQL_DROP);
-        IndexBind->SkipFwdStmt = NULL;
+        IndexBind->SkipFwdStmt = SR_NULLPTR;
       }
 
       if (IndexBind->SkipBwdStmt)
       {
         SQLFreeStmt(IndexBind->SkipBwdStmt, SQL_DROP);
-        IndexBind->SkipBwdStmt = NULL;
+        IndexBind->SkipBwdStmt = SR_NULLPTR;
       }
       IndexBind++;
     }
@@ -2485,7 +2485,7 @@ static HB_ERRCODE sqlExFound(SQLEXAREAP thiswa, HB_BOOL *found)
 
 static HB_ERRCODE sqlExGoBottom(SQLEXAREAP thiswa)
 {
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
   thiswa->area.fFound = HB_FALSE;
@@ -2577,7 +2577,7 @@ static HB_ERRCODE sqlExGoTo(SQLEXAREAP thiswa, HB_LONG recno)
   }
 
   // Reset parent rel struct
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
   thiswa->area.fFound = HB_FALSE;
@@ -2654,7 +2654,7 @@ static HB_ERRCODE sqlExGoToId(SQLEXAREAP thiswa, PHB_ITEM pItem)
 
 static HB_ERRCODE sqlExGoTop(SQLEXAREAP thiswa)
 {
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
   thiswa->area.fFound = HB_FALSE;
@@ -2746,10 +2746,10 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
   HB_USHORT iIndex;
   HB_SIZE i;
   HB_ERRCODE retvalue = HB_SUCCESS;
-  PHB_ITEM pNewKey = NULL;
-  HSTMT hStmt = NULL;
+  PHB_ITEM pNewKey = SR_NULLPTR;
+  HSTMT hStmt = SR_NULLPTR;
 
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
   thiswa->area.fTop = thiswa->area.fBottom = HB_FALSE;
@@ -3230,7 +3230,7 @@ static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
 static HB_ERRCODE sqlExAppend(SQLEXAREAP thiswa)
 {
   // Reset parent rel struct
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
@@ -3867,7 +3867,7 @@ static HB_ERRCODE sqlExClose(SQLEXAREAP thiswa)
   }
   code = (SUPER_CLOSE((AREAP)thiswa));
   // Reset parent rel struct
-  thiswa->lpdbPendingRel = NULL;
+  thiswa->lpdbPendingRel = SR_NULLPTR;
 
   if ((thiswa->oSql) && HB_IS_OBJECT(thiswa->oSql))
   {
@@ -3988,26 +3988,26 @@ static HB_ERRCODE sqlExNewArea(SQLEXAREAP thiswa)
 
   errCode = SUPER_NEW((AREAP)thiswa);
 
-  thiswa->oSql = NULL;
+  thiswa->oSql = SR_NULLPTR;
   thiswa->hBufferPool = hb_hashNew(NULL);
-  thiswa->aFields = NULL;
-  thiswa->sTable = NULL;
-  thiswa->sOwner = NULL;
-  thiswa->sRecnoName = NULL;
-  thiswa->sDeletedName = NULL;
+  thiswa->aFields = SR_NULLPTR;
+  thiswa->sTable = SR_NULLPTR;
+  thiswa->sOwner = SR_NULLPTR;
+  thiswa->sRecnoName = SR_NULLPTR;
+  thiswa->sDeletedName = SR_NULLPTR;
   thiswa->iColumnListStatus = FIELD_LIST_LEARNING;
-  thiswa->hStmt = NULL;
-  thiswa->hStmtBuffer = NULL;
-  thiswa->hStmtInsert = NULL;
-  thiswa->hStmtNextval = NULL;
-  thiswa->hStmtUpdate = NULL;
+  thiswa->hStmt = SR_NULLPTR;
+  thiswa->hStmtBuffer = SR_NULLPTR;
+  thiswa->hStmtInsert = SR_NULLPTR;
+  thiswa->hStmtNextval = SR_NULLPTR;
+  thiswa->hStmtUpdate = SR_NULLPTR;
   thiswa->recordListPos = 0;
   thiswa->indexColumns = 0;
   thiswa->skipDirection = 0;
   thiswa->lBofAt = 0;
   thiswa->lEofAt = 0;
   thiswa->indexLevel = -1;
-  thiswa->sFields = NULL;
+  thiswa->sFields = SR_NULLPTR;
   thiswa->iTCCompat = 0;
   thiswa->bIsInsert = HB_FALSE;
   thiswa->bufferHot = HB_FALSE;
@@ -4026,8 +4026,8 @@ static HB_ERRCODE sqlExNewArea(SQLEXAREAP thiswa)
   memset(thiswa->sOrderBy, 0, MAX_SQL_QUERY_LEN / 20 * sizeof(char));
   thiswa->sWhere = (char *)hb_xgrab(MAX_SQL_QUERY_LEN / 10 * sizeof(char));
   memset(thiswa->sWhere, 0, MAX_SQL_QUERY_LEN / 10 * sizeof(char));
-  thiswa->InsertRecord = NULL;
-  thiswa->CurrRecord = NULL;
+  thiswa->InsertRecord = SR_NULLPTR;
+  thiswa->CurrRecord = SR_NULLPTR;
 
   hb_hashPreallocate(thiswa->hBufferPool, (HB_ULONG)(bufferPoolSize * 1.2));
 
@@ -4166,7 +4166,7 @@ static HB_ERRCODE sqlExOrderListFocus(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInf
     if (thiswa->IndexBindings[thiswa->hOrdCurrent])
     {
       hb_xfree(thiswa->IndexBindings[thiswa->hOrdCurrent]);
-      thiswa->IndexBindings[thiswa->hOrdCurrent] = NULL;
+      thiswa->IndexBindings[thiswa->hOrdCurrent] = SR_NULLPTR;
     }
   }
   else
@@ -4617,7 +4617,7 @@ static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   int iLimit, iResult = 0;
   HB_BYTE len1, len2;
   const char *val1, *val2;
-  char *valbuf = NULL;
+  char *valbuf = SR_NULLPTR;
 
   pTag = loadTagDefault(thiswa, NULL, &lorder);
   if (pTag)

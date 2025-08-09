@@ -71,8 +71,8 @@
 
 #define CLIENT_ALL_FLAGS (CLIENT_COMPRESS | CLIENT_MULTI_RESULTS | CLIENT_MULTI_STATEMENTS)
 #define CLIENT_ALL_FLAGS2 (CLIENT_MULTI_RESULTS | CLIENT_MULTI_STATEMENTS)
-static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
-static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
+static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
+static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 static int iConnectionCount = 0;
 #define LOGFILE "mysql.log"
 typedef struct _MYSQL_SESSION
@@ -557,7 +557,7 @@ HB_FUNC(MYSCLEAR)
   if (session->stmt)
   {
     mysql_free_result(session->stmt);
-    session->stmt = NULL;
+    session->stmt = SR_NULLPTR;
     session->ifetch = -2;
   }
 }
@@ -891,7 +891,7 @@ HB_FUNC(MYSTABLEATTR)
   hb_itemReturnForward(ret);
   hb_itemRelease(ret);
   mysql_free_result(session->stmt);
-  session->stmt = NULL;
+  session->stmt = SR_NULLPTR;
 }
 
 HB_FUNC(MYSAFFECTEDROWS)

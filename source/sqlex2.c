@@ -80,7 +80,7 @@
 
 //------------------------------------------------------------------------
 
-static PHB_DYNS s_pSym_Serial1 = NULL; // Pointer to serialization function
+static PHB_DYNS s_pSym_Serial1 = SR_NULLPTR; // Pointer to serialization function
 
 //------------------------------------------------------------------------
 
@@ -930,7 +930,7 @@ HB_ERRCODE ExecuteUpdateStmt(SQLEXAREAP thiswa)
   {
     odbcErrorDiagRTE(thiswa->hStmtUpdate, "ExecuteUpdateStmt", thiswa->sSql, res, __LINE__, __FILE__);
     SQLCloseCursor(thiswa->hStmtUpdate);
-    thiswa->hStmtUpdate = NULL;
+    thiswa->hStmtUpdate = SR_NULLPTR;
     return HB_FAILURE;
   }
 

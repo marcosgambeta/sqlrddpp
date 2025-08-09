@@ -77,7 +77,7 @@
 
 //------------------------------------------------------------------------
 
-static PHB_DYNS s_pSym_Serial1 = NULL; // Pointer to serialization function
+static PHB_DYNS s_pSym_Serial1 = SR_NULLPTR; // Pointer to serialization function
 
 #define LOGFILE "oci2.log"
 

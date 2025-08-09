@@ -1548,7 +1548,7 @@ static MXML_STATUS mxml_node_read(MXML_REFIL *ref, PHB_ITEM pNode, PHB_ITEM doc,
       return MXML_STATUS_MALFORMED;
     }
     // resetting new node findings
-    node = NULL;
+    node = SR_NULLPTR;
 
     switch (iStatus)
     {
@@ -1664,7 +1664,7 @@ static MXML_STATUS mxml_node_read(MXML_REFIL *ref, PHB_ITEM pNode, PHB_ITEM doc,
 
   if (iStatus == -1) // ARE WE DONE ?
   {
-    PHB_ITEM child_node, data_node = NULL;
+    PHB_ITEM child_node, data_node = SR_NULLPTR;
 
     // Time to close current node. We must verify:
     // 1) If the closing tag is coherent with the opened tag name.
@@ -1699,7 +1699,7 @@ static MXML_STATUS mxml_node_read(MXML_REFIL *ref, PHB_ITEM pNode, PHB_ITEM doc,
         else
         {
           hb_itemRelease(data_node);
-          data_node = NULL;
+          data_node = SR_NULLPTR;
           break;
         }
       }

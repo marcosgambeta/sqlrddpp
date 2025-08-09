@@ -56,9 +56,9 @@
 
 #include <assert.h>
 
-static PHB_DYNS s_pSym_SR_DESERIALIZE = NULL;
-static PHB_DYNS s_pSym_SR_FROMXML = NULL;
-static PHB_DYNS s_pSym_SR_FROMJSON = NULL;
+static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
+static PHB_DYNS s_pSym_SR_FROMXML = SR_NULLPTR;
+static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 #define LOGFILE "pgs.log"
 typedef struct _PSQL_SESSION
 {
@@ -235,7 +235,7 @@ HB_FUNC(PGSCLEAR) // PGSClear(ResultSet)
   if (session->stmt)
   {
     PQclear(session->stmt);
-    session->stmt = NULL;
+    session->stmt = SR_NULLPTR;
     session->ifetch = -2;
   }
 }

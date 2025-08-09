@@ -273,13 +273,13 @@ HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
     if (SeekBind->SeekFwdStmt)
     {
       OCI_StatementFree(SeekBind->SeekFwdStmt);
-      SeekBind->SeekFwdStmt = NULL;
+      SeekBind->SeekFwdStmt = SR_NULLPTR;
     }
 
     if (SeekBind->SeekBwdStmt)
     {
       OCI_StatementFree(SeekBind->SeekBwdStmt);
-      SeekBind->SeekBwdStmt = NULL;
+      SeekBind->SeekBwdStmt = SR_NULLPTR;
     }
 
     getSeekWhereExpressionOra(thiswa, thiswa->recordListDirection == LIST_FORWARD ? LIST_SKIP_FWD : LIST_SKIP_BWD,
@@ -338,12 +338,12 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
       if (SeekBind->SeekFwdStmt)
       {
         OCI_StatementFree(SeekBind->SeekFwdStmt);
-        SeekBind->SeekFwdStmt = NULL;
+        SeekBind->SeekFwdStmt = SR_NULLPTR;
       }
       if (SeekBind->SeekBwdStmt)
       {
         OCI_StatementFree(SeekBind->SeekBwdStmt);
-        SeekBind->SeekBwdStmt = NULL;
+        SeekBind->SeekBwdStmt = SR_NULLPTR;
       }
 
       SeekBind++;
