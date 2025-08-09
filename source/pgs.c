@@ -78,7 +78,7 @@ static void myNoticeProcessor(void *arg, const char *message)
 {
   HB_SYMBOL_UNUSED(arg);
   HB_SYMBOL_UNUSED(message);
-  //   TraceLog("sqlerror.log", "%s", message);
+  //   sr_TraceLog("sqlerror.log", "%s", message);
 }
 
 HB_FUNC(PGSCONNECT) // PGSConnect(ConnectionString) => ConnHandle
@@ -162,7 +162,7 @@ HB_FUNC(PGSRESULTSTATUS) // PGSResultStatus(ResultSet) => nStatus
 
 HB_FUNC(PGSEXEC) // PGSExec(ConnHandle, cCommand) => ResultSet
 {
-  // TraceLog(SR_NULLPTR, "PGSExec : %s\n", hb_parc(2));
+  // sr_TraceLog(SR_NULLPTR, "PGSExec : %s\n", hb_parc(2));
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int ret;
   assert(session->dbh != NULL);
@@ -474,7 +474,7 @@ HB_FUNC(PGSQUERYATTR) // PGSQueryAttr(ResultSet) => aStruct
       break;
 
     default:
-      TraceLog(LOGFILE, "Strange data type returned in query: %i\n", type);
+      sr_TraceLog(LOGFILE, "Strange data type returned in query: %i\n", type);
       break;
     }
 
@@ -515,7 +515,7 @@ HB_FUNC(PGSTABLEATTR) // PGSTableAttr(ConnHandle, cTableName) => aStruct
 
   if (PQresultStatus(stmtTemp) != PGRES_TUPLES_OK)
   {
-    TraceLog(LOGFILE, "Query error : %i - %s\n", PQresultStatus(stmtTemp), PQresStatus(PQresultStatus(stmtTemp)));
+    sr_TraceLog(LOGFILE, "Query error : %i - %s\n", PQresultStatus(stmtTemp), PQresStatus(PQresultStatus(stmtTemp)));
     PQclear(stmtTemp);
   }
 
@@ -667,7 +667,7 @@ HB_FUNC(PGSTABLEATTR) // PGSTableAttr(ConnHandle, cTableName) => aStruct
       break;
 
     default:
-      TraceLog(LOGFILE, "Strange data type returned: %i\n", type);
+      sr_TraceLog(LOGFILE, "Strange data type returned: %i\n", type);
       break;
     }
 
@@ -749,7 +749,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
     }
 
     default:
-      TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+      sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
   }
   else
@@ -907,7 +907,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
     }
 
     default:
-      TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+      sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
   }
 }
