@@ -223,7 +223,7 @@ PHB_ITEM SQLpCodeGenArrayItem(PHB_ITEM pArray, PHB_ITEM value)
 
 PHB_ITEM SQLpCodeGenArrayInt(PHB_ITEM pArray, int code)
 {
-  PHB_ITEM pItem = hb_itemPutNILen(NULL, code, 6);
+  PHB_ITEM pItem = hb_itemPutNILen(SR_NULLPTR, code, 6);
 
   hb_arrayAddForward(pArray, pItem);
   hb_itemRelease(pItem);
@@ -235,7 +235,7 @@ PHB_ITEM SQLpCodeGenArrayIntInt(PHB_ITEM pArray, int code, int code2)
 {
   PHB_ITEM pItem;
 
-  pItem = hb_itemPutNILen(NULL, code, 6);
+  pItem = hb_itemPutNILen(SR_NULLPTR, code, 6);
   hb_arrayAddForward(pArray, pItem);
   hb_itemPutNILen(pItem, code2, 6);
   hb_arrayAddForward(pArray, pItem);

@@ -508,7 +508,7 @@ static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, HB_LONG recno)
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
-  pParam1 = hb_itemPutNL(NULL, recno);
+  pParam1 = hb_itemPutNL(SR_NULLPTR, recno);
   if (hb_arrayGetL(thiswa->aInfo, AINFO_HOT))
   {
     hb_objSendMessage(thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0);
@@ -575,7 +575,7 @@ static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
 
   if (lbof)
   {
-    PHB_ITEM pBOF = hb_itemPutNL(NULL, lbof);
+    PHB_ITEM pBOF = hb_itemPutNL(SR_NULLPTR, lbof);
     hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLGOTO, 1, pBOF);
     hb_itemRelease(pBOF);
   }
@@ -654,7 +654,7 @@ int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   }
   else if (HB_IS_NUMBER(pKey))
   {
-    PHB_ITEM pLen = hb_itemPutNL(NULL, (HB_LONG)len1);
+    PHB_ITEM pLen = hb_itemPutNL(SR_NULLPTR, (HB_LONG)len1);
     val2 = valbuf = hb_itemStr(pKey, pLen, NULL);
     len2 = (HB_BYTE)strlen(val2);
     hb_itemRelease(pLen);
@@ -733,8 +733,8 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
-  pItem = hb_itemPutL(NULL, bSoftSeek);
-  pItem2 = hb_itemPutL(NULL, bFindLast);
+  pItem = hb_itemPutL(SR_NULLPTR, bSoftSeek);
+  pItem2 = hb_itemPutL(SR_NULLPTR, bFindLast);
 
 #ifndef HB_CDP_SUPPORT_OFF
   if (HB_IS_STRING(pKey))
@@ -744,7 +744,7 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
     {
       HB_SIZE nLen = hb_itemGetCLen(pKey);
       char *pszVal = hb_cdpnDup(hb_itemGetCPtr(pKey), &nLen, cdpSrc, thiswa->area.cdPage);
-      pKey = pNewKey = hb_itemPutCLPtr(NULL, pszVal, nLen);
+      pKey = pNewKey = hb_itemPutCLPtr(SR_NULLPTR, pszVal, nLen);
     }
   }
 #endif
@@ -1199,7 +1199,7 @@ static HB_ERRCODE sqlAppend(SQLAREAP thiswa)
   thiswa->area.fEof = hb_arrayGetL(thiswa->aInfo, AINFO_EOF);
   thiswa->area.fBof = hb_arrayGetL(thiswa->aInfo, AINFO_BOF);
 
-  pItem = hb_itemPutL(NULL, HB_TRUE);
+  pItem = hb_itemPutL(SR_NULLPTR, HB_TRUE);
   hb_arraySet(thiswa->aInfo, AINFO_HOT, pItem);
   hb_arraySet(thiswa->aInfo, AINFO_ISINSERT, pItem);
   hb_itemPutNI(pItem, 0);
@@ -2636,16 +2636,16 @@ static HB_ERRCODE sqlOrderCreate(SQLAREAP thiswa, LPDBORDERCREATEINFO pOrderInfo
     return HB_FAILURE;
   }
 
-  pBagName = hb_itemPutC(NULL, pOrderInfo->abBagName);
-  pAtomBagName = hb_itemPutC(NULL, pOrderInfo->atomBagName);
+  pBagName = hb_itemPutC(SR_NULLPTR, pOrderInfo->abBagName);
+  pAtomBagName = hb_itemPutC(SR_NULLPTR, pOrderInfo->atomBagName);
 
   if (pOrderInfo->lpdbConstraintInfo)
   {
     PHB_ITEM pConstrName, pTarget, pEnable;
 
-    pConstrName = hb_itemPutC(NULL, pOrderInfo->lpdbConstraintInfo->abConstrName);
-    pTarget = hb_itemPutC(NULL, pOrderInfo->lpdbConstraintInfo->abTargetName);
-    pEnable = hb_itemPutL(NULL, pOrderInfo->lpdbConstraintInfo->fEnabled);
+    pConstrName = hb_itemPutC(SR_NULLPTR, pOrderInfo->lpdbConstraintInfo->abConstrName);
+    pTarget = hb_itemPutC(SR_NULLPTR, pOrderInfo->lpdbConstraintInfo->abTargetName);
+    pEnable = hb_itemPutL(SR_NULLPTR, pOrderInfo->lpdbConstraintInfo->fEnabled);
 
     hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERCREATE, 7, pBagName, pOrderInfo->abExpr, pAtomBagName,
                       pConstrName, pTarget, pOrderInfo->lpdbConstraintInfo->itmRelationKey, pEnable);
@@ -2813,7 +2813,7 @@ static HB_ERRCODE sqlSetServerSideIndexScope(SQLAREAP thiswa, int nScope, PHB_IT
   int res;
 
   scopeval = hb_itemNew(scopeValue);
-  scopetype = hb_itemPutNI(NULL, nScope);
+  scopetype = hb_itemPutNI(SR_NULLPTR, nScope);
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLSETSCOPE, 2, scopetype, scopeval);
   res = hb_itemGetNI(hb_stackReturnItem());
   hb_itemRelease(scopetype);
@@ -3270,7 +3270,7 @@ static HB_ERRCODE sqlSetScope(SQLAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 
   // TraceLog(NULL, "sqlSetScope\n");
 
-  scopetype = hb_itemPutNI(NULL, sInfo->nScope);
+  scopetype = hb_itemPutNI(SR_NULLPTR, sInfo->nScope);
   scopeval = hb_itemNew(sInfo->scopeValue);
 
 #ifndef HB_CDP_SUPPORT_OFF
@@ -3344,7 +3344,7 @@ static HB_ERRCODE sqlLock(SQLAREAP thiswa, LPDBLOCKINFO pLockInfo)
 
   if (thiswa->shared)
   {
-    PHB_ITEM pMethod = hb_itemPutNI(NULL, pLockInfo->uiMethod);
+    PHB_ITEM pMethod = hb_itemPutNI(SR_NULLPTR, pLockInfo->uiMethod);
 
     switch (pLockInfo->uiMethod)
     {

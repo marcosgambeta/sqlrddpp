@@ -2872,7 +2872,7 @@ static HB_ERRCODE sqlExOraSeek(SQLEXORAAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM
     {
       HB_SIZE nLen = hb_itemGetCLen(pKey);
       char *pszVal = hb_cdpnDup(hb_itemGetCPtr(pKey), &nLen, cdpSrc, thiswa->sqlarea.area.cdPage);
-      pKey = pNewKey = hb_itemPutCLPtr(NULL, pszVal, nLen);
+      pKey = pNewKey = hb_itemPutCLPtr(SR_NULLPTR, pszVal, nLen);
     }
   }
 #endif
@@ -4771,7 +4771,7 @@ static int sqlKeyCompareEx(SQLEXORAAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   }
   else if (HB_IS_NUMBER(pKey))
   {
-    PHB_ITEM pLen = hb_itemPutNL(NULL, (HB_LONG)len1);
+    PHB_ITEM pLen = hb_itemPutNL(SR_NULLPTR, (HB_LONG)len1);
     val2 = valbuf = hb_itemStr(pKey, pLen, NULL);
     len2 = (HB_SIZE)strlen(val2);
     hb_itemRelease(pLen);
