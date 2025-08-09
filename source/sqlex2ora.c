@@ -44,6 +44,7 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#include "sqlrddpp.h"
 #include "compat.h"
 #include <hbinit.h>
 #include "msg.ch"
@@ -139,7 +140,7 @@ static void ResolveSpecialCols(SQLEXORAAREAP thiswa)
   if (!thiswa->pIndexMgmnt)
   {
     hb_objSendMsg(thiswa->sqlarea.oWorkArea, "AINDEXMGMNT", 0);
-    thiswa->pIndexMgmnt = hb_itemNew(NULL);
+    thiswa->pIndexMgmnt = hb_itemNew(SR_NULLPTR);
     hb_itemMove(thiswa->pIndexMgmnt, hb_stackReturnItem());
   }
 
@@ -552,7 +553,7 @@ HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
           if (InsertRecord->isMultiLang && HB_IS_STRING(pFieldData))
           {
             // Transform multilang field in HASH
-            PHB_ITEM pLangItem = hb_itemNew(NULL);
+            PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
             pTemp = hb_hashNew(NULL);
             hb_hashAdd(pTemp, sr_getBaseLang(pLangItem), pFieldData);
             hb_itemRelease(pLangItem);
@@ -983,7 +984,7 @@ HB_ERRCODE ExecuteUpdateStmtOra(SQLEXORAAREAP thiswa)
 
   // Update Buffer Pool if needed
 
-  pKey = hb_itemNew(NULL);
+  pKey = hb_itemNew(SR_NULLPTR);
   hb_itemPutNLL(pKey, thiswa->recordList[thiswa->recordListPos]);
 
   if (hb_hashScan(thiswa->hBufferPool, pKey, &lPos))

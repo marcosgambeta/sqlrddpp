@@ -48,6 +48,7 @@
 #pragma warning(disable : 4201)
 #endif
 
+#include "sqlrddpp.h"
 #include "compat.h"
 #include <hbinit.h>
 #include "msg.ch"
@@ -139,7 +140,7 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
   if (!thiswa->pIndexMgmnt)
   {
     hb_objSendMsg(thiswa->oWorkArea, "AINDEXMGMNT", 0);
-    thiswa->pIndexMgmnt = hb_itemNew(NULL);
+    thiswa->pIndexMgmnt = hb_itemNew(SR_NULLPTR);
     hb_itemMove(thiswa->pIndexMgmnt, hb_stackReturnItem());
   }
   iOldArea = hb_rddGetCurrentWorkAreaNumber();
@@ -579,7 +580,7 @@ HB_ERRCODE FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
           if (InsertRecord->isMultiLang && HB_IS_STRING(pFieldData))
           {
             // Transform multilang field in HASH
-            PHB_ITEM pLangItem = hb_itemNew(NULL);
+            PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
             pTemp = hb_hashNew(NULL);
             hb_hashAdd(pTemp, sr_getBaseLang(pLangItem), pFieldData);
             hb_itemRelease(pLangItem);
@@ -944,7 +945,7 @@ HB_ERRCODE ExecuteUpdateStmt(SQLEXAREAP thiswa)
 
   // Update Buffer Pool if needed
 
-  pKey = hb_itemNew(NULL);
+  pKey = hb_itemNew(SR_NULLPTR);
   hb_itemPutNL(pKey, thiswa->recordList[thiswa->recordListPos]);
 
   if (hb_hashScan(thiswa->hBufferPool, pKey, &lPos))

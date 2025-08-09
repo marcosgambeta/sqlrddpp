@@ -47,6 +47,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 
+#include "sqlrddpp.h"
 #include "compat.h"
 #include "hbsql.h"
 
@@ -247,7 +248,7 @@ PHB_ITEM SQLpCodeGenIntArray(int code, PHB_ITEM pArray)
 {
   PHB_ITEM pItem;
 
-  pItem = hb_itemNew(NULL);
+  pItem = hb_itemNew(SR_NULLPTR);
   hb_arrayAdd(pArray, pItem);
   hb_arrayIns(pArray, 1);
   hb_itemPutNILen(pItem, code, 6);

@@ -59,6 +59,7 @@
 
 // #define DEBUG_XGRAB
 
+#include "sqlrddpp.h"
 #include "compat.h"
 #include <hbinit.h>
 #include "msg.ch"
@@ -192,7 +193,7 @@ static void sqlGetCleanBuffer(SQLEXAREAP thiswa)
   HB_SIZE nPos, nLen;
   PHB_ITEM pCol;
 
-  pCol = hb_itemNew(NULL);
+  pCol = hb_itemNew(SR_NULLPTR);
   for (nPos = 1, nLen = hb_arrayLen(thiswa->aEmptyBuff); nPos <= nLen; nPos++)
   {
     hb_arrayGet(thiswa->aEmptyBuff, nPos, pCol);
@@ -1018,7 +1019,7 @@ static void FeedCurrentRecordToBindings(SQLEXAREAP thiswa)
       }
       else
       {
-        pFieldData = hb_itemNew(NULL);
+        pFieldData = hb_itemNew(SR_NULLPTR);
         newFieldData = HB_TRUE;
       }
 
@@ -1434,7 +1435,7 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
 
         if (BindStructure->lFieldPosDB == (HB_LONG)(thiswa->ulhRecno))
         {
-          pTemp = hb_itemNew(NULL);
+          pTemp = hb_itemNew(SR_NULLPTR);
           hb_itemPutNL(pTemp, thiswa->recordList[thiswa->recordListPos]);
           pFieldData = pTemp;
         }
@@ -1442,7 +1443,7 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
         {
           if (!pFieldData)
           {
-            pTemp = hb_itemNew(NULL);
+            pTemp = hb_itemNew(SR_NULLPTR);
             pFieldData = pTemp;
           }
           getMissingColumn(thiswa, pFieldData, BindStructure->lFieldPosDB);
@@ -1989,7 +1990,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
 
   // First, try to look for record in current buffer pool
 
-  pKey = hb_itemNew(NULL);
+  pKey = hb_itemNew(SR_NULLPTR);
   hb_itemPutNL(pKey, thiswa->recordList[thiswa->recordListPos]);
 
   if (!bUpdateDeleted)
@@ -2159,7 +2160,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
     }
 
     // Create a line array to hold the record
-    aRecord = hb_itemNew(NULL);
+    aRecord = hb_itemNew(SR_NULLPTR);
     hb_arrayNew(aRecord, hb_arrayLen(thiswa->aBuffer));
 
     for (i = 1; i <= thiswa->area.uiFieldCount; i++)
@@ -2173,7 +2174,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
       // iReallocs = 0;
       // temp.type = HB_IT_NIL; // I know this is not a good practice, but we save tons of allocs.
       // please keep as is. ML.
-      temp = hb_itemNew(NULL);
+      temp = hb_itemNew(SR_NULLPTR);
 
       if ((thiswa->uiFieldList[i - 1] == 0) && thiswa->iColumnListStatus != FIELD_LIST_LEARNING)
       {
@@ -2821,7 +2822,7 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
     PHB_ITEM temp;
     // HB_ITEM temp;
     int iComp;
-    PHB_ITEM aRecord = hb_itemNew(NULL);
+    PHB_ITEM aRecord = hb_itemNew(SR_NULLPTR);
 
     hb_arrayNew(aRecord, hb_arrayLen(thiswa->aBuffer));
 
@@ -2839,7 +2840,7 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
       // lLenOut = 0;
       // iReallocs = 0;
 
-      temp = hb_itemNew(NULL);
+      temp = hb_itemNew(SR_NULLPTR);
       // temp.type = HB_IT_NIL; // I know this is not a good practice, but we save tons of allocs.
       // please keep as is. ML.
 
@@ -3415,12 +3416,12 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
       hb_vmPushString(bBuffer, lLenBuff);
       hb_vmDo(1);
 
-      pTemp = hb_itemNew(NULL);
+      pTemp = hb_itemNew(SR_NULLPTR);
       hb_itemMove(pTemp, hb_stackReturnItem());
 
       if (HB_IS_HASH(pTemp) && sr_isMultilang())
       {
-        PHB_ITEM pLangItem = hb_itemNew(NULL);
+        PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
         // HB_SIZE ulPos; declared at beginning
         if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
             hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
@@ -3453,7 +3454,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
 
     if (pField->uiType == HB_FT_MEMO)
     {
-      PHB_ITEM pLangItem = hb_itemNew(NULL);
+      PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
 
       if (hb_hashScan(itemTemp, sr_getBaseLang(pLangItem), &ulPos) ||
           hb_hashScan(itemTemp, sr_getSecondLang(pLangItem), &ulPos) ||
@@ -3470,7 +3471,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
     }
     else
     {
-      PHB_ITEM pLangItem = hb_itemNew(NULL);
+      PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
       HB_SIZE nLen = pField->uiLen, nSrcLen;
       char *empty = (char *)hb_xgrab(nLen + 1);
 
@@ -3688,7 +3689,7 @@ static HB_ERRCODE sqlExPutValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
   }
   else if (HB_IS_STRING(value) && HB_IS_HASH(pDest) && sr_isMultilang())
   {
-    PHB_ITEM pLangItem = hb_itemNew(NULL);
+    PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
     hb_hashAdd(pDest, sr_getBaseLang(pLangItem), value);
     hb_itemRelease(pLangItem);
   }

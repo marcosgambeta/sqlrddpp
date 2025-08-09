@@ -60,6 +60,7 @@
 // Original MXML lib can be obtained requesting it at
 // Giancarlo Niccolai <giancarlo@niccolai.org>
 
+#include "sqlrddpp.h"
 #include <hbapi.h>
 #include <hbapierr.h>
 #include <hbapiitm.h>
@@ -496,7 +497,7 @@ static void mxml_node_unlink(PHB_ITEM pNode)
 {
   PHB_ITEM pPrev, pNext, pParent, pNil;
 
-  pNil = hb_itemNew(NULL);
+  pNil = hb_itemNew(SR_NULLPTR);
 
   hb_objSendMsg(pNode, "OPREV", 0);
   pPrev = hb_itemNew(hb_param(-1, HB_IT_ANY));
@@ -992,8 +993,8 @@ static MXML_STATUS mxml_node_read_attributes(MXML_REFIL *ref, PHB_ITEM pNode, PH
   PHB_ITEM hbValue;
   MXML_STATUS ret;
 
-  hbName = hb_itemNew(NULL);
-  hbValue = hb_itemNew(NULL);
+  hbName = hb_itemNew(SR_NULLPTR);
+  hbValue = hb_itemNew(SR_NULLPTR);
   attributes = hb_hashNew(NULL);
 
   hbAttr.pName = hbName;
@@ -1764,8 +1765,8 @@ static MXML_STATUS mxml_node_write(MXML_OUTPUT *out, PHB_ITEM pNode, int style)
   PHB_ITEM pChild, pItem;
   int depth = 0;
 
-  pChild = hb_itemNew(NULL);
-  pItem = hb_itemNew(NULL);
+  pChild = hb_itemNew(SR_NULLPTR);
+  pItem = hb_itemNew(SR_NULLPTR);
 
   if (style & MXML_STYLE_NONEWLINE)
   {

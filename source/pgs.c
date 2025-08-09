@@ -44,6 +44,7 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#include "sqlrddpp.h"
 #include "compat.h"
 
 #include "libpq-fe.h"
@@ -311,9 +312,9 @@ HB_FUNC(PGSQUERYATTR) // PGSQueryAttr(ResultSet) => aStruct
   }
 
   rows = PQnfields(session->stmt);
-  ret = hb_itemNew(NULL);
-  temp = hb_itemNew(NULL);
-  atemp = hb_itemNew(NULL);
+  ret = hb_itemNew(SR_NULLPTR);
+  temp = hb_itemNew(SR_NULLPTR);
+  atemp = hb_itemNew(SR_NULLPTR);
 
   hb_arrayNew(ret, rows);
 
@@ -519,9 +520,9 @@ HB_FUNC(PGSTABLEATTR) // PGSTableAttr(ConnHandle, cTableName) => aStruct
   }
 
   rows = PQntuples(stmtTemp);
-  ret = hb_itemNew(NULL);
-  atemp = hb_itemNew(NULL);
-  temp = hb_itemNew(NULL);
+  ret = hb_itemNew(SR_NULLPTR);
+  atemp = hb_itemNew(SR_NULLPTR);
+  temp = hb_itemNew(SR_NULLPTR);
 
   hb_arrayNew(ret, rows);
 
@@ -802,7 +803,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
         hb_vmPushDynSym(s_pSym_SR_FROMJSON);
         hb_vmPushNil();
         hb_vmPushString(bBuffer, lLenBuff);
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_vmPush(pTemp);
         hb_vmDo(2);
         // TOFIX:
@@ -825,12 +826,12 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
 
         hb_vmDo(1);
 
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_itemMove(pTemp, hb_stackReturnItem());
 
         if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate)
         {
-          PHB_ITEM pLangItem = hb_itemNew(NULL);
+          PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
               hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
@@ -872,7 +873,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
       hb_vmPushString(bBuffer, lLenBuff);
       hb_vmDo(4);
 
-      pTemp = hb_itemNew(NULL);
+      pTemp = hb_itemNew(SR_NULLPTR);
       hb_itemMove(pTemp, hb_stackReturnItem());
 
       hb_itemMove(pItem, pTemp);
@@ -935,7 +936,7 @@ HB_FUNC(PGSLINEPROCESSED)
 
     for (i = 0; i < cols; i++)
     {
-      temp = hb_itemNew(NULL);
+      temp = hb_itemNew(SR_NULLPTR);
       lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i + 1), FIELD_ENUM);
 
       if (lIndex != 0)

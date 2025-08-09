@@ -43,6 +43,7 @@
 #pragma warning(disable : 4201)
 #endif
 
+#include "sqlrddpp.h"
 #include "compat.h"
 #include "sqlrddsetup.ch"
 #include "sqlprototypes.h"
@@ -551,7 +552,7 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBu
         hb_vmPushDynSym(s_pSym_SR_FROMJSON);
         hb_vmPushNil();
         hb_vmPushString(bBuffer, lLenBuff);
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_vmPush(pTemp);
         hb_vmDo(2);
         // TOFIX:
@@ -573,12 +574,12 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBu
         hb_vmPushString(bBuffer, lLenBuff);
         hb_vmDo(1);
 
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_itemMove(pTemp, hb_stackReturnItem());
 
         if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate)
         {
-          PHB_ITEM pLangItem = hb_itemNew(NULL);
+          PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
               hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
@@ -674,7 +675,7 @@ HB_FUNC(SR_ODBCLINEPROCESSED)
 
   for (i = 1; i <= cols; i++)
   {
-    temp = hb_itemNew(NULL);
+    temp = hb_itemNew(SR_NULLPTR);
     lIndex = (HB_USHORT)hb_arrayGetNI(hb_arrayGetItemPtr(pFields, i), FIELD_ENUM);
 
     if (lIndex == 0)
@@ -799,7 +800,7 @@ HB_FUNC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTra
       lInitBuff = lLen;
       lLenOut = 0;
       iReallocs = 0;
-      temp = hb_itemNew(NULL);
+      temp = hb_itemNew(SR_NULLPTR);
       lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i), FIELD_ENUM);
       lIndex = lIndex ? lIndex : i;
 
@@ -918,7 +919,7 @@ void odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql, SQ
 
   if (szSql)
   {
-    pArg = hb_itemNew(NULL);
+    pArg = hb_itemNew(SR_NULLPTR);
     hb_itemPutC(pArg, szSql);
     if (hb_itemGetCLen(pArg))
     {

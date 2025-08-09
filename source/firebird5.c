@@ -48,6 +48,7 @@
 #define _INTPTR_T_DEFINED
 #endif
 
+#include "sqlrddpp.h"
 #include "compat.h"
 
 #include "sqlrddsetup.ch"
@@ -1224,7 +1225,7 @@ static void FBFieldGet5(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
         hb_vmPushDynSym(s_pSym_SR_FROMJSON);
         hb_vmPushNil();
         hb_vmPushString(bBuffer, lLenBuff);
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_vmPush(pTemp);
         hb_vmDo(2);
         // TOFIX: What this code should do ???
@@ -1248,12 +1249,12 @@ static void FBFieldGet5(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
         hb_vmPushString(bBuffer, lLenBuff);
         hb_vmDo(1);
 
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_itemMove(pTemp, hb_stackReturnItem());
 
         if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate)
         {
-          PHB_ITEM pLangItem = hb_itemNew(NULL);
+          PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
               hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
@@ -1346,7 +1347,7 @@ HB_FUNC(FBLINEPROCESSED5)
     for (icol = 1; icol <= cols; icol++)
     {
       // HB_LONG lType;
-      temp = hb_itemNew(NULL);
+      temp = hb_itemNew(SR_NULLPTR);
       var = session->sqlda->sqlvar;
       lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), FIELD_ENUM);
       // lType = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 6);

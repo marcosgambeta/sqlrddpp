@@ -44,6 +44,8 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#include "sqlrddpp.h"
+
 #define SQLORA2
 #include "sqlorastru.h"
 
@@ -848,7 +850,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
         hb_vmPushDynSym(s_pSym_SR_FROMJSON);
         hb_vmPushNil();
         hb_vmPushString(bBuffer, lLenBuff);
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_vmPush(pTemp);
         hb_vmDo(2);
         // TOFIX:
@@ -870,12 +872,12 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
         hb_vmPushString(bBuffer, lLenBuff);
         hb_vmDo(1);
 
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_itemMove(pTemp, hb_stackReturnItem());
 
         if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate)
         {
-          PHB_ITEM pLangItem = hb_itemNew(NULL);
+          PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
               hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
@@ -940,7 +942,7 @@ HB_FUNC(SQLO2_LINE)
   HB_USHORT i;
   SQLO2_stmt_handle_t stmtParamRes;
 
-  ret = hb_itemNew(NULL);
+  ret = hb_itemNew(SR_NULLPTR);
 
   if (session)
   {
@@ -951,7 +953,7 @@ HB_FUNC(SQLO2_LINE)
 
     for (i = 0; i < session->numcols; i++)
     {
-      temp = hb_itemNew(NULL);
+      temp = hb_itemNew(SR_NULLPTR);
       hb_arraySetForward(ret, i + 1, hb_itemPutCL(temp, (char *)line[i], lens[i]));
       hb_itemRelease(temp);
     }
@@ -986,7 +988,7 @@ HB_FUNC(SQLO2_LINEPROCESSED)
     for (i = 0; i < cols; i++)
     {
       lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i + 1), FIELD_ENUM);
-      temp = hb_itemNew(NULL);
+      temp = hb_itemNew(SR_NULLPTR);
 
       if (lIndex != 0)
       {

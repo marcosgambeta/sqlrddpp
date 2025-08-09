@@ -53,6 +53,7 @@
 #include <windows.h>
 #endif
 
+#include "sqlrddpp.h"
 #include "compat.h"
 
 #include "sqlrddsetup.ch"
@@ -346,7 +347,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBu
         hb_vmPushDynSym(s_pSym_SR_FROMJSON);
         hb_vmPushNil();
         hb_vmPushString(bBuffer, lLenBuff);
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_vmPush(pTemp);
         hb_vmDo(2);
         hb_itemMove(pItem, pTemp);
@@ -367,12 +368,12 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBu
         hb_vmPushString(bBuffer, lLenBuff);
         hb_vmDo(1);
 
-        pTemp = hb_itemNew(NULL);
+        pTemp = hb_itemNew(SR_NULLPTR);
         hb_itemMove(pTemp, hb_stackReturnItem());
 
         if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate)
         {
-          PHB_ITEM pLangItem = hb_itemNew(NULL);
+          PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
               hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
@@ -463,7 +464,7 @@ HB_FUNC(MYSLINEPROCESSED)
 
       for (col = 0; col < cols; col++)
       {
-        temp = hb_itemNew(NULL);
+        temp = hb_itemNew(SR_NULLPTR);
         lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, col + 1), FIELD_ENUM);
 
         if (lIndex != 0)
@@ -637,9 +638,9 @@ HB_FUNC(MYSQUERYATTR)
   assert(session->stmt != NULL);
 
   rows = session->numcols;
-  ret = hb_itemNew(NULL);
-  temp = hb_itemNew(NULL);
-  atemp = hb_itemNew(NULL);
+  ret = hb_itemNew(SR_NULLPTR);
+  temp = hb_itemNew(SR_NULLPTR);
+  atemp = hb_itemNew(SR_NULLPTR);
 
   hb_arrayNew(ret, rows);
 
@@ -775,9 +776,9 @@ HB_FUNC(MYSTABLEATTR)
     TraceLog(LOGFILE, "Query error : %i - %s\n", mysql_errno(session->dbh), mysql_error(session->dbh));
   }
 
-  ret = hb_itemNew(NULL);
-  temp = hb_itemNew(NULL);
-  atemp = hb_itemNew(NULL);
+  ret = hb_itemNew(SR_NULLPTR);
+  temp = hb_itemNew(SR_NULLPTR);
+  atemp = hb_itemNew(SR_NULLPTR);
 
   rows = mysql_num_fields(session->stmt);
   hb_arrayNew(ret, rows);
