@@ -154,7 +154,7 @@ HB_FUNC(SQLO2_CONNECT)
   // memset(session, 0, sizeof(OCI_ORASESSION));
   if (!OCI_initilized)
   {
-    if (!OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT | OCI_ENV_CONTEXT | OCI_ENV_THREADED))
+    if (!OCI_Initialize(SR_NULLPTR, SR_NULLPTR, OCI_ENV_DEFAULT | OCI_ENV_CONTEXT | OCI_ENV_THREADED))
     { // OCI_ENV_CONTEXT))
       session->iStatus = SQLO2_ERROR;
     }

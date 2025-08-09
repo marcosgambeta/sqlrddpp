@@ -985,7 +985,7 @@ static inline int DEFUN(_mutex_init, (mutex), sqlo_mutex_t *mutex)
 #else
 #ifdef ENABLE_WINTHREADS
 
-  if ((*mutex = CreateMutex(NULL, FALSE, NULL)) != NULL)
+  if ((*mutex = CreateMutex(SR_NULLPTR, FALSE, SR_NULLPTR)) != NULL)
   {
     status = SQLO_SUCCESS;
   }
@@ -1117,7 +1117,7 @@ static inline int DEFUN_VOID(_init_init_mux)
 #else
 #ifdef ENABLE_WINTHREADS
 
-  if ((_init_mux = CreateMutex(NULL, FALSE, NULL)) != NULL)
+  if ((_init_mux = CreateMutex(SR_NULLPTR, FALSE, SR_NULLPTR)) != NULL)
   {
     status = SQLO_SUCCESS;
   }

@@ -164,10 +164,10 @@ HB_FUNC(SR_INSTALLDSN)
     }
 
     // remove the DSN if it already existed
-    SQLConfigDataSource(NULL, ODBC_REMOVE_SYS_DSN, szDriver, szAttributes);
+    SQLConfigDataSource(SR_NULLPTR, ODBC_REMOVE_SYS_DSN, szDriver, szAttributes);
 
     // create a new DSN
-    hb_retl(SQLConfigDataSource(NULL, ODBC_ADD_SYS_DSN, szDriver, szAttributes));
+    hb_retl(SQLConfigDataSource(SR_NULLPTR, ODBC_ADD_SYS_DSN, szDriver, szAttributes));
 
     hb_xfree((void *)szAttributes);
   }
@@ -197,7 +197,7 @@ HB_FUNC(SR_UNINSTALLDSN)
     }
 
     // remove the DSN if it already existed
-    SQLConfigDataSource(NULL, ODBC_REMOVE_SYS_DSN, szDriver, szAttributes);
+    SQLConfigDataSource(SR_NULLPTR, ODBC_REMOVE_SYS_DSN, szDriver, szAttributes);
 
     hb_xfree((void *)szAttributes);
   }
