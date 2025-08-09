@@ -269,7 +269,7 @@ HB_FUNC(SR_STRTOHEX)
 
   if (!HB_ISCHAR(1))
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 3012, NULL, "SR_STRTOHEX", 1, hb_param(1, HB_IT_ANY));
+    hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_STRTOHEX", 1, hb_param(1, HB_IT_ANY));
     return;
   }
 
@@ -388,7 +388,7 @@ HB_FUNC(SR_HEXTOSTR)
 
   if (!HB_ISCHAR(1))
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 3012, NULL, "SR_HEXTOSTR", 1, hb_param(1, HB_IT_ANY));
+    hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_HEXTOSTR", 1, hb_param(1, HB_IT_ANY));
     return;
   }
 
@@ -568,7 +568,7 @@ HB_FUNC(SR_ESCAPESTRING)
 
   if (!(HB_ISCHAR(1) && HB_ISNUM(2)))
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 3012, NULL, "SR_ESCAPESTRING", 2, hb_param(1, HB_IT_ANY), hb_param(2, HB_IT_ANY));
+    hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_ESCAPESTRING", 2, hb_param(1, HB_IT_ANY), hb_param(2, HB_IT_ANY));
     return;
   }
 
@@ -692,7 +692,7 @@ HB_FUNC(SR_ESCAPENUM)
 
   if (!(HB_ISCHAR(1) && HB_ISNUM(2) && HB_ISNUM(3)))
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 3012, NULL, "SR_ESCAPENUM", 3, hb_param(1, HB_IT_ANY), hb_param(2, HB_IT_ANY),
+    hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_ESCAPENUM", 3, hb_param(1, HB_IT_ANY), hb_param(2, HB_IT_ANY),
                          hb_param(3, HB_IT_ANY));
     return;
   }
@@ -1028,7 +1028,7 @@ HB_FUNC(SR_DBQUALIFY)
   }
   else
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 1102, NULL, "SR_DBQUALIFY", 1, hb_paramError(1));
+    hb_errRT_BASE_SubstR(EG_ARG, 1102, SR_NULLPTR, "SR_DBQUALIFY", 1, hb_paramError(1));
   }
 }
 

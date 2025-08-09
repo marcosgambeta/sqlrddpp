@@ -651,7 +651,7 @@ HB_FUNC(SR_ODBCLINEPROCESSED)
 
   if (!pFields)
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, NULL, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 
@@ -659,7 +659,7 @@ HB_FUNC(SR_ODBCLINEPROCESSED)
 
   if (cols <= 0)
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, NULL, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 
@@ -667,7 +667,7 @@ HB_FUNC(SR_ODBCLINEPROCESSED)
 
   if (lLen <= 0)
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, NULL, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 
@@ -725,7 +725,7 @@ HB_FUNC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTra
 
   if (!pFields)
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, NULL, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 
@@ -733,7 +733,7 @@ HB_FUNC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTra
 
   if (cols <= 0)
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, NULL, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 
@@ -741,7 +741,7 @@ HB_FUNC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTra
 
   if (lLen <= 0)
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, NULL, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 

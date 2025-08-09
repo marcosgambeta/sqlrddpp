@@ -49,6 +49,8 @@
 #include <hbapiitm.h>
 #include <hbapierr.h>
 
+#include "sqlrddpp.h"
+
 // NOTE: for internal usage - do not use in user code
 
 HB_FUNC(_SR_THROW)
@@ -65,6 +67,6 @@ HB_FUNC(_SR_THROW)
   }
   else
   {
-    hb_errRT_BASE(EG_ARG, 9101, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS);
+    hb_errRT_BASE(EG_ARG, 9101, SR_NULLPTR, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS);
   }
 }
