@@ -51,7 +51,7 @@
 #include "sqlrdd.ch"
 #include "fileio.ch"
 #include "msg.ch"
-#include "error.ch"
+#include <error.ch>
 #include "sqlrddsetup.ch"
 
 #define SR_CRLF   (Chr(13) + Chr(10))

@@ -49,7 +49,7 @@
 #include <common.ch>
 #include "sqlora.ch"
 #include "sqlrdd.ch"
-#include "error.ch"
+#include <error.ch>
 #include "msg.ch"
 #include "sqlrddsetup.ch"
 

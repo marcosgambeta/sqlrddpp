@@ -45,7 +45,7 @@
 // $END_LICENSE$
 
 #include <common.ch>
-#include "error.ch"
+#include <error.ch>
 #include "rddsys.ch"
 #include <hbclass.ch>
 // #include "compat.ch"

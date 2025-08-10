@@ -45,7 +45,7 @@
 // $END_LICENSE$
 
 // #include "compat.ch"
-#include "error.ch"
+#include <error.ch>
 #include "sqlrdd.ch"
 #include "msg.ch"
 #include "hbsql.ch"

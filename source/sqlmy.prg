@@ -50,7 +50,7 @@
 // #include "compat.ch"
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"
-#include "error.ch"
+#include <error.ch>
 #include "msg.ch"
 #include "mysql.ch"
 #include "sqlrddsetup.ch"
