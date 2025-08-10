@@ -365,11 +365,16 @@ HB_FUNC(PGSQUERYATTR) // PGSQueryAttr(ResultSet) => aStruct
       
       int fieldLen = 0;
       if (typmod >= 4)
+      {
         fieldLen = typmod - 4;
-      else {
+      }
+      else
+      {
         fieldLen = (int)PQfsize(session->stmt, row);
         if (fieldLen <= 0)
+        {
           fieldLen = 254;
+        }
       }
 
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, fieldLen));
