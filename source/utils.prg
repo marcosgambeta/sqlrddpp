@@ -49,7 +49,7 @@
 // #include "compat.ch"
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"
-#include "fileio.ch"
+#include <fileio.ch>
 #include "msg.ch"
 #include <error.ch>
 #include "sqlrddsetup.ch"

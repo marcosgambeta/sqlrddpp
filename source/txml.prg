@@ -46,7 +46,7 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-#include "fileio.ch"
+#include <fileio.ch>
 #include "srxml.ch"
 #include <hbclass.ch>
 
