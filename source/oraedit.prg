@@ -90,7 +90,7 @@ STATIC s_TRACE_STRUCT := { ;
 //                      Mauricio
 
 #include "dbedit.ch"
-#include "inkey.ch"
+#include <inkey.ch>
 #include "setcurs.ch"
 #include "hbsetup.ch"
 #include "common.ch"
