@@ -214,7 +214,9 @@ HB_FUNC(FBCONNECT) // FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
   {
     fb_log_status(session, "FBCONNECT");
     if (session->msgerror)
+    {
       hb_xfree(session->msgerror);
+    }  
 
     hb_xfree(session->sqlda);
     hb_xfree(session);
@@ -260,7 +262,9 @@ HB_FUNC(FBCLOSE) // FBClose(hEnv)
       }
     }
     if (session->msgerror)
+    {
       hb_xfree(session->msgerror);
+    }  
 
     hb_xfree(session->sqlda);
     hb_xfree(session);
