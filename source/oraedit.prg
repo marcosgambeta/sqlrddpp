@@ -93,7 +93,7 @@ STATIC s_TRACE_STRUCT := { ;
 #include <inkey.ch>
 #include "setcurs.ch"
 #include "hbsetup.ch"
-#include "common.ch"
+#include <common.ch>
 #include "tbrowse.ch"
 
 // E.F. 2006/04/22 - The #define DE_APPEND is for Append mode in dbEdit.

@@ -45,7 +45,7 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-#include "common.ch"
+#include <common.ch>
 #include <hbclass.ch>
 #include "sqlrdd.ch"
 #include "sqlodbc.ch"

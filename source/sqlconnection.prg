@@ -48,7 +48,7 @@
 // $END_LICENSE$
 
 #include <hbclass.ch>
-#include "common.ch"
+#include <common.ch>
 // #include "compat.ch"
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"

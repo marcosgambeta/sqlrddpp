@@ -43,7 +43,7 @@ REQUEST ADS
 
 #include "sqlrdd.ch"
 #include "sqlodbc.ch"
-#include "common.ch"
+#include <common.ch>
 #include <hbclass.ch>
 #include "ads.ch"
 

@@ -46,7 +46,7 @@
 
 // #include "compat.ch"
 #include <hbclass.ch>
-#include "common.ch"
+#include <common.ch>
 #include "msg.ch"
 
 STATIC s_nMessages := 32
