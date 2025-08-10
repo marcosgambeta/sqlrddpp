@@ -196,14 +196,14 @@ HB_ERRCODE prepareSeekQueryOra(SQLEXORAAREAP thiswa, INDEXBINDORAP SeekBind)
 
   if (thiswa->recordListDirection == LIST_FORWARD)
   {
-    if (SeekBind->SeekFwdStmt == NULL)
+    if (SeekBind->SeekFwdStmt == SR_NULLPTR)
     {
       return HB_FAILURE;
     }
   }
   else
   {
-    if (SeekBind->SeekBwdStmt == NULL)
+    if (SeekBind->SeekBwdStmt == SR_NULLPTR)
     {
       return HB_FAILURE;
     }
@@ -707,7 +707,7 @@ HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, HB_USHORT *i
   }
 
   *rs = OCI_GetResultset(*hStmt);
-  if (*rs == NULL)
+  if (*rs == SR_NULLPTR)
   {
     return HB_FAILURE;
   }
@@ -725,7 +725,7 @@ HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, HB_USHORT *i
     char szValue[2];
     unsigned int uiLen;
 
-    if (OCI_GetString(*rs, 2) == NULL)
+    if (OCI_GetString(*rs, 2) == SR_NULLPTR)
     {
       // OCI_StatementFree(*hStmt);
       return HB_FAILURE;

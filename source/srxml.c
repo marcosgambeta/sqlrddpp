@@ -478,7 +478,7 @@ static PHB_ITEM mxml_node_new(PHB_ITEM pDoc)
   pNode = hb_itemNew(hb_param(-1, HB_IT_ANY));
 
   // Sets also current node line begin value, if the node is from a document
-  if (pDoc != NULL)
+  if (pDoc != SR_NULLPTR)
   {
     hb_objSendMsg(pDoc, "NLINE", 0);
     hb_objSendMsg(pNode, "_NBEGINLINE", 1, hb_param(-1, HB_IT_ANY));
@@ -1640,7 +1640,7 @@ static MXML_STATUS mxml_node_read(MXML_REFIL *ref, PHB_ITEM pNode, PHB_ITEM doc,
     }
 
     // have I to add a node below our structure ?
-    if (node != NULL)
+    if (node != SR_NULLPTR)
     {
       if (ref->status == MXML_STATUS_OK)
       {
@@ -1691,7 +1691,7 @@ static MXML_STATUS mxml_node_read(MXML_REFIL *ref, PHB_ITEM pNode, PHB_ITEM doc,
       if (hb_parni(-1) == MXML_TYPE_DATA)
       {
         // first data node ?
-        if (data_node == NULL)
+        if (data_node == SR_NULLPTR)
         {
           data_node = hb_itemNew(child_node);
         }
@@ -1979,9 +1979,9 @@ static MXML_OUTPUT * mxml_output_new(MXML_OUTPUT_FUNC func, int node_count)
 {
   MXML_OUTPUT *ret = (MXML_OUTPUT *)MXML_ALLOCATOR(sizeof(MXML_OUTPUT));
 
-  if (ret == NULL)
+  if (ret == SR_NULLPTR)
   {
-    return NULL;
+    return SR_NULLPTR;
   }
 
   if (mxml_output_setup(ret, func, node_count) == MXML_STATUS_OK)
@@ -1990,7 +1990,7 @@ static MXML_OUTPUT * mxml_output_new(MXML_OUTPUT_FUNC func, int node_count)
   }
 
   MXML_DELETOR(ret);
-  return NULL;
+  return SR_NULLPTR;
 }
 #endif
 
@@ -1999,7 +1999,7 @@ static MXML_OUTPUT * mxml_output_new(MXML_OUTPUT_FUNC func, int node_count)
 // Node count is optional, but highly wanted for progress indicators.
 static MXML_STATUS mxml_output_setup(MXML_OUTPUT *out, MXML_OUTPUT_FUNC func, int node_count)
 {
-  if (func == NULL)
+  if (func == SR_NULLPTR)
   {
     return MXML_STATUS_ERROR;
   }
@@ -2136,9 +2136,9 @@ static MXML_REFIL * mxml_refil_new(MXML_REFIL_FUNC func, char *buf, HB_ISIZ bufl
 {
   MXML_REFIL *ret = (MXML_REFIL *)MXML_ALLOCATOR(sizeof(MXML_REFIL));
 
-  if (ret == NULL)
+  if (ret == SR_NULLPTR)
   {
-    return NULL;
+    return SR_NULLPTR;
   }
 
   if (mxml_refil_setup(ret, func, buf, buflen, bufsize) == MXML_STATUS_OK)
@@ -2147,7 +2147,7 @@ static MXML_REFIL * mxml_refil_new(MXML_REFIL_FUNC func, char *buf, HB_ISIZ bufl
   }
 
   MXML_DELETOR(ret);
-  return NULL;
+  return SR_NULLPTR;
 }
 #endif
 
@@ -2163,7 +2163,7 @@ static MXML_REFIL * mxml_refil_new(MXML_REFIL_FUNC func, char *buf, HB_ISIZ bufl
 // calling program, if this is needed.
 static MXML_STATUS mxml_refil_setup(MXML_REFIL *ref, MXML_REFIL_FUNC func, char *buf, HB_ISIZ buflen, HB_ISIZ bufsize)
 {
-  if (buf == NULL && func == NULL)
+  if (buf == SR_NULLPTR && func == SR_NULLPTR)
   {
     return MXML_STATUS_ERROR;
   }
@@ -2174,7 +2174,7 @@ static MXML_STATUS mxml_refil_setup(MXML_REFIL *ref, MXML_REFIL_FUNC func, char 
   ref->status = MXML_STATUS_OK;
   ref->error = MXML_ERROR_NONE;
 
-  if (buf == NULL)
+  if (buf == SR_NULLPTR)
   {
     ref->buflen = ref->bufsize = 0;
   }
@@ -2216,7 +2216,7 @@ static int mxml_refil_getc(MXML_REFIL *ref)
 
   if (ref->bufpos >= ref->buflen)
   {
-    if (ref->refil_func != NULL)
+    if (ref->refil_func != SR_NULLPTR)
     {
       ref->refil_func(ref);
       if (ref->status != MXML_STATUS_OK || ref->buflen == 0)
@@ -2268,16 +2268,16 @@ static MXML_SGS *mxml_sgs_new()
 {
   MXML_SGS *ret = (MXML_SGS *)MXML_ALLOCATOR(sizeof(MXML_SGS));
 
-  if (ret == NULL)
+  if (ret == SR_NULLPTR)
   {
-    return NULL;
+    return SR_NULLPTR;
   }
 
   ret->buffer = (char *)MXML_ALLOCATOR(MXML_ALLOC_BLOCK);
-  if (ret->buffer == NULL)
+  if (ret->buffer == SR_NULLPTR)
   {
     MXML_DELETOR(ret);
-    return NULL;
+    return SR_NULLPTR;
   }
 
   ret->allocated = MXML_ALLOC_BLOCK;
@@ -2288,7 +2288,7 @@ static MXML_SGS *mxml_sgs_new()
 
 static void mxml_sgs_destroy(MXML_SGS *sgs)
 {
-  if (sgs->buffer != NULL)
+  if (sgs->buffer != SR_NULLPTR)
   {
     MXML_DELETOR(sgs->buffer);
   }
@@ -2306,7 +2306,7 @@ static MXML_STATUS mxml_sgs_append_char(MXML_SGS *sgs, char c)
   {
     char *buf = (char *)MXML_REALLOCATOR(sgs->buffer, sgs->allocated + MXML_ALLOC_BLOCK);
 
-    if (buf == NULL)
+    if (buf == SR_NULLPTR)
     {
       return MXML_STATUS_ERROR;
     }
@@ -2327,7 +2327,7 @@ static MXML_STATUS mxml_sgs_append_string_len(MXML_SGS *sgs, const char *s, HB_I
       HB_ISIZ blklen = ((sgs->length + slen) / MXML_ALLOC_BLOCK + 1) * MXML_ALLOC_BLOCK;
       char *buf = (char *)MXML_REALLOCATOR(sgs->buffer, blklen);
 
-      if (buf == NULL)
+      if (buf == SR_NULLPTR)
       {
         return MXML_STATUS_ERROR;
       }
@@ -2385,7 +2385,7 @@ static const char *mxml_error_desc(MXML_ERROR_CODE code)
 
   if (iCode < 0 || iCode > (signed)(sizeof(edesc) / sizeof(char *)))
   {
-    return NULL;
+    return SR_NULLPTR;
   }
 
   return edesc[iCode];
@@ -2407,7 +2407,7 @@ HB_FUNC(SRXML_DATAREAD)
   char buffer[512], *buf;
   HB_SIZE nLen;
 
-  if (pDoc == NULL || pParam == NULL || (!HB_IS_STRING(pParam) && !HB_IS_NUMERIC(pParam)))
+  if (pDoc == SR_NULLPTR || pParam == SR_NULLPTR || (!HB_IS_STRING(pParam) && !HB_IS_NUMERIC(pParam)))
   {
     hb_errRT_BASE(EG_ARG, 3012, SR_NULLPTR, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS);
     return;
@@ -2457,13 +2457,13 @@ HB_FUNC(SRXML_NODE_TO_STRING)
   MXML_OUTPUT out;
   int iStyle;
 
-  if (pNode == NULL)
+  if (pNode == SR_NULLPTR)
   {
     hb_errRT_BASE(EG_ARG, 3012, SR_NULLPTR, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS);
     return;
   }
 
-  if (pStyle == NULL)
+  if (pStyle == SR_NULLPTR)
   {
     iStyle = 0;
   }
@@ -2494,13 +2494,13 @@ HB_FUNC(SRXML_NODE_WRITE)
   MXML_OUTPUT out;
   int iStyle, iRet;
 
-  if (pNode == NULL || pHandle == NULL)
+  if (pNode == SR_NULLPTR || pHandle == SR_NULLPTR)
   {
     hb_errRT_BASE(EG_ARG, 3012, SR_NULLPTR, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS);
     return;
   }
 
-  if (pStyle == NULL)
+  if (pStyle == SR_NULLPTR)
   {
     iStyle = 0;
   }

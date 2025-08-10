@@ -78,11 +78,11 @@ void startsqlExOraSymbols()
 {
    HB_THREAD_STUB
 
-   if( s_pSym_SOLVERESTRICTORS == NULL ) {
+   if( s_pSym_SOLVERESTRICTORS == SR_NULLPTR ) {
 
       s_pSym_SOLVERESTRICTORS = hb_dynsymFindName("SOLVERESTRICTORS");
 
-      if( s_pSym_SOLVERESTRICTORS == NULL ) {
+      if( s_pSym_SOLVERESTRICTORS == SR_NULLPTR ) {
          printf("Could not find Symbol %s\n", "SOLVERESTRICTORS");
       }
    }
@@ -392,12 +392,12 @@ static HB_ERRCODE getMissingColumn(SQLEXORAAREAP thiswa, PHB_ITEM pFieldData, HB
 
   pFieldStruct = hb_arrayGetItemPtr(thiswa->aFields, (HB_SIZE)lFieldPosDB);
 
-  if (thiswa->colStmt[lFieldPosDB - 1].pStmt == NULL)
+  if (thiswa->colStmt[lFieldPosDB - 1].pStmt == SR_NULLPTR)
   {
     // res = SQLAllocStmt((HDBC) thiswa->hDbc, &(thiswa->colStmt[lFieldPosDB - 1]));
     thiswa->colStmt[lFieldPosDB - 1].pStmt = OCI_StatementCreate(GetConnection(thiswa->hDbc));
 
-    if (thiswa->colStmt[lFieldPosDB - 1].pStmt == NULL)
+    if (thiswa->colStmt[lFieldPosDB - 1].pStmt == SR_NULLPTR)
     {
       return HB_FAILURE;
     }
@@ -458,7 +458,7 @@ static HB_ERRCODE getMissingColumn(SQLEXORAAREAP thiswa, PHB_ITEM pFieldData, HB
   // if( res != SQL_SUCCESS )
 
   rs = OCI_GetResultset(thiswa->colStmt[lFieldPosDB - 1].pStmt);
-  if (rs == NULL)
+  if (rs == SR_NULLPTR)
   {
     OraErrorDiagRTE(thiswa->colStmt[lFieldPosDB - 1].pStmt, "getMissingColumn/SQLFetch", sSql, res, __LINE__, __FILE__);
     // OCI_StatementFree(thiswa->colStmt->pStmt);
@@ -1628,7 +1628,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXORAAREAP thiswa, int iMax) // Retur
   {
     // res = SQLFetch(hStmt);
 
-    if (rs == NULL)
+    if (rs == SR_NULLPTR)
     {
       // Ops, where are previously retrieved record ?
       // Run query again and try to find it in result
@@ -1699,7 +1699,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXORAAREAP thiswa, int iMax) // Retur
       char szValue[2];
       unsigned int uiLen;
 
-      if (OCI_GetString(rs, 2) == NULL)
+      if (OCI_GetString(rs, 2) == SR_NULLPTR)
       {
         // OCI_StatementFree(thiswa->hStmtSkip);
         // thiswa->hStmtSkip = NULL;
@@ -1748,7 +1748,7 @@ static HB_ERRCODE getRecordList(SQLEXORAAREAP thiswa, int iMax) // Returns HB_TR
   // res = SQLAllocStmt((HDBC) thiswa->hDbc, &(thiswa->hStmt));
   thiswa->hStmt = OCI_StatementCreate(GetConnection(thiswa->hDbc));
 
-  if (thiswa->hStmt == NULL)
+  if (thiswa->hStmt == SR_NULLPTR)
   {
     return HB_FAILURE;
   }
@@ -1792,7 +1792,7 @@ static HB_ERRCODE getRecordList(SQLEXORAAREAP thiswa, int iMax) // Returns HB_TR
     {
       char szValue[2];
       unsigned int uiLen;
-      if (OCI_GetString(rs, 2) == NULL)
+      if (OCI_GetString(rs, 2) == SR_NULLPTR)
       {
         OCI_StatementFree(thiswa->hStmt);
         return HB_FAILURE;
@@ -1840,7 +1840,7 @@ static HB_ERRCODE getFirstColumnAsLong(SQLEXORAAREAP thiswa, HB_ULONG *szValue) 
   // res = SQLAllocStmt((HDBC) thiswa->hDbc, &(thiswa->hStmt));
   thiswa->hStmt = OCI_StatementCreate(GetConnection(thiswa->hDbc));
 
-  if (thiswa->hStmt == NULL)
+  if (thiswa->hStmt == SR_NULLPTR)
   {
     return HB_FAILURE;
   }
@@ -1854,7 +1854,7 @@ static HB_ERRCODE getFirstColumnAsLong(SQLEXORAAREAP thiswa, HB_ULONG *szValue) 
 
   // res = SQLFetch(thiswa->hStmt);
   rs = OCI_GetResultset(thiswa->hStmtNextval);
-  if (rs == NULL)
+  if (rs == SR_NULLPTR)
   {
     OCI_StatementFree(thiswa->hStmt);
     return HB_FAILURE; // It means a fault in SQL statement
@@ -2052,7 +2052,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
 
   // Not found, so let's try the database...
 
-  if (getColumnListOra(thiswa) || thiswa->hStmtBuffer == NULL)
+  if (getColumnListOra(thiswa) || thiswa->hStmtBuffer == SR_NULLPTR)
   {                                       // Check if field list has changed and if so
                                           // creates a new one in thiswa structure
     thiswa->bConditionChanged2 = HB_TRUE; // SEEK statements are no longer valid - column list has changed!
@@ -2123,7 +2123,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
 
     // res = SQLAllocStmt((HDBC) thiswa->hDbc, &(thiswa->hStmtBuffer));
     thiswa->hStmtBuffer = OCI_StatementCreate(GetConnection(thiswa->hDbc));
-    if (thiswa->hStmtBuffer == NULL)
+    if (thiswa->hStmtBuffer == SR_NULLPTR)
     {
       return HB_FAILURE;
     }
@@ -2177,7 +2177,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
 
   // bBuffer = hb_xgrabDebug(__LINE__, __FILE__, COLUMN_BLOCK_SIZE + 1);
   rs = OCI_GetResultset(thiswa->hStmtBuffer);
-  if (rs == NULL)
+  if (rs == SR_NULLPTR)
   {
     // break;
     return HB_FAILURE;
@@ -2210,7 +2210,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
       {
         char szValue[2];
         unsigned int uiLen;
-        if (OCI_GetString(rs, 2) == NULL)
+        if (OCI_GetString(rs, 2) == SR_NULLPTR)
         {
           OCI_StatementFree(thiswa->hStmtBuffer);
         }
@@ -2992,7 +2992,7 @@ static HB_ERRCODE sqlExOraSeek(SQLEXORAAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM
       }
     }
 
-    if ((hb_setGetDeleted() || thiswa->sqlarea.area.dbfi.itmCobExpr != NULL) && !thiswa->sqlarea.area.fEof)
+    if ((hb_setGetDeleted() || thiswa->sqlarea.area.dbfi.itmCobExpr != SR_NULLPTR) && !thiswa->sqlarea.area.fEof)
     {
       retvalue = SELF_SKIPFILTER(&thiswa->sqlarea.area, (bFindLast ? -1 : 1));
 
@@ -3120,7 +3120,7 @@ static HB_ERRCODE sqlExOraSkipFilter(SQLEXORAAREAP thiswa, HB_LONG lUpDown)
 
   HB_TRACE(HB_TR_DEBUG, ("hb_waSkipFilter(%p, %ld)", thiswa, lUpDown));
 
-  if (!hb_setGetDeleted() && thiswa->sqlarea.area.dbfi.itmCobExpr == NULL)
+  if (!hb_setGetDeleted() && thiswa->sqlarea.area.dbfi.itmCobExpr == SR_NULLPTR)
   {
     return HB_SUCCESS;
   }
@@ -3403,7 +3403,7 @@ static HB_ERRCODE sqlExOraDeleteRec(SQLEXORAAREAP thiswa)
 
     // res = SQLAllocStmt((HDBC) thiswa->hDbc, &(thiswa->hStmt));
     thiswa->hStmt = OCI_StatementCreate(GetConnection(thiswa->hDbc));
-    if (thiswa->hStmt == NULL)
+    if (thiswa->hStmt == SR_NULLPTR)
     {
       return HB_FAILURE;
     }
@@ -3826,7 +3826,7 @@ static HB_ERRCODE sqlExOraRecall(SQLEXORAAREAP thiswa)
 
     // res = SQLAllocStmt((HDBC) thiswa->hDbc, &(thiswa->hStmt));
     thiswa->hStmt = OCI_StatementCreate(GetConnection(thiswa->hDbc));
-    if (thiswa->hStmt == NULL)
+    if (thiswa->hStmt == SR_NULLPTR)
     {
       return HB_FAILURE;
     }
@@ -4681,7 +4681,7 @@ HB_INIT_SYMBOLS_BEGIN(sqlExOra1Ora__InitSymbols){
     {"SQLEXORA_GETFUNCTABLE",
      {HB_FS_PUBLIC | HB_FS_LOCAL},
      {HB_FUNCNAME(SQLEXORA_GETFUNCTABLE)},
-     NULL} HB_INIT_SYMBOLS_END(sqlExOra1Ora__InitSymbols)
+     SR_NULLPTR} HB_INIT_SYMBOLS_END(sqlExOra1Ora__InitSymbols)
 
         HB_CALL_ON_STARTUP_BEGIN(_hb_sqlExOraora_rdd_init_) hb_vmAtInit(hb_sqlExOraRddInitora, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlExOraora_rdd_init_)
@@ -4946,9 +4946,9 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOn
             char * bBuffer = (char *) OCI_GetString(rs, iField);
             HB_ULONG lLenBuff = strlen(bBuffer);
             if( lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2) ) && (sr_lSerializeArrayAsJson()) ) {
-               if( s_pSym_SR_FROMJSON == NULL ) {
+               if( s_pSym_SR_FROMJSON == SR_NULLPTR ) {
                   s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
-                  if( s_pSym_SR_FROMJSON  == NULL ) {
+                  if( s_pSym_SR_FROMJSON  == SR_NULLPTR ) {
                      printf("Could not find Symbol HB_JSONDECODE\n");
                   }
                }
@@ -4963,9 +4963,9 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOn
                hb_itemRelease(pTemp);
 
             } else if( lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()) ) {
-               if( s_pSym_SR_DESERIALIZE == NULL ) {
+               if( s_pSym_SR_DESERIALIZE == SR_NULLPTR ) {
                   s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-                  if( s_pSym_SR_DESERIALIZE  == NULL ) {
+                  if( s_pSym_SR_DESERIALIZE  == SR_NULLPTR ) {
                      printf("Could not find Symbol SR_DESERIALIZE\n");
                   }
                }

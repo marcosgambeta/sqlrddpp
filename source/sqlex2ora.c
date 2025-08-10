@@ -371,7 +371,7 @@ HB_ERRCODE PrepareInsertStmtOra(SQLEXORAAREAP thiswa)
   // res = SQLAllocHandle(SQL_HANDLE_STMT, (HDBC) thiswa->hDbc, &(thiswa->hStmtInsert));
   thiswa->hStmtInsert = OCI_StatementCreate(GetConnection(thiswa->hDbc));
 
-  if (thiswa->hStmtInsert == NULL)
+  if (thiswa->hStmtInsert == SR_NULLPTR)
   {
     OraErrorDiagRTE(thiswa->hStmtInsert, "PrepareInsertStmtOra/SQLAllocStmt", thiswa->sSql, 0, __LINE__, __FILE__);
     return HB_FAILURE;
@@ -628,7 +628,7 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
     char ident[200] = {0};
     char tablename[100] = {0};
 
-    if (thiswa->hStmtNextval == NULL)
+    if (thiswa->hStmtNextval == SR_NULLPTR)
     {
       switch (thiswa->nSystemID)
       {
@@ -646,7 +646,7 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
       // res = SQLAllocHandle(SQL_HANDLE_STMT, (HDBC) thiswa->hDbc, &(thiswa->hStmtNextval));
 
       thiswa->hStmtNextval = OCI_StatementCreate(GetConnection(thiswa->hDbc));
-      if (thiswa->hStmtNextval == NULL)
+      if (thiswa->hStmtNextval == SR_NULLPTR)
       {
         OraErrorDiagRTE(thiswa->hStmtNextval, "SQLAllocStmt", ident, 0, __LINE__, __FILE__);
         return HB_FAILURE;
@@ -675,7 +675,7 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
     // res = SQLFetch(thiswa->hStmtNextval);
     // if( CHECK_SQL_N_OK(res) )
     rs = OCI_GetResultset(thiswa->hStmtNextval);
-    if (rs == NULL)
+    if (rs == SR_NULLPTR)
     {
       OraErrorDiagRTE(thiswa->hStmtNextval, "ExecuteInsertStmtOra/Fetch", ident, res, __LINE__, __FILE__);
       // thiswa->hStmtNextval = NULL;
@@ -731,7 +731,7 @@ HB_ERRCODE CreateUpdateStmtOra(SQLEXORAAREAP thiswa)
 
   // res = SQLAllocHandle(SQL_HANDLE_STMT, (HDBC) thiswa->hDbc, &(thiswa->hStmtUpdate));
   thiswa->hStmtUpdate = OCI_StatementCreate(GetConnection(thiswa->hDbc));
-  if (thiswa->hStmtUpdate == NULL)
+  if (thiswa->hStmtUpdate == SR_NULLPTR)
   {
     OraErrorDiagRTE(thiswa->hStmtUpdate, "CreateUpdateStmtOra", thiswa->sSql, 0, __LINE__, __FILE__);
   }

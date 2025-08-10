@@ -510,7 +510,7 @@ HB_ERRCODE BindInsertColumns(SQLEXAREAP thiswa)
         res = SQLBindParameter(thiswa->hStmtInsert, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT,
                                (SQLSMALLINT)InsertRecord->iCType, (SQLSMALLINT)InsertRecord->iSQLType,
                                InsertRecord->ColumnSize, InsertRecord->DecimalDigits, &(InsertRecord->asLogical), 0,
-                               NULL);
+                               SR_NULLPTR);
         break;
       }
       }
@@ -670,7 +670,7 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
     char ident[200] = {0};
     char tablename[100] = {0};
 
-    if (thiswa->hStmtNextval == NULL)
+    if (thiswa->hStmtNextval == SR_NULLPTR)
     {
       switch (thiswa->nSystemID)
       {

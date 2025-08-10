@@ -1100,7 +1100,7 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
     return HB_FALSE;
   }
   case HB_IT_POINTER: {
-    return hb_itemGetPtr(pItem) == NULL;
+    return hb_itemGetPtr(pItem) == SR_NULLPTR;
   }
   case HB_IT_SYMBOL: {
     PHB_SYMB pSym = hb_itemGetSymbol(pItem);
@@ -1108,7 +1108,7 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
     {
       pSym = hb_dynsymSymbol(pSym->pDynSym);
     }
-    return pSym == NULL || pSym->value.pFunPtr == NULL;
+    return pSym == SR_NULLPTR || pSym->value.pFunPtr == SR_NULLPTR;
   }
   default: {
     return HB_TRUE;

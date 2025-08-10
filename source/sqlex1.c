@@ -99,9 +99,9 @@ void startSQLEXSymbols()
 {
    HB_THREAD_STUB
 
-   if( s_pSym_SOLVERESTRICTORS == NULL ) {
+   if( s_pSym_SOLVERESTRICTORS == SR_NULLPTR ) {
       s_pSym_SOLVERESTRICTORS = hb_dynsymFindName("SOLVERESTRICTORS");
-      if( s_pSym_SOLVERESTRICTORS == NULL ) {
+      if( s_pSym_SOLVERESTRICTORS == SR_NULLPTR ) {
          printf("Could not find Symbol %s\n", "SOLVERESTRICTORS");
       }
    }
@@ -418,7 +418,7 @@ static HB_ERRCODE getMissingColumn(SQLEXAREAP thiswa, PHB_ITEM pFieldData, HB_LO
 
   pFieldStruct = hb_arrayGetItemPtr(thiswa->aFields, lFieldPosDB);
 
-  if (thiswa->colStmt[lFieldPosDB - 1] == NULL)
+  if (thiswa->colStmt[lFieldPosDB - 1] == SR_NULLPTR)
   {
     res = SQLAllocStmt((HDBC)thiswa->hDbc, &(thiswa->colStmt[lFieldPosDB - 1]));
 
@@ -2014,7 +2014,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
 
   // Not found, so let's try the database...
 
-  if (getColumnList(thiswa) || thiswa->hStmtBuffer == NULL)
+  if (getColumnList(thiswa) || thiswa->hStmtBuffer == SR_NULLPTR)
   {                                       // Check if field list has changed and if so
                                           // creates a new one in thiswa structure
     thiswa->bConditionChanged2 = HB_TRUE; // SEEK statements are no longer valid - column list has changed!
@@ -2885,7 +2885,7 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
       }
     }
 
-    if ((hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != NULL) && !thiswa->area.fEof)
+    if ((hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != SR_NULLPTR) && !thiswa->area.fEof)
     {
       retvalue = SELF_SKIPFILTER((AREAP)thiswa, (bFindLast ? -1 : 1));
 
@@ -3013,7 +3013,7 @@ static HB_ERRCODE sqlExSkipFilter(SQLEXAREAP thiswa, HB_LONG lUpDown)
 
   HB_TRACE(HB_TR_DEBUG, ("hb_waSkipFilter(%p, %ld)", thiswa, lUpDown));
 
-  if (!hb_setGetDeleted() && thiswa->area.dbfi.itmCobExpr == NULL)
+  if (!hb_setGetDeleted() && thiswa->area.dbfi.itmCobExpr == SR_NULLPTR)
   {
     return HB_SUCCESS;
   }
@@ -3403,10 +3403,10 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
     PHB_ITEM pTemp;
     if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()))
     {
-      if (s_pSym_SR_DESERIALIZE == NULL)
+      if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
       {
         s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-        if (s_pSym_SR_DESERIALIZE == NULL)
+        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
         {
           printf("Could not find Symbol SR_DESERIALIZE\n");
         }
@@ -4579,7 +4579,7 @@ HB_INIT_SYMBOLS_BEGIN(sqlEx1__InitSymbols){"SQLEX", {HB_FS_PUBLIC | HB_FS_LOCAL}
     {"SQLEX_GETFUNCTABLE",
      {HB_FS_PUBLIC | HB_FS_LOCAL},
      {HB_FUNCNAME(SQLEX_GETFUNCTABLE)},
-     NULL} HB_INIT_SYMBOLS_END(sqlEx1__InitSymbols)
+     SR_NULLPTR} HB_INIT_SYMBOLS_END(sqlEx1__InitSymbols)
 
         HB_CALL_ON_STARTUP_BEGIN(_hb_sqlEx_rdd_init_) hb_vmAtInit(hb_sqlExRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlEx_rdd_init_)

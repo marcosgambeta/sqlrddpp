@@ -755,7 +755,7 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
   thiswa->area.fBof = hb_arrayGetL(thiswa->aInfo, AINFO_BOF);
   thiswa->area.fEof = hb_arrayGetL(thiswa->aInfo, AINFO_EOF);
 
-  if ((hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != NULL) && !thiswa->area.fEof)
+  if ((hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != SR_NULLPTR) && !thiswa->area.fEof)
   {
     retvalue = SELF_SKIPFILTER(&thiswa->area, (bFindLast ? -1 : 1));
 
@@ -848,7 +848,7 @@ HB_ERRCODE sqlSkipFilter(SQLAREAP thiswa, HB_LONG lUpDown)
 
   // sr_TraceLog(SR_NULLPTR, "sqlSkipFilter %i\n", lUpDown);
 
-  if (!hb_setGetDeleted() && thiswa->area.dbfi.itmCobExpr == NULL)
+  if (!hb_setGetDeleted() && thiswa->area.dbfi.itmCobExpr == SR_NULLPTR)
   {
     return HB_SUCCESS;
   }
@@ -2045,7 +2045,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
 
 void startSQLRDDSymbols()
 {
-  if (s_pSym_WORKAREA == NULL)
+  if (s_pSym_WORKAREA == SR_NULLPTR)
   {
     s_pSym_WORKAREA = hb_dynsymFindName(WORKAREA_CLASS);
     s_pSym_SQLGOBOTTOM = hb_dynsymFindName("SQLGOBOTTOM");
@@ -2085,77 +2085,77 @@ void startSQLRDDSymbols()
     s_pSym_SQLCLEARFILTER = hb_dynsymFindName("SQLCLEARFILTER");
     s_pSym_SQLFILTERTEXT = hb_dynsymFindName("SQLFILTERTEXT");
 
-    if (s_pSym_WORKAREA == NULL)
+    if (s_pSym_WORKAREA == SR_NULLPTR)
       printf("Could not find Symbol %s\n", WORKAREA_CLASS);
-    if (s_pSym_SQLGOBOTTOM == NULL)
+    if (s_pSym_SQLGOBOTTOM == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLGOBOTTOM");
-    if (s_pSym_SQLGOTO == NULL)
+    if (s_pSym_SQLGOTO == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLGOTO");
-    if (s_pSym_SQLGOTOP == NULL)
+    if (s_pSym_SQLGOTOP == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLGOTOP");
-    if (s_pSym_SQLSEEK == NULL)
+    if (s_pSym_SQLSEEK == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLSEEK");
-    if (s_pSym_SETBOF == NULL)
+    if (s_pSym_SETBOF == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SETBOF");
-    if (s_pSym_SQLDELETEREC == NULL)
+    if (s_pSym_SQLDELETEREC == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLDELETEREC");
-    if (s_pSym_SQLFLUSH == NULL)
+    if (s_pSym_SQLFLUSH == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLFLUSH");
-    if (s_pSym_SQLRECALL == NULL)
+    if (s_pSym_SQLRECALL == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLRECALL");
-    if (s_pSym_SQLCLOSE == NULL)
+    if (s_pSym_SQLCLOSE == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLCLOSE");
-    if (s_pSym_SQLCREATE == NULL)
+    if (s_pSym_SQLCREATE == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLCREATE");
-    if (s_pSym_SQLOPEN == NULL)
+    if (s_pSym_SQLOPEN == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLOPENAREA");
-    if (s_pSym_SQLOPENALLINDEXES == NULL)
+    if (s_pSym_SQLOPENALLINDEXES == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLOPENALLINDEXES");
-    if (s_pSym_SQLPACK == NULL)
+    if (s_pSym_SQLPACK == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLPACK");
-    if (s_pSym_SQLZAP == NULL)
+    if (s_pSym_SQLZAP == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLZAP");
-    if (s_pSym_SQLORDERLISTADD == NULL)
+    if (s_pSym_SQLORDERLISTADD == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLORDERLISTADD");
-    if (s_pSym_SQLORDERLISTCLEAR == NULL)
+    if (s_pSym_SQLORDERLISTCLEAR == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLORDERLISTCLEAR");
-    if (s_pSym_SQLORDERLISTFOCUS == NULL)
+    if (s_pSym_SQLORDERLISTFOCUS == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLORDERLISTFOCUS");
-    if (s_pSym_SQLORDERCREATE == NULL)
+    if (s_pSym_SQLORDERCREATE == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLORDERCREATE");
-    if (s_pSym_SQLORDERDESTROY == NULL)
+    if (s_pSym_SQLORDERDESTROY == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLORDERDESTROY");
-    if (s_pSym_SQLORDERCONDITION == NULL)
+    if (s_pSym_SQLORDERCONDITION == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLORDERCONDITION");
-    if (s_pSym_SQLORDERLISTNUM == NULL)
+    if (s_pSym_SQLORDERLISTNUM == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLORDERLISTNUM");
-    if (s_pSym_SQLSETSCOPE == NULL)
+    if (s_pSym_SQLSETSCOPE == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLSETSCOPE");
-    if (s_pSym_SQLLOCK == NULL)
+    if (s_pSym_SQLLOCK == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLLOCK");
-    if (s_pSym_SQLUNLOCK == NULL)
+    if (s_pSym_SQLUNLOCK == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLUNLOCK");
-    if (s_pSym_SQLDROP == NULL)
+    if (s_pSym_SQLDROP == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLDROP");
-    if (s_pSym_SQLEXISTS == NULL)
+    if (s_pSym_SQLEXISTS == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLEXISTS");
-    if (s_pSym_SQLKEYCOUNT == NULL)
+    if (s_pSym_SQLKEYCOUNT == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLKEYCOUNT");
-    if (s_pSym_WRITEBUFFER == NULL)
+    if (s_pSym_WRITEBUFFER == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "WRITEBUFFER");
-    if (s_pSym_READPAGE == NULL)
+    if (s_pSym_READPAGE == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "READPAGE");
-    if (s_pSym_STABILIZE == NULL)
+    if (s_pSym_STABILIZE == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "STABILIZE");
-    if (s_pSym_NORMALIZE == NULL)
+    if (s_pSym_NORMALIZE == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "NORMALIZE");
-    if (s_pSym_SQLGETVALUE == NULL)
+    if (s_pSym_SQLGETVALUE == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLGETVALUE");
-    if (s_pSym_SQLSETFILTER == NULL)
+    if (s_pSym_SQLSETFILTER == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLSETFILTER");
-    if (s_pSym_SQLCLEARFILTER == NULL)
+    if (s_pSym_SQLCLEARFILTER == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLCLEARFILTER");
-    if (s_pSym_SQLFILTERTEXT == NULL)
+    if (s_pSym_SQLFILTERTEXT == SR_NULLPTR)
       printf("Could not find Symbol %s\n", "SQLFILTERTEXT");
   }
 }
@@ -2728,7 +2728,7 @@ static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
     else
     {
       commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
-      return NULL;
+      return SR_NULLPTR;
     }
 
     if (hb_itemGetNL(hb_stackReturnItem()))
@@ -2761,7 +2761,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
       else
       {
         commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
-        return NULL;
+        return SR_NULLPTR;
       }
     }
     else
@@ -2774,7 +2774,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
       {
         hb_itemRelease(pOrder);
         commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
-        return NULL;
+        return SR_NULLPTR;
       }
     }
   }
@@ -2788,7 +2788,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
     {
       hb_itemRelease(pOrder);
       commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
-      return NULL;
+      return SR_NULLPTR;
     }
   }
 

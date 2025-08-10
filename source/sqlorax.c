@@ -639,10 +639,10 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
     case SQL_LONGVARCHAR: {
       if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson()))
       {
-        if (s_pSym_SR_FROMJSON == NULL)
+        if (s_pSym_SR_FROMJSON == SR_NULLPTR)
         {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
-          if (s_pSym_SR_FROMJSON == NULL)
+          if (s_pSym_SR_FROMJSON == SR_NULLPTR)
           {
             printf("Could not find Symbol HB_JSONDECODE\n");
           }
@@ -659,10 +659,10 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
       }
       else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()))
       {
-        if (s_pSym_SR_DESERIALIZE == NULL)
+        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
         {
           s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-          if (s_pSym_SR_DESERIALIZE == NULL)
+          if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
           {
             printf("Could not find Symbol SR_DESERIALIZE\n");
           }
