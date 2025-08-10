@@ -148,7 +148,7 @@ HB_FUNC(SR_INSTALLDSN)
 
   if (hb_pcount() != 2)
   {
-    hb_retl(0);
+    hb_retl(HB_FALSE);
   }
   else
   {
@@ -181,7 +181,7 @@ HB_FUNC(SR_UNINSTALLDSN)
 
   if (hb_pcount() != 2)
   {
-    hb_retl(0);
+    hb_retl(HB_FALSE);
   }
   else
   {

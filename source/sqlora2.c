@@ -1329,7 +1329,7 @@ HB_FUNC(SQLO2_ORACLESETLOBPREFETCH)
   }
   else
   {
-    hb_retl(0);
+    hb_retl(HB_FALSE);
   }
 }
 
@@ -1343,7 +1343,7 @@ HB_FUNC(SQLO2_SETSTATEMENTCACHESIZE)
   }
   else
   {
-    hb_retl(0);
+    hb_retl(HB_FALSE);
   }
 }
 
