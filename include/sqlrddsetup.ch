@@ -44,6 +44,9 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#ifndef SQLRDDSETUP_CH
+#define SQLRDDSETUP_CH
+
 #define LOCK_TIMEOUT             3
 #define LOCKTABLE_TRIES          2
 #define MAXIMUN_LOCKS          100
@@ -217,3 +220,5 @@
 #define SYSTEMID_FIREBR4              21
 #define SYSTEMID_FIREBR5              22
 #endif
+
+#endif // SQLRDDSETUP_CH

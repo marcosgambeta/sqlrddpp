@@ -44,6 +44,9 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#ifndef FIREBIRD3_CH
+#define FIREBIRD3_CH
+
 #define IB_SQL_TEXT                           452
 #define IB_SQL_VARYING                        448
 #define IB_SQL_SHORT                          500
@@ -65,3 +68,5 @@
 #define IB_DIALECT_V6_TRANSITION              2
 #define IB_DIALECT_V6                         3
 #define IB_DIALECT_CURRENT                    IB_DIALECT_V6
+
+#endif // FIREBIRD3_CH

@@ -46,6 +46,9 @@
 
 // TODO: revise and remove duplicates
 
+#ifndef SQLORA_CH
+#define SQLORA_CH
+
 #include "sqlodbc.ch"
 
 #define OCI_SUCCESS 0                      // maps to SQL_SUCCESS of SAG CLI
@@ -305,3 +308,5 @@
 #define SQLT_TIMESTAMP_LTZ             232        // TIMESTAMP WITH LOCAL TZ
 
 #define SQLT_PNTY   241              // pl/sql representation of named types
+
+#endif // SQLORA_CH

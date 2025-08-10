@@ -45,6 +45,9 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#ifndef HBSQL_CH
+#define HBSQL_CH
+
 // pCode Instruction Set
 
 #define SQL_PCODE_VERSION                    1
@@ -211,3 +214,5 @@
 #define SQL_CONTEXT_UPDATE                21
 #define SQL_CONTEXT_DELETE                31
 
+
+#endif // HBSQL_CH

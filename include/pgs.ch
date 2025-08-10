@@ -44,6 +44,9 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#ifndef PGS_CH
+#define PGS_CH
+
 #ifndef LIBPQ_FE_H
 
    #define CONNECTION_OK                       0
@@ -130,3 +133,5 @@
 #define OPAQUEOID             2282
 
 #define XMLOID                142
+
+#endif // PGS_CH
