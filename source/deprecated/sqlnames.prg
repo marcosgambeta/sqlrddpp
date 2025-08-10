@@ -46,7 +46,7 @@
  *
  */
 
-#include "hbclass.ch"
+#include <hbclass.ch>
 // #include "compat.ch"
 #include "sqlrdd.ch"
 #include "msg.ch"

@@ -40,7 +40,7 @@
 // $END_LICENSE$
 
 #include "dbinfo.ch"
-#include "hbclass.ch"
+#include <hbclass.ch>
 #include "sqlrdd.ch"
 #include "inkey.ch"
 

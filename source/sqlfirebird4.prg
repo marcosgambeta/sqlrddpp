@@ -47,7 +47,7 @@
 // TODO: inherit from SR_FIREBIRD3
 //       remove duplicated code
 
-#include "hbclass.ch"
+#include <hbclass.ch>
 #include "common.ch"
 // #include "compat.ch"
 #include "sqlodbc.ch"

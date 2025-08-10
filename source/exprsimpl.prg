@@ -39,7 +39,7 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-#include "hbclass.ch"
+#include <hbclass.ch>
 
 ///////////////////////////////////////////////////////////////////////////////
 

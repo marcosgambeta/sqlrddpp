@@ -45,7 +45,7 @@
 // $END_LICENSE$
 
 // #include "compat.ch"
-#include "hbclass.ch"
+#include <hbclass.ch>
 #include "common.ch"
 #include "msg.ch"
 

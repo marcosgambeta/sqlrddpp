@@ -46,7 +46,7 @@
 // $END_LICENSE$
 
 #include "common.ch"
-#include "hbclass.ch"
+#include <hbclass.ch>
 #include "sqlrdd.ch"
 #include "sqlodbc.ch"
 #include "error.ch"
