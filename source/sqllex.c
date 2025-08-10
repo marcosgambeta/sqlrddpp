@@ -86,7 +86,7 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
   const char *queryPtr = stmt->queryPtr;
   const char *queryEnd = stmt->query + stmt->queryLen;
 
-  // Remove starting spaces 
+  // Remove starting spaces
 
   while (queryEnd > queryPtr && (isspace(*queryPtr) || *queryPtr == '\n' || *queryPtr == '\r' || *queryPtr == '\t'))
   {

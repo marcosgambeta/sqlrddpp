@@ -568,7 +568,8 @@ HB_FUNC(SR_ESCAPESTRING)
 
   if (!(HB_ISCHAR(1) && HB_ISNUM(2)))
   {
-    hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_ESCAPESTRING", 2, hb_param(1, HB_IT_ANY), hb_param(2, HB_IT_ANY));
+    hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_ESCAPESTRING", 2, hb_param(1, HB_IT_ANY),
+                         hb_param(2, HB_IT_ANY));
     return;
   }
 

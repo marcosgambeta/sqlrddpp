@@ -649,8 +649,8 @@ void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
         //                        SQL_DATE_LEN,
         //                        0,
         //                        &(BindStructure->asDate), 0, NULL);
-        // sr_TraceLog("sqltrace.log", " %s  %i %i %i \n", sSql, BindStructure->asDate.year, BindStructure->asDate.month,
-        // BindStructure->asDate.day);
+        // sr_TraceLog("sqltrace.log", " %s  %i %i %i \n", sSql, BindStructure->asDate.year,
+        // BindStructure->asDate.month, BindStructure->asDate.day);
         BindStructure->asDate1 = OCI_DateCreate(GetConnection(thiswa->hDbc));
         OCI_DateSetDate(BindStructure->asDate1, BindStructure->asDate.year, BindStructure->asDate.month,
                         BindStructure->asDate.day);

@@ -195,7 +195,7 @@ static MXML_STATUS mxml_attribute_read(MXML_REFIL *ref, PHB_ITEM pDoc, PHB_ITEM 
     {
       break;
     }
-    
+
     switch (iStatus)
     {
     // begin
@@ -602,13 +602,13 @@ static void mxml_node_insert_after(PHB_ITEM pTg, PHB_ITEM pNode)
   hb_objSendMsg(pTg, "ONEXT", 0);
   hb_objSendMsg(pNode, "_ONEXT", 1, hb_param(-1, HB_IT_ANY));
 
-  // tg->NEXT is now pnode! 
+  // tg->NEXT is now pnode!
   hb_objSendMsg(pTg, "_ONEXT", 1, pNode);
 
   // pNode->prev is TG
   hb_objSendMsg(pNode, "_OPREV", 1, pTg);
 
-  // pNode->parent is the same as tg 
+  // pNode->parent is the same as tg
   hb_objSendMsg(pTg, "OPARENT", 0);
   hb_objSendMsg(pNode, "_OPARENT", 1, hb_param(-1, HB_IT_ANY));
 }
@@ -785,7 +785,7 @@ static void mxml_node_read_data(MXML_REFIL *ref, PHB_ITEM pNode, PHB_ITEM doc, i
         }
         else
         {
-          // error - we have something like &amp &amp 
+          // error - we have something like &amp &amp
           MXML_DELETOR(buf);
           hbxml_set_doc_status(ref, doc, pNode, MXML_STATUS_MALFORMED, MXML_ERROR_UNCLOSEDENTITY);
           return;

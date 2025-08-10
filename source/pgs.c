@@ -362,7 +362,7 @@ HB_FUNC(PGSQUERYATTR) // PGSQueryAttr(ResultSet) => aStruct
       // case TIMESTAMPTZOID:
       hb_itemPutC(temp, "C");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      
+
       int fieldLen = 0;
       if (typmod >= 4)
       {

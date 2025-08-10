@@ -1036,7 +1036,8 @@ HB_FUNC(FBCREATEDB3)
                 passwd /*, page, charset*/);
   }
 
-  if (isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, (unsigned short)dialect, SR_NULLPTR))
+  if (isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, (unsigned short)dialect,
+                                 SR_NULLPTR))
   {
     hb_retni(SQL_ERROR);
     sr_TraceLog(LOGFILE, "FireBird Error: %s - code: %i (see iberr.h)\n", "create database", status[1]);
@@ -1488,7 +1489,8 @@ HB_FUNC(FBLINEPROCESSED3)
           case IB_SQL_ARRAY:
           case IB_SQL_QUAD:
             blob_id = (ISC_QUAD *)var->sqldata;
-            if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, SR_NULLPTR))
+            if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0,
+                               SR_NULLPTR))
             {
               ERRORLOGANDEXIT(session, "FBGETDATA1");
             }

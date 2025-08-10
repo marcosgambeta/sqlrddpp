@@ -845,9 +845,10 @@ HB_ERRCODE CreateUpdateStmt(SQLEXAREAP thiswa)
         break;
       }
       case SQL_C_BIT: {
-        res = SQLBindParameter(thiswa->hStmtUpdate, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT,
-                               (SQLSMALLINT)CurrRecord->iCType, (SQLSMALLINT)CurrRecord->iSQLType,
-                               CurrRecord->ColumnSize, CurrRecord->DecimalDigits, &(CurrRecord->asLogical), 0, SR_NULLPTR);
+        res =
+            SQLBindParameter(thiswa->hStmtUpdate, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, (SQLSMALLINT)CurrRecord->iCType,
+                             (SQLSMALLINT)CurrRecord->iSQLType, CurrRecord->ColumnSize, CurrRecord->DecimalDigits,
+                             &(CurrRecord->asLogical), 0, SR_NULLPTR);
         break;
       }
       }

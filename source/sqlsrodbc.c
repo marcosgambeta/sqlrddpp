@@ -1154,7 +1154,7 @@ void odbcErrorDiag(SQLHSTMT hStmt, const char *routine, const char *szSql, int l
   }
 
   sr_TraceLog(LOGFILE, "Error at %s, local %i: State: %s - Message: %s\r\nOriginal SQL code:\n%s\n", routine, line,
-           SqlState, Msg, szSql);
+              SqlState, Msg, szSql);
 }
 
 //-----------------------------------------------------------------------------//
@@ -1162,7 +1162,8 @@ void odbcErrorDiag(SQLHSTMT hStmt, const char *routine, const char *szSql, int l
 HB_FUNC(SR_TABLES)
 {
   RETCODE ret;
-  ret = SQLTables((SQLHSTMT)hb_parptr(1), SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS, (SQLCHAR *)"TABLE", 5);
+  ret = SQLTables((SQLHSTMT)hb_parptr(1), SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS,
+                  (SQLCHAR *)"TABLE", 5);
   hb_retni(ret);
 }
 

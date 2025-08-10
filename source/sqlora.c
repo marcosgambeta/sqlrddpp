@@ -148,12 +148,12 @@ const char *_sqlo_sqloraID = "$Id$";
   {                                                                                                                    \
     if (p)                                                                                                             \
     {                                                                                                                  \
-      sr_TraceLog(LOGFILE, "Pointer %p freed in line %i\n", p, i);                                                        \
+      sr_TraceLog(LOGFILE, "Pointer %p freed in line %i\n", p, i);                                                     \
       hb_xfree(p);                                                                                                     \
     }                                                                                                                  \
     else                                                                                                               \
     {                                                                                                                  \
-      sr_TraceLog(LOGFILE, "NULL pointer free at sqlora.c line %i \n", i);                                                \
+      sr_TraceLog(LOGFILE, "NULL pointer free at sqlora.c line %i \n", i);                                             \
     }                                                                                                                  \
   } while (0)
 #else
@@ -166,7 +166,7 @@ const char *_sqlo_sqloraID = "$Id$";
     }                                                                                                                  \
     else                                                                                                               \
     {                                                                                                                  \
-      sr_TraceLog(LOGFILE, "NULL pointer free at sqlora.c line %i \n", i);                                                \
+      sr_TraceLog(LOGFILE, "NULL pointer free at sqlora.c line %i \n", i);                                             \
     }                                                                                                                  \
   } while (0)
 #endif
@@ -3588,7 +3588,8 @@ static int DEFUN(_define_ocol_by_pos, (stp, colp, pos),
         // sr_TraceLog(LOGFILE, "col %i, OCIDescriptorAlloc %p\n", col_idx, colp->loblp);
       }
 
-      dbp->status = _define_by_pos(stp, pos, SQLOT_CLOB, &(colp->loblp), 0, (short *)&stp->oindv[col_idx], 0, SR_NULLPTR, 0);
+      dbp->status =
+          _define_by_pos(stp, pos, SQLOT_CLOB, &(colp->loblp), 0, (short *)&stp->oindv[col_idx], 0, SR_NULLPTR, 0);
     }
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_ocol_by_pos", "_define_by_pos");
   }
@@ -5024,8 +5025,8 @@ int DEFUN(sqlo_fetch, (sth, nrows), sqlo_stmt_handle_t sth AND unsigned int nrow
 
                 if (localStatus == OCI_ERROR)
                 {
-                  sr_TraceLog(LOGFILE, "col %i status %i - error reading a %i bytes lob located by %p, dbh %p\n", col_idx,
-                           dbp->status, stp->outv_size[col_idx], stp->ocolsv[col_idx].loblp, dbp->dbh);
+                  sr_TraceLog(LOGFILE, "col %i status %i - error reading a %i bytes lob located by %p, dbh %p\n",
+                              col_idx, dbp->status, stp->outv_size[col_idx], stp->ocolsv[col_idx].loblp, dbp->dbh);
                 }
               }
               else
@@ -5424,7 +5425,8 @@ int DEFUN(sqlo_server_attach, (dbhp, tnsname), sqlo_db_handle_t *dbhp AND const 
   EXEC_WHEN_THREADING(_env_lock(););
 
 #ifdef HAVE_OCIENVCREATE
-  dbp->status = OCIEnvCreate(&dbp->envhp, _oci_init_mode, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR, 0, SR_NULLPTR);
+  dbp->status =
+      OCIEnvCreate(&dbp->envhp, _oci_init_mode, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR, 0, SR_NULLPTR);
   CHECK_OCI_STATUS(dbp, dbp->status, "sqlo_server_attach", "OCIEnvCreate");
 #else
   dbp->status = OCIEnvInit((OCIEnv **)((dvoid *)&dbp->envhp), _oci_init_mode, 0, (dvoid **)0);
