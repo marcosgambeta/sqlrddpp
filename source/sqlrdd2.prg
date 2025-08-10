@@ -53,7 +53,7 @@
 #include "ord.ch"
 #include "msg.ch"
 #include "set.ch"
-#include "dbinfo.ch"
+#include <dbinfo.ch>
 #include "sqlrddsetup.ch"
 #include "srxml.ch" // Culik added to support arrays as xml
 

@@ -39,7 +39,7 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-#include "dbinfo.ch"
+#include <dbinfo.ch>
 #include <hbclass.ch>
 #include "sqlrdd.ch"
 #include "inkey.ch"
