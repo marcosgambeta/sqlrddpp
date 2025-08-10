@@ -3987,9 +3987,9 @@ HB_INIT_SYMBOLS_BEGIN(sqlrdd1__InitSymbols)
   {"SQLRDD", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD)}, SR_NULLPTR},
   {"SQLRDD_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD_GETFUNCTABLE)}, SR_NULLPTR}
 HB_INIT_SYMBOLS_END(sqlrdd1__InitSymbols)
-    // clang-format on
+// clang-format on
 
-    // clang-format off
+// clang-format off
 HB_CALL_ON_STARTUP_BEGIN(_hb_sqlrdd_rdd_init_)
   hb_vmAtInit(hb_sqlrddRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlrdd_rdd_init_)

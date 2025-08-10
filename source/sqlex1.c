@@ -4575,14 +4575,18 @@ static void hb_sqlExRddInit(void *cargo)
   HB_FUNC_EXEC(SQLRDD);
 }
 
-HB_INIT_SYMBOLS_BEGIN(sqlEx1__InitSymbols){"SQLEX", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEX)}, SR_NULLPTR},
-    {"SQLEX_GETFUNCTABLE",
-     {HB_FS_PUBLIC | HB_FS_LOCAL},
-     {HB_FUNCNAME(SQLEX_GETFUNCTABLE)},
-     SR_NULLPTR} HB_INIT_SYMBOLS_END(sqlEx1__InitSymbols)
+// clang-format off
+HB_INIT_SYMBOLS_BEGIN(sqlEx1__InitSymbols)
+  {"SQLEX", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEX)}, SR_NULLPTR},
+  {"SQLEX_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEX_GETFUNCTABLE)}, SR_NULLPTR}
+HB_INIT_SYMBOLS_END(sqlEx1__InitSymbols)
+// clang-format on
 
-        HB_CALL_ON_STARTUP_BEGIN(_hb_sqlEx_rdd_init_) hb_vmAtInit(hb_sqlExRddInit, SR_NULLPTR);
+// clang-format off
+HB_CALL_ON_STARTUP_BEGIN(_hb_sqlEx_rdd_init_)
+  hb_vmAtInit(hb_sqlExRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlEx_rdd_init_)
+// clang-format on
 
 #if defined(HB_PRAGMA_STARTUP)
 #pragma startup sqlEx1__InitSymbols

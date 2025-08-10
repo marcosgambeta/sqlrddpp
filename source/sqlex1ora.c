@@ -4676,15 +4676,18 @@ static void hb_sqlExOraRddInitora(void *cargo)
   HB_FUNC_EXEC(SQLRDD);
 }
 
-HB_INIT_SYMBOLS_BEGIN(sqlExOra1Ora__InitSymbols){
-    "SQLEXORA", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEXORA)}, SR_NULLPTR},
-    {"SQLEXORA_GETFUNCTABLE",
-     {HB_FS_PUBLIC | HB_FS_LOCAL},
-     {HB_FUNCNAME(SQLEXORA_GETFUNCTABLE)},
-     SR_NULLPTR} HB_INIT_SYMBOLS_END(sqlExOra1Ora__InitSymbols)
+// clang-format off
+HB_INIT_SYMBOLS_BEGIN(sqlExOra1Ora__InitSymbols)
+  {"SQLEXORA", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEXORA)}, SR_NULLPTR},
+  {"SQLEXORA_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEXORA_GETFUNCTABLE)}, SR_NULLPTR}
+HB_INIT_SYMBOLS_END(sqlExOra1Ora__InitSymbols)
+// clang-format on
 
-        HB_CALL_ON_STARTUP_BEGIN(_hb_sqlExOraora_rdd_init_) hb_vmAtInit(hb_sqlExOraRddInitora, SR_NULLPTR);
+// clang-format off
+HB_CALL_ON_STARTUP_BEGIN(_hb_sqlExOraora_rdd_init_)
+  hb_vmAtInit(hb_sqlExOraRddInitora, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlExOraora_rdd_init_)
+// clang-format on
 
 #if defined(HB_PRAGMA_STARTUP)
 #pragma startup sqlExOra1Ora__InitSymbols
