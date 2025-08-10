@@ -46,7 +46,7 @@
 
 #include <common.ch>
 #include <error.ch>
-#include "rddsys.ch"
+#include <rddsys.ch>
 #include <hbclass.ch>
 // #include "compat.ch"
 #include "sqlrdd.ch"
