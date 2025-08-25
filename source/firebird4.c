@@ -180,7 +180,8 @@ static void fb_log_status4(PFB_SESSION session, const char *from)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBCONNECT4) // FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
+// FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
+HB_FUNC(FBCONNECT4)
 {
   XSQLVAR *var;
   const char *db_connect;
@@ -256,7 +257,8 @@ HB_FUNC(FBCONNECT4) // FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBCLOSE4) // FBClose(hEnv)
+// FBClose(hEnv)
+HB_FUNC(FBCLOSE4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int i;
@@ -300,7 +302,8 @@ HB_FUNC(FBCLOSE4) // FBClose(hEnv)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBBEGINTRANSACTION4) // FBBeginTransaction(hEnv)
+// FBBeginTransaction(hEnv)
+HB_FUNC(FBBEGINTRANSACTION4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -373,7 +376,8 @@ HB_FUNC(FBBEGINTRANSACTION4) // FBBeginTransaction(hEnv)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBCOMMITTRANSACTION4) // FBBeginTransaction(hEnv)
+// FBBeginTransaction(hEnv)
+HB_FUNC(FBCOMMITTRANSACTION4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -395,7 +399,8 @@ HB_FUNC(FBCOMMITTRANSACTION4) // FBBeginTransaction(hEnv)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBROLLBACKTRANSACTION4) // FBRollBackTransaction(hEnv)
+// FBRollBackTransaction(hEnv)
+HB_FUNC(FBROLLBACKTRANSACTION4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -417,7 +422,8 @@ HB_FUNC(FBROLLBACKTRANSACTION4) // FBRollBackTransaction(hEnv)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBEXECUTE4) // FBExecute(hEnv, cCmd, nDialect)
+// FBExecute(hEnv, cCmd, nDialect)
+HB_FUNC(FBEXECUTE4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   const char *command = hb_parcx(2);
@@ -573,7 +579,8 @@ HB_FUNC(FBEXECUTE4) // FBExecute(hEnv, cCmd, nDialect)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBEXECUTEIMMEDIATE4) // FBExecuteImmediate(hEnv, cCmd, nDialect)
+// FBExecuteImmediate(hEnv, cCmd, nDialect)
+HB_FUNC(FBEXECUTEIMMEDIATE4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   const char *command = hb_parcx(2);
@@ -613,7 +620,8 @@ HB_FUNC(FBEXECUTEIMMEDIATE4) // FBExecuteImmediate(hEnv, cCmd, nDialect)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBDESCRIBECOL4) // FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
+// FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
+HB_FUNC(FBDESCRIBECOL4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int icol = hb_parni(2);
@@ -721,7 +729,8 @@ HB_FUNC(FBDESCRIBECOL4) // FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nD
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBNUMRESULTCOLS4) // FBNumResultCols(hEnv, @nResultSetColumnCount)
+// FBNumResultCols(hEnv, @nResultSetColumnCount)
+HB_FUNC(FBNUMRESULTCOLS4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -738,7 +747,8 @@ HB_FUNC(FBNUMRESULTCOLS4) // FBNumResultCols(hEnv, @nResultSetColumnCount)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBERROR4) // FBError(hEnv)
+// FBError(hEnv)
+HB_FUNC(FBERROR4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -755,7 +765,8 @@ HB_FUNC(FBERROR4) // FBError(hEnv)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBFETCH4) // FBFetch(hEnv)
+// FBFetch(hEnv)
+HB_FUNC(FBFETCH4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
@@ -782,7 +793,8 @@ HB_FUNC(FBFETCH4) // FBFetch(hEnv)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBGETDATA4) // FBGetData(hEnv, nField, @uData)
+// FBGetData(hEnv, nField, @uData)
+HB_FUNC(FBGETDATA4)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int icol = hb_parni(2);
