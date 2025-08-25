@@ -193,7 +193,8 @@ HB_FUNC(MYSEXEC)
   session->ifetch = -1;
 }
 
-HB_FUNC(MYSFETCH) // MYSFetch(ConnHandle, ResultSet) => nStatus
+// MYSFetch(ConnHandle, ResultSet) => nStatus
+HB_FUNC(MYSFETCH)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int rows;
@@ -571,7 +572,8 @@ HB_FUNC(MYSCOLS)
   hb_retni(session->numcols);
 }
 
-HB_FUNC(MYSVERS) // MYSVERS(hConnection) => nVersion
+// MYSVERS(hConnection) => nVersion
+HB_FUNC(MYSVERS)
 {
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session != SR_NULLPTR);
