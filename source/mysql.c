@@ -662,8 +662,21 @@ HB_FUNC(MYSQUERYATTR)
     case MYSQL_VAR_STRING_TYPE:
       // case MYSQL_DATETIME_TYPE:
 
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(temp, "C"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, (int)field->length));
+      hb_itemPutC(temp, "C");
+
+      MY_CHARSET_INFO cs;
+      unsigned int mbmax = 1;
+
+      mysql_get_character_set_info(session->dbh, &cs); 
+      if (cs.mbmaxlen > 0)
+        mbmax = (unsigned int) cs.mbmaxlen;
+
+      int char_len = (int) ((mbmax > 1) ? (field->length / mbmax) : field->length);
+      if (char_len <= 0)
+        char_len = (int) field->length;
+
+      hb_arraySetForward(atemp, FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, char_len));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
@@ -802,8 +815,20 @@ HB_FUNC(MYSTABLEATTR)
     case MYSQL_VAR_STRING_TYPE:
       // case MYSQL_DATETIME_TYPE:
       hb_itemPutC(temp, "C");
+      
+      MY_CHARSET_INFO cs;
+      unsigned int mbmax = 1;
+
+      mysql_get_character_set_info(session->dbh, &cs); 
+      if (cs.mbmaxlen > 0)
+        mbmax = (unsigned int) cs.mbmaxlen;
+
+      int char_len = (int) ((mbmax > 1) ? (field->length / mbmax) : field->length);
+      if (char_len <= 0)
+        char_len = (int) field->length;
+      
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, (int)field->length));
+      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, char_len));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
