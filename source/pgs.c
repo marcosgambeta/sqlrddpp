@@ -372,13 +372,14 @@ HB_FUNC(PGSQUERYATTR)
     case MACADDROID:
     case INETOID:
     case CIDROID:
-    case TIMETZOID:
+    case TIMETZOID: {
       //         case TIMESTAMPOID:
       // case TIMESTAMPTZOID:
+      int fieldLen = 0;
+
       hb_itemPutC(temp, "C");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
 
-      int fieldLen = 0;
       if (typmod >= 4)
       {
         fieldLen = typmod - 4;
@@ -396,6 +397,7 @@ HB_FUNC(PGSQUERYATTR)
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
+    }
     case UNKNOWNOID:
       hb_itemPutC(temp, "C");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);

@@ -659,19 +659,20 @@ HB_FUNC(MYSQUERYATTR)
     switch (type)
     {
     case MYSQL_STRING_TYPE:
-    case MYSQL_VAR_STRING_TYPE:
+    case MYSQL_VAR_STRING_TYPE: {
       // case MYSQL_DATETIME_TYPE:
-
-      hb_itemPutC(temp, "C");
 
       MY_CHARSET_INFO cs;
       unsigned int mbmax = 1;
+      int char_len;
 
-      mysql_get_character_set_info(session->dbh, &cs); 
+      hb_itemPutC(temp, "C");
+
+      mysql_get_character_set_info(session->dbh, &cs);
       if (cs.mbmaxlen > 0)
         mbmax = (unsigned int) cs.mbmaxlen;
 
-      int char_len = (int) ((mbmax > 1) ? (field->length / mbmax) : field->length);
+      char_len = (int) ((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0)
         char_len = (int) field->length;
 
@@ -680,6 +681,7 @@ HB_FUNC(MYSQUERYATTR)
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
+    }
     case MYSQL_TINY_TYPE:
       hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(temp, "L"));
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 1));
@@ -812,26 +814,29 @@ HB_FUNC(MYSTABLEATTR)
     switch (type)
     {
     case MYSQL_STRING_TYPE:
-    case MYSQL_VAR_STRING_TYPE:
+    case MYSQL_VAR_STRING_TYPE: {
       // case MYSQL_DATETIME_TYPE:
-      hb_itemPutC(temp, "C");
-      
+
       MY_CHARSET_INFO cs;
       unsigned int mbmax = 1;
+      int char_len;
 
-      mysql_get_character_set_info(session->dbh, &cs); 
+      hb_itemPutC(temp, "C");
+
+      mysql_get_character_set_info(session->dbh, &cs);
       if (cs.mbmaxlen > 0)
         mbmax = (unsigned int) cs.mbmaxlen;
 
-      int char_len = (int) ((mbmax > 1) ? (field->length / mbmax) : field->length);
+      char_len = (int) ((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0)
         char_len = (int) field->length;
-      
+
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, char_len));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
+    }
     case MYSQL_TINY_TYPE:
       hb_itemPutC(temp, "L");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
