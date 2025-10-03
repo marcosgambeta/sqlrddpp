@@ -114,12 +114,9 @@ HB_FUNC(PGSSTATUS)
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != SR_NULLPTR);
 
-  if (PQstatus(session->dbh) == CONNECTION_OK)
-  {
+  if (PQstatus(session->dbh) == CONNECTION_OK) {
     hb_retni(SQL_SUCCESS);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -140,26 +137,31 @@ HB_FUNC(PGSRESULTSTATUS)
   assert(res != SR_NULLPTR);
   ret = (int)PQresultStatus(res);
 
-  switch (ret)
-  {
-  case PGRES_EMPTY_QUERY:
+  switch (ret) {
+  case PGRES_EMPTY_QUERY: {
     ret = SQL_ERROR;
     break;
-  case PGRES_COMMAND_OK:
+  }
+  case PGRES_COMMAND_OK: {
     ret = SQL_SUCCESS;
     break;
-  case PGRES_TUPLES_OK:
+  }
+  case PGRES_TUPLES_OK: {
     ret = SQL_SUCCESS;
     break;
-  case PGRES_BAD_RESPONSE:
+  }
+  case PGRES_BAD_RESPONSE: {
     ret = SQL_ERROR;
     break;
-  case PGRES_NONFATAL_ERROR:
+  }
+  case PGRES_NONFATAL_ERROR: {
     ret = SQL_SUCCESS_WITH_INFO;
     break;
-  case PGRES_FATAL_ERROR:
+  }
+  case PGRES_FATAL_ERROR: {
     ret = SQL_ERROR;
     break;
+  }
   }
 
   hb_retni(ret);
@@ -180,13 +182,14 @@ HB_FUNC(PGSEXEC)
   session->numcols = PQnfields(session->stmt);
   ret = (int)PQresultStatus(session->stmt);
 
-  switch (ret)
-  {
-  case PGRES_COMMAND_OK:
+  switch (ret) {
+  case PGRES_COMMAND_OK: {
     session->iAffectedRows = (int)atoi(PQcmdTuples(session->stmt));
     break;
-  default:
+  }
+  default: {
     session->iAffectedRows = 0;
+  }
   }
 }
 
@@ -200,28 +203,19 @@ HB_FUNC(PGSFETCH)
 
   iTpl = PQresultStatus(session->stmt);
   session->iAffectedRows = 0;
-  if (iTpl != PGRES_TUPLES_OK)
-  {
+  if (iTpl != PGRES_TUPLES_OK) {
     hb_retni(SQL_INVALID_HANDLE);
-  }
-  else
-  {
-    if (session->ifetch >= -1)
-    {
+  } else {
+    if (session->ifetch >= -1) {
       session->ifetch++;
       iTpl = PQntuples(session->stmt) - 1;
-      if (session->ifetch > iTpl)
-      {
+      if (session->ifetch > iTpl) {
         hb_retni(SQL_NO_DATA_FOUND);
-      }
-      else
-      {
+      } else {
         session->iAffectedRows = (int)iTpl;
         hb_retni(SQL_SUCCESS);
       }
-    }
-    else
-    {
+    } else {
       hb_retni(SQL_INVALID_HANDLE);
     }
   }
@@ -241,8 +235,7 @@ HB_FUNC(PGSCLEAR)
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != SR_NULLPTR);
-  if (session->stmt)
-  {
+  if (session->stmt) {
     PQclear(session->stmt);
     session->stmt = SR_NULLPTR;
     session->ifetch = -2;
@@ -281,12 +274,9 @@ HB_FUNC(PGSCOMMIT)
   PGresult *res;
   assert(session->dbh != SR_NULLPTR);
   res = PQexec(session->dbh, "COMMIT");
-  if (PQresultStatus(res) == PGRES_COMMAND_OK)
-  {
+  if (PQresultStatus(res) == PGRES_COMMAND_OK) {
     hb_retni(SQL_SUCCESS);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -298,12 +288,9 @@ HB_FUNC(PGSROLLBACK)
   PGresult *res;
   assert(session->dbh != SR_NULLPTR);
   res = PQexec(session->dbh, "ROLLBACK");
-  if (PQresultStatus(res) == PGRES_COMMAND_OK)
-  {
+  if (PQresultStatus(res) == PGRES_COMMAND_OK) {
     hb_retni(SQL_SUCCESS);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -320,8 +307,7 @@ HB_FUNC(PGSQUERYATTR)
   assert(session->dbh != SR_NULLPTR);
   assert(session->stmt != SR_NULLPTR);
 
-  if (hb_pcount() != 1)
-  {
+  if (hb_pcount() != 1) {
     hb_retnl(-2);
     return;
   }
@@ -333,8 +319,7 @@ HB_FUNC(PGSQUERYATTR)
 
   hb_arrayNew(ret, rows);
 
-  for (row = 0; row < rows; row++)
-  {
+  for (row = 0; row < rows; row++) {
     //      long nullable;
     // Column name
     hb_arrayNew(atemp, 11);
@@ -348,18 +333,15 @@ HB_FUNC(PGSQUERYATTR)
 
     // nullable = PQgetisnull(session->stmt, row,PQfnumber(session->stmt, PQfname(session->stmt, row)));
 
-    if (typmod < 0L)
-    {
+    if (typmod < 0L) {
       typmod = (HB_LONG)PQfsize(session->stmt, row);
     }
 #if 0
-    if (typmod < 0L)
-    {
+    if (typmod < 0L) {
       typmod = 20L;
     }
 #endif
-    switch (type)
-    {
+    switch (type) {
     case CHAROID:
     case NAMEOID:
     case BPCHAROID:
@@ -380,15 +362,11 @@ HB_FUNC(PGSQUERYATTR)
       hb_itemPutC(temp, "C");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
 
-      if (typmod >= 4)
-      {
+      if (typmod >= 4) {
         fieldLen = typmod - 4;
-      }
-      else
-      {
+      } else {
         fieldLen = (int)PQfsize(session->stmt, row);
-        if (fieldLen <= 0)
-        {
+        if (fieldLen <= 0) {
           fieldLen = 254;
         }
       }
@@ -398,106 +376,114 @@ HB_FUNC(PGSQUERYATTR)
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
     }
-    case UNKNOWNOID:
+    case UNKNOWNOID: {
       hb_itemPutC(temp, "C");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, PQgetlength(session->stmt, 0, row)));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
-    case NUMERICOID:
+    }
+    case NUMERICOID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      if (typmod > 0)
-      {
+      if (typmod > 0) {
         hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, ((typmod - 4L) >> 16L)));
         hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, ((typmod - 4L) & 0xffff)));
-      }
-      else
-      {
+      } else {
         hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 18));
         hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 6));
       }
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case BOOLOID:
+      }
+    case BOOLOID: {
       hb_itemPutC(temp, "L");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 1));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_BIT));
       break;
-    case TEXTOID:
+    }
+    case TEXTOID: {
       hb_itemPutC(temp, "M");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 10));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_LONGVARCHAR));
       break;
-    case XMLOID:
+    }
+    case XMLOID: {
       hb_itemPutC(temp, "M");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 4));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_LONGVARCHARXML));
       break;
-
-    case DATEOID:
+    }
+    case DATEOID: {
       hb_itemPutC(temp, "D");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 8));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_DATE));
       break;
-    case INT2OID:
+    }
+    case INT2OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 6));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
+    }
     case INT8OID:
-    case OIDOID:
+    case OIDOID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 20));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case INT4OID:
+    }
+    case INT4OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 11));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case FLOAT4OID:
+    }
+    case FLOAT4OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 18));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 2));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case FLOAT8OID:
+    }
+    case FLOAT8OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 18));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 6));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-      // teste datetime
+    }
+    // teste datetime
     case TIMESTAMPOID:
-    case TIMESTAMPTZOID:
+    case TIMESTAMPTZOID: {
       hb_itemPutC(temp, "T");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 8));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_DATETIME));
       break;
-
-    default:
+    }
+    default: {
       sr_TraceLog(LOGFILE, "Strange data type returned in query: %i\n", type);
       break;
+    }
     }
 
     // Nullable
@@ -522,8 +508,7 @@ HB_FUNC(PGSTABLEATTR)
 
   assert(session->dbh != SR_NULLPTR);
 
-  if (hb_pcount() < 3)
-  {
+  if (hb_pcount() < 3) {
     hb_retnl(-2);
     return;
   }
@@ -536,8 +521,7 @@ HB_FUNC(PGSTABLEATTR)
 
   stmtTemp = PQexec(session->dbh, attcmm);
 
-  if (PQresultStatus(stmtTemp) != PGRES_TUPLES_OK)
-  {
+  if (PQresultStatus(stmtTemp) != PGRES_TUPLES_OK) {
     sr_TraceLog(LOGFILE, "Query error : %i - %s\n", PQresultStatus(stmtTemp), PQresStatus(PQresultStatus(stmtTemp)));
     PQclear(stmtTemp);
   }
@@ -549,8 +533,7 @@ HB_FUNC(PGSTABLEATTR)
 
   hb_arrayNew(ret, rows);
 
-  for (row = 0; row < rows; row++)
-  {
+  for (row = 0; row < rows; row++) {
     long typmod;
     long nullable;
     int type;
@@ -565,24 +548,17 @@ HB_FUNC(PGSTABLEATTR)
 
     type = atoi(PQgetvalue(stmtTemp, row, 1));
     typmod = atol(PQgetvalue(stmtTemp, row, 2));
-    if (sr_iOldPgsBehavior())
-    {
+    if (sr_iOldPgsBehavior()) {
       nullable = 0;
-    }
-    else
-    {
-      if (strcmp(PQgetvalue(stmtTemp, row, 3), "f") == 0)
-      {
+    } else {
+      if (strcmp(PQgetvalue(stmtTemp, row, 3), "f") == 0) {
         nullable = 1;
-      }
-      else
-      {
+      } else {
         nullable = 0;
       }
     }
 
-    switch (type)
-    {
+    switch (type) {
     case CHAROID:
     case NAMEOID:
     case BPCHAROID:
@@ -595,103 +571,115 @@ HB_FUNC(PGSTABLEATTR)
     case MACADDROID:
     case INETOID:
     case CIDROID:
-    case TIMETZOID:
+    case TIMETZOID: {
       hb_itemPutC(temp, "C");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, typmod - 4));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
-    case NUMERICOID:
+    }
+    case NUMERICOID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, ((typmod - 4L) >> 16L)));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, ((typmod - 4L) & 0xffff)));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case BOOLOID:
+    }
+    case BOOLOID: {
       hb_itemPutC(temp, "L");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 1));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_BIT));
       break;
-    case TEXTOID:
+    }
+    case TEXTOID: {
       hb_itemPutC(temp, "M");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 10));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_LONGVARCHAR));
       break;
-    case XMLOID:
+    }
+    case XMLOID: {
       hb_itemPutC(temp, "M");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 4));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_LONGVARCHARXML));
       break;
-
-    case DATEOID:
+    }
+    case DATEOID: {
       hb_itemPutC(temp, "D");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 8));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_DATE));
       break;
-    case INT2OID:
+    }
+    case INT2OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 6));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case INT8OID:
+    }
+    case INT8OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 20));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case INT4OID:
+    }
+    case INT4OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 11));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case FLOAT4OID:
+    }
+    case FLOAT4OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 18));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 2));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-    case FLOAT8OID:
+    }
+    case FLOAT8OID: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 18));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 6));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
+    }
     case TIMESTAMPOID:
-    case TIMESTAMPTZOID:
+    case TIMESTAMPTZOID: {
       hb_itemPutC(temp, "T");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 8));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_DATETIME));
       break;
-    case TIMEOID:
+    }
+    case TIMEOID: {
       hb_itemPutC(temp, "T");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
       hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 4));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_TIME));
       break;
-
-    default:
+    }
+    default: {
       sr_TraceLog(LOGFILE, "Strange data type returned: %i\n", type);
       break;
+    }
     }
 
     // Nullable
@@ -725,10 +713,8 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
   lLen = hb_arrayGetNL(pField, 3);
   lDec = hb_arrayGetNL(pField, 4);
 
-  if (lLenBuff <= 0)
-  { // database content is NULL
-    switch (lType)
-    {
+  if (lLenBuff <= 0) { // database content is NULL
+    switch (lType) {
     case SQL_CHAR: {
       char *szResult = (char *)hb_xgrab(lLen + 1);
       hb_xmemset(szResult, ' ', lLen);
@@ -755,7 +741,6 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
       hb_itemPutL(pItem, HB_FALSE);
       break;
     }
-
 #ifdef SQLRDD_TOPCONN
     case SQL_FAKE_DATE: {
       hb_itemPutDS(pItem, bBuffer);
@@ -770,22 +755,17 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
       hb_itemPutTDT(pItem, 0, 0);
       break;
     }
-
-    default:
+    default: {
       sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
-  }
-  else
-  {
-    switch (lType)
-    {
+    }
+  } else {
+    switch (lType) {
     case SQL_CHAR: {
       HB_SIZE lPos;
       char *szResult = (char *)hb_xgrab(lLen + 1);
       hb_xmemcpy(szResult, bBuffer, (lLen < lLenBuff ? lLen : lLenBuff));
-
-      for (lPos = lLenBuff; lPos < lLen; lPos++)
-      {
+      for (lPos = lLenBuff; lPos < lLen; lPos++) {
         szResult[lPos] = ' ';
       }
       szResult[lLen] = '\0';
@@ -810,16 +790,11 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
       hb_itemPutDS(pItem, dt);
       break;
     }
-
     case SQL_LONGVARCHAR: {
-
-      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson()))
-      {
-        if (s_pSym_SR_FROMJSON == SR_NULLPTR)
-        {
+      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson())) {
+        if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
-          if (s_pSym_SR_FROMJSON == SR_NULLPTR)
-          {
+          if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
             printf("Could not find Symbol HB_JSONDECODE\n");
           }
         }
@@ -832,14 +807,10 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
         // TOFIX:
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
-      }
-      else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()))
-      {
-        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
-        {
+      } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString())) {
+        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
           s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-          if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
-          {
+          if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
             printf("Could not find Symbol SR_DESERIALIZE\n");
           }
         }
@@ -852,38 +823,29 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
         pTemp = hb_itemNew(SR_NULLPTR);
         hb_itemMove(pTemp, hb_stackReturnItem());
 
-        if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate)
-        {
+        if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate) {
           PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
               hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
-              hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos))
-          {
+              hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos)) {
             hb_itemCopy(pItem, hb_hashGetValueAt(pTemp, ulPos));
           }
           hb_itemRelease(pLangItem);
-        }
-        else
-        {
+        } else {
           hb_itemMove(pItem, pTemp);
         }
         hb_itemRelease(pTemp);
-      }
-      else
-      {
+      } else {
         hb_itemPutCL(pItem, bBuffer, lLenBuff);
       }
       break;
     }
     // xmltoarray
     case SQL_LONGVARCHARXML: {
-
-      if (s_pSym_SR_FROMXML == SR_NULLPTR)
-      {
+      if (s_pSym_SR_FROMXML == SR_NULLPTR) {
         s_pSym_SR_FROMXML = hb_dynsymFindName("SR_FROMXML");
-        if (s_pSym_SR_FROMXML == SR_NULLPTR)
-        {
+        if (s_pSym_SR_FROMXML == SR_NULLPTR) {
           printf("Could not find Symbol SR_DESERIALIZE\n");
         }
       }
@@ -904,12 +866,10 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
       hb_itemRelease(pTemp);
       break;
     }
-
     case SQL_BIT: {
       hb_itemPutL(pItem, bBuffer[0] == 't' ? HB_TRUE : HB_FALSE);
       break;
     }
-
 #ifdef SQLRDD_TOPCONN
     case SQL_FAKE_DATE: {
       hb_itemPutDS(pItem, bBuffer);
@@ -928,9 +888,9 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
       hb_itemPutTDT(pItem, 0, lMilliSec);
       break;
     }
-
-    default:
+    default: {
       sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+    }  
     }
   }
 }
@@ -953,17 +913,14 @@ HB_FUNC(PGSLINEPROCESSED)
   assert(session->dbh != SR_NULLPTR);
   assert(session->stmt != SR_NULLPTR);
 
-  if (session)
-  {
+  if (session) {
     cols = hb_arrayLen(pFields);
 
-    for (i = 0; i < cols; i++)
-    {
+    for (i = 0; i < cols; i++) {
       temp = hb_itemNew(SR_NULLPTR);
       lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i + 1), FIELD_ENUM);
 
-      if (lIndex != 0)
-      {
+      if (lIndex != 0) {
         col = PQgetvalue(session->stmt, session->ifetch, lIndex - 1);
         PGSFieldGet(hb_arrayGetItemPtr(pFields, i + 1), temp, (char *)col, strlen(col), bQueryOnly, ulSystemID,
                     bTranslate);
@@ -977,8 +934,7 @@ HB_FUNC(PGSLINEPROCESSED)
 HB_FUNC(PGSAFFECTEDROWS)
 {
   PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  if (session)
-  {
+  if (session) {
     hb_retni(session->iAffectedRows);
     return;
   }
