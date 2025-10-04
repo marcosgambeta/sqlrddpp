@@ -10,6 +10,12 @@ cd sqlrddpp
 hbmk2 sqlrddpp.hbp
 ```
 
+To compile with BCC 5.8.2:
+
+```Batch
+hbmk2 sqlrddpp.hbp -aflag=/P64
+```
+
 ### Ubuntu - How to get and compile
 ```Batch
 sudo apt install unixodbc-dev
