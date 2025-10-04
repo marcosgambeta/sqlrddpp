@@ -2,6 +2,26 @@
 
 SQLRDD for Harbour++ and Harbour
 
+## C/C++ Compilers Compatibility
+
+| Project   | C/C++ compiler | Status   | Extra parameters    |
+| --------- | -------------- | -------- | ------------------- |
+| Harbour   | MinGW32        | ...      | ...                 |
+| Harbour   | MinGW64        | ...      | ...                 |
+| Harbour   | MSVC32         | ...      | ...                 |
+| Harbour   | MSVC64         | ...      | ...                 |
+| Harbour   | Clang32        | ...      | ...                 |
+| Harbour   | Clang64        | ...      | ...                 |
+| Harbour   | BCC 5.8.2      | OK       | -aflag=/P64         |
+| Harbour++ | MinGW32        | ...      | ...                 |
+| Harbour++ | MinGW64        | ...      | ...                 |
+| Harbour++ | MSVC32         | ...      | ...                 |
+| Harbour++ | MSVC64         | ...      | ...                 |
+| Harbour++ | Clang32        | ...      | ...                 |
+| Harbour++ | Clang64        | ...      | ...                 |
+| Harbour++ | BCC 7.3 32-bit | ...      | ...                 |
+| Harbour++ | BCC 7.3 64-bit | ...      | ...                 |
+
 ## Building
 
 ### Windows - How to compile
