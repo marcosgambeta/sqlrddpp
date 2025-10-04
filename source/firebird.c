@@ -120,16 +120,14 @@ static void fb_log_status(PFB_SESSION session, const char *from)
   const ISC_STATUS *pVect = session->status;
   HB_SCHAR s[1024] = {0};
   // char * temp = (char*) hb_xgrab(8192);
-  if (session->msgerror)
-  {
+  if (session->msgerror) {
     hb_xfree(session->msgerror);
   }
   session->msgerror = (char *)hb_xgrab(8192 + 1);
   hb_xmemset(session->msgerror, '\0', 8192);
   // isc_interprete(session->msgerror, &pVect);
 
-  while (fb_interpret((ISC_SCHAR *)s, sizeof(s), &pVect))
-  {
+  while (fb_interpret((ISC_SCHAR *)s, sizeof(s), &pVect)) {
     // const char* nl = (s[0] ? s[strlen(s) - 1] != '\n' : true) ? "\n" : "";
     strcat(session->msgerror, (const char *)s);
     strcat(session->msgerror, "\n");
@@ -139,15 +137,11 @@ static void fb_log_status(PFB_SESSION session, const char *from)
   session->errorcode = session->status[1];
   HB_SYMBOL_UNUSED(from);
 
-  if (session->transac)
-  {
+  if (session->transac) {
     isc_rollback_transaction(session->status, &(session->transac));
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBROLLBACKTRANSACTION ON ERROR");
-    }
-    else
-    {
+    } else {
       session->transac = 0;
       session->transactionPending = 0;
     }
@@ -179,8 +173,7 @@ HB_FUNC(FBCONNECT)
   session->stmt = 0;
   session->transactionPending = 0;
 
-  for (i = 0, var = session->sqlda->sqlvar; i < MAX_COLUMNS_IN_QUERY; i++, var++)
-  {
+  for (i = 0, var = session->sqlda->sqlvar; i < MAX_COLUMNS_IN_QUERY; i++, var++) {
     var->sqldata = SR_NULLPTR;
   }
 
@@ -203,19 +196,16 @@ HB_FUNC(FBCONNECT)
   memcpy(&(dpb[i]), passwd, len);
   i += len;
 
-  if (charset != SR_NULLPTR)
-  {
+  if (charset != SR_NULLPTR) {
     dpb[i++] = isc_dpb_lc_ctype;
     len = strlen(charset);
     dpb[i++] = (char)len;
     memcpy(&(dpb[i]), charset, len);
     i += len;
   }
-  if (isc_attach_database(session->status, 0, db_connect, &(session->db), (short)i, dpb))
-  {
+  if (isc_attach_database(session->status, 0, db_connect, &(session->db), (short)i, dpb)) {
     fb_log_status(session, "FBCONNECT");
-    if (session->msgerror)
-    {
+    if (session->msgerror) {
       hb_xfree(session->msgerror);
     }
 
@@ -223,9 +213,7 @@ HB_FUNC(FBCONNECT)
     hb_xfree(session);
     hb_retnl(SQL_ERROR);
     return;
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_SUCCESS);
     hb_storptr((void *)session, 5);
   }
@@ -240,31 +228,24 @@ HB_FUNC(FBCLOSE)
   int i;
   XSQLVAR *var;
 
-  if (session)
-  {
-    if (session->transac)
-    {
-      if (isc_commit_transaction(session->status, &(session->transac)))
-      {
+  if (session) {
+    if (session->transac) {
+      if (isc_commit_transaction(session->status, &(session->transac))) {
         ERRORLOGANDEXIT(session, "FBCLOSE");
       }
     }
 
-    if (isc_detach_database(session->status, &(session->db)))
-    {
+    if (isc_detach_database(session->status, &(session->db))) {
       ERRORLOGANDEXIT(session, "FBCLOSE");
     }
 
-    for (i = 0, var = session->sqlda->sqlvar; i < MAX_COLUMNS_IN_QUERY; i++, var++)
-    {
-      if (var->sqldata)
-      {
+    for (i = 0, var = session->sqlda->sqlvar; i < MAX_COLUMNS_IN_QUERY; i++, var++) {
+      if (var->sqldata) {
         hb_xfree(var->sqldata);
         hb_xfree(var->sqlind);
       }
     }
-    if (session->msgerror)
-    {
+    if (session->msgerror) {
       hb_xfree(session->msgerror);
     }
 
@@ -281,29 +262,22 @@ HB_FUNC(FBBEGINTRANSACTION)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (CHECK_ERROR(session) && session->transac)
-  {
+  if (CHECK_ERROR(session) && session->transac) {
     isc_rollback_transaction(session->status, &(session->transac));
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBROLLBACKTRANSACTION");
-    }
-    else
-    {
+    } else {
       session->transac = 0;
       session->transactionPending = 0;
     }
   }
 
-  if (session->transactionPending && session->transac)
-  {
+  if (session->transactionPending && session->transac) {
     isc_commit_retaining(session->status, &(session->transac));
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       session->transactionPending = 0;
       isc_commit_transaction(session->status, &(session->transac));
-      if (CHECK_ERROR(session))
-      {
+      if (CHECK_ERROR(session)) {
         ERRORLOGANDEXIT(session, "FBBEGINTRANSACTION1_1");
       }
 
@@ -311,23 +285,16 @@ HB_FUNC(FBBEGINTRANSACTION)
       //          sizeof(isc_tpb), isc_tpb) )
       isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)sizeof(isc_tpb),
                             isc_tpb);
-      if (CHECK_ERROR(session))
-      {
+      if (CHECK_ERROR(session)) {
         ERRORLOGANDEXIT(session, "FBBEGINTRANSACTION1_2");
-      }
-      else
-      {
+      } else {
         hb_retni(SQL_SUCCESS);
       }
     }
-  }
-  else
-  {
-    if (session->transac)
-    {
+  } else {
+    if (session->transac) {
       isc_commit_transaction(session->status, &(session->transac));
-      if (CHECK_ERROR(session))
-      {
+      if (CHECK_ERROR(session)) {
         ERRORLOGANDEXIT(session, "FBBEGINTRANSACTION2");
       }
     }
@@ -336,12 +303,9 @@ HB_FUNC(FBBEGINTRANSACTION)
     // sizeof(isc_tpb), isc_tpb) )
     isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)sizeof(isc_tpb),
                           isc_tpb);
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBBEGINTRANSACTION3");
-    }
-    else
-    {
+    } else {
       session->transactionPending = 0;
       hb_retni(SQL_SUCCESS);
     }
@@ -355,15 +319,11 @@ HB_FUNC(FBCOMMITTRANSACTION)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session->transac)
-  {
+  if (session->transac) {
     isc_commit_transaction(session->status, &(session->transac));
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBCOMMITTRANSACTION1");
-    }
-    else
-    {
+    } else {
       session->transac = 0;
       session->transactionPending = 0;
       hb_retni(SQL_SUCCESS);
@@ -378,15 +338,11 @@ HB_FUNC(FBROLLBACKTRANSACTION)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session->transac)
-  {
+  if (session->transac) {
     isc_rollback_transaction(session->status, &(session->transac));
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBROLLBACKTRANSACTION");
-    }
-    else
-    {
+    } else {
       session->transac = 0;
       session->transactionPending = 0;
       hb_retni(SQL_SUCCESS);
@@ -404,10 +360,8 @@ HB_FUNC(FBEXECUTE)
   int i, dtype;
   XSQLVAR *var;
 
-  if (session->stmt)
-  {
-    if (isc_dsql_free_statement(session->status, &(session->stmt), DSQL_drop))
-    {
+  if (session->stmt) {
+    if (isc_dsql_free_statement(session->status, &(session->stmt), DSQL_drop)) {
       ERRORLOGANDEXIT(session, "FBEXECUTE1");
     }
     session->stmt = 0;
@@ -415,23 +369,18 @@ HB_FUNC(FBEXECUTE)
 
   //   if( isc_dsql_allocate_statement(session->status, &(session->db), &(session->stmt) )
   isc_dsql_allocate_statement(session->status, &(session->db), &(session->stmt));
-  if (CHECK_ERROR(session))
-  {
+  if (CHECK_ERROR(session)) {
     ERRORLOGANDEXIT(session, "FBEXECUTE2");
   }
 
-  if (!session->transac)
-  {
+  if (!session->transac) {
     // if( isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)
     // sizeof(isc_tpb), isc_tpb) )
     isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)sizeof(isc_tpb),
                           isc_tpb);
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBBEGINTRANSACTION1_3");
-    }
-    else
-    {
+    } else {
       hb_retni(SQL_SUCCESS);
     }
   }
@@ -440,86 +389,90 @@ HB_FUNC(FBEXECUTE)
   // hb_parni(3), session->sqlda) )
   isc_dsql_prepare(session->status, &(session->transac), &(session->stmt), 0, command, (unsigned short)hb_parni(3),
                    session->sqlda);
-  if (CHECK_ERROR(session))
-  {
+  if (CHECK_ERROR(session)) {
     ERRORLOGANDEXIT(session, (char *)command);
   }
 
-  for (i = 0, var = session->sqlda->sqlvar; i < session->sqlda->sqld; i++, var++)
-  {
+  for (i = 0, var = session->sqlda->sqlvar; i < session->sqlda->sqld; i++, var++) {
     dtype = (var->sqltype & ~1);
-    if (var->sqldata)
-    {
+    if (var->sqldata) {
       hb_xfree(var->sqldata);
       hb_xfree(var->sqlind);
     }
-    switch (dtype)
-    {
-    case IB_SQL_TEXT:
+    switch (dtype) {
+    case IB_SQL_TEXT: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab((sizeof(char) * var->sqllen) + 1);
       break;
-    case IB_SQL_VARYING:
+    }
+    case IB_SQL_VARYING: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab((sizeof(char) * var->sqllen) + 3);
       break;
-    case IB_SQL_LONG:
+    }
+    case IB_SQL_LONG: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(long));
       break;
-    case IB_SQL_SHORT:
+    }
+    case IB_SQL_SHORT: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(short));
       break;
-    case IB_SQL_FLOAT:
+    }
+    case IB_SQL_FLOAT: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(float));
       break;
-    case IB_SQL_DOUBLE:
+    }
+    case IB_SQL_DOUBLE: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(double));
       break;
-    case IB_SQL_D_FLOAT:
+    }
+    case IB_SQL_D_FLOAT: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(float) * 2);
       break;
-    case IB_SQL_TIMESTAMP:
+    }
+    case IB_SQL_TIMESTAMP: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(ISC_TIMESTAMP));
       break;
+    }
     case IB_SQL_ARRAY:
     case IB_SQL_QUAD:
-    case IB_SQL_BLOB:
+    case IB_SQL_BLOB: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(ISC_QUAD));
       break;
-    case IB_SQL_TYPE_TIME:
+    }
+    case IB_SQL_TYPE_TIME: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(ISC_TIME));
       break;
-    case IB_SQL_TYPE_DATE:
+    }
+    case IB_SQL_TYPE_DATE: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(ISC_DATE));
       break;
-    case IB_SQL_INT64:
+    }
+    case IB_SQL_INT64: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(ISC_INT64) * var->sqllen);
       break;
-    default:
+    }
+    default: {
       var->sqldata = (ISC_SCHAR *)hb_xgrab(sizeof(char) * var->sqllen);
       break;
+    }
     }
     var->sqlind = (short *)hb_xgrab(sizeof(short));
   }
 
   session->transactionPending = 1;
 
-  if (!session->sqlda->sqld)
-  {
+  if (!session->sqlda->sqld) {
     //           ISC_STATUS r;
     //      if( isc_dsql_execute(session->status, &(session->transac), &(session->stmt), hb_parni(3), NULL) )
     isc_dsql_execute(session->status, &(session->transac), &(session->stmt), (unsigned short)hb_parni(3), SR_NULLPTR);
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBEXECUTE4");
     }
-  }
-  else
-  {
+  } else {
     // if( isc_dsql_execute(session->status, &(session->transac), &(session->stmt), hb_parni(3), session->sqlda) )
     //          ISC_STATUS r;
     isc_dsql_execute(session->status, &(session->transac), &(session->stmt), (unsigned short)hb_parni(3),
                      session->sqlda);
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBEXECUTE5");
     }
   }
@@ -536,18 +489,14 @@ HB_FUNC(FBEXECUTEIMMEDIATE)
   const char *command = hb_parcx(2);
   //    ISC_STATUS r;
 
-  if (!session->transac)
-  {
+  if (!session->transac) {
     // if( isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)
     // sizeof(isc_tpb), isc_tpb) )
     isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)sizeof(isc_tpb),
                           isc_tpb);
-    if (CHECK_ERROR(session))
-    {
+    if (CHECK_ERROR(session)) {
       ERRORLOGANDEXIT(session, "FBBEGINTRANSACTION1_4");
-    }
-    else
-    {
+    } else {
       hb_retni(SQL_SUCCESS);
     }
   }
@@ -559,8 +508,7 @@ HB_FUNC(FBEXECUTEIMMEDIATE)
   isc_dsql_execute_immediate(session->status, &(session->db), &(session->transac), 0, command,
                              (unsigned short)hb_parni(3), SR_NULLPTR);
 
-  if (CHECK_ERROR(session))
-  {
+  if (CHECK_ERROR(session)) {
     ERRORLOGANDEXIT(session, (char *)command);
   }
 
@@ -578,105 +526,95 @@ HB_FUNC(FBDESCRIBECOL)
   int dtype, rettype, i;
   XSQLVAR *var;
 
-  if (session && session->sqlda->sqld >= (icol))
-  {
+  if (session && session->sqlda->sqld >= (icol)) {
     var = session->sqlda->sqlvar;
-    for (i = 0; i < icol - 1; i++, var++)
-    {
+    for (i = 0; i < icol - 1; i++, var++) {
     }
 
     dtype = (((XSQLVAR *)var)->sqltype & ~1);
 
-    switch (dtype)
-    {
+    switch (dtype) {
     case IB_SQL_TEXT:
-    case IB_SQL_VARYING:
+    case IB_SQL_VARYING: {
       rettype = SQL_CHAR;
       hb_storni(var->sqllen, 5);
       hb_storni(var->sqlscale, 6);
       break;
-    case IB_SQL_TYPE_TIME:
+    }
+    case IB_SQL_TYPE_TIME: {
       rettype = SQL_TIME;
       hb_storni(4L, 5);
       hb_storni(0, 6);
       break;
-    case IB_SQL_TIMESTAMP:
+    }
+    case IB_SQL_TIMESTAMP: {
       // rettype = SQL_CHAR;
       rettype = SQL_DATETIME;
       hb_storni(8L, 5);
       hb_storni(0, 6);
       break;
-    case IB_SQL_SHORT:
-      if (!sr_fShortasNum())
-      {
+    }
+    case IB_SQL_SHORT: {
+      if (!sr_fShortasNum()) {
         rettype = SQL_SMALLINT;
         hb_storni(var->sqllen, 1);
         hb_storni(var->sqlscale, 0);
-      }
-      else
-      {
+      } else {
         rettype = SQL_NUMERIC;
         hb_storni(5, 1);
         hb_storni(var->sqlscale, 0);
       }
       break;
-
+    }
     case IB_SQL_LONG:
-    case IB_SQL_INT64:
-
+    case IB_SQL_INT64: {
       rettype = SQL_NUMERIC;
       hb_storni(20, 5);
       hb_storni(-var->sqlscale, 6);
       break;
-
+    }
     case IB_SQL_FLOAT:
     case IB_SQL_DOUBLE:
-    case IB_SQL_D_FLOAT:
+    case IB_SQL_D_FLOAT: {
       rettype = SQL_DOUBLE;
       hb_storni(23, 5);
       hb_storni(3, 6);
-
       break;
+    }
     case IB_SQL_BLOB:
     case IB_SQL_ARRAY:
-    case IB_SQL_QUAD:
-
+    case IB_SQL_QUAD: {
       rettype = SQL_LONGVARCHAR;
       hb_storni(10L, 5);
       hb_storni(0L, 6);
       break;
-    case IB_SQL_TYPE_DATE:
-
+    }
+    case IB_SQL_TYPE_DATE: {
       rettype = SQL_DATE;
       hb_storni(8L, 5);
       hb_storni(0L, 6);
       break;
-    default:
-
+    }
+    default: {
       rettype = SQL_CHAR;
       hb_storni(var->sqllen, 5);
       hb_storni(var->sqlscale, 6);
-
-      break;
+      break; // TODO: break unnecessary
+    }
     }
     // hb_storclen((char *) var->sqlname, var->sqlname_length, 3);
 
     hb_storclen((char *)var->aliasname, var->aliasname_length, 3);
     hb_storni(rettype, 4);
 
-    if (var->sqltype & 1)
-    {
+    if (var->sqltype & 1) {
       hb_storni(1, 7);
-    }
-    else
-    {
+    } else {
       hb_storni(0, 7);
     }
 
     hb_retni(SQL_SUCCESS);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -688,13 +626,10 @@ HB_FUNC(FBNUMRESULTCOLS)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_storni(session->sqlda->sqld, 2);
     hb_retni(SQL_SUCCESS);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -706,13 +641,10 @@ HB_FUNC(FBERROR)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_retc(session->msgerror);
     hb_storni(session->errorcode, 2);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -724,19 +656,13 @@ HB_FUNC(FBFETCH)
 {
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
-    if (isc_dsql_fetch(session->status, &(session->stmt), session->sqlda->version, session->sqlda))
-    {
+  if (session) {
+    if (isc_dsql_fetch(session->status, &(session->stmt), session->sqlda->version, session->sqlda)) {
       hb_retni(SQL_NO_DATA_FOUND);
-    }
-    else
-    {
+    } else {
       hb_retni(SQL_SUCCESS);
     }
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -764,31 +690,27 @@ HB_FUNC(FBGETDATA)
   XSQLVAR *var;
   VARY *vary;
 
-  if (session && session->sqlda->sqld >= (icol))
-  {
+  if (session && session->sqlda->sqld >= (icol)) {
     var = session->sqlda->sqlvar;
-    for (i = 0; i < icol - 1; i++, var++)
-    {
+    for (i = 0; i < icol - 1; i++, var++) {
     }
 
-    if ((var->sqltype & 1) && (*var->sqlind < 0))
-    {
+    if ((var->sqltype & 1) && (*var->sqlind < 0)) {
       hb_storc(" ", 3);
-    }
-    else
-    {
+    } else {
       dtype = (((XSQLVAR *)var)->sqltype & ~1);
-      switch (dtype)
-      {
-      case IB_SQL_TEXT:
+      switch (dtype) {
+      case IB_SQL_TEXT: {
         hb_storclen((char *)var->sqldata, var->sqllen, 3);
         break;
-      case IB_SQL_VARYING:
+      }
+      case IB_SQL_VARYING: {
         vary = (VARY *)var->sqldata;
         vary->vary_string[vary->vary_length] = '\0';
         hb_storc((char *)vary->vary_string, 3);
         break;
-      case IB_SQL_TIMESTAMP:
+      }
+      case IB_SQL_TIMESTAMP: {
         isc_decode_timestamp((ISC_TIMESTAMP ISC_FAR *)var->sqldata, &times);
         hb_snprintf(date_s, sizeof(date_s), "%04d-%02d-%02d %02d:%02d:%02d.%04d", times.tm_year + 1900,
                     times.tm_mon + 1, times.tm_mday, times.tm_hour, times.tm_min, times.tm_sec,
@@ -799,6 +721,7 @@ HB_FUNC(FBGETDATA)
           hb_stortdt(lJulian, lMilliSec, 3);
         }
         break;
+      }
       case IB_SQL_TYPE_TIME: {
         long lMilliSec;
         isc_decode_sql_time((ISC_TIME ISC_FAR *)var->sqldata, &times);
@@ -815,104 +738,96 @@ HB_FUNC(FBGETDATA)
       case IB_SQL_SHORT: {
         ISC_INT64 value = 0;
         short field_width = 0, dscale;
-        switch (dtype)
-        {
-        case IB_SQL_SHORT:
+        switch (dtype) {
+        case IB_SQL_SHORT: {
           value = (ISC_INT64) * (short ISC_FAR *)var->sqldata;
           field_width = 6;
           break;
-        case IB_SQL_LONG:
+        }
+        case IB_SQL_LONG: {
           value = (ISC_INT64) * (long ISC_FAR *)var->sqldata;
           field_width = 11;
           break;
-        case IB_SQL_INT64:
+        }
+        case IB_SQL_INT64: {
           value = (ISC_INT64) * (ISC_INT64 ISC_FAR *)var->sqldata;
           field_width = 21;
-          break;
+          break; // TODO: break unnecessary
+        }
         }
 
         dscale = var->sqlscale;
 
-        if (dscale < 0)
-        {
+        if (dscale < 0) {
           ISC_INT64 tens;
           short si;
           tens = 1;
-          for (si = 0; si > dscale; si--)
-          {
+          for (si = 0; si > dscale; si--) {
             tens *= 10;
           }
 
-          if (value >= 0)
-          {
+          if (value >= 0) {
             hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d.%0*" ISC_INT64_FORMAT "d",
                         field_width - 1 + dscale, (ISC_INT64)value / tens, -dscale, (ISC_INT64)value % tens);
-          }
-          else if ((value / tens) != 0)
-          {
+          } else if ((value / tens) != 0) {
             hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d.%0*" ISC_INT64_FORMAT "d",
                         field_width - 1 + dscale, (ISC_INT64)(value / tens), -dscale, (ISC_INT64) - (value % tens));
-          }
-          else
-          {
+          } else {
             hb_snprintf(data, sizeof(data), "%*s.%0*" ISC_INT64_FORMAT "d", field_width - 1 + dscale, "-0", -dscale,
                         (ISC_INT64) - (value % tens));
           }
-        }
-        else if (dscale)
-        {
+        } else if (dscale) {
           hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d%0*d", field_width, (ISC_INT64)value, dscale, 0);
-        }
-        else
-        {
+        } else {
           hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d", field_width, (ISC_INT64)value);
         }
 
         hb_storc(data, 3);
         break;
       }
-      case IB_SQL_FLOAT:
+      case IB_SQL_FLOAT: {
         hb_snprintf(data, sizeof(data), "%15g ", *(float ISC_FAR *)(var->sqldata));
         hb_storc(data, 3);
         break;
-      case IB_SQL_DOUBLE:
+      }
+      case IB_SQL_DOUBLE: {
         hb_snprintf(data, sizeof(data), "%24f ", *(double ISC_FAR *)(var->sqldata));
         hb_storc(data, 3);
         break;
+      }
       case IB_SQL_BLOB:
       case IB_SQL_ARRAY:
-      case IB_SQL_QUAD:
+      case IB_SQL_QUAD: {
         blob_id = (ISC_QUAD *)var->sqldata;
-        if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, SR_NULLPTR))
-        {
+        if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, SR_NULLPTR)) {
           ERRORLOGANDEXIT(session, "FBGETDATA1");
         }
         if (isc_blob_info(session->status, &blob_handle, sizeof(blob_items), blob_items, sizeof(res_buffer),
-                          res_buffer))
-        {
+                          res_buffer)) {
           ERRORLOGANDEXIT(session, "FBGETDATA2");
         }
-        for (resp = res_buffer; *resp != isc_info_end;)
-        {
+        for (resp = res_buffer; *resp != isc_info_end;) {
           item = *resp++;
           length = (short)isc_vax_integer(resp, 2);
           resp += 2;
-          switch (item)
-          {
-          case isc_info_blob_total_length:
+          switch (item) {
+          case isc_info_blob_total_length: {
             blob_size = isc_vax_integer(resp, length);
             break;
-          case isc_info_blob_num_segments:
+          }
+          case isc_info_blob_num_segments: {
             num_segments = isc_vax_integer(resp, length);
             break;
-          case isc_info_truncated:
+          }
+          case isc_info_truncated: {
             bEnd = HB_TRUE;
             break;
-          default:
+          }
+          default: { // TODO: default unnecessary
             break;
           }
-          if (bEnd)
-          {
+          }
+          if (bEnd) {
             break;
           }
           resp += length;
@@ -922,39 +837,35 @@ HB_FUNC(FBGETDATA)
         p = read_blob;
         residual_size = blob_size;
 
-        for (count = 0; count <= num_segments; count++)
-        {
+        for (count = 0; count <= num_segments; count++) {
           if (isc_get_segment(session->status, &blob_handle, (unsigned short ISC_FAR *)&blob_seg_len,
-                              (unsigned short)residual_size, p) != isc_segstr_eof)
-          {
+                              (unsigned short)residual_size, p) != isc_segstr_eof) {
             p += blob_seg_len;
             residual_size -= blob_seg_len;
           }
         }
 
-        if (isc_close_blob(session->status, &blob_handle))
-        {
+        if (isc_close_blob(session->status, &blob_handle)) {
           ERRORLOGANDEXIT(session, "FBGETDATA3");
         }
 
         hb_storclen_buffer(read_blob, blob_size, 3);
         break;
-
-      case IB_SQL_TYPE_DATE:
+      }
+      case IB_SQL_TYPE_DATE: {
         isc_decode_sql_date((ISC_DATE ISC_FAR *)var->sqldata, &times);
         hb_snprintf(data, sizeof(data), "%04d-%02d-%02d", times.tm_year + 1900, times.tm_mon + 1, times.tm_mday);
         hb_storc(data, 3);
         break;
-
-      default:
+      }
+      default: {
         sr_TraceLog(LOGFILE, "Unsupported data type returned in query: %i\n", dtype);
         break;
       }
+      }
     }
     hb_retni(SQL_SUCCESS);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -981,43 +892,31 @@ HB_FUNC(FBCREATEDB)
   charset = hb_parc(5);
   dialect = hb_parni(6);
 
-  if (!dialect)
-  {
+  if (!dialect) {
     dialect = 3;
   }
 
-  if (charset && page)
-  {
+  if (charset && page) {
     hb_snprintf(create_db, sizeof(create_db),
                 "CREATE DATABASE '%s' USER '%s' PASSWORD '%s' PAGE_SIZE = %i DEFAULT CHARACTER SET %s", db_name,
                 username, passwd, page, charset);
-  }
-  else if (charset)
-  {
+  } else if (charset) {
     hb_snprintf(create_db, sizeof(create_db), "CREATE DATABASE '%s' USER '%s' PASSWORD '%s' DEFAULT CHARACTER SET %s",
                 db_name, username, passwd, charset);
-  }
-  else if (page)
-  {
+  } else if (page) {
     hb_snprintf(create_db, sizeof(create_db), "CREATE DATABASE '%s' USER '%s' PASSWORD '%s' PAGE_SIZE = %i", db_name,
                 username, passwd, page /*, charset*/);
-  }
-  else
-  {
+  } else {
     hb_snprintf(create_db, sizeof(create_db), "CREATE DATABASE '%s' USER '%s' PASSWORD '%s'", db_name, username,
                 passwd /*, page, charset*/);
   }
 
   if (isc_dsql_execute_immediate((ISC_STATUS *)status, &newdb, &trans, 0, create_db, (unsigned short)dialect,
-                                 SR_NULLPTR))
-  {
+                                 SR_NULLPTR)) {
     hb_retni(SQL_ERROR);
     sr_TraceLog(LOGFILE, "FireBird Error: %s - code: %i (see iberr.h)\n", "create database", status[1]);
-  }
-  else
-  {
-    if (isc_detach_database((ISC_STATUS *)status, &newdb))
-    {
+  } else {
+    if (isc_detach_database((ISC_STATUS *)status, &newdb)) {
       hb_retni(SQL_ERROR);
       return;
     }
@@ -1030,13 +929,10 @@ HB_FUNC(FBCREATEDB)
 
 static void firebird_info_cb(void *arg, char const *s)
 {
-  if (*(char *)arg)
-  {
+  if (*(char *)arg) {
     strcat((char *)arg, " ");
     //      strcat((char*)arg, s);
-  }
-  else
-  {
+  } else {
     strcpy((char *)arg, s);
   }
 }
@@ -1050,8 +946,7 @@ HB_FUNC(FBVERSION)
 
   *tmp = 0;
 
-  if (!isc_version(&(session->db), firebird_info_cb, (void *)tmp))
-  {
+  if (!isc_version(&(session->db), firebird_info_cb, (void *)tmp)) {
     isc_vax_integer(tmp, 100);
     hb_retnl(num_version);
   }
@@ -1073,10 +968,8 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
   lLen = hb_arrayGetNL(pField, 3);
   lDec = hb_arrayGetNL(pField, 4);
 
-  if (lLenBuff <= 0)
-  { // database content is NULL
-    switch (lType)
-    {
+  if (lLenBuff <= 0) { // database content is NULL
+    switch (lType) {
     case SQL_CHAR: {
       char *szResult = (char *)hb_xgrab(lLen + 1);
       hb_xmemset(szResult, ' ', lLen);
@@ -1097,7 +990,6 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
       hb_itemPutDS(pItem, dt);
       break;
     }
-
     case SQL_LONGVARCHAR: {
       hb_itemPutCL(pItem, bBuffer, 0);
       break;
@@ -1107,7 +999,6 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
       hb_itemPutL(pItem, HB_FALSE);
       break;
     }
-
 #ifdef SQLRDD_TOPCONN
     case SQL_FAKE_DATE: {
       hb_itemPutDS(pItem, bBuffer);
@@ -1122,27 +1013,21 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
       hb_itemPutTDT(pItem, 0, 0);
       break;
     }
-
-    default:
+    default: {
       sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
-  }
-  else
-  {
-    switch (lType)
-    {
+    }
+  } else {
+    switch (lType) {
     case SQL_CHAR: {
       HB_SIZE lPos;
       char *szResult = (char *)hb_xgrab(lLen + 1);
       hb_xmemcpy(szResult, bBuffer, (lLen < lLenBuff ? lLen : lLenBuff));
-
-      for (lPos = lLenBuff; lPos < lLen; lPos++)
-      {
+      for (lPos = lLenBuff; lPos < lLen; lPos++) {
         szResult[lPos] = ' ';
       }
       szResult[lLen] = '\0';
       hb_itemPutCLPtr(pItem, szResult, lLen);
-
       break;
     }
     case SQL_DOUBLE:
@@ -1166,13 +1051,10 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
       break;
     }
     case SQL_LONGVARCHAR: {
-      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson()))
-      {
-        if (s_pSym_SR_FROMJSON == SR_NULLPTR)
-        {
+      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson())) {
+        if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
-          if (s_pSym_SR_FROMJSON == SR_NULLPTR)
-          {
+          if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
             printf("Could not find Symbol HB_JSONDECODE\n");
           }
         }
@@ -1187,14 +1069,10 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
         // [druzus]
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
-      }
-      else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()))
-      {
-        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
-        {
+      } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString())) {
+        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
           s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-          if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
-          {
+          if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
             printf("Could not find Symbol SR_DESERIALIZE\n");
           }
         }
@@ -1206,26 +1084,20 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
         pTemp = hb_itemNew(SR_NULLPTR);
         hb_itemMove(pTemp, hb_stackReturnItem());
 
-        if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate)
-        {
+        if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate) {
           PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
               hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
-              hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos))
-          {
+              hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos)) {
             hb_itemCopy(pItem, hb_hashGetValueAt(pTemp, ulPos));
           }
           hb_itemRelease(pLangItem);
-        }
-        else
-        {
+        } else {
           hb_itemMove(pItem, pTemp);
         }
         hb_itemRelease(pTemp);
-      }
-      else
-      {
+      } else {
         hb_itemPutCL(pItem, bBuffer, lLenBuff);
       }
       break;
@@ -1237,7 +1109,6 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
       // hb_itemPutL(pItem, hb_strValInt(bBuffer, &iOverflow) > 0 ? HB_TRUE : HB_FALSE);
       break;
     }
-
 #ifdef SQLRDD_TOPCONN
     case SQL_FAKE_DATE: {
       hb_itemPutDS(pItem, bBuffer);
@@ -1250,16 +1121,15 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
       hb_itemPutTDT(pItem, 0, lMilliSec);
       break;
     }
-
     case SQL_DATETIME: {
       long lJulian, lMilliSec;
       hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
       hb_itemPutTDT(pItem, lJulian, lMilliSec);
       break;
     }
-
-    default:
+    default: {
       sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+    }
     }
   }
 }
@@ -1296,12 +1166,10 @@ HB_FUNC(FBLINEPROCESSED)
 
   HB_SIZE lLen, lDec;
 
-  if (session)
-  {
+  if (session) {
     cols = hb_arrayLen(pFields);
 
-    for (icol = 1; icol <= cols; icol++)
-    {
+    for (icol = 1; icol <= cols; icol++) {
       //        HB_LONG lType;
       temp = hb_itemNew(SR_NULLPTR);
       var = session->sqlda->sqlvar;
@@ -1310,39 +1178,33 @@ HB_FUNC(FBLINEPROCESSED)
       lLen = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 3);
       lDec = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, icol), 4);
 
-      if (lIndex == 0)
-      {
+      if (lIndex == 0) {
         hb_arraySetForward(pRet, icol, temp);
-      }
-      else
-      {
-        for (i = 0; i < lIndex - 1; i++, var++)
-        {
+      } else {
+        for (i = 0; i < lIndex - 1; i++, var++) {
         }
 
-        if ((var->sqltype & 1) && (*var->sqlind < 0))
-        {
+        if ((var->sqltype & 1) && (*var->sqlind < 0)) {
           FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)"", 0, bQueryOnly, ulSystemID, bTranslate);
           hb_arraySetForward(pRet, icol, temp);
-        }
-        else
-        {
+        } else {
           dtype = (((XSQLVAR *)var)->sqltype & ~1);
-          switch (dtype)
-          {
-          case IB_SQL_TEXT:
+          switch (dtype) {
+          case IB_SQL_TEXT: {
             FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)var->sqldata, var->sqllen, bQueryOnly,
                        ulSystemID, bTranslate);
             hb_arraySetForward(pRet, icol, temp);
             break;
-          case IB_SQL_VARYING:
+          }
+          case IB_SQL_VARYING: {
             vary = (VARY *)var->sqldata;
             vary->vary_string[vary->vary_length] = '\0';
             FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)vary->vary_string, strlen(vary->vary_string),
                        bQueryOnly, ulSystemID, bTranslate);
             hb_arraySetForward(pRet, icol, temp);
             break;
-          case IB_SQL_TIMESTAMP:
+          }
+          case IB_SQL_TIMESTAMP: {
             isc_decode_timestamp((ISC_TIMESTAMP ISC_FAR *)var->sqldata, &times);
             hb_snprintf(date_s, sizeof(date_s), "%04d-%02d-%02d %02d:%02d:%02d.%04d", times.tm_year + 1900,
                         times.tm_mon + 1, times.tm_mday, times.tm_hour, times.tm_min, times.tm_sec,
@@ -1354,8 +1216,8 @@ HB_FUNC(FBLINEPROCESSED)
                        bTranslate);
             hb_arraySetForward(pRet, icol, temp);
             break;
-
-          case IB_SQL_TYPE_TIME:
+          }
+          case IB_SQL_TYPE_TIME: {
             isc_decode_sql_time((ISC_TIME ISC_FAR *)var->sqldata, &times);
             hb_snprintf(date_s, sizeof(date_s), "%02d:%02d:%02d.%04d", times.tm_hour, times.tm_min, times.tm_sec,
                         (int)((*((ISC_TIME *)var->sqldata)) % 10000));
@@ -1364,95 +1226,79 @@ HB_FUNC(FBLINEPROCESSED)
                        bTranslate);
             hb_arraySetForward(pRet, icol, temp);
             break;
-
+          }
           case IB_SQL_LONG:
           case IB_SQL_INT64:
           case IB_SQL_SHORT: {
             ISC_INT64 value;
             short field_width = 0, dscale;
             value = 0;
-            switch (dtype)
-            {
-            case IB_SQL_SHORT:
+            switch (dtype) {
+            case IB_SQL_SHORT: {
               value = (ISC_INT64) * (short ISC_FAR *)var->sqldata;
               field_width = 6;
               break;
-
-            case IB_SQL_LONG:
+            }
+            case IB_SQL_LONG: {
               value = (ISC_INT64) * (long ISC_FAR *)var->sqldata;
               field_width = 11;
               break;
-
-            case IB_SQL_INT64:
+            }
+            case IB_SQL_INT64: {
               value = (ISC_INT64) * (ISC_INT64 ISC_FAR *)var->sqldata;
               field_width = 21;
               break;
             }
+            }
 
             dscale = var->sqlscale;
 
-            if (dscale < 0)
-            {
+            if (dscale < 0) {
               ISC_INT64 tens;
               short si;
               tens = 1;
-              for (si = 0; si > dscale; si--)
-              {
+              for (si = 0; si > dscale; si--) {
                 tens *= 10;
               }
 
-              if (value >= 0)
-              {
+              if (value >= 0) {
                 hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d.%0*" ISC_INT64_FORMAT "d",
                             field_width - 1 + dscale, (ISC_INT64)value / tens, -dscale, (ISC_INT64)value % tens);
                 FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)data, strlen(data), bQueryOnly, ulSystemID,
                            bTranslate);
-              }
-              else if ((value / tens) != 0)
-              {
+              } else if ((value / tens) != 0) {
                 hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d.%0*" ISC_INT64_FORMAT "d",
                             field_width - 1 + dscale, (ISC_INT64)(value / tens), -dscale, (ISC_INT64) - (value % tens));
                 FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)data, strlen(data), bQueryOnly, ulSystemID,
                            bTranslate);
-              }
-              else
-              {
+              } else {
                 hb_snprintf(data, sizeof(data), "%*s.%0*" ISC_INT64_FORMAT "d", field_width - 1 + dscale, "-0", -dscale,
                             (ISC_INT64) - (value % tens));
                 FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)data, strlen(data), bQueryOnly, ulSystemID,
                            bTranslate);
               }
-            }
-            else if (dscale)
-            {
+            } else if (dscale) {
               hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d%0*d", field_width, (ISC_INT64)value, dscale, 0);
               FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)data, strlen(data), bQueryOnly, ulSystemID,
                          bTranslate);
-            }
-            else
-            {
+            } else {
               //                         sprintf(p, "%*" ISC_INT64_FORMAT "d%", field_width, (ISC_INT64) value);
               //                         hb_snprintf(data, sizeof(data), "%*" ISC_INT64_FORMAT "d", field_width,
               //                         (ISC_INT64) value);
               PHB_ITEM pField = hb_arrayGetItemPtr(pFields, icol);
               HB_LONG lType = hb_arrayGetNL(pField, 6);
-              if (lType == SQL_BIT || lType == SQL_SMALLINT)
-              {
+              if (lType == SQL_BIT || lType == SQL_SMALLINT) {
                 hb_itemPutL(temp, (HB_BOOL)value);
-              }
-              else
-              {
+              } else {
                 hb_itemPutNInt(temp, (ISC_INT64)value);
               }
             }
 
             hb_arraySetForward(pRet, icol, temp);
+            break;
           }
-          break;
-
-          case IB_SQL_FLOAT:
+          case IB_SQL_FLOAT: {
             //
-
             //                   hb_snprintf(data, sizeof(data), "%15g ", *(float ISC_FAR *) (var->sqldata));
             //                   sr_TraceLog("fb.log","valor float = %lf data %s\n",*(float ISC_FAR *)
             //                   (var->sqldata),data); FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)
@@ -1460,10 +1306,9 @@ HB_FUNC(FBLINEPROCESSED)
             hb_itemPutNDLen(temp, *(float ISC_FAR *)(var->sqldata), lLen, lDec);
             hb_arraySetForward(pRet, icol, temp);
             break;
-
-          case IB_SQL_DOUBLE:
+          }
+          case IB_SQL_DOUBLE: {
             //
-
             //                   hb_snprintf(data, sizeof(data), "%24f ", *(double ISC_FAR *) (var->sqldata));
             //                   sr_TraceLog("fb.log","valor double = %lf data %s\n",*(float ISC_FAR *)
             //                   (var->sqldata),data); FBFieldGet(hb_arrayGetItemPtr(pFields, icol), temp, (char *)
@@ -1471,42 +1316,41 @@ HB_FUNC(FBLINEPROCESSED)
             hb_itemPutNDLen(temp, *(double ISC_FAR *)(var->sqldata), lLen, lDec);
             hb_arraySetForward(pRet, icol, temp);
             break;
-
+          }
           case IB_SQL_BLOB:
           case IB_SQL_ARRAY:
-          case IB_SQL_QUAD:
+          case IB_SQL_QUAD: {
             blob_id = (ISC_QUAD *)var->sqldata;
             if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0,
-                               SR_NULLPTR))
-            {
+                               SR_NULLPTR)) {
               ERRORLOGANDEXIT(session, "FBGETDATA1");
             }
             if (isc_blob_info(session->status, &blob_handle, sizeof(blob_items), blob_items, sizeof(res_buffer),
-                              res_buffer))
-            {
+                              res_buffer)) {
               ERRORLOGANDEXIT(session, "FBGETDATA2");
             }
-            for (resp = res_buffer; *resp != isc_info_end;)
-            {
+            for (resp = res_buffer; *resp != isc_info_end;) {
               item = *resp++;
               length = (short)isc_vax_integer(resp, 2);
               resp += 2;
-              switch (item)
-              {
-              case isc_info_blob_total_length:
+              switch (item) {
+              case isc_info_blob_total_length: {
                 blob_size = isc_vax_integer(resp, length);
                 break;
-              case isc_info_blob_num_segments:
+              }
+              case isc_info_blob_num_segments: {
                 num_segments = isc_vax_integer(resp, length);
                 break;
-              case isc_info_truncated:
+              }
+              case isc_info_truncated: {
                 bEnd = HB_TRUE;
                 break;
-              default:
+              }
+              default: { // TODO: default unnecessary
                 break;
               }
-              if (bEnd)
-              {
+              }
+              if (bEnd) {
                 break;
               }
               resp += length;
@@ -1516,18 +1360,15 @@ HB_FUNC(FBLINEPROCESSED)
             p = read_blob;
             residual_size = blob_size;
 
-            for (count = 0; count <= num_segments; count++)
-            {
+            for (count = 0; count <= num_segments; count++) {
               if (isc_get_segment(session->status, &blob_handle, (unsigned short ISC_FAR *)&blob_seg_len,
-                                  (unsigned short)residual_size, p) != isc_segstr_eof)
-              {
+                                  (unsigned short)residual_size, p) != isc_segstr_eof) {
                 p += blob_seg_len;
                 residual_size -= blob_seg_len;
               }
             }
 
-            if (isc_close_blob(session->status, &blob_handle))
-            {
+            if (isc_close_blob(session->status, &blob_handle)) {
               ERRORLOGANDEXIT(session, "FBGETDATA3");
             }
 
@@ -1538,8 +1379,8 @@ HB_FUNC(FBLINEPROCESSED)
             hb_storclen_buffer(read_blob, blob_size, 3);
             hb_xfree(read_blob);
             break;
-
-          case IB_SQL_TYPE_DATE:
+          }
+          case IB_SQL_TYPE_DATE: {
             isc_decode_sql_date((ISC_DATE ISC_FAR *)var->sqldata, &times);
             hb_snprintf(date_s, sizeof(date_s), "%04d-%02d-%02d", times.tm_year + 1900, times.tm_mon + 1,
                         times.tm_mday);
@@ -1549,10 +1390,11 @@ HB_FUNC(FBLINEPROCESSED)
                        bTranslate);
             hb_arraySetForward(pRet, icol, temp);
             break;
-
-          default:
+          }
+          default: {
             sr_TraceLog(LOGFILE, "Unsupported data type returned in query: %i\n", dtype);
             break;
+          }  
           }
         }
       }
