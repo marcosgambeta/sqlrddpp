@@ -2,6 +2,33 @@
 
 SQLRDD for Harbour++ and Harbour
 
+## Supported database systems
+
+| SGBD               | Status         |
+| ------------------ | -------------- |
+| SYSTEMID_ACCESS    |                |
+| SYSTEMID_ADABAS    |                |
+| SYSTEMID_AZURE     |                |
+| SYSTEMID_CACHE     |                |
+| SYSTEMID_FIREBR    |                |
+| SYSTEMID_FIREBR3   |                |
+| SYSTEMID_FIREBR4   |                |
+| SYSTEMID_FIREBR5   |                |
+| SYSTEMID_IBMDB2    |                |
+| SYSTEMID_INFORM    |                |
+| SYSTEMID_INGRES    |                |
+| SYSTEMID_MARIADB   |                |
+| SYSTEMID_MSSQL6    |                |
+| SYSTEMID_MSSQL7    |                |
+| SYSTEMID_MYSQL     |                |
+| SYSTEMID_ORACLE    |                |
+| SYSTEMID_OTERRO    |                |
+| SYSTEMID_PERVASIVE |                |
+| SYSTEMID_POSTGR    |                |
+| SYSTEMID_SQLANY    |                |
+| SYSTEMID_SQLBAS    |                |
+| SYSTEMID_SYBASE    |                |
+
 ## C/C++ Compilers Compatibility
 
 | Project   | C/C++ compiler | Status                  | Extra parameters    |
