@@ -97,14 +97,14 @@ static RDDFUNCS sqlExSuper;
 #if 0
 void startSQLEXSymbols()
 {
-   HB_THREAD_STUB
+  HB_THREAD_STUB
 
-   if( s_pSym_SOLVERESTRICTORS == SR_NULLPTR ) {
-      s_pSym_SOLVERESTRICTORS = hb_dynsymFindName("SOLVERESTRICTORS");
-      if( s_pSym_SOLVERESTRICTORS == SR_NULLPTR ) {
-         printf("Could not find Symbol %s\n", "SOLVERESTRICTORS");
-      }
-   }
+  if (s_pSym_SOLVERESTRICTORS == SR_NULLPTR) {
+    s_pSym_SOLVERESTRICTORS = hb_dynsymFindName("SOLVERESTRICTORS");
+    if (s_pSym_SOLVERESTRICTORS == SR_NULLPTR) {
+      printf("Could not find Symbol %s\n", "SOLVERESTRICTORS");
+    }
+  }
 }
 #endif
 
@@ -132,14 +132,14 @@ HB_EXTERN_END
 //------------------------------------------------------------------------
 
 #if 0
-static char * sqlSolveRestrictors(SQLEXAREAP thiswa)
+static char *sqlSolveRestrictors(SQLEXAREAP thiswa)
 {
-   if( s_pSym_SOLVERESTRICTORS ) {
-      hb_objSendMessage(thiswa->oWorkArea, s_pSym_SOLVERESTRICTORS, 0);
-      return hb_itemGetCPtr(hb_stackReturnItem());
-   } else {
-      return "";
-   }
+  if (s_pSym_SOLVERESTRICTORS) {
+    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SOLVERESTRICTORS, 0);
+    return hb_itemGetCPtr(hb_stackReturnItem());
+  } else {
+    return "";
+  }
 }
 #endif
 
@@ -147,12 +147,9 @@ static char * sqlSolveRestrictors(SQLEXAREAP thiswa)
 
 HB_ULONG GetCurrentRecordNum(SQLEXAREAP thiswa)
 {
-  if (thiswa->bIsInsert || thiswa->area.fEof)
-  {
+  if (thiswa->bIsInsert || thiswa->area.fEof) {
     return thiswa->lLastRec;
-  }
-  else
-  {
+  } else {
     return (HB_ULONG)thiswa->recordList[thiswa->recordListPos];
   }
 }
@@ -163,8 +160,7 @@ HB_BOOL IsItemNull(PHB_ITEM pFieldData, SQLEXAREAP thiswa)
 {
   if (SR_itemEmpty(pFieldData) && (!(HB_IS_ARRAY(pFieldData) || HB_IS_OBJECT(pFieldData) || HB_IS_HASH(pFieldData))) &&
       (((thiswa->nSystemID == SYSTEMID_POSTGR) && HB_IS_DATE(pFieldData)) ||
-       ((thiswa->nSystemID != SYSTEMID_POSTGR) && (!HB_IS_LOGICAL(pFieldData)))))
-  {
+       ((thiswa->nSystemID != SYSTEMID_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
     return HB_TRUE;
   }
   return HB_FALSE;
@@ -176,12 +172,9 @@ static HB_ERRCODE ConcludeSkipraw(SQLEXAREAP thiswa)
 {
   // Force relational movement in child WorkAreas
 
-  if (thiswa->area.lpdbRelations)
-  {
+  if (thiswa->area.lpdbRelations) {
     return SELF_SYNCCHILDREN((AREAP)thiswa);
-  }
-  else
-  {
+  } else {
     return HB_SUCCESS;
   }
 }
@@ -194,8 +187,7 @@ static void sqlGetCleanBuffer(SQLEXAREAP thiswa)
   PHB_ITEM pCol;
 
   pCol = hb_itemNew(SR_NULLPTR);
-  for (nPos = 1, nLen = hb_arrayLen(thiswa->aEmptyBuff); nPos <= nLen; nPos++)
-  {
+  for (nPos = 1, nLen = hb_arrayLen(thiswa->aEmptyBuff); nPos <= nLen; nPos++) {
     hb_arrayGet(thiswa->aEmptyBuff, nPos, pCol);
     hb_arraySet(thiswa->aOldBuffer, nPos, pCol);
     hb_arraySetForward(thiswa->aBuffer, nPos, pCol);
@@ -215,44 +207,48 @@ void setResultSetLimit(SQLEXAREAP thiswa, int iRows)
 {
   char *fmt1, *fmt2;
 
-  if (iRows > 1)
-  {
+  if (iRows > 1) {
     iRows++; // Add one more to multiple line queries
   }
 
-  switch (thiswa->nSystemID)
-  {
+  switch (thiswa->nSystemID) {
   case SYSTEMID_MSSQL7:
   case SYSTEMID_CACHE:
-  case SYSTEMID_SYBASE:
+  case SYSTEMID_SYBASE: {
     fmt1 = "TOP %i";
     fmt2 = "";
     break;
+  }
   case SYSTEMID_FIREBR:
   case SYSTEMID_FIREBR3:
   case SYSTEMID_FIREBR4:
   case SYSTEMID_FIREBR5:
-  case SYSTEMID_INFORM:
+  case SYSTEMID_INFORM: {
     fmt1 = "FIRST %i";
     fmt2 = "";
     break;
-  case SYSTEMID_ORACLE:
+  }
+  case SYSTEMID_ORACLE: {
     fmt1 = "";
     fmt2 = "";
     break;
+  }
   case SYSTEMID_POSTGR:
   case SYSTEMID_MYSQL:
-  case SYSTEMID_MARIADB:
+  case SYSTEMID_MARIADB: {
     fmt1 = "";
     fmt2 = "LIMIT %i";
     break;
-  case SYSTEMID_IBMDB2:
+  }
+  case SYSTEMID_IBMDB2: {
     fmt1 = "";
     fmt2 = "fetch first %i rows only";
     break;
-  default:
+  }
+  default: {
     fmt1 = "";
     fmt2 = "";
+  }
   }
   sprintf(thiswa->sLimit1, (const char *)fmt1, iRows);
   sprintf(thiswa->sLimit2, (const char *)fmt2, iRows);
@@ -308,36 +304,26 @@ static PHB_ITEM getMessageItem(PHB_ITEM obj, const char *message)
 
 static void createRecodListQuery(SQLEXAREAP thiswa)
 {
-  if (thiswa->sSql)
-  {
+  if (thiswa->sSql) {
     memset(thiswa->sSql, 0, MAX_SQL_QUERY_LEN * sizeof(char));
   }
-  if (thiswa->ulhDeleted == 0)
-  {
-    if (thiswa->bIsSelect)
-    {
+  if (thiswa->ulhDeleted == 0) {
+    if (thiswa->bIsSelect) {
       sprintf(thiswa->sSql, "SELECT %s A.%c%s%c FROM (%s) A %s %s %s", thiswa->sLimit1, OPEN_QUALIFIER(thiswa),
               thiswa->sRecnoName, CLOSE_QUALIFIER(thiswa), thiswa->szDataFileName, thiswa->sWhere, thiswa->sOrderBy,
               thiswa->sLimit2);
-    }
-    else
-    {
+    } else {
       sprintf(thiswa->sSql, "SELECT %s A.%c%s%c FROM %s A %s %s %s", thiswa->sLimit1, OPEN_QUALIFIER(thiswa),
               thiswa->sRecnoName, CLOSE_QUALIFIER(thiswa), thiswa->sTable, thiswa->sWhere, thiswa->sOrderBy,
               thiswa->sLimit2);
     }
-  }
-  else
-  {
-    if (thiswa->bIsSelect)
-    {
+  } else {
+    if (thiswa->bIsSelect) {
       sprintf(thiswa->sSql, "SELECT %s A.%c%s%c, A.%c%s%c FROM (%s) A %s %s %s", thiswa->sLimit1,
               OPEN_QUALIFIER(thiswa), thiswa->sRecnoName, CLOSE_QUALIFIER(thiswa), OPEN_QUALIFIER(thiswa),
               thiswa->sDeletedName, CLOSE_QUALIFIER(thiswa), thiswa->sTable, thiswa->sWhere, thiswa->sOrderBy,
               thiswa->sLimit2);
-    }
-    else
-    {
+    } else {
       sprintf(thiswa->sSql, "SELECT %s A.%c%s%c, A.%c%s%c FROM %s A %s %s %s", thiswa->sLimit1, OPEN_QUALIFIER(thiswa),
               thiswa->sRecnoName, CLOSE_QUALIFIER(thiswa), OPEN_QUALIFIER(thiswa), thiswa->sDeletedName,
               CLOSE_QUALIFIER(thiswa), thiswa->sTable, thiswa->sWhere, thiswa->sOrderBy, thiswa->sLimit2);
@@ -349,8 +335,7 @@ static void createRecodListQuery(SQLEXAREAP thiswa)
 
 static void createCountQuery(SQLEXAREAP thiswa)
 {
-  if (thiswa->sSql)
-  {
+  if (thiswa->sSql) {
     memset(thiswa->sSql, 0, MAX_SQL_QUERY_LEN * sizeof(char));
   }
   sprintf(thiswa->sSql, "SELECT COUNT( A.%c%s%c ) \nFROM %s A %s", OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
@@ -363,35 +348,25 @@ void getOrderByExpression(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints)
 {
   PHB_ITEM pIndexRef;
 
-  if (bUseOptimizerHints)
-  {
+  if (bUseOptimizerHints) {
     // The the index phisical name
-    if (thiswa->hOrdCurrent > 0)
-    {
+    if (thiswa->hOrdCurrent > 0) {
       pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent);
       sprintf(thiswa->sOrderBy, "%s", hb_arrayGetCPtr(pIndexRef, INDEX_PHISICAL_NAME));
-    }
-    else
-    {
+    } else {
       thiswa->sOrderBy[0] = '\0';
     }
-  }
-  else
-  {
+  } else {
     HB_BOOL bDirectionFWD = thiswa->recordListDirection == LIST_FORWARD;
 
-    if (thiswa->bReverseIndex)
-    {
+    if (thiswa->bReverseIndex) {
       bDirectionFWD = !bDirectionFWD;
     }
     // Get the index column list
-    if (thiswa->hOrdCurrent > 0)
-    {
+    if (thiswa->hOrdCurrent > 0) {
       pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent);
       sprintf(thiswa->sOrderBy, "\n%s", hb_arrayGetCPtr(pIndexRef, bDirectionFWD ? ORDER_ASCEND : ORDER_DESEND));
-    }
-    else
-    {
+    } else {
       // sprintf(thiswa->sOrderBy, "\nORDER BY %c%s%c %s", OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
       // CLOSE_QUALIFIER(thiswa), (bDirectionFWD ? "ASC" : "DESC"));
       sprintf(thiswa->sOrderBy, "\nORDER BY A.%c%s%c %s", OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
@@ -418,25 +393,20 @@ static HB_ERRCODE getMissingColumn(SQLEXAREAP thiswa, PHB_ITEM pFieldData, HB_LO
 
   pFieldStruct = hb_arrayGetItemPtr(thiswa->aFields, lFieldPosDB);
 
-  if (thiswa->colStmt[lFieldPosDB - 1] == SR_NULLPTR)
-  {
+  if (thiswa->colStmt[lFieldPosDB - 1] == SR_NULLPTR) {
     res = SQLAllocStmt((HDBC)thiswa->hDbc, &(thiswa->colStmt[lFieldPosDB - 1]));
 
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE;
     }
 
     colName = QualifyName(hb_arrayGetC(pFieldStruct, FIELD_NAME), thiswa);
 
-    if (thiswa->bIsSelect)
-    {
+    if (thiswa->bIsSelect) {
       sprintf(sSql, "SELECT %c%s%c FROM (%s) WHERE %c%s%c = ?", OPEN_QUALIFIER(thiswa), colName,
               CLOSE_QUALIFIER(thiswa), thiswa->szDataFileName, OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
               CLOSE_QUALIFIER(thiswa));
-    }
-    else
-    {
+    } else {
       sprintf(sSql, "SELECT %c%s%c FROM %s WHERE %c%s%c = ?", OPEN_QUALIFIER(thiswa), colName, CLOSE_QUALIFIER(thiswa),
               thiswa->sTable, OPEN_QUALIFIER(thiswa), thiswa->sRecnoName, CLOSE_QUALIFIER(thiswa));
     }
@@ -444,16 +414,14 @@ static HB_ERRCODE getMissingColumn(SQLEXAREAP thiswa, PHB_ITEM pFieldData, HB_LO
 
     res = SQLPrepare(thiswa->colStmt[lFieldPosDB - 1], (SQLCHAR *)sSql, SQL_NTS);
 
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE;
     }
 
     res = SQLBindParameter(thiswa->colStmt[lFieldPosDB - 1], 1, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 15, 0,
                            &(thiswa->lCurrentRecord), 0, SR_NULLPTR);
 
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE;
     }
   }
@@ -462,8 +430,7 @@ static HB_ERRCODE getMissingColumn(SQLEXAREAP thiswa, PHB_ITEM pFieldData, HB_LO
 
   res = SQLExecute(thiswa->colStmt[lFieldPosDB - 1]);
 
-  if (CHECK_SQL_N_OK(res))
-  {
+  if (CHECK_SQL_N_OK(res)) {
     odbcErrorDiagRTE(thiswa->colStmt[lFieldPosDB - 1], "getMissingColumn/SQLExecute", sSql, (SQLRETURN)res, __LINE__,
                      __FILE__);
     SQLFreeStmt(thiswa->colStmt[lFieldPosDB - 1], SQL_CLOSE);
@@ -473,10 +440,8 @@ static HB_ERRCODE getMissingColumn(SQLEXAREAP thiswa, PHB_ITEM pFieldData, HB_LO
   // Now fetch and store result in pFieldData
 
   res = SQLFetch(thiswa->colStmt[lFieldPosDB - 1]);
-  if (res != SQL_SUCCESS)
-  {
-    if (res == (unsigned int)SQL_ERROR)
-    {
+  if (res != SQL_SUCCESS) {
+    if (res == (unsigned int)SQL_ERROR) {
       odbcErrorDiagRTE(thiswa->colStmt[lFieldPosDB - 1], "getMissingColumn/SQLFetch", sSql, (SQLRETURN)res, __LINE__,
                        __FILE__);
       SQLFreeStmt(thiswa->colStmt[lFieldPosDB - 1], SQL_CLOSE);
@@ -502,8 +467,7 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
   HB_BOOL bEmpty = SR_itemEmpty(pFieldData);
   SQLRETURN res;
 
-  switch (BindStructure->iCType)
-  {
+  switch (BindStructure->iCType) {
   case SQL_C_CHAR: {
     int nTrim, i;
     int size = (int)hb_itemGetCLen(pFieldData);
@@ -513,35 +477,27 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
 
     // RTrim() the string value
 
-    for (i = (size - 1); i >= 0; i--)
-    {
-      if (pszText[i] == '\0' || pszText[i] != ' ')
-      {
+    for (i = (size - 1); i >= 0; i--) {
+      if (pszText[i] == '\0' || pszText[i] != ' ') {
         nTrim = i + 1;
         break;
       }
     }
 
-    if (i < 0)
-    {
+    if (i < 0) {
       nTrim = 0;
     }
-    if (nTrim == 0)
-    {
+    if (nTrim == 0) {
       BindStructure->asChar.value[0] = '\0';
-      if (!BindStructure->isBoundNULL)
-      {
+      if (!BindStructure->isBoundNULL) {
         BindStructure->lIndPtr = SQL_NULL_DATA;
         BindStructure->isBoundNULL = HB_TRUE;
       }
-    }
-    else
-    {
+    } else {
       hb_xmemcpy(BindStructure->asChar.value, pszText, nTrim);
       BindStructure->asChar.value[nTrim] = '\0';
 
-      if (BindStructure->isBoundNULL)
-      {
+      if (BindStructure->isBoundNULL) {
         BindStructure->isBoundNULL = HB_FALSE;
         BindStructure->lIndPtr = SQL_NTS;
       }
@@ -558,28 +514,23 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
 
     // RTrim() the string value
 
-    for (i = (size - 1); i >= 0; i--)
-    {
-      if (pszText[i] == '\0' || pszText[i] != ' ')
-      {
+    for (i = (size - 1); i >= 0; i--) {
+      if (pszText[i] == '\0' || pszText[i] != ' ') {
         nTrim = i + 1;
         break;
       }
     }
 
-    if (i < 0)
-    {
+    if (i < 0) {
       nTrim = 0;
     }
 
-    if (nTrim >= BindStructure->asChar.size_alloc)
-    {
+    if (nTrim >= BindStructure->asChar.size_alloc) {
       BindStructure->asChar.value = (SQLCHAR *)hb_xrealloc(BindStructure->asChar.value, nTrim + 1);
       BindStructure->asChar.size_alloc = nTrim + 1;
     }
 
-    if (nTrim >= BindStructure->asChar.size_alloc || nTrim > BindStructure->asChar.size)
-    {
+    if (nTrim >= BindStructure->asChar.size_alloc || nTrim > BindStructure->asChar.size) {
       hb_xmemcpy(BindStructure->asChar.value, pszText, nTrim);
       BindStructure->asChar.value[nTrim] = '\0';
       BindStructure->lIndPtr = SQL_NTS;
@@ -589,20 +540,16 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
                              BindStructure->asChar.size_alloc, 0, BindStructure->asChar.value, 0,
                              &(BindStructure->lIndPtr));
 
-      if (CHECK_SQL_N_OK(res))
-      {
+      if (CHECK_SQL_N_OK(res)) {
         odbcErrorDiagRTE(hStmt, "SetBindValue", "", res, __LINE__, __FILE__);
         return HB_FAILURE;
       }
       break;
     }
 
-    if (nTrim == 0)
-    {
+    if (nTrim == 0) {
       BindStructure->asChar.value[0] = '\0';
-    }
-    else
-    {
+    } else {
       hb_xmemcpy(BindStructure->asChar.value, pszText, nTrim);
       BindStructure->asChar.value[nTrim] = '\0';
     }
@@ -610,19 +557,14 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
     break;
   }
   case SQL_C_DOUBLE: {
-    if ((!bEmpty) && BindStructure->isBoundNULL && hStmt)
-    { // Param was NULL, should be re-bound
+    if ((!bEmpty) && BindStructure->isBoundNULL && hStmt) { // Param was NULL, should be re-bound
       BindStructure->isBoundNULL = HB_FALSE;
       BindStructure->lIndPtr = 0;
-    }
-    else if (bEmpty && (!(BindStructure->isBoundNULL)) && hStmt)
-    {
+    } else if (bEmpty && (!(BindStructure->isBoundNULL)) && hStmt) {
       BindStructure->lIndPtr = SQL_NULL_DATA;
       BindStructure->isBoundNULL = HB_TRUE;
       break;
-    }
-    else if (bEmpty && BindStructure->isBoundNULL)
-    {
+    } else if (bEmpty && BindStructure->isBoundNULL) {
       break;
     }
 
@@ -632,19 +574,14 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
   case SQL_C_TYPE_DATE: {
     int iYear, iMonth, iDay;
 
-    if ((!bEmpty) && BindStructure->isBoundNULL && hStmt)
-    { // Param was NULL, should be re-bound
+    if ((!bEmpty) && BindStructure->isBoundNULL && hStmt) { // Param was NULL, should be re-bound
       BindStructure->isBoundNULL = HB_FALSE;
       BindStructure->lIndPtr = 0;
-    }
-    else if (bEmpty && (!(BindStructure->isBoundNULL)) && hStmt)
-    {
+    } else if (bEmpty && (!(BindStructure->isBoundNULL)) && hStmt) {
       BindStructure->lIndPtr = SQL_NULL_DATA;
       BindStructure->isBoundNULL = HB_TRUE;
       break;
-    }
-    else if (bEmpty && BindStructure->isBoundNULL)
-    {
+    } else if (bEmpty && BindStructure->isBoundNULL) {
       break;
     }
 
@@ -659,19 +596,14 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
     int iHour, iMinute;
     // HB_BOOL bEmpty = SR_itemEmpty(pFieldData); declared at beginning
     // DebugBreak();
-    if ((!bEmpty) && BindStructure->isBoundNULL && hStmt)
-    { // Param was NULL, should be re-bound
+    if ((!bEmpty) && BindStructure->isBoundNULL && hStmt) { // Param was NULL, should be re-bound
       BindStructure->isBoundNULL = HB_FALSE;
       BindStructure->lIndPtr = 0;
-    }
-    else if (bEmpty && (!(BindStructure->isBoundNULL)) && hStmt)
-    {
+    } else if (bEmpty && (!(BindStructure->isBoundNULL)) && hStmt) {
       BindStructure->lIndPtr = SQL_NULL_DATA;
       BindStructure->isBoundNULL = HB_TRUE;
       break;
-    }
-    else if (bEmpty && BindStructure->isBoundNULL)
-    {
+    } else if (bEmpty && BindStructure->isBoundNULL) {
       break;
     }
 
@@ -693,7 +625,7 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
   }
   case SQL_C_BIT: {
     BindStructure->asLogical = (SQLCHAR)hb_itemGetL(pFieldData);
-    break;
+    break; // TODO: unnecessary break
   }
   }
   return HB_SUCCESS;
@@ -703,8 +635,7 @@ HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hS
 
 HB_ERRCODE SetBindEmptylValue(COLUMNBINDP BindStructure)
 {
-  switch (BindStructure->iCType)
-  {
+  switch (BindStructure->iCType) {
   case SQL_C_CHAR: {
     BindStructure->asChar.value[0] = ' ';
     BindStructure->asChar.value[1] = '\0';
@@ -721,16 +652,14 @@ HB_ERRCODE SetBindEmptylValue(COLUMNBINDP BindStructure)
   }
   case SQL_C_TYPE_TIMESTAMP: {
     // DebugBreak();
-    if (!BindStructure->isBoundNULL)
-    {
+    if (!BindStructure->isBoundNULL) {
       BindStructure->lIndPtr = SQL_NULL_DATA;
       BindStructure->isBoundNULL = HB_TRUE;
     }
     break;
   }
   case SQL_C_TYPE_DATE: {
-    if (!BindStructure->isBoundNULL)
-    {
+    if (!BindStructure->isBoundNULL) {
       BindStructure->lIndPtr = SQL_NULL_DATA;
       BindStructure->isBoundNULL = HB_TRUE;
     }
@@ -738,7 +667,7 @@ HB_ERRCODE SetBindEmptylValue(COLUMNBINDP BindStructure)
   }
   case SQL_C_BIT: {
     BindStructure->asLogical = HB_FALSE;
-    break;
+    break; // TODO: unnecessary break
   }
   }
 
@@ -750,23 +679,18 @@ HB_ERRCODE SetBindEmptylValue(COLUMNBINDP BindStructure)
 void ReleaseInsertRecordStructure(SQLEXAREAP thiswa, int iCols)
 {
   COLUMNBINDP InsertRecord;
-  if (thiswa->InsertRecord)
-  {
+  if (thiswa->InsertRecord) {
     int n;
-    if (iCols == 0)
-    {
+    if (iCols == 0) {
       iCols = (int)hb_arrayLen(thiswa->aFields);
     }
     InsertRecord = thiswa->InsertRecord;
 
-    for (n = 0; n < iCols; n++)
-    {
-      if (InsertRecord->asChar.value)
-      {
+    for (n = 0; n < iCols; n++) {
+      if (InsertRecord->asChar.value) {
         hb_xfree(InsertRecord->asChar.value);
       }
-      if (InsertRecord->colName)
-      {
+      if (InsertRecord->colName) {
         hb_xfree(InsertRecord->colName);
       }
       InsertRecord++;
@@ -781,23 +705,18 @@ void ReleaseCurrRecordStructure(SQLEXAREAP thiswa, int iCols)
 {
   COLUMNBINDP CurrRecord;
 
-  if (thiswa->CurrRecord)
-  {
+  if (thiswa->CurrRecord) {
     int n;
-    if (iCols == 0)
-    {
+    if (iCols == 0) {
       iCols = (int)hb_arrayLen(thiswa->aFields);
     }
     CurrRecord = thiswa->CurrRecord;
 
-    for (n = 0; n < iCols; n++)
-    {
-      if (CurrRecord->asChar.value)
-      {
+    for (n = 0; n < iCols; n++) {
+      if (CurrRecord->asChar.value) {
         hb_xfree(CurrRecord->asChar.value);
       }
-      if (CurrRecord->colName)
-      {
+      if (CurrRecord->colName) {
         hb_xfree(CurrRecord->colName);
       }
       CurrRecord++;
@@ -811,17 +730,13 @@ void ReleaseCurrRecordStructure(SQLEXAREAP thiswa, int iCols)
 void ReleaseColStatements(SQLEXAREAP thiswa, int iCols)
 {
   int i;
-  if (thiswa->colStmt)
-  {
-    if (iCols == 0)
-    {
+  if (thiswa->colStmt) {
+    if (iCols == 0) {
       iCols = (int)hb_arrayLen(thiswa->aFields);
     }
 
-    for (i = 0; i < iCols; i++)
-    {
-      if (thiswa->colStmt[i])
-      {
+    for (i = 0; i < iCols; i++) {
+      if (thiswa->colStmt[i]) {
         SQLFreeStmt(thiswa->colStmt[i], SQL_DROP);
       }
     }
@@ -843,28 +758,21 @@ void ReleaseIndexBindStructure(SQLEXAREAP thiswa)
 {
   int i, n, iCols;
   INDEXBINDP IndexBind;
-  for (i = 0; i < MAX_INDEXES; i++)
-  {
+  for (i = 0; i < MAX_INDEXES; i++) {
     IndexBind = thiswa->IndexBindings[i];
-    if (IndexBind)
-    {
+    if (IndexBind) {
       iCols = IndexBind->iIndexColumns;
-      for (n = 0; n < iCols; n++)
-      {
-        if (IndexBind->SkipFwdStmt)
-        {
+      for (n = 0; n < iCols; n++) {
+        if (IndexBind->SkipFwdStmt) {
           SQLFreeStmt(IndexBind->SkipFwdStmt, SQL_DROP);
         }
-        if (IndexBind->SkipBwdStmt)
-        {
+        if (IndexBind->SkipBwdStmt) {
           SQLFreeStmt(IndexBind->SkipBwdStmt, SQL_DROP);
         }
-        if (IndexBind->SeekFwdStmt)
-        {
+        if (IndexBind->SeekFwdStmt) {
           SQLFreeStmt(IndexBind->SeekFwdStmt, SQL_DROP);
         }
-        if (IndexBind->SeekBwdStmt)
-        {
+        if (IndexBind->SeekBwdStmt) {
           SQLFreeStmt(IndexBind->SeekBwdStmt, SQL_DROP);
         }
         IndexBind++;
@@ -895,8 +803,7 @@ static void BindAllIndexStmts(SQLEXAREAP thiswa)
   SQLRETURN res = SQL_ERROR;
   char *sSql;
 
-  if (thiswa->hOrdCurrent == 0)
-  {
+  if (thiswa->hOrdCurrent == 0) {
     // Natural order
 
     IndexBind = thiswa->IndexBindings[0];
@@ -909,29 +816,22 @@ static void BindAllIndexStmts(SQLEXAREAP thiswa)
                            (SQLSMALLINT)BindStructure->iSQLType, BindStructure->ColumnSize,
                            BindStructure->DecimalDigits, &(BindStructure->asNumeric), 0, SR_NULLPTR);
 
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       odbcErrorDiagRTE(hStmt, "BindAllIndexStmts", sSql, res, __LINE__, __FILE__);
     }
-  }
-  else
-  {
+  } else {
     IndexBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
 
-    for (iCol = 1; iCol <= thiswa->indexColumns; iCol++)
-    {
+    for (iCol = 1; iCol <= thiswa->indexColumns; iCol++) {
       hStmt = thiswa->recordListDirection == LIST_FORWARD ? IndexBind->SkipFwdStmt : IndexBind->SkipBwdStmt;
       sSql = thiswa->recordListDirection == LIST_FORWARD ? IndexBind->SkipFwdSql : IndexBind->SkipBwdSql;
       IndexBindParam = thiswa->IndexBindings[thiswa->hOrdCurrent];
       iBind = 1;
 
-      for (iLoop = 1; iLoop <= IndexBind->iLevel; iLoop++)
-      {
+      for (iLoop = 1; iLoop <= IndexBind->iLevel; iLoop++) {
         BindStructure = GetBindStruct(thiswa, IndexBindParam);
-        if (!BindStructure->isArgumentNull)
-        {
-          switch (BindStructure->iCType)
-          {
+        if (!BindStructure->isArgumentNull) {
+          switch (BindStructure->iCType) {
           case SQL_C_CHAR: {
             res = SQLBindParameter(hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, (SQLSMALLINT)BindStructure->iCType,
                                    (SQLSMALLINT)BindStructure->iSQLType, BindStructure->ColumnSize,
@@ -971,11 +871,10 @@ static void BindAllIndexStmts(SQLEXAREAP thiswa)
             res = SQLBindParameter(hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, (SQLSMALLINT)BindStructure->iCType,
                                    (SQLSMALLINT)BindStructure->iSQLType, BindStructure->ColumnSize,
                                    BindStructure->DecimalDigits, &(BindStructure->asLogical), 0, SR_NULLPTR);
-            break;
+            break; // TODO: unnecessary break
           }
           }
-          if (CHECK_SQL_N_OK(res))
-          {
+          if (CHECK_SQL_N_OK(res)) {
             odbcErrorDiagRTE(hStmt, "BindAllIndexStmts()", sSql, res, __LINE__, __FILE__);
           }
           iBind++;
@@ -997,60 +896,45 @@ static void FeedCurrentRecordToBindings(SQLEXAREAP thiswa)
   COLUMNBINDP BindStructure;
   HB_BOOL newFieldData;
 
-  if (thiswa->hOrdCurrent == 0)
-  {
+  if (thiswa->hOrdCurrent == 0) {
     // Natural order, pretty simple
     BindStructure = GetBindStruct(thiswa, thiswa->IndexBindings[0]);
     BindStructure->asNumeric = (SQLDOUBLE)GetCurrentRecordNum(thiswa);
-  }
-  else
-  {
+  } else {
     IndexBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
 
-    for (iCol = 1; iCol <= thiswa->indexColumns; iCol++)
-    {
+    for (iCol = 1; iCol <= thiswa->indexColumns; iCol++) {
       BindStructure = GetBindStruct(thiswa, IndexBind);
 
-      if (BindStructure->lFieldPosWA > 0)
-      {
+      if (BindStructure->lFieldPosWA > 0) {
         // Get item value from Workarea
         pFieldData = hb_arrayGetItemPtr(thiswa->aBuffer, BindStructure->lFieldPosWA);
         newFieldData = HB_FALSE;
-      }
-      else
-      {
+      } else {
         pFieldData = hb_itemNew(SR_NULLPTR);
         newFieldData = HB_TRUE;
       }
 
-      if (IndexBind->lFieldPosDB == (HB_LONG)(thiswa->ulhRecno))
-      {
+      if (IndexBind->lFieldPosDB == (HB_LONG)(thiswa->ulhRecno)) {
         hb_itemPutNL(pFieldData, thiswa->recordList[thiswa->recordListPos]);
       }
 
-      if (HB_IS_NIL(pFieldData))
-      {
+      if (HB_IS_NIL(pFieldData)) {
         getMissingColumn(thiswa, pFieldData, IndexBind->lFieldPosDB);
       }
 
       // Check if column is NULL
 
       if (SR_itemEmpty(pFieldData) && (((thiswa->nSystemID == SYSTEMID_POSTGR) && HB_IS_DATE(pFieldData)) ||
-                                       ((thiswa->nSystemID != SYSTEMID_POSTGR) && (!HB_IS_LOGICAL(pFieldData)))))
-      {
-        if (BindStructure->isNullable && BindStructure->isArgumentNull)
-        {
+                                       ((thiswa->nSystemID != SYSTEMID_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
+        if (BindStructure->isNullable && BindStructure->isArgumentNull) {
           // It is STILL NULL, so no problem
           HSTMT hStmt = thiswa->recordListDirection == LIST_FORWARD ? IndexBind->SkipFwdStmt : IndexBind->SkipBwdStmt;
           SetBindValue(pFieldData, BindStructure, hStmt);
-        }
-        else if (!BindStructure->isNullable)
-        {
+        } else if (!BindStructure->isNullable) {
           // Just get an empty value to be bound, because column is NOT nullable
           SetBindEmptylValue(BindStructure);
-        }
-        else if (BindStructure->isNullable && (!BindStructure->isArgumentNull))
-        {
+        } else if (BindStructure->isNullable && (!BindStructure->isArgumentNull)) {
           // Now we have a problem. Current record column is NULL, database accept NULLS
           // but query in NOT prepared for NULL values. So we must RE-PREPARE all queries
           thiswa->bConditionChanged1 = HB_TRUE;
@@ -1058,15 +942,12 @@ static void FeedCurrentRecordToBindings(SQLEXAREAP thiswa)
           BindAllIndexStmts(thiswa);
           FeedCurrentRecordToBindings(thiswa); // Recursive call
         }
-      }
-      else
-      {
+      } else {
         HSTMT hStmt = thiswa->recordListDirection == LIST_FORWARD ? IndexBind->SkipFwdStmt : IndexBind->SkipBwdStmt;
         SetBindValue(pFieldData, BindStructure, hStmt);
       }
 
-      if (newFieldData)
-      {
+      if (newFieldData) {
         hb_itemRelease(pFieldData);
       }
       IndexBind++;
@@ -1083,18 +964,13 @@ void SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere)
   char *temp;
 
   char *szfor = getMessageC(thiswa->oWorkArea, "CFOR");
-  if (szfor)
-  {
-    if (szfor[0])
-    {
-      if (bWhere)
-      {
+  if (szfor) {
+    if (szfor[0]) {
+      if (bWhere) {
         temp = hb_strdup((const char *)thiswa->sWhere);
         sprintf(thiswa->sWhere, "%s AND ( %s )", temp, szfor);
         hb_xfree(temp);
-      }
-      else
-      {
+      } else {
         sprintf(thiswa->sWhere, "\nWHERE ( %s )", szfor);
         bWhere = HB_TRUE;
       }
@@ -1104,43 +980,30 @@ void SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere)
 
   /////////////////////////////////////////////////////////////////////////////
 
-  if (thiswa->sqlfilter)
-  {
+  if (thiswa->sqlfilter) {
     char *sFilter = getMessageC(thiswa->oWorkArea, "CFILTER");
-    if (sFilter)
-    {
-      if (sFilter[0])
-      {
-        if (bWhere)
-        {
+    if (sFilter) {
+      if (sFilter[0]) {
+        if (bWhere) {
           temp = hb_strdup((const char *)thiswa->sWhere);
           sprintf(thiswa->sWhere, "%s AND ( %s )", temp, sFilter);
           hb_xfree(temp);
-        }
-        else
-        {
+        } else {
           sprintf(thiswa->sWhere, "\nWHERE ( %s )", sFilter);
           bWhere = HB_TRUE;
         }
         hb_xfree(sFilter);
       }
     }
-  }
-  else
-  {
+  } else {
     char *sFilter = getMessageC(thiswa->oWorkArea, "CFILTER");
-    if (sFilter)
-    {
-      if (sFilter[0])
-      {
-        if (bWhere)
-        {
+    if (sFilter) {
+      if (sFilter[0]) {
+        if (bWhere) {
           temp = hb_strdup((const char *)thiswa->sWhere);
           sprintf(thiswa->sWhere, "%s AND ( %s )", temp, sFilter);
           hb_xfree(temp);
-        }
-        else
-        {
+        } else {
           sprintf(thiswa->sWhere, "\nWHERE ( %s )", sFilter);
           bWhere = HB_TRUE;
         }
@@ -1151,20 +1014,15 @@ void SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere)
 
   // Resolve SET SCOPE TO
 
-  if (thiswa->hOrdCurrent > 0)
-  {
+  if (thiswa->hOrdCurrent > 0) {
     PHB_ITEM pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent);
     const char *szFilter = hb_arrayGetCPtr(pIndexRef, SCOPE_SQLEXPR);
-    if (szFilter && szFilter[0])
-    {
-      if (bWhere)
-      {
+    if (szFilter && szFilter[0]) {
+      if (bWhere) {
         temp = hb_strdup((const char *)thiswa->sWhere);
         sprintf(thiswa->sWhere, "%s AND ( %s )", temp, szFilter);
         hb_xfree(temp);
-      }
-      else
-      {
+      } else {
         sprintf(thiswa->sWhere, "\nWHERE ( %s )", szFilter);
         bWhere = HB_TRUE;
       }
@@ -1175,18 +1033,13 @@ void SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere)
 
   {
     char *sFilter = getMessageC(thiswa->oWorkArea, "CSCOPE");
-    if (sFilter)
-    {
-      if (sFilter[0])
-      {
-        if (bWhere)
-        {
+    if (sFilter) {
+      if (sFilter[0]) {
+        if (bWhere) {
           temp = hb_strdup((const char *)thiswa->sWhere);
           sprintf(thiswa->sWhere, "%s AND ( %s )", temp, sFilter);
           hb_xfree(temp);
-        }
-        else
-        {
+        } else {
           sprintf(thiswa->sWhere, "\nWHERE ( %s )", sFilter);
           bWhere = HB_TRUE;
         }
@@ -1197,18 +1050,13 @@ void SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere)
 
   {
     char *sFilter = getMessageC(thiswa->oWorkArea, "CFLTUSR");
-    if (sFilter)
-    {
-      if (sFilter[0])
-      {
-        if (bWhere)
-        {
+    if (sFilter) {
+      if (sFilter[0]) {
+        if (bWhere) {
           temp = hb_strdup((const char *)thiswa->sWhere);
           sprintf(thiswa->sWhere, "%s AND ( %s )", temp, sFilter);
           hb_xfree(temp);
-        }
-        else
-        {
+        } else {
           sprintf(thiswa->sWhere, "\nWHERE ( %s )", sFilter);
           // bWhere = HB_TRUE;
         }
@@ -1226,8 +1074,7 @@ void SetIndexBindStructure(SQLEXAREAP thiswa)
   INDEXBINDP IndexBind;
   int i;
 
-  if (thiswa->hOrdCurrent > 0)
-  {
+  if (thiswa->hOrdCurrent > 0) {
     pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent);
     pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
     thiswa->indexColumns = hb_arrayLen(pColumns);
@@ -1240,17 +1087,14 @@ void SetIndexBindStructure(SQLEXAREAP thiswa)
 
     IndexBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
 
-    for (i = 1; i <= thiswa->indexColumns; i++)
-    {
+    for (i = 1; i <= thiswa->indexColumns; i++) {
       IndexBind->lFieldPosDB = hb_arrayGetNL(hb_arrayGetItemPtr(pColumns, i), 2);
       IndexBind->hIndexOrder = thiswa->hOrdCurrent;
       IndexBind->iLevel = i;
       IndexBind->iIndexColumns = thiswa->indexColumns;
       IndexBind++;
     }
-  }
-  else
-  {
+  } else {
     thiswa->indexColumns = 1; // Natural order, RECNO
     // Alloc memory for binding structures
     thiswa->IndexBindings[thiswa->hOrdCurrent] = (INDEXBINDP)hb_xgrab(thiswa->indexColumns * sizeof(INDEXBIND));
@@ -1282,16 +1126,14 @@ void SetCurrRecordStructure(SQLEXAREAP thiswa)
 
   BindStructure = thiswa->CurrRecord;
 
-  for (i = 1; i <= iCols; i++)
-  {
+  for (i = 1; i <= iCols; i++) {
     pFieldStruct = hb_arrayGetItemPtr(thiswa->aFields, i);
     pFieldLen = hb_arrayGetItemPtr(pFieldStruct, FIELD_LEN);
     pFieldDec = hb_arrayGetItemPtr(pFieldStruct, FIELD_DEC);
     lType = hb_arrayGetNL(pFieldStruct, FIELD_DOMAIN);
     cType = (*hb_arrayGetCPtr(pFieldStruct, FIELD_TYPE));
     bMultiLang = hb_arrayGetL(pFieldStruct, FIELD_MULTILANG);
-    if (bMultiLang)
-    {
+    if (bMultiLang) {
       cType = 'M';
     }
 
@@ -1307,21 +1149,19 @@ void SetCurrRecordStructure(SQLEXAREAP thiswa)
     BindStructure->isMemo = cType == 'M';
 
 #ifdef SQLRDD_TOPCONN
-    switch (lType)
-    {
+    switch (lType) {
     case SQL_FAKE_NUM: {
       lType = SQL_FLOAT;
       break;
     }
     case SQL_FAKE_DATE: {
       lType = SQL_CHAR;
-      break;
+      break; // TODO: unnecessary break
     }
     }
 #endif
 
-    switch (cType)
-    {
+    switch (cType) {
     case 'C': {
       BindStructure->asChar.value = (SQLCHAR *)hb_xgrabz(BindStructure->ColumnSize + 1);
       // memset(BindStructure->asChar.value, 0, BindStructure->ColumnSize + 1); // Culik Zero all memory
@@ -1348,29 +1188,24 @@ void SetCurrRecordStructure(SQLEXAREAP thiswa)
       BindStructure->iCType = SQL_C_TYPE_TIMESTAMP;
       break;
     }
-
     case 'D': {
       // BindStructure->iCType = lType; // DATE or TIMESTAMP
       // Corrigido 27/12/2013 09:53 - lpereira
       // Estava atribuindo o valor de SYSTEMID_ORACLE para thiswa->nSystemID.
-      // if( thiswa->nSystemID = SYSTEMID_ORACLE )
-      if (thiswa->nSystemID == SYSTEMID_ORACLE)
-      {
+      // if (thiswa->nSystemID = SYSTEMID_ORACLE)
+      if (thiswa->nSystemID == SYSTEMID_ORACLE) {
         BindStructure->iCType = SQL_C_TYPE_TIMESTAMP; // May be DATE or TIMESTAMP
-      }
-      else
-      {
+      } else {
         BindStructure->iCType = lType; // May be DATE or TIMESTAMP
       }
       break;
     }
     case 'L': {
       BindStructure->iCType = SQL_C_BIT;
-      break;
+      break; // TODO: unnecessary break
     }
     }
-    if (BindStructure->isMultiLang)
-    { // culik, se e multiplang, binda como binario
+    if (BindStructure->isMultiLang) { // culik, se e multiplang, binda como binario
       BindStructure->iCType = SQL_C_BINARY;
     }
     BindStructure++;
@@ -1398,51 +1233,40 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
 
   // Resolve record or index navigation
 
-  if (iListType == LIST_SKIP_FWD || iListType == LIST_SKIP_BWD)
-  {
+  if (iListType == LIST_SKIP_FWD || iListType == LIST_SKIP_BWD) {
     INDEXBINDP IndexBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
 
     thiswa->recordListDirection = (iListType == LIST_SKIP_FWD ? LIST_FORWARD : LIST_BACKWARD);
     bDirectionFWD = iListType == LIST_SKIP_FWD;
 
-    if (thiswa->bReverseIndex)
-    {
+    if (thiswa->bReverseIndex) {
       bDirectionFWD = !bDirectionFWD;
     }
 
-    if (thiswa->hOrdCurrent == 0)
-    { // Natural order
+    if (thiswa->hOrdCurrent == 0) { // Natural order
       sprintf(thiswa->sWhere, "\nWHERE A.%c%s%c %s ?", OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
               CLOSE_QUALIFIER(thiswa), bDirectionFWD ? ">=" : "<=");
       BindStructure = GetBindStruct(thiswa, IndexBind);
       BindStructure->asNumeric = (SQLDOUBLE)GetCurrentRecordNum(thiswa);
       bWhere = HB_TRUE;
-    }
-    else
-    {
-      for (iCol = 1; iCol <= thiswa->indexLevel; iCol++)
-      {
+    } else {
+      for (iCol = 1; iCol <= thiswa->indexLevel; iCol++) {
         BindStructure = GetBindStruct(thiswa, IndexBind);
 
         pTemp = SR_NULLPTR;
         pFieldData = SR_NULLPTR;
 
-        if (BindStructure->lFieldPosWA > 0)
-        {
+        if (BindStructure->lFieldPosWA > 0) {
           // Get item value from Workarea
           pFieldData = hb_arrayGetItemPtr(thiswa->aBuffer, BindStructure->lFieldPosWA);
         }
 
-        if (BindStructure->lFieldPosDB == (HB_LONG)(thiswa->ulhRecno))
-        {
+        if (BindStructure->lFieldPosDB == (HB_LONG)(thiswa->ulhRecno)) {
           pTemp = hb_itemNew(SR_NULLPTR);
           hb_itemPutNL(pTemp, thiswa->recordList[thiswa->recordListPos]);
           pFieldData = pTemp;
-        }
-        else if (BindStructure->lFieldPosWA == 0 || (pFieldData && HB_IS_NIL(pFieldData)))
-        {
-          if (!pFieldData)
-          {
+        } else if (BindStructure->lFieldPosWA == 0 || (pFieldData && HB_IS_NIL(pFieldData))) {
+          if (!pFieldData) {
             pTemp = hb_itemNew(SR_NULLPTR);
             pFieldData = pTemp;
           }
@@ -1452,22 +1276,18 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
 
         bArgumentIsNull = BindStructure->isNullable && IsItemNull(pFieldData, thiswa);
 
-        if (iCol == thiswa->indexLevel)
-        {
+        if (iCol == thiswa->indexLevel) {
           BindStructure->isArgumentNull = bArgumentIsNull;
 
-          if (!bArgumentIsNull)
-          {
+          if (!bArgumentIsNull) {
             // Bind column value only if argument is NOT null
             HSTMT hStmt = thiswa->recordListDirection == LIST_FORWARD ? IndexBind->SkipFwdStmt : IndexBind->SkipBwdStmt;
             SetBindValue(pFieldData, BindStructure, hStmt);
           }
         }
 
-        if (bArgumentIsNull)
-        { // This is the same to be directly used or prepared
-          if (BindStructure->iCType == SQL_C_DOUBLE)
-          { // If NUMERIC
+        if (bArgumentIsNull) { // This is the same to be directly used or prepared
+          if (BindStructure->iCType == SQL_C_DOUBLE) { // If NUMERIC
             temp = hb_strdup((const char *)thiswa->sWhere);
             sprintf(thiswa->sWhere, "%s %s ( A.%c%s%c %s %s OR A.%c%s%c IS NULL )", bWhere ? temp : "\nWHERE",
                     bWhere ? "AND" : "", OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa),
@@ -1476,17 +1296,12 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
                     CLOSE_QUALIFIER(thiswa));
             bWhere = HB_TRUE;
             hb_xfree(temp);
-          }
-          else
-          {
-            if (iCol == thiswa->indexLevel && bDirectionFWD)
-            {
+          } else {
+            if (iCol == thiswa->indexLevel && bDirectionFWD) {
               // This condition should create a WHERE clause like "COLUMN >= NULL".
               // Since this is not numeric, EVERYTHING is greater
               // or equal to NULL, so we do not add any restriction to WHERE clause.
-            }
-            else
-            {
+            } else {
               temp = hb_strdup((const char *)thiswa->sWhere);
               sprintf(thiswa->sWhere, "%s %s A.%c%s%c IS NULL", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
                       OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa));
@@ -1494,9 +1309,7 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
               hb_xfree(temp);
             }
           }
-        }
-        else
-        {
+        } else {
           temp = hb_strdup((const char *)thiswa->sWhere);
           sprintf(thiswa->sWhere, "%s %s A.%c%s%c %s ?", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
                   OPEN_QUALIFIER(thiswa), BindStructure->colName, CLOSE_QUALIFIER(thiswa),
@@ -1504,25 +1317,19 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
           bWhere = HB_TRUE;
           hb_xfree(temp);
         }
-        if (pTemp)
-        {
+        if (pTemp) {
           hb_itemRelease(pTemp);
         }
         IndexBind++;
       }
     }
-  }
-  else
-  {
+  } else {
     thiswa->indexLevel = -1; // Reset index navigation
   }
 
-  if (iListType == LIST_FROM_TOP)
-  {
+  if (iListType == LIST_FROM_TOP) {
     thiswa->recordListDirection = LIST_FORWARD;
-  }
-  else if (iListType == LIST_FROM_BOTTOM)
-  {
+  } else if (iListType == LIST_FROM_BOTTOM) {
     thiswa->recordListDirection = LIST_BACKWARD;
   }
 
@@ -1537,8 +1344,7 @@ HB_ERRCODE getWorkareaParams(SQLEXAREAP thiswa)
 {
   HB_ULONG lCnnType;
 
-  if (!thiswa->oSql)
-  {
+  if (!thiswa->oSql) {
     thiswa->oSql = getMessageItem(thiswa->oWorkArea, "OSQL");
     thiswa->aFields = getMessageItem(thiswa->oWorkArea, "AFIELDS");
     thiswa->hDbc = (HDBC)getMessagePtr(thiswa->oSql, "HDBC");
@@ -1554,20 +1360,18 @@ HB_ERRCODE getWorkareaParams(SQLEXAREAP thiswa)
     SetColStatements(thiswa);
   }
 
-  if (!thiswa->bConnVerified)
-  {
+  if (!thiswa->bConnVerified) {
     lCnnType = getMessageNL(thiswa->oSql, "NCONNECTIONTYPE");
 
-    if (!(lCnnType == CONNECT_ODBC || lCnnType == CONNECT_ODBC_QUERY_ONLY))
-    {
+    if (!(lCnnType == CONNECT_ODBC || lCnnType == CONNECT_ODBC_QUERY_ONLY)) {
       commonError((AREAP)thiswa, EG_OPEN, ESQLRDD_OPEN, "SQLEX supports only ODBC connections.");
       return HB_FAILURE;
     }
     thiswa->bConnVerified = HB_TRUE;
   }
   thiswa->bIsSelect = getMessageL(thiswa->oWorkArea, "LTABLEISSELECT");
-  // if( !thiswa->hStmtInsert ) {
-  //    SQLAllocHandle(SQL_HANDLE_STMT, (HDBC) thiswa->hDbc, &(thiswa->hStmtInsert));
+  // if (!thiswa->hStmtInsert) {
+  //   SQLAllocHandle(SQL_HANDLE_STMT, (HDBC)thiswa->hDbc, &(thiswa->hStmtInsert));
   // }
 
   return HB_SUCCESS;
@@ -1593,8 +1397,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXAREAP thiswa, int iMax) // Returns 
 
   res = SQLExecute(hStmt);
 
-  if (CHECK_SQL_N_OK(res))
-  {
+  if (CHECK_SQL_N_OK(res)) {
     odbcErrorDiagRTE(hStmt, "getPreparedRecordList", sSql, res, __LINE__, __FILE__);
     SQLCloseCursor(hStmt);
     return HB_FAILURE;
@@ -1611,8 +1414,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXAREAP thiswa, int iMax) // Returns 
   do
   {
     res = SQLFetch(hStmt);
-    if (res != SQL_SUCCESS)
-    {
+    if (res != SQL_SUCCESS) {
       // Ops, where are previously retrieved record ?
       // Run query again and try to find it in result
       // set since it can be deleted by other user - MISSING!!!
@@ -1620,88 +1422,64 @@ static HB_ERRCODE getPreparedRecordList(SQLEXAREAP thiswa, int iMax) // Returns 
       return HB_RETRY;
     }
 
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE; // Any other error means a fault in SQL statement
     }
     res = SQLGetData(hStmt, 1, SQL_C_ULONG, &lRecord, sizeof(SQL_C_ULONG), SR_NULLPTR);
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE; // Any other error means a fault in SQL statement
     }
   } while (thiswa->lCurrentRecord != lRecord);
 
   recordListChanged = 0;
 
-  for (i = 0; i < iMax; i++)
-  {
+  for (i = 0; i < iMax; i++) {
     res = SQLFetch(hStmt);
-    if (res != SQL_SUCCESS)
-    {
-      if (i > 0 && thiswa->indexLevel == 1 && res == SQL_NO_DATA_FOUND)
-      {
-        if (thiswa->recordListDirection == LIST_FORWARD)
-        {
+    if (res != SQL_SUCCESS) {
+      if (i > 0 && thiswa->indexLevel == 1 && res == SQL_NO_DATA_FOUND) {
+        if (thiswa->recordListDirection == LIST_FORWARD) {
           thiswa->lEofAt = thiswa->recordList[i - 1];
-        }
-        else
-        {
+        } else {
           thiswa->lBofAt = thiswa->recordList[i - 1];
         }
-      }
-      else if (i == 0 && thiswa->indexLevel == 1 && res == SQL_NO_DATA_FOUND && thiswa->recordListSize > 0)
-      {
-        if (thiswa->recordListDirection == LIST_FORWARD)
-        {
+      } else if (i == 0 && thiswa->indexLevel == 1 && res == SQL_NO_DATA_FOUND && thiswa->recordListSize > 0) {
+        if (thiswa->recordListDirection == LIST_FORWARD) {
           thiswa->lEofAt = thiswa->recordList[thiswa->recordListPos];
-        }
-        else
-        {
+        } else {
           thiswa->lBofAt = thiswa->recordList[thiswa->recordListPos];
         }
       }
       break;
     }
     res = SQLGetData(hStmt, 1, SQL_C_ULONG, &(thiswa->recordList[i]), sizeof(SQL_C_ULONG), SR_NULLPTR);
-    if (res == SQL_ERROR)
-    {
+    if (res == SQL_ERROR) {
       SQLFreeStmt(hStmt, SQL_CLOSE);
       return HB_FAILURE;
     }
 
     recordListChanged++;
 
-    if (thiswa->ulhDeleted > 0)
-    {
+    if (thiswa->ulhDeleted > 0) {
       SQLCHAR szValue[2];
       res = SQLGetData(hStmt, 2, SQL_C_CHAR, szValue, 2, SR_NULLPTR);
-      if (res == SQL_ERROR)
-      {
+      if (res == SQL_ERROR) {
         SQLFreeStmt(hStmt, SQL_CLOSE);
         return HB_FAILURE;
-      }
-      else
-      {
-        if (szValue[0] == 0)
-        {
+      } else {
+        if (szValue[0] == 0) {
           thiswa->deletedList[i] = ' '; // MySQL driver climps spaces from right side
-        }
-        else
-        {
+        } else {
           thiswa->deletedList[i] = szValue[0];
         }
       }
-    }
-    else
-    {
+    } else {
       thiswa->deletedList[i] = ' ';
     }
   }
 
   SQLFreeStmt(hStmt, SQL_CLOSE);
 
-  if (recordListChanged)
-  {
+  if (recordListChanged) {
     thiswa->recordListSize = (HB_ULONG)i;
     thiswa->recordListPos = 0;
     return RESULTSET_OK;
@@ -1719,32 +1497,24 @@ static HB_ERRCODE getRecordList(SQLEXAREAP thiswa, int iMax) // Returns HB_TRUE 
 
   res = SQLAllocStmt((HDBC)thiswa->hDbc, &(thiswa->hStmt));
 
-  if (CHECK_SQL_N_OK(res))
-  {
+  if (CHECK_SQL_N_OK(res)) {
     return HB_FAILURE;
   }
 
   res = SQLExecDirect(thiswa->hStmt, (SQLCHAR *)thiswa->sSql, SQL_NTS);
 
-  if (res == SQL_ERROR)
-  {
+  if (res == SQL_ERROR) {
     return HB_FAILURE; // It means a fault in SQL statement
   }
 
   recordListChanged = 0;
-  for (i = 0; i < iMax; i++)
-  {
+  for (i = 0; i < iMax; i++) {
     res = SQLFetch(thiswa->hStmt);
-    if (res != SQL_SUCCESS)
-    {
-      if (i > 0 && res == SQL_NO_DATA_FOUND)
-      {
-        if (thiswa->recordListDirection == LIST_FORWARD)
-        {
+    if (res != SQL_SUCCESS) {
+      if (i > 0 && res == SQL_NO_DATA_FOUND) {
+        if (thiswa->recordListDirection == LIST_FORWARD) {
           thiswa->lEofAt = thiswa->recordList[i - 1];
-        }
-        else
-        {
+        } else {
           thiswa->lBofAt = thiswa->recordList[i - 1];
         }
       }
@@ -1752,45 +1522,34 @@ static HB_ERRCODE getRecordList(SQLEXAREAP thiswa, int iMax) // Returns HB_TRUE 
       break;
     }
     res = SQLGetData(thiswa->hStmt, 1, SQL_C_ULONG, &(thiswa->recordList[i]), sizeof(SQL_C_ULONG), SR_NULLPTR);
-    if (res == SQL_ERROR)
-    {
+    if (res == SQL_ERROR) {
       SQLFreeStmt(thiswa->hStmt, SQL_CLOSE);
       return HB_FAILURE;
     }
 
     recordListChanged++;
 
-    if (thiswa->ulhDeleted > 0)
-    {
+    if (thiswa->ulhDeleted > 0) {
       SQLCHAR szValue[2];
       res = SQLGetData(thiswa->hStmt, 2, SQL_C_CHAR, szValue, 2, SR_NULLPTR);
-      if (res == SQL_ERROR)
-      {
+      if (res == SQL_ERROR) {
         SQLFreeStmt(thiswa->hStmt, SQL_CLOSE);
         return HB_FAILURE;
-      }
-      else
-      {
-        if (szValue[0] == 0)
-        {
+      } else {
+        if (szValue[0] == 0) {
           thiswa->deletedList[i] = ' '; // MySQL driver climps spaces from right side
-        }
-        else
-        {
+        } else {
           thiswa->deletedList[i] = szValue[0];
         }
       }
-    }
-    else
-    {
+    } else {
       thiswa->deletedList[i] = ' ';
     }
   }
 
   SQLFreeStmt(thiswa->hStmt, SQL_CLOSE);
 
-  if (recordListChanged)
-  {
+  if (recordListChanged) {
     thiswa->recordListSize = (HB_ULONG)i;
     thiswa->recordListPos = 0;
     return RESULTSET_OK;
@@ -1807,28 +1566,24 @@ static HB_ERRCODE getFirstColumnAsLong(SQLEXAREAP thiswa, long *szValue) // Retu
 
   res = SQLAllocStmt((HDBC)thiswa->hDbc, &(thiswa->hStmt));
 
-  if (CHECK_SQL_N_OK(res))
-  {
+  if (CHECK_SQL_N_OK(res)) {
     return HB_FAILURE;
   }
 
   res = SQLExecDirect(thiswa->hStmt, (SQLCHAR *)thiswa->sSql, SQL_NTS);
 
-  if (res == SQL_ERROR)
-  {
+  if (res == SQL_ERROR) {
     return HB_FAILURE; // It means a fault in SQL statement
   }
 
   res = SQLFetch(thiswa->hStmt);
-  if (res == SQL_ERROR)
-  {
+  if (res == SQL_ERROR) {
     SQLFreeStmt(thiswa->hStmt, SQL_CLOSE);
     return HB_FAILURE; // It means a fault in SQL statement
   }
 
   res = SQLGetData(thiswa->hStmt, 1, SQL_C_ULONG, szValue, sizeof(SQL_C_ULONG), SR_NULLPTR);
-  if (res == SQL_ERROR)
-  {
+  if (res == SQL_ERROR) {
     SQLFreeStmt(thiswa->hStmt, SQL_CLOSE);
     return HB_FAILURE;
   }
@@ -1872,14 +1627,11 @@ HB_BOOL getColumnList(SQLEXAREAP thiswa)
 
   colName = (char *)hb_xgrab(HB_SYMBOL_NAME_LEN + 1);
 
-  if (thiswa->iColumnListStatus == FIELD_LIST_LEARNING)
-  {
-    if (!thiswa->sFields)
-    {
+  if (thiswa->iColumnListStatus == FIELD_LIST_LEARNING) {
+    if (!thiswa->sFields) {
       thiswa->sFields = (char *)hb_xgrab(FIELD_LIST_SIZE * sizeof(char));
       uiFlds = 0;
-      for (n = 1; n <= thiswa->area.uiFieldCount; n++)
-      {
+      for (n = 1; n <= thiswa->area.uiFieldCount; n++) {
         pField = thiswa->area.lpFields + n - 1;
         fName = (char *)hb_dynsymName((PHB_DYNS)pField->sym);
         len = strlen(fName);
@@ -1888,24 +1640,18 @@ HB_BOOL getColumnList(SQLEXAREAP thiswa)
         colName = QualifyName(colName, thiswa);
         colName[len] = '\0';
 
-        if (uiFlds == 0)
-        {
+        if (uiFlds == 0) {
           // Should ALWAYS ask for RECNO in first column to
           // be used in the BufferPool
-          if (thiswa->ulhDeleted == 0)
-          {
+          if (thiswa->ulhDeleted == 0) {
             sprintf(thiswa->sFields, "A.%c%s%c, A.%c%s%c", OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
                     CLOSE_QUALIFIER(thiswa), OPEN_QUALIFIER(thiswa), colName, CLOSE_QUALIFIER(thiswa));
-          }
-          else
-          { // If deleted records control exists in current WA, we should add it first, also
+          } else { // If deleted records control exists in current WA, we should add it first, also
             sprintf(thiswa->sFields, "A.%c%s%c, A.%c%s%c, A.%c%s%c", OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
                     CLOSE_QUALIFIER(thiswa), OPEN_QUALIFIER(thiswa), thiswa->sDeletedName, CLOSE_QUALIFIER(thiswa),
                     OPEN_QUALIFIER(thiswa), colName, CLOSE_QUALIFIER(thiswa));
           }
-        }
-        else
-        {
+        } else {
           temp = hb_strdup((const char *)thiswa->sFields);
           sprintf(thiswa->sFields, "%s, A.%c%s%c", temp, OPEN_QUALIFIER(thiswa), colName, CLOSE_QUALIFIER(thiswa));
           hb_xfree(temp);
@@ -1915,18 +1661,13 @@ HB_BOOL getColumnList(SQLEXAREAP thiswa)
       hb_xfree(colName);
       return HB_TRUE;
     }
-  }
-  else if (thiswa->iColumnListStatus == FIELD_LIST_CHANGED || thiswa->iColumnListStatus == FIELD_LIST_NEW_VALUE_READ)
-  {
+  } else if (thiswa->iColumnListStatus == FIELD_LIST_CHANGED || thiswa->iColumnListStatus == FIELD_LIST_NEW_VALUE_READ) {
     uiFlds = 0;
-    if (!thiswa->sFields)
-    {
+    if (!thiswa->sFields) {
       thiswa->sFields = (char *)hb_xgrab(FIELD_LIST_SIZE * sizeof(char));
     }
-    for (n = 1; n <= thiswa->area.uiFieldCount; n++)
-    {
-      if (thiswa->uiFieldList[n - 1])
-      {
+    for (n = 1; n <= thiswa->area.uiFieldCount; n++) {
+      if (thiswa->uiFieldList[n - 1]) {
         pField = thiswa->area.lpFields + n - 1;
         fName = (char *)hb_dynsymName((PHB_DYNS)pField->sym);
         len = strlen(fName);
@@ -1935,24 +1676,18 @@ HB_BOOL getColumnList(SQLEXAREAP thiswa)
         colName = QualifyName(colName, thiswa);
         colName[len] = '\0';
 
-        if (uiFlds == 0)
-        {
+        if (uiFlds == 0) {
           // Should ALWAYS ask for RECNO in first column to
           // be used in the BufferPool
-          if (thiswa->ulhDeleted == 0)
-          {
+          if (thiswa->ulhDeleted == 0) {
             sprintf(thiswa->sFields, "A.%c%s%c, A.%c%s%c", OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
                     CLOSE_QUALIFIER(thiswa), OPEN_QUALIFIER(thiswa), colName, CLOSE_QUALIFIER(thiswa));
-          }
-          else
-          {
+          } else {
             sprintf(thiswa->sFields, "A.%c%s%c, A.%c%s%c, A.%c%s%c", OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
                     CLOSE_QUALIFIER(thiswa), OPEN_QUALIFIER(thiswa), thiswa->sDeletedName, CLOSE_QUALIFIER(thiswa),
                     OPEN_QUALIFIER(thiswa), colName, CLOSE_QUALIFIER(thiswa));
           }
-        }
-        else
-        {
+        } else {
           temp = hb_strdup((const char *)thiswa->sFields);
           sprintf(thiswa->sFields, "%s, A.%c%s%c", temp, OPEN_QUALIFIER(thiswa), colName, CLOSE_QUALIFIER(thiswa));
           hb_xfree(temp);
@@ -1993,10 +1728,8 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
   pKey = hb_itemNew(SR_NULLPTR);
   hb_itemPutNL(pKey, thiswa->recordList[thiswa->recordListPos]);
 
-  if (!bUpdateDeleted)
-  { // Cache NEVER holds deleted() information
-    if (hb_hashScan(thiswa->hBufferPool, pKey, &lPos))
-    {
+  if (!bUpdateDeleted) { // Cache NEVER holds deleted() information
+    if (hb_hashScan(thiswa->hBufferPool, pKey, &lPos)) {
       aRecord = hb_hashGetValueAt(thiswa->hBufferPool, lPos);
       hb_arrayCopy(aRecord, thiswa->aBuffer, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
       hb_itemRelease(pKey);
@@ -2006,35 +1739,28 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
 
   // Check for maximum buffer pool size
 
-  if (((HB_LONG)hb_hashLen(thiswa->hBufferPool)) > bufferPoolSize)
-  {
+  if (((HB_LONG)hb_hashLen(thiswa->hBufferPool)) > bufferPoolSize) {
     hb_hashNew(thiswa->hBufferPool);
     hb_hashPreallocate(thiswa->hBufferPool, (HB_ULONG)(bufferPoolSize * 1.2));
   }
 
   // Not found, so let's try the database...
 
-  if (getColumnList(thiswa) || thiswa->hStmtBuffer == SR_NULLPTR)
-  {                                       // Check if field list has changed and if so
+  if (getColumnList(thiswa) || thiswa->hStmtBuffer == SR_NULLPTR) {                                       // Check if field list has changed and if so
                                           // creates a new one in thiswa structure
     thiswa->bConditionChanged2 = HB_TRUE; // SEEK statements are no longer valid - column list has changed!
     memset(thiswa->sSqlBuffer, 0, MAX_SQL_QUERY_LEN / 5 * sizeof(char));
-    if (thiswa->bIsSelect)
-    {
+    if (thiswa->bIsSelect) {
       sprintf(thiswa->sSqlBuffer, "SELECT %s FROM (%s) A WHERE A.%c%s%c IN ( ?", thiswa->sFields,
               thiswa->szDataFileName, OPEN_QUALIFIER(thiswa), thiswa->sRecnoName, CLOSE_QUALIFIER(thiswa));
-    }
-    else
-    {
+    } else {
       sprintf(thiswa->sSqlBuffer, "SELECT %s \nFROM %s A \nWHERE A.%c%s%c IN ( ?", thiswa->sFields, thiswa->sTable,
               OPEN_QUALIFIER(thiswa), thiswa->sRecnoName, CLOSE_QUALIFIER(thiswa));
     }
 
     iEnd = (HB_USHORT)strlen(thiswa->sSqlBuffer);
-    for (i = 20; i < (MAX_SQL_QUERY_LEN / 5); i++)
-    {
-      if (thiswa->sSqlBuffer[i] == '?')
-      {
+    for (i = 20; i < (MAX_SQL_QUERY_LEN / 5); i++) {
+      if (thiswa->sSqlBuffer[i] == '?') {
         iEnd = i;
         break;
       }
@@ -2042,8 +1768,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
 
     // Adjust SQL to 'pageReadSize' params
 
-    for (i = 1; i < pageReadSize; i++)
-    {
+    for (i = 1; i < pageReadSize; i++) {
       thiswa->sSqlBuffer[++iEnd] = ',';
       thiswa->sSqlBuffer[++iEnd] = '?';
     }
@@ -2051,35 +1776,29 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
     thiswa->sSqlBuffer[++iEnd] = ')';
     thiswa->sSqlBuffer[++iEnd] = '\0';
 
-    if (thiswa->hStmtBuffer)
-    {
+    if (thiswa->hStmtBuffer) {
       res = SQLFreeStmt(thiswa->hStmtBuffer, SQL_CLOSE);
-      if (CHECK_SQL_N_OK(res))
-      {
+      if (CHECK_SQL_N_OK(res)) {
         return HB_FAILURE;
       }
       // thiswa->hStmtBuffer = NULL;
     }
 
     res = SQLAllocStmt((HDBC)thiswa->hDbc, &(thiswa->hStmtBuffer));
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE;
     }
 
     res = SQLPrepare(thiswa->hStmtBuffer, (SQLCHAR *)(thiswa->sSqlBuffer), SQL_NTS);
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE;
     }
 
-    for (i = 0; i < pageReadSize; i++)
-    {
+    for (i = 0; i < pageReadSize; i++) {
       res = SQLBindParameter(thiswa->hStmtBuffer, i + 1, SQL_PARAM_INPUT, SQL_C_ULONG, SQL_INTEGER, 15, 0,
                              &(thiswa->lRecordToRetrieve[i]), 0, SR_NULLPTR);
 
-      if (CHECK_SQL_N_OK(res))
-      {
+      if (CHECK_SQL_N_OK(res)) {
         // thiswa->hStmtBuffer =NULL;
         return HB_FAILURE;
       }
@@ -2089,16 +1808,14 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
   bTranslate = HB_FALSE;
 
   // Sets the bindvar contents
-  for (i = 0; i < pageReadSize; i++)
-  {
+  for (i = 0; i < pageReadSize; i++) {
     thiswa->lRecordToRetrieve[i] =
         (thiswa->recordListPos + i < thiswa->recordListSize ? thiswa->recordList[thiswa->recordListPos + i] : 0);
   }
 
   res = SQLExecute(thiswa->hStmtBuffer);
 
-  if (CHECK_SQL_N_OK(res))
-  {
+  if (CHECK_SQL_N_OK(res)) {
     odbcErrorDiagRTE(thiswa->hStmtBuffer, "updateRecordBuffer", thiswa->sSqlBuffer, res, __LINE__, __FILE__);
     SQLCloseCursor(thiswa->hStmtBuffer);
     // culik null the handle
@@ -2108,12 +1825,10 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
 
   // bBuffer = hb_xgrab(COLUMN_BLOCK_SIZE + 1);
 
-  for (iRow = 1; iRow <= pageReadSize; iRow++)
-  {
+  for (iRow = 1; iRow <= pageReadSize; iRow++) {
     res = SQLFetch(thiswa->hStmtBuffer);
-    if (res != SQL_SUCCESS)
-    {
-      // if( res == SQL_ERROR ) {
+    if (res != SQL_SUCCESS) {
+      // if (res == SQL_ERROR) {
       break;
       // }
     }
@@ -2121,8 +1836,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
     // Get the RECNO from 1st column in result set
 
     res = SQLGetData(thiswa->hStmtBuffer, 1, SQL_C_ULONG, &(lCurrRecord), sizeof(SQL_C_ULONG), SR_NULLPTR);
-    if (res == SQL_ERROR)
-    {
+    if (res == SQL_ERROR) {
       SQLFreeStmt(thiswa->hStmtBuffer, SQL_CLOSE);
       // thiswa->hStmtBuffer = NULL;
       return HB_FAILURE;
@@ -2132,26 +1846,18 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
 
     iIndex = 1; // Recno is the 1st so we have 1 position offset
 
-    if (thiswa->ulhDeleted > 0)
-    {
-      if (((HB_LONG)(thiswa->recordList[thiswa->recordListPos])) == lCurrRecord)
-      {
+    if (thiswa->ulhDeleted > 0) {
+      if (((HB_LONG)(thiswa->recordList[thiswa->recordListPos])) == lCurrRecord) {
         SQLCHAR szValue[2];
         res = SQLGetData(thiswa->hStmtBuffer, 2, SQL_C_CHAR, szValue, 2, SR_NULLPTR);
-        if (res == SQL_ERROR)
-        {
+        if (res == SQL_ERROR) {
           SQLFreeStmt(thiswa->hStmtBuffer, SQL_CLOSE);
           // thiswa->hStmtBuffer = NULL;
           return HB_FAILURE;
-        }
-        else
-        {
-          if (szValue[0] == 0)
-          {
+        } else {
+          if (szValue[0] == 0) {
             thiswa->deletedList[thiswa->recordListPos] = ' '; // MySQL driver climps spaces from right side
-          }
-          else
-          {
+          } else {
             thiswa->deletedList[thiswa->recordListPos] = szValue[0];
           }
         }
@@ -2163,8 +1869,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
     aRecord = hb_itemNew(SR_NULLPTR);
     hb_arrayNew(aRecord, hb_arrayLen(thiswa->aBuffer));
 
-    for (i = 1; i <= thiswa->area.uiFieldCount; i++)
-    {
+    for (i = 1; i <= thiswa->area.uiFieldCount; i++) {
       // bBuffer = (char *) hb_xgrab(COLUMN_BLOCK_SIZE + 1);
       // lLen = COLUMN_BLOCK_SIZE;
       // memset(bBuffer, 0, COLUMN_BLOCK_SIZE);
@@ -2176,13 +1881,10 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
       // please keep as is. ML.
       temp = hb_itemNew(SR_NULLPTR);
 
-      if ((thiswa->uiFieldList[i - 1] == 0) && thiswa->iColumnListStatus != FIELD_LIST_LEARNING)
-      {
+      if ((thiswa->uiFieldList[i - 1] == 0) && thiswa->iColumnListStatus != FIELD_LIST_LEARNING) {
         hb_arraySetForward(aRecord, i, temp); // Field is temporaly NIL since it's have never
                                               // been needed in current WA. Will be filled on demand
-      }
-      else
-      {
+      } else {
         // HB_LONG lType = hb_arrayGetNL(hb_arrayGetItemPtr(thiswa->aFields, thiswa->uiBufferIndex[i - 1]),
         // FIELD_DOMAIN);
         ++iIndex;
@@ -2197,8 +1899,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
     hb_hashAdd(thiswa->hBufferPool, pKey, aRecord);
 
     // Feeds current record when it is found
-    if (((HB_LONG)(thiswa->recordList[thiswa->recordListPos])) == lCurrRecord)
-    {
+    if (((HB_LONG)(thiswa->recordList[thiswa->recordListPos])) == lCurrRecord) {
       hb_arrayCopy(aRecord, thiswa->aBuffer, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
     }
     hb_itemRelease(aRecord);
@@ -2208,12 +1909,9 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
 
   SQLFreeStmt(thiswa->hStmtBuffer, SQL_CLOSE);
 
-  if (res == SQL_NO_DATA_FOUND && iRow == 1)
-  {
+  if (res == SQL_NO_DATA_FOUND && iRow == 1) {
     return HB_FAILURE; // Could not get at least one line from database
-  }
-  else
-  {
+  } else {
     return HB_SUCCESS;
   }
 }
@@ -2224,66 +1922,50 @@ static HB_ERRCODE trySkippingOnCache(SQLEXAREAP thiswa, HB_LONG lToSkip)
 {
   HB_LONG lSupposedPos;
 
-  if (thiswa->skipDirection != 0)
-  {
-    if (thiswa->recordListDirection == LIST_FORWARD)
-    {
+  if (thiswa->skipDirection != 0) {
+    if (thiswa->recordListDirection == LIST_FORWARD) {
       lSupposedPos = thiswa->recordListPos + lToSkip;
 
-      if (lSupposedPos >= 0 && lSupposedPos < thiswa->recordListSize)
-      {
+      if (lSupposedPos >= 0 && lSupposedPos < thiswa->recordListSize) {
         thiswa->recordListPos = lSupposedPos;
-        if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE)
-        {
+        if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
           commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
           return HB_FAILURE;
         }
         return HB_SUCCESS;
-      }
-      else
-      {
+      } else {
         // now, for sure thiswa->recordListPos is on the FIRST or LAST position in array
         // First, try to optimize EOF and BOF position cache
 
-        if (lSupposedPos < 0 && thiswa->recordList[0] == thiswa->lBofAt)
-        {
+        if (lSupposedPos < 0 && thiswa->recordList[0] == thiswa->lBofAt) {
           thiswa->area.fBof = HB_TRUE;
           return HB_SUCCESS;
         }
 
-        if (lSupposedPos >= 0 && thiswa->recordList[thiswa->recordListPos] == thiswa->lEofAt)
-        {
+        if (lSupposedPos >= 0 && thiswa->recordList[thiswa->recordListPos] == thiswa->lEofAt) {
           sqlGetCleanBuffer(thiswa);
           return HB_SUCCESS;
         }
       }
-    }
-    else
-    {
+    } else {
       lSupposedPos = thiswa->recordListPos - lToSkip;
 
-      if (lSupposedPos >= 0 && lSupposedPos < thiswa->recordListSize)
-      {
+      if (lSupposedPos >= 0 && lSupposedPos < thiswa->recordListSize) {
         thiswa->recordListPos = lSupposedPos;
-        if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE)
-        {
+        if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
           commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
           return HB_FAILURE;
         }
         return HB_SUCCESS;
-      }
-      else
-      {
+      } else {
         // now, for sure thiswa->recordListPos is on the FIRST or LAST position in array
         // First, try to optimize EOF and BOF position cache
-        if (lSupposedPos < 0 && thiswa->recordList[0] == thiswa->lEofAt)
-        {
+        if (lSupposedPos < 0 && thiswa->recordList[0] == thiswa->lEofAt) {
           sqlGetCleanBuffer(thiswa);
           return HB_SUCCESS;
         }
 
-        if (lSupposedPos >= 0 && thiswa->recordList[thiswa->recordListPos] == thiswa->lBofAt)
-        {
+        if (lSupposedPos >= 0 && thiswa->recordList[thiswa->recordListPos] == thiswa->lBofAt) {
           thiswa->area.fBof = HB_TRUE;
           return HB_SUCCESS;
         }
@@ -2307,25 +1989,20 @@ HB_ERRCODE prepareRecordListQuery(SQLEXAREAP thiswa)
 
   res = SQLAllocStmt((HDBC)thiswa->hDbc, &hPrep);
 
-  if (CHECK_SQL_N_OK(res))
-  {
+  if (CHECK_SQL_N_OK(res)) {
     return HB_FAILURE;
   }
 
-  if (CHECK_SQL_N_OK(SQLPrepare(hPrep, (SQLCHAR *)(thiswa->sSql), SQL_NTS)))
-  {
+  if (CHECK_SQL_N_OK(SQLPrepare(hPrep, (SQLCHAR *)(thiswa->sSql), SQL_NTS))) {
     return HB_FAILURE;
   }
 
-  if (thiswa->recordListDirection == LIST_FORWARD)
-  {
+  if (thiswa->recordListDirection == LIST_FORWARD) {
     IndexBind->SkipFwdStmt = hPrep;
     memset(&IndexBind->SkipFwdSql, 0, PREPARED_SQL_LEN);
     hb_xmemcpy(IndexBind->SkipFwdSql, thiswa->sSql, PREPARED_SQL_LEN - 1);
     IndexBind->SkipFwdSql[PREPARED_SQL_LEN - 1] = '\0';
-  }
-  else
-  {
+  } else {
     IndexBind->SkipBwdStmt = hPrep;
     memset(&IndexBind->SkipBwdSql, 0, PREPARED_SQL_LEN);
     hb_xmemcpy(IndexBind->SkipBwdSql, thiswa->sSql, PREPARED_SQL_LEN - 1);
@@ -2352,27 +2029,22 @@ static HB_BOOL CreateSkipStmt(SQLEXAREAP thiswa)
        ((thiswa->recordListDirection == LIST_FORWARD &&
          (!((INDEXBINDP)(thiswa->IndexBindings[thiswa->hOrdCurrent]))->SkipFwdStmt)) ||
         (thiswa->recordListDirection == LIST_BACKWARD &&
-         (!((INDEXBINDP)(thiswa->IndexBindings[thiswa->hOrdCurrent]))->SkipBwdStmt)))))
-  { // Filter or controlling order has changed, or stmt is not prepared
+         (!((INDEXBINDP)(thiswa->IndexBindings[thiswa->hOrdCurrent]))->SkipBwdStmt))))) { // Filter or controlling order has changed, or stmt is not prepared
     thiswa->lBofAt = 0;
     thiswa->lEofAt = 0;
     thiswa->bOrderChanged = HB_FALSE;
 
-    if (thiswa->hOrdCurrent > 0)
-    {
+    if (thiswa->hOrdCurrent > 0) {
       pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent);
       pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
       thiswa->indexColumns = hb_arrayLen(pColumns);
-    }
-    else
-    {
+    } else {
       thiswa->indexColumns = 1; // Natural order, RECNO
     }
 
     // Alloc memory for binding structures, if first time
 
-    if (!thiswa->IndexBindings[thiswa->hOrdCurrent])
-    {
+    if (!thiswa->IndexBindings[thiswa->hOrdCurrent]) {
       SetIndexBindStructure(thiswa);
     }
 
@@ -2382,16 +2054,13 @@ static HB_BOOL CreateSkipStmt(SQLEXAREAP thiswa)
 
     // Free the statements we are about to recreate
 
-    for (i = 1; i <= thiswa->indexColumns; i++)
-    {
-      if (IndexBind->SkipFwdStmt)
-      {
+    for (i = 1; i <= thiswa->indexColumns; i++) {
+      if (IndexBind->SkipFwdStmt) {
         SQLFreeStmt(IndexBind->SkipFwdStmt, SQL_DROP);
         IndexBind->SkipFwdStmt = SR_NULLPTR;
       }
 
-      if (IndexBind->SkipBwdStmt)
-      {
+      if (IndexBind->SkipBwdStmt) {
         SQLFreeStmt(IndexBind->SkipBwdStmt, SQL_DROP);
         IndexBind->SkipBwdStmt = SR_NULLPTR;
       }
@@ -2405,17 +2074,14 @@ static HB_BOOL CreateSkipStmt(SQLEXAREAP thiswa)
 
     // Create and prepare queries to scroll to each index column level
 
-    for (i = 1; i <= thiswa->indexColumns; i++)
-    {
+    for (i = 1; i <= thiswa->indexColumns; i++) {
       getWhereExpression(thiswa, thiswa->recordListDirection == LIST_FORWARD ? LIST_SKIP_FWD : LIST_SKIP_BWD);
       createRecodListQuery(thiswa);
       prepareRecordListQuery(thiswa);
       thiswa->indexLevel--;
     }
     return HB_TRUE;
-  }
-  else
-  {
+  } else {
     return HB_FALSE;
   }
 }
@@ -2424,14 +2090,12 @@ static HB_BOOL CreateSkipStmt(SQLEXAREAP thiswa)
 
 static HB_ERRCODE sqlExBof(SQLEXAREAP thiswa, HB_BOOL *bof)
 {
-  if (thiswa->firstinteract)
-  {
+  if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
 
@@ -2444,23 +2108,18 @@ static HB_ERRCODE sqlExBof(SQLEXAREAP thiswa, HB_BOOL *bof)
 
 static HB_ERRCODE sqlExEof(SQLEXAREAP thiswa, HB_BOOL *eof)
 {
-  if (thiswa->firstinteract)
-  {
+  if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
 
-  if (thiswa->bIsInsert && thiswa->bufferHot)
-  {
+  if (thiswa->bIsInsert && thiswa->bufferHot) {
     *eof = HB_FALSE;
-  }
-  else
-  {
+  } else {
     *eof = thiswa->area.fEof;
   }
 
@@ -2471,8 +2130,7 @@ static HB_ERRCODE sqlExEof(SQLEXAREAP thiswa, HB_BOOL *eof)
 
 static HB_ERRCODE sqlExFound(SQLEXAREAP thiswa, HB_BOOL *found)
 {
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
 
@@ -2490,32 +2148,26 @@ static HB_ERRCODE sqlExGoBottom(SQLEXAREAP thiswa)
   thiswa->wasdel = HB_FALSE;
   thiswa->area.fFound = HB_FALSE;
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
-  if (thiswa->lEofAt)
-  {
+  if (thiswa->lEofAt) {
     SELF_GOTO((AREAP)thiswa, (HB_LONG)thiswa->lEofAt);
-    if (thiswa->bReverseIndex != bOldReverseIndex)
-    {
+    if (thiswa->bReverseIndex != bOldReverseIndex) {
       thiswa->recordListDirection = LIST_BACKWARD;
       getOrderByExpression(thiswa, HB_FALSE);
       getWhereExpression(thiswa, LIST_FROM_BOTTOM);
       setResultSetLimit(thiswa, RECORD_LIST_SIZE / 10);
       createRecodListQuery(thiswa);
 
-      if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE)
-      {
+      if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE) {
         odbcErrorDiagRTE(thiswa->hStmt, "dbGoBottom", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
         commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
       }
     }
-  }
-  else
-  {
+  } else {
     thiswa->recordListDirection = LIST_BACKWARD;
 
     getOrderByExpression(thiswa, HB_FALSE);
@@ -2523,8 +2175,7 @@ static HB_ERRCODE sqlExGoBottom(SQLEXAREAP thiswa)
     setResultSetLimit(thiswa, RECORD_LIST_SIZE / 10);
     createRecodListQuery(thiswa);
 
-    if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE)
-    {
+    if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE) {
       odbcErrorDiagRTE(thiswa->hStmt, "dbGoBottom", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
       commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
@@ -2535,19 +2186,15 @@ static HB_ERRCODE sqlExGoBottom(SQLEXAREAP thiswa)
   thiswa->area.fBottom = HB_TRUE;
   thiswa->skipDirection = -1;
 
-  if (thiswa->recordListSize == 0)
-  {
+  if (thiswa->recordListSize == 0) {
     thiswa->area.fEof = HB_TRUE;
     thiswa->area.fBof = HB_TRUE;
     sqlGetCleanBuffer(thiswa);
-  }
-  else
-  {
+  } else {
     thiswa->area.fEof = HB_FALSE;
     thiswa->area.fBof = HB_FALSE;
     thiswa->lEofAt = thiswa->recordList[thiswa->recordListPos];
-    if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE)
-    {
+    if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
       commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
     }
@@ -2555,12 +2202,9 @@ static HB_ERRCODE sqlExGoBottom(SQLEXAREAP thiswa)
 
   SELF_SKIPFILTER((AREAP)thiswa, -1);
 
-  if (thiswa->area.lpdbRelations)
-  {
+  if (thiswa->area.lpdbRelations) {
     return SELF_SYNCCHILDREN((AREAP)thiswa);
-  }
-  else
-  {
+  } else {
     return HB_SUCCESS;
   }
 }
@@ -2571,8 +2215,7 @@ static HB_ERRCODE sqlExGoTo(SQLEXAREAP thiswa, HB_LONG recno)
 {
   int i;
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
@@ -2582,8 +2225,7 @@ static HB_ERRCODE sqlExGoTo(SQLEXAREAP thiswa, HB_LONG recno)
   thiswa->wasdel = HB_FALSE;
   thiswa->area.fFound = HB_FALSE;
 
-  if (recno == 0)
-  {
+  if (recno == 0) {
     // Move to phantom
     sqlGetCleanBuffer(thiswa);
     thiswa->area.fBof = HB_TRUE;
@@ -2592,13 +2234,10 @@ static HB_ERRCODE sqlExGoTo(SQLEXAREAP thiswa, HB_LONG recno)
 
   // 1 - Try to look for the record in current skip sequence
 
-  for (i = 0; i < thiswa->recordListSize; i++)
-  {
-    if (thiswa->recordList[i] == (HB_ULONG)recno)
-    {
+  for (i = 0; i < thiswa->recordListSize; i++) {
+    if (thiswa->recordList[i] == (HB_ULONG)recno) {
       thiswa->recordListPos = i;
-      if (updateRecordBuffer(thiswa, HB_FALSE) == HB_SUCCESS)
-      {
+      if (updateRecordBuffer(thiswa, HB_FALSE) == HB_SUCCESS) {
         thiswa->area.fEof = HB_FALSE;
         thiswa->area.fBof = HB_FALSE;
         return HB_SUCCESS;
@@ -2613,8 +2252,7 @@ static HB_ERRCODE sqlExGoTo(SQLEXAREAP thiswa, HB_LONG recno)
   thiswa->recordListDirection = LIST_FORWARD;
   thiswa->recordListPos = 0;
 
-  if (updateRecordBuffer(thiswa, HB_TRUE) == HB_SUCCESS)
-  {
+  if (updateRecordBuffer(thiswa, HB_TRUE) == HB_SUCCESS) {
     thiswa->area.fEof = HB_FALSE;
     thiswa->area.fBof = HB_FALSE;
     return HB_SUCCESS;
@@ -2634,17 +2272,13 @@ static HB_ERRCODE sqlExGoToId(SQLEXAREAP thiswa, PHB_ITEM pItem)
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
-  if (HB_IS_NUMERIC(pItem))
-  {
+  if (HB_IS_NUMERIC(pItem)) {
     return SELF_GOTO((AREAP)thiswa, hb_itemGetNL(pItem));
-  }
-  else
-  {
+  } else {
     commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
     return HB_FAILURE;
   }
@@ -2659,45 +2293,37 @@ static HB_ERRCODE sqlExGoTop(SQLEXAREAP thiswa)
   thiswa->wasdel = HB_FALSE;
   thiswa->area.fFound = HB_FALSE;
 
-  if (getWorkareaParams(thiswa) == HB_FAILURE)
-  { // If workarea was opened by dbCreate()
+  if (getWorkareaParams(thiswa) == HB_FAILURE) { // If workarea was opened by dbCreate()
     return HB_FAILURE;
   }
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
-  if (thiswa->lBofAt)
-  {
+  if (thiswa->lBofAt) {
     SELF_GOTO((AREAP)thiswa, (HB_LONG)thiswa->lBofAt);
-    if (thiswa->bReverseIndex != bOldReverseIndex)
-    {
+    if (thiswa->bReverseIndex != bOldReverseIndex) {
       thiswa->recordListDirection = LIST_FORWARD;
       getOrderByExpression(thiswa, HB_FALSE);
       getWhereExpression(thiswa, LIST_FROM_TOP);
       setResultSetLimit(thiswa, RECORD_LIST_SIZE / 10);
       createRecodListQuery(thiswa);
 
-      if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE)
-      {
+      if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE) {
         odbcErrorDiagRTE(thiswa->hStmt, "dbGoTop", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
         commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
       }
     }
-  }
-  else
-  {
+  } else {
     thiswa->recordListDirection = LIST_FORWARD;
     getOrderByExpression(thiswa, HB_FALSE);
     getWhereExpression(thiswa, LIST_FROM_TOP);
     setResultSetLimit(thiswa, RECORD_LIST_SIZE / 10);
     createRecodListQuery(thiswa);
 
-    if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE)
-    {
+    if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE) {
       odbcErrorDiagRTE(thiswa->hStmt, "dbGoTop", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
       commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
@@ -2708,19 +2334,15 @@ static HB_ERRCODE sqlExGoTop(SQLEXAREAP thiswa)
   thiswa->area.fBottom = HB_FALSE;
   thiswa->skipDirection = 1;
 
-  if (thiswa->recordListSize == 0)
-  {
+  if (thiswa->recordListSize == 0) {
     thiswa->area.fEof = HB_TRUE;
     thiswa->area.fBof = HB_TRUE;
     sqlGetCleanBuffer(thiswa);
-  }
-  else
-  {
+  } else {
     thiswa->area.fEof = HB_FALSE;
     thiswa->area.fBof = HB_FALSE;
     thiswa->lBofAt = thiswa->recordList[thiswa->recordListPos];
-    if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE)
-    {
+    if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
       commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
     }
@@ -2728,12 +2350,9 @@ static HB_ERRCODE sqlExGoTop(SQLEXAREAP thiswa)
 
   SELF_SKIPFILTER((AREAP)thiswa, 1);
 
-  if (thiswa->area.lpdbRelations)
-  {
+  if (thiswa->area.lpdbRelations) {
     return SELF_SYNCCHILDREN((AREAP)thiswa);
-  }
-  else
-  {
+  } else {
     return HB_SUCCESS;
   }
 }
@@ -2756,23 +2375,19 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
   thiswa->area.fEof = HB_FALSE;
   thiswa->area.fFound = HB_FALSE;
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
-  if (thiswa->hOrdCurrent == 0)
-  {
+  if (thiswa->hOrdCurrent == 0) {
     commonError((AREAP)thiswa, EG_NOORDER, EDBF_NOTINDEXED, thiswa->sTable);
     return HB_FAILURE;
   }
 
 #ifndef HB_CDP_SUPPORT_OFF
-  if (HB_IS_STRING(pKey))
-  {
+  if (HB_IS_STRING(pKey)) {
     PHB_CODEPAGE cdpSrc = thiswa->cdPageCnv ? thiswa->cdPageCnv : hb_vmCDP();
-    if (thiswa->area.cdPage && thiswa->area.cdPage != cdpSrc)
-    {
+    if (thiswa->area.cdPage && thiswa->area.cdPage != cdpSrc) {
       HB_SIZE nLen = hb_itemGetCLen(pKey);
       char *pszVal = hb_cdpnDup(hb_itemGetCPtr(pKey), &nLen, cdpSrc, thiswa->area.cdPage);
       pKey = pNewKey = hb_itemPutCLPtr(SR_NULLPTR, pszVal, nLen);
@@ -2780,8 +2395,7 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
   }
 #endif
 
-  if (!thiswa->CurrRecord)
-  {
+  if (!thiswa->CurrRecord) {
     SetCurrRecordStructure(thiswa);
   }
 
@@ -2790,30 +2404,25 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
   thiswa->recordListDirection = (bFindLast ? LIST_BACKWARD : LIST_FORWARD);
 
   // Set binding structures and push pKey to it
-  if (!thiswa->IndexBindings[thiswa->hOrdCurrent])
-  {
+  if (!thiswa->IndexBindings[thiswa->hOrdCurrent]) {
     SetIndexBindStructure(thiswa);
   }
 
-  if (FeedSeekKeyToBindings(thiswa, pKey, &queryLevel) != HB_SUCCESS)
-  {
-    if (pNewKey)
-    {
+  if (FeedSeekKeyToBindings(thiswa, pKey, &queryLevel) != HB_SUCCESS) {
+    if (pNewKey) {
       hb_itemRelease(pNewKey);
     }
     return HB_FAILURE;
   }
 
   thiswa->bRebuildSeekQuery = HB_TRUE;
-  if (CreateSeekStmt(thiswa, queryLevel))
-  {                                   // Create and prepare new SEEK statement, if needed
+  if (CreateSeekStmt(thiswa, queryLevel)) {                                   // Create and prepare new SEEK statement, if needed
     BindSeekStmt(thiswa, queryLevel); // Bind parameters to IndexBind structure
   }
 
   thiswa->bConditionChanged2 = HB_FALSE;
 
-  if (getPreparedSeek(thiswa, queryLevel, &iIndex, &hStmt) == HB_SUCCESS)
-  { // Fetch line from database, read RECNO and DELETED
+  if (getPreparedSeek(thiswa, queryLevel, &iIndex, &hStmt) == HB_SUCCESS) { // Fetch line from database, read RECNO and DELETED
     // Create a line array to hold the record
     // HB_LONG lLenOut, lLen, lInitBuff;
     HB_BOOL bTranslate;
@@ -2829,8 +2438,7 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
     // bBuffer = hb_xgrab(COLUMN_BLOCK_SIZE + 1);
     bTranslate = HB_FALSE;
 
-    for (i = 1; i <= thiswa->area.uiFieldCount; i++)
-    {
+    for (i = 1; i <= thiswa->area.uiFieldCount; i++) {
       // bBuffer = hb_xgrab(COLUMN_BLOCK_SIZE + 1 );
       // // bBuffer = hb_xgrab(COLUMN_BLOCK_SIZE + 1);
       // lLen = COLUMN_BLOCK_SIZE;
@@ -2844,13 +2452,10 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
       // temp.type = HB_IT_NIL; // I know this is not a good practice, but we save tons of allocs.
       // please keep as is. ML.
 
-      if ((thiswa->uiFieldList[i - 1] == 0) && thiswa->iColumnListStatus != FIELD_LIST_LEARNING)
-      {
+      if ((thiswa->uiFieldList[i - 1] == 0) && thiswa->iColumnListStatus != FIELD_LIST_LEARNING) {
         hb_arraySetForward(aRecord, i, temp); // Field is temporaly NIL since it's have never
                                               // been needed in current WA. Will be filled on demand
-      }
-      else
-      {
+      } else {
         // HB_LONG lType = hb_arrayGetNL(hb_arrayGetItemPtr(thiswa->aFields, thiswa->uiBufferIndex[i - 1]),
         // FIELD_DOMAIN);
         ++iIndex;
@@ -2870,64 +2475,46 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
 
     iComp = sqlKeyCompareEx(thiswa, pKey, HB_FALSE);
 
-    if (iComp != 0)
-    {
+    if (iComp != 0) {
       thiswa->area.fFound = HB_TRUE;
       thiswa->area.fBof = HB_FALSE;
       thiswa->area.fEof = HB_FALSE;
-    }
-    else
-    {
+    } else {
       thiswa->area.fFound = HB_FALSE;
-      if (!bSoftSeek)
-      {
+      if (!bSoftSeek) {
         sqlGetCleanBuffer(thiswa);
       }
     }
 
-    if ((hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != SR_NULLPTR) && !thiswa->area.fEof)
-    {
+    if ((hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != SR_NULLPTR) && !thiswa->area.fEof) {
       retvalue = SELF_SKIPFILTER((AREAP)thiswa, (bFindLast ? -1 : 1));
 
-      if (thiswa->area.fEof)
-      {
+      if (thiswa->area.fEof) {
         thiswa->area.fFound = HB_FALSE;
-      }
-      else
-      {
-        if (sqlKeyCompareEx(thiswa, pKey, HB_FALSE) != 0)
-        {
+      } else {
+        if (sqlKeyCompareEx(thiswa, pKey, HB_FALSE) != 0) {
           thiswa->area.fFound = HB_TRUE;
-        }
-        else
-        {
+        } else {
           thiswa->area.fFound = HB_FALSE;
 
-          if (!bSoftSeek)
-          {
+          if (!bSoftSeek) {
             sqlGetCleanBuffer(thiswa);
           }
         }
       }
     }
-  }
-  else
-  {
+  } else {
     sqlGetCleanBuffer(thiswa);
     thiswa->area.fFound = HB_FALSE;
   }
   thiswa->bRebuildSeekQuery = HB_TRUE;
-  if (pNewKey)
-  {
+  if (pNewKey) {
     hb_itemRelease(pNewKey);
   }
 
-  if (thiswa->area.lpdbRelations && retvalue == HB_SUCCESS)
-  {
+  if (thiswa->area.lpdbRelations && retvalue == HB_SUCCESS) {
     return SELF_SYNCCHILDREN((AREAP)thiswa);
-  }
-  else
-  {
+  } else {
     return HB_SUCCESS;
   }
 }
@@ -2938,22 +2525,17 @@ static HB_ERRCODE sqlExSkip(SQLEXAREAP thiswa, HB_LONG lToSkip)
 {
   HB_LONG lSkip;
 
-  if (thiswa->lpdbPendingRel)
-  {
-    if (SELF_FORCEREL((AREAP)thiswa) != HB_SUCCESS)
-    {
+  if (thiswa->lpdbPendingRel) {
+    if (SELF_FORCEREL((AREAP)thiswa) != HB_SUCCESS) {
       return HB_FAILURE;
     }
-  }
-  else if (thiswa->firstinteract)
-  {
+  } else if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
   // Flush record and exit
-  if (lToSkip == 0)
-  {
+  if (lToSkip == 0) {
     return SELF_GOCOLD((AREAP)thiswa);
   }
 
@@ -2964,38 +2546,28 @@ static HB_ERRCODE sqlExSkip(SQLEXAREAP thiswa, HB_LONG lToSkip)
   thiswa->wasdel = HB_FALSE;
   thiswa->area.fBof = thiswa->area.fEof = HB_FALSE;
 
-  if (lToSkip > 0)
-  {
+  if (lToSkip > 0) {
     lSkip = 1;
-  }
-  else
-  {
+  } else {
     lSkip = -1;
     lToSkip *= -1;
   }
-  while (--lToSkip >= 0)
-  {
-    if (SELF_SKIPRAW((AREAP)thiswa, lSkip) != HB_SUCCESS)
-    {
+  while (--lToSkip >= 0) {
+    if (SELF_SKIPRAW((AREAP)thiswa, lSkip) != HB_SUCCESS) {
       return HB_FAILURE;
     }
-    if (SELF_SKIPFILTER((AREAP)thiswa, lSkip) != HB_SUCCESS)
-    {
+    if (SELF_SKIPFILTER((AREAP)thiswa, lSkip) != HB_SUCCESS) {
       return HB_FAILURE;
     }
-    if (thiswa->area.fBof || thiswa->area.fEof)
-    {
+    if (thiswa->area.fBof || thiswa->area.fEof) {
       break;
     }
   }
 
   // Update Bof and Eof flags
-  if (lSkip < 0)
-  {
+  if (lSkip < 0) {
     thiswa->area.fEof = HB_FALSE;
-  }
-  else
-  { // ( lSkip > 0 )
+  } else { // ( lSkip > 0 )
     thiswa->area.fBof = HB_FALSE;
   }
 
@@ -3013,8 +2585,7 @@ static HB_ERRCODE sqlExSkipFilter(SQLEXAREAP thiswa, HB_LONG lUpDown)
 
   HB_TRACE(HB_TR_DEBUG, ("hb_waSkipFilter(%p, %ld)", thiswa, lUpDown));
 
-  if (!hb_setGetDeleted() && thiswa->area.dbfi.itmCobExpr == SR_NULLPTR)
-  {
+  if (!hb_setGetDeleted() && thiswa->area.dbfi.itmCobExpr == SR_NULLPTR) {
     return HB_SUCCESS;
   }
 
@@ -3027,19 +2598,14 @@ static HB_ERRCODE sqlExSkipFilter(SQLEXAREAP thiswa, HB_LONG lUpDown)
   // remember if we are here after SLEF_GOTOP()
   fBottom = thiswa->area.fBottom;
 
-  while (!thiswa->area.fBof && !thiswa->area.fEof)
-  {
+  while (!thiswa->area.fBof && !thiswa->area.fEof) {
     // SET DELETED
-    if (hb_setGetDeleted())
-    {
-      if (SELF_DELETED((AREAP)thiswa, &fDeleted) != HB_SUCCESS)
-      {
+    if (hb_setGetDeleted()) {
+      if (SELF_DELETED((AREAP)thiswa, &fDeleted) != HB_SUCCESS) {
         return HB_FAILURE;
       }
-      if (fDeleted)
-      {
-        if (SELF_SKIPRAW((AREAP)thiswa, lUpDown) != HB_SUCCESS)
-        {
+      if (fDeleted) {
+        if (SELF_SKIPRAW((AREAP)thiswa, lUpDown) != HB_SUCCESS) {
           return HB_FAILURE;
         }
         continue;
@@ -3047,17 +2613,13 @@ static HB_ERRCODE sqlExSkipFilter(SQLEXAREAP thiswa, HB_LONG lUpDown)
     }
 
     // SET FILTER TO
-    if (thiswa->area.dbfi.itmCobExpr)
-    {
-      if (SELF_EVALBLOCK((AREAP)thiswa, thiswa->area.dbfi.itmCobExpr) != HB_SUCCESS)
-      {
+    if (thiswa->area.dbfi.itmCobExpr) {
+      if (SELF_EVALBLOCK((AREAP)thiswa, thiswa->area.dbfi.itmCobExpr) != HB_SUCCESS) {
         return HB_FAILURE;
       }
 
-      if (HB_IS_LOGICAL(thiswa->area.valResult) && !hb_itemGetL(thiswa->area.valResult))
-      {
-        if (SELF_SKIPRAW((AREAP)thiswa, lUpDown) != HB_SUCCESS)
-        {
+      if (HB_IS_LOGICAL(thiswa->area.valResult) && !hb_itemGetL(thiswa->area.valResult)) {
+        if (SELF_SKIPRAW((AREAP)thiswa, lUpDown) != HB_SUCCESS) {
           return HB_FAILURE;
         }
         continue;
@@ -3071,10 +2633,8 @@ static HB_ERRCODE sqlExSkipFilter(SQLEXAREAP thiswa, HB_LONG lUpDown)
   // if we are at BOTTOM position (it's SKIPFILTER called from GOBOTTOM)
   // then GOEOF() if not then GOTOP()
 
-  if (thiswa->area.fBof && lUpDown < 0)
-  {
-    if (fBottom)
-    {
+  if (thiswa->area.fBof && lUpDown < 0) {
+    if (fBottom) {
       // GOTO EOF (phantom) record -
       // this is the only one place where GOTO is used by xHarbour
       // directly and RDD which does not operate on numbers should
@@ -3084,15 +2644,11 @@ static HB_ERRCODE sqlExSkipFilter(SQLEXAREAP thiswa, HB_LONG lUpDown)
       // are out of filter so I do not want to do that. I will prefer
       // explicit add SELF_GOEOF() method
       uiError = SELF_GOTO((AREAP)thiswa, 0);
-    }
-    else
-    {
+    } else {
       uiError = SELF_GOTOP((AREAP)thiswa);
       thiswa->area.fBof = HB_TRUE;
     }
-  }
-  else
-  {
+  } else {
     uiError = HB_SUCCESS;
   }
 
@@ -3105,40 +2661,32 @@ static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
 {
   HB_ERRCODE res;
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
   // if we are over phantom record we go bottom.
-  if (lToSkip < 0 && thiswa->lCurrentRecord == thiswa->lLastRec)
-  {
+  if (lToSkip < 0 && thiswa->lCurrentRecord == thiswa->lLastRec) {
     return SELF_GOBOTTOM((AREAP)thiswa);
   }
 
-  if (!thiswa->CurrRecord)
-  {
+  if (!thiswa->CurrRecord) {
     SetCurrRecordStructure(thiswa);
   }
 
-  if (lToSkip != 0)
-  {
+  if (lToSkip != 0) {
     // Try to find needed record in record list cache
     thiswa->skipDirection = lToSkip > 0 ? 1 : -1;
 
-    if (trySkippingOnCache(thiswa, lToSkip) == HB_SUCCESS)
-    {
+    if (trySkippingOnCache(thiswa, lToSkip) == HB_SUCCESS) {
       return ConcludeSkipraw(thiswa);
     }
 
     // Cache was unsuccessful, so get a new list from database
 
-    if (thiswa->hOrdCurrent > 0)
-    {
+    if (thiswa->hOrdCurrent > 0) {
       thiswa->indexColumns = hb_arrayLen(
           hb_arrayGetItemPtr(hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent), INDEX_FIELDS));
-    }
-    else
-    {
+    } else {
       thiswa->indexColumns = 1; // Natural order, RECNO
     }
 
@@ -3147,15 +2695,12 @@ static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
     // Set binding structures and SQL stmts for
     // SKIP and SEEK over current index order
 
-    if (!CreateSkipStmt(thiswa))
-    {
+    if (!CreateSkipStmt(thiswa)) {
       // If queries were not re-createds and re-prepared, we should
       // feed bind structures with current record information (CreateSkipStmt
       // does it in GetWhereExpression() if queries were re-prepared
       FeedCurrentRecordToBindings(thiswa);
-    }
-    else
-    {
+    } else {
       BindAllIndexStmts(thiswa);
     }
 
@@ -3166,24 +2711,16 @@ static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
       res = getPreparedRecordList(thiswa, RECORD_LIST_SIZE);
       thiswa->indexLevel--;
 
-      if (res == RESULTSET_OK)
-      {
+      if (res == RESULTSET_OK) {
         break;
-      }
-      else if (res == HB_FAILURE)
-      {
+      } else if (res == HB_FAILURE) {
         commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
-      }
-      else if (res == HB_RETRY)
-      {
-        if (lToSkip > 0)
-        {
+      } else if (res == HB_RETRY) {
+        if (lToSkip > 0) {
           sqlGetCleanBuffer(thiswa);
           break;
-        }
-        else
-        {
+        } else {
           SELF_GOTOP((AREAP)thiswa);
           break;
         }
@@ -3192,27 +2729,19 @@ static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
 
     // Now new database cache should had been read
 
-    if (res == RESULTSET_OK)
-    {
-      if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE)
-      {
+    if (res == RESULTSET_OK) {
+      if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
         commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
       }
       return ConcludeSkipraw(thiswa);
-    }
-    else
-    {
-      if (lToSkip < 0)
-      {
+    } else {
+      if (lToSkip < 0) {
         thiswa->area.fBof = HB_TRUE;
-        if (thiswa->recordListSize)
-        {
+        if (thiswa->recordListSize) {
           thiswa->lBofAt = thiswa->recordList[thiswa->recordListPos];
         }
-      }
-      else
-      {
+      } else {
         sqlGetCleanBuffer(thiswa);
       }
     }
@@ -3236,8 +2765,7 @@ static HB_ERRCODE sqlExAppend(SQLEXAREAP thiswa)
 
   hb_arraySize(thiswa->aLocked, 0);
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
@@ -3260,51 +2788,41 @@ static HB_ERRCODE sqlExDeleteRec(SQLEXAREAP thiswa)
   HB_BOOL isDeleted;
   SQLRETURN res;
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
-  if (thiswa->firstinteract)
-  {
+  if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
 
   SELF_DELETED((AREAP)thiswa, &isDeleted);
 
-  if ((!isDeleted) && (!thiswa->area.fEof))
-  {
-    if (thiswa->sSql)
-    {
+  if ((!isDeleted) && (!thiswa->area.fEof)) {
+    if (thiswa->sSql) {
       memset(thiswa->sSql, 0, MAX_SQL_QUERY_LEN * sizeof(char));
     }
-    if (thiswa->ulhDeleted > 0 && sr_UseDeleteds())
-    {
+    if (thiswa->ulhDeleted > 0 && sr_UseDeleteds()) {
       sprintf(thiswa->sSql, "UPDATE %s SET %s = '%c'%s WHERE %s = %i", thiswa->sTable, thiswa->sDeletedName,
               thiswa->iTCCompat >= 2 ? '*' : 'T', thiswa->iTCCompat >= 4 ? ", R_E_C_D_E_L_ = R_E_C_N_O_" : " ",
               thiswa->sRecnoName, (int)GetCurrentRecordNum(thiswa));
-    }
-    else
-    {
+    } else {
       sprintf(thiswa->sSql, "DELETE FROM %s WHERE %s = %i", thiswa->sTable, thiswa->sRecnoName,
               (int)GetCurrentRecordNum(thiswa));
     }
 
     res = SQLAllocStmt((HDBC)thiswa->hDbc, &(thiswa->hStmt));
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE;
     }
 
     res = SQLExecDirect(thiswa->hStmt, (SQLCHAR *)thiswa->sSql, SQL_NTS);
-    if (res == SQL_ERROR)
-    {
+    if (res == SQL_ERROR) {
       return HB_FAILURE; // It means a fault in SQL statement
     }
     SQLFreeStmt(thiswa->hStmt, SQL_DROP);
@@ -3312,13 +2830,11 @@ static HB_ERRCODE sqlExDeleteRec(SQLEXAREAP thiswa)
 
   thiswa->deletedList[thiswa->recordListPos] = (thiswa->iTCCompat ? '*' : 'T');
 
-  if (thiswa->lEofAt == thiswa->recordList[thiswa->recordListPos])
-  {
+  if (thiswa->lEofAt == thiswa->recordList[thiswa->recordListPos]) {
     thiswa->lEofAt = 0;
   }
 
-  if (thiswa->lBofAt == thiswa->recordList[thiswa->recordListPos])
-  {
+  if (thiswa->lBofAt == thiswa->recordList[thiswa->recordListPos]) {
     thiswa->lBofAt = 0;
   }
 
@@ -3329,23 +2845,18 @@ static HB_ERRCODE sqlExDeleteRec(SQLEXAREAP thiswa)
 
 static HB_ERRCODE sqlExDeleted(SQLEXAREAP thiswa, HB_BOOL *isDeleted)
 {
-  if (thiswa->firstinteract)
-  {
+  if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
 
-  if (thiswa->ulhDeleted == 0 || thiswa->bIsInsert || thiswa->area.fEof)
-  {
+  if (thiswa->ulhDeleted == 0 || thiswa->bIsInsert || thiswa->area.fEof) {
     *isDeleted = HB_FALSE;
-  }
-  else
-  {
+  } else {
     *isDeleted = thiswa->deletedList[thiswa->recordListPos] != ' ';
   }
 
@@ -3377,37 +2888,29 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
   PHB_ITEM itemTemp, itemTemp3;
   HB_SIZE ulPos;
 
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
-  }
-  else if (thiswa->firstinteract)
-  {
+  } else if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
   itemTemp = hb_itemArrayGet(thiswa->aBuffer, thiswa->uiBufferIndex[fieldNum - 1]);
 
-  if (HB_IS_NIL(itemTemp))
-  {
+  if (HB_IS_NIL(itemTemp)) {
     getMissingColumn(thiswa, hb_arrayGetItemPtr(thiswa->aBuffer, thiswa->uiBufferIndex[fieldNum - 1]),
                      (HB_LONG)(thiswa->uiBufferIndex[fieldNum - 1]));
     hb_itemRelease(itemTemp);
     itemTemp = hb_itemArrayGet(thiswa->aBuffer, thiswa->uiBufferIndex[fieldNum - 1]);
   }
-  if (HB_IS_STRING(itemTemp))
-  {
+  if (HB_IS_STRING(itemTemp)) {
     char *bBuffer = (char *)hb_itemGetCPtr(itemTemp); // const char * to char *
     HB_LONG lLenBuff = hb_itemGetCLen(itemTemp);
     PHB_ITEM pTemp;
-    if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()))
-    {
-      if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
-      {
+    if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString())) {
+      if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
         s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
-        {
+        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
           printf("Could not find Symbol SR_DESERIALIZE\n");
         }
       }
@@ -3419,97 +2922,75 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
       pTemp = hb_itemNew(SR_NULLPTR);
       hb_itemMove(pTemp, hb_stackReturnItem());
 
-      if (HB_IS_HASH(pTemp) && sr_isMultilang())
-      {
+      if (HB_IS_HASH(pTemp) && sr_isMultilang()) {
         PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
         // HB_SIZE ulPos; declared at beginning
         if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
             hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
-            hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos))
-        {
+            hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos)) {
           hb_itemCopy(itemTemp, hb_hashGetValueAt(pTemp, ulPos));
         }
         hb_itemRelease(pLangItem);
-      }
-      else
-      {
+      } else {
         hb_itemMove(itemTemp, pTemp);
       }
       hb_itemRelease(pTemp);
     }
   }
-  if (!thiswa->uiFieldList[fieldNum - 1])
-  {
+  if (!thiswa->uiFieldList[fieldNum - 1]) {
     thiswa->uiFieldList[fieldNum - 1] = 1;
     thiswa->iColumnListStatus = FIELD_LIST_NEW_VALUE_READ;
   }
 
-  if (HB_IS_ARRAY(itemTemp))
-  {
+  if (HB_IS_ARRAY(itemTemp)) {
     hb_arrayCloneTo(value, itemTemp);
-  }
-  else if (HB_IS_HASH(itemTemp) && sr_isMultilang())
-  {
+  } else if (HB_IS_HASH(itemTemp) && sr_isMultilang()) {
     LPFIELD pField = thiswa->area.lpFields + fieldNum - 1;
 
-    if (pField->uiType == HB_FT_MEMO)
-    {
+    if (pField->uiType == HB_FT_MEMO) {
       PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
 
       if (hb_hashScan(itemTemp, sr_getBaseLang(pLangItem), &ulPos) ||
           hb_hashScan(itemTemp, sr_getSecondLang(pLangItem), &ulPos) ||
-          hb_hashScan(itemTemp, sr_getRootLang(pLangItem), &ulPos))
-      {
+          hb_hashScan(itemTemp, sr_getRootLang(pLangItem), &ulPos)) {
         hb_itemCopy(value, hb_hashGetValueAt(itemTemp, ulPos));
-      }
-      else
-      {
+      } else {
         hb_itemPutC(pLangItem, SR_NULLPTR);
         hb_itemMove(value, pLangItem);
       }
       hb_itemRelease(pLangItem);
-    }
-    else
-    {
+    } else {
       PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
       HB_SIZE nLen = pField->uiLen, nSrcLen;
       char *empty = (char *)hb_xgrab(nLen + 1);
 
       if (hb_hashScan(itemTemp, sr_getBaseLang(pLangItem), &ulPos) ||
           hb_hashScan(itemTemp, sr_getSecondLang(pLangItem), &ulPos) ||
-          hb_hashScan(itemTemp, sr_getRootLang(pLangItem), &ulPos))
-      {
+          hb_hashScan(itemTemp, sr_getRootLang(pLangItem), &ulPos)) {
         itemTemp3 = hb_hashGetValueAt(itemTemp, ulPos);
         nSrcLen = hb_itemGetCLen(itemTemp3);
         hb_xmemcpy(empty, hb_itemGetCPtr(itemTemp3), HB_MIN(nLen, nSrcLen));
-        if (nLen > nSrcLen)
-        {
+        if (nLen > nSrcLen) {
           memset(empty + nSrcLen, ' ', nLen - nSrcLen);
         }
 #ifndef HB_CDP_SUPPORT_OFF
-        if (pField->uiType == HB_FT_STRING)
-        {
+        if (pField->uiType == HB_FT_STRING) {
           PHB_CODEPAGE cdpDest = thiswa->cdPageCnv ? thiswa->cdPageCnv : hb_vmCDP();
-          if (thiswa->area.cdPage && thiswa->area.cdPage != cdpDest)
-          {
+          if (thiswa->area.cdPage && thiswa->area.cdPage != cdpDest) {
             char *pszVal = hb_cdpnDup(empty, &nLen, thiswa->area.cdPage, cdpDest);
             hb_xfree(empty);
             empty = pszVal;
           }
         }
 #endif
-      }
-      else
-      {
+      } else {
         memset(empty, ' ', nLen);
       }
       empty[nLen] = '\0';
       hb_itemPutCLPtr(value, empty, nLen);
       hb_itemRelease(pLangItem);
     }
-  }
-  else
-  {
+  } else {
     hb_itemMove(value, itemTemp);
   }
   hb_itemRelease(itemTemp);
@@ -3524,67 +3005,49 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
 
 static HB_ERRCODE sqlExGoCold(SQLEXAREAP thiswa)
 {
-  if (thiswa->bufferHot)
-  { // && (!(thiswa->ulhDeleted > 0 ? HB_TRUE : thiswa->deletedList[thiswa->recordListPos] == ' ') )
-    if (thiswa->bHistoric)
-    {
+  if (thiswa->bufferHot) { // && (!(thiswa->ulhDeleted > 0 ? HB_TRUE : thiswa->deletedList[thiswa->recordListPos] == ' ') )
+    if (thiswa->bHistoric) {
       hb_arraySetL(thiswa->aInfo, AINFO_ISINSERT, thiswa->bIsInsert);
       hb_arraySetL(thiswa->aInfo, AINFO_HOT, thiswa->bufferHot);
-      if (!thiswa->bIsInsert)
-      {
+      if (!thiswa->bIsInsert) {
         hb_arraySetNL(thiswa->aInfo, AINFO_RECNO, GetCurrentRecordNum(thiswa));
       }
       return SUPER_GOCOLD((AREAP)thiswa); // Historic workareas are handled by xBase code in sqlrdd2.c as in SQLRDD
     }
 
-    if (thiswa->bIsInsert)
-    {
-      if (!thiswa->hStmtInsert)
-      {                           // Check if we have the INSERT statement prepared
+    if (thiswa->bIsInsert) {
+      if (!thiswa->hStmtInsert) {                           // Check if we have the INSERT statement prepared
         CreateInsertStmt(thiswa); // Create also column binding structures
 
-        if (PrepareInsertStmt(thiswa) == HB_FAILURE)
-        {
+        if (PrepareInsertStmt(thiswa) == HB_FAILURE) {
           return HB_FAILURE;
         }
 
-        if (BindInsertColumns(thiswa) == HB_FAILURE)
-        {
+        if (BindInsertColumns(thiswa) == HB_FAILURE) {
           return HB_FAILURE;
         }
-      }
-      else
-      {
+      } else {
         thiswa->sSql[0] = '\0'; // To prevent erroneous error message
       }
 
-      if (FeedRecordCols(thiswa, HB_FALSE) == HB_FAILURE)
-      { // Stmt created and prepared, only need to push data
+      if (FeedRecordCols(thiswa, HB_FALSE) == HB_FAILURE) { // Stmt created and prepared, only need to push data
         return HB_FAILURE;
       }
 
-      if (ExecuteInsertStmt(thiswa) == HB_FAILURE)
-      {
+      if (ExecuteInsertStmt(thiswa) == HB_FAILURE) {
         return HB_FAILURE;
       }
-    }
-    else if (!thiswa->area.fEof)
-    {
+    } else if (!thiswa->area.fEof) {
       if ((!thiswa->hStmtUpdate) ||
-          memcmp((const void *)(thiswa->editMask), (const void *)(thiswa->updatedMask), MAX_FIELDS) != 0)
-      {
-        if (CreateUpdateStmt(thiswa) == HB_FAILURE)
-        {
+          memcmp((const void *)(thiswa->editMask), (const void *)(thiswa->updatedMask), MAX_FIELDS) != 0) {
+        if (CreateUpdateStmt(thiswa) == HB_FAILURE) {
           return HB_FAILURE;
         }
-      }
-      else
-      {
+      } else {
         thiswa->sSql[0] = '\0'; // Avoid wrong error message in Execute
       }
 
-      if (ExecuteUpdateStmt(thiswa) == HB_FAILURE)
-      {
+      if (ExecuteUpdateStmt(thiswa) == HB_FAILURE) {
         return HB_FAILURE;
       }
     }
@@ -3612,14 +3075,12 @@ static HB_ERRCODE sqlExPutValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
   double dNum;
   HB_USHORT len, dec, fieldindex;
 
-  if (thiswa->firstinteract)
-  {
+  if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
 
@@ -3627,19 +3088,16 @@ static HB_ERRCODE sqlExPutValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
   thiswa->editMask[fieldindex - 1] = '1';
   pDest = hb_itemArrayGet(thiswa->aBuffer, fieldindex);
 
-  if (!thiswa->uiFieldList[fieldNum - 1])
-  {
+  if (!thiswa->uiFieldList[fieldNum - 1]) {
     thiswa->uiFieldList[fieldNum - 1] = 1;
     thiswa->iColumnListStatus = FIELD_LIST_NEW_VALUE_READ;
   }
 
-  if (HB_IS_NIL(pDest))
-  {
+  if (HB_IS_NIL(pDest)) {
     getMissingColumn(thiswa, pDest, fieldindex);
   }
 
-  if (!thiswa->uiFieldList[fieldNum - 1])
-  { // Columns to be included in SELECT statement further
+  if (!thiswa->uiFieldList[fieldNum - 1]) { // Columns to be included in SELECT statement further
     hb_arraySetNL(thiswa->aSelectList, thiswa->uiBufferIndex[fieldNum - 1], 1);
     thiswa->uiFieldList[fieldNum - 1] = 1;
   }
@@ -3650,11 +3108,9 @@ static HB_ERRCODE sqlExPutValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
 
   if ((HB_IS_NUMBER(pDest) && HB_IS_NUMBER(value)) || (HB_IS_STRING(pDest) && HB_IS_STRING(value)) ||
       (HB_IS_LOGICAL(pDest) && HB_IS_LOGICAL(value)) || (HB_IS_DATE(pDest) && HB_IS_DATE(value)) ||
-      (HB_IS_DATETIME(pDest) && HB_IS_DATETIME(value)))
-  {
+      (HB_IS_DATETIME(pDest) && HB_IS_DATETIME(value))) {
 
-    if (pField->uiType == HB_FT_STRING)
-    {
+    if (pField->uiType == HB_FT_STRING) {
       HB_SIZE nSize = hb_itemGetCLen(value), nLen = pField->uiLen;
 
       cfield = (char *)hb_xgrab(nLen + 1);
@@ -3666,19 +3122,15 @@ static HB_ERRCODE sqlExPutValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
 #else
       memcpy(cfield, hb_itemGetCPtr(value), HB_MIN(nLen, nSize));
 #endif
-      if (nLen > nSize)
-      {
+      if (nLen > nSize) {
         memset(cfield + nSize, ' ', nLen - nSize);
       }
       cfield[nLen] = '\0';
       hb_itemPutCLPtr(value, cfield, nLen);
-    }
-    else if (pField->uiType == HB_FT_LONG)
-    {
+    } else if (pField->uiType == HB_FT_LONG) {
       len = pField->uiLen;
       dec = pField->uiDec;
-      if (dec > 0)
-      {
+      if (dec > 0) {
         len -= (dec + 1);
       }
       dNum = hb_itemGetND(value);
@@ -3686,19 +3138,13 @@ static HB_ERRCODE sqlExPutValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
     }
 
     hb_arraySet(thiswa->aBuffer, fieldindex, value);
-  }
-  else if (HB_IS_STRING(value) && HB_IS_HASH(pDest) && sr_isMultilang())
-  {
+  } else if (HB_IS_STRING(value) && HB_IS_HASH(pDest) && sr_isMultilang()) {
     PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
     hb_hashAdd(pDest, sr_getBaseLang(pLangItem), value);
     hb_itemRelease(pLangItem);
-  }
-  else if (pField->uiType == HB_FT_MEMO)
-  { // Memo fields can hold ANY datatype
+  } else if (pField->uiType == HB_FT_MEMO) { // Memo fields can hold ANY datatype
     hb_arraySet(thiswa->aBuffer, fieldindex, value);
-  }
-  else
-  {
+  } else {
 #ifdef SQLRDD_NWG_SPECIFIC
     thiswa->bufferHot = HB_TRUE;
     return HB_SUCCESS;
@@ -3722,39 +3168,32 @@ static HB_ERRCODE sqlExRecall(SQLEXAREAP thiswa)
   HB_BOOL isDeleted;
   SQLRETURN res;
 
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
-  }
-  else if (thiswa->firstinteract)
-  {
+  } else if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
   SELF_DELETED((AREAP)thiswa, &isDeleted);
 
-  if (isDeleted && thiswa->ulhDeleted > 0 && sr_UseDeleteds())
-  {
+  if (isDeleted && thiswa->ulhDeleted > 0 && sr_UseDeleteds()) {
     memset(thiswa->sSql, 0, MAX_SQL_QUERY_LEN * sizeof(char));
     sprintf(thiswa->sSql, "UPDATE %s SET %s = '%c'%s WHERE %s = %i", thiswa->sTable, thiswa->sDeletedName, ' ',
             thiswa->iTCCompat >= 4 ? ", R_E_C_D_E_L_ = R_E_C_N_O_" : " ", thiswa->sRecnoName,
             (int)GetCurrentRecordNum(thiswa));
 
     res = SQLAllocStmt((HDBC)thiswa->hDbc, &(thiswa->hStmt));
-    if (CHECK_SQL_N_OK(res))
-    {
+    if (CHECK_SQL_N_OK(res)) {
       return HB_FAILURE;
     }
 
     res = SQLExecDirect(thiswa->hStmt, (SQLCHAR *)thiswa->sSql, SQL_NTS);
-    if (res == SQL_ERROR)
-    {
+    if (res == SQL_ERROR) {
       return HB_FAILURE; // It means a fault in SQL statement
     }
     SQLFreeStmt(thiswa->hStmt, SQL_DROP);
@@ -3769,17 +3208,13 @@ static HB_ERRCODE sqlExRecall(SQLEXAREAP thiswa)
 
 static HB_ERRCODE sqlExRecCount(SQLEXAREAP thiswa, HB_ULONG *recCount)
 {
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
 
-  if (thiswa->bIsInsert && thiswa->bufferHot)
-  {
+  if (thiswa->bIsInsert && thiswa->bufferHot) {
     *recCount = (HB_ULONG)(hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT) + 1);
-  }
-  else
-  {
+  } else {
     *recCount = (HB_ULONG)(hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT));
   }
 
@@ -3797,18 +3232,14 @@ static HB_ERRCODE sqlExRecCount(SQLEXAREAP thiswa, HB_ULONG *recCount)
 static HB_ERRCODE sqlExRecNo(SQLEXAREAP thiswa, HB_ULONG *recno)
 {
 #ifdef SQLRDD_NWG_SPECIFIC
-  if (thiswa->bIsInsert)
-  {
+  if (thiswa->bIsInsert) {
     commonError((AREAP)thiswa, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
     return HB_FAILURE;
   }
 #endif
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
-  }
-  else if (thiswa->firstinteract)
-  {
+  } else if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
@@ -3822,29 +3253,20 @@ static HB_ERRCODE sqlExRecNo(SQLEXAREAP thiswa, HB_ULONG *recno)
 
 static HB_ERRCODE sqlExRecId(SQLEXAREAP thiswa, PHB_ITEM recno)
 {
-  if (thiswa->lpdbPendingRel)
-  {
+  if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
-  }
-  else if (thiswa->firstinteract)
-  {
+  } else if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
 
-  if (thiswa->initialized)
-  {
-    if (thiswa->bIsInsert || thiswa->area.fEof)
-    {
+  if (thiswa->initialized) {
+    if (thiswa->bIsInsert || thiswa->area.fEof) {
       hb_itemPutNL(recno, thiswa->lLastRec);
-    }
-    else
-    {
+    } else {
       hb_itemPutNL(recno, (HB_ULONG)thiswa->recordList[thiswa->recordListPos]);
     }
-  }
-  else
-  {
+  } else {
     hb_itemPutNL(recno, 0);
   }
 
@@ -3861,84 +3283,65 @@ static HB_ERRCODE sqlExRecId(SQLEXAREAP thiswa, PHB_ITEM recno)
 static HB_ERRCODE sqlExClose(SQLEXAREAP thiswa)
 {
   HB_ERRCODE code;
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
   code = (SUPER_CLOSE((AREAP)thiswa));
   // Reset parent rel struct
   thiswa->lpdbPendingRel = SR_NULLPTR;
 
-  if ((thiswa->oSql) && HB_IS_OBJECT(thiswa->oSql))
-  {
+  if ((thiswa->oSql) && HB_IS_OBJECT(thiswa->oSql)) {
     hb_itemRelease(thiswa->oSql);
   }
-  if (thiswa->sTable)
-  {
+  if (thiswa->sTable) {
     hb_xfree(thiswa->sTable);
   }
-  if (thiswa->sOwner)
-  {
+  if (thiswa->sOwner) {
     hb_xfree(thiswa->sOwner);
   }
-  if (thiswa->sFields)
-  {
+  if (thiswa->sFields) {
     hb_xfree(thiswa->sFields);
   }
-  if (thiswa->sRecnoName)
-  {
+  if (thiswa->sRecnoName) {
     hb_xfree(thiswa->sRecnoName);
   }
-  if (thiswa->sDeletedName)
-  {
+  if (thiswa->sDeletedName) {
     hb_xfree(thiswa->sDeletedName);
   }
-  if (thiswa->recordList)
-  {
+  if (thiswa->recordList) {
     hb_xfree(thiswa->recordList);
   }
-  if (thiswa->deletedList)
-  {
+  if (thiswa->deletedList) {
     hb_xfree(thiswa->deletedList);
   }
-  if (thiswa->sSql)
-  {
+  if (thiswa->sSql) {
     hb_xfree(thiswa->sSql);
   }
-  if (thiswa->sSqlBuffer)
-  {
+  if (thiswa->sSqlBuffer) {
     hb_xfree(thiswa->sSqlBuffer);
   }
-  if (thiswa->sWhere)
-  {
+  if (thiswa->sWhere) {
     hb_xfree(thiswa->sWhere);
   }
-  if (thiswa->sOrderBy)
-  {
+  if (thiswa->sOrderBy) {
     hb_xfree(thiswa->sOrderBy);
   }
-  if (thiswa->hBufferPool)
-  {
+  if (thiswa->hBufferPool) {
     hb_itemRelease(thiswa->hBufferPool);
   }
-  if (thiswa->lRecordToRetrieve)
-  {
+  if (thiswa->lRecordToRetrieve) {
     hb_xfree(thiswa->lRecordToRetrieve);
   }
-  if (thiswa->hStmtBuffer)
-  {
+  if (thiswa->hStmtBuffer) {
     SQLFreeStmt(thiswa->hStmtBuffer, SQL_DROP);
   }
-  if (thiswa->hStmtInsert)
-  {
+  if (thiswa->hStmtInsert) {
     SQLFreeStmt(thiswa->hStmtInsert, SQL_DROP);
   }
-  if (thiswa->hStmtNextval)
-  {
+  if (thiswa->hStmtNextval) {
     SQLFreeStmt(thiswa->hStmtNextval, SQL_DROP);
   }
-  if (thiswa->hStmtUpdate)
-  {
+  if (thiswa->hStmtUpdate) {
     SQLFreeStmt(thiswa->hStmtUpdate, SQL_DROP);
   }
 
@@ -3946,15 +3349,13 @@ static HB_ERRCODE sqlExClose(SQLEXAREAP thiswa)
   ReleaseInsertRecordStructure(thiswa, 0);
   ReleaseCurrRecordStructure(thiswa, 0);
 
-  if (thiswa->aFields)
-  {
+  if (thiswa->aFields) {
     hb_itemRelease(thiswa->aFields);
   }
 
   ReleaseIndexBindStructure(thiswa);
   // We now use as an true structure, so let freeit
-  if (thiswa->IndexBindings)
-  {
+  if (thiswa->IndexBindings) {
     hb_xfree(thiswa->IndexBindings);
   }
 
@@ -4048,13 +3449,11 @@ static HB_ERRCODE sqlExOpen(SQLEXAREAP thiswa, LPDBOPENINFO OpenInfo)
 
   errCode = SUPER_OPEN((AREAP)thiswa, OpenInfo);
 
-  if (errCode != HB_SUCCESS)
-  {
+  if (errCode != HB_SUCCESS) {
     return errCode;
   }
 
-  if (getWorkareaParams(thiswa) == HB_FAILURE)
-  { // If workarea was opened by dbCreate()
+  if (getWorkareaParams(thiswa) == HB_FAILURE) { // If workarea was opened by dbCreate()
     return HB_FAILURE;
   }
 
@@ -4109,8 +3508,7 @@ static HB_ERRCODE sqlExOrderListAdd(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInfo)
 
   err = SUPER_ORDLSTADD((AREAP)thiswa, pOrderInfo);
 
-  if (hOldOrder != thiswa->hOrdCurrent)
-  {
+  if (hOldOrder != thiswa->hOrdCurrent) {
     thiswa->lBofAt = 0;
     thiswa->lEofAt = 0;
     thiswa->indexLevel = -1;
@@ -4150,27 +3548,22 @@ static HB_ERRCODE sqlExOrderListFocus(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInf
 
   err = SUPER_ORDLSTFOCUS((AREAP)thiswa, pOrderInfo);
 
-  if (hOldOrder != thiswa->hOrdCurrent)
-  {
+  if (hOldOrder != thiswa->hOrdCurrent) {
     thiswa->bOrderChanged = HB_TRUE;
     thiswa->lBofAt = 0;
     thiswa->lEofAt = 0;
   }
 
-  if (thiswa->hOrdCurrent > 0)
-  {
+  if (thiswa->hOrdCurrent > 0) {
     thiswa->indexColumns = hb_arrayLen(
         hb_arrayGetItemPtr(hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent), INDEX_FIELDS));
     bOldReverseIndex = thiswa->bReverseIndex;
     thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, AINFO_REVERSE_INDEX);
-    if (thiswa->IndexBindings[thiswa->hOrdCurrent])
-    {
+    if (thiswa->IndexBindings[thiswa->hOrdCurrent]) {
       hb_xfree(thiswa->IndexBindings[thiswa->hOrdCurrent]);
       thiswa->IndexBindings[thiswa->hOrdCurrent] = SR_NULLPTR;
     }
-  }
-  else
-  {
+  } else {
     thiswa->indexColumns = 1; // Natural order, RECNO
   }
 
@@ -4198,8 +3591,7 @@ static HB_ERRCODE sqlExOrderCreate(SQLEXAREAP thiswa, LPDBORDERCREATEINFO pOrder
   // (FOR clause or Synthetic Index) all allocated structures for binding
   // columns are now invalid and will GPF when unalloc
 
-  if (iLen != (int)hb_arrayLen(thiswa->aFields))
-  {
+  if (iLen != (int)hb_arrayLen(thiswa->aFields)) {
     // Release structures
     ReleaseColStatements(thiswa, iLen);
     ReleaseInsertRecordStructure(thiswa, iLen);
@@ -4210,8 +3602,7 @@ static HB_ERRCODE sqlExOrderCreate(SQLEXAREAP thiswa, LPDBORDERCREATEINFO pOrder
     SetInsertRecordStructure(thiswa);
   }
 
-  if (err == HB_SUCCESS)
-  {
+  if (err == HB_SUCCESS) {
     bOldReverseIndex = thiswa->bReverseIndex;
     thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, AINFO_REVERSE_INDEX);
   }
@@ -4243,22 +3634,17 @@ static HB_ERRCODE sqlExOrderInfo(SQLEXAREAP thiswa, HB_USHORT uiIndex, LPDBORDER
 
   lIndexes = hb_itemSize(thiswa->aOrders);
 
-  if (lIndexes)
-  {
-    switch (uiIndex)
-    {
+  if (lIndexes) {
+    switch (uiIndex) {
     case DBOI_KEYCOUNT: {
       long lValue;
       getWhereExpression(thiswa, LIST_FROM_TOP);
       createCountQuery(thiswa);
 
-      if (getFirstColumnAsLong(thiswa, &lValue) == HB_FAILURE)
-      {
+      if (getFirstColumnAsLong(thiswa, &lValue) == HB_FAILURE) {
         odbcErrorDiagRTE(thiswa->hStmt, "OrdKeyCount", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
         uiError = HB_FAILURE;
-      }
-      else
-      {
+      } else {
         pInfo->itmResult = hb_itemPutNI(pInfo->itmResult, (int)lValue);
         uiError = HB_SUCCESS;
       }
@@ -4288,9 +3674,7 @@ static HB_ERRCODE sqlExOrderInfo(SQLEXAREAP thiswa, HB_USHORT uiIndex, LPDBORDER
       thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, AINFO_REVERSE_INDEX); // OrderInfo() may change this flag
     }
     }
-  }
-  else
-  {
+  } else {
     uiError = SUPER_ORDINFO((AREAP)thiswa, uiIndex, pInfo);
   }
 
@@ -4338,8 +3722,7 @@ static HB_ERRCODE sqlExSetFilter(SQLEXAREAP thiswa, LPDBFILTERINFO pFilterInfo)
   HB_ERRCODE ret;
 
   ret = SUPER_SETFILTER((AREAP)thiswa, pFilterInfo);
-  if (ret == HB_SUCCESS)
-  {
+  if (ret == HB_SUCCESS) {
     thiswa->bConditionChanged1 = HB_TRUE;
     thiswa->bConditionChanged2 = HB_TRUE;
   }
@@ -4374,13 +3757,11 @@ static HB_ERRCODE sqlExSetScope(SQLEXAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 
 static HB_ERRCODE sqlExLock(SQLEXAREAP thiswa, LPDBLOCKINFO pLockInfo)
 {
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
-  if (thiswa->firstinteract)
-  {
+  if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
@@ -4396,13 +3777,11 @@ static HB_ERRCODE sqlExLock(SQLEXAREAP thiswa, LPDBLOCKINFO pLockInfo)
 
 static HB_ERRCODE sqlExUnLock(SQLEXAREAP thiswa, PHB_ITEM pRecNo)
 {
-  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE)
-  {
+  if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
 
-  if (thiswa->firstinteract)
-  {
+  if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
   }
@@ -4517,19 +3896,15 @@ HB_FUNC(SQLEX_GETFUNCTABLE)
 
   HB_TRACE(HB_TR_DEBUG, ("SQLEX_GETFUNCTABLE(%p, %p)", uiCount, pTable));
 
-  if (pTable)
-  {
+  if (pTable) {
     HB_ERRCODE errCode;
 
-    if (uiCount)
-    {
+    if (uiCount) {
       *uiCount = RDDFUNCSCOUNT;
     }
     errCode = hb_rddInherit(pTable, &sqlTable, &sqlExSuper, (const char *)"SQLRDD");
     hb_retni(errCode);
-  }
-  else
-  {
+  } else {
     hb_retni(HB_FAILURE);
   }
 }
@@ -4546,20 +3921,16 @@ static void hb_sqlExRddInit(void *cargo)
   HB_USHORT usResult;
   HB_SYMBOL_UNUSED(cargo);
 
-  if (hb_rddRegister("SQLRDD", RDT_FULL) <= 1)
-  {
+  if (hb_rddRegister("SQLRDD", RDT_FULL) <= 1) {
     usResult = (HB_USHORT)hb_rddRegister("SQLEX", RDT_FULL);
-    if (usResult <= 1)
-    {
-      if (usResult == 0)
-      {
+    if (usResult <= 1) {
+      if (usResult == 0) {
         PHB_DYNS pDynSym;
         HB_FUNC_EXEC(SR_INIT);
 
         pDynSym = hb_dynsymFind("__SR_STARTSQL");
 
-        if (pDynSym && hb_dynsymIsFunction(pDynSym))
-        {
+        if (pDynSym && hb_dynsymIsFunction(pDynSym)) {
           hb_vmPushDynSym(pDynSym);
           hb_vmPushNil();
           hb_vmDo(0);
@@ -4600,16 +3971,14 @@ HB_CALL_ON_STARTUP_END(_hb_sqlEx_rdd_init_)
 
 HB_FUNC(SR_SETPAGEREADSIZE)
 {
-  if (HB_ISNUM(1))
-  {
+  if (HB_ISNUM(1)) {
     pageReadSize = hb_itemGetNL(hb_param(1, HB_IT_NUMERIC));
   }
 }
 
 HB_FUNC(SR_SETBUFFERPOOLSIZE)
 {
-  if (HB_ISNUM(1))
-  {
+  if (HB_ISNUM(1)) {
     bufferPoolSize = hb_itemGetNL(hb_param(1, HB_IT_NUMERIC));
   }
 }
@@ -4624,30 +3993,25 @@ static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   char *valbuf = SR_NULLPTR;
 
   pTag = loadTagDefault(thiswa, SR_NULLPTR, &lorder);
-  if (pTag)
-  {
-    if (thiswa->firstinteract)
-    {
+  if (pTag) {
+    if (thiswa->firstinteract) {
       SELF_GOTOP((AREAP)thiswa);
       thiswa->firstinteract = HB_FALSE;
     }
 
     itemTemp = hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK);
-    // if( pTag ) {
-    //    HB_EVALINFO info;
-    //    hb_evalNew(&info, hb_itemArrayGet(pTag, INDEXMAN_KEY_CODEBLOCK));
-    //    pKey1 = hb_evalLaunch(&info);
-    //    hb_evalRelease(&info);
+    // if (pTag) {
+    //   HB_EVALINFO info;
+    //   hb_evalNew(&info, hb_itemArrayGet(pTag, INDEXMAN_KEY_CODEBLOCK));
+    //   pKey1 = hb_evalLaunch(&info);
+    //   hb_evalRelease(&info);
     // }
 
-    if (HB_IS_NUMBER(itemTemp))
-    {
+    if (HB_IS_NUMBER(itemTemp)) {
       pKeyVal = hb_itemArrayGet(thiswa->aBuffer, hb_arrayGetNL(pTag, INDEX_KEY_CODEBLOCK) - 2);
       len1 = (HB_BYTE)hb_strRTrimLen(hb_itemGetCPtr(pKeyVal), hb_itemGetCLen(pKeyVal), HB_FALSE) - 15;
       val1 = hb_itemGetCPtr(pKeyVal);
-    }
-    else
-    {
+    } else {
       HB_EVALINFO info;
       hb_evalNew(&info, hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK));
       pKeyVal = hb_evalLaunch(&info);
@@ -4657,33 +4021,30 @@ static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
     }
     hb_itemRelease(itemTemp);
     hb_itemRelease(pTag);
-  }
-  else
-  {
+  } else {
     return 0;
   }
 
 #if 0 // TODO: old code for reference (to be deleted)
-   if( HB_IS_DATE(pKey) ) {
-      len2 = 8;
-      valbuf = (char *) hb_xgrab(9);
-      val2 = hb_itemGetDS(pKey, valbuf);
-   } else if( HB_IS_NUMBER(pKey) ) {
-      PHB_ITEM pLen = hb_itemPutNL(SR_NULLPTR, (HB_LONG) len1);
-      val2 = valbuf = hb_itemStr(pKey, pLen, SR_NULLPTR);
-      len2 = (HB_BYTE) strlen(val2);
-      hb_itemRelease(pLen);
-   } else if( HB_IS_LOGICAL(pKey) ) {
-      len2 = 1;
-      val2 = hb_itemGetL(pKey) ? "T" : "F";
-   } else {
-      len2 = (HB_BYTE) hb_itemGetCLen(pKey);
-      val2 = hb_itemGetCPtr(pKey);
-   }
+  if (HB_IS_DATE(pKey)) {
+    len2 = 8;
+    valbuf = (char *)hb_xgrab(9);
+    val2 = hb_itemGetDS(pKey, valbuf);
+  } else if (HB_IS_NUMBER(pKey)) {
+    PHB_ITEM pLen = hb_itemPutNL(SR_NULLPTR, (HB_LONG)len1);
+    val2 = valbuf = hb_itemStr(pKey, pLen, SR_NULLPTR);
+    len2 = (HB_BYTE)strlen(val2);
+    hb_itemRelease(pLen);
+  } else if (HB_IS_LOGICAL(pKey)) {
+    len2 = 1;
+    val2 = hb_itemGetL(pKey) ? "T" : "F";
+  } else {
+    len2 = (HB_BYTE)hb_itemGetCLen(pKey);
+    val2 = hb_itemGetCPtr(pKey);
+  }
 #endif
 
-  switch (hb_itemType(pKey))
-  {
+  switch (hb_itemType(pKey)) {
   case HB_IT_DATE: {
     len2 = 8;
     valbuf = (char *)hb_xgrab(9);
@@ -4712,45 +4073,30 @@ static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 
   iLimit = (len1 > len2) ? len2 : len1;
 
-  if (HB_IS_STRING(pKeyVal))
-  {
-    if (iLimit > 0)
-    {
+  if (HB_IS_STRING(pKeyVal)) {
+    if (iLimit > 0) {
       iResult = memcmp(val1, val2, iLimit);
     }
-    if (iResult == 0)
-    {
-      if (len1 >= len2)
-      {
+    if (iResult == 0) {
+      if (len1 >= len2) {
         iResult = 1;
-      }
-      else if (len1 < len2 && fExact)
-      {
+      } else if (len1 < len2 && fExact) {
         iResult = -1;
       }
-    }
-    else
-    {
+    } else {
       iResult = 0;
     }
-  }
-  else
-  {
-    if (iLimit == 0 || (iResult = memcmp(val1, val2, iLimit)) == 0)
-    {
-      if (len1 >= len2)
-      {
+  } else {
+    if (iLimit == 0 || (iResult = memcmp(val1, val2, iLimit)) == 0) {
+      if (len1 >= len2) {
         iResult = 1;
-      }
-      else if (len1 < len2)
-      {
+      } else if (len1 < len2) {
         iResult = -1;
       }
     }
   }
 
-  if (valbuf)
-  {
+  if (valbuf) {
     hb_xfree(valbuf);
   }
 
@@ -4765,30 +4111,30 @@ void SqlExLog(const char *str, int ver)
   HB_SYMBOL_UNUSED(ver);
 
 #if 0
-   if( SqlExIsLog() ) {
-      char date[9];
-      // time_t timer = time(0);
-      // tm *ltm = localtime(&timer);
-      FILE * log;
-      log = fopen("sqlex.log", "a");
-      // fprintf(log, "%s %n:%n:%n : %s : %i\n", _strdate(date), ltm->tm_hour, ltm->tm_min, ltm->tm_sec, str, ver);
-      fprintf(log, "%s : %s : %i\n", _strdate(date), str, ver);
-      fclose(log);
-   }
+  if (SqlExIsLog()) {
+    char date[9];
+    // time_t timer = time(0);
+    // tm *ltm = localtime(&timer);
+    FILE *log;
+    log = fopen("sqlex.log", "a");
+    // fprintf(log, "%s %n:%n:%n : %s : %i\n", _strdate(date), ltm->tm_hour, ltm->tm_min, ltm->tm_sec, str, ver);
+    fprintf(log, "%s : %s : %i\n", _strdate(date), str, ver);
+    fclose(log);
+  }
 #endif
 }
 
 HB_BOOL SqlExIsLog()
 {
 #if 0
-   if(_SqlExIsLogFirst) {
-      _SqlExIsLogFirst = HB_FALSE;
+  if (_SqlExIsLogFirst) {
+    _SqlExIsLogFirst = HB_FALSE;
 
-      if( FILE *file = fopen("sqlex.debug", "r") ) {
-        fclose(file);
-        _SqlExIsLogFile = HB_TRUE;
-      }
-   }
+    if (FILE *file = fopen("sqlex.debug", "r")) {
+      fclose(file);
+      _SqlExIsLogFile = HB_TRUE;
+    }
+  }
 #endif
 
   return _SqlExIsLogFile;
