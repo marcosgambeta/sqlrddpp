@@ -37,6 +37,8 @@ SQLRDD for Harbour++ and Harbour
 | Harbour   | MinGW64          | Compiling with warnings | ...                 |
 | Harbour   | MSVC 2019 32-bit | Compiling with warnings | ...                 |
 | Harbour   | MSVC 2019 64-bit | Compiling with warnings | ...                 |
+| Harbour   | MSVC 2022 32-bit | Compiling with warnings | ...                 |
+| Harbour   | MSVC 2022 64-bit | Compiling with warnings | ...                 |
 | Harbour   | Clang32          | ...                     | ...                 |
 | Harbour   | Clang64          | ...                     | ...                 |
 | Harbour   | BCC 5.8.2        | Compiling with warnings | -aflag=/P64         |
