@@ -2098,23 +2098,22 @@ static int DEFUN_VOID(_sqlo_getenv)
 
     if (NULL != ep && strlen(ep)) {
 
-      switch (g_params[i].vtyp)
-      {
-
-      case INTEGER:
+      switch (g_params[i].vtyp) {
+      case INTEGER: {
         if (g_params[i].value) {
           *((int *)g_params[i].value) = atoi(ep);
-        }  
+        }
         break;
-
-      case STRING:
+      }
+      case STRING: {
         if (g_params[i].value) {
           strcpy((char *)g_params[i].value, ep);
-        }  
+        }
         break;
-
-      default:
+      }
+      default: { // TODO: unnecessary default
         break;
+      }
       }
 
       /* Call the trigger function, if one was defined */
@@ -2253,13 +2252,11 @@ static int DEFUN(_save_oci_status, (dbp, action, object, lineno),
   TRACE(
       3, if (dbp->status != OCI_SUCCESS) { fprintf(_get_trace_fp(dbp), "_save_oci_status: %d\n", dbp->status); });
 
-  switch (dbp->status)
-  {
-
-  case OCI_SUCCESS:
+  switch (dbp->status) {
+  case OCI_SUCCESS: {
     break;
-
-  case OCI_SUCCESS_WITH_INFO:
+  }
+  case OCI_SUCCESS_WITH_INFO: {
     (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)SR_NULLPTR, &dbp->errcode, (text *)errbuf, (ub4)sizeof(errbuf),
                       OCI_HTYPE_ERROR);
 #ifndef NDEBUG
@@ -2267,18 +2264,17 @@ static int DEFUN(_save_oci_status, (dbp, action, object, lineno),
 #else
     strcpy(dbp->errmsg, errbuf);
 #endif
-
     break;
-
-  case OCI_NEED_DATA:
+  }
+  case OCI_NEED_DATA: {
     sprintf(dbp->errmsg, "ERROR: OCI_NEED_DATA\n(line: %d)\n", lineno);
     break;
-
-  case OCI_NO_DATA:
+  }
+  case OCI_NO_DATA: {
     sprintf(dbp->errmsg, "ERROR: OCI_NO_DATA\n(line: %d)\n", lineno);
     break;
-
-  case OCI_ERROR:
+  }
+  case OCI_ERROR: {
     (void)OCIErrorGet(dbp->errhp, (ub4)1, (text *)SR_NULLPTR, &dbp->errcode, (text *)errbuf, (ub4)sizeof(errbuf),
                       OCI_HTYPE_ERROR);
 #ifndef NDEBUG
@@ -2286,65 +2282,65 @@ static int DEFUN(_save_oci_status, (dbp, action, object, lineno),
 #else
     strcpy(dbp->errmsg, errbuf);
 #endif
-
     break;
-
-  case OCI_INVALID_HANDLE:
+  }
+  case OCI_INVALID_HANDLE: {
     sprintf(dbp->errmsg, "ERROR: OCI_INVALID_HANDLE\n(line: %d)\n", lineno);
     break;
-
-  case OCI_STILL_EXECUTING:
+  }
+  case OCI_STILL_EXECUTING: {
     sprintf(dbp->errmsg, "ERROR: OCI_STILL_EXECUTING\n(line: %d)\n", lineno);
     break;
-
-  case OCI_CONTINUE:
+  }
+  case OCI_CONTINUE: {
     sprintf(dbp->errmsg, "ERROR: OCI_CONTINUE\n(line: %d)\n", lineno);
     break;
-
-  case SQLO_INVALID_DB_HANDLE:
+  }
+  case SQLO_INVALID_DB_HANDLE: {
     sprintf(dbp->errmsg, "ERROR: %05d: Invalid database handle.\n(line: %d)\n", dbp->status, lineno);
     break;
-
-  case SQLO_INVALID_STMT_HANDLE:
+  }
+  case SQLO_INVALID_STMT_HANDLE: {
     sprintf(dbp->errmsg, "ERROR: %05d: Invalid statement handle.\n(line: %d)\n", dbp->status, lineno);
     break;
-
-  case SQLO_STMT_NOT_OPENED:
+  }
+  case SQLO_STMT_NOT_OPENED: {
     sprintf(dbp->errmsg, "ERROR: %05d: Cursor is not open.\n(line: %d)\n", dbp->status, lineno);
     break;
-
-  case SQLO_STMT_NOT_PARSED:
+  }
+  case SQLO_STMT_NOT_PARSED: {
     sprintf(dbp->errmsg, "ERROR: %05d: Stmt is not prepared.\n(line: %d)\n", dbp->status, lineno);
     break;
-
-  case SQLO_INVALID_STMT_TYPE:
+  }
+  case SQLO_INVALID_STMT_TYPE: {
     sprintf(dbp->errmsg,
             "ERROR: %05d: Sorry, this function cannot handle your type of statement.\n"
             "(line: %d)\n",
             dbp->status, lineno);
     break;
-
-  case SQLO_INVALID_SQL:
+  }
+  case SQLO_INVALID_SQL: {
     sprintf(dbp->errmsg,
             "ERROR: %05d: Invalid SQL parsed.\n"
             "(line: %d)\n",
             dbp->status, lineno);
     break;
-
-  case SQLO_ERRMALLOC:
+  }
+  case SQLO_ERRMALLOC: {
     /* concatenate the error message. */
     sprintf(&dbp->errmsg[strlen(dbp->errmsg)], "ERROR: %05d: Memory allocation error.\n(line: %d)\n", dbp->status,
             lineno);
     break;
-
-  case SQLO_UNSUPPORTED_DATA_TYPE:
+  }
+  case SQLO_UNSUPPORTED_DATA_TYPE: {
     sprintf(&dbp->errmsg[strlen(dbp->errmsg)], "ERROR: %05d: Unsupported database data type.\n(line: %d)\n",
             dbp->status, lineno);
     break;
-
-  default:
+  }
+  default: {
     sprintf(dbp->errmsg, "ERROR: - 00000: Unknown status %d\n(line: %d)\n", dbp->status, lineno);
-    break;
+    break; // TODO: unnecessary break
+  }
   }
 
 #ifndef NDEBUG
@@ -2389,38 +2385,37 @@ static int DEFUN(_save_oci_status, (dbp, action, object, lineno),
  */
 static const char *DEFUN(_get_stmt_type_str, (stype), int stype)
 {
-  switch (stype)
-  {
-
-  case OCI_STMT_SELECT:
+  switch (stype) {
+  case OCI_STMT_SELECT: {
     return "SELECT";
-
-  case OCI_STMT_UPDATE:
+  }
+  case OCI_STMT_UPDATE: {
     return "UPDATE";
-
-  case OCI_STMT_DELETE:
+  }
+  case OCI_STMT_DELETE: {
     return "DELETE";
-
-  case OCI_STMT_INSERT:
+  }
+  case OCI_STMT_INSERT: {
     return "INSERT";
-
-  case OCI_STMT_CREATE:
+  }
+  case OCI_STMT_CREATE: {
     return "CREATE";
-
-  case OCI_STMT_DROP:
+  }
+  case OCI_STMT_DROP: {
     return "DROP";
-
-  case OCI_STMT_ALTER:
+  }
+  case OCI_STMT_ALTER: {
     return "ALTER";
-
-  case OCI_STMT_BEGIN:
+  }
+  case OCI_STMT_BEGIN: {
     return "BEGIN";
-
-  case OCI_STMT_DECLARE:
+  }
+  case OCI_STMT_DECLARE: {
     return "DECLARE";
-
-  default:
+  }
+  default: {
     return "UNKNOWN";
+  }
   }
 }
 
@@ -2496,94 +2491,136 @@ static inline int DEFUN(_is_opened, (stp), sqlo_stmt_struct_ptr_t stp)
 static const char *DEFUN(_get_data_type_str, (dtype), int dtype)
 {
   /* the constants are defined in ocidfn.h */
-  switch (dtype)
-  {
-  case SQLT_CHR:
+  switch (dtype) {
+  case SQLT_CHR: {
     return "character string";
-  case SQLT_NUM:
+  }
+  case SQLT_NUM: {
     return "oracle numeric";
-  case SQLT_INT:
+  }
+  case SQLT_INT: {
     return "integer";
-  case SQLT_FLT:
+  }
+  case SQLT_FLT: {
     return "floating point number";
-  case SQLT_STR:
+  }
+  case SQLT_STR: {
     return "zero terminated string";
-  case SQLT_VNU:
+  }
+  case SQLT_VNU: {
     return "num with preceding length byte";
-  case SQLT_PDN:
+  }
+  case SQLT_PDN: {
     return "packed decimal numeric";
-  case SQLT_LNG:
+  }
+  case SQLT_LNG: {
     return "long";
-  case SQLT_VCS:
+  }
+  case SQLT_VCS: {
     return "variable character string";
-  case SQLT_NON:
+  }
+  case SQLT_NON: {
     return "Null/empty PCC Descriptor entry ";
-  case SQLT_RID:
+  }
+  case SQLT_RID: {
     return "rowid";
-  case SQLT_DAT:
+  }
+  case SQLT_DAT: {
     return "date in oracle format";
-  case SQLT_DATE:
+  }
+  case SQLT_DATE: {
     return "ANSI Date";
-  case SQLT_TIME:
+  }
+  case SQLT_TIME: {
     return "Time";
-  case SQLT_TIME_TZ:
+  }
+  case SQLT_TIME_TZ: {
     return "Time with timezone";
-  case SQLT_TIMESTAMP:
+  }
+  case SQLT_TIMESTAMP: {
     return "Timestamp";
-  case SQLT_TIMESTAMP_TZ:
+  }
+  case SQLT_TIMESTAMP_TZ: {
     return "Timestamp with timezone";
-  case SQLT_TIMESTAMP_LTZ:
+  }
+  case SQLT_TIMESTAMP_LTZ: {
     return "Timestamp with local timezone";
-  case SQLT_INTERVAL_YM:
+  }
+  case SQLT_INTERVAL_YM: {
     return "Interval year to month";
-  case SQLT_INTERVAL_DS:
+  }
+  case SQLT_INTERVAL_DS: {
     return "Interval day to second";
-  case SQLT_VBI:
+  }
+  case SQLT_VBI: {
     return "binary in VCS format";
-  case SQLT_BIN:
+  }
+  case SQLT_BIN: {
     return "binary data(DTYBIN)";
-  case SQLT_LBI:
+  }
+  case SQLT_LBI: {
     return "long binary";
-  case SQLT_UIN:
+  }
+  case SQLT_UIN: {
     return "unsigned integer";
-  case SQLT_SLS:
+  }
+  case SQLT_SLS: {
     return "dispay sign leading separate";
-  case SQLT_LVC:
+  }
+  case SQLT_LVC: {
     return "longer longs (char)";
-  case SQLT_LVB:
+  }
+  case SQLT_LVB: {
     return "longer longs (binary)";
-  case SQLT_AFC:
+  }
+  case SQLT_AFC: {
     return "ansi fixed char";
-  case SQLT_AVC:
+  }
+  case SQLT_AVC: {
     return "ansi var char";
-  case SQLT_CUR:
+  }
+  case SQLT_CUR: {
     return "cursor type";
-  case SQLT_RDD:
+  }
+  case SQLT_RDD: {
     return "rowid descriptor";
-  case SQLT_LAB:
+  }
+  case SQLT_LAB: {
     return "label type";
-  case SQLT_OSL:
+  }
+  case SQLT_OSL: {
     return "oslabel type";
-  case SQLT_NTY:
+  }
+  case SQLT_NTY: {
     return "named object type";
-  case SQLT_REF:
+  }
+  case SQLT_REF: {
     return "ref type";
-  case SQLT_CLOB:
+  }
+  case SQLT_CLOB: {
     return "character lob";
-  case SQLT_BLOB:
+  }
+  case SQLT_BLOB: {
     return "binary lob";
-  case SQLT_BFILEE:
+  }
+  case SQLT_BFILEE: {
     return "binary file lob";
-  case SQLT_CFILEE:
+  }
+  case SQLT_CFILEE: {
     return "character file lob";
-  case SQLT_RSET:
+  }
+  case SQLT_RSET: {
     return "result set type";
-  case SQLT_NCO:
+  }
+  case SQLT_NCO: {
     return "named collection type";
-  case SQLT_VST:
+  }
+  case SQLT_VST: {
     return "OCIString type";
-  case SQLT_ODT:
+  }
+  case SQLT_ODT: {
     return "OCIDate type";
+  }
   }
   return "UNKNOWN";
 }
@@ -2942,12 +2979,10 @@ static inline int DEFUN(_calc_obuf_size, (bufsizep, data_type, prec, scale, dbsi
 
   assert(bufsizep != SR_NULLPTR);
 
-  switch (data_type)
-  {
-
+  switch (data_type) {
   case SQLT_NUM:
   case SQLT_INT:
-  case SQLT_FLT:
+  case SQLT_FLT: {
     if (scale > prec) {
       buffer_size = (unsigned int)scale + 3; /* sign, comma and \0 */
     } else if (prec > 0) {
@@ -2959,48 +2994,48 @@ static inline int DEFUN(_calc_obuf_size, (bufsizep, data_type, prec, scale, dbsi
     /* use a minimum buffer */
     if (buffer_size < (2 * dbsize) + 3) {
       buffer_size = (2 * dbsize) + 3;
-    }  
+    }
 
     break;
-
+  }
   case SQLT_CHR:
   case SQLT_STR:
-  case SQLT_AFC:
+  case SQLT_AFC: {
     buffer_size = (dbsize + 1);
     break;
-
+  }
   case SQLT_RID:
-  case SQLT_RDD:
+  case SQLT_RDD: {
     buffer_size = 32;
     break;
-
+  }
   case SQLT_DAT:
   case SQLT_DATE:
   case SQLT_TIME:
   case SQLT_TIME_TZ:
   case SQLT_TIMESTAMP:
   case SQLT_TIMESTAMP_TZ:
-  case SQLT_TIMESTAMP_LTZ:
+  case SQLT_TIMESTAMP_LTZ: {
     buffer_size = 64;
     break;
-
-  case SQLT_LNG:
+  }
+  case SQLT_LNG: {
     buffer_size = _max_long_size;
     break;
-
+  }
   case SQLT_BLOB:
-  case SQLT_CLOB:
+  case SQLT_CLOB: {
     buffer_size = 0;
     break;
-
+  }
   case SQLT_BFILEE:
-  case SQLT_CFILEE:
+  case SQLT_CFILEE: {
     status = SQLO_ERROR; /* not supported in this mode */
     break;
-
-  default:
+  }
+  default: {
     buffer_size = ((8 * dbsize) + 1);
-
+  }
   } /* end switch */
 
   *bufsizep = buffer_size;
@@ -6129,45 +6164,44 @@ int DEFUN(sqlo_get_oci_handle, (sqloh, ocihp, type), int sqloh AND void *ocihp A
   sqlo_db_struct_ptr_t dbp;
   sqlo_stmt_struct_ptr_t stp;
 
-  switch (type)
-  {
-    /* global handles */
-  case SQLO_OCI_HTYPE_ENV:
+  switch (type) {
+  /* global handles */
+  case SQLO_OCI_HTYPE_ENV: {
     CHECK_DBHANDLE(dbp, sqloh, "sqlo_get_oci_handle", SQLO_INVALID_DB_HANDLE);
     *((OCIEnv **)ocihp) = dbp->envhp;
     break;
-
-    /* Connection specific handles */
-  case SQLO_OCI_HTYPE_ERROR:
+  }
+  /* Connection specific handles */
+  case SQLO_OCI_HTYPE_ERROR: {
     CHECK_DBHANDLE(dbp, sqloh, "sqlo_get_oci_handle", SQLO_INVALID_DB_HANDLE);
     *((OCIError **)ocihp) = dbp->errhp;
     break;
-
-  case SQLO_OCI_HTYPE_SVCCTX:
+  }
+  case SQLO_OCI_HTYPE_SVCCTX: {
     CHECK_DBHANDLE(dbp, sqloh, "sqlo_get_oci_handle", SQLO_INVALID_DB_HANDLE);
     *((OCISvcCtx **)ocihp) = dbp->svchp;
     break;
-
-  case SQLO_OCI_HTYPE_SERVER:
+  }
+  case SQLO_OCI_HTYPE_SERVER: {
     CHECK_DBHANDLE(dbp, sqloh, "sqlo_get_oci_handle", SQLO_INVALID_DB_HANDLE);
     *((OCIServer **)ocihp) = dbp->srvhp;
     break;
-
-  case SQLO_OCI_HTYPE_SESSION:
+  }
+  case SQLO_OCI_HTYPE_SESSION: {
     CHECK_DBHANDLE(dbp, sqloh, "sqlo_get_oci_handle", SQLO_INVALID_DB_HANDLE);
     *((OCISession **)ocihp) = dbp->authp;
-
     break;
-
-    /* Statement specific handles */
-  case SQLO_OCI_HTYPE_STMT:
+  }
+  /* Statement specific handles */
+  case SQLO_OCI_HTYPE_STMT: {
     CHECK_STHANDLE(stp, sqloh, "sqlo_get_oci_handle", SQLO_INVALID_STMT_HANDLE);
     *((OCIStmt **)ocihp) = stp->stmthp;
     break;
-
-  default:
+  }
+  default: {
     return SQLO_INVALID_OCI_HANDLE_TYPE;
-    break; /* to keep the compiler happy */
+    break; /* to keep the compiler happy */ // TODO: unnecessary break
+  }
   }
   return SQLO_SUCCESS;
 }
@@ -6685,10 +6719,8 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
 
   } while (SQLO_STILL_EXECUTING == dbp->status);
 
-  switch (dbp->status)
-  {
-
-  case SQLO_SUCCESS:
+  switch (dbp->status) {
+  case SQLO_SUCCESS: {
     /* got all in one piece */
     TRACE(3, fprintf(_get_trace_fp(dbp),
                      "sqlo_lob_read_stream: "
@@ -6696,13 +6728,13 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
                      loblen););
     (void)fwrite((void *)buf, (size_t)loblen, 1, fp);
     break;
-
-  case SQLO_ERROR:
+  }
+  case SQLO_ERROR: {
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_lob_read_stream", "sqlo_lob_read_buffer(FIRST)");
     return dbp->status;
     break;
-
-  case SQLO_NEED_DATA:
+  }
+  case SQLO_NEED_DATA: {
     remainder = loblen;
 
     TRACE(3, fprintf(_get_trace_fp(dbp), "sqlo_lob_read_stream: got first piece (%u bytes)\n", nbytes););
@@ -6745,10 +6777,11 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
 
     } while (SQLO_NEED_DATA == dbp->status);
     break;
-
-  default:
+  }
+  default: {
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_lob_read_stream", "");
-    break;
+    break; // TODO: unnecessary break
+  }
   }
   return dbp->status;
 }
