@@ -4232,8 +4232,7 @@ int DEFUN(sqlo_exists, (dbh, table, colname, colval, where),
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_exists: %s\n", stmt););
 
-  while (SQLO_STILL_EXECUTING == (status = sqlo_open2(&sth, dbh, stmt, argc, argv)))
-  {
+  while (SQLO_STILL_EXECUTING == (status = sqlo_open2(&sth, dbh, stmt, argc, argv))) {
     TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_exists: sqlo_open2 status=%d (still executing) sth=%d\n", status, sth););
     SQLO_USLEEP;
   }
@@ -4242,8 +4241,7 @@ int DEFUN(sqlo_exists, (dbh, table, colname, colval, where),
     CHECK_OCI_STATUS_RETURN(dbp, status, "sqlo_exists", "sqlo_open2");
   }
 
-  while (SQLO_STILL_EXECUTING == (status = sqlo_fetch(sth, 1)))
-  {
+  while (SQLO_STILL_EXECUTING == (status = sqlo_fetch(sth, 1))) {
     SQLO_USLEEP;
   }
 
@@ -4387,8 +4385,7 @@ int DEFUN(sqlo_run, (dbh, stmt, argc, argv),
     return status;
   }
 
-  while (SQLO_STILL_EXECUTING == (ret = sqlo_fetch(sth, 1)))
-  {
+  while (SQLO_STILL_EXECUTING == (ret = sqlo_fetch(sth, 1))) {
     SQLO_USLEEP;
   }
 
@@ -4861,8 +4858,7 @@ int DEFUN(sqlo_ncols, (sth, in), sqlo_stmt_handle_t sth AND int in)
       /* execute to describe the output */
       while (OCI_STILL_EXECUTING ==
              (dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4)0, (ub4)0, (OCISnapshot *)0,
-                                           (OCISnapshot *)0, (ub4)OCI_DEFAULT)))
-      {
+                                           (OCISnapshot *)0, (ub4)OCI_DEFAULT))) {
         SQLO_USLEEP;
       }
       CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_ncols", "OCIStmtExecute(DESCRIBE)");
@@ -5013,8 +5009,7 @@ int DEFUN(sqlo_split_cstring, (cstr, uid, pwd, tnsname, bufsize),
 
   /* copy username part to uid */
   n = 0;
-  while (*c && *c != '/')
-  {
+  while (*c && *c != '/') {
     if (n >= bufsize) {
       return SQLO_ERROR;
     }  
@@ -5028,8 +5023,7 @@ int DEFUN(sqlo_split_cstring, (cstr, uid, pwd, tnsname, bufsize),
   if (*c == '/') {
     ++c;
     n = 0;
-    while (*c && *c != '@')
-    {
+    while (*c && *c != '@') {
       if (n >= bufsize) {
         return SQLO_ERROR;
       }  
@@ -5043,8 +5037,7 @@ int DEFUN(sqlo_split_cstring, (cstr, uid, pwd, tnsname, bufsize),
   if (*c == '@') {
     ++c;
     n = 0;
-    while (*c != '\0')
-    {
+    while (*c != '\0') {
       if (n >= bufsize) {
         return SQLO_ERROR;
       }  
@@ -5279,8 +5272,7 @@ int DEFUN(sqlo_session_begin, (dbh, username, password),
    */
   while (OCI_STILL_EXECUTING == (dbp->status = OCISessionBegin((OCISvcCtx *)((dvoid *)dbp->svchp), dbp->errhp,
                                                                dbp->authp, OCI_CRED_RDBMS, OCI_DEFAULT)) ||
-         (dbp->status == OCI_ERROR && _get_errcode(dbp) == ((-1) * OCI_STILL_EXECUTING)))
-  {
+         (dbp->status == OCI_ERROR && _get_errcode(dbp) == ((-1) * OCI_STILL_EXECUTING))) {
     TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_session_begin: "
                                          "Still executing OCISessionBegin\n"););
     SQLO_USLEEP;
@@ -5290,8 +5282,7 @@ int DEFUN(sqlo_session_begin, (dbh, username, password),
 
   /* Set the authentication handle in the service context */
   while (OCI_STILL_EXECUTING == (dbp->status = OCIAttrSet((dvoid *)dbp->svchp, OCI_HTYPE_SVCCTX, (dvoid *)dbp->authp,
-                                                          (ub4)0, OCI_ATTR_SESSION, dbp->errhp)))
-  {
+                                                          (ub4)0, OCI_ATTR_SESSION, dbp->errhp))) {
     TRACE(2, fprintf(_get_trace_fp(dbp), "Still executing OCIAttrSet (authp -> svchp)\n"););
     SQLO_USLEEP;
   }
@@ -5397,8 +5388,7 @@ int DEFUN(sqlo_session_end, (dbh), sqlo_db_handle_t dbh)
   /* close all open cursors  on this database connection */
   _close_all_db_cursors(dbp);
 
-  while (OCI_STILL_EXECUTING == (dbp->status = OCISessionEnd(dbp->svchp, dbp->errhp, dbp->authp, 0)))
-  {
+  while (OCI_STILL_EXECUTING == (dbp->status = OCISessionEnd(dbp->svchp, dbp->errhp, dbp->authp, 0))) {
     TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_session_end: Still executing OCISessionEnd\n"););
     SQLO_USLEEP;
   }
@@ -6602,8 +6592,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
     } while (dbp->status == SQLO_NEED_DATA && !feof(fp));
 
 #ifdef HAVE_OCILOBOPEN
-    while (SQLO_STILL_EXECUTING == (dbp->status = OCILobClose(dbp->svchp, dbp->errhp, loblp)))
-    {
+    while (SQLO_STILL_EXECUTING == (dbp->status = OCILobClose(dbp->svchp, dbp->errhp, loblp))) {
       SQLO_USLEEP;
     }
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "slqo_lob_write_stream", "OCILobClose");
@@ -6817,8 +6806,7 @@ int DEFUN(sqlo_get_ocol_dtype, (sth, pos), sqlo_stmt_handle_t sth AND unsigned i
   if (0 == stp->num_executions && !(REFCURSOR == stp->cursor_type)) {
     /* execute to describe the output */
     while (OCI_STILL_EXECUTING == (dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4)0, (ub4)0,
-                                                                (OCISnapshot *)0, (OCISnapshot *)0, (ub4)OCI_DEFAULT)))
-    {
+                                                                (OCISnapshot *)0, (OCISnapshot *)0, (ub4)OCI_DEFAULT))) {
       SQLO_USLEEP;
     }
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_nget_ocol_dtype", "OCIStmtExecute(DESCRIBE)");
