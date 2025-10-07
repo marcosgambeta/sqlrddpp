@@ -707,7 +707,7 @@ HB_FUNC(FBFETCH4)
   PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
   if (session) {
-    ISC_STATUS stat = 0;
+    ISC_STATUS stat;
     stat = isc_dsql_fetch(session->status, &(session->stmt), session->sqlda->version, session->sqlda);
 
     // if( isc_dsql_fetch(session->status, &(session->stmt), session->sqlda->version, session->sqlda) )
@@ -1471,7 +1471,7 @@ HB_FUNC(FB_MORERESULTS4)
   if (session && session->sqlda->sqld >= 1) {
     if (session->queryType == isc_info_sql_stmt_exec_procedure) {
       XSQLVAR *var;
-      ISC_INT64 value = 0;
+      ISC_INT64 value;
       var = session->sqlda->sqlvar;
       value = (ISC_INT64) * (ISC_INT64 ISC_FAR *)var->sqldata;
       hb_stornint((ISC_INT64)value, 2);
