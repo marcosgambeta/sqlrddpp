@@ -357,7 +357,7 @@ HB_FUNC(PGSQUERYATTR)
     case TIMETZOID: {
       //         case TIMESTAMPOID:
       // case TIMESTAMPTZOID:
-      int fieldLen = 0;
+      int fieldLen;
 
       hb_itemPutC(temp, "C");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
