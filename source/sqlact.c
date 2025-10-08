@@ -109,7 +109,7 @@ int SqlParse(sql_stmt *stmt, const char *query, int queryLen)
     return 0;
   }
   if (!queryLen) {
-    queryLen = strlen(query) + 1;
+    queryLen = (int)strlen(query) + 1;
   }
 
   stmt->query = query;
@@ -359,7 +359,7 @@ HB_FUNC(SR_HEXTOSTR)
     return;
   }
 
-  outbuff = sr_Hex2Str(hb_parc(1), hb_parclen(1), &nalloc);
+  outbuff = sr_Hex2Str(hb_parc(1), (int)hb_parclen(1), &nalloc);
   hb_retclen_buffer(outbuff, nalloc);
 }
 
@@ -695,14 +695,14 @@ HB_FUNC(SR_ESCAPENUM)
   for (iPos = 0; iPos < iSize; iPos++) {
     if (FromBuffer[iPos] == ',') {
       ToBuffer[iPos] = '.';
-      iDecPos = iPos;
+      iDecPos = (int)iPos;
     } else {
       ToBuffer[iPos] = FromBuffer[iPos];
     }
 
     if (ToBuffer[iPos] == '.') {
       bInteger = HB_FALSE;
-      iDecPos = iPos;
+      iDecPos = (int)iPos;
     }
 
     if (ToBuffer[iPos] == 'E' && (iPos + 2) <= iSize) { // 1928773.3663E+003
@@ -763,14 +763,14 @@ HB_FUNC(SR_ESCAPENUM)
 
     if (!iOverflow) {
       double dValue = (double)lValue;
-      hb_retnlen(dValue, len, dec);
+      hb_retnlen(dValue, (int)len, (int)dec);
     } else {
       double dValue = hb_strVal(ToBuffer, iSize);
-      hb_retnlen(dValue, len, dec);
+      hb_retnlen(dValue, (int)len, (int)dec);
     }
   } else {
     double dValue = hb_strVal(ToBuffer, iSize);
-    hb_retnlen(dValue, len, dec);
+    hb_retnlen(dValue, (int)len, (int)dec);
   }
   hb_xfree(ToBuffer);
 }
@@ -798,14 +798,14 @@ PHB_ITEM sr_escapeNumber(char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pR
   for (iPos = 0; iPos < iSize; iPos++) {
     if (FromBuffer[iPos] == ',') {
       ToBuffer[iPos] = '.';
-      iDecPos = iPos;
+      iDecPos = (int)iPos;
     } else {
       ToBuffer[iPos] = FromBuffer[iPos];
     }
 
     if (ToBuffer[iPos] == '.') {
       bInteger = HB_FALSE;
-      iDecPos = iPos;
+      iDecPos = (int)iPos;
     }
 
     if (ToBuffer[iPos] == 'E' && (iPos + 2) <= iSize) { // 1928773.3663E+003
@@ -866,14 +866,14 @@ PHB_ITEM sr_escapeNumber(char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pR
 
     if (!iOverflow) {
       double dValue = (double)lValue;
-      hb_itemPutNLen(pRet, dValue, len, dec);
+      hb_itemPutNLen(pRet, dValue, (int)len, (int)dec);
     } else {
       double dValue = hb_strVal(ToBuffer, iSize);
-      hb_itemPutNLen(pRet, dValue, len, dec);
+      hb_itemPutNLen(pRet, dValue, (int)len, (int)dec);
     }
   } else {
     double dValue = hb_strVal(ToBuffer, iSize);
-    hb_itemPutNLen(pRet, dValue, len, dec);
+    hb_itemPutNLen(pRet, dValue, (int)len, (int)dec);
   }
   hb_xfree(ToBuffer);
   return pRet;
