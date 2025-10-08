@@ -152,26 +152,19 @@ HB_FUNC(SQLO2_CONNECT)
   //    char sPool[30] = {0};
 
   // memset(session, 0, sizeof(OCI_ORASESSION));
-  if (!OCI_initilized)
-  {
-    if (!OCI_Initialize(SR_NULLPTR, SR_NULLPTR, OCI_ENV_DEFAULT | OCI_ENV_CONTEXT | OCI_ENV_THREADED))
-    { // OCI_ENV_CONTEXT))
+  if (!OCI_initilized) {
+    if (!OCI_Initialize(SR_NULLPTR, SR_NULLPTR, OCI_ENV_DEFAULT | OCI_ENV_CONTEXT | OCI_ENV_THREADED)) { // OCI_ENV_CONTEXT))
       session->iStatus = SQLO2_ERROR;
-    }
-    else
-    {
+    } else {
       session->iStatus = SQLO2_SUCCESS;
     }
-  }
-  else
-  {
+  } else {
     session->iStatus = SQLO2_SUCCESS;
   }
 
   OCI_initilized++;
 
-  if (SQLO2_SUCCESS != session->iStatus)
-  {
+  if (SQLO2_SUCCESS != session->iStatus) {
     hb_retni(SQL_ERROR);
   }
 
@@ -186,24 +179,17 @@ HB_FUNC(SQLO2_CONNECT)
   //    sprintf(sPool, "session%i", OCI_initilized);
   //    session->cn = OCI_PoolGetConnection(pool,sPool);//OCI_ConnectionCreate(hb_parc(1), hb_parc(2), hb_parc(3),
   //    OCI_SESSION_DEFAULT); sr_TraceLog("pool.log","secao %p \n",session->cn);
-  // }
-  // else
-  //{
+  // } else {
   session->cn = OCI_ConnectionCreate(hb_parc(1), hb_parc(2), hb_parc(3), OCI_SESSION_DEFAULT);
-
   //}
 
-  if (session->cn != SR_NULLPTR)
-  {
+  if (session->cn != SR_NULLPTR) {
     session->iStatus = SQLO_SUCCESS;
   }
 
-  if (SQLO2_SUCCESS != session->iStatus)
-  {
+  if (SQLO2_SUCCESS != session->iStatus) {
     hb_retni(SQL_ERROR);
-  }
-  else
-  {
+  } else {
     OCI_SetDefaultFormatDate(session->cn, "YYYYMMDD");
     OCI_SetDefaultLobPrefetchSize(session->cn, 4096);
     strcpy(session->server_version, OCI_GetVersionServer(session->cn));
@@ -218,12 +204,9 @@ HB_FUNC(SQLO2_DBMSNAME)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_retc(session->server_version);
-  }
-  else
-  {
+  } else {
     hb_retc("Not connected to Oracle");
   }
 }
@@ -234,23 +217,19 @@ HB_FUNC(SQLO2_DISCONNECT)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
 
     OCI_ConnectionFree(session->cn);
 
     OCI_initilized--;
-    if (OCI_initilized == 0)
-    {
+    if (OCI_initilized == 0) {
       //          if( pool )
       //             OCI_PoolFree(pool);
       OCI_Cleanup();
     }
     hb_xfree(session);
     hb_retni(SQL_SUCCESS);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -259,12 +238,9 @@ HB_FUNC(SQLO2_GETERRORDESCR)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_retc((char *)OCI_ErrorGetString(OCI_GetLastError()));
-  }
-  else
-  {
+  } else {
     hb_retc("Not connected to Oracle");
   }
 }
@@ -273,12 +249,9 @@ HB_FUNC(SQLO2_GETERRORCODE)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_retni(OCI_ErrorGetType(OCI_GetLastError()));
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -287,12 +260,9 @@ HB_FUNC(SQLO2_NUMCOLS)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_retni(session->numcols);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -301,21 +271,15 @@ HB_FUNC(SQLO2_COMMIT)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     session->iStatus = OCI_Commit(session->cn) ? 0 : -1;
 
-    if (SQLO2_SUCCESS == session->iStatus)
-    {
+    if (SQLO2_SUCCESS == session->iStatus) {
       hb_retni(SQL_SUCCESS);
-    }
-    else
-    {
+    } else {
       hb_retni(SQL_ERROR);
     }
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -326,20 +290,14 @@ HB_FUNC(SQLO2_ROLLBACK)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     session->iStatus = OCI_Rollback(session->cn) ? 0 : -1;
-    if (SQLO2_SUCCESS == session->iStatus)
-    {
+    if (SQLO2_SUCCESS == session->iStatus) {
       hb_retni(SQL_SUCCESS);
-    }
-    else
-    {
+    } else {
       hb_retni(SQL_ERROR);
     }
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -349,23 +307,17 @@ HB_FUNC(SQLO2_EXECDIRECT)
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   const char *stm = hb_parcx(2);
 
-  if (session)
-  {
+  if (session) {
     session->stmt = OCI_StatementCreate(session->cn);
 
-    if (OCI_ExecuteStmt(session->stmt, stm))
-    {
+    if (OCI_ExecuteStmt(session->stmt, stm)) {
       hb_retni(SQL_SUCCESS);
-    }
-    else
-    {
+    } else {
       hb_retni(SQL_ERROR);
     }
 
     OCI_StatementFree(session->stmt);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -374,49 +326,37 @@ HB_FUNC(SQLO2_EXECUTE)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
-  if (session)
-  {
+  if (session) {
     char *stm = (char *)hb_parc(2);
-    if (lStmt)
-    {
+    if (lStmt) {
       OCI_SetPrefetchSize(session->stmt, 100);
 
-      if (!OCI_Execute(session->stmt))
-      {
+      if (!OCI_Execute(session->stmt)) {
         session->numcols = 0;
         hb_retni(SQL_ERROR);
-      }
-      else
-      {
+      } else {
         // session->numcols = SQLO2_ncols(session->stmt, 0);
         session->rs = OCI_GetResultset(session->stmt);
         session->numcols = OCI_GetColumnCount(session->rs);
         hb_retni(SQL_SUCCESS);
       }
-    }
-    else
-    {
+    } else {
       session->stmt = OCI_StatementCreate(session->cn);
       // OCI_SetFetchMode(session->stmt, OCI_SFM_SCROLLABLE);
       // OCI_SetFetchSize(session->stmt,100);
       OCI_SetPrefetchSize(session->stmt, 100);
 
-      if (!OCI_ExecuteStmt(session->stmt, stm))
-      {
+      if (!OCI_ExecuteStmt(session->stmt, stm)) {
         session->numcols = 0;
         hb_retni(SQL_ERROR);
-      }
-      else
-      {
+      } else {
         // session->numcols = SQLO2_ncols(session->stmt, 0);
         session->rs = OCI_GetResultset(session->stmt);
         session->numcols = OCI_GetColumnCount(session->rs);
         hb_retni(SQL_SUCCESS);
       }
     }
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -433,8 +373,7 @@ HB_FUNC(ORACLEINBINDPARAM2)
   HB_BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : HB_FALSE;
   HB_BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
 
-  if (Stmt)
-  {
+  if (Stmt) {
 
     Stmt->pLink[iPos].bindname = (char *)hb_xgrabz(sizeof(char) * 10);
     //      memset(Stmt->pLink[iPos].bindname,'\0',10 * sizeof(char));
@@ -443,84 +382,65 @@ HB_FUNC(ORACLEINBINDPARAM2)
 
     Stmt->pLink[iPos].sVal = isNull ? -1 : 0;
     Stmt->pLink[iPos].iType = iParamType;
-    switch (Stmt->pLink[iPos].iType)
-    {
+    switch (Stmt->pLink[iPos].iType) {
     case 2: {
-      if (HB_ISNUM(6))
-      {
+      if (HB_ISNUM(6)) {
         Stmt->pLink[iPos].ulValue = hb_parnl(6);
         ret = OCI_BindUnsignedInt(Stmt->stmt, Stmt->pLink[iPos].bindname, &Stmt->pLink[iPos].ulValue);
-      }
-      else
-      {
+      } else {
         ret = OCI_BindUnsignedInt(Stmt->stmt, Stmt->pLink[iPos].bindname, &Stmt->pLink[iPos].ulValue);
       }
+      break;
     }
-    break;
     case 3: {
-      if (HB_ISNUM(6))
-      {
+      if (HB_ISNUM(6)) {
         Stmt->pLink[iPos].iValue = hb_parl(6);
         OCI_BindBigInt(Stmt->stmt, Stmt->pLink[iPos].bindname, &Stmt->pLink[iPos].iValue);
-      }
-      else
-      {
+      } else {
         ret = OCI_BindBigInt(Stmt->stmt, Stmt->pLink[iPos].bindname, &Stmt->pLink[iPos].iValue);
       }
+      break;
     }
-    break;
-
     case 4: {
-      if (HB_ISNUM(6))
-      {
+      if (HB_ISNUM(6)) {
         Stmt->pLink[iPos].dValue = hb_parnd(6);
         OCI_BindDouble(Stmt->stmt, Stmt->pLink[iPos].bindname, &Stmt->pLink[iPos].dValue);
-      }
-      else
-      {
+      } else {
         ret = OCI_BindDouble(Stmt->stmt, Stmt->pLink[iPos].bindname, &Stmt->pLink[iPos].dValue);
       }
+      break;
     }
-    break;
     case 5: {
-      if (HB_ISNUM(6))
-      {
+      if (HB_ISNUM(6)) {
         Stmt->pLink[iPos].lValue = hb_parnll(6);
         OCI_BindBigInt(Stmt->stmt, Stmt->pLink[iPos].bindname, &Stmt->pLink[iPos].lValue);
-      }
-      else
-      {
+      } else {
         ret = OCI_BindBigInt(Stmt->stmt, Stmt->pLink[iPos].bindname, &Stmt->pLink[iPos].lValue);
       }
+      break;
     }
-    break;
     case 6: {
       // ret = SQLO2_bind_ref_cursor(Stmt->stmtParam, ":c1", &Stmt->stmtParamRes);
       ret = OCI_BindStatement(Stmt->stmt, ":1", Stmt->stmtParamRes);
+      break;
     }
-    break;
     case 8: {
       Stmt->pLink[iPos].date = OCI_DateCreate(Stmt->cn);
-      if (ISDATE(6))
-      {
+      if (ISDATE(6)) {
         int iYear, iMonth, iDay;
         PHB_ITEM pFieldData = hb_param(6, HB_IT_DATE);
         hb_dateDecode(hb_itemGetDL(pFieldData), &iYear, &iMonth, &iDay);
 
         OCI_DateSetDate(Stmt->pLink[iPos].date, iYear, iMonth, iDay);
         ret = OCI_BindDate(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].date);
-      }
-      else
-      {
+      } else {
         ret = OCI_BindDate(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].date);
       }
+      break;
     }
-    break;
-
     case 9: {
       Stmt->pLink[iPos].date = OCI_DateCreate(Stmt->cn);
-      if (HB_ISDATETIME(6))
-      {
+      if (HB_ISDATETIME(6)) {
         int iYear, iMonth, iDay;
         int iHour, iMin;
         int mSec;
@@ -533,35 +453,28 @@ HB_FUNC(ORACLEINBINDPARAM2)
         hb_timeDecode(plMilliSec, &iHour, &iMin, &iSeconds, &mSec);
         OCI_DateSetDateTime(Stmt->pLink[iPos].date, iYear, iMonth, iDay, iHour, iMin, iSeconds);
         OCI_BindDate(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].date);
-      }
-      else
-      {
+      } else {
         ret = OCI_BindDate(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].date);
       }
+      break;
     }
-    break;
-
     default: {
       Stmt->pLink[iPos].col_name = (char *)hb_xgrabz(sizeof(char) * (iFieldSize + 1));
       //            memset(Stmt->pLink[iPos].col_name,'\0',(iFieldSize + 1) * sizeof(char));
 
-      if (HB_ISCHAR(6))
-      {
+      if (HB_ISCHAR(6)) {
         hb_xmemcpy(Stmt->pLink[iPos].col_name, hb_parc(6), hb_parclen(6));
         Stmt->pLink[iPos].col_name[hb_parclen(6)] = '\0';
         ret = OCI_BindString(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].col_name, hb_parclen(6));
-      }
-      else
-      {
+      } else {
         ret = OCI_BindString(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].col_name, iFieldSize);
       }
+      break; // TODO: unnecessary break
     }
-    break;
     }
   }
 
-  if (Stmt->pLink[iPos].sVal == -1)
-  {
+  if (Stmt->pLink[iPos].sVal == -1) {
     OCI_BindSetNull(OCI_GetBind(Stmt->stmt, iParamNum));
   }
   ret = ret ? 1 : SQL_ERROR;
@@ -578,33 +491,21 @@ HB_FUNC(ORACLEGETBINDDATA2)
 
   PHB_ITEM p1 = hb_param(2, HB_IT_ANY);
 
-  if (HB_IS_NUMBER(p1) && p)
-  {
+  if (HB_IS_NUMBER(p1) && p) {
 
     iPos = hb_itemGetNI(p1);
-    if (p->pLink[iPos - 1].iType == 2)
-    {
+    if (p->pLink[iPos - 1].iType == 2) {
       hb_retnll(p->pLink[iPos - 1].ulValue);
-    }
-    else if (p->pLink[iPos - 1].iType == 4)
-    {
-
+    } else if (p->pLink[iPos - 1].iType == 4) {
       hb_retnd(p->pLink[iPos - 1].dValue);
-    }
-    else if (p->pLink[iPos - 1].iType == 5)
-    {
-
+    } else if (p->pLink[iPos - 1].iType == 5) {
       hb_retnll(p->pLink[iPos - 1].lValue);
-    }
-    else if (p->pLink[iPos - 1].iType == 8)
-    {
+    } else if (p->pLink[iPos - 1].iType == 8) {
       int iYear, iMonth, iDay;
       // p->pLink[iPos - 1].date = OCI_GetDate(p->rs, iPos);
       OCI_DateGetDate(p->pLink[iPos - 1].date, &iYear, &iMonth, &iDay);
       hb_retd(iYear, iMonth, iDay);
-    }
-    else if (p->pLink[iPos - 1].iType == 9)
-    {
+    } else if (p->pLink[iPos - 1].iType == 9) {
       int iYear, iMonth, iDay;
       int iHour, iMin;
       int iSeconds;
@@ -618,9 +519,7 @@ HB_FUNC(ORACLEGETBINDDATA2)
       lTime = hb_timeEncode(iHour, iMin, (double)iSeconds);
 
       hb_retdtl(lDate, lTime);
-    }
-    else
-    {
+    } else {
       hb_retc(p->pLink[iPos - 1].col_name);
     }
     return;
@@ -633,11 +532,9 @@ HB_FUNC(ORACLEEXECDIR2)
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int ret = SQL_ERROR;
   int ret1;
-  if (session)
-  {
+  if (session) {
     ret1 = OCI_Execute(session->stmt);
-    if (ret1)
-    {
+    if (ret1) {
       OCI_StatementFree(session->stmt);
       session->stmt = SR_NULLPTR;
       //          session->rs = OCI_GetResultset(session->stmt);
@@ -656,20 +553,17 @@ HB_FUNC(ORACLEPREPARE2)
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
   int ret = -1;
 
-  if (session)
-  {
-    if (lStmt)
-    {
+  if (session) {
+    if (lStmt) {
+      session->stmt = OCI_StatementCreate(session->cn);
+      ret = OCI_Prepare(session->stmt, szSql);
+    } else {
       session->stmt = OCI_StatementCreate(session->cn);
       ret = OCI_Prepare(session->stmt, szSql);
     }
-    else
-    {
-      session->stmt = OCI_StatementCreate(session->cn);
-      ret = OCI_Prepare(session->stmt, szSql);
-    }
-    if (ret)
+    if (ret) {
       OCI_SetBindMode(session->stmt, OCI_BIND_BY_POS);
+    }  
     hb_retni(ret == 1 ? 1 : -1);
     return;
   }
@@ -682,8 +576,7 @@ HB_FUNC(ORACLEBINDALLOC2)
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   int iBind;
 
-  if (session)
-  {
+  if (session) {
     iBind = hb_parni(2);
     session->pLink = (ORA_BIND_COLS2 *)hb_xgrabz(sizeof(ORA_BIND_COLS2) * iBind);
     // memset(session->pLink, 0, sizeof(ORA_BIND_COLS) * iBind);
@@ -695,21 +588,16 @@ void OracleFreeLink2(int num_recs, POCI_ORASESSION p)
 {
   int i;
 
-  if (p->pLink)
-  {
+  if (p->pLink) {
 
-    for (i = 0; i < num_recs; i++)
-    {
-      if (p->pLink[i].col_name)
-      {
+    for (i = 0; i < num_recs; i++) {
+      if (p->pLink[i].col_name) {
         hb_xfree(p->pLink[i].col_name);
       }
-      if (p->pLink[i].bindname)
-      {
+      if (p->pLink[i].bindname) {
         hb_xfree(p->pLink[i].bindname);
       }
-      if (p->pLink[i].date)
-      {
+      if (p->pLink[i].date) {
         OCI_DateFree(p->pLink[i].date);
       }
     }
@@ -723,8 +611,7 @@ void OracleFreeLink2(int num_recs, POCI_ORASESSION p)
 HB_FUNC(ORACLEFREEBIND2)
 {
   POCI_ORASESSION Stmt = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  if (Stmt->pLink)
-  {
+  if (Stmt->pLink) {
     OracleFreeLink2(Stmt->ubBindNum, Stmt);
     // OCI_StatementFree(Stmt->stmt);
   }
@@ -746,10 +633,8 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
   lDec = hb_arrayGetNS(pField, 4);
 
   // if( lLenBuff <= 0 )     // database content is NULL
-  if (OCI_IsNull(rs, iField))
-  {
-    switch (lType)
-    {
+  if (OCI_IsNull(rs, iField)) {
+    switch (lType) {
     case SQL_CHAR: {
       char *szResult = (char *)hb_xgrab(lLen + 1);
       hb_xmemset(szResult, ' ', lLen);
@@ -762,12 +647,9 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
       //             char szResult[2] = {' ', '\0'};
       //             sr_escapeNumber(szResult, (HB_ULONG) lLen, (HB_ULONG) lDec, pItem);
       //             hb_itemPutNL(pItem,0);
-      if (lDec > 0)
-      {
+      if (lDec > 0) {
         hb_itemPutNDLen(pItem, 0, lLen, lDec);
-      }
-      else
-      {
+      } else {
         hb_itemPutNIntLen(pItem, 0, lLen);
       }
       break;
@@ -785,7 +667,6 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
       hb_itemPutL(pItem, HB_FALSE);
       break;
     }
-
       // #ifdef SQLRDD_TOPCONN
       //          case SQL_FAKE_DATE: {
       //             hb_itemPutDS(pItem, bBuffer);
@@ -796,15 +677,12 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
       hb_itemPutTDT(pItem, 0, 0);
       break;
     }
-
-    default:
+    default: {
       sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
-  }
-  else
-  {
-    switch (lType)
-    {
+    }
+  } else {
+    switch (lType) {
     case SQL_CHAR: {
       char *szResult = (char *)hb_xgrab(lLen + 1);
       memset(szResult, ' ', lLen);
@@ -815,13 +693,10 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
       break;
     }
     case SQL_NUMERIC: {
-      if (lDec > 0)
-      {
+      if (lDec > 0) {
         lLen -= (lDec + 1);
         hb_itemPutNDLen(pItem, OCI_GetDouble(rs, iField), lLen, lDec);
-      }
-      else
-      {
+      } else {
         hb_itemPutNIntLen(pItem, OCI_GetBigInt(rs, iField), lLen);
       }
       break;
@@ -837,13 +712,10 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
     case SQL_LONGVARCHAR: {
       char *bBuffer = (char *)OCI_GetString(rs, iField);
       HB_SIZE lLenBuff = strlen(bBuffer);
-      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson()))
-      {
-        if (s_pSym_SR_FROMJSON == SR_NULLPTR)
-        {
+      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson())) {
+        if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
-          if (s_pSym_SR_FROMJSON == SR_NULLPTR)
-          {
+          if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
             printf("Could not find Symbol HB_JSONDECODE\n");
           }
         }
@@ -856,14 +728,10 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
         // TOFIX:
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
-      }
-      else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString()))
-      {
-        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
-        {
+      } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString())) {
+        if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
           s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
-          if (s_pSym_SR_DESERIALIZE == SR_NULLPTR)
-          {
+          if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
             printf("Could not find Symbol SR_DESERIALIZE\n");
           }
         }
@@ -875,26 +743,20 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
         pTemp = hb_itemNew(SR_NULLPTR);
         hb_itemMove(pTemp, hb_stackReturnItem());
 
-        if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate)
-        {
+        if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate) {
           PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(pLangItem), &ulPos) ||
               hb_hashScan(pTemp, sr_getSecondLang(pLangItem), &ulPos) ||
-              hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos))
-          {
+              hb_hashScan(pTemp, sr_getRootLang(pLangItem), &ulPos)) {
             hb_itemCopy(pItem, hb_hashGetValueAt(pTemp, ulPos));
           }
           hb_itemRelease(pLangItem);
-        }
-        else
-        {
+        } else {
           hb_itemMove(pItem, pTemp);
         }
         hb_itemRelease(pTemp);
-      }
-      else
-      {
+      } else {
         hb_itemPutCL(pItem, bBuffer, lLenBuff);
       }
       break;
@@ -904,7 +766,6 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
       hb_itemPutL(pItem, OCI_GetBigInt(rs, iField) == 1 ? HB_TRUE : HB_FALSE);
       break;
     }
-
       // #ifdef SQLRDD_TOPCONN
       //          case SQL_FAKE_DATE: {
       //             hb_itemPutDS(pItem, bBuffer);
@@ -923,9 +784,9 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
       OCI_TimestampFree(pTime);
       break;
     }
-
-    default:
+    default: {
       sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+    }
     }
   }
 }
@@ -944,15 +805,13 @@ HB_FUNC(SQLO2_LINE)
 
   ret = hb_itemNew(SR_NULLPTR);
 
-  if (session)
-  {
+  if (session) {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
     line = SQLO2_values(stmtParamRes, SR_NULLPTR, 0);
     lens = SQLO2_value_lens(stmtParamRes, SR_NULLPTR);
     hb_arrayNew(ret, session->numcols);
 
-    for (i = 0; i < session->numcols; i++)
-    {
+    for (i = 0; i < session->numcols; i++) {
       temp = hb_itemNew(SR_NULLPTR);
       hb_arraySetForward(ret, i + 1, hb_itemPutCL(temp, (char *)line[i], lens[i]));
       hb_itemRelease(temp);
@@ -977,21 +836,18 @@ HB_FUNC(SQLO2_LINEPROCESSED)
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
   //   SQLO2_stmt_handle_t stmtParamRes;
 
-  if (session)
-  {
+  if (session) {
     // stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
     // line = SQLO2_values(stmtParamRes, NULL, 0);
     // lens = SQLO2_value_lens(stmtParamRes, NULL);
 
     cols = hb_arrayLen(pFields);
 
-    for (i = 0; i < cols; i++)
-    {
+    for (i = 0; i < cols; i++) {
       lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i + 1), FIELD_ENUM);
       temp = hb_itemNew(SR_NULLPTR);
 
-      if (lIndex != 0)
-      {
+      if (lIndex != 0) {
         SQLO2_FieldGet(hb_arrayGetItemPtr(pFields, i + 1), temp, lIndex, bQueryOnly, ulSystemID, bTranslate,
                        session->rs);
       }
@@ -1005,9 +861,8 @@ int SQLO2_sqldtype(int type)
 {
   int isqltype;
 
-  switch (type)
-  {
-  case OCI_CDT_TEXT:
+  switch (type) {
+  case OCI_CDT_TEXT: {
     // case SQLOT_STR:
     // case SQLOT_VCS:
     // case SQLOT_NON:
@@ -1030,20 +885,26 @@ int SQLO2_sqldtype(int type)
     // case SQLOT_VST:
     isqltype = SQL_CHAR;
     break;
-  case OCI_CDT_LOB:
+  }
+  case OCI_CDT_LOB: {
     isqltype = SQL_LONGVARCHAR;
     break;
-  case OCI_CDT_NUMERIC:
+  }
+  case OCI_CDT_NUMERIC: {
     isqltype = SQL_NUMERIC;
     break;
-  case OCI_CDT_DATETIME:
+  }
+  case OCI_CDT_DATETIME: {
     isqltype = SQL_DATE;
     break;
-  case OCI_CDT_TIMESTAMP:
+  }
+  case OCI_CDT_TIMESTAMP: {
     isqltype = SQL_DATETIME;
     break;
-  default:
+  }
+  default: {
     isqltype = 0;
+  }
   }
   return isqltype;
 }
@@ -1057,8 +918,7 @@ HB_FUNC(SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDe
   char *name;
   //     SQLO2_stmt_handle_t stmtParamRes;
 
-  if (session)
-  {
+  if (session) {
     OCI_Column *col;
     ncol = hb_parni(2);
     // stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
@@ -1096,21 +956,17 @@ HB_FUNC(SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDe
          hb_storni(scale, 6);
       }
 #endif
-    switch (type)
-    {
+    switch (type) {
     case SQL_CHAR: {
       hb_storni(0, 6);
       hb_storni(dbsize, 5);
       break;
     }
     case SQL_NUMERIC: {
-      if (prec == 0)
-      {
+      if (prec == 0) {
         hb_storni(19, 5);
         hb_storni(6, 6);
-      }
-      else
-      {
+      } else {
         hb_storni(prec, 5);
         hb_storni(scale, 6);
       }
@@ -1130,9 +986,7 @@ HB_FUNC(SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDe
     hb_storl(nullok, 7);
     hb_storc(name, 3);
     hb_retni(SQL_SUCCESS);
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -1141,26 +995,18 @@ HB_FUNC(SQLO2_FETCH)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
 
     session->iStatus = OCI_FetchNext(session->rs) ? 1 : -1;
 
-    if (session->iStatus == 0 || session->iStatus == 1)
-    {
+    if (session->iStatus == 0 || session->iStatus == 1) {
       hb_retni(SQL_SUCCESS);
-    }
-    else if (session->iStatus < 0)
-    {
+    } else if (session->iStatus < 0) {
+      hb_retni(SQL_NO_DATA_FOUND);
+    } else {
       hb_retni(SQL_NO_DATA_FOUND);
     }
-    else
-    {
-      hb_retni(SQL_NO_DATA_FOUND);
-    }
-  }
-  else
-  {
+  } else {
     hb_retni(SQL_ERROR);
   }
 }
@@ -1169,19 +1015,14 @@ HB_FUNC(SQLO2_CLOSESTMT)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
-    if (session->stmtParamRes)
-    {
+  if (session) {
+    if (session->stmtParamRes) {
       OCI_StatementFree(session->stmtParamRes);
       session->stmtParamRes = SR_NULLPTR;
     }
-    if (session->stmt)
-    {
+    if (session->stmt) {
       session->iStatus = OCI_StatementFree(session->stmt) ? 1 : -1;
-    }
-    else
-    {
+    } else {
       session->iStatus = 1;
     }
     session->stmt = SR_NULLPTR;
@@ -1208,15 +1049,11 @@ HB_FUNC(ORACLEWRITEMEMO2)
 
   uiLen = hb_arrayLen(pArray);
 
-  if ((!session) || uiLen == 0)
-  {
+  if ((!session) || uiLen == 0) {
     hb_retni(0);
     return;
-  }
-  else
-  {
-    for (uiSize = 0; uiSize < uiLen; uiSize++)
-    {
+  } else {
+    for (uiSize = 0; uiSize < uiLen; uiSize++) {
       PHB_ITEM pFieldDesc = hb_arrayGetItemPtr(pArray, uiSize + 1);
       char szSql[256] = {0};
       char *sMemo = hb_arrayGetCPtr(pFieldDesc, 2);
@@ -1233,8 +1070,7 @@ HB_FUNC(ORACLEWRITEMEMO2)
       OCI_RegisterLob(stmt, ":b1", OCI_CLOB);
       // status = SQLO2_execute(sth, 1);
 
-      if (!OCI_Execute(stmt))
-      {
+      if (!OCI_Execute(stmt)) {
         // SQLO2_free_lob_desc(session->dbh, &loblp);
         // SQLO2_close(sth);
         hb_retni(-1);
@@ -1247,8 +1083,7 @@ HB_FUNC(ORACLEWRITEMEMO2)
       // status = SQLO2_lob_write_buffer(session->dbh, loblp, strlen(sMemo), sMemo, strlen(sMemo), SQLO2_ONE_PIECE);
       status = OCI_LobWrite(lob1, (void *)sMemo, strlen(sMemo));
 
-      if (status < 0)
-      {
+      if (status < 0) {
         // SQLO2_free_lob_desc(session->dbh, &loblp);
         // SQLO2_close(sth);
         OCI_LobFree(lob1);
@@ -1277,37 +1112,31 @@ HB_FUNC(ORACLE_PROCCURSOR2)
   const char *stmt = hb_parc(2);
   const char *parc = hb_parc(3);
 
-  if (session)
-  {
+  if (session) {
     // parse the statement
     // ret = SQLO2_prepare(session->dbh, stmt);
     session->stmt = OCI_StatementCreate(session->cn);
     session->stmtParamRes = OCI_StatementCreate(session->cn);
     ret = OCI_Prepare(session->stmt, stmt) ? 0 : -1;
 
-    if (ret >= SQLO_SUCCESS)
-    {
+    if (ret >= SQLO_SUCCESS) {
       // if( 0 <= (sth = ret) )
       //{
       // bind all variables
-      if (!OCI_BindStatement(session->stmt, parc, session->stmtParamRes))
-      {
+      if (!OCI_BindStatement(session->stmt, parc, session->stmtParamRes)) {
         hb_retni(SQL_ERROR);
         return;
       }
       //}
 
-      if (!OCI_Execute(session->stmt))
-      {
+      if (!OCI_Execute(session->stmt)) {
         hb_retni(SQL_ERROR);
         return;
       }
 
       session->rs = OCI_GetResultset(session->stmtParamRes);
       session->numcols = OCI_GetColumnCount(session->rs);
-    }
-    else
-    {
+    } else {
       hb_retni(SQL_ERROR);
       return;
     }
@@ -1323,12 +1152,9 @@ HB_FUNC(SQLO2_ORACLESETLOBPREFETCH)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_retl(OCI_SetDefaultLobPrefetchSize(session->cn, (unsigned int)hb_parni(2)));
-  }
-  else
-  {
+  } else {
     hb_retl(HB_FALSE);
   }
 }
@@ -1337,12 +1163,9 @@ HB_FUNC(SQLO2_SETSTATEMENTCACHESIZE)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_retl(OCI_SetStatementCacheSize(session->cn, (unsigned int)hb_parni(2)));
-  }
-  else
-  {
+  } else {
     hb_retl(HB_FALSE);
   }
 }
@@ -1351,12 +1174,9 @@ HB_FUNC(SQLO2_GETSTATEMENTCACHESIZE)
 {
   POCI_ORASESSION session = (POCI_ORASESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (session)
-  {
+  if (session) {
     hb_retni((unsigned int)OCI_GetStatementCacheSize(session->cn));
-  }
-  else
-  {
+  } else {
     hb_retni(0);
   }
 }
@@ -1365,8 +1185,7 @@ HB_FUNC(GETORAHANDLE2)
 {
   OCI_ORASESSION *p = (OCI_ORASESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (p)
-  {
+  if (p) {
     hb_retptr(p->stmt);
   }
 }
@@ -1375,8 +1194,7 @@ HB_FUNC(SETORAHANDLE2)
 {
   OCI_ORASESSION *p = (OCI_ORASESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (p)
-  {
+  if (p) {
     p->stmt = (OCI_Statement *)hb_parptr(2);
   }
 }
