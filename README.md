@@ -44,8 +44,8 @@ SQLRDD for Harbour++ and Harbour
 | Harbour   | Clang32          | ...                     | ...                 |
 | Harbour   | Clang64          | ...                     | ...                 |
 | Harbour   | BCC 5.8.2        | Compiling with warnings | -aflag=/P64         |
-| Harbour++ | MinGW32          | ...                     | ...                 |
-| Harbour++ | MinGW64          | ...                     | ...                 |
+| Harbour++ | MinGW32          | Compiling with warnings | -cflag=-fpermissive |
+| Harbour++ | MinGW64          | Compiling with warnings | -cflag=-fpermissive |
 | Harbour++ | MSVC32           | ...                     | ...                 |
 | Harbour++ | MSVC64           | ...                     | ...                 |
 | Harbour++ | Clang32          | ...                     | ...                 |
