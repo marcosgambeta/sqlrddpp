@@ -914,7 +914,7 @@ HB_FUNC(PGSLINEPROCESSED)
   assert(session->stmt != SR_NULLPTR);
 
   if (session) {
-    cols = hb_arrayLen(pFields);
+    cols = (HB_LONG)hb_arrayLen(pFields);
 
     for (i = 0; i < cols; i++) {
       temp = hb_itemNew(SR_NULLPTR);
