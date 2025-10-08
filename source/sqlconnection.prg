@@ -541,7 +541,7 @@ METHOD Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno
                aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
                FOR i := 1 TO Len(aFields)
-                  ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30)) , Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
+                  ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30)), Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
                NEXT i
 
                ::cResult += SR_CRLF
