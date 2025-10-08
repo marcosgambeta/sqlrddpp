@@ -2943,7 +2943,7 @@ static int DEFUN(_bind_argv, (stp, argc, argv), sqlo_stmt_struct_ptr_t stp AND u
       size = 0;
     } else {
       *ind_ptr = SQLO_NOT_NULL_IND;
-      size = strlen(*arg) + 1;
+      size = (unsigned int)strlen(*arg) + 1;
     }
 
     dbp->status = _bind_by_pos(stp, arg_idx + 1, SQLOT_STR, *arg, size, ind_ptr, 0);
