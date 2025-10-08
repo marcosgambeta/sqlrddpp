@@ -1154,7 +1154,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQuery
   case SQL_VARBINARY: {
     char buffer[2];
     lLenOut = 0;
-    res = 0;
+    //res = 0;
     res = SQLGetData((HSTMT)hStmt, ui, SQL_CHAR, buffer, 0, &lLenOut);
     if (SQL_SUCCEEDED(res)) {
       if ((int)lLenOut == SQL_NULL_DATA || lLenOut == 0) {
