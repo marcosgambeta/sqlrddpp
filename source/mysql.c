@@ -135,7 +135,7 @@ HB_FUNC(MYSFINISH)
   }
   if (iConnectionCount == 0) {
     mysql_library_end();
-  }  
+  }
   hb_ret();
 }
 
@@ -308,7 +308,8 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBu
       break;
     }
     case SQL_LONGVARCHAR: {
-      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson())) {
+      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) &&
+          (sr_lSerializeArrayAsJson())) {
         if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
           if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
@@ -595,7 +596,7 @@ HB_FUNC(MYSQUERYATTR)
     switch (type) {
     case MYSQL_STRING_TYPE:
     case MYSQL_VAR_STRING_TYPE: {
-    // case MYSQL_DATETIME_TYPE:
+      // case MYSQL_DATETIME_TYPE:
       MY_CHARSET_INFO cs;
       unsigned int mbmax = 1;
       int char_len;
@@ -604,12 +605,12 @@ HB_FUNC(MYSQUERYATTR)
 
       mysql_get_character_set_info(session->dbh, &cs);
       if (cs.mbmaxlen > 0) {
-        mbmax = (unsigned int) cs.mbmaxlen;
+        mbmax = (unsigned int)cs.mbmaxlen;
       }
 
-      char_len = (int) ((mbmax > 1) ? (field->length / mbmax) : field->length);
+      char_len = (int)((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0) {
-        char_len = (int) field->length;
+        char_len = (int)field->length;
       }
 
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
@@ -766,12 +767,12 @@ HB_FUNC(MYSTABLEATTR)
 
       mysql_get_character_set_info(session->dbh, &cs);
       if (cs.mbmaxlen > 0) {
-        mbmax = (unsigned int) cs.mbmaxlen;
+        mbmax = (unsigned int)cs.mbmaxlen;
       }
 
-      char_len = (int) ((mbmax > 1) ? (field->length / mbmax) : field->length);
+      char_len = (int)((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0) {
-        char_len = (int) field->length;
+        char_len = (int)field->length;
       }
 
       hb_arraySetForward(atemp, FIELD_TYPE, temp);

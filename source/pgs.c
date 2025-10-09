@@ -396,7 +396,7 @@ HB_FUNC(PGSQUERYATTR)
       }
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
-      }
+    }
     case BOOLOID: {
       hb_itemPutC(temp, "L");
       hb_arraySetForward(atemp, FIELD_TYPE, temp);
@@ -791,7 +791,8 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
       break;
     }
     case SQL_LONGVARCHAR: {
-      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson())) {
+      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) &&
+          (sr_lSerializeArrayAsJson())) {
         if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
           if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
@@ -890,7 +891,7 @@ void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuf
     }
     default: {
       sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
-    }  
+    }
     }
   }
 }

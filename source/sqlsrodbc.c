@@ -466,11 +466,12 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBu
         hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
         hb_itemPutTDT(pItem, lJulian, lMilliSec);
         break;
-      } else if (((ulSystemID == SYSTEMID_POSTGR) || (ulSystemID == SYSTEMID_ORACLE) || (ulSystemID == SYSTEMID_FIREBR) ||
-                (ulSystemID == SYSTEMID_FIREBR3) || (ulSystemID == SYSTEMID_FIREBR4) ||
-                (ulSystemID == SYSTEMID_FIREBR5) || (ulSystemID == SYSTEMID_MYSQL) ||
-                (ulSystemID == SYSTEMID_MARIADB) || (ulSystemID == SYSTEMID_MSSQL7 && sr_lsql2008newTypes())) &&
-               (lType == SQL_TIMESTAMP || lType == SQL_TYPE_TIMESTAMP)) {
+      } else if (((ulSystemID == SYSTEMID_POSTGR) || (ulSystemID == SYSTEMID_ORACLE) ||
+                  (ulSystemID == SYSTEMID_FIREBR) || (ulSystemID == SYSTEMID_FIREBR3) ||
+                  (ulSystemID == SYSTEMID_FIREBR4) || (ulSystemID == SYSTEMID_FIREBR5) ||
+                  (ulSystemID == SYSTEMID_MYSQL) || (ulSystemID == SYSTEMID_MARIADB) ||
+                  (ulSystemID == SYSTEMID_MSSQL7 && sr_lsql2008newTypes())) &&
+                 (lType == SQL_TIMESTAMP || lType == SQL_TYPE_TIMESTAMP)) {
         long lJulian, lMilliSec;
         hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
         hb_itemPutTDT(pItem, lJulian, lMilliSec);
@@ -495,7 +496,8 @@ void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBu
     case SQL_FAKE_LOB:
     case SQL_LONGVARBINARY:
     case SQL_VARBINARY: {
-      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson())) {
+      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) &&
+          (sr_lSerializeArrayAsJson())) {
         if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
           if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
@@ -724,8 +726,7 @@ HB_FUNC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTra
       if (lIndex == 0) {
         hb_arraySetForward(pLine, i, temp);
       } else {
-        do
-        {
+        do {
           wResult = SQLGetData((SQLHSTMT)hb_parptr(1), (SQLUSMALLINT)lIndex, (SQLSMALLINT)SQL_CHAR, (PTR)bBuffer,
                                (SQLLEN)lLen, (SQLLEN *)&lLenOut);
           if (wResult == SQL_SUCCESS && iReallocs == 0) {
@@ -1154,7 +1155,7 @@ void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQuery
   case SQL_VARBINARY: {
     char buffer[2];
     lLenOut = 0;
-    //res = 0;
+    // res = 0;
     res = SQLGetData((HSTMT)hStmt, ui, SQL_CHAR, buffer, 0, &lLenOut);
     if (SQL_SUCCEEDED(res)) {
       if ((int)lLenOut == SQL_NULL_DATA || lLenOut == 0) {

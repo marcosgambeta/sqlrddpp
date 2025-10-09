@@ -153,7 +153,8 @@ HB_FUNC(SQLO2_CONNECT)
 
   // memset(session, 0, sizeof(OCI_ORASESSION));
   if (!OCI_initilized) {
-    if (!OCI_Initialize(SR_NULLPTR, SR_NULLPTR, OCI_ENV_DEFAULT | OCI_ENV_CONTEXT | OCI_ENV_THREADED)) { // OCI_ENV_CONTEXT))
+    if (!OCI_Initialize(SR_NULLPTR, SR_NULLPTR,
+                        OCI_ENV_DEFAULT | OCI_ENV_CONTEXT | OCI_ENV_THREADED)) { // OCI_ENV_CONTEXT))
       session->iStatus = SQLO2_ERROR;
     } else {
       session->iStatus = SQLO2_SUCCESS;
@@ -563,7 +564,7 @@ HB_FUNC(ORACLEPREPARE2)
     }
     if (ret) {
       OCI_SetBindMode(session->stmt, OCI_BIND_BY_POS);
-    }  
+    }
     hb_retni(ret == 1 ? 1 : -1);
     return;
   }
@@ -712,7 +713,8 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
     case SQL_LONGVARCHAR: {
       char *bBuffer = (char *)OCI_GetString(rs, iField);
       HB_SIZE lLenBuff = strlen(bBuffer);
-      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson())) {
+      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) &&
+          (sr_lSerializeArrayAsJson())) {
         if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
           if (s_pSym_SR_FROMJSON == SR_NULLPTR) {

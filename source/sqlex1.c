@@ -1286,7 +1286,7 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
           }
         }
 
-        if (bArgumentIsNull) { // This is the same to be directly used or prepared
+        if (bArgumentIsNull) {                         // This is the same to be directly used or prepared
           if (BindStructure->iCType == SQL_C_DOUBLE) { // If NUMERIC
             temp = hb_strdup((const char *)thiswa->sWhere);
             sprintf(thiswa->sWhere, "%s %s ( A.%c%s%c %s %s OR A.%c%s%c IS NULL )", bWhere ? temp : "\nWHERE",
@@ -1411,8 +1411,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXAREAP thiswa, int iMax) // Returns 
 
   // Current line is always in result set if we are SKIPPING
 
-  do
-  {
+  do {
     res = SQLFetch(hStmt);
     if (res != SQL_SUCCESS) {
       // Ops, where are previously retrieved record ?
@@ -1661,7 +1660,8 @@ HB_BOOL getColumnList(SQLEXAREAP thiswa)
       hb_xfree(colName);
       return HB_TRUE;
     }
-  } else if (thiswa->iColumnListStatus == FIELD_LIST_CHANGED || thiswa->iColumnListStatus == FIELD_LIST_NEW_VALUE_READ) {
+  } else if (thiswa->iColumnListStatus == FIELD_LIST_CHANGED ||
+             thiswa->iColumnListStatus == FIELD_LIST_NEW_VALUE_READ) {
     uiFlds = 0;
     if (!thiswa->sFields) {
       thiswa->sFields = (char *)hb_xgrab(FIELD_LIST_SIZE * sizeof(char));
@@ -1746,8 +1746,8 @@ static HB_ERRCODE updateRecordBuffer(SQLEXAREAP thiswa, HB_BOOL bUpdateDeleted)
 
   // Not found, so let's try the database...
 
-  if (getColumnList(thiswa) || thiswa->hStmtBuffer == SR_NULLPTR) {                                       // Check if field list has changed and if so
-                                          // creates a new one in thiswa structure
+  if (getColumnList(thiswa) || thiswa->hStmtBuffer == SR_NULLPTR) { // Check if field list has changed and if so
+                                                                    // creates a new one in thiswa structure
     thiswa->bConditionChanged2 = HB_TRUE; // SEEK statements are no longer valid - column list has changed!
     memset(thiswa->sSqlBuffer, 0, MAX_SQL_QUERY_LEN / 5 * sizeof(char));
     if (thiswa->bIsSelect) {
@@ -2029,7 +2029,8 @@ static HB_BOOL CreateSkipStmt(SQLEXAREAP thiswa)
        ((thiswa->recordListDirection == LIST_FORWARD &&
          (!((INDEXBINDP)(thiswa->IndexBindings[thiswa->hOrdCurrent]))->SkipFwdStmt)) ||
         (thiswa->recordListDirection == LIST_BACKWARD &&
-         (!((INDEXBINDP)(thiswa->IndexBindings[thiswa->hOrdCurrent]))->SkipBwdStmt))))) { // Filter or controlling order has changed, or stmt is not prepared
+         (!((INDEXBINDP)(thiswa->IndexBindings[thiswa->hOrdCurrent]))
+               ->SkipBwdStmt))))) { // Filter or controlling order has changed, or stmt is not prepared
     thiswa->lBofAt = 0;
     thiswa->lEofAt = 0;
     thiswa->bOrderChanged = HB_FALSE;
@@ -2416,13 +2417,14 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
   }
 
   thiswa->bRebuildSeekQuery = HB_TRUE;
-  if (CreateSeekStmt(thiswa, queryLevel)) {                                   // Create and prepare new SEEK statement, if needed
-    BindSeekStmt(thiswa, queryLevel); // Bind parameters to IndexBind structure
+  if (CreateSeekStmt(thiswa, queryLevel)) { // Create and prepare new SEEK statement, if needed
+    BindSeekStmt(thiswa, queryLevel);       // Bind parameters to IndexBind structure
   }
 
   thiswa->bConditionChanged2 = HB_FALSE;
 
-  if (getPreparedSeek(thiswa, queryLevel, &iIndex, &hStmt) == HB_SUCCESS) { // Fetch line from database, read RECNO and DELETED
+  if (getPreparedSeek(thiswa, queryLevel, &iIndex, &hStmt) ==
+      HB_SUCCESS) { // Fetch line from database, read RECNO and DELETED
     // Create a line array to hold the record
     // HB_LONG lLenOut, lLen, lInitBuff;
     HB_BOOL bTranslate;
@@ -2706,8 +2708,7 @@ static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
 
     thiswa->indexLevel = thiswa->indexColumns;
 
-    do
-    {
+    do {
       res = getPreparedRecordList(thiswa, RECORD_LIST_SIZE);
       thiswa->indexLevel--;
 
@@ -3005,7 +3006,8 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
 
 static HB_ERRCODE sqlExGoCold(SQLEXAREAP thiswa)
 {
-  if (thiswa->bufferHot) { // && (!(thiswa->ulhDeleted > 0 ? HB_TRUE : thiswa->deletedList[thiswa->recordListPos] == ' ') )
+  if (thiswa->bufferHot) { // && (!(thiswa->ulhDeleted > 0 ? HB_TRUE : thiswa->deletedList[thiswa->recordListPos] == '
+                           // ') )
     if (thiswa->bHistoric) {
       hb_arraySetL(thiswa->aInfo, AINFO_ISINSERT, thiswa->bIsInsert);
       hb_arraySetL(thiswa->aInfo, AINFO_HOT, thiswa->bufferHot);
@@ -3016,7 +3018,7 @@ static HB_ERRCODE sqlExGoCold(SQLEXAREAP thiswa)
     }
 
     if (thiswa->bIsInsert) {
-      if (!thiswa->hStmtInsert) {                           // Check if we have the INSERT statement prepared
+      if (!thiswa->hStmtInsert) { // Check if we have the INSERT statement prepared
         CreateInsertStmt(thiswa); // Create also column binding structures
 
         if (PrepareInsertStmt(thiswa) == HB_FAILURE) {
@@ -3951,9 +3953,9 @@ HB_INIT_SYMBOLS_BEGIN(sqlEx1__InitSymbols)
   {"SQLEX", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEX)}, SR_NULLPTR},
   {"SQLEX_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLEX_GETFUNCTABLE)}, SR_NULLPTR}
 HB_INIT_SYMBOLS_END(sqlEx1__InitSymbols)
-// clang-format on
+    // clang-format on
 
-// clang-format off
+    // clang-format off
 HB_CALL_ON_STARTUP_BEGIN(_hb_sqlEx_rdd_init_)
   hb_vmAtInit(hb_sqlExRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlEx_rdd_init_)

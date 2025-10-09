@@ -242,7 +242,7 @@ static MXML_STATUS mxml_attribute_read(MXML_REFIL *ref, PHB_ITEM pDoc, PHB_ITEM 
       } else if (chr == MXML_LINE_TERMINATOR) {
         hbxml_doc_new_line(pDoc);
         iStatus = 2; // waiting for a '='
-      // We repeat line terminator here for portability
+        // We repeat line terminator here for portability
       } else if (chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r') {
         iStatus = 2;
       } else if (chr == '=') {
@@ -259,7 +259,7 @@ static MXML_STATUS mxml_attribute_read(MXML_REFIL *ref, PHB_ITEM pDoc, PHB_ITEM 
         iStatus = 3;
       } else if (chr == MXML_LINE_TERMINATOR) {
         hbxml_doc_new_line(pDoc);
-      // We repeat line terminator here for portability
+        // We repeat line terminator here for portability
       } else if (chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r') {
       } else {
         hbxml_set_doc_status(ref, pDoc, pNode, MXML_STATUS_MALFORMED, MXML_ERROR_MALFATT);
@@ -274,7 +274,7 @@ static MXML_STATUS mxml_attribute_read(MXML_REFIL *ref, PHB_ITEM pDoc, PHB_ITEM 
         quotechr = chr;
       } else if (chr == MXML_LINE_TERMINATOR) {
         hbxml_doc_new_line(pDoc);
-      // We repeat line terminator here for portability
+        // We repeat line terminator here for portability
       } else if (chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r') {
       } else {
         hbxml_set_doc_status(ref, pDoc, pNode, MXML_STATUS_MALFORMED, MXML_ERROR_MALFATT);
@@ -296,7 +296,7 @@ static MXML_STATUS mxml_attribute_read(MXML_REFIL *ref, PHB_ITEM pDoc, PHB_ITEM 
           hbxml_set_doc_status(ref, pDoc, pNode, MXML_STATUS_MALFORMED, MXML_ERROR_ATTRIBTOOLONG);
           return MXML_STATUS_MALFORMED;
         }
-      // We repeat line terminator here for portability
+        // We repeat line terminator here for portability
       } else {
         if (mxml_sgs_append_char(buf_attrib, (char)chr) != MXML_STATUS_OK) {
           hbxml_set_doc_status(ref, pDoc, pNode, MXML_STATUS_MALFORMED, MXML_ERROR_ATTRIBTOOLONG);
@@ -1451,7 +1451,7 @@ static MXML_STATUS mxml_node_read(MXML_REFIL *ref, PHB_ITEM pNode, PHB_ITEM doc,
         // first data node ?
         if (data_node == SR_NULLPTR) {
           data_node = hb_itemNew(child_node);
-        // ... or have we more than a data node?
+          // ... or have we more than a data node?
         } else {
           hb_itemRelease(data_node);
           data_node = SR_NULLPTR;

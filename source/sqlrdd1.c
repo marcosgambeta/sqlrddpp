@@ -979,7 +979,7 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
       hb_arraySetL(thiswa->aInfo, AINFO_EOF, bEof);
       return ConcludeSkipraw(thiswa, lToSkip);
     } else if (hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip > 0 &&
-             hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip <= (HB_LONG)hb_arrayLen(thiswa->aCache)) {
+               hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip <= (HB_LONG)hb_arrayLen(thiswa->aCache)) {
       sqlGetBufferFromCache2(thiswa, hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip);
       hb_arraySetL(thiswa->aInfo, AINFO_BOF, HB_FALSE);
       hb_arraySetL(thiswa->aInfo, AINFO_EOF, HB_FALSE);
@@ -3606,9 +3606,9 @@ HB_INIT_SYMBOLS_BEGIN(sqlrdd1__InitSymbols)
   {"SQLRDD", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD)}, SR_NULLPTR},
   {"SQLRDD_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD_GETFUNCTABLE)}, SR_NULLPTR}
 HB_INIT_SYMBOLS_END(sqlrdd1__InitSymbols)
-// clang-format on
+    // clang-format on
 
-// clang-format off
+    // clang-format off
 HB_CALL_ON_STARTUP_BEGIN(_hb_sqlrdd_rdd_init_)
   hb_vmAtInit(hb_sqlrddRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlrdd_rdd_init_)

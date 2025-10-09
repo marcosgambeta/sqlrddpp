@@ -142,8 +142,7 @@ const char *_sqlo_sqloraID = "$Id$";
 
 #ifdef DEBUG_XGRAB
 #define XFREE(p, i)                                                                                                    \
-  do                                                                                                                   \
-  {                                                                                                                    \
+  do {                                                                                                                 \
     if (p) {                                                                                                           \
       sr_TraceLog(LOGFILE, "Pointer %p freed in line %i\n", p, i);                                                     \
       hb_xfree(p);                                                                                                     \
@@ -153,8 +152,7 @@ const char *_sqlo_sqloraID = "$Id$";
   } while (0)
 #else
 #define XFREE(p, i)                                                                                                    \
-  do                                                                                                                   \
-  {                                                                                                                    \
+  do {                                                                                                                 \
     if (p) {                                                                                                           \
       hb_xfree(p);                                                                                                     \
     } else {                                                                                                           \
@@ -1062,7 +1060,7 @@ static inline int DEFUN_VOID(_init_mutexes)
 
   if (OCI_SUCCESS == status) {
     status = _mutex_init(&_env_mux);
-  }  
+  }
 
 #endif
 
@@ -1134,8 +1132,7 @@ static inline int DEFUN(_winmutex_lock, (mp), sqlo_mutex_t mp)
   int stat;
   int locked = FALSE;
 
-  do
-  {
+  do {
     stat = WaitForSingleObject(mp, MUTEX_WAIT_TIME);
 
     if (stat == WAIT_OBJECT_0) {
@@ -1250,7 +1247,7 @@ static inline int DEFUN_VOID(_init_lock)
 #ifdef ENABLE_THREADS
   if (!_init_mux_initialized) {
     _init_init_mux();
-  }  
+  }
 
   return _mutex_lock(&_init_mux);
 #else
@@ -1347,7 +1344,7 @@ static inline const char *DEFUN(_get_stmt_string, (stp), sqlo_stmt_struct_ptr_t 
 
   if (!stp->stmt) {
     return nostmt;
-  }  
+  }
 
   return stp->stmt;
 }
@@ -1436,7 +1433,7 @@ static int DEFUN(_find_free_dbv_entry, (free_idx), unsigned int *free_idxp)
     /* return the index of the first null slot if no unused one was found */
     if (FALSE == found_unused) {
       *free_idxp = first_null_idx;
-    }  
+    }
   } else {
     status = SQLO_ERROR;
   }
@@ -1511,14 +1508,14 @@ static sqlo_db_struct_ptr_t DEFUN_VOID(_db_add)
   /* check for initialization */
   if ((!_sqlo_init) || (_dbv_size <= 0)) {
     return NULL;
-  }  
+  }
 
   EXEC_WHEN_THREADING(_dbv_lock();); /* start of critical section */
 
   status = _find_free_dbv_entry(&free_idx);
 
   if (status != SQLO_SUCCESS) {
-                                         /* no more slots available? */
+    /* no more slots available? */
     EXEC_WHEN_THREADING(_dbv_unlock();); /* end of critical section */
     return NULL;
   }
@@ -1584,7 +1581,7 @@ static void DEFUN(_db_release, (dbp), sqlo_db_struct_ptr_t dbp)
 
   if (!dbp) {
     return;
-  }  
+  }
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "_db_release[%u] starts\n", dbp->dbh););
 
@@ -1626,7 +1623,7 @@ static void DEFUN(_db_release, (dbp), sqlo_db_struct_ptr_t dbp)
   /* close the trace file */
   if (TRACE_ENABLED && _trace_level > 0) {
     _close_session_trace_file(dbp);
-  }  
+  }
 
   dbp->thread_id = 0;
   dbp->errcode = 0;
@@ -2120,7 +2117,7 @@ static int DEFUN_VOID(_sqlo_getenv)
       if (g_params[i].trigger_fct) {
         if (SQLO_SUCCESS != g_params[i].trigger_fct(i)) {
           return SQLO_ERROR;
-        }  
+        }
       }
     }
   }
@@ -2138,7 +2135,7 @@ static int DEFUN_VOID(_open_global_trace_file)
 {
   if (_trace_fp) {
     return SQLO_SUCCESS;
-  }  
+  }
 
   if (NULL == (_trace_fp = fopen(_trace_file, "w"))) {
     fprintf(stderr, "Cannot open %s (errno=%d)\n", _trace_file, errno);
@@ -2241,16 +2238,15 @@ static int DEFUN(_save_oci_status, (dbp, action, object, lineno),
 
   if (!dbp) {
     return 0;
-  }  
+  }
 
   if (!object) {
     object = "";
-  }  
+  }
 
   *errbuf = '\0';
   dbp->errcode = dbp->status; /* preset with something usefull */
-  TRACE(
-      3, if (dbp->status != OCI_SUCCESS) { fprintf(_get_trace_fp(dbp), "_save_oci_status: %d\n", dbp->status); });
+  TRACE(3, if (dbp->status != OCI_SUCCESS) { fprintf(_get_trace_fp(dbp), "_save_oci_status: %d\n", dbp->status); });
 
   switch (dbp->status) {
   case OCI_SUCCESS: {
@@ -2640,7 +2636,7 @@ static inline void DEFUN(_strip_string, (s, len), char *s AND unsigned int len)
 
   for (p = &s[len - 1]; len > 0 && ' ' == *p; --len) {
     *p = '\0';
-  }  
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -2714,7 +2710,7 @@ static inline int DEFUN(_bind_by_pos, (stp, param_pos, param_type, param_addr, p
 
     if (param_pos > stp->num_bindpv) {
       stp->num_bindpv = param_pos;
-    }  
+    }
 
     assert(stp->num_bindpv <= stp->bindpv_size);
   } else {
@@ -2779,7 +2775,7 @@ static inline int DEFUN(
 
     if (param_pos > stp->num_bindpv) {
       stp->num_bindpv = param_pos;
-    }  
+    }
 
     assert(stp->num_bindpv <= stp->bindpv_size);
   } else {
@@ -2838,7 +2834,7 @@ static inline int DEFUN(
 
     if (value_pos > stp->num_defnpv) {
       stp->num_defnpv = value_pos;
-    }  
+    }
 
     assert(stp->defnpv_size >= stp->num_defnpv);
   } else {
@@ -2895,7 +2891,7 @@ static inline int DEFUN(
 
     if (value_pos > stp->num_defnpv) {
       stp->num_defnpv = value_pos;
-    }  
+    }
 
     assert(stp->defnpv_size >= stp->num_defnpv);
   } else {
@@ -3471,7 +3467,8 @@ static int DEFUN(_define_ocol_by_pos, (stp, colp, pos),
   /* these routines set all dbp->status */
   if (SQLO_SUCCESS == (_get_ocol_db_data_type(stp, pos, &(colp->database_dtype)) || _set_ocol_name(stp, colp, pos) ||
                        _get_ocol_db_size(stp, pos, &(colp->dbsize)) || _get_ocol_db_prec(stp, pos, &(colp->prec)) ||
-                       _get_ocol_db_scale(stp, pos, &(colp->scale)) || _get_ocol_db_is_null(stp, pos, &(colp->nullok)))) {
+                       _get_ocol_db_scale(stp, pos, &(colp->scale)) ||
+                       _get_ocol_db_is_null(stp, pos, &(colp->nullok)))) {
 
     /* If we cannot determine the size, it is caused by an
      * unsupported data type
@@ -3567,7 +3564,7 @@ static int DEFUN(_define_output, (stp), sqlo_stmt_struct_ptr_t stp)
   /* Already defined ? */
   if (stp->num_defnpv) {
     return SQLO_SUCCESS;
-  }  
+  }
 
   /* Describe the output variables.
    * REFCURSORs are already exectuted by there parent stmt
@@ -3588,7 +3585,7 @@ static int DEFUN(_define_output, (stp), sqlo_stmt_struct_ptr_t stp)
 
   if (stp->cursor_type == REFCURSOR) {
     stp->opened = TRUE;
-  }  
+  }
 
   /* Get info about the select list */
   dbp->status = OCIAttrGet((dvoid *)stp->stmthp, (ub4)OCI_HTYPE_STMT, (dvoid *)&num_cols, (ub4 *)0,
@@ -3630,7 +3627,7 @@ static void DEFUN(_close_all_executing_cursors, (dbp), const_sqlo_db_struct_ptr_
     if (stp->used && stp->still_executing) {
       sqlo_close(ENCODE_STH(stp->sth, dbp->dbh));
     } /* endif is valid and executing */
-  }   /* end for stmt_idx */
+  } /* end for stmt_idx */
 }
 
 /*-------------------------------------------------------------------------*/
@@ -3668,7 +3665,7 @@ static void DEFUN(_close_all_db_cursors, (dbp), const_sqlo_db_struct_ptr_t dbp)
     for (col_idx = 0; col_idx < stp->defnpv_size; ++col_idx) {
       if (stp->ocolsv && stp->ocolsv[col_idx].col_name) {
         XFREE(stp->ocolsv[col_idx].col_name, __LINE__);
-      }  
+      }
 
       if (stp->ocolsv && stp->ocolsv[col_idx].loblp) {
 
@@ -3912,8 +3909,7 @@ static int DEFUN(_sqlo_reopen, (stp, argc, argv), sqlo_stmt_struct_ptr_t stp AND
         return dbp->status;
       }
 
-      TRACE(
-          2, if (argc) { fprintf(_get_trace_fp(dbp), "sqlo_reopen [%2u] %s\n", stp->sth, _get_stmt_string(stp)); });
+      TRACE(2, if (argc) { fprintf(_get_trace_fp(dbp), "sqlo_reopen [%2u] %s\n", stp->sth, _get_stmt_string(stp)); });
 
       TRACE(3, {
         int z;
@@ -4006,7 +4002,7 @@ CONST char *DEFUN(sqlo_get_stmt, (sth), sqlo_stmt_handle_t sth)
 
   if (_get_stmt_string(stp)) {
     return stp->stmt;
-  }  
+  }
 
   return NULL;
 }
@@ -4109,7 +4105,8 @@ int DEFUN(sqlo_init, (threaded_mode, max_db, max_cursors),
     }
 #endif
     /* Alloc the global handle */
-    if ((status = OCIHandleAlloc((dvoid *)_oci_envhp, (dvoid **)&_oci_errhp, OCI_HTYPE_ERROR, (size_t)0, (dvoid **)0))) {
+    if ((status =
+             OCIHandleAlloc((dvoid *)_oci_envhp, (dvoid **)&_oci_errhp, OCI_HTYPE_ERROR, (size_t)0, (dvoid **)0))) {
       EXEC_WHEN_THREADING(_init_unlock();); /* end of critical section */
       return status;
     }
@@ -4343,8 +4340,7 @@ int DEFUN(sqlo_count, (dbh, table, colname, colval, where),
   }
 
   status = SQLO_SUCCESS;
-  do
-  {
+  do {
     if (status == SQLO_SUCCESS) {
       SQLO_USLEEP;
     }
@@ -4356,8 +4352,7 @@ int DEFUN(sqlo_count, (dbh, table, colname, colval, where),
   }
 
   status = SQLO_SUCCESS;
-  do
-  {
+  do {
     if (status != SQLO_SUCCESS) {
       SQLO_USLEEP;
     }
@@ -4374,8 +4369,7 @@ int DEFUN(sqlo_count, (dbh, table, colname, colval, where),
   }
 
   status = SQLO_SUCCESS;
-  do
-  {
+  do {
     if (status != SQLO_SUCCESS) {
       SQLO_USLEEP;
     }
@@ -4408,8 +4402,7 @@ int DEFUN(sqlo_run, (dbh, stmt, argc, argv),
   });
 
   status = SQLO_SUCCESS;
-  do
-  {
+  do {
     if (status != SQLO_SUCCESS) {
       SQLO_USLEEP;
     }
@@ -4429,8 +4422,7 @@ int DEFUN(sqlo_run, (dbh, stmt, argc, argv),
   }
 
   status = SQLO_SUCCESS;
-  do
-  {
+  do {
     if (status != SQLO_SUCCESS) {
       SQLO_USLEEP;
     }
@@ -4535,7 +4527,7 @@ int DEFUN(sqlo_open, (dbh, stmt, argc, argv),
   status = _get_blocking_mode(dbp, &blocking);
   if (status < 0) {
     CHECK_OCI_STATUS_RETURN(dbp, status, "sqlo_open", "sqlo_set_blocking_i");
-  }  
+  }
 
   if (SQLO_OFF == blocking) {
     status = sqlo_set_blocking(dbh, 1);
@@ -4605,7 +4597,7 @@ int DEFUN(sqlo_open2, (sthp, dbh, stmt, argc, argv),
   CHECK_DBHANDLE(dbp, dbh, "sqlo_open2", SQLO_INVALID_DB_HANDLE);
   if (!sthp) {
     return SQLO_INVALID_STMT_HANDLE;
-  }  
+  }
 
   if (*sthp == SQLO_STH_INIT) {
     real_sth = -1;
@@ -4621,7 +4613,7 @@ int DEFUN(sqlo_open2, (sthp, dbh, stmt, argc, argv),
 
   if (status < 0) {
     CHECK_OCI_STATUS_RETURN(dbp, status, "sqlo_open2", "_get_blocking_mode");
-  }  
+  }
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_open2: blocking=%d\n", blocking););
 
@@ -4781,9 +4773,9 @@ int DEFUN(sqlo_fetch, (sth, nrows), sqlo_stmt_handle_t sth AND unsigned int nrow
                 // stp->outv_size[col_idx]);
               }
             } /* if is there any data */
-          }   /* if lob is null */
-        }     /* if is lob */
-      }       /* for() */
+          } /* if lob is null */
+        } /* if is lob */
+      } /* for() */
     }
 
     if (dbp->status != OCI_SUCCESS && dbp->status != OCI_NO_DATA && dbp->status != SQLO_SUCCESS_WITH_INFO) {
@@ -4815,7 +4807,7 @@ CONST char **DEFUN(sqlo_values, (sth, num, do_strip_string),
     TRACE(1, (void)fputs(stp->dbp->errmsg, _get_trace_fp(stp->dbp)););
     if (num) {
       *num = 0;
-    }  
+    }
     return NULL;
   }
 
@@ -4825,7 +4817,7 @@ CONST char **DEFUN(sqlo_values, (sth, num, do_strip_string),
 
   if (num) {
     *num = (int)stp->num_defnpv;
-  }  
+  }
 
   return (CONST char **)stp->outv;
 }
@@ -5035,7 +5027,7 @@ int DEFUN(sqlo_split_cstring, (cstr, uid, pwd, tnsname, bufsize),
 
   if (!cstr || !uid || !pwd || !tnsname || !bufsize) {
     return SQLO_ERROR;
-  }  
+  }
 
   /* extract username, password and tnsname from the connect string */
   *uid = '\0';
@@ -5047,7 +5039,7 @@ int DEFUN(sqlo_split_cstring, (cstr, uid, pwd, tnsname, bufsize),
   while (*c && *c != '/') {
     if (n >= bufsize) {
       return SQLO_ERROR;
-    }  
+    }
     *(uid++) = *(c++);
     ++n;
   }
@@ -5061,7 +5053,7 @@ int DEFUN(sqlo_split_cstring, (cstr, uid, pwd, tnsname, bufsize),
     while (*c && *c != '@') {
       if (n >= bufsize) {
         return SQLO_ERROR;
-      }  
+      }
       *(pwd++) = *(c++);
       ++n;
     }
@@ -5075,7 +5067,7 @@ int DEFUN(sqlo_split_cstring, (cstr, uid, pwd, tnsname, bufsize),
     while (*c != '\0') {
       if (n >= bufsize) {
         return SQLO_ERROR;
-      }  
+      }
       *(tnsname++) = *(c++);
       ++n;
     }
@@ -5098,7 +5090,7 @@ int DEFUN(sqlo_server_attach, (dbhp, tnsname), sqlo_db_handle_t *dbhp AND const 
 
   if (dbhp) {
     *dbhp = -1;
-  }  
+  }
 
   TRACE(2, fprintf(_get_trace_fp(NULL), "sqlo_server_attach starts\n"););
 
@@ -5121,7 +5113,7 @@ int DEFUN(sqlo_server_attach, (dbhp, tnsname), sqlo_db_handle_t *dbhp AND const 
 
     if (SQLO_SUCCESS != sqlo_split_cstring(tnsname, uid, pwd, dbname, MAX_BUFLEN)) {
       return SQLO_ERROR;
-    }  
+    }
     dbp->tnsname = strdupx(dbname);
   } else {
     dbp->tnsname = strdupx(tnsname);
@@ -5136,7 +5128,7 @@ int DEFUN(sqlo_server_attach, (dbhp, tnsname), sqlo_db_handle_t *dbhp AND const 
    */
   if (dbhp) {
     *dbhp = (int)dbp->dbh;
-  }  
+  }
 
   /*
     We must use OCIEnvCreate instead of OCIInitialize / OCIEnvInit (see Oracle OCI
@@ -5333,7 +5325,7 @@ int DEFUN(sqlo_session_begin, (dbh, username, password),
 
   if (TRACE_ENABLED && _trace_level > 0) {
     _open_session_trace_file(dbp);
-  }  
+  }
 
   return dbp->status;
 }
@@ -5462,7 +5454,7 @@ int DEFUN(sqlo_connect, (dbhp, cstr), sqlo_db_handle_t *dbhp AND const char *cst
 
   if (SQLO_SUCCESS != sqlo_split_cstring(cstr, uid, pwd, tnsname, MAX_BUFLEN)) {
     return SQLO_ERROR;
-  }  
+  }
 
   TRACE(3, fprintf(_get_trace_fp(NULL), "sqlo_connect: uid=%s, pwd=%s, tnsname=%s\n", uid, pwd, tnsname););
 
@@ -5578,7 +5570,7 @@ CONST char *DEFUN(sqlo_getdatabase, (dbh), sqlo_db_handle_t dbh)
 
   if (!dbp) {
     return NULL;
-  }  
+  }
 
   if (!dbp->tnsname) {
     sprintf(dbp->errmsg, "No tnsname in db structure\n");
@@ -5945,7 +5937,7 @@ int DEFUN(sqlo_execute, (sth, iterations), sqlo_stmt_handle_t sth AND unsigned i
                            * The next sqlo_bind_by_name will not have to
                            * to allocate again memory
                            */
-    }                     /* end if OCI_SUCCESS != status  */
+    } /* end if OCI_SUCCESS != status  */
   } else {
     dbp->status = SQLO_STMT_NOT_PARSED;
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_execute", "");
@@ -6000,7 +5992,7 @@ int DEFUN(sqlo_executeselect, (sth, iterations), sqlo_stmt_handle_t sth AND unsi
                            * The next sqlo_bind_by_name will not have to
                            * to allocate again memory
                            */
-    }                     /* end if OCI_SUCCESS != status  */
+    } /* end if OCI_SUCCESS != status  */
   } else {
     dbp->status = SQLO_STMT_NOT_PARSED;
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_execute", "");
@@ -6034,13 +6026,13 @@ CONST char **DEFUN(sqlo_ocol_names, (sth, num), sqlo_stmt_handle_t sth AND int *
 
     if (num) {
       *num = 0;
-    }  
+    }
     return NULL;
   }
 
   if (num) {
     *num = (int)stp->num_defnpv;
-  }  
+  }
 
   _set_all_ocol_names(stp);
 
@@ -6071,13 +6063,13 @@ int DEFUN(sqlo_ocol_names2, (sth, num, ocol_names), sqlo_stmt_handle_t sth AND i
     TRACE(1, (void)fputs(dbp->errmsg, _get_trace_fp(dbp)););
     if (num) {
       *num = 0;
-    }  
+    }
     return SQLO_ERROR;
   }
 
   if (num) {
     *num = (int)stp->num_defnpv;
-  }  
+  }
 
   _set_all_ocol_names(stp);
   CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_ocol_names2", "_set_all_ocol_names");
@@ -6114,7 +6106,7 @@ CONST int *DEFUN(sqlo_ocol_name_lens, (sth, num), sqlo_stmt_handle_t sth AND int
 
   if (num) {
     *num = (int)stp->num_defnpv;
-  }  
+  }
 
   _set_all_ocol_names(stp);
 
@@ -6143,13 +6135,13 @@ CONST unsigned int *DEFUN(sqlo_value_lens, (sth, num), sqlo_stmt_handle_t sth AN
     TRACE(1, (void)fputs(dbp->errmsg, _get_trace_fp(dbp)););
     if (num) {
       *num = 0;
-    }  
+    }
     return NULL;
   }
 
   if (num) {
     *num = (int)stp->num_defnpv;
-  }  
+  }
 
   TRACE(2, fprintf(_get_trace_fp(dbp), "sqlo_value_lens: Returning %u items\n", stp->num_defnpv););
 
@@ -6221,7 +6213,7 @@ int DEFUN(sqlo_get_db_handle, (sth), sqlo_stmt_handle_t sth)
 
     if (stp->dbp) {
       strcpy(stp->dbp->errmsg, errmsg);
-    }  
+    }
 
     TRACE(1, (void)fputs(errmsg, _trace_fp););
     return SQLO_INVALID_STMT_HANDLE;
@@ -6521,8 +6513,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
     TRACE(3, fprintf(_get_trace_fp(dbp), "sqlo_lob_write_stream: nbytes=%u remain=%u ONE piece\n", nbytes, remainder););
     dbp->status = SQLO_SUCCESS;
     piece = SQLO_ONE_PIECE;
-    do
-    {
+    do {
 
       if (SQLO_STILL_EXECUTING == dbp->status) {
         SQLO_USLEEP;
@@ -6543,7 +6534,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
     if (0 > dbp->status) {
       if (_get_errcode(dbp) != ((-1) * SQLO_STILL_EXECUTING)) {
         CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "slqo_lob_write_stream", "OCILobOpen");
-      }  
+      }
     }
 #endif
 
@@ -6555,8 +6546,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
 
     piece = SQLO_FIRST_PIECE;
     /* wait until non-blocking call finished */
-    do
-    {
+    do {
 
       if (SQLO_STILL_EXECUTING == dbp->status) {
         SQLO_USLEEP;
@@ -6580,8 +6570,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
 
     /* insert remaining pieces */
     piece = SQLO_NEXT_PIECE;
-    do
-    {
+    do {
       if (remainder > MAX_LONG_SIZE) {
         nbytes = MAX_LONG_SIZE;
       } else {
@@ -6607,8 +6596,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
                        : (piece == SQLO_LAST_PIECE)  ? "LAST"
                                                      : "???"););
       /* wait until non-blocking call finished */
-      do
-      {
+      do {
 
         if (SQLO_STILL_EXECUTING == dbp->status) {
           SQLO_USLEEP;
@@ -6710,8 +6698,7 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
   dbp->status = SQLO_SUCCESS;
 
   /* get a chunk of data out of the lob */
-  do
-  {
+  do {
     if (SQLO_STILL_EXECUTING == dbp->status) {
       SQLO_USLEEP;
     }
@@ -6741,16 +6728,14 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
     /* write this buffer */
     (void)fwrite((void *)buf, (size_t)nbytes, 1, fp);
 
-    do
-    {
+    do {
       memset(buf, '\0', MAX_LONG_SIZE);
       /*      loblen = 0;*/
 
       remainder -= nbytes;
 
       /* get a chunk of data out of the lob */
-      do
-      {
+      do {
         if (SQLO_STILL_EXECUTING == dbp->status) {
           SQLO_USLEEP;
         }
@@ -6838,8 +6823,9 @@ int DEFUN(sqlo_get_ocol_dtype, (sth, pos), sqlo_stmt_handle_t sth AND unsigned i
 
   if (0 == stp->num_executions && !(REFCURSOR == stp->cursor_type)) {
     /* execute to describe the output */
-    while (OCI_STILL_EXECUTING == (dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4)0, (ub4)0,
-                                                                (OCISnapshot *)0, (OCISnapshot *)0, (ub4)OCI_DEFAULT))) {
+    while (OCI_STILL_EXECUTING ==
+           (dbp->status = OCIStmtExecute(dbp->svchp, stp->stmthp, dbp->errhp, (ub4)0, (ub4)0, (OCISnapshot *)0,
+                                         (OCISnapshot *)0, (ub4)OCI_DEFAULT))) {
       SQLO_USLEEP;
     }
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_nget_ocol_dtype", "OCIStmtExecute(DESCRIBE)");
@@ -6967,9 +6953,9 @@ static void DEFUN(_terminate_ocols, (stp, do_strip_string), sqlo_stmt_struct_ptr
             memmove(*outpp, p, l);
           }
         } /* end if dtype != SQLT_NUM */
-      }   /* end if do_strip_string */
-    }     /* end if NULL */
-  }       /* end for */
+      } /* end if do_strip_string */
+    } /* end if NULL */
+  } /* end for */
 }
 
 /*---------------------------------------------------------------------------

@@ -524,7 +524,7 @@ HB_ERRCODE FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
   for (i = 1; i <= iCols; i++) {
     if ((!bUpdate) || (bUpdate && (thiswa->editMask[i - 1] || thiswa->specialMask[i - 1]))) {
       if (i == (int)(thiswa->ulhDeleted)) {
-        SetBindEmptylValue(InsertRecord); // Writes a ' ' to deleted flag
+        SetBindEmptylValue(InsertRecord);        // Writes a ' ' to deleted flag
       } else if (i != (int)(thiswa->ulhRecno)) { // RECNO is never included in INSERT column list
         // Get item value from Workarea
         pFieldData = hb_arrayGetItemPtr(thiswa->aBuffer, i);
@@ -548,7 +548,8 @@ HB_ERRCODE FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
             SerializeMemo(pFieldData);
           }
 
-          if (SetBindValue(pFieldData, InsertRecord, bUpdate ? thiswa->hStmtUpdate : thiswa->hStmtInsert) == HB_FAILURE) {
+          if (SetBindValue(pFieldData, InsertRecord, bUpdate ? thiswa->hStmtUpdate : thiswa->hStmtInsert) ==
+              HB_FAILURE) {
             return HB_FAILURE;
           }
         }

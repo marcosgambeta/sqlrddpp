@@ -858,7 +858,8 @@ HB_FUNC(FBGETDATA5)
       case IB_SQL_ARRAY:
       case IB_SQL_QUAD: {
         blob_id = (ISC_QUAD *)var->sqldata;
-        if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0, SR_NULLPTR)) {
+        if (isc_open_blob2(session->status, &(session->db), &(session->transac), &blob_handle, blob_id, 0,
+                           SR_NULLPTR)) {
           ERRORLOGANDEXIT(session, "FBGETDATA1");
         }
         if (isc_blob_info(session->status, &blob_handle, sizeof(blob_items), blob_items, sizeof(res_buffer),
@@ -1110,7 +1111,8 @@ static void FBFieldGet5(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
       break;
     }
     case SQL_LONGVARCHAR: {
-      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) && (sr_lSerializeArrayAsJson())) {
+      if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) &&
+          (sr_lSerializeArrayAsJson())) {
         if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
           s_pSym_SR_FROMJSON = hb_dynsymFindName("HB_JSONDECODE");
           if (s_pSym_SR_FROMJSON == SR_NULLPTR) {

@@ -428,7 +428,7 @@ static HB_SIZE escape_single(char *to, const char *from, HB_SIZE length)
     }
     default: {
       *to++ = *from;
-    }  
+    }
     }
   }
   *to = 0;
@@ -952,7 +952,7 @@ HB_FUNC(SR_DBQUALIFY)
         szOut[i + 1] = (HB_BYTE)pszBuffer[i];
       }
       szOut[i + 1] = '"';
-    }  
+    }
     }
     hb_retclen_buffer(szOut, ulLen + 2);
   } else {
