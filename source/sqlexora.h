@@ -422,7 +422,7 @@ char *QuoteTrimEscapeString(char *FromBuffer, HB_ULONG iSize, int idatabase, HB_
 char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
                  HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL *bNullArgument);
 HB_BOOL SR_itemEmpty2(PHB_ITEM pItem);
-void commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, char *filename);
+void commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, const char *filename);
 HB_ERRCODE SetBindEmptylValue2(COLUMNBINDORAP BindStructure);
 HB_ERRCODE SetBindValue2(PHB_ITEM pFieldData, COLUMNBINDORAP BindStructure, OCI_Statement *hStmt);
 char *QualifyName2(char *szName, SQLEXORAAREAP thiswa);

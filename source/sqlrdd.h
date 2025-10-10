@@ -115,6 +115,6 @@ typedef SQLAREA *LPSQLAREA;
 
 // prototypes
 
-void commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, char *filename);
+void commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, const char *filename);
 
 #endif // SQLRDD_H
