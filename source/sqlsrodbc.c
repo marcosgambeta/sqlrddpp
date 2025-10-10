@@ -994,7 +994,7 @@ HB_FUNC(SR_GETCONNECTOPTION)
 #if ODBCVER >= 0x0300
   SQLPOINTER buffer[512];
   SQLINTEGER lLen = 0;
-  buffer[0] = '\0';
+  buffer[0] = SR_NULLPTR;
   hb_retni(SQLGetConnectAttr((SQLHDBC)hb_parptr(1), (SQLINTEGER)hb_parnl(2), (SQLPOINTER)buffer,
                              (SQLINTEGER)sizeof(buffer), (SQLINTEGER *)&lLen));
   hb_storclen((char *)buffer, lLen, 3);
