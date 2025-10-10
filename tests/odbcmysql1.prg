@@ -27,6 +27,7 @@ PROCEDURE Main()
 
    LOCAL nConnection
    LOCAL n
+   LOCAL cConnectionString
 
    setMode(25, 80)
 
@@ -72,14 +73,17 @@ PROCEDURE Main()
 
    rddSetDefault(RDD_NAME)
 
-   nConnection := sr_AddConnection(CONNECT_ODBC, ;
-      "Driver="   + s_ODBC_DRIVER   + ";" + ;
-      "Server="   + s_ODBC_SERVER   + ";" + ;
-      "Port="     + s_ODBC_PORT     + ";" + ;
-      "Database=" + s_ODBC_DATABASE + ";" + ;
-      "Uid="      + s_ODBC_UID      + ";" + ;
-      "Pwd="      + s_ODBC_PWD      + ";" + ;
-      ""          + s_ODBC_OPTIONS  + ";")
+   cConnectionString := "Driver="   + s_ODBC_DRIVER   + ";" + ;
+                        "Server="   + s_ODBC_SERVER   + ";" + ;
+                        "Port="     + s_ODBC_PORT     + ";" + ;
+                        "Database=" + s_ODBC_DATABASE + ";" + ;
+                        "Uid="      + s_ODBC_UID      + ";" + ;
+                        "Pwd="      + s_ODBC_PWD      + ";" + ;
+                        ""          + s_ODBC_OPTIONS  + ";"
+
+   Alert(cConnectionString)
+
+   nConnection := sr_AddConnection(CONNECT_ODBC, cConnectionString)
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")
