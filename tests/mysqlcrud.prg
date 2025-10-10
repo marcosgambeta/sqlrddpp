@@ -6,13 +6,14 @@
 #include "sqlrdd.ch"
 #include "inkey.ch"
 
-// Make a copy of this file and change the values below.
+// To run the test:
+// mysqlcrud --server <servername> --uid <username> --pwd <userpassword> --dtb <databasename>
 // NOTE: the database must exist before runnning the test.
 
-#define MYSQL_SERVER     "localhost"
-#define MYSQL_UID        "root"
-#define MYSQL_PWD        "password"
-#define MYSQL_DTB        "dbtest"
+STATIC s_MYSQL_SERVER := "localhost"
+STATIC s_MYSQL_UID    := "root"
+STATIC s_MYSQL_PWD    := "password"
+STATIC s_MYSQL_DTB    := "dbtest"
 
 REQUEST SQLRDD
 REQUEST SR_MYSQL
@@ -20,13 +21,36 @@ REQUEST SR_MYSQL
 PROCEDURE Main()
 
    LOCAL nConnection
-#if 0
    LOCAL n
-#endif
    LOCAL oTB
    LOCAL nKey
 
    setMode(25, 80)
+
+   n := 1
+   DO WHILE n <= PCount()
+      IF HB_PValue(n) == "--server"
+         ++n
+         s_MYSQL_SERVER := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--uid"
+         ++n
+         s_MYSQL_UID := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--pwd"
+         ++n
+         s_MYSQL_PWD := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--dtb"
+         ++n
+         s_MYSQL_DTB := HB_PValue(n)
+         LOOP
+      ENDIF
+      ++n
+   ENDDO
 
    SET DELETED ON
 
@@ -34,7 +58,7 @@ PROCEDURE Main()
 
    CLS
 
-   nConnection := sr_AddConnection(CONNECT_MYSQL, "MySQL=" + MYSQL_SERVER + ";UID=" + MYSQL_UID + ";PWD=" + MYSQL_PWD + ";DTB=" + MYSQL_DTB)
+   nConnection := sr_AddConnection(CONNECT_MYSQL, "MySQL=" + s_MYSQL_SERVER + ";UID=" + s_MYSQL_UID + ";PWD=" + s_MYSQL_PWD + ";DTB=" + s_MYSQL_DTB)
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")

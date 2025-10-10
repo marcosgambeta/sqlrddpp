@@ -5,16 +5,18 @@
 
 #include "sqlrdd.ch"
 
-// Make a copy of this file and change the values below.
+// To run the test:
+// mysql1 --server <servername> --uid <username> --pwd <userpassword> --dtb <databasename>
 // NOTE: the database must exist before runnning the test.
-#define SERVER "localhost"
-#define UID    "root"
-#define PWD    "password"
-#define DTB    "dbtest"
 
 REQUEST SQLRDD
 REQUEST SQLEX
 REQUEST SR_MYSQL
+
+STATIC s_SERVER := "localhost"
+STATIC s_UID    := "root"
+STATIC s_PWD    := "password"
+STATIC s_DTB    := "dbtest"
 
 PROCEDURE Main()
 
@@ -23,15 +25,40 @@ PROCEDURE Main()
 
    setMode(25, 80)
 
+   n := 1
+   DO WHILE n <= PCount()
+      IF HB_PValue(n) == "--server"
+         ++n
+         s_SERVER := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--uid"
+         ++n
+         s_UID := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--pwd"
+         ++n
+         s_PWD := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--dtb"
+         ++n
+         s_DTB := HB_PValue(n)
+         LOOP
+      ENDIF
+      ++n
+   ENDDO
+
    rddSetDefault("SQLRDD")
 
-   nConnection := sr_AddConnection(CONNECT_MYSQL, "MySQL=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
+   nConnection := sr_AddConnection(CONNECT_MYSQL, "MySQL=" + s_SERVER + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")
       QUIT
    ENDIF
-   
+
    sr_StartLog(nConnection)
 
    IF !sr_ExistTable("test")
@@ -64,9 +91,9 @@ PROCEDURE Main()
    browse()
 
    CLOSE DATABASE
-   
+
    sr_StopLog(nConnection)
-   
+
    sr_EndConnection(nConnection)
 
 RETURN
