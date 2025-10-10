@@ -2699,7 +2699,7 @@ static inline int DEFUN(_bind_by_pos, (stp, param_pos, param_type, param_addr, p
 
     dbp->status =
         OCIBindByPos(stp->stmthp, bindp_addr, dbp->errhp, (ub4)param_pos, (dvoid *)param_addr, (sword)param_size,
-                     param_type, (dvoid *)ind_addr, (ub2 *)0, (ub2)0, (ub4)0, (ub4 *)0, OCI_DEFAULT);
+                     param_type, (dvoid *)ind_addr, (ub2 *)0, (ub2 *)0, (ub4)0, (ub4 *)0, OCI_DEFAULT);
 
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_bind_by_pos. Cannot bind", SR_NULLPTR);
     if (is_array) {
@@ -5698,7 +5698,7 @@ int DEFUN(sqlo_bind_by_name, (sth, param_name, param_type, param_addr, param_siz
 
       dbp->status = OCIBindByName(stp->stmthp, bindp_addr, dbp->errhp, (text *)param_name, (sb4)strlen(param_name),
                                   (dvoid *)param_addr, (sb4)param_size, (ub2)param_type, (dvoid *)ind_addr, (ub2 *)0,
-                                  (ub2)0, (ub4)0, (ub4 *)0, OCI_DEFAULT);
+                                  (ub2 *)0, (ub4)0, (ub4 *)0, OCI_DEFAULT);
       CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_bind_by_name. Cannot bind", param_name);
 
       /* In case of arrays, we setup the skip parameters. */
