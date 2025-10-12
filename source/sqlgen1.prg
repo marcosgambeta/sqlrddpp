@@ -57,23 +57,23 @@
 
 #define cJoinWords(nType, nSystemID)    s_aJoinWords[nSystemID,nType]
 
-#define  SKIPFWD            nIP++;uData:=apCode[nIP]
-#define  PARAM_SOLV         IIf(HB_IsBlock(aParam[uData+1]),Eval(aParam[uData+1]),aParam[uData+1])
-#define  RECURSIVE_CALL     nIP++;cSql+=SR_SQLCodeGen2(apCode,aParam,nSystemId,lIdent,@nIP,nContext,@nSpaces,lParseTableName);Exit
-#define  GETPARAM           cSql+=IIf(uData+1<=Len(aParam),PARAM_SOLV,"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_QUOTED    cSql+=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV, nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_VALUE     cSql+=IIf(uData+1<=Len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
-#define  GETPARAM_VAL_2     uData:=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV,nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##")
-#define  GETPARAM_VALNN     cSql+=IIf(uData+1<=Len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID,.T.),"##PARAM_"+StrZero(uData+1,3)+"_NOT_NULL_NOT_SUPPLIED##");nIP++;Exit
-#define  FIX_PRE_WHERE      IIf(nContext==SQL_CONTEXT_SELECT_PRE_WHERE,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" WHERE "),IIf(nContext==SQL_CONTEXT_SELECT_PRE_WHERE2,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" AND "),))
-#define  PASSTHROUGH        nIP++;EXIT
-#define  IDENTSPACE         space(nSpaces)
-//#define  TABLE_OPTIMIZER    IIf(nSystemId==SYSTEMID_MSSQL7,IIf(lLocking," WITH (UPDLOCK)", " WITH (NOLOCK)"),"")
-#define  TABLE_OPTIMIZER    IIf(nSystemId==SYSTEMID_MSSQL7,IIf(lLocking," WITH (UPDLOCK)", ""),"")
-#define  COMMAND_OPTIMIZER  IIf(nSystemId==SYSTEMID_SYBASE,IIf(lLocking,"", " AT ISOLATION READ UNCOMMITTED "),"")
-#define  SELECT_OPTIMIZER1  ""
-#define  SELECT_OPTIMIZER2  IIf(nSystemId==SYSTEMID_ORACLE,IIf(lLocking," FOR UPDATE", ""),"")
-#define  NEWLINE            IIf(lIdent,SR_CRLF,"")
+#define SKIPFWD            nIP++;uData:=apCode[nIP]
+#define PARAM_SOLV         IIf(HB_IsBlock(aParam[uData+1]),Eval(aParam[uData+1]),aParam[uData+1])
+#define RECURSIVE_CALL     nIP++;cSql+=SR_SQLCodeGen2(apCode,aParam,nSystemId,lIdent,@nIP,nContext,@nSpaces,lParseTableName);Exit
+#define GETPARAM           cSql+=IIf(uData+1<=Len(aParam),PARAM_SOLV,"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define GETPARAM_QUOTED    cSql+=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV, nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define GETPARAM_VALUE     cSql+=IIf(uData+1<=Len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##");nIP++;Exit
+#define GETPARAM_VAL_2     uData:=IIf(uData+1<=Len(aParam),SR_DBQUALIFY(PARAM_SOLV,nSystemID),"##PARAM_"+StrZero(uData+1,3)+"_NOT_SUPPLIED##")
+#define GETPARAM_VALNN     cSql+=IIf(uData+1<=Len(aParam),SR_SQLQuotedString(PARAM_SOLV,nSystemID,.T.),"##PARAM_"+StrZero(uData+1,3)+"_NOT_NULL_NOT_SUPPLIED##");nIP++;Exit
+#define FIX_PRE_WHERE      IIf(nContext==SQL_CONTEXT_SELECT_PRE_WHERE,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" WHERE "),IIf(nContext==SQL_CONTEXT_SELECT_PRE_WHERE2,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" AND "),))
+#define PASSTHROUGH        nIP++;EXIT
+#define IDENTSPACE         space(nSpaces)
+//#define TABLE_OPTIMIZER    IIf(nSystemId==SYSTEMID_MSSQL7,IIf(lLocking," WITH (UPDLOCK)", " WITH (NOLOCK)"),"")
+#define TABLE_OPTIMIZER    IIf(nSystemId==SYSTEMID_MSSQL7,IIf(lLocking," WITH (UPDLOCK)", ""),"")
+#define COMMAND_OPTIMIZER  IIf(nSystemId==SYSTEMID_SYBASE,IIf(lLocking,"", " AT ISOLATION READ UNCOMMITTED "),"")
+#define SELECT_OPTIMIZER1  ""
+#define SELECT_OPTIMIZER2  IIf(nSystemId==SYSTEMID_ORACLE,IIf(lLocking," FOR UPDATE", ""),"")
+#define NEWLINE            IIf(lIdent,SR_CRLF,"")
 
 #xtranslate Default(<Var>, <xVal>) => IIf(<Var> == NIL, <Var> := <xVal>, NIL)
 
@@ -87,7 +87,7 @@ STATIC s_aJoinWords
 // SQL Code generation
 
 FUNCTION SR_SQLCodeGen(apCode, aParam, nSystemId, lIdent, lParseTableName)
-RETURN   SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, , , , lParseTableName)
+RETURN SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, , , , lParseTableName)
 
 STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext, nSpaces, lParseTableName)
 
