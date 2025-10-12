@@ -213,7 +213,7 @@ ENDCLASS
 // nMode = 1 : If the key exist, an exception is thrown
 // nMode = 2 : If the key exist, the method does nothing
 // nMode = 3 : If the key exist, the value is replaced
-METHOD aAdd(xKey, xValue, nMode) CLASS Dictionary
+METHOD Dictionary:aAdd(xKey, xValue, nMode)
 
    LOCAL lContainsKey := ::lContainsKey(xKey)
 
@@ -231,7 +231,7 @@ METHOD aAdd(xKey, xValue, nMode) CLASS Dictionary
 
 RETURN NIL
 
-METHOD GetKeyValuePair(xKey) CLASS Dictionary
+METHOD Dictionary:GetKeyValuePair(xKey)
 
    LOCAL result := xFirst(::aInternArray, {|y|y:xKey == xKey})
 
@@ -241,22 +241,22 @@ METHOD GetKeyValuePair(xKey) CLASS Dictionary
 
 RETURN result
 
-METHOD At(nIndex) CLASS Dictionary
+METHOD Dictionary:At(nIndex)
 RETURN ::aInternArray[nIndex]
 
-METHOD xValue(xKey) CLASS Dictionary
+METHOD Dictionary:xValue(xKey)
 RETURN ::GetKeyValuePair(xKey):xValue
 
-METHOD SetValue(xKey, xValue) CLASS Dictionary
+METHOD Dictionary:SetValue(xKey, xValue)
 
    ::GetKeyValuePair(xKey):xValue := xValue
 
 RETURN NIL
 
-METHOD nIndexOfKey(xKey) CLASS Dictionary
+METHOD Dictionary:nIndexOfKey(xKey)
 RETURN AScan(::aInternArray, {|x|x:xKey == xKey})
 
-METHOD Remove(xKey) CLASS Dictionary
+METHOD Dictionary:Remove(xKey)
 
    LOCAL nIndex := ::nIndexOfKey(xKey)
 
@@ -266,13 +266,13 @@ METHOD Remove(xKey) CLASS Dictionary
 
 RETURN hb_ADel(::aInternArray, nIndex, .T.)
 
-METHOD Clear() CLASS Dictionary
+METHOD Dictionary:Clear()
 
    ::aInternArray := {}
 
 RETURN NIL
 
-METHOD lContainsKey(xKey) CLASS Dictionary
+METHOD Dictionary:lContainsKey(xKey)
 RETURN ::nIndexOfKey(xKey) > 0
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -288,7 +288,7 @@ CLASS KeyValuePair
 
 ENDCLASS
 
-METHOD new(pKey, pValue) CLASS KeyValuePair
+METHOD KeyValuePair:new(pKey, pValue)
 
    ::xKey := pKey
    ::xValue := pValue

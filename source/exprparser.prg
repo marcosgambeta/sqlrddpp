@@ -95,13 +95,13 @@ CLASS ParserBase
 
 ENDCLASS
 
-METHOD new(pWorkarea) CLASS ParserBase
+METHOD ParserBase:new(pWorkarea)
 
    ::_cDefaultContext := pWorkarea
 
 RETURN SELF
 
-METHOD SortedOperators CLASS ParserBase
+METHOD ParserBase:SortedOperators
 
    IF ::_SortedOperators == NIL
       ::_SortedOperators := ASort(::GetOperators(), , , {|x, y|x:nPriority < y:nPriority})
@@ -109,10 +109,10 @@ METHOD SortedOperators CLASS ParserBase
 
 RETURN ::_SortedOperators
 
-METHOD Parse(cExpression) CLASS ParserBase
+METHOD ParserBase:Parse(cExpression)
 RETURN ::InternParse("?" + AtRepl(Chr(34), cExpression, "'") + "?", ::_cDefaultContext)
 
-METHOD InternParse(cExpression, cAlias) CLASS ParserBase
+METHOD ParserBase:InternParse(cExpression, cAlias)
 
    LOCAL oOperand1
    LOCAL oOperand2
@@ -126,7 +126,7 @@ METHOD InternParse(cExpression, cAlias) CLASS ParserBase
 
 RETURN oOperand1
 
-METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS ParserBase
+METHOD ParserBase:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
    LOCAL o
    LOCAL aGroups
@@ -160,7 +160,7 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
 
 RETURN NIL
 
-METHOD ResolveParenthesis(cExpression) CLASS ParserBase
+METHOD ParserBase:ResolveParenthesis(cExpression)
 
    LOCAL i
    LOCAL nParenthesisDeep := 0
@@ -187,7 +187,7 @@ METHOD ResolveParenthesis(cExpression) CLASS ParserBase
 
 RETURN NIL
 
-METHOD RestoreParenthesis(cExpression) CLASS ParserBase
+METHOD ParserBase:RestoreParenthesis(cExpression)
 
    LOCAL cParenthesis := "("
    LOCAL i
@@ -204,25 +204,25 @@ METHOD RestoreParenthesis(cExpression) CLASS ParserBase
 
 RETURN cExpression
 
-METHOD ExtractAlias1(cExpression) CLASS ParserBase
+METHOD ParserBase:ExtractAlias1(cExpression)
 
    STATIC regex := "^(\w+)\s*->\s*(\?.+\?)$"
 
 RETURN ::ExtractAlias(@cExpression, regex)
 
-METHOD ExtractAlias2(cExpression) CLASS ParserBase
+METHOD ParserBase:ExtractAlias2(cExpression)
 
    STATIC regex := "^(\w+)\s*->\s*(\(.+\))$"
 
 RETURN ::ExtractAlias(@cExpression, regex)
 
-METHOD ExtractAlias3(cExpression) CLASS ParserBase
+METHOD ParserBase:ExtractAlias3(cExpression)
 
    STATIC regex := "^(\w+)\s*->\s*(\w+)$"
 
 RETURN ::ExtractAlias(@cExpression, regex)
 
-METHOD ExtractAlias(cExpression, cRegex) CLASS ParserBase
+METHOD ParserBase:ExtractAlias(cExpression, cRegex)
 
    LOCAL aGroups
 
@@ -255,7 +255,7 @@ CLASS ExpressionParser FROM ParserBase
 
 ENDCLASS
 
-METHOD GetOperators() CLASS ExpressionParser
+METHOD ExpressionParser:GetOperators()
 
    IF ::_Operators == NIL
       ::_Operators := {                                               ;
@@ -269,10 +269,10 @@ METHOD GetOperators() CLASS ExpressionParser
 
 RETURN ::_Operators
 
-METHOD GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) CLASS ExpressionParser
+METHOD ExpressionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
 RETURN ComposedExpression():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
 
-METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS ExpressionParser
+METHOD ExpressionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
    LOCAL aGroups
    LOCAL aParamGroups
@@ -310,7 +310,7 @@ METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS 
 
 RETURN NIL
 
-METHOD GetParameter(cExpression, cAlias) CLASS ExpressionParser
+METHOD ExpressionParser:GetParameter(cExpression, cAlias)
 
    STATIC cRegParam := "^(@?)(.*)$"
 
@@ -356,7 +356,7 @@ CLASS ConditionParser FROM ParserBase
 
 ENDCLASS
 
-METHOD new(pWorkarea) CLASS ConditionParser
+METHOD ConditionParser:new(pWorkarea)
 
    LOCAL cOperatorsChoice
    LOCAL cOperatorsChars
@@ -385,7 +385,7 @@ METHOD new(pWorkarea) CLASS ConditionParser
 
 RETURN SELF
 
-METHOD GetOperators() CLASS ConditionParser
+METHOD ConditionParser:GetOperators()
 
    IF ::_Operators == NIL
       ::_Operators := {                                           ;
@@ -396,10 +396,10 @@ METHOD GetOperators() CLASS ConditionParser
 
 RETURN ::_Operators
 
-METHOD GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) CLASS ConditionParser
+METHOD ConditionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
 RETURN ComposedCondition():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
 
-METHOD GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2) CLASS ConditionParser
+METHOD ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
    LOCAL aGroups
    LOCAL oComparisonOperator

@@ -131,7 +131,7 @@ CLASS DirectRelation FROM RelationBase
 
 ENDCLASS
 
-METHOD new(pWorkarea1, pWorkarea2, pExpression) CLASS DirectRelation
+METHOD DirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
 
    IF HB_IsChar(pWorkarea1)
       ::oWorkarea1 := oGetWorkarea(pWorkarea1)
@@ -160,7 +160,7 @@ CLASS RelationFactory
 
 ENDCLASS
 
-METHOD new() CLASS RelationFactory
+METHOD RelationFactory:new()
 
    STATIC instance
 
@@ -197,7 +197,7 @@ CLASS RelationManager
 
 ENDCLASS
 
-METHOD new() CLASS RelationManager
+METHOD RelationManager:new()
 
    STATIC instance
 
@@ -207,14 +207,14 @@ METHOD new() CLASS RelationManager
 
 RETURN instance
 
-METHOD Clear(cAlias) CLASS RelationManager
+METHOD RelationManager:Clear(cAlias)
 
    ::oInternDictionary:Clear()
    RemoveAll(::aDirectRelations, {|y|Lower(y:oWorkarea1:cAlias) == Lower(cAlias)})
 
 RETURN NIL
 
-METHOD AddRelation(oFactory, pAlias1, pAlias2, pExpression) CLASS RelationManager
+METHOD RelationManager:AddRelation(oFactory, pAlias1, pAlias2, pExpression)
 
    LOCAL cAlias1 := Upper(pAlias1)
    LOCAL cAlias2 := Upper(pAlias2)
@@ -230,7 +230,7 @@ METHOD AddRelation(oFactory, pAlias1, pAlias2, pExpression) CLASS RelationManage
 
 RETURN NIL
 
-METHOD GetRelations(cAlias1, cAlias2) CLASS RelationManager
+METHOD RelationManager:GetRelations(cAlias1, cAlias2)
 
    LOCAL result := {}
    LOCAL r
@@ -267,7 +267,7 @@ METHOD GetRelations(cAlias1, cAlias2) CLASS RelationManager
 
 RETURN result
 
-METHOD BuildRelations(oIndirectRelation, cAlias1, cAlias2) CLASS RelationManager
+METHOD RelationManager:BuildRelations(oIndirectRelation, cAlias1, cAlias2)
 
    LOCAL result := {}
    LOCAL r
@@ -341,7 +341,7 @@ CLASS DbIndex
 
 ENDCLASS
 
-METHOD new(pWorkarea, pName) CLASS DbIndex
+METHOD DbIndex:new(pWorkarea, pName)
 
    IF HB_IsChar(pWorkarea)
       ::oWorkarea := oGetWorkarea(pWorkarea)
@@ -354,7 +354,7 @@ METHOD new(pWorkarea, pName) CLASS DbIndex
 
 RETURN SELF
 
-METHOD lIsSynthetic() CLASS DbIndex
+METHOD DbIndex:lIsSynthetic()
 
    IF ::_lIsSynthetic == NIL
       ::_lIsSynthetic := (::_aInfos[9] == "")
@@ -362,7 +362,7 @@ METHOD lIsSynthetic() CLASS DbIndex
 
 RETURN ::_lIsSynthetic
 
-METHOD aDbFields() CLASS DbIndex
+METHOD DbIndex:aDbFields()
 
    LOCAL i
 
@@ -380,7 +380,7 @@ METHOD aDbFields() CLASS DbIndex
 
 RETURN ::_aDbFields
 
-METHOD nLength() CLASS DbIndex
+METHOD DbIndex:nLength()
 
    LOCAL item
 
@@ -411,7 +411,7 @@ CLASS DbField
 
 ENDCLASS
 
-METHOD new(pName, pType, pLength) CLASS DbField
+METHOD DbField:new(pName, pType, pLength)
 
    ::cName := pName
    ::cType := pType
@@ -458,7 +458,7 @@ CLASS ClipperExpression
 
 ENDCLASS
 
-METHOD new(pContext, pValue, pIgnoreRelations) CLASS ClipperExpression
+METHOD ClipperExpression:new(pContext, pValue, pIgnoreRelations)
 
    ::cContext := pContext
    ::cValue := pValue
@@ -466,7 +466,7 @@ METHOD new(pContext, pValue, pIgnoreRelations) CLASS ClipperExpression
 
 RETURN SELF
 
-METHOD cEvaluation() CLASS ClipperExpression
+METHOD ClipperExpression:cEvaluation()
 
    IF ::_cEvaluation == NIL
       ::_cEvaluation := cstr(::Evaluate(::lIgnoreRelations))
@@ -474,7 +474,7 @@ METHOD cEvaluation() CLASS ClipperExpression
 
 RETURN NIL
 
-METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
+METHOD ClipperExpression:Evaluate(lIgnoreRelations)
 
    LOCAL nSeconds
    LOCAL save_slct
@@ -504,7 +504,7 @@ METHOD Evaluate(lIgnoreRelations) CLASS ClipperExpression
 
 RETURN result
 
-METHOD cType() CLASS ClipperExpression
+METHOD ClipperExpression:cType()
 
    IF ::_cType == NIL
       ::_cType := ValType(::cEvaluation())
@@ -512,7 +512,7 @@ METHOD cType() CLASS ClipperExpression
 
 RETURN ::_cType
 
-METHOD nLength() CLASS ClipperExpression
+METHOD ClipperExpression:nLength()
 
    IF ::_nLength == NIL
       ::_nLength := Len(::cEvaluation())

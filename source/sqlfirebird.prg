@@ -82,7 +82,7 @@ ENDCLASS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:Getline(aFields, lTranslate, aArray)
 
    LOCAL i
 
@@ -108,7 +108,7 @@ RETURN aArray
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:FieldGet(nField, aFields, lTranslate)
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
@@ -120,7 +120,7 @@ RETURN ::aCurrLine[nField]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD FetchRaw(lTranslate, aFields) CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:FetchRaw(lTranslate, aFields)
 
    ::nRetCode := SQL_ERROR
    DEFAULT aFields TO ::aFields
@@ -138,7 +138,7 @@ RETURN ::nRetCode
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD AllocStatement() CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:AllocStatement()
 
    IF ::lSetNext
       IF ::nSetOpt == SQL_ATTR_QUERY_TIMEOUT
@@ -151,7 +151,7 @@ RETURN SQL_SUCCESS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
 
    LOCAL n
    LOCAL nFields := 0
@@ -248,7 +248,7 @@ RETURN aFields
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD LastError() CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:LastError()
 
    LOCAL cMsgError
    LOCAL nType := 0
@@ -259,8 +259,8 @@ RETURN AllTrim(cMsgError) + " - Native error code " + AllTrim(Str(nType))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
-   nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+   nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
 
    LOCAL nRet
    LOCAL hEnv
@@ -312,7 +312,7 @@ RETURN SELF
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD End() CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:End()
 
    ::Commit()
    FBClose(::hEnv)
@@ -321,7 +321,7 @@ RETURN ::Super:End()
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Commit() CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:Commit()
 
    ::Super:Commit()
    ::nRetCode := FBCOMMITTRANSACTION(::hEnv)
@@ -330,7 +330,7 @@ RETURN (::nRetCode := FBBeginTransaction(::hEnv))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD RollBack() CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:RollBack()
 
    ::Super:RollBack()
 
@@ -338,7 +338,7 @@ RETURN (::nRetCode := FBRollBackTransaction(::hEnv))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ExecuteRaw(cCommand) CLASS SR_FIREBIRD
+METHOD SR_FIREBIRD:ExecuteRaw(cCommand)
 
    LOCAL nRet
 

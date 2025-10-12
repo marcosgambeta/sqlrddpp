@@ -60,14 +60,14 @@ CLASS Operator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols) CLASS Operator
+METHOD Operator:new(pName, pSymbols)
 
    ::cName := pName
    ::aSymbols := pSymbols
 
 RETURN SELF
 
-METHOD cPattern() CLASS Operator
+METHOD Operator:cPattern()
 
    IF ::_cPattern == NIL
       ::_cPattern := cJoin(::aSymbols, "|")
@@ -85,7 +85,7 @@ CLASS ComparisonOperator FROM Operator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols) CLASS ComparisonOperator
+METHOD ComparisonOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
 
@@ -106,7 +106,7 @@ CLASS SerialOperator FROM Operator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols) CLASS SerialOperator
+METHOD SerialOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
 
@@ -121,7 +121,7 @@ CLASS LogicalOperator FROM SerialOperator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols) CLASS LogicalOperator
+METHOD LogicalOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
    IF pName == "and"
@@ -141,7 +141,7 @@ CLASS ArithmeticOperator FROM SerialOperator
 
 ENDCLASS
 
-METHOD new(pName, pSymbols) CLASS ArithmeticOperator
+METHOD ArithmeticOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
    SWITCH pName
@@ -180,7 +180,7 @@ CLASS AlgebraSet
 
 ENDCLASS
 
-METHOD new(pOperator, pType) CLASS AlgebraSet
+METHOD AlgebraSet:new(pOperator, pType)
 
    ::oOperator := pOperator
    ::cType := pType
@@ -257,14 +257,14 @@ CLASS ExpressionBase
 
 ENDCLASS
 
-METHOD new(pContext, pClipperString) CLASS ExpressionBase
+METHOD ExpressionBase:new(pContext, pClipperString)
 
    ::oClipperExpression := ClipperExpression():new(pContext, pClipperString)
    ::cContext := Upper(pContext)
 
 RETURN SELF
 
-METHOD oWorkArea() CLASS ExpressionBase
+METHOD ExpressionBase:oWorkArea()
 
    IF ::_oWorkArea == NIL
       ::_oWorkArea := oGetWorkarea(::cContext)
@@ -294,13 +294,13 @@ CLASS ConditionBase FROM ExpressionBase
 
 ENDCLASS
 
-METHOD new2(pContext, pClipperString, pDenied) CLASS ConditionBase
+METHOD ConditionBase:new2(pContext, pClipperString, pDenied)
 
    ::lDenied_ := pDenied
 
 RETURN ::super:new(pContext, pClipperString)
 
-METHOD lDenied(value) CLASS ConditionBase
+METHOD ConditionBase:lDenied(value)
 
    IF value != NIL .AND. value != ::lDenied_
       ::lDenied_ := value
@@ -331,13 +331,13 @@ CLASS BooleanExpression FROM ConditionBase
 
 ENDCLASS
 
-METHOD new2(pContext, pClipperString, pDenied, pExpr) CLASS BooleanExpression
+METHOD BooleanExpression:new2(pContext, pClipperString, pDenied, pExpr)
 
    ::lDenied_ := pDenied
 
 RETURN ::new(pContext, pClipperString, pExpr)
 
-METHOD new(pContext, pClipperString, pExpr) CLASS BooleanExpression
+METHOD BooleanExpression:new(pContext, pClipperString, pExpr)
 
    ::super:new(pContext, pClipperString)
    ::oExpression := pExpr
@@ -347,7 +347,7 @@ METHOD new(pContext, pClipperString, pExpr) CLASS BooleanExpression
 RETURN SELF
 
 // not very usefull, but cleaner
-METHOD lDenied(value) CLASS BooleanExpression
+METHOD BooleanExpression:lDenied(value)
 
    IF value != NIL .AND. value != ::lDenied_ .AND. ::lIsSimple .AND. ::oExpression:ValueType = "value"
       ::lDenied_ := value
@@ -374,13 +374,13 @@ CLASS ComposedConditionBase FROM ConditionBase
 
 ENDCLASS
 
-METHOD new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2) CLASS ComposedConditionBase
+METHOD ComposedConditionBase:new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2)
 
    ::lDenied_ := pDenied
 
 RETURN ::new(pContext, pClipperString, /*pExpr,*/ pOperand1, pOperator, pOperand2)
 
-METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2) CLASS ComposedConditionBase
+METHOD ComposedConditionBase:new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
 
    ::super:new(pContext, pClipperString)
    ::oOperand1 := pOperand1
@@ -411,7 +411,7 @@ CLASS Expression FROM ExpressionBase
 
 ENDCLASS
 
-METHOD GetType() CLASS Expression
+METHOD Expression:GetType()
 RETURN ::oClipperExpression:cType
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -438,7 +438,7 @@ CLASS ValueExpression FROM Expression
 
 ENDCLASS
 
-METHOD new(pContext, pValue) CLASS ValueExpression
+METHOD ValueExpression:new(pContext, pValue)
 
    ::super:new(pContext, AllTrim(pValue))
 
@@ -457,7 +457,7 @@ METHOD new(pContext, pValue) CLASS ValueExpression
 RETURN SELF
 
 // method redefined because it's faster than evaluate the expression.
-METHOD GetType() CLASS ValueExpression
+METHOD ValueExpression:GetType()
 
    IF ::cType == NIL
       SWITCH ::ValueType
@@ -496,7 +496,7 @@ CLASS FunctionExpression FROM Expression
 
 ENDCLASS
 
-METHOD new(pContext, pClipperString, pFunctionName, aParameters) CLASS FunctionExpression
+METHOD FunctionExpression:new(pContext, pClipperString, pFunctionName, aParameters)
 
    ::super:new(pContext, pClipperString)
    ::cFunctionName := Lower(pFunctionName)
@@ -517,7 +517,7 @@ CLASS Parameter
 
 ENDCLASS
 
-METHOD new(pExpression, pIsByRef) CLASS Parameter
+METHOD Parameter:new(pExpression, pIsByRef)
 
    ::oExpression := pExpression
    ::lIsByRef := pIsByRef
@@ -544,7 +544,7 @@ CLASS ComposedExpression FROM Expression
 
 ENDCLASS
 
-METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2) CLASS ComposedExpression
+METHOD ComposedExpression:new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
 
    ::super:new(pContext, pClipperString)
    ::oOperand1 := pOperand1
@@ -553,7 +553,7 @@ METHOD new(pContext, pClipperString, pOperand1, pOperator, pOperand2) CLASS Comp
 
 RETURN SELF
 
-METHOD GetType() CLASS ComposedExpression
+METHOD ComposedExpression:GetType()
 
    LOCAL cOperand1Type
 

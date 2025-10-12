@@ -302,7 +302,7 @@ CLASS SR_WORKAREA
    // METHOD sqlDeleted                   C level implemented - reads from ::aInfo
    // METHOD sqlFieldCount                C level implemented - reads from ::aInfo
    // METHOD sqlFieldDisplay              Superclass does the job
-   // METHOD sqlFieldInfo                 Superclass does the job 
+   // METHOD sqlFieldInfo                 Superclass does the job
    // METHOD sqlFieldName                 Superclass does the job
    METHOD sqlFlush()
    // METHOD sqlGetRec                    Superclass does the job
@@ -330,19 +330,19 @@ CLASS SR_WORKAREA
    // METHOD sqlEval                      Superclass does the job
    METHOD sqlPack()
    // METHOD sqlPackRec                   Superclass does the job
-   // METHOD sqlSort                      Superclass does the job - UNSUPPORTED 
+   // METHOD sqlSort                      Superclass does the job - UNSUPPORTED
    // METHOD sqlTrans                     Superclass does the job
    // METHOD sqlTransRec                  Superclass does the job
    METHOD sqlZap()
    // METHOD sqlChildEnd                  C level implemented
    // METHOD sqlChildStart                C level implemented
    // METHOD sqlChildSync                 C level implemented
-   // METHOD sqlSyncChildren              C level implemented 
-   // METHOD sqlClearRel                  C level implemented 
-   // METHOD sqlForceRel                  C level implemented 
+   // METHOD sqlSyncChildren              C level implemented
+   // METHOD sqlClearRel                  C level implemented
+   // METHOD sqlForceRel                  C level implemented
    // METHOD sqlRelArea                   Superclass does the job
    // METHOD sqlRelEval                   Superclass does the job
-   // METHOD sqlRelText                   Superclass does the job 
+   // METHOD sqlRelText                   Superclass does the job
    // METHOD sqlSetRel                    C level implemented
    METHOD sqlOrderListAdd(cBagName, cTag)
    METHOD sqlOrderListClear()
@@ -402,7 +402,7 @@ ENDCLASS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlSetFilter(cFilter) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlSetFilter(cFilter)
 
    LOCAL cExpr
 #ifdef NG_DEVELOPMENT
@@ -441,7 +441,7 @@ RETURN SQL_ERROR
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlClearFilter() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlClearFilter()
 
    ::cFilter := ""
    ::Refresh()
@@ -450,7 +450,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlFilterText() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlFilterText()
 
    IF ::cFilter == NIL
       RETURN ""
@@ -460,7 +460,7 @@ RETURN ::cFilter
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD GetSelectList() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:GetSelectList()
 
    LOCAL i
    LOCAL nLen := Len(::aFields)
@@ -516,7 +516,7 @@ RETURN cSelectList + " "
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlGetValue(nField) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlGetValue(nField)
 
    LOCAL aRet := {NIL}
    LOCAL lOldIndex
@@ -555,7 +555,7 @@ RETURN aRet[1]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlRecSize() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlRecSize()
 
    LOCAL i := 0
    LOCAL aCol
@@ -568,7 +568,7 @@ RETURN i
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SolveRestrictors() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:SolveRestrictors()
 
    lOCAL cRet := ""
 
@@ -624,7 +624,7 @@ RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD GetSyntheticVirtualExpr(aExpr, cAlias) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:GetSyntheticVirtualExpr(aExpr, cAlias)
 
    LOCAL cRet := ""
    LOCAL cColName
@@ -668,7 +668,7 @@ RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD LoadRegisteredTags() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:LoadRegisteredTags()
 
    LOCAL aInd
    LOCAL cLast := "##"
@@ -989,7 +989,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SetColPK(cColName) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:SetColPK(cColName)
 
    LOCAL nPos := AScan(::aNames, {|x|x == Upper(cColName)})
 
@@ -1002,7 +1002,7 @@ RETURN ::cColPK
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD DisableHistoric() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:DisableHistoric()
 
    LOCAL i
 
@@ -1016,7 +1016,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD EnableHistoric() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:EnableHistoric()
 
    LOCAL i
 
@@ -1030,7 +1030,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD GetNextRecordNumber() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:GetNextRecordNumber()
 
    LOCAL nRet
    LOCAL aRet
@@ -1066,7 +1066,7 @@ RETURN nRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ParseIndexColInfo(cSQL) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
 
    LOCAL i
    LOCAL nLen
@@ -1217,7 +1217,7 @@ RETURN cSql
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlKeyCount(lFilters) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlKeyCount(lFilters)
 
    LOCAL nRet := 0
    LOCAL aRet := {}
@@ -1262,7 +1262,7 @@ RETURN nRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD IncludeAllMethods() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:IncludeAllMethods()
 
    // Any methods referenced by startSQLRDDSymbols() should be added here
 
@@ -1310,7 +1310,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD LockTable(lCheck4ExcLock, lFLock) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
 
    LOCAL lRet := .T.
    LOCAL aVet := {}
@@ -1392,7 +1392,7 @@ RETURN lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD UnlockTable(lClosing) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:UnlockTable(lClosing)
 
    LOCAL lRet := .T.
    LOCAL aVet := {}
@@ -1438,7 +1438,7 @@ RETURN lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD LineCount(lMsg) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:LineCount(lMsg)
 
    LOCAL nRet := 0
    LOCAL aRet := {}
@@ -1492,7 +1492,7 @@ RETURN nRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlOpenAllIndexes() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlOpenAllIndexes()
 
    LOCAL i
    LOCAL aCols
@@ -1654,7 +1654,7 @@ RETURN 0
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD OrderBy(nOrder, lAscend, lRec) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:OrderBy(nOrder, lAscend, lRec)
 
    DEFAULT nOrder TO ::aInfo[AINFO_INDEXORD]
    DEFAULT lRec TO .T.
@@ -1677,7 +1677,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD FirstFetch(nDirection) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:FirstFetch(nDirection)
 
    LOCAL uRecord
    LOCAL nFecth
@@ -1902,7 +1902,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Stabilize() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:Stabilize()
 
    LOCAL nLen
    LOCAL nPos
@@ -1952,7 +1952,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Normalize(nDirection) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:Normalize(nDirection)
 
    LOCAL nRet := 1
 
@@ -1987,7 +1987,7 @@ RETURN nRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SkipRawCache(nToSkip) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:SkipRawCache(nToSkip)
 
    LOCAL nRet := 0
 
@@ -2011,7 +2011,7 @@ RETURN 0
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode)
 
    LOCAL oErr := ErrorNew()
    LOCAL cDescr
@@ -2051,7 +2051,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD CheckCache(oWorkArea) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:CheckCache(oWorkArea)
 
    LOCAL nRecno := ::aLocalBuffer[::hnRecno]
 
@@ -2074,13 +2074,13 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD WhereEqual() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:WhereEqual()
 
 RETURN " WHERE " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " = " + ::Quoted(::aInfo[AINFO_RECNO])
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
 
    LOCAL cType := ValType(uData)
    LOCAL cRet
@@ -2250,7 +2250,7 @@ RETURN ""
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
 
    LOCAL cType := ValType(uData)
    LOCAL cRet
@@ -2463,7 +2463,7 @@ RETURN ""
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD HistExpression(n, cAlias) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:HistExpression(n, cAlias)
 
    // parameter n +- 0 -> (default) active record at current date
    //             |- 1 -> record last version
@@ -2513,7 +2513,7 @@ RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD WriteBuffer(lInsert, aBuffer) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 
    LOCAL cRet := ""
    LOCAL cVal := ""
@@ -3128,13 +3128,13 @@ RETURN .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD lCanICommitNow() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:lCanICommitNow()
 
 RETURN ::oSql:nTransacCount == 0 .AND. ::aInfo[AINFO_SHARED] .AND. Empty(::aLocked)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD UpdateCache(aResultSet) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:UpdateCache(aResultSet)
 
    LOCAL uRecord
    LOCAL uVal
@@ -3174,7 +3174,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Default() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:Default()
 
    IF Len(::aCache) == 0
       ::aInfo[AINFO_BOF] := .T.
@@ -3200,7 +3200,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SolveSQLFilters(cAliasSQL) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:SolveSQLFilters(cAliasSQL)
 
    LOCAL cRet := ""
    LOCAL cFlt
@@ -3234,7 +3234,7 @@ RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Refresh(lGoCold) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:Refresh(lGoCold)
 
    LOCAL i
    LOCAL nMax := 0
@@ -3345,7 +3345,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD GetBuffer(lClean, nCache) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:GetBuffer(lClean, nCache)
 
    DEFAULT lClean TO .F.
    DEFAULT nCache TO ::aInfo[AINFO_NPOSCACHE]
@@ -3398,7 +3398,7 @@ RETURN ::aLocalBuffer
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD IniFields(lReSelect, lLoadCache, aInfo) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
 
    LOCAL cName
    LOCAL n
@@ -3673,7 +3673,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlGoBottom() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlGoBottom()
 
    LOCAL cJoin1
    LOCAL cJoin3
@@ -3757,7 +3757,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlGoCold() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlGoCold()
 
    IF ::aInfo[AINFO_HOT] .AND. IIf(::hnDeleted > 0, .T.,  !::aInfo[AINFO_DELETED])
       ::WriteBuffer(::aInfo[AINFO_ISINSERT], ::aLocalBuffer)
@@ -3767,7 +3767,7 @@ RETURN .F.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlGoTo(uRecord, lNoOptimize) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlGoTo(uRecord, lNoOptimize)
 
    LOCAL nCache
    LOCAL cGoTo
@@ -3860,7 +3860,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlGoTop() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlGoTop()
 
    LOCAL cJoin1
    LOCAL cJoin3
@@ -3945,7 +3945,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlGoPhantom() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlGoPhantom()
 
    ::sqlGoCold()
    ::GetBuffer(.T.)
@@ -3955,7 +3955,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlSeek(uKey, lSoft, lLast) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
    LOCAL nLenKey
    LOCAL cPart
@@ -4675,7 +4675,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-Method ConvType(cData, cType, lPartialSeek, nThis, lLike)
+METHOD SR_WORKAREA:ConvType(cData, cType, lPartialSeek, nThis, lLike)
 
    LOCAL dRet
    LOCAL cD := "19600101"
@@ -8675,7 +8675,7 @@ RETURN -1         // Failure
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlLock(nType, uRecord) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlLock(nType, uRecord)
 
    LOCAL lRet := .T.
    LOCAL aVet := {}
@@ -8864,7 +8864,7 @@ RETURN lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlUnLock(uRecord) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlUnLock(uRecord)
 
    HB_SYMBOL_UNUSED(uRecord)
 
@@ -8887,7 +8887,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlDrop(cFileName) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlDrop(cFileName)
 
    IF SR_ExistTable(cFileName)
       SR_DropTable(cFileName)
@@ -8901,7 +8901,7 @@ RETURN .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlExists(cFileName) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlExists(cFileName)
 
 RETURN SR_File(cFileName)
 
@@ -9014,7 +9014,7 @@ RETURN nRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD WhereMajor() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:WhereMajor()
 
    LOCAL i
    LOCAL cRet := ""
@@ -9091,7 +9091,7 @@ RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD WhereVMajor(cQot) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:WhereVMajor(cQot)
 
    LOCAL cRet := ""
    LOCAL c1 := ""
@@ -9137,7 +9137,7 @@ RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD WherePgsMajor(aQuotedCols, lPartialSeek) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
 
    LOCAL i
    LOCAL aRet := {}
@@ -9247,7 +9247,7 @@ RETURN aRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD WhereMinor() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:WhereMinor()
 
    LOCAL i
    LOCAL cRet := ""
@@ -9324,7 +9324,7 @@ RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD WhereVMinor(cQot) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:WhereVMinor(cQot)
 
    LOCAL cRet := ""
    LOCAL c1 := ""
@@ -9372,7 +9372,7 @@ RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD WherePgsMinor(aQuotedCols) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
 
    LOCAL i
    LOCAL aRet := {}
@@ -9482,7 +9482,7 @@ RETURN aRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes)
 
    LOCAL aInd := NIL
    LOCAL i
@@ -9579,7 +9579,7 @@ RETURN nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO .OR. nRet == SQL_N
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD DropColumn(cColumn, lDisplayErrorMessage, lRemoveFromWA) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:DropColumn(cColumn, lDisplayErrorMessage, lRemoveFromWA)
 
    LOCAL i
    LOCAL nRet := SQL_SUCCESS
@@ -9636,7 +9636,7 @@ RETURN nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO .OR. nRet == SQL_N
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD AlterColumns(aCreate, lDisplayErrorMessage, lBakcup) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
 
    LOCAL lRet := .T.
    LOCAL i
@@ -10073,7 +10073,7 @@ RETURN lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aRemove)
 
    LOCAL lRet := .T.
    LOCAL i
@@ -10464,7 +10464,7 @@ RETURN lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD OrdSetForClause(cFor, cForxBase) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:OrdSetForClause(cFor, cForxBase)
 
    LOCAL i
    LOCAL cOut := ""
@@ -10510,7 +10510,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ParseForClause(cFor) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:ParseForClause(cFor)
 
    LOCAL i
    LOCAL cOut := ""
@@ -10585,7 +10585,7 @@ RETURN cOut
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD HasFilters() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:HasFilters()
 
    IF !Empty(::cFilter) .OR. !Empty(::cFltUsr) .OR. !Empty(::cFor) .OR. !Empty(::cScope) .OR. (::lHistoric .AND. ::lHistEnable)
       RETURN .T.
@@ -10595,7 +10595,7 @@ RETURN .F.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD AddRuleNotNull(cColumn) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
 
    LOCAL lOk := .T.
    LOCAL nCol
@@ -10697,7 +10697,7 @@ RETURN lOk
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD DropRuleNotNull(cColumn) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:DropRuleNotNull(cColumn)
 
    LOCAL lOk := .T.
    LOCAL nCol
@@ -10753,7 +10753,7 @@ RETURN lOk
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD DropConstraint(cTable, cConstraintName, lFKs, cConstrType) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:DropConstraint(cTable, cConstraintName, lFKs, cConstrType)
 
    LOCAL lOk := .T.
    LOCAL cSql
@@ -10850,7 +10850,7 @@ RETURN lOk
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColumns, cConstraintName) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, aTargetColumns, cConstraintName)
 
    LOCAL i
    LOCAL cSql
@@ -11279,7 +11279,7 @@ RETURN IIf(Empty(cMatch), 0, Val(hb_atokens(cMatch, '.')[1]))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD RecnoExpr()
+METHOD SR_WORKAREA:RecnoExpr()
 
    LOCAL cRet := ""
    LOCAL aItem

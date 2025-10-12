@@ -86,7 +86,7 @@ ENDCLASS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Getline(aFields, lTranslate, aArray) CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:Getline(aFields, lTranslate, aArray)
 
    LOCAL i
 
@@ -112,7 +112,7 @@ RETURN aArray
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD FieldGet(nField, aFields, lTranslate) CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:FieldGet(nField, aFields, lTranslate)
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
@@ -124,7 +124,7 @@ RETURN ::aCurrLine[nField]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD FetchRaw(lTranslate, aFields) CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:FetchRaw(lTranslate, aFields)
 
    ::nRetCode := SQL_ERROR
    DEFAULT aFields TO ::aFields
@@ -142,7 +142,7 @@ RETURN ::nRetCode
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD AllocStatement() CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:AllocStatement()
 
    IF ::lSetNext
       IF ::nSetOpt == SQL_ATTR_QUERY_TIMEOUT
@@ -155,7 +155,7 @@ RETURN SQL_SUCCESS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName) CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
 
    LOCAL n
    LOCAL nFields := 0
@@ -252,7 +252,7 @@ RETURN aFields
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD LastError() CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:LastError()
 
    LOCAL cMsgError
    LOCAL nType := 0
@@ -263,8 +263,8 @@ RETURN AllTrim(cMsgError) + " - Native error code " + AllTrim(Str(nType))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
-   nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit) CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+   nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
 
    LOCAL nRet
    LOCAL hEnv
@@ -317,7 +317,7 @@ RETURN SELF
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD End() CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:End()
 
    ::Commit()
    FBClose4(::hEnv)
@@ -326,7 +326,7 @@ RETURN ::Super:End()
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD Commit() CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:Commit()
 
    ::Super:Commit()
    ::nRetCode := FBCOMMITTRANSACTION4(::hEnv)
@@ -335,7 +335,7 @@ RETURN (::nRetCode := FBBeginTransaction4(::hEnv))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD RollBack() CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:RollBack()
 
    ::super:RollBack()
 
@@ -343,7 +343,7 @@ RETURN (::nRetCode := FBRollBackTransaction4(::hEnv))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ExecuteRaw(cCommand) CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:ExecuteRaw(cCommand)
 
    LOCAL nRet
 
@@ -359,7 +359,7 @@ RETURN nRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD MoreResults(aArray, lTranslate) CLASS SR_FIREBIRD4
+METHOD SR_FIREBIRD4:MoreResults(aArray, lTranslate)
 
    LOCAL nRet
    //LOCAL i (variable not used)
