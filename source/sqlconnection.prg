@@ -518,7 +518,7 @@ METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRec
                   ELSE
                      FOR i := 1 TO Len(aFields)
                         DO CASE
-                        CASE i = nFieldRec
+                        CASE i == nFieldRec
                            ::FieldGet(i, aFields, lTranslate)
                         CASE i > nFieldRec
                            FieldPut(i - 1, ::FieldGet(i, aFields, lTranslate))
@@ -590,7 +590,7 @@ METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRec
                //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
 
                IF HB_IsArray(aArray)
-                  IF Len(aArray) = 0
+                  IF Len(aArray) == 0
                      ASize(aArray, ARRAY_BLOCK1)
                      nAllocated := ARRAY_BLOCK1
                   ELSE
@@ -605,7 +605,7 @@ METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRec
                n := 0
                aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
 
-               DO WHILE (::nRetCode := ::Fetch(, lTranslate)) = SQL_SUCCESS
+               DO WHILE (::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS
                   n++
                   IF n > nAllocated
                      SWITCH nAllocated
@@ -1074,7 +1074,7 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
 
          aToken := hb_atokens(aItem, "=")
          cBuff := AllTrim(Upper(aToken[1]))
-         IF Len(aToken) = 1
+         IF Len(aToken) == 1
             AAdd(aToken, "")
          ENDIF
          SWITCH cBuff
@@ -1303,11 +1303,11 @@ METHOD SR_CONNECTION:SQLLen(nType, nLen, nDec)
    CASE SQL_FLOAT
    CASE SQL_REAL
    CASE SQL_DOUBLE
-      IF nLen > 19 .AND. nDec > 10 .AND. !(nLen = 38 .AND. nDec = 0)
+      IF nLen > 19 .AND. nDec > 10 .AND. !(nLen == 38 .AND. nDec == 0)
          nLen := 20
          nDec := 6
       ENDIF
-      IF !(nLen = 38 .AND. nDec = 0)
+      IF !(nLen == 38 .AND. nDec == 0)
          nLen := Min(nLen, 20)
          nLen := Max(nLen, 1)
       ENDIF
