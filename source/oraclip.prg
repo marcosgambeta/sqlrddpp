@@ -1882,8 +1882,7 @@ HB_FUNC(GETORAHANDLE)
 {
   OCI_SESSION *p = (OCI_SESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (p)
-  {
+  if (p) {
     hb_retni(p->stmt);
   }
 }
@@ -1892,8 +1891,7 @@ HB_FUNC(SETORAHANDLE)
 {
   OCI_SESSION *p  = (OCI_SESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
-  if (p)
-  {
+  if (p) {
     p->stmt = hb_parni(2);
   }
 }
