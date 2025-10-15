@@ -49,12 +49,11 @@
 // #include "compat.ch"
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"
+#include "sqlrddpp.ch"
 #include <error.ch>
 #include "msg.ch"
 #include "firebird.ch"
 #include "sqlrddsetup.ch"
-
-#define SR_CRLF   (Chr(13) + Chr(10))
 
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500

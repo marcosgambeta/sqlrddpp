@@ -49,12 +49,11 @@
 // #include "compat.ch"
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"
+#include "sqlrddpp.ch"
 #include <fileio.ch>
 #include "msg.ch"
 #include <error.ch>
 #include "sqlrddsetup.ch"
-
-#define SR_CRLF   (Chr(13) + Chr(10))
 
 REQUEST HB_Deserialize
 //REQUEST HB_DeserialNext
