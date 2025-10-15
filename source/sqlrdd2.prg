@@ -7457,7 +7457,6 @@ METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
    //LOCAL aInd
 
    HB_SYMBOL_UNUSED(cBag)
-   //HB_SYMBOL_UNUSED(uOrder)
 
    IF HB_IsChar(uOrder)      // TAG order
       nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[ORDER_TAG])) == Upper(AllTrim(uOrder))})

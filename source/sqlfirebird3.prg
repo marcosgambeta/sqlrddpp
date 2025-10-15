@@ -169,9 +169,6 @@ METHOD SR_FIREBIRD3:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, c
    LOCAL nRet
    LOCAL aLocalPrecision := {}
 
-   //HB_SYMBOL_UNUSED(aFields)
-   //HB_SYMBOL_UNUSED(cVlr)
-
    DEFAULT lReSelect TO .T.
    DEFAULT lLoadCache TO .F.
    DEFAULT cWhere TO ""
@@ -239,8 +236,6 @@ METHOD SR_FIREBIRD3:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, c
    IF lReSelect .AND. !lLoadCache
       ::FreeStatement()
    ENDIF
-
-   //HB_SYMBOL_UNUSED(_nLen)
 
 RETURN aFields
 

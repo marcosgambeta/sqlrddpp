@@ -179,8 +179,6 @@ METHOD SR_ORACLE:AllocStatement()
 
    LOCAL nRet := 0
 
-   //HB_SYMBOL_UNUSED(hStmtLocal)
-
    ::FreeStatement()
 
    IF ::lSetNext
@@ -209,9 +207,6 @@ METHOD SR_ORACLE:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRec
    LOCAL nLenField
    LOCAL aFields
    LOCAL nRet
-
-   //HB_SYMBOL_UNUSED(aFields)
-   //HB_SYMBOL_UNUSED(cVlr)
 
    DEFAULT lReSelect TO .T.
    DEFAULT lLoadCache TO .F.
@@ -280,9 +275,6 @@ METHOD SR_ORACLE:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRec
       ::FreeStatement()
    ENDIF
 
-   //HB_SYMBOL_UNUSED(_nLen)
-   //HB_SYMBOL_UNUSED(_nDec)
-
 RETURN aFields
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -301,11 +293,6 @@ METHOD SR_ORACLE:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBu
    LOCAL nret
    LOCAL cSystemVers
    LOCAL aRet := {}
-
-   //HB_SYMBOL_UNUSED(hEnv)
-   //HB_SYMBOL_UNUSED(cVersion)
-   //HB_SYMBOL_UNUSED(cSystemVers)
-   //HB_SYMBOL_UNUSED(cBuff)
 
    // parameters not used
    HB_SYMBOL_UNUSED(cDSN)
@@ -482,8 +469,6 @@ METHOD SR_ORACLE:ExecSP(cComm, aReturn, nParam, aType)
    LOCAL n
    LOCAL nError
 
-   //HB_SYMBOL_UNUSED(nError)
-
    DEFAULT aReturn TO {}
    DEFAULT aType TO {}
    DEFAULT nParam TO 1
@@ -551,8 +536,6 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
 
    // parameters not used
    HB_SYMBOL_UNUSED(nlogMode)
-
-   //HB_SYMBOL_UNUSED(ncols)
 
    ::AllocStatement()
 
@@ -762,7 +745,6 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
    ::freestatement()
 
    HB_SYMBOL_UNUSED(aFields)
-   //HB_SYMBOL_UNUSED(nBlocks)
 
 RETURN  0
 
@@ -772,8 +754,6 @@ FUNCTION ExecuteSP(cComm, aReturn)
 
    LOCAL nError
    LOCAL oConn := SR_GetConnection()
-
-   //HB_SYMBOL_UNUSED(nError)
 
    DEFAULT aReturn TO {}
 

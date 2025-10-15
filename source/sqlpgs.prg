@@ -165,14 +165,6 @@ METHOD SR_PGS:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoN
    LOCAL cTbl
    LOCAL cOwner := "public"
 
-   //HB_SYMBOL_UNUSED(nFields)
-   //HB_SYMBOL_UNUSED(nType)
-   //HB_SYMBOL_UNUSED(nLen)
-   //HB_SYMBOL_UNUSED(nNull)
-   //HB_SYMBOL_UNUSED(aFields)
-   //HB_SYMBOL_UNUSED(nDec)
-   //HB_SYMBOL_UNUSED(cVlr)
-
    DEFAULT lReSelect TO .T.
    DEFAULT lLoadCache TO .F.
    DEFAULT cWhere TO ""
@@ -248,12 +240,6 @@ METHOD SR_PGS:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff,
    LOCAL nlen
    LOCAL s_reEnvVar := HB_RegexComp("(\d+\.\d+\.\d+)")
    LOCAL cString
-
-   //HB_SYMBOL_UNUSED(hEnv)
-   //HB_SYMBOL_UNUSED(hDbc)
-   //HB_SYMBOL_UNUSED(cVersion)
-   //HB_SYMBOL_UNUSED(cSystemVers)
-   //HB_SYMBOL_UNUSED(cBuff)
 
    // parameters not used
    HB_SYMBOL_UNUSED(cDSN)

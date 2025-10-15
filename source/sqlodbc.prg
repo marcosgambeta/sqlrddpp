@@ -273,8 +273,6 @@ METHOD SR_ODBC:AllocStatement()
    LOCAL hStmtLocal := NIL
    LOCAL nRet
 
-   //HB_SYMBOL_UNUSED(nRet)
-
    ::FreeStatement()
 
    IF (nRet := SR_AllocSt(::hDbc, @hStmtLocal)) == SQL_SUCCESS
@@ -318,9 +316,6 @@ METHOD SR_ODBC:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecno
    //LOCAL cVlr := "" (variable used in code disabled)
    //LOCAL nBfLn      (variable used in code disabled)
    //LOCAL nOut       (variable used in code disabled)
-
-   //HB_SYMBOL_UNUSED(aFields)
-   //HB_SYMBOL_UNUSED(cVlr)
 
    DEFAULT lReSelect TO .T.
    DEFAULT lLoadCache TO .F.
@@ -416,8 +411,6 @@ METHOD SR_ODBC:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecno
       ::FreeStatement()
    ENDIF
 
-   //HB_SYMBOL_UNUSED(_nLen)
-
 RETURN aFields
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -443,9 +436,6 @@ METHOD SR_ODBC:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff
    LOCAL nret
    LOCAL cSystemVers := ""
    LOCAL aRet := {}
-
-   //HB_SYMBOL_UNUSED(cVersion)
-   //HB_SYMBOL_UNUSED(cBuff)
 
    // parameters not used
    HB_SYMBOL_UNUSED(cDSN)

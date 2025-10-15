@@ -169,13 +169,6 @@ METHOD SR_MYSQL:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecn
    LOCAL nRet
    LOCAL aFld
 
-   //HB_SYMBOL_UNUSED(nType)
-   //HB_SYMBOL_UNUSED(nLen)
-   //HB_SYMBOL_UNUSED(nNull)
-   //HB_SYMBOL_UNUSED(aFields)
-   //HB_SYMBOL_UNUSED(nDec)
-   //HB_SYMBOL_UNUSED(cVlr)
-
    DEFAULT lReSelect TO .T.
    DEFAULT lLoadCache TO .F.
    DEFAULT cWhere TO ""
@@ -241,12 +234,6 @@ METHOD SR_MYSQL:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuf
    LOCAL nret
    LOCAL cSystemVers
    LOCAL nVersionp
-
-   //HB_SYMBOL_UNUSED(hEnv)
-   //HB_SYMBOL_UNUSED(hDbc)
-   //HB_SYMBOL_UNUSED(cVersion)
-   //HB_SYMBOL_UNUSED(cSystemVers)
-   //HB_SYMBOL_UNUSED(cBuff)
 
    // parameters not used
    HB_SYMBOL_UNUSED(cDSN)
