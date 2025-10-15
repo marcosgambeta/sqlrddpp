@@ -170,7 +170,6 @@ METHOD SR_FIREBIRD4:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, c
    LOCAL aFields
    LOCAL nDec := 0
    LOCAL nRet
-   //LOCAL cVlr := "" (variable not used)
    LOCAL aLocalPrecision := {}
 
    //HB_SYMBOL_UNUSED(aFields)
@@ -360,11 +359,8 @@ RETURN nRet
 METHOD SR_FIREBIRD4:MoreResults(aArray, lTranslate)
 
    LOCAL nRet
-   //LOCAL i (variable not used)
    LOCAL n
    LOCAL nvalue := -1
-
-   //STATIC aFieldsMore (variable not used)
 
    DEFAULT lTranslate TO .T.
 

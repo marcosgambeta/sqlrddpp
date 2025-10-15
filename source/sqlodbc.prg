@@ -441,9 +441,7 @@ METHOD SR_ODBC:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff
    LOCAL hEnv := NIL
    LOCAL hDbc := NIL
    LOCAL nret
-   //LOCAL cVersion := "" (variable not used)
    LOCAL cSystemVers := ""
-   //LOCAL cBuff := "" (variable not used)
    LOCAL aRet := {}
 
    //HB_SYMBOL_UNUSED(cVersion)

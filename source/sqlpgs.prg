@@ -160,13 +160,8 @@ RETURN NIL
 METHOD SR_PGS:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
 
    LOCAL nFields
-   //LOCAL nType := 0 (variable not used)
-   //LOCAL nLen := 0 (variable not used)
-   //LOCAL nNull := 0 (variable not used)
    LOCAL aFields
-   //LOCAL nDec := 0 (variable not used)
    LOCAL nRet
-   //LOCAL cVlr := "" (variable not used)
    LOCAL cTbl
    LOCAL cOwner := "public"
 
@@ -243,12 +238,9 @@ RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + PGSErrMsg(::hDbc)
 METHOD SR_PGS:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
    nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
 
-   //LOCAL hEnv := 0 (variable not used)
    LOCAL hDbc
    LOCAL nret
-   //LOCAL cVersion := "" (variable not used)
    LOCAL cSystemVers
-   //LOCAL cBuff := "" (variable not used)
    LOCAL aRet := {}
    LOCAL aVersion
    LOCAL cmatch

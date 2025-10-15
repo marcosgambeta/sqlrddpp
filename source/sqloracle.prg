@@ -177,7 +177,6 @@ RETURN NIL
 
 METHOD SR_ORACLE:AllocStatement()
 
-   //LOCAL hStmtLocal := 0 (variable not used)
    LOCAL nRet := 0
 
    //HB_SYMBOL_UNUSED(hStmtLocal)
@@ -210,7 +209,6 @@ METHOD SR_ORACLE:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRec
    LOCAL nLenField
    LOCAL aFields
    LOCAL nRet
-   //LOCAL cVlr := "" (variable not used)
 
    //HB_SYMBOL_UNUSED(aFields)
    //HB_SYMBOL_UNUSED(cVlr)
@@ -299,12 +297,9 @@ RETURN SQLO_GETERRORDESCR(::hDBC) + " retcode: " + sr_val2Char(::nRetCode) + " -
 METHOD SR_ORACLE:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
    nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
 
-   //LOCAL hEnv := 0 (variable not used)
    LOCAL hDbc := 0
    LOCAL nret
-   //LOCAL cVersion := "" (variable not used)
    LOCAL cSystemVers
-   //LOCAL cBuff := "" (variable not used)
    LOCAL aRet := {}
 
    //HB_SYMBOL_UNUSED(hEnv)

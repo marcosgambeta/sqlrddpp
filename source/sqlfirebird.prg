@@ -166,7 +166,6 @@ METHOD SR_FIREBIRD:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cR
    LOCAL aFields
    LOCAL nDec := 0
    LOCAL nRet
-   //LOCAL cVlr := "" (variable not used)
    LOCAL aLocalPrecision := {}
 
    //HB_SYMBOL_UNUSED(aFields)

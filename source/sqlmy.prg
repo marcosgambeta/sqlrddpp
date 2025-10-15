@@ -165,13 +165,8 @@ RETURN NIL
 
 METHOD SR_MYSQL:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
 
-   //LOCAL nType := 0 (variable not used)
-   //LOCAL nLen := 0 (variable not used)
-   //LOCAL nNull := 0 (variable not used)
    LOCAL aFields
-   //LOCAL nDec := 0 (variable not used)
    LOCAL nRet
-   //LOCAL cVlr := "" (variable not used)
    LOCAL aFld
 
    //HB_SYMBOL_UNUSED(nType)
@@ -242,12 +237,9 @@ RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + MYSErrMsg(::hDbc)
 METHOD SR_MYSQL:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
    nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
 
-   //LOCAL hEnv := 0 (variable not used)
    LOCAL hDbc
    LOCAL nret
-   //LOCAL cVersion := "" (variable not used)
    LOCAL cSystemVers
-   //LOCAL cBuff := "" (variable not used)
    LOCAL nVersionp
 
    //HB_SYMBOL_UNUSED(hEnv)
