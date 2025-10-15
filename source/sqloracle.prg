@@ -208,7 +208,7 @@ METHOD SR_ORACLE:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRec
    //LOCAL _nDec
    LOCAL cType
    LOCAL nLenField
-   LOCAL aFields //:= {} (value not used)
+   LOCAL aFields
    LOCAL nRet
    //LOCAL cVlr := "" (variable not used)
 
@@ -253,8 +253,6 @@ METHOD SR_ORACLE:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRec
         RETURN NIL
       ENDIF
 
-      //_nLen := nLen (value not used)
-      //_nDec := nDec (value not used)
       cName := Upper(AllTrim(cName))
 
       IF (nLen == 2000 .OR. nLen == 4000) .AND. SR_SetNwgCompat()
@@ -305,7 +303,7 @@ METHOD SR_ORACLE:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBu
    LOCAL hDbc := 0
    LOCAL nret
    //LOCAL cVersion := "" (variable not used)
-   LOCAL cSystemVers //:= "" (value not used)
+   LOCAL cSystemVers
    //LOCAL cBuff := "" (variable not used)
    LOCAL aRet := {}
 
@@ -487,7 +485,7 @@ METHOD SR_ORACLE:ExecSP(cComm, aReturn, nParam, aType)
 
    LOCAL i
    LOCAL n
-   LOCAL nError //:= 0 (value not used)
+   LOCAL nError
 
    //HB_SYMBOL_UNUSED(nError)
 
@@ -720,7 +718,6 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
             nAllocated := ARRAY_BLOCK1
          ENDIF
 
-         //nBlocks := 1 (value not used)
          n := 0
          aFields := ::IniFields(.F., , , , , cRecnoName, cDeletedName)
 
@@ -778,7 +775,7 @@ RETURN  0
 
 FUNCTION ExecuteSP(cComm, aReturn)
 
-   LOCAL nError //:= 0 (value not used)
+   LOCAL nError
    LOCAL oConn := SR_GetConnection()
 
    //HB_SYMBOL_UNUSED(nError)

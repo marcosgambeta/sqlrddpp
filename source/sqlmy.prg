@@ -168,7 +168,7 @@ METHOD SR_MYSQL:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecn
    //LOCAL nType := 0 (variable not used)
    //LOCAL nLen := 0 (variable not used)
    //LOCAL nNull := 0 (variable not used)
-   LOCAL aFields //:= {} (value not used)
+   LOCAL aFields
    //LOCAL nDec := 0 (variable not used)
    LOCAL nRet
    //LOCAL cVlr := "" (variable not used)
@@ -243,10 +243,10 @@ METHOD SR_MYSQL:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuf
    nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
 
    //LOCAL hEnv := 0 (variable not used)
-   LOCAL hDbc //:= 0 (value not used)
+   LOCAL hDbc
    LOCAL nret
    //LOCAL cVersion := "" (variable not used)
-   LOCAL cSystemVers //:= "" (value not used)
+   LOCAL cSystemVers
    //LOCAL cBuff := "" (variable not used)
    LOCAL nVersionp
 
@@ -278,7 +278,6 @@ METHOD SR_MYSQL:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuf
       ::nRetCode := nRet
       ::nSystemID := 0
       SR_MsgLogFile("Connection Error")
-      //nVersionp := MINIMAL_MYSQL_SUPPORTED - 100 (value not used)
       RETURN SELF
    ENDIF
 

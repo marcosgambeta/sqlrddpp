@@ -271,7 +271,7 @@ RETURN NIL
 METHOD SR_ODBC:AllocStatement()
 
    LOCAL hStmtLocal := NIL
-   LOCAL nRet //:= 0 (value not used)
+   LOCAL nRet
 
    //HB_SYMBOL_UNUSED(nRet)
 
@@ -311,7 +311,7 @@ METHOD SR_ODBC:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecno
    LOCAL cType
    LOCAL nLenField
    LOCAL nNameLen
-   LOCAL aFields //:= {} (value not used)
+   LOCAL aFields
    LOCAL nDec := 0
    LOCAL nSoma
    LOCAL nRet
@@ -362,7 +362,6 @@ METHOD SR_ODBC:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecno
             "Last command sent to database : " + ::cLastComm)
          RETURN NIL
       ELSE
-         //_nLen := nLen (value not used)
          _nDec := nDec
          IF (nType == SQL_DOUBLE .OR. nType == SQL_FLOAT) .AND. nDec == 0
             nDec := 6

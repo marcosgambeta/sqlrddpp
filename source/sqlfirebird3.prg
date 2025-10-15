@@ -164,7 +164,7 @@ METHOD SR_FIREBIRD3:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, c
    LOCAL nPos
    LOCAL cType
    LOCAL nLenField
-   LOCAL aFields //:= {} (value not used)
+   LOCAL aFields
    LOCAL nDec := 0
    LOCAL nRet
    //LOCAL cVlr := "" (variable not used)
@@ -215,7 +215,6 @@ METHOD SR_FIREBIRD3:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, c
          RETURN NIL
       ENDIF
 
-      //_nLen := nLen (value not used)
       _nDec := nDec
 
       cName := Upper(AllTrim(cName))

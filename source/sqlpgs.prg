@@ -159,11 +159,11 @@ RETURN NIL
 
 METHOD SR_PGS:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
 
-   LOCAL nFields //:= 0 (value not used)
+   LOCAL nFields
    //LOCAL nType := 0 (variable not used)
    //LOCAL nLen := 0 (variable not used)
    //LOCAL nNull := 0 (variable not used)
-   LOCAL aFields //:= {} (value not used)
+   LOCAL aFields
    //LOCAL nDec := 0 (variable not used)
    LOCAL nRet
    //LOCAL cVlr := "" (variable not used)
@@ -244,10 +244,10 @@ METHOD SR_PGS:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff,
    nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
 
    //LOCAL hEnv := 0 (variable not used)
-   LOCAL hDbc //:= 0 (value not used)
+   LOCAL hDbc
    LOCAL nret
    //LOCAL cVersion := "" (variable not used)
-   LOCAL cSystemVers //:= "" (value not used)
+   LOCAL cSystemVers
    //LOCAL cBuff := "" (variable not used)
    LOCAL aRet := {}
    LOCAL aVersion
