@@ -23,7 +23,7 @@ PROCEDURE Main()
    LOCAL oTB
    LOCAL nKey
 
-   setMode(25, 80)
+   SetMode(25, maxcol() + 1)
 
    rddSetDefault("SQLRDD")
 

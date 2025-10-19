@@ -21,7 +21,7 @@ PROCEDURE Main()
    LOCAL n
    LOCAL cQuery
 
-   setMode(25, 80)
+   SetMode(25, maxcol() + 1)
 
    rddSetDefault("SQLRDD")
 

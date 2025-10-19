@@ -26,7 +26,7 @@ PROCEDURE Main()
    LOCAL nConnection
    LOCAL n
 
-   setMode(25, 80)
+   SetMode(25, maxcol() + 1)
 
    rddSetDefault(RDD_NAME)
 
