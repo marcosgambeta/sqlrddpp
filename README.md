@@ -44,9 +44,6 @@ SQLRDD for Harbour++ and Harbour
 | Harbour     | Clang            | 32-bit        | Compiling with warnings | ...                 |
 | Harbour     | Clang            | 64-bit        | Compiling with warnings | ...                 |
 | Harbour     | BCC 5.8.2        | 32-bit        | Compiling with warnings | -aflag=/P64         |
-
-| Project     | C/C++ compiler   | 32-bit/64-bit | Status                  | Extra parameters    |
-| ---------   | ---------------- | ------------- | ----------------------- | ------------------- |
 | Harbour 3.4 | MinGW            | 32-bit        | ...                     | ...                 |
 | Harbour 3.4 | MinGW            | 64-bit        | ...                     | ...                 |
 | Harbour 3.4 | MSVC             | 32-bit        | ...                     | ...                 |
@@ -55,9 +52,6 @@ SQLRDD for Harbour++ and Harbour
 | Harbour 3.4 | Clang            | 64-bit        | ...                     | ...                 |
 | Harbour 3.4 | BCC 7.3          | 32-bit        | ...                     | ...                 |
 | Harbour 3.4 | BCC 7.3          | 64-bit        | ...                     | ...                 |
-
-| Project     | C++ compiler     | 32-bit/64-bit | Status                  | Extra parameters    |
-| ---------   | ---------------- | ------------- | ----------------------- | ------------------- |
 | Harbour++   | MinGW            | 32-bit        | Compiling with warnings | ...                 |
 | Harbour++   | MinGW            | 64-bit        | Compiling with warnings | ...                 |
 | Harbour++   | MSVC             | 32-bit        | ...                     | ...                 |
