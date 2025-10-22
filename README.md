@@ -31,35 +31,41 @@ SQLRDD for Harbour++ and Harbour
 
 ## C/C++ Compilers Compatibility
 
-| Project     | C/C++ compiler   | Status                  | Extra parameters    |
-| ---------   | ---------------- | ----------------------- | ------------------- |
-| Harbour     | MinGW 32-bit     | Compiling with warnings | ...                 |
-| Harbour     | MinGW 64-bit     | Compiling with warnings | ...                 |
-| Harbour     | MSVC 2019 32-bit | Compiling with warnings | ...                 |
-| Harbour     | MSVC 2019 64-bit | Compiling with warnings | ...                 |
-| Harbour     | MSVC 2022 32-bit | Compiling with warnings | ...                 |
-| Harbour     | MSVC 2022 64-bit | Compiling with warnings | ...                 |
-| Harbour     | MSVC 2026 32-bit | Compiling with warnings | ...                 |
-| Harbour     | MSVC 2026 64-bit | Compiling with warnings | ...                 |
-| Harbour     | Clang 32-bit     | Compiling with warnings | ...                 |
-| Harbour     | Clang 64-bit     | Compiling with warnings | ...                 |
-| Harbour     | BCC 5.8.2 32-bit | Compiling with warnings | -aflag=/P64         |
-| Harbour 3.4 | MinGW 32-bit     | ...                     | ...                 |
-| Harbour 3.4 | MinGW 64-bit     | ...                     | ...                 |
-| Harbour 3.4 | MSVC 32-bit      | ...                     | ...                 |
-| Harbour 3.4 | MSVC 64-bit      | ...                     | ...                 |
-| Harbour 3.4 | Clang 32-bit     | Compiling with warnings | ...                 |
-| Harbour 3.4 | Clang 64-bit     | ...                     | ...                 |
-| Harbour 3.4 | BCC 7.3 32-bit   | ...                     | ...                 |
-| Harbour 3.4 | BCC 7.3 64-bit   | ...                     | ...                 |
-| Harbour++   | MinGW 32-bit     | Compiling with warnings | ...                 |
-| Harbour++   | MinGW 64-bit     | Compiling with warnings | ...                 |
-| Harbour++   | MSVC 32-bit      | ...                     | ...                 |
-| Harbour++   | MSVC 64-bit      | ...                     | ...                 |
-| Harbour++   | Clang 32-bit     | Compiling with warnings | ...                 |
-| Harbour++   | Clang 64-bit     | Compiling with warnings | ...                 |
-| Harbour++   | BCC 7.3 32-bit   | ...                     | ...                 |
-| Harbour++   | BCC 7.3 64-bit   | ...                     | ...                 |
+| Project     | C/C++ compiler   | 32-bit/64-bit | Status                  | Extra parameters    |
+| ---------   | ---------------- | ------------- | ----------------------- | ------------------- |
+| Harbour     | MinGW            | 32-bit        | Compiling with warnings | ...                 |
+| Harbour     | MinGW            | 64-bit        | Compiling with warnings | ...                 |
+| Harbour     | MSVC 2019        | 32-bit        | Compiling with warnings | ...                 |
+| Harbour     | MSVC 2019        | 64-bit        | Compiling with warnings | ...                 |
+| Harbour     | MSVC 2022        | 32-bit        | Compiling with warnings | ...                 |
+| Harbour     | MSVC 2022        | 64-bit        | Compiling with warnings | ...                 |
+| Harbour     | MSVC 2026        | 32-bit        | Compiling with warnings | ...                 |
+| Harbour     | MSVC 2026        | 64-bit        | Compiling with warnings | ...                 |
+| Harbour     | Clang            | 32-bit        | Compiling with warnings | ...                 |
+| Harbour     | Clang            | 64-bit        | Compiling with warnings | ...                 |
+| Harbour     | BCC 5.8.2        | 32-bit        | Compiling with warnings | -aflag=/P64         |
+
+| Project     | C/C++ compiler   | 32-bit/64-bit | Status                  | Extra parameters    |
+| ---------   | ---------------- | ------------- | ----------------------- | ------------------- |
+| Harbour 3.4 | MinGW            | 32-bit        | ...                     | ...                 |
+| Harbour 3.4 | MinGW            | 64-bit        | ...                     | ...                 |
+| Harbour 3.4 | MSVC             | 32-bit        | ...                     | ...                 |
+| Harbour 3.4 | MSVC             | 64-bit        | ...                     | ...                 |
+| Harbour 3.4 | Clang            | 32-bit        | Compiling with warnings | ...                 |
+| Harbour 3.4 | Clang            | 64-bit        | ...                     | ...                 |
+| Harbour 3.4 | BCC 7.3          | 32-bit        | ...                     | ...                 |
+| Harbour 3.4 | BCC 7.3          | 64-bit        | ...                     | ...                 |
+
+| Project     | C++ compiler     | 32-bit/64-bit | Status                  | Extra parameters    |
+| ---------   | ---------------- | ------------- | ----------------------- | ------------------- |
+| Harbour++   | MinGW            | 32-bit        | Compiling with warnings | ...                 |
+| Harbour++   | MinGW            | 64-bit        | Compiling with warnings | ...                 |
+| Harbour++   | MSVC             | 32-bit        | ...                     | ...                 |
+| Harbour++   | MSVC             | 64-bit        | ...                     | ...                 |
+| Harbour++   | Clang            | 32-bit        | Compiling with warnings | ...                 |
+| Harbour++   | Clang            | 64-bit        | Compiling with warnings | ...                 |
+| Harbour++   | BCC 7.3          | 32-bit        | ...                     | ...                 |
+| Harbour++   | BCC 7.3          | 64-bit        | ...                     | ...                 |
 
 ## Building
 
