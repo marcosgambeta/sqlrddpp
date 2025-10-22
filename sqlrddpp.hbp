@@ -41,7 +41,7 @@ source/txml.prg
 #source/sql.y
 source/sqly.c
 
-source/compat.c
+source/tracelog.c
 source/firebird.c
 source/firebird3.c
 source/firebird4.c
