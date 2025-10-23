@@ -2,7 +2,7 @@
 
 SQLRDD para Harbour e Harbour++
 
-## SGBS suportados
+## SGBD suportados
 
 | SGBD                   | Versão  | Status         |
 | ---------------------- | ------- | -------------- |
