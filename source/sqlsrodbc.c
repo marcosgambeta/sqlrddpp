@@ -84,7 +84,6 @@ typedef unsigned char SQLTCHAR;
 #define ORD_DIR_BWD 2
 
 #define AINFO_NPOSCACHE 20
-#define SYSTEMID_ORACLE 1
 
 #ifndef HB_OS_WIN_32
 #ifndef SQL_GUID
