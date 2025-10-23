@@ -555,38 +555,38 @@ HB_FUNC(SR_ESCAPESTRING)
     ToBuffer = (char *)hb_xgrab((iSize * 2) + 1);
     if (ToBuffer) {
       switch (idatabase) {
-      case SYSTEMID_MYSQL:
-      case SYSTEMID_MARIADB: {
+      case SQLRDD_RDBMS_MYSQL:
+      case SQLRDD_RDBMS_MARIADB: {
         iSize = escape_mysql(ToBuffer, FromBuffer, iSize);
         break;
       }
-      case SYSTEMID_FIREBR:
-      case SYSTEMID_FIREBR3:
-      case SYSTEMID_FIREBR4:
-      case SYSTEMID_FIREBR5: {
+      case SQLRDD_RDBMS_FIREBR:
+      case SQLRDD_RDBMS_FIREBR3:
+      case SQLRDD_RDBMS_FIREBR4:
+      case SQLRDD_RDBMS_FIREBR5: {
         iSize = escape_firebird(ToBuffer, FromBuffer, iSize);
         break;
       }
-      case SYSTEMID_ORACLE:
-      case SYSTEMID_CACHE: {
+      case SQLRDD_RDBMS_ORACLE:
+      case SQLRDD_RDBMS_CACHE: {
         iSize = escape_oci(ToBuffer, FromBuffer, iSize);
         break;
       }
-      case SYSTEMID_MSSQL7:
-      case SYSTEMID_INGRES:
-      case SYSTEMID_SYBASE:
-      case SYSTEMID_ADABAS:
-      case SYSTEMID_INFORM:
-      case SYSTEMID_OTERRO:
-      case SYSTEMID_PERVASIVE: {
+      case SQLRDD_RDBMS_MSSQL7:
+      case SQLRDD_RDBMS_INGRES:
+      case SQLRDD_RDBMS_SYBASE:
+      case SQLRDD_RDBMS_ADABAS:
+      case SQLRDD_RDBMS_INFORM:
+      case SQLRDD_RDBMS_OTERRO:
+      case SQLRDD_RDBMS_PERVASIVE: {
         iSize = escape_single(ToBuffer, FromBuffer, iSize);
         break;
       }
-      case SYSTEMID_POSTGR: {
+      case SQLRDD_RDBMS_POSTGR: {
         iSize = escape_pgs(ToBuffer, FromBuffer, iSize);
         break;
       }
-      case SYSTEMID_IBMDB2: {
+      case SQLRDD_RDBMS_IBMDB2: {
         iSize = escape_db2(ToBuffer, FromBuffer, iSize);
         break; // TODO: unnecessary break
       }
@@ -608,38 +608,38 @@ char *QuoteTrimEscapeString(const char *FromBuffer, HB_SIZE iSize, int idatabase
   ToBuffer++;
 
   switch (idatabase) {
-  case SYSTEMID_MYSQL:
-  case SYSTEMID_MARIADB: {
+  case SQLRDD_RDBMS_MYSQL:
+  case SQLRDD_RDBMS_MARIADB: {
     iSize = escape_mysql(ToBuffer, FromBuffer, iSize);
     break;
   }
-  case SYSTEMID_FIREBR:
-  case SYSTEMID_FIREBR3:
-  case SYSTEMID_FIREBR4:
-  case SYSTEMID_FIREBR5: {
+  case SQLRDD_RDBMS_FIREBR:
+  case SQLRDD_RDBMS_FIREBR3:
+  case SQLRDD_RDBMS_FIREBR4:
+  case SQLRDD_RDBMS_FIREBR5: {
     iSize = escape_firebird(ToBuffer, FromBuffer, iSize);
     break;
   }
-  case SYSTEMID_ORACLE:
-  case SYSTEMID_CACHE: {
+  case SQLRDD_RDBMS_ORACLE:
+  case SQLRDD_RDBMS_CACHE: {
     iSize = escape_oci(ToBuffer, FromBuffer, iSize);
     break;
   }
-  case SYSTEMID_MSSQL7:
-  case SYSTEMID_INGRES:
-  case SYSTEMID_SYBASE:
-  case SYSTEMID_ADABAS:
-  case SYSTEMID_INFORM:
-  case SYSTEMID_OTERRO:
-  case SYSTEMID_PERVASIVE: {
+  case SQLRDD_RDBMS_MSSQL7:
+  case SQLRDD_RDBMS_INGRES:
+  case SQLRDD_RDBMS_SYBASE:
+  case SQLRDD_RDBMS_ADABAS:
+  case SQLRDD_RDBMS_INFORM:
+  case SQLRDD_RDBMS_OTERRO:
+  case SQLRDD_RDBMS_PERVASIVE: {
     iSize = escape_single(ToBuffer, FromBuffer, iSize);
     break;
   }
-  case SYSTEMID_POSTGR: {
+  case SQLRDD_RDBMS_POSTGR: {
     iSize = escape_pgs(ToBuffer, FromBuffer, iSize);
     break;
   }
-  case SYSTEMID_IBMDB2: {
+  case SQLRDD_RDBMS_IBMDB2: {
     iSize = escape_db2(ToBuffer, FromBuffer, iSize);
     break; // TODO: unnecessary break
   }
@@ -898,13 +898,13 @@ HB_FUNC(SR_DBQUALIFY)
     // Others, doesn't matter column case
 
     switch (ulDb) {
-    case SYSTEMID_ORACLE:
-    case SYSTEMID_FIREBR:
-    case SYSTEMID_FIREBR3:
-    case SYSTEMID_FIREBR4:
-    case SYSTEMID_FIREBR5:
-    case SYSTEMID_IBMDB2:
-    case SYSTEMID_ADABAS: {
+    case SQLRDD_RDBMS_ORACLE:
+    case SQLRDD_RDBMS_FIREBR:
+    case SQLRDD_RDBMS_FIREBR3:
+    case SQLRDD_RDBMS_FIREBR4:
+    case SQLRDD_RDBMS_FIREBR5:
+    case SQLRDD_RDBMS_IBMDB2:
+    case SQLRDD_RDBMS_ADABAS: {
       szOut[0] = '"';
       for (i = 0; i < ulLen; i++) {
         szOut[i + 1] = (char)toupper((HB_BYTE)pszBuffer[i]);
@@ -912,8 +912,8 @@ HB_FUNC(SR_DBQUALIFY)
       szOut[i + 1] = '"';
       break;
     }
-    case SYSTEMID_INGRES:
-    case SYSTEMID_POSTGR: {
+    case SQLRDD_RDBMS_INGRES:
+    case SQLRDD_RDBMS_POSTGR: {
       szOut[0] = '"';
       for (i = 0; i < ulLen; i++) {
         szOut[i + 1] = (char)tolower((HB_BYTE)pszBuffer[i]);
@@ -921,7 +921,7 @@ HB_FUNC(SR_DBQUALIFY)
       szOut[i + 1] = '"';
       break;
     }
-    case SYSTEMID_MSSQL7: {
+    case SQLRDD_RDBMS_MSSQL7: {
       szOut[0] = '[';
       for (i = 0; i < ulLen; i++) {
         szOut[i + 1] = (HB_BYTE)pszBuffer[i];
@@ -929,9 +929,9 @@ HB_FUNC(SR_DBQUALIFY)
       szOut[i + 1] = ']';
       break;
     }
-    case SYSTEMID_MYSQL:
-    case SYSTEMID_OTERRO:
-    case SYSTEMID_MARIADB: {
+    case SQLRDD_RDBMS_MYSQL:
+    case SQLRDD_RDBMS_OTERRO:
+    case SQLRDD_RDBMS_MARIADB: {
       szOut[0] = '`';
       for (i = 0; i < ulLen; i++) {
         szOut[i + 1] = (char)tolower((HB_BYTE)pszBuffer[i]);
@@ -939,7 +939,7 @@ HB_FUNC(SR_DBQUALIFY)
       szOut[i + 1] = '`';
       break;
     }
-    case SYSTEMID_INFORM: {
+    case SQLRDD_RDBMS_INFORM: {
       for (i = 0; i < ulLen; i++) {
         szOut[i] = (char)tolower((HB_BYTE)pszBuffer[i]);
       }
@@ -1055,8 +1055,8 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
   *bNullArgument = HB_FALSE;
 
   if (SR_itemEmpty(pFieldData) && (!(HB_IS_ARRAY(pFieldData) || HB_IS_OBJECT(pFieldData) || HB_IS_HASH(pFieldData))) &&
-      (((nSystemID == SYSTEMID_POSTGR) && HB_IS_DATE(pFieldData)) ||
-       ((nSystemID != SYSTEMID_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
+      (((nSystemID == SQLRDD_RDBMS_POSTGR) && HB_IS_DATE(pFieldData)) ||
+       ((nSystemID != SQLRDD_RDBMS_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
     if (bNullable || HB_IS_DATE(pFieldData)) {
       sValue = (char *)hb_xgrab(5);
       sValue[0] = 'N';
@@ -1133,7 +1133,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
       hb_dateDecStr(sDate, hb_itemGetDL(pFieldData));
       sValue = (char *) hb_xgrab(30);
       switch( nSystemID ) {
-         case SYSTEMID_ORACLE: {
+         case SQLRDD_RDBMS_ORACLE: {
             if( !bMemo ) {
                sprintf(sValue, "TO_DATE(\'%s\',\'YYYYMMDD\')", sDate);
                return sValue;
@@ -1149,13 +1149,13 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
    } else if( HB_IS_LOGICAL(pFieldData) ) {
       sValue = (char *) hb_xgrab(6);
       if( hb_itemGetL(pFieldData) ) {
-         if( nSystemID == SYSTEMID_POSTGR ) {
+         if( nSystemID == SQLRDD_RDBMS_POSTGR ) {
             sValue[0] = 't';
             sValue[1] = 'r';
             sValue[2] = 'u';
             sValue[3] = 'e';
             sValue[4] = '\0';
-         } else if( nSystemID == SYSTEMID_INFORM ) {
+         } else if( nSystemID == SQLRDD_RDBMS_INFORM ) {
             sValue[0] = '\'';
             sValue[1] = 't';
             sValue[2] = '\'';
@@ -1165,14 +1165,14 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
             sValue[1] = '\0';
          }
       } else {
-         if( nSystemID == SYSTEMID_POSTGR ) {
+         if( nSystemID == SQLRDD_RDBMS_POSTGR ) {
             sValue[0] = 'f';
             sValue[1] = 'a';
             sValue[2] = 'l';
             sValue[3] = 's';
             sValue[4] = 'e';
             sValue[5] = '\0';
-         } else if( nSystemID == SYSTEMID_INFORM ) {
+         } else if( nSystemID == SQLRDD_RDBMS_INFORM ) {
             sValue[0] = '\'';
             sValue[1] = 'f';
             sValue[2] = '\'';
@@ -1212,7 +1212,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
     hb_dateDecStr(sDate, hb_itemGetDL(pFieldData));
     sValue = (char *)hb_xgrab(30);
     switch (nSystemID) {
-    case SYSTEMID_ORACLE: {
+    case SQLRDD_RDBMS_ORACLE: {
       if (!bMemo) {
         sprintf(sValue, "TO_DATE(\'%s\',\'YYYYMMDD\')", sDate);
         return sValue;
@@ -1231,7 +1231,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
     sValue = (char *)hb_xgrab(6);
     if (hb_itemGetL(pFieldData)) {
       switch (nSystemID) {
-      case SYSTEMID_POSTGR: {
+      case SQLRDD_RDBMS_POSTGR: {
         sValue[0] = 't';
         sValue[1] = 'r';
         sValue[2] = 'u';
@@ -1239,7 +1239,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
         sValue[4] = '\0';
         break;
       }
-      case SYSTEMID_INFORM: {
+      case SQLRDD_RDBMS_INFORM: {
         sValue[0] = '\'';
         sValue[1] = 't';
         sValue[2] = '\'';
@@ -1253,7 +1253,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
       }
     } else {
       switch (nSystemID) {
-      case SYSTEMID_POSTGR: {
+      case SQLRDD_RDBMS_POSTGR: {
         sValue[0] = 'f';
         sValue[1] = 'a';
         sValue[2] = 'l';
@@ -1262,7 +1262,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
         sValue[5] = '\0';
         break;
       }
-      case SYSTEMID_INFORM: {
+      case SQLRDD_RDBMS_INFORM: {
         sValue[0] = '\'';
         sValue[1] = 'f';
         sValue[2] = '\'';

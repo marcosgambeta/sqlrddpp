@@ -95,23 +95,23 @@ char *QualifyName(char *szName, SQLEXAREAP thiswa)
       break;
     }
     switch (thiswa->nSystemID) {
-    case SYSTEMID_MSSQL7:
-    case SYSTEMID_ORACLE:
-    case SYSTEMID_FIREBR:
-    case SYSTEMID_FIREBR3:
-    case SYSTEMID_FIREBR4:
-    case SYSTEMID_FIREBR5:
-    case SYSTEMID_IBMDB2:
-    case SYSTEMID_ADABAS: {
+    case SQLRDD_RDBMS_MSSQL7:
+    case SQLRDD_RDBMS_ORACLE:
+    case SQLRDD_RDBMS_FIREBR:
+    case SQLRDD_RDBMS_FIREBR3:
+    case SQLRDD_RDBMS_FIREBR4:
+    case SQLRDD_RDBMS_FIREBR5:
+    case SQLRDD_RDBMS_IBMDB2:
+    case SQLRDD_RDBMS_ADABAS: {
       szName[i] = (char)toupper((HB_BYTE)szName[i]);
       break;
     }
-    case SYSTEMID_INGRES:
-    case SYSTEMID_POSTGR:
-    case SYSTEMID_MYSQL:
-    case SYSTEMID_MARIADB:
-    case SYSTEMID_OTERRO:
-    case SYSTEMID_INFORM: {
+    case SQLRDD_RDBMS_INGRES:
+    case SQLRDD_RDBMS_POSTGR:
+    case SQLRDD_RDBMS_MYSQL:
+    case SQLRDD_RDBMS_MARIADB:
+    case SQLRDD_RDBMS_OTERRO:
+    case SQLRDD_RDBMS_INFORM: {
       szName[i] = (char)tolower((HB_BYTE)szName[i]);
       break; // TODO: unnecessary break
     }
@@ -314,9 +314,9 @@ void CreateInsertStmt(SQLEXAREAP thiswa)
     }
     case 'D': {
       // Corrigido 27/12/2013 09:53 - lpereira
-      // Estava atribuindo o valor de SYSTEMID_ORACLE para thiswa->nSystemID.
-      // if (thiswa->nSystemID = SYSTEMID_ORACLE)
-      if (thiswa->nSystemID == SYSTEMID_ORACLE) {
+      // Estava atribuindo o valor de SQLRDD_RDBMS_ORACLE para thiswa->nSystemID.
+      // if (thiswa->nSystemID = SQLRDD_RDBMS_ORACLE)
+      if (thiswa->nSystemID == SQLRDD_RDBMS_ORACLE) {
         InsertRecord->iCType = SQL_C_TYPE_TIMESTAMP; // May be DATE or TIMESTAMP
       } else {
         InsertRecord->iCType = lType; // May be DATE or TIMESTAMP
@@ -342,22 +342,22 @@ void CreateInsertStmt(SQLEXAREAP thiswa)
   sFields[0] = ' ';
 
   switch (thiswa->nSystemID) {
-  case SYSTEMID_MSSQL7:
-  case SYSTEMID_SYBASE: {
+  case SQLRDD_RDBMS_MSSQL7:
+  case SQLRDD_RDBMS_SYBASE: {
     // sprintf(ident, " SELECT @@IDENTITY ;");
     sprintf(ident, "SELECT %s FROM @InsertedData;", thiswa->sRecnoName);
     sprintf(declare, "Declare @InsertedData table ( %s numeric(15,0) );", thiswa->sRecnoName);
     // sprintf(ident, ";SELECT SCOPE_IDENTITY() AS NewID ;");
     break;
   }
-  case SYSTEMID_FIREBR:
-  case SYSTEMID_FIREBR3:
-  case SYSTEMID_FIREBR4:
-  case SYSTEMID_FIREBR5: {
+  case SQLRDD_RDBMS_FIREBR:
+  case SQLRDD_RDBMS_FIREBR3:
+  case SQLRDD_RDBMS_FIREBR4:
+  case SQLRDD_RDBMS_FIREBR5: {
     sprintf(ident, " RETURNING %s", thiswa->sRecnoName);
     break;
   }
-  case SYSTEMID_POSTGR: {
+  case SQLRDD_RDBMS_POSTGR: {
     sprintf(tablename, "%s", thiswa->szDataFileName);
     if (strlen(tablename) > (MAX_TABLE_NAME_LENGHT - 3)) {
       tablename[MAX_TABLE_NAME_LENGHT - 4] = '\0';
@@ -365,14 +365,14 @@ void CreateInsertStmt(SQLEXAREAP thiswa)
     sprintf(ident, "; SELECT currval('%s_SQ');", tablename);
     break;
   }
-  case SYSTEMID_ORACLE:
-  case SYSTEMID_CACHE:
-  case SYSTEMID_INFORM:
-  case SYSTEMID_MYSQL: { // TODO: same as default
+  case SQLRDD_RDBMS_ORACLE:
+  case SQLRDD_RDBMS_CACHE:
+  case SQLRDD_RDBMS_INFORM:
+  case SQLRDD_RDBMS_MYSQL: { // TODO: same as default
     ident[0] = '\0';
     break;
   }
-  case SYSTEMID_IBMDB2: {
+  case SQLRDD_RDBMS_IBMDB2: {
     sprintf(ident, "; VALUES IDENTITY_VAL_LOCAL();");
     break;
   }
@@ -385,7 +385,7 @@ void CreateInsertStmt(SQLEXAREAP thiswa)
   }
   thiswa->sSql = (char *)hb_xgrab(MAX_SQL_QUERY_LEN * sizeof(char));
   memset(thiswa->sSql, 0, MAX_SQL_QUERY_LEN * sizeof(char));
-  if (thiswa->nSystemID == SYSTEMID_MSSQL7) {
+  if (thiswa->nSystemID == SQLRDD_RDBMS_MSSQL7) {
     sprintf(thiswa->sSql, "%s INSERT INTO %s (%s ) OUTPUT Inserted.%s INTO @InsertedData(%s) VALUES (%s );%s", declare,
             thiswa->sTable, sFields, thiswa->sRecnoName, thiswa->sRecnoName, sParams, ident);
     // sprintf(thiswa->sSql, "%s INSERT INTO %s (%s ) VALUES (%s );%s", declare, thiswa->sTable, sFields, sParams,
@@ -467,7 +467,7 @@ HB_ERRCODE BindInsertColumns(SQLEXAREAP thiswa)
         InsertRecord->lIndPtr = 0;
         res = SQLBindParameter(thiswa->hStmtInsert, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP,
                                SQL_TYPE_TIMESTAMP, SQL_TIMESTAMP_LEN,
-                               thiswa->nSystemID == SYSTEMID_MSSQL7 || thiswa->nSystemID == SYSTEMID_AZURE ? 3 : 0,
+                               thiswa->nSystemID == SQLRDD_RDBMS_MSSQL7 || thiswa->nSystemID == SQLRDD_RDBMS_AZURE ? 3 : 0,
                                &(InsertRecord->asTimestamp), 0, &(InsertRecord->lIndPtr));
         break;
       }
@@ -578,16 +578,16 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
   // Retrieve RECNO
 
   switch (thiswa->nSystemID) {
-  case SYSTEMID_MSSQL7:
-  case SYSTEMID_SYBASE:
-  case SYSTEMID_IBMDB2:
-  case SYSTEMID_POSTGR:
-  case SYSTEMID_FIREBR:
-  case SYSTEMID_FIREBR3:
-  case SYSTEMID_FIREBR4:
-  case SYSTEMID_FIREBR5: {
-    if (thiswa->nSystemID != SYSTEMID_FIREBR && thiswa->nSystemID != SYSTEMID_FIREBR3 &&
-        thiswa->nSystemID != SYSTEMID_FIREBR4 && thiswa->nSystemID != SYSTEMID_FIREBR5) {
+  case SQLRDD_RDBMS_MSSQL7:
+  case SQLRDD_RDBMS_SYBASE:
+  case SQLRDD_RDBMS_IBMDB2:
+  case SQLRDD_RDBMS_POSTGR:
+  case SQLRDD_RDBMS_FIREBR:
+  case SQLRDD_RDBMS_FIREBR3:
+  case SQLRDD_RDBMS_FIREBR4:
+  case SQLRDD_RDBMS_FIREBR5: {
+    if (thiswa->nSystemID != SQLRDD_RDBMS_FIREBR && thiswa->nSystemID != SQLRDD_RDBMS_FIREBR3 &&
+        thiswa->nSystemID != SQLRDD_RDBMS_FIREBR4 && thiswa->nSystemID != SQLRDD_RDBMS_FIREBR5) {
       // #if defined(_MSC_VER)
       res = SQLMoreResults(thiswa->hStmtInsert);
       if (res != SQL_SUCCESS) {
@@ -612,15 +612,15 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
     }
     break;
   }
-  case SYSTEMID_ORACLE:
-  case SYSTEMID_MYSQL: {
+  case SQLRDD_RDBMS_ORACLE:
+  case SQLRDD_RDBMS_MYSQL: {
     SQLRETURN _res;
     char ident[200] = {0};
     char tablename[100] = {0};
 
     if (thiswa->hStmtNextval == SR_NULLPTR) {
       switch (thiswa->nSystemID) {
-      case SYSTEMID_ORACLE: {
+      case SQLRDD_RDBMS_ORACLE: {
         sprintf(tablename, "%s", thiswa->szDataFileName);
         if (strlen(tablename) > (MAX_TABLE_NAME_LENGHT - 3)) {
           tablename[MAX_TABLE_NAME_LENGHT - 4] = '\0';
@@ -628,7 +628,7 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
         sprintf(ident, "SELECT %s%s_SQ.CURRVAL FROM DUAL", thiswa->sOwner, tablename);
         break;
       }
-      case SYSTEMID_MYSQL: {
+      case SQLRDD_RDBMS_MYSQL: {
         sprintf(ident, "SELECT LAST_INSERT_ID()");
         break; // TODO: unnecessary break
       }
@@ -667,8 +667,8 @@ HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa)
     SQLFreeStmt(thiswa->hStmtNextval, SQL_CLOSE);
     break;
   }
-  case SYSTEMID_CACHE:
-  case SYSTEMID_INFORM:
+  case SQLRDD_RDBMS_CACHE:
+  case SQLRDD_RDBMS_INFORM:
   default: {
     ;
   }
@@ -761,7 +761,7 @@ HB_ERRCODE CreateUpdateStmt(SQLEXAREAP thiswa)
         CurrRecord->lIndPtr = 0;
         res = SQLBindParameter(thiswa->hStmtUpdate, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP,
                                SQL_TYPE_TIMESTAMP, SQL_TIMESTAMP_LEN,
-                               thiswa->nSystemID == SYSTEMID_MSSQL7 || thiswa->nSystemID == SYSTEMID_AZURE ? 3 : 0,
+                               thiswa->nSystemID == SQLRDD_RDBMS_MSSQL7 || thiswa->nSystemID == SQLRDD_RDBMS_AZURE ? 3 : 0,
                                &(CurrRecord->asTimestamp), 0, &(CurrRecord->lIndPtr));
         break;
       }

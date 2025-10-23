@@ -347,7 +347,7 @@ METHOD SR_ORACLE2:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
 
    ::cSystemName := cTargetDB
    ::cSystemVers := cSystemVers
-   ::nSystemID := SYSTEMID_ORACLE
+   ::nSystemID := SQLRDD_RDBMS_ORACLE
    ::cTargetDB := Upper(cTargetDB)
 
    aRet := {{cSystemVers}}

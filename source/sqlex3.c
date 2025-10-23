@@ -292,7 +292,7 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
   INDEXBINDP SeekBind;
   HB_BOOL bUseOptimizerHints;
 
-  bUseOptimizerHints = thiswa->nSystemID == SYSTEMID_ORACLE;
+  bUseOptimizerHints = thiswa->nSystemID == SQLRDD_RDBMS_ORACLE;
   thiswa->bConditionChanged1 = HB_TRUE; // SKIP statements are no longer valid
 
   // Alloc memory for binding structures, if first time
@@ -592,9 +592,9 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
     BindStructure = GetBindStruct(thiswa, SeekBindParam);
     if (!BindStructure->isArgumentNull) {
       // Corrigido 27/12/2013 09:53 - lpereira
-      // Estava atribuindo o valor de SYSTEMID_ORACLE para thiswa->nSystemID.
-      // if (thiswa->nSystemID = SYSTEMID_ORACLE)
-      if (thiswa->nSystemID == SYSTEMID_ORACLE) {
+      // Estava atribuindo o valor de SQLRDD_RDBMS_ORACLE para thiswa->nSystemID.
+      // if (thiswa->nSystemID = SQLRDD_RDBMS_ORACLE)
+      if (thiswa->nSystemID == SQLRDD_RDBMS_ORACLE) {
         if (BindStructure->iCType == SQL_C_TYPE_DATE) {
           BindStructure->iCType = SQL_C_TYPE_TIMESTAMP; // May be DATE or TIMESTAMP
         }
@@ -622,7 +622,7 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
         //                        &(BindStructure->asTimestamp), 0, 0);
         res = SQLBindParameter(hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP,
                                SQL_TIMESTAMP_LEN,
-                               thiswa->nSystemID == SYSTEMID_MSSQL7 || thiswa->nSystemID == SYSTEMID_AZURE ? 3 : 0,
+                               thiswa->nSystemID == SQLRDD_RDBMS_MSSQL7 || thiswa->nSystemID == SQLRDD_RDBMS_AZURE ? 3 : 0,
                                &(BindStructure->asTimestamp), 0, 0);
         break;
       }

@@ -292,42 +292,42 @@ METHOD SR_CONNECTION:ListCatTables(cOwner)
    ENDIF
 
    SWITCH ::nSystemID
-   CASE SYSTEMID_MSSQL7
-   CASE SYSTEMID_SYBASE
+   CASE SQLRDD_RDBMS_MSSQL7
+   CASE SQLRDD_RDBMS_SYBASE
       IF Empty(cOwner)
          ::Exec("select name from sysobjects where type = N'U' order by name", .T., .T., @aRet)
       ELSE
          ::Exec("select name from sysobjects where type = N'U' and user_name(uid) = '" + cOwner + "' order by name", .T., .T., @aRet)
       ENDIF
       EXIT
-   CASE SYSTEMID_POSTGR
+   CASE SQLRDD_RDBMS_POSTGR
       IF Empty(cOwner)
          ::Exec("select tablename from pg_tables where schemaname = 'public' order by tablename", .T., .T., @aRet)
       ELSE
          ::Exec("select tablename from pg_tables where schemaname = '" + cOwner + "' order by tablename", .T., .T., @aRet)
       ENDIF
       EXIT
-   CASE SYSTEMID_ORACLE
+   CASE SQLRDD_RDBMS_ORACLE
       IF Empty(cOwner)
          ::Exec("select table_name from user_tables order by TABLE_NAME", .T., .T., @aRet)
       ELSE
          ::Exec("select TABLE_NAME from all_tables where owner = '" + cOwner + "' order by TABLE_NAME", .T., .T., @aRet)
       ENDIF
       EXIT
-   CASE SYSTEMID_MYSQL
-   CASE SYSTEMID_MARIADB
+   CASE SQLRDD_RDBMS_MYSQL
+   CASE SQLRDD_RDBMS_MARIADB
       ::Exec("show tables", .T., .T., @aRet)
       EXIT
-   CASE SYSTEMID_ADABAS
-   CASE SYSTEMID_IBMDB2
-   CASE SYSTEMID_CACHE
-   CASE SYSTEMID_INGRES
+   CASE SQLRDD_RDBMS_ADABAS
+   CASE SQLRDD_RDBMS_IBMDB2
+   CASE SQLRDD_RDBMS_CACHE
+   CASE SQLRDD_RDBMS_INGRES
       aRet := ::DriverCatTables()
       EXIT
-   CASE SYSTEMID_FIREBR
-   CASE SYSTEMID_FIREBR3
-   CASE SYSTEMID_FIREBR4
-   CASE SYSTEMID_FIREBR5
+   CASE SQLRDD_RDBMS_FIREBR
+   CASE SQLRDD_RDBMS_FIREBR3
+   CASE SQLRDD_RDBMS_FIREBR4
+   CASE SQLRDD_RDBMS_FIREBR5
       IF Empty(cOwner)
          ::Exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 order by RDB$RELATION_NAME", .T., .T., @aRet)
       ELSE
@@ -740,17 +740,17 @@ METHOD SR_CONNECTION:DetectTargetDb()
    LOCAL cTargetDB := Upper(::cSystemName)
    LOCAL aVers
 
-   ::nSystemID := SYSTEMID_UNKNOW
+   ::nSystemID := SQLRDD_RDBMS_UNKNOW
 
    DO CASE
    CASE "ORACLE" $ cTargetDB
-      ::nSystemID := SYSTEMID_ORACLE
+      ::nSystemID := SQLRDD_RDBMS_ORACLE
    CASE ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.("10.25" $ ::cSystemVers))
-      ::nSystemID := SYSTEMID_AZURE
+      ::nSystemID := SQLRDD_RDBMS_AZURE
    CASE "MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND. "6.5" $ ::cSystemVers
-      ::nSystemID := SYSTEMID_MSSQL6
+      ::nSystemID := SQLRDD_RDBMS_MSSQL6
    CASE ("SQL Server" $ cTargetDB .AND. "00.53.0000" $ ::cSystemVers) .OR. ("MICROSOFT SQL SERVER" $ cTargetDB)
-      ::nSystemID := SYSTEMID_MSSQL7
+      ::nSystemID := SQLRDD_RDBMS_MSSQL7
       aVers := hb_atokens(::cSystemVers, '.')
       IF Val(aVers[1]) >= 8
          ::lClustered := .T.
@@ -761,57 +761,57 @@ METHOD SR_CONNECTION:DetectTargetDb()
       ENDIF
 
    CASE ("MICROSOFT" $ cTargetDB .AND. "SQL" $ cTargetDB .AND. "SERVER" $ cTargetDB .AND.("7.0" $ ::cSystemVers .OR. "8.0" $ ::cSystemVers .OR. "9.0" $ ::cSystemVers .OR. "10.00" $ ::cSystemVers .OR. "10.50" $ ::cSystemVers .OR. "11.00" $ ::cSystemVers)) //.OR. ( "SQL SERVER" $ cTargetDB .AND. !("SYBASE" $ cTargetDB))
-      ::nSystemID := SYSTEMID_MSSQL7
+      ::nSystemID := SQLRDD_RDBMS_MSSQL7
       aVers := hb_atokens(::cSystemVers, '.')
       IF Val(aVers[1]) >= 8
          ::lClustered := .T.
       ENDIF
    CASE "ANYWHERE" $ cTargetDB
-      ::nSystemID := SYSTEMID_SQLANY
+      ::nSystemID := SQLRDD_RDBMS_SQLANY
    CASE "SYBASE" $ cTargetDB .OR. "SQL SERVER" $ cTargetDB
-      ::nSystemID := SYSTEMID_SYBASE
+      ::nSystemID := SQLRDD_RDBMS_SYBASE
    CASE "ACCESS" $ cTargetDB
-      ::nSystemID := SYSTEMID_ACCESS
+      ::nSystemID := SQLRDD_RDBMS_ACCESS
    CASE "INGRES" $ cTargetDB
-      ::nSystemID := SYSTEMID_INGRES
+      ::nSystemID := SQLRDD_RDBMS_INGRES
    CASE "SQLBASE" $ cTargetDB
-      ::nSystemID := SYSTEMID_SQLBAS
+      ::nSystemID := SQLRDD_RDBMS_SQLBAS
    CASE "INFORMIX" $ cTargetDB
-      ::nSystemID := SYSTEMID_INFORM
+      ::nSystemID := SQLRDD_RDBMS_INFORM
    CASE "ADABAS" $ cTargetDB
-      ::nSystemID := SYSTEMID_ADABAS
+      ::nSystemID := SQLRDD_RDBMS_ADABAS
       ::lComments := .F.
    CASE "POSTGRESQL" $ cTargetDB
-      ::nSystemID := SYSTEMID_POSTGR
+      ::nSystemID := SQLRDD_RDBMS_POSTGR
    CASE "DB2" $ cTargetDB .OR. "SQLDS/VM" $ cTargetDB
-      ::nSystemID := SYSTEMID_IBMDB2
+      ::nSystemID := SQLRDD_RDBMS_IBMDB2
       ::lComments := .F.
       IF "05.03" $ ::cSystemVers       // Detects AS/400 from Win98 ODBC
          ::cSystemName := "DB2/400"
          cTargetDB := "DB2/400"
       ENDIF
    CASE "MYSQL" $ cTargetDB .AND. SubStr(AllTrim(::cSystemVers), 1, 3) >= "4.1"
-      ::nSystemID := SYSTEMID_MYSQL
+      ::nSystemID := SQLRDD_RDBMS_MYSQL
    CASE "MARIADB" $ cTargetDB
-      ::nSystemID := SYSTEMID_MARIADB
+      ::nSystemID := SQLRDD_RDBMS_MARIADB
    CASE "FIREBIRD" $ cTargetDb .OR. "INTERBASE" $ cTargetdb
-      ::nSystemID := SYSTEMID_FIREBR
+      ::nSystemID := SQLRDD_RDBMS_FIREBR
       aVers := hb_atokens(::cSystemVers, '.')
       IF Val(aVers[1]) >= 5
-         ::nSystemID := SYSTEMID_FIREBR5
+         ::nSystemID := SQLRDD_RDBMS_FIREBR5
       ELSEIF Val(aVers[1]) >= 4
-         ::nSystemID := SYSTEMID_FIREBR4
+         ::nSystemID := SQLRDD_RDBMS_FIREBR4
       ELSEIF Val(aVers[1]) >= 3
-         ::nSystemID := SYSTEMID_FIREBR3
+         ::nSystemID := SQLRDD_RDBMS_FIREBR3
       ENDIF
    CASE "INTERSYSTEMS CACHE" $ cTargetDb
-      ::nSystemID := SYSTEMID_CACHE
+      ::nSystemID := SQLRDD_RDBMS_CACHE
       ::lComments := .F.
    CASE "OTERRO" $ cTargetDb
-      ::nSystemID := SYSTEMID_OTERRO
+      ::nSystemID := SQLRDD_RDBMS_OTERRO
       ::lComments := .F.
    CASE "PERVASIVE.SQL" $ cTargetDb
-      ::nSystemID := SYSTEMID_PERVASIVE
+      ::nSystemID := SQLRDD_RDBMS_PERVASIVE
       ::lComments := .F.
    OTHERWISE
       IF !::lQueryOnly
@@ -1172,12 +1172,12 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
       NEXT
    ENDIF
 
-   ::nSystemID := SYSTEMID_UNKNOW
+   ::nSystemID := SQLRDD_RDBMS_UNKNOW
 
    ::ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, AllTrim(cConnect), nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
 
    SWITCH ::nSystemID
-   CASE SYSTEMID_ORACLE
+   CASE SQLRDD_RDBMS_ORACLE
       ::cLockWait := " WAIT " + Str(Int(::nLockWaitTime))
       EXIT
    OTHERWISE
@@ -1232,13 +1232,13 @@ METHOD SR_CONNECTION:SQLType(nType, cName, nLen)
       cType := "D"
       EXIT
    CASE SQL_TIME
-      IF      ::nSystemID == SYSTEMID_POSTGR ;
-         .OR. ::nSystemID == SYSTEMID_MYSQL ;
-         .OR. ::nSystemID == SYSTEMID_MARIADB ;
-         .OR. ::nSystemID == SYSTEMID_FIREBR ;
-         .OR. ::nSystemID == SYSTEMID_FIREBR3 ;
-         .OR. ::nSystemID == SYSTEMID_FIREBR4 ;
-         .OR. ::nSystemID == SYSTEMID_FIREBR5
+      IF      ::nSystemID == SQLRDD_RDBMS_POSTGR ;
+         .OR. ::nSystemID == SQLRDD_RDBMS_MYSQL ;
+         .OR. ::nSystemID == SQLRDD_RDBMS_MARIADB ;
+         .OR. ::nSystemID == SQLRDD_RDBMS_FIREBR ;
+         .OR. ::nSystemID == SQLRDD_RDBMS_FIREBR3 ;
+         .OR. ::nSystemID == SQLRDD_RDBMS_FIREBR4 ;
+         .OR. ::nSystemID == SQLRDD_RDBMS_FIREBR5
          cType := "T"
       ELSE
          cType := "C"
@@ -1251,10 +1251,10 @@ METHOD SR_CONNECTION:SQLType(nType, cName, nLen)
       cType := "M"
       EXIT
    CASE SQL_VARBINARY
-      IF ::nSystemID != SYSTEMID_MSSQL7
+      IF ::nSystemID != SQLRDD_RDBMS_MSSQL7
          cType := "M"
       ENDIF
-      IF ::nSystemID == SYSTEMID_MSSQL7
+      IF ::nSystemID == SQLRDD_RDBMS_MSSQL7
          cType := "V"
       ENDIF
       EXIT

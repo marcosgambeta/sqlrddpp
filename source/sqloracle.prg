@@ -326,7 +326,7 @@ METHOD SR_ORACLE:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBu
 
    ::cSystemName := cTargetDB
    ::cSystemVers := cSystemVers
-   ::nSystemID := SYSTEMID_ORACLE
+   ::nSystemID := SQLRDD_RDBMS_ORACLE
    ::cTargetDB := Upper(cTargetDB)
 
    ::Exec("select sid from " + IIf(::lCluster, "g", "") + ;

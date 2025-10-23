@@ -367,11 +367,11 @@ METHOD SR_ODBC:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecno
             nType := SQL_FAKE_LOB
          ENDIF
 
-         IF ::nSystemID == SYSTEMID_ORACLE .AND. nLen == 19 .AND. ;
+         IF ::nSystemID == SQLRDD_RDBMS_ORACLE .AND. nLen == 19 .AND. ;
             (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME)
              nType := SQL_DATE
          ENDIF
-         IF ::nsystemId ==  SYSTEMID_MSSQL7
+         IF ::nsystemId ==  SQLRDD_RDBMS_MSSQL7
             IF (ntype == SQL_TYPE_DATE) .AND. SR_GETSQL2008NEWTYPES() .AND. ::lSqlServer2008
                nType := SQL_DATE
             ELSEIF (nType == SQL_TIMESTAMP .OR. nType == SQL_TYPE_TIMESTAMP .OR. nType == SQL_DATETIME) .AND. ;
@@ -385,13 +385,13 @@ METHOD SR_ODBC:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecno
          cName := Upper(AllTrim(cName))
          cType := ::SQLType(nType, cName, nLen)
          nLenField := ::SQLLen(nType, nLen, @nDec) + nSoma
-         IF ::nSystemID == SYSTEMID_ORACLE .AND. (!::lQueryOnly) .AND. cType == "N" .AND. nLenField == 38 ;
+         IF ::nSystemID == SQLRDD_RDBMS_ORACLE .AND. (!::lQueryOnly) .AND. cType == "N" .AND. nLenField == 38 ;
             .AND. nDec == 0
             cType := "L"
             nLenField := 1
          ENDIF
 #if 0
-         IF ::nSystemID == SYSTEMID_POSTGR
+         IF ::nSystemID == SQLRDD_RDBMS_POSTGR
             nRet := SR_ColAttribute(::hStmt, n, SQL_DESC_NULLABLE, @cVlr, 64, @nBfLn, @nOut)
             nNull := nOut
          ENDIF
@@ -493,11 +493,11 @@ METHOD SR_ODBC:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff
    ::DetectTargetDb()
 
    SWITCH ::nSystemID
-   CASE SYSTEMID_IBMDB2
+   CASE SQLRDD_RDBMS_IBMDB2
       SR_SetConnectAttr(hDbc, SQL_ATTR_LONGDATA_COMPAT, SQL_LD_COMPAT_YES)
       EXIT
-   CASE SYSTEMID_MSSQL7
-   CASE SYSTEMID_AZURE
+   CASE SQLRDD_RDBMS_MSSQL7
+   CASE SQLRDD_RDBMS_AZURE
       ::Exec("select cast( @@spid as numeric )", .T., .T., @aRet)
       IF Len(aRet) > 0
          ::uSid := Val(Str(aRet[1, 1], 8, 0))

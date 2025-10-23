@@ -277,7 +277,7 @@ METHOD SR_MARIA:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuf
 
    ::cSystemName := cTargetDB
    ::cSystemVers := cSystemVers
-   ::nSystemID := SYSTEMID_MARIADB
+   ::nSystemID := SQLRDD_RDBMS_MARIADB
    ::cTargetDB := Upper(cTargetDB)
    ::uSid := MYSGETCONNID(hDbc)
    ::lMariaDb := .T.

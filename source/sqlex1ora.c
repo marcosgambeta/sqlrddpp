@@ -139,8 +139,8 @@ HB_ULONGLONG GetCurrentRecordNumOra(SQLEXORAAREAP thiswa)
 HB_BOOL IsItemNull2(PHB_ITEM pFieldData, SQLEXORAAREAP thiswa)
 {
   if (SR_itemEmpty2(pFieldData) && (!(HB_IS_ARRAY(pFieldData) || HB_IS_OBJECT(pFieldData) || HB_IS_HASH(pFieldData))) &&
-      (((thiswa->nSystemID == SYSTEMID_POSTGR) && HB_IS_DATE(pFieldData)) ||
-       ((thiswa->nSystemID != SYSTEMID_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
+      (((thiswa->nSystemID == SQLRDD_RDBMS_POSTGR) && HB_IS_DATE(pFieldData)) ||
+       ((thiswa->nSystemID != SQLRDD_RDBMS_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
     return HB_TRUE;
   }
   return HB_FALSE;
@@ -192,34 +192,34 @@ void setResultSetLimitOra(SQLEXORAAREAP thiswa, int iRows)
   }
 
   switch (thiswa->nSystemID) {
-  case SYSTEMID_MSSQL7:
-  case SYSTEMID_CACHE:
-  case SYSTEMID_SYBASE: {
+  case SQLRDD_RDBMS_MSSQL7:
+  case SQLRDD_RDBMS_CACHE:
+  case SQLRDD_RDBMS_SYBASE: {
     fmt1 = "TOP %i";
     fmt2 = "";
     break;
   }
-  case SYSTEMID_FIREBR:
-  case SYSTEMID_FIREBR3:
-  case SYSTEMID_FIREBR4:
-  case SYSTEMID_FIREBR5:
-  case SYSTEMID_INFORM: {
+  case SQLRDD_RDBMS_FIREBR:
+  case SQLRDD_RDBMS_FIREBR3:
+  case SQLRDD_RDBMS_FIREBR4:
+  case SQLRDD_RDBMS_FIREBR5:
+  case SQLRDD_RDBMS_INFORM: {
     fmt1 = "FIRST %i";
     fmt2 = "";
     break;
   }
-  case SYSTEMID_ORACLE: {
+  case SQLRDD_RDBMS_ORACLE: {
     fmt1 = "";
     fmt2 = "";
     break;
   }
-  case SYSTEMID_POSTGR:
-  case SYSTEMID_MYSQL: {
+  case SQLRDD_RDBMS_POSTGR:
+  case SQLRDD_RDBMS_MYSQL: {
     fmt1 = "";
     fmt2 = "LIMIT %i";
     break;
   }
-  case SYSTEMID_IBMDB2: {
+  case SQLRDD_RDBMS_IBMDB2: {
     fmt1 = "";
     fmt2 = "fetch first %i rows only";
     break;
@@ -961,8 +961,8 @@ static void FeedCurrentRecordToBindings(SQLEXORAAREAP thiswa)
 
       // Check if column is NULL
 
-      if (SR_itemEmpty2(pFieldData) && (((thiswa->nSystemID == SYSTEMID_POSTGR) && HB_IS_DATE(pFieldData)) ||
-                                        ((thiswa->nSystemID != SYSTEMID_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
+      if (SR_itemEmpty2(pFieldData) && (((thiswa->nSystemID == SQLRDD_RDBMS_POSTGR) && HB_IS_DATE(pFieldData)) ||
+                                        ((thiswa->nSystemID != SQLRDD_RDBMS_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
         if (BindStructure->isNullable && BindStructure->isArgumentNull) {
           // It is STILL NULL, so no problem
           OCI_Statement *hStmt =

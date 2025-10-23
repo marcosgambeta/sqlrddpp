@@ -94,22 +94,22 @@ char *QualifyName2(char *szName, SQLEXORAAREAP thiswa)
       break;
     }
     switch (thiswa->nSystemID) {
-    case SYSTEMID_MSSQL7:
-    case SYSTEMID_ORACLE:
-    case SYSTEMID_FIREBR:
-    case SYSTEMID_FIREBR3:
-    case SYSTEMID_FIREBR4:
-    case SYSTEMID_FIREBR5:
-    case SYSTEMID_IBMDB2:
-    case SYSTEMID_ADABAS: {
+    case SQLRDD_RDBMS_MSSQL7:
+    case SQLRDD_RDBMS_ORACLE:
+    case SQLRDD_RDBMS_FIREBR:
+    case SQLRDD_RDBMS_FIREBR3:
+    case SQLRDD_RDBMS_FIREBR4:
+    case SQLRDD_RDBMS_FIREBR5:
+    case SQLRDD_RDBMS_IBMDB2:
+    case SQLRDD_RDBMS_ADABAS: {
       szName[i] = (char)toupper((int)szName[i]);
       break;
     }
-    case SYSTEMID_INGRES:
-    case SYSTEMID_POSTGR:
-    case SYSTEMID_MYSQL:
-    case SYSTEMID_OTERRO:
-    case SYSTEMID_INFORM: {
+    case SQLRDD_RDBMS_INGRES:
+    case SQLRDD_RDBMS_POSTGR:
+    case SQLRDD_RDBMS_MYSQL:
+    case SQLRDD_RDBMS_OTERRO:
+    case SQLRDD_RDBMS_INFORM: {
       szName[i] = (char)tolower((int)szName[i]);
       break; // TODO: unnecessary break
     }
@@ -324,7 +324,7 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
   sFields[0] = ' ';
 
   switch (thiswa->nSystemID) {
-  case SYSTEMID_ORACLE: {
+  case SQLRDD_RDBMS_ORACLE: {
     ident[0] = '\0';
     break;
   }
@@ -335,7 +335,7 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
   if (thiswa->sSql) {
     memset(thiswa->sSql, 0, MAX_SQL_QUERY_LEN * sizeof(char));
   }
-  if (thiswa->nSystemID == SYSTEMID_MSSQL7) {
+  if (thiswa->nSystemID == SQLRDD_RDBMS_MSSQL7) {
     sprintf(thiswa->sSql, "%s INSERT INTO %s (%s ) OUTPUT Inserted.%s INTO @InsertedData VALUES (%s );%s", declare,
             thiswa->sTable, sFields, thiswa->sRecnoName, sParams, ident);
   } else {
@@ -578,14 +578,14 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
   // Retrieve RECNO
 
   switch (thiswa->nSystemID) {
-  case SYSTEMID_ORACLE: {
+  case SQLRDD_RDBMS_ORACLE: {
     int res;
     char ident[200] = {0};
     char tablename[100] = {0};
 
     if (thiswa->hStmtNextval == SR_NULLPTR) {
       switch (thiswa->nSystemID) {
-      case SYSTEMID_ORACLE: {
+      case SQLRDD_RDBMS_ORACLE: {
         sprintf(tablename, "%s", thiswa->sqlarea.szDataFileName);
         if (strlen(tablename) > (MAX_TABLE_NAME_LENGHT - 3)) {
           tablename[MAX_TABLE_NAME_LENGHT - 4] = '\0';
@@ -638,8 +638,8 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
     }
     break;
   }
-  case SYSTEMID_CACHE:
-  case SYSTEMID_INFORM:
+  case SQLRDD_RDBMS_CACHE:
+  case SQLRDD_RDBMS_INFORM:
   default: {
     ;
   }

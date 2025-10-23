@@ -296,7 +296,7 @@ METHOD SR_PGS:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff,
 
    ::cSystemName := cTargetDB
    ::cSystemVers := cSystemVers
-   ::nSystemID := SYSTEMID_POSTGR
+   ::nSystemID := SQLRDD_RDBMS_POSTGR
    ::cTargetDB := Upper(cTargetDB)
 
    // IF !("7.3" $ cSystemVers .OR. "7.4" $ cSystemVers .OR. "8.0" $ cSystemVers .OR. "8.1" $ cSystemVers .OR. ;

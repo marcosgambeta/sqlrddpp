@@ -268,7 +268,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
                      oWA:AddRuleNotNull(aNewStruct[i, 1])
                   ENDIF
                ENDIF
-            ELSEIF oWA:oSql:nSystemID == SYSTEMID_IBMDB2
+            ELSEIF oWA:oSql:nSystemID == SQLRDD_RDBMS_IBMDB2
                SR_LogFile("changestruct.log", {oWA:cFileName, "Column cannot be changed:", aNewStruct[i, 1], " - Operation not supported by back end database"})
             ELSEIF aNewStruct[i, 2] == "M" .AND. oWA:aFields[n, 2] == "C"
                AAdd(aToFix, AClone(aNewStruct[i]))
@@ -277,7 +277,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
                AAdd(aToFix, AClone(aNewStruct[i]))
                SR_LogFile("changestruct.log", {oWA:cFileName, "Warning: Possible data loss changing data type:", aNewStruct[i, 1], "from", oWA:aFields[n, 2], "to", aNewStruct[i, 2]})
             ELSEIF aNewStruct[i, 2] != oWA:aFields[n, 2]
-               IF aNewStruct[i, 2] $"CN" .AND. oWA:aFields[n, 2] $"CN" .AND. oWA:oSql:nSystemID == SYSTEMID_POSTGR
+               IF aNewStruct[i, 2] $"CN" .AND. oWA:aFields[n, 2] $"CN" .AND. oWA:oSql:nSystemID == SQLRDD_RDBMS_POSTGR
 
 *                   IF "8.4" $ oWA:oSql:cSystemVers .OR. "9.0" $ oWA:oSql:cSystemVers
                   IF oWA:oSql:lPostgresql8 .AND. !oWA:oSql:lPostgresql83
@@ -307,7 +307,7 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
 
       FOR i := 1 TO Len(oWA:aFields)
          IF (n := AScan(aNewStruct, {|x|x[1] == oWA:aFields[i, 1]})) == 0
-            IF (!oWA:aFields[i, 1] == oWA:cRecnoName) .AND. (!oWA:aFields[i, 1] == oWA:cDeletedName) .AND. oWA:oSql:nSystemID != SYSTEMID_IBMDB2
+            IF (!oWA:aFields[i, 1] == oWA:cRecnoName) .AND. (!oWA:aFields[i, 1] == oWA:cDeletedName) .AND. oWA:oSql:nSystemID != SQLRDD_RDBMS_IBMDB2
                AAdd(aToDrop, AClone(oWA:aFields[i]))
                SR_LogFile("changestruct.log", {oWA:cFileName, "Will drop:", oWA:aFields[i, 1]})
             ENDIF
@@ -315,17 +315,17 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
          HB_SYMBOL_UNUSED(n)
       NEXT i
       IF Len(aDirect) > 0 .AND. ( ;
-              oWA:oSql:nSystemID == SYSTEMID_FIREBR ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_FIREBR3 ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_FIREBR4 ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_FIREBR5 ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_MYSQL ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_MARIADB ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_ORACLE ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_MSSQL6 ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_MSSQL7 ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_CACHE ;
-         .OR. oWA:oSql:nSystemID == SYSTEMID_POSTGR)
+              oWA:oSql:nSystemID == SQLRDD_RDBMS_FIREBR ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_FIREBR5 ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_MYSQL ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_MARIADB ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_ORACLE ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_MSSQL6 ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_MSSQL7 ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_CACHE ;
+         .OR. oWA:oSql:nSystemID == SQLRDD_RDBMS_POSTGR)
          oWA:AlterColumnsDirect(aDirect, .T., .F., @aTofix)
       ENDIF
 
@@ -525,45 +525,45 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
 #if 0 // TODO: old code for reference (to be deleted)
    Do Case
-   Case cType $ "CM" .AND. nSystemID == SYSTEMID_ORACLE
+   Case cType $ "CM" .AND. nSystemID == SQLRDD_RDBMS_ORACLE
       RETURN "'" + RTrim(StrTran(uData, "'", "'||" + "CHR(39)" + "||'")) + "'"
-   Case cType $ "CM" .AND. nSystemID == SYSTEMID_MSSQL7
+   Case cType $ "CM" .AND. nSystemID == SQLRDD_RDBMS_MSSQL7
       RETURN "'" + RTrim(StrTran(uData, "'", "'" + "'")) + "'"
-   Case cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
+   Case cType $ "CM" .AND. nSystemID == SQLRDD_RDBMS_POSTGR
       RETURN "E'" + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
    Case cType $ "CM"
       RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
-   Case cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
+   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_ORACLE
       RETURN "TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')"
-   Case cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS)
+   Case cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_IBMDB2 .OR. nSystemID == SQLRDD_RDBMS_ADABAS)
         RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
-   Case cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
+   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_SQLBAS
       RETURN "'" + SR_dtosDot(uData) + "'"
-   Case cType == "D" .AND. nSystemID == SYSTEMID_INFORM
+   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_INFORM
       RETURN "'" + SR_dtoUS(uData) + "'"
-   Case cType == "D" .AND. nSystemID == SYSTEMID_INGRES
+   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_INGRES
       RETURN "'" + SR_dtoDot(uData) + "'"
-   Case cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
+   Case cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_FIREBR .OR. nSystemID == SQLRDD_RDBMS_FIREBR3)
       RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
-   Case cType == "D" .AND. nSystemID == SYSTEMID_CACHE
+   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_CACHE
       RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
    Case cType == "D"
       RETURN "'" + DToS(uData) + "'"
    Case cType == "N"
       RETURN LTrim(Str(uData))
-   Case cType == "L" .AND. (nSystemID == SYSTEMID_POSTGR .OR. nSystemID == SYSTEMID_FIREBR3)
+   Case cType == "L" .AND. (nSystemID == SQLRDD_RDBMS_POSTGR .OR. nSystemID == SQLRDD_RDBMS_FIREBR3)
       RETURN IIf(uData, "true", "false")
-   Case cType == "L" .AND. nSystemID == SYSTEMID_INFORM
+   Case cType == "L" .AND. nSystemID == SQLRDD_RDBMS_INFORM
       RETURN IIf(uData, "'t'", "'f'")
    Case cType == "L"
       RETURN IIf(uData, "1", "0")
-   case ctype == "T"  .AND. nSystemID == SYSTEMID_POSTGR
+   case ctype == "T"  .AND. nSystemID == SQLRDD_RDBMS_POSTGR
       IF Empty(uData)
          RETURN 'NULL'
       ENDIF
 
       RETURN "'" + Transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
-   case ctype == "T" .AND. nSystemID == SYSTEMID_ORACLE
+   case ctype == "T" .AND. nSystemID == SQLRDD_RDBMS_ORACLE
       IF Empty(uData)
          RETURN 'NULL'
       ENDIF
@@ -588,11 +588,11 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    CASE "C"
    CASE "M"
       SWITCH nSystemID
-      CASE SYSTEMID_ORACLE
+      CASE SQLRDD_RDBMS_ORACLE
          RETURN "'" + RTrim(StrTran(uData, "'", "'||" + "CHR(39)" + "||'")) + "'"
-      CASE SYSTEMID_MSSQL7
+      CASE SQLRDD_RDBMS_MSSQL7
          RETURN "'" + RTrim(StrTran(uData, "'", "'" + "'")) + "'"
-      CASE SYSTEMID_POSTGR
+      CASE SQLRDD_RDBMS_POSTGR
          RETURN "E'" + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
       OTHERWISE
          RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
@@ -600,23 +600,23 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    CASE "D"
       SWITCH nSystemID
-      CASE SYSTEMID_ORACLE
+      CASE SQLRDD_RDBMS_ORACLE
          RETURN "TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')"
-      CASE SYSTEMID_IBMDB2
-      CASE SYSTEMID_ADABAS
+      CASE SQLRDD_RDBMS_IBMDB2
+      CASE SQLRDD_RDBMS_ADABAS
          RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
-      CASE SYSTEMID_SQLBAS
+      CASE SQLRDD_RDBMS_SQLBAS
          RETURN "'" + SR_dtosDot(uData) + "'"
-      CASE SYSTEMID_INFORM
+      CASE SQLRDD_RDBMS_INFORM
          RETURN "'" + SR_dtoUS(uData) + "'"
-      CASE SYSTEMID_INGRES
+      CASE SQLRDD_RDBMS_INGRES
          RETURN "'" + SR_dtoDot(uData) + "'"
-      CASE SYSTEMID_FIREBR
-      CASE SYSTEMID_FIREBR3
-      CASE SYSTEMID_FIREBR4
-      CASE SYSTEMID_FIREBR5
+      CASE SQLRDD_RDBMS_FIREBR
+      CASE SQLRDD_RDBMS_FIREBR3
+      CASE SQLRDD_RDBMS_FIREBR4
+      CASE SQLRDD_RDBMS_FIREBR5
          RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
-      CASE SYSTEMID_CACHE
+      CASE SQLRDD_RDBMS_CACHE
          RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
       OTHERWISE
          RETURN "'" + DToS(uData) + "'"
@@ -627,12 +627,12 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    CASE "L"
       SWITCH nSystemID
-      CASE SYSTEMID_POSTGR
-      CASE SYSTEMID_FIREBR3
-      CASE SYSTEMID_FIREBR4
-      CASE SYSTEMID_FIREBR5
+      CASE SQLRDD_RDBMS_POSTGR
+      CASE SQLRDD_RDBMS_FIREBR3
+      CASE SQLRDD_RDBMS_FIREBR4
+      CASE SQLRDD_RDBMS_FIREBR5
          RETURN IIf(uData, "true", "false")
-      CASE SYSTEMID_INFORM
+      CASE SQLRDD_RDBMS_INFORM
          RETURN IIf(uData, "'t'", "'f'")
       OTHERWISE
          RETURN IIf(uData, "1", "0")
@@ -643,9 +643,9 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN "NULL"
       ENDIF
       SWITCH nSystemID
-      CASE SYSTEMID_POSTGR
+      CASE SQLRDD_RDBMS_POSTGR
          RETURN "'" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
-      CASE SYSTEMID_ORACLE
+      CASE SQLRDD_RDBMS_ORACLE
          RETURN " TIMESTAMP '" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       OTHERWISE
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
@@ -1266,7 +1266,7 @@ FUNCTION SR_BeginTransaction(nCnn)
       ENDIF
       oCnn:nTransacCount ++
 
-      IF oCnn:nSystemID == SYSTEMID_CACHE
+      IF oCnn:nSystemID == SQLRDD_RDBMS_CACHE
          oCnn:Exec("START TRANSACTION %COMMITMODE EXPLICIT ISOLATION LEVEL READ COMMITTED")
 //         oCnn:Exec("START TRANSACTION %COMMITMODE EXPLICIT")
       ENDIF
@@ -2138,7 +2138,7 @@ FUNCTION SR_SetFieldDefault(cTable, cField, cDefault)
          cSql += "'" + cDefault + "'"
       ENDIF
    ENDIF
-   IF oCnn:nSystemId == SYSTEMID_POSTGR
+   IF oCnn:nSystemId == SQLRDD_RDBMS_POSTGR
       oCnn:Exec(cSql, , .F.)
       oCnn:Commit()
    ENDIF

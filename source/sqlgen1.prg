@@ -67,11 +67,11 @@
 #define FIX_PRE_WHERE      IIf(nContext==SQL_CONTEXT_SELECT_PRE_WHERE,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" WHERE "),IIf(nContext==SQL_CONTEXT_SELECT_PRE_WHERE2,(nContext:=SQL_CONTEXT_SELECT_WHERE,cSql+=" AND "),))
 #define PASSTHROUGH        nIP++;EXIT
 #define IDENTSPACE         space(nSpaces)
-//#define TABLE_OPTIMIZER    IIf(nSystemId==SYSTEMID_MSSQL7,IIf(lLocking," WITH (UPDLOCK)", " WITH (NOLOCK)"),"")
-#define TABLE_OPTIMIZER    IIf(nSystemId==SYSTEMID_MSSQL7,IIf(lLocking," WITH (UPDLOCK)", ""),"")
-#define COMMAND_OPTIMIZER  IIf(nSystemId==SYSTEMID_SYBASE,IIf(lLocking,"", " AT ISOLATION READ UNCOMMITTED "),"")
+//#define TABLE_OPTIMIZER    IIf(nSystemId==SQLRDD_RDBMS_MSSQL7,IIf(lLocking," WITH (UPDLOCK)", " WITH (NOLOCK)"),"")
+#define TABLE_OPTIMIZER    IIf(nSystemId==SQLRDD_RDBMS_MSSQL7,IIf(lLocking," WITH (UPDLOCK)", ""),"")
+#define COMMAND_OPTIMIZER  IIf(nSystemId==SQLRDD_RDBMS_SYBASE,IIf(lLocking,"", " AT ISOLATION READ UNCOMMITTED "),"")
 #define SELECT_OPTIMIZER1  ""
-#define SELECT_OPTIMIZER2  IIf(nSystemId==SYSTEMID_ORACLE,IIf(lLocking," FOR UPDATE", ""),"")
+#define SELECT_OPTIMIZER2  IIf(nSystemId==SQLRDD_RDBMS_ORACLE,IIf(lLocking," FOR UPDATE", ""),"")
 #define NEWLINE            IIf(lIdent,SR_CRLF,"")
 
 #xtranslate Default(<Var>, <xVal>) => IIf(<Var> == NIL, <Var> := <xVal>, NIL)
@@ -366,22 +366,22 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             PASSTHROUGH
          CASE SQL_PCODE_FUNC_DATE
             SWITCH nSystemId
-            CASE SYSTEMID_MSSQL7
+            CASE SQLRDD_RDBMS_MSSQL7
                cSql += "getdate() "
                EXIT
-            CASE SYSTEMID_ORACLE
+            CASE SQLRDD_RDBMS_ORACLE
                cSql += "SYSDATE "
                EXIT
-            CASE SYSTEMID_IBMDB2
-            CASE SYSTEMID_FIREBR
-            CASE SYSTEMID_FIREBR3
-            CASE SYSTEMID_FIREBR4
-            CASE SYSTEMID_FIREBR5
-            CASE SYSTEMID_POSTGR
+            CASE SQLRDD_RDBMS_IBMDB2
+            CASE SQLRDD_RDBMS_FIREBR
+            CASE SQLRDD_RDBMS_FIREBR3
+            CASE SQLRDD_RDBMS_FIREBR4
+            CASE SQLRDD_RDBMS_FIREBR5
+            CASE SQLRDD_RDBMS_POSTGR
                cSql += "CURRENT_DATE "
                EXIT
-            CASE SYSTEMID_MYSQL
-            Case SYSTEMID_MARIADB
+            CASE SQLRDD_RDBMS_MYSQL
+            Case SQLRDD_RDBMS_MARIADB
                cSql += "CURDATE() "
                EXIT
             OTHERWISE
@@ -401,8 +401,8 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_FUNC_AVG
             FIX_PRE_WHERE
             SWITCH nSystemId
-            CASE SYSTEMID_ORACLE
-            CASE SYSTEMID_MSSQL7
+            CASE SQLRDD_RDBMS_ORACLE
+            CASE SQLRDD_RDBMS_MSSQL7
                cSql += "AVG("
                EXIT
             OTHERWISE
@@ -412,18 +412,18 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_FUNC_ISNULL
             FIX_PRE_WHERE
             SWITCH nSystemId
-            CASE SYSTEMID_MSSQL7
+            CASE SQLRDD_RDBMS_MSSQL7
                cSql += "ISNULL("
                EXIT
-            CASE SYSTEMID_ORACLE
+            CASE SQLRDD_RDBMS_ORACLE
                cSql += "NVL("
                EXIT
-            CASE SYSTEMID_IBMDB2
+            CASE SQLRDD_RDBMS_IBMDB2
                cSql += "VALUE("
                EXIT
-            CASE SYSTEMID_POSTGR
-            CASE SYSTEMID_MYSQL
-            Case SYSTEMID_MARIADB
+            CASE SQLRDD_RDBMS_POSTGR
+            CASE SQLRDD_RDBMS_MYSQL
+            Case SQLRDD_RDBMS_MARIADB
                cSql += "COALESCE("
                EXIT
             OTHERWISE
@@ -449,8 +449,8 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_FUNC_SUBSTR
             FIX_PRE_WHERE
             SWITCH nSystemId
-            CASE SYSTEMID_MSSQL7
-            CASE SYSTEMID_SYBASE
+            CASE SQLRDD_RDBMS_MSSQL7
+            CASE SQLRDD_RDBMS_SYBASE
                cSql += "SUBSTRING("
                EXIT
             OTHERWISE
@@ -460,8 +460,8 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_FUNC_SUBSTR2
             FIX_PRE_WHERE
             SWITCH nSystemId
-            CASE SYSTEMID_MSSQL7
-            CASE SYSTEMID_SYBASE
+            CASE SQLRDD_RDBMS_MSSQL7
+            CASE SQLRDD_RDBMS_SYBASE
                cSql += "SUBSTRING("
                EXIT
             OTHERWISE
@@ -475,7 +475,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_FUNC_TRIM
             FIX_PRE_WHERE
             SWITCH nSystemId
-            CASE SYSTEMID_MSSQL7
+            CASE SQLRDD_RDBMS_MSSQL7
                cSql += "dbo.trim("
                EXIT
             OTHERWISE
@@ -499,23 +499,23 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          CASE SQL_PCODE_SELECT_LIMIT
             SKIPFWD
             SWITCH nSystemId
-            CASE SYSTEMID_MSSQL7
-            CASE SYSTEMID_CACHE
+            CASE SQLRDD_RDBMS_MSSQL7
+            CASE SQLRDD_RDBMS_CACHE
                cSql += "TOP " + LTrim(Str(uData)) + " "
                EXIT
-            CASE SYSTEMID_FIREBR
-            CASE SYSTEMID_FIREBR3
-            CASE SYSTEMID_FIREBR4
-            CASE SYSTEMID_FIREBR5
-            CASE SYSTEMID_INFORM
+            CASE SQLRDD_RDBMS_FIREBR
+            CASE SQLRDD_RDBMS_FIREBR3
+            CASE SQLRDD_RDBMS_FIREBR4
+            CASE SQLRDD_RDBMS_FIREBR5
+            CASE SQLRDD_RDBMS_INFORM
                cSql += "FIRST " + LTrim(Str(uData)) + " "
                EXIT
-            CASE SYSTEMID_MYSQL
-            CASE SYSTEMID_MARIADB
-            CASE SYSTEMID_POSTGR
+            CASE SQLRDD_RDBMS_MYSQL
+            CASE SQLRDD_RDBMS_MARIADB
+            CASE SQLRDD_RDBMS_POSTGR
                cTrailler := " LIMIT " + LTrim(Str(uData)) + " "
                EXIT
-            CASE SYSTEMID_IBMDB2
+            CASE SQLRDD_RDBMS_IBMDB2
                cTrailler := " fetch first " + LTrim(Str(uData)) + " rows only"
                EXIT
             ENDSWITCH
@@ -531,7 +531,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SQL_PCODE_COLUMN_NAME_BINDVAR
                SKIPFWD
                cSql += SR_DBQUALIFY(&uData, nSystemID) + " ASC"
-               IF nSystemId == SYSTEMID_ORACLE
+               IF nSystemId == SQLRDD_RDBMS_ORACLE
                   cSql += " NULLS FIRST"
                ENDIF
                EXIT
@@ -539,14 +539,14 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                SKIPFWD
                GETPARAM_VAL_2
                cSql += SR_DBQUALIFY(uData, nSystemID) + " ASC"
-               IF nSystemId == SYSTEMID_ORACLE
+               IF nSystemId == SQLRDD_RDBMS_ORACLE
                   cSql += " NULLS FIRST"
                ENDIF
                EXIT
             OTHERWISE
                SKIPFWD
                cSql += SR_DBQUALIFY(uData, nSystemID) + " ASC"
-               IF nSystemId == SYSTEMID_ORACLE
+               IF nSystemId == SQLRDD_RDBMS_ORACLE
                   cSql += " NULLS FIRST"
                ENDIF
             ENDSWITCH
@@ -562,7 +562,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SQL_PCODE_COLUMN_NAME_BINDVAR
                SKIPFWD
                cSql += SR_DBQUALIFY(&uData, nSystemID) + " DESC"
-               IF nSystemId == SYSTEMID_ORACLE
+               IF nSystemId == SQLRDD_RDBMS_ORACLE
                   cSql += " NULLS FIRST"
                ENDIF
                EXIT
@@ -570,14 +570,14 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                SKIPFWD
                GETPARAM_VAL_2
                cSql += SR_DBQUALIFY(uData, nSystemID) + " DESC"
-               IF nSystemId == SYSTEMID_ORACLE
+               IF nSystemId == SQLRDD_RDBMS_ORACLE
                   cSql += " NULLS FIRST"
                ENDIF
                EXIT
             OTHERWISE
                SKIPFWD
                cSql += SR_DBQUALIFY(uData, nSystemID) + " DESC"
-               IF nSystemId == SYSTEMID_ORACLE
+               IF nSystemId == SQLRDD_RDBMS_ORACLE
                   cSql += " NULLS FIRST"
                ENDIF
             ENDSWITCH
@@ -713,7 +713,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             IF !Empty(cSqlCols)
 
-               IF nSystemId == SYSTEMID_ORACLE
+               IF nSystemId == SQLRDD_RDBMS_ORACLE
 
                   cTmp := cSql
                   cSql := cSqlCols
@@ -947,23 +947,23 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             PASSTHROUGH
          CASE SQL_PCODE_OPERATOR_CONCAT
             SWITCH nSystemId
-            CASE SYSTEMID_MSSQL7
+            CASE SQLRDD_RDBMS_MSSQL7
                cSql += " + "
                EXIT
-            CASE SYSTEMID_ORACLE
-            CASE SYSTEMID_POSTGR
-            CASE SYSTEMID_MYSQL
-            CASE SYSTEMID_MARIADB
+            CASE SQLRDD_RDBMS_ORACLE
+            CASE SQLRDD_RDBMS_POSTGR
+            CASE SQLRDD_RDBMS_MYSQL
+            CASE SQLRDD_RDBMS_MARIADB
                cSql += " || "
                EXIT
             ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_OPERATOR_JOIN
             SWITCH nSystemId
-            CASE SYSTEMID_MSSQL7
+            CASE SQLRDD_RDBMS_MSSQL7
                cSql += " = "
                EXIT
-            CASE SYSTEMID_ORACLE
+            CASE SQLRDD_RDBMS_ORACLE
                cSql += " = "
                EXIT
             ENDSWITCH
@@ -1056,7 +1056,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
       IF !Empty(cSqlCols)
 
-         IF nSystemId == SYSTEMID_ORACLE
+         IF nSystemId == SQLRDD_RDBMS_ORACLE
 
             cTmp := cSql
             cSql := cSqlCols
@@ -1233,33 +1233,33 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
 #if 0 // TODO: old code for reference (to be deleted)
    DO CASE
-   CASE cType $ "CM" .AND. nSystemID == SYSTEMID_POSTGR
+   CASE cType $ "CM" .AND. nSystemID == SQLRDD_RDBMS_POSTGR
       RETURN [E'] + RTrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
    CASE cType $ "CM"
       RETURN "'" + RTrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
-   CASE cType == "D" .AND. nSystemID == SYSTEMID_ORACLE
+   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_ORACLE
       RETURN ("TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')")
-   CASE cType == "D" .AND. (nSystemID == SYSTEMID_IBMDB2 .OR. nSystemID == SYSTEMID_ADABAS )
+   CASE cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_IBMDB2 .OR. nSystemID == SQLRDD_RDBMS_ADABAS )
       RETURN ("'" + Transform(DToS(uData), "@R 9999-99-99") + "'")
-   CASE cType == "D" .AND. nSystemID == SYSTEMID_SQLBAS
+   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_SQLBAS
       RETURN ("'" + SR_dtosdot(uData) + "'")
-   CASE cType == "D" .AND. nSystemID == SYSTEMID_INFORM
+   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_INFORM
       RETURN ("'" + SR_dtoUS(uData) + "'")
-   CASE cType == "D" .AND. nSystemID == SYSTEMID_INGRES
+   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_INGRES
       RETURN ("'" + SR_dtoDot(uData) + "'")
-   CASE cType == "D" .AND. (nSystemID == SYSTEMID_FIREBR .OR. nSystemID == SYSTEMID_FIREBR3)
+   CASE cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_FIREBR .OR. nSystemID == SQLRDD_RDBMS_FIREBR3)
       RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
-   CASE cType == "D" .AND. nSystemID == SYSTEMID_CACHE
+   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_CACHE
       RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
-   CASE cType == "D" .AND. (nSystemID == SYSTEMID_MYSQL .OR. nSystemID == SYSTEMID_MARIADB)
+   CASE cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_MYSQL .OR. nSystemID == SQLRDD_RDBMS_MARIADB)
       RETURN ("str_to_date( '" + DToS(uData) + "', '%Y%m%d' )")
    CASE cType == "D"
       RETURN ("'" + DToS(uData) + "'")
    CASE cType == "N"
       RETURN LTrim(Str(uData))
-   CASE cType == "L" .AND. nSystemID == SYSTEMID_POSTGR
+   CASE cType == "L" .AND. nSystemID == SQLRDD_RDBMS_POSTGR
       RETURN IIf(uData, "true", "false")
-   CASE cType == "L" .AND. nSystemID == SYSTEMID_INFORM
+   CASE cType == "L" .AND. nSystemID == SQLRDD_RDBMS_INFORM
       RETURN IIf(uData, "'t'", "'f'")
    Case cType == "L"
       RETURN IIf(uData, "1", "0")
@@ -1278,7 +1278,7 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
    CASE "C"
    CASE "M"
-      IF nSystemID == SYSTEMID_POSTGR
+      IF nSystemID == SQLRDD_RDBMS_POSTGR
          RETURN "E'" + RTrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
       ELSE
          RETURN "'" + RTrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
@@ -1286,26 +1286,26 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
    CASE "D"
       SWITCH nSystemID
-      CASE SYSTEMID_ORACLE
+      CASE SQLRDD_RDBMS_ORACLE
          RETURN "TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')"
-      CASE SYSTEMID_IBMDB2
-      CASE SYSTEMID_ADABAS
+      CASE SQLRDD_RDBMS_IBMDB2
+      CASE SQLRDD_RDBMS_ADABAS
          RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
-      CASE SYSTEMID_SQLBAS
+      CASE SQLRDD_RDBMS_SQLBAS
          RETURN "'" + SR_dtosdot(uData) + "'"
-      CASE SYSTEMID_INFORM
+      CASE SQLRDD_RDBMS_INFORM
          RETURN "'" + SR_dtoUS(uData) + "'"
-      CASE SYSTEMID_INGRES
+      CASE SQLRDD_RDBMS_INGRES
          RETURN "'" + SR_dtoDot(uData) + "'"
-      CASE SYSTEMID_FIREBR
-      CASE SYSTEMID_FIREBR3
-      CASE SYSTEMID_FIREBR4
-      CASE SYSTEMID_FIREBR5
+      CASE SQLRDD_RDBMS_FIREBR
+      CASE SQLRDD_RDBMS_FIREBR3
+      CASE SQLRDD_RDBMS_FIREBR4
+      CASE SQLRDD_RDBMS_FIREBR5
          RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
-      CASE SYSTEMID_CACHE
+      CASE SQLRDD_RDBMS_CACHE
          RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
-      CASE SYSTEMID_MYSQL
-      CASE SYSTEMID_MARIADB
+      CASE SQLRDD_RDBMS_MYSQL
+      CASE SQLRDD_RDBMS_MARIADB
          RETURN "str_to_date( '" + DToS(uData) + "', '%Y%m%d' )"
       OTHERWISE
          RETURN "'" + DToS(uData) + "'"
@@ -1316,9 +1316,9 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
    CASE "L"
       SWITCH nSystemID
-      CASE SYSTEMID_POSTGR
+      CASE SQLRDD_RDBMS_POSTGR
          RETURN IIf(uData, "true", "false")
-      CASE SYSTEMID_INFORM
+      CASE SQLRDD_RDBMS_INFORM
          RETURN IIf(uData, "'t'", "'f'")
       OTHERWISE
          RETURN IIf(uData, "1", "0")
