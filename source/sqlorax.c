@@ -67,6 +67,35 @@
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
+#ifdef __BORLANDC__
+int sqlo_init(int threaded_mode, unsigned int max_db, unsigned int max_cursors);
+int sqlo_connect(sqlo_db_handle_t * dbhp, CONST char *cstr);
+int sqlo_server_version(sqlo_db_handle_t dbh, char *bufp, unsigned int buflen);
+int sqlo_finish(sqlo_db_handle_t dbh);
+void sqlo_freeall(void);
+CONST char *sqlo_geterror(sqlo_db_handle_t dbh);
+int sqlo_geterrcode(sqlo_db_handle_t dbh);
+int sqlo_exec(sqlo_db_handle_t dbh, CONST char *stmt, unsigned int *rr);
+int sqlo_executeselect(sqlo_stmt_handle_t sth, unsigned int iterations);
+int sqlo_open2(sqlo_stmt_handle_t * sthp, sqlo_db_handle_t dbh, CONST char *stmt, int argc, CONST char **argv);
+int sqlo_ncols(sqlo_stmt_handle_t sth, int in);
+int sqlo_describecol(sqlo_stmt_handle_t sth, int col, unsigned short *dType, char **name, int *namelen, int *prec, int *scale, int *dbsize, int *nullok);
+int sqlo_fetch(sqlo_stmt_handle_t sth, unsigned int nrows);
+int sqlo_commit(sqlo_db_handle_t dbh);
+int sqlo_rollback(sqlo_db_handle_t dbh);
+int sqlo_close(sqlo_stmt_handle_t sth);
+CONST char **sqlo_values(sqlo_stmt_handle_t sth, int *num, int dostrip);
+CONST unsigned int *sqlo_value_lens(sqlo_stmt_handle_t sth, int *num);
+int sqlo_prepare(sqlo_db_handle_t dbh, CONST char *stmt);
+int sqlo_alloc_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
+int sqlo_bind_by_pos(sqlo_stmt_handle_t sth, int position, int param_type, CONST void *param_addr, unsigned int param_size, short *ind_addr, int is_array);
+int sqlo_execute(sqlo_stmt_handle_t sth, unsigned int iterations);
+int sqlo_free_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
+int sqlo_lob_write_buffer(sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen, const void *bufp, unsigned int bufl, unsigned int piece);
+int sqlo_bind_ref_cursor(sqlo_stmt_handle_t sth, CONST char *cursor_name, int *sth2p);
+int sqlo_bind_by_name(sqlo_stmt_handle_t sth, CONST char *name, int param_type, CONST void *param_addr, unsigned int param_size, short *ind_addr, int is_array);
+#endif
+
 //-----------------------------------------------------------------------------//
 
 typedef struct _ORA_BIND_COLS
