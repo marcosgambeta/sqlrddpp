@@ -1,33 +1,33 @@
 # SQLRDD++
 
-SQLRDD for Harbour++ and Harbour
+SQLRDD for Harbour and Harbour++
 
 ## Supported database systems
 
-| SGBD               | Status         |
-| ------------------ | -------------- |
-| SYSTEMID_ACCESS    |                |
-| SYSTEMID_ADABAS    |                |
-| SYSTEMID_AZURE     |                |
-| SYSTEMID_CACHE     |                |
-| SYSTEMID_FIREBR    |                |
-| SYSTEMID_FIREBR3   |                |
-| SYSTEMID_FIREBR4   |                |
-| SYSTEMID_FIREBR5   |                |
-| SYSTEMID_IBMDB2    |                |
-| SYSTEMID_INFORM    |                |
-| SYSTEMID_INGRES    |                |
-| SYSTEMID_MARIADB   |                |
-| SYSTEMID_MSSQL6    |                |
-| SYSTEMID_MSSQL7    |                |
-| SYSTEMID_MYSQL     |                |
-| SYSTEMID_ORACLE    |                |
-| SYSTEMID_OTERRO    |                |
-| SYSTEMID_PERVASIVE |                |
-| SYSTEMID_POSTGR    |                |
-| SYSTEMID_SQLANY    |                |
-| SYSTEMID_SQLBAS    |                |
-| SYSTEMID_SYBASE    |                |
+| RDBMS                  | Version | Status         |
+| -------------------    | ------- | -------------- |
+| SQLRDD_RDBMS_ACCESS    |         |                |
+| SQLRDD_RDBMS_ADABAS    |         |                |
+| SQLRDD_RDBMS_AZURE     |         |                |
+| SQLRDD_RDBMS_CACHE     |         |                |
+| SQLRDD_RDBMS_FIREBR    |         |                |
+| SQLRDD_RDBMS_FIREBR3   |         |                |
+| SQLRDD_RDBMS_FIREBR4   |         |                |
+| SQLRDD_RDBMS_FIREBR5   |         |                |
+| SQLRDD_RDBMS_IBMDB2    |         |                |
+| SQLRDD_RDBMS_INFORM    |         |                |
+| SQLRDD_RDBMS_INGRES    |         |                |
+| SQLRDD_RDBMS_MARIADB   |         |                |
+| SQLRDD_RDBMS_MSSQL6    |         |                |
+| SQLRDD_RDBMS_MSSQL7    |         |                |
+| SQLRDD_RDBMS_MYSQL     |         |                |
+| SQLRDD_RDBMS_ORACLE    |         |                |
+| SQLRDD_RDBMS_OTERRO    |         |                |
+| SQLRDD_RDBMS_PERVASIVE |         |                |
+| SQLRDD_RDBMS_POSTGR    |         |                |
+| SQLRDD_RDBMS_SQLANY    |         |                |
+| SQLRDD_RDBMS_SQLBAS    |         |                |
+| SQLRDD_RDBMS_SYBASE    |         |                |
 
 ## C/C++ Compilers Compatibility
 
