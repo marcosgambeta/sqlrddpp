@@ -848,6 +848,7 @@ void odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql, SQ
 
 //-----------------------------------------------------------------------------//
 
+// SR_DESCRIB(p1, p2, @p3, p4, @p5, @p6, @p7, @p8, @p9, p10) --> numeric
 HB_FUNC(SR_DESCRIB)
 {
   SQLSMALLINT lLen = (SQLSMALLINT)hb_parni(4);
@@ -869,9 +870,9 @@ HB_FUNC(SR_DESCRIB)
   bBuffer = (SQLTCHAR *)hb_xgrab(lLen * sizeof(SQLTCHAR));
   bBuffer[0] = '\0';
 
-  wResult = SQLDescribeCol((HSTMT)hb_parptr(1), (SQLUSMALLINT)hb_parni(2), (SQLTCHAR *)bBuffer, (SQLSMALLINT)lLen,
-                           (SQLSMALLINT *)&wBufLen, (SQLSMALLINT *)&wDataType, (SQLULEN *)&wColSize,
-                           (SQLSMALLINT *)&wDecimals, (SQLSMALLINT *)&wNullable);
+  wResult = SQLDescribeCol((HSTMT)hb_parptr(1), (SQLUSMALLINT)hb_parni(2), (SQLTCHAR *)bBuffer, lLen,
+                           &wBufLen, &wDataType, &wColSize,
+                           &wDecimals, &wNullable);
   if (wDataType == -8 && ulSystemID == SQLRDD_RDBMS_MYSQL) {
     // MySQL ODBC Bug
     odbcErrorDiagRTE((SQLHSTMT)hb_parptr(1), "SQLCONNECT", "MySQL Driver version 5 is not compatible with SQLRDD", 0,
