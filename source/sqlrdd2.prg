@@ -6146,7 +6146,18 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
             IF cField == ::cRecnoName
                cSql += "BIGINT (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
             ELSE
+               // use type DECIMAL instead of REAL when using MySQL 8 or upper,
+               // except if the flag 'SQLRDD_MYSQL_REAL_DATA_TYPE' is set
+               #ifdef SQLRDD_MYSQL_REAL_DATA_TYPE
                cSql += s_cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+               #else
+               IF SubStr(::oSql:cSystemVers, 1, 1) == "5"
+                  // maintain the original behavior when using MySQL 5
+                  cSql += s_cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+               ELSE
+                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+               ENDIF
+               #endif
             ENDIF
             EXIT
          CASE SQLRDD_RDBMS_MARIADB
