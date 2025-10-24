@@ -10662,13 +10662,15 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
             EXIT
          CASE SQLRDD_RDBMS_MYSQL
          CASE SQLRDD_RDBMS_MARIADB
-            IF ::aFields[nCol, 2] == "C"
+            SWITCH ::aFields[nCol, 2]
+            CASE "C"
                IF ::aFields[nCol, 3] > 255
                   cType := "VARCHAR (" + Str(::aFields[nCol, 3], 3) + ")"
                ELSE
                   cType := "CHAR (" + Str(::aFields[nCol, 3], 3) + ")"
                ENDIF
-            ELSEIF ::aFields[nCol, 2] == "N"
+               EXIT
+            CASE "N"
                IF ::oSql:nSystemID == SQLRDD_RDBMS_MYSQL
                   // use type DECIMAL instead of REAL when using MySQL 8 or upper,
                   // except if the flag 'SQLRDD_MYSQL_REAL_DATA_TYPE' is set
@@ -10686,21 +10688,25 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
                   // MariaDB
                   cType := "DECIMAL (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
                ENDIF
-            ELSEIF ::aFields[nCol, 2] == "D"
+               EXIT
+            CASE "D"
                cType := "DATE"
-            ENDIF
+            ENDSWITCH
             nRet := ::oSql:Exec("ALTER TABLE " + ::cQualifiedTableName + " MODIFY " + cColumn + " " + cType + " NOT NULL", .F.)
             EXIT
          CASE SQLRDD_RDBMS_SYBASE
          CASE SQLRDD_RDBMS_MSSQL7
          CASE SQLRDD_RDBMS_AZURE
-            IF ::aFields[nCol, 2] == "C"
+            SWITCH ::aFields[nCol, 2]
+            CASE "C"
                cType := "CHAR (" + Str(::aFields[nCol, 3], 3) + ")"
-            ELSEIF ::aFields[nCol, 2] == "N"
+               EXIT
+            CASE "N"
                cType := "NUMERIC (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
-            ELSEIF ::aFields[nCol, 2] == "D"
+               EXIT
+            CASE "D"
                cType := "DATETIME"
-            ENDIF
+            ENDSWITCH
             nRet := ::oSql:Exec("ALTER TABLE " + ::cQualifiedTableName + " ALTER COLUMN " + cColumn + " " + cType + " NOT NULL", .F.)
             EXIT
          CASE SQLRDD_RDBMS_ORACLE
@@ -10747,9 +10753,11 @@ METHOD SR_WORKAREA:DropRuleNotNull(cColumn)
          EXIT
       CASE SQLRDD_RDBMS_MYSQL
       CASE SQLRDD_RDBMS_MARIADB
-         IF ::aFields[nCol, 2] == "C"
+         SWITCH ::aFields[nCol, 2]
+         CASE "C"
             cType := "CHAR (" + Str(::aFields[nCol, 3], 3) + ")"
-         ELSEIF ::aFields[nCol, 2] == "N"
+            EXIT
+         CASE "N"
             IF ::oSql:nSystemID == SQLRDD_RDBMS_MYSQL
                // use type DECIMAL instead of REAL when using MySQL 8 or upper,
                // except if the flag 'SQLRDD_MYSQL_REAL_DATA_TYPE' is set
@@ -10767,21 +10775,25 @@ METHOD SR_WORKAREA:DropRuleNotNull(cColumn)
                // MariaDB
                cType := "DECIMAL (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
             ENDIF
-         ELSEIF ::aFields[nCol, 2] == "D"
+            EXIT
+         CASE "D"
             cType := "DATE"
-         ENDIF
+         ENDSWITCH
          nRet := ::oSql:Exec("ALTER TABLE " + ::cQualifiedTableName + " MODIFY " + cColumn + " " + cType + " NULL", .F.)
          EXIT
       CASE SQLRDD_RDBMS_SYBASE
       CASE SQLRDD_RDBMS_MSSQL7
       CASE SQLRDD_RDBMS_AZURE
-         IF ::aFields[nCol, 2] == "C"
+         SWITCH ::aFields[nCol, 2]
+         CASE "C"
             cType := "CHAR (" + Str(::aFields[nCol, 3], 3) + ")"
-         ELSEIF ::aFields[nCol, 2] == "N"
+            EXIT
+         CASE "N"
             cType := "NUMERIC (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
-         ELSEIF ::aFields[nCol, 2] == "D"
+            EXIT
+         CASE "D"
             cType := "DATETIME"
-         ENDIF
+         ENDSWITCH
          nRet := ::oSql:Exec("ALTER TABLE " + ::cQualifiedTableName + " ALTER COLUMN " + cColumn + " " + cType + " NULL", .F.)
          EXIT
       CASE SQLRDD_RDBMS_ORACLE
