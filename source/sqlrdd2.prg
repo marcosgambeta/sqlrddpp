@@ -10669,7 +10669,23 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
                   cType := "CHAR (" + Str(::aFields[nCol, 3], 3) + ")"
                ENDIF
             ELSEIF ::aFields[nCol, 2] == "N"
-               cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+               IF ::oSql:nSystemID == SQLRDD_RDBMS_MYSQL
+                  // use type DECIMAL instead of REAL when using MySQL 8 or upper,
+                  // except if the flag 'SQLRDD_MYSQL_REAL_DATA_TYPE' is set
+                  #ifdef SQLRDD_MYSQL_REAL_DATA_TYPE
+                  cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+                  #else
+                  IF SubStr(::oSql:cSystemVers, 1, 1) == "5"
+                     // maintain the original behavior when using MySQL 5
+                     cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+                  ELSE
+                     cType := "DECIMAL (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+                  ENDIF
+                  #endif
+               ELSE
+                  // MariaDB
+                  cType := "DECIMAL (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+               ENDIF
             ELSEIF ::aFields[nCol, 2] == "D"
                cType := "DATE"
             ENDIF
@@ -10734,7 +10750,23 @@ METHOD SR_WORKAREA:DropRuleNotNull(cColumn)
          IF ::aFields[nCol, 2] == "C"
             cType := "CHAR (" + Str(::aFields[nCol, 3], 3) + ")"
          ELSEIF ::aFields[nCol, 2] == "N"
-            cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+            IF ::oSql:nSystemID == SQLRDD_RDBMS_MYSQL
+               // use type DECIMAL instead of REAL when using MySQL 8 or upper,
+               // except if the flag 'SQLRDD_MYSQL_REAL_DATA_TYPE' is set
+               #ifdef SQLRDD_MYSQL_REAL_DATA_TYPE
+               cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+               #else
+               IF SubStr(::oSql:cSystemVers, 1, 1) == "5"
+                  // maintain the original behavior when using MySQL 5
+                  cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+               ELSE
+                  cType := "DECIMAL (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+               ENDIF
+               #endif
+            ELSE
+               // MariaDB
+               cType := "DECIMAL (" + Str(::aFields[nCol, 3], 4) + "," + Str(::aFields[nCol, 4], 3) + ")"
+            ENDIF
          ELSEIF ::aFields[nCol, 2] == "D"
             cType := "DATE"
          ENDIF
