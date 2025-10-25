@@ -8,7 +8,7 @@
 
 // Make a copy of this file and change the values below.
 // NOTE: the database must exist before runnning the test.
-#define ODBC_DRIVER   "MariaDB ODBC 3.1 Driver"
+#define ODBC_DRIVER   "MariaDB ODBC 3.2 Driver"
 #define ODBC_SERVER   "localhost"
 #define ODBC_PORT     "3306"
 #define ODBC_UID      "root"
