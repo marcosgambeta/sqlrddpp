@@ -44,7 +44,6 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-// #include "compat.ch"
 #include <error.ch>
 #include "sqlrdd.ch"
 #include "sqlrddpp.ch"
