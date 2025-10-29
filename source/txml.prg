@@ -44,8 +44,9 @@
 // $END_LICENSE$
 
 #include <fileio.ch>
-#include "srxml.ch"
 #include <hbclass.ch>
+
+#include "srxml.ch"
 
 //-------------------------------------------------------------------------------------------------------------------//
 

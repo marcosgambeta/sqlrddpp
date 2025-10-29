@@ -44,10 +44,11 @@
 
 #include <hbclass.ch>
 #include <common.ch>
+#include <error.ch>
+
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"
 #include "sqlrddpp.ch"
-#include <error.ch>
 #include "msg.ch"
 #include "pgs.ch"
 #include "sqlrddsetup.ch"

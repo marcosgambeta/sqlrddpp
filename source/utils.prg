@@ -44,12 +44,13 @@
 
 #include <hbclass.ch>
 #include <common.ch>
+#include <fileio.ch>
+#include <error.ch>
+
 #include "sqlodbc.ch"
 #include "sqlrdd.ch"
 #include "sqlrddpp.ch"
-#include <fileio.ch>
 #include "msg.ch"
-#include <error.ch>
 #include "sqlrddsetup.ch"
 
 REQUEST HB_Deserialize

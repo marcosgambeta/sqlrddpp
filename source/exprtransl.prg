@@ -43,8 +43,9 @@
 
 #include <dbinfo.ch>
 #include <hbclass.ch>
-#include "sqlrdd.ch"
 #include <inkey.ch>
+
+#include "sqlrdd.ch"
 
 //#define DEBUG
 

@@ -43,6 +43,7 @@
 // $END_LICENSE$
 
 #include <error.ch>
+
 #include "sqlrdd.ch"
 #include "sqlrddpp.ch"
 #include "msg.ch"

@@ -45,14 +45,15 @@
 
 #include <common.ch>
 #include <hbclass.ch>
+#include <error.ch>
+#include <dbinfo.ch>
+
 #include "sqlrdd.ch"
 #include "sqlrddpp.ch"
 #include "sqlodbc.ch"
-#include <error.ch>
 #include "ord.ch"
 #include "msg.ch"
 #include "set.ch"
-#include <dbinfo.ch>
 #include "sqlrddsetup.ch"
 #include "srxml.ch" // Culik added to support arrays as xml
 

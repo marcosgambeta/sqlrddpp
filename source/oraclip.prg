@@ -43,10 +43,11 @@
 
 REQUEST ADS
 
-#include "sqlrdd.ch"
-#include "sqlodbc.ch"
 #include <common.ch>
 #include <hbclass.ch>
+
+#include "sqlrdd.ch"
+#include "sqlodbc.ch"
 #include "ads.ch"
 
 STATIC s_aOraclipHash := hb_hash()

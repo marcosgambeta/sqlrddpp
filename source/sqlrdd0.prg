@@ -42,14 +42,16 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
-#include "sqlrddpp.ch"
 #include <common.ch>
 #include <error.ch>
 #include <rddsys.ch>
 #include <hbclass.ch>
+
+#include "sqlrddpp.ch"
 #include "sqlrdd.ch"
 #include "sqlodbc.ch"
 #include "msg.ch"
+
 #define HB_FALSE 0
 #define HB_TRUE 1
 //REQUEST XHB_LIB

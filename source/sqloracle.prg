@@ -45,10 +45,11 @@
 
 #include <hbclass.ch>
 #include <common.ch>
+#include <error.ch>
+
 #include "sqlora.ch"
 #include "sqlrdd.ch"
 #include "sqlrddpp.ch"
-#include <error.ch>
 #include "msg.ch"
 #include "sqlrddsetup.ch"
 
