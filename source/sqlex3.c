@@ -1,7 +1,5 @@
-//
 // SQLEX Auxiliar File for SEEK routines
 // Copyright (c) 2009 - Marcelo Lombardo  <lombardo@uol.com.br>
-//
 
 // $BEGIN_LICENSE$
 // This program is free software; you can redistribute it and/or modify

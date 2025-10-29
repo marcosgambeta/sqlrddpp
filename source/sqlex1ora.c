@@ -1,7 +1,5 @@
-//
 // sqlExOra Main File
 // Copyright (c) 2008 - Marcelo Lombardo  <lombardo@uol.com.br>
-//
 
 // $BEGIN_LICENSE$
 // This program is free software; you can redistribute it and/or modify

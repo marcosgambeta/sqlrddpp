@@ -1,10 +1,7 @@
-//
 // SQLRDD Oracle native connection
 // Copyright (c) 2005 - Marcelo Lombardo  <lombardo@uol.com.br>
-//
 // SQLRDD Oracle Native Bind Utility Functions
 // Copyright (c) 2004-2005 - Luiz Rafael Culik Guimaraes <luiz@xharbour.com.br>
-//
 
 // $BEGIN_LICENSE$
 // This program is free software; you can redistribute it and/or modify

@@ -1,9 +1,6 @@
-//
 // HBXML - XML DOM oriented routines - Classes encapsulating the document
-//
 // Copyright 2003 Giancarlo Niccolai <gian@niccolai.ws>
-//    See also MXML library related copyright in hbxml.c
-//
+// See also MXML library related copyright in hbxml.c
 
 // $BEGIN_LICENSE$
 // This program is free software; you can redistribute it and/or modify
