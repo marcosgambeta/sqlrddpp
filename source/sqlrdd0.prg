@@ -61,6 +61,7 @@ REQUEST HB_Serialize
 // Need this modules linked
 REQUEST SR_WORKAREA
 
+STATIC s_mutex := hb_mutexcreate()
 STATIC s_aConnections := {}
 STATIC s_nActiveConnection := 0
 
@@ -384,6 +385,8 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
    LOCAL oConnect
    LOCAL oConnect2
 
+   hb_mutexlock(s_mutex)
+
    DEFAULT nType TO CONNECT_ODBC
    DEFAULT lAutoCommit TO .F.
    DEFAULT lCounter TO .F.
@@ -506,6 +509,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       EXIT
    OTHERWISE
       SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + Str(nType))
+      hb_mutexunlock(s_mutex)
       RETURN -1
    ENDSWITCH
 
@@ -514,6 +518,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
          nTimeout)
    ELSE
       SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + Str(nType))
+      hb_mutexunlock(s_mutex)
       RETURN -1
    ENDIF
 
@@ -545,10 +550,12 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
 
       IF !lNoSetEnv
          IF Empty(SR_SetEnvSQLRDD(oConnect))
+            hb_mutexunlock(s_mutex)
             RETURN -1
          ENDIF
       ELSE
          IF Empty(SR_SetEnvMinimal(oConnect))
+            hb_mutexunlock(s_mutex)
             RETURN -1
          ENDIF
       ENDIF
@@ -570,6 +577,8 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       ENDIF
 
    ENDIF
+
+   hb_mutexunlock(s_mutex)
 
 RETURN nRet
 
@@ -1390,6 +1399,8 @@ FUNCTION SR_EndConnection(nConnection)
    LOCAL oCnn
    LOCAL uRet
 
+   hb_mutexlock(s_mutex)
+
    //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
@@ -1397,6 +1408,7 @@ FUNCTION SR_EndConnection(nConnection)
    SR_CheckConnection(nConnection)
 
    IF nConnection > Len(s_aConnections) .OR. nConnection == 0 .OR. nConnection < 0
+      hb_mutexunlock(s_mutex)
       RETURN NIL
    ENDIF
 
@@ -1417,6 +1429,8 @@ FUNCTION SR_EndConnection(nConnection)
    ENDIF
 
    s_nActiveConnection := Len(s_aConnections)
+   
+   hb_mutexunlock(s_mutex)
 
 RETURN uRet
 
