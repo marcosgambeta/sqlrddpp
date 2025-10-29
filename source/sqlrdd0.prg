@@ -62,7 +62,7 @@ REQUEST HB_Serialize
 REQUEST SR_WORKAREA
 
 STATIC s_aConnections := {}
-STATIC s_nActiveConnection
+STATIC s_nActiveConnection := 0
 
 STATIC s_lTblMgmnt := .F.
 STATIC s_EvalFilters := .F.
@@ -99,7 +99,7 @@ RETURN
 
 FUNCTION SR_GetCnn(nConnection)
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
 
    IF SR_CheckCnn(nConnection)
@@ -113,7 +113,7 @@ RETURN NIL
 
 FUNCTION SR_CheckCnn(nConnection)
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
 
@@ -127,7 +127,7 @@ RETURN .T.
 
 FUNCTION SR_GetConnection(nConnection)
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
 
@@ -139,7 +139,7 @@ RETURN s_aConnections[nConnection]
 
 FUNCTION SR_CheckConnection(nConnection)
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
 
@@ -156,7 +156,7 @@ FUNCTION SR_SetNextQuery(cSql)
    LOCAL cOld
 
    //DEFAULT s_aConnections TO {}
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
 
    SR_CheckConnection(s_nActiveConnection)
    cOld := s_aConnections[s_nActiveConnection]:cNextQuery
@@ -174,7 +174,7 @@ FUNCTION SR_GetSyntheticIndexMinimun()
    LOCAL nRet := s_nSyntheticIndexMinimun
 
    //DEFAULT s_aConnections TO {}
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
 
    SWITCH s_aConnections[s_nActiveConnection]:nSystemID
    CASE SQLRDD_RDBMS_POSTGR
@@ -353,7 +353,7 @@ RETURN s_lFastOpenWA
 
 FUNCTION SR_GetActiveConnection()
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
 
 RETURN s_nActiveConnection
 
@@ -363,7 +363,7 @@ FUNCTION SR_SetActiveConnection(nCnn)
 
    LOCAL nOld
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    nOld := s_nActiveConnection
    DEFAULT nCnn TO 1
    //DEFAULT s_aConnections TO {}
@@ -390,7 +390,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
    DEFAULT cOwner TO ""
    DEFAULT lNoSetEnv TO .F.
    //DEFAULT s_aConnections TO {}
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
 
    // The macro execution is used to NOT link the connection class if we don't need it
    // The programmer MUST declare the needed connection class using REQUEST in PRG source
@@ -1390,7 +1390,7 @@ FUNCTION SR_EndConnection(nConnection)
    LOCAL oCnn
    LOCAL uRet
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
 
@@ -1426,7 +1426,7 @@ FUNCTION SR_GetConnectionInfo(nConnection, nInfo)
 
    LOCAL oCnn
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    SR_CheckConnection(nConnection)
    oCnn := SR_GetConnection()
@@ -1446,7 +1446,7 @@ RETURN ""
 
 FUNCTION SR_StartLog(nConnection)
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
@@ -1461,7 +1461,7 @@ RETURN .T.
 
 FUNCTION SR_StartTrace(nConnection)
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
@@ -1476,7 +1476,7 @@ RETURN .T.
 
 FUNCTION SR_StopLog(nConnection)
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
@@ -1491,7 +1491,7 @@ RETURN NIL
 
 FUNCTION SR_StopTrace(nConnection)
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
@@ -1508,7 +1508,7 @@ FUNCTION SR_SetTimeTrace(nConnection, nMilisseconds)
 
    LOCAL nOld
 
-   DEFAULT s_nActiveConnection TO 0
+   //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
    //DEFAULT s_aConnections TO {}
    SR_CheckConnection(nConnection)
