@@ -1229,49 +1229,6 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
       RETURN "'" + " " + "'"
    ENDIF
 
-#if 0 // TODO: old code for reference (to be deleted)
-   DO CASE
-   CASE cType $ "CM" .AND. nSystemID == SQLRDD_RDBMS_POSTGR
-      RETURN [E'] + RTrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
-   CASE cType $ "CM"
-      RETURN "'" + RTrim(SR_ESCAPESTRING(uData, nSystemID)) + "'"
-   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_ORACLE
-      RETURN ("TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')")
-   CASE cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_IBMDB2 .OR. nSystemID == SQLRDD_RDBMS_ADABAS )
-      RETURN ("'" + Transform(DToS(uData), "@R 9999-99-99") + "'")
-   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_SQLBAS
-      RETURN ("'" + SR_dtosdot(uData) + "'")
-   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_INFORM
-      RETURN ("'" + SR_dtoUS(uData) + "'")
-   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_INGRES
-      RETURN ("'" + SR_dtoDot(uData) + "'")
-   CASE cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_FIREBR .OR. nSystemID == SQLRDD_RDBMS_FIREBR3)
-      RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
-   CASE cType == "D" .AND. nSystemID == SQLRDD_RDBMS_CACHE
-      RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
-   CASE cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_MYSQL .OR. nSystemID == SQLRDD_RDBMS_MARIADB)
-      RETURN ("str_to_date( '" + DToS(uData) + "', '%Y%m%d' )")
-   CASE cType == "D"
-      RETURN ("'" + DToS(uData) + "'")
-   CASE cType == "N"
-      RETURN LTrim(Str(uData))
-   CASE cType == "L" .AND. nSystemID == SQLRDD_RDBMS_POSTGR
-      RETURN IIf(uData, "true", "false")
-   CASE cType == "L" .AND. nSystemID == SQLRDD_RDBMS_INFORM
-      RETURN IIf(uData, "'t'", "'f'")
-   Case cType == "L"
-      RETURN IIf(uData, "1", "0")
-   CASE cType == "A"
-      FOR EACH uElement IN uData
-         cRet += IIf(Empty(cRet), "", ", ") + SR_SQLQuotedString(uElement, nSystemID, lNotNull)
-      NEXT
-      RETURN cRet
-   CASE cType == "O"
-      cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SQLQuotedString(SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID, lNotNull)
-   ENDCASE
-#endif
-
    SWITCH cType
 
    CASE "C"

@@ -521,66 +521,6 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
    LOCAL cRet
    LOCAL cOldSet := SET(_SET_DATEFORMAT)
 
-#if 0 // TODO: old code for reference (to be deleted)
-   Do Case
-   Case cType $ "CM" .AND. nSystemID == SQLRDD_RDBMS_ORACLE
-      RETURN "'" + RTrim(StrTran(uData, "'", "'||" + "CHR(39)" + "||'")) + "'"
-   Case cType $ "CM" .AND. nSystemID == SQLRDD_RDBMS_MSSQL7
-      RETURN "'" + RTrim(StrTran(uData, "'", "'" + "'")) + "'"
-   Case cType $ "CM" .AND. nSystemID == SQLRDD_RDBMS_POSTGR
-      RETURN "E'" + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
-   Case cType $ "CM"
-      RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
-   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_ORACLE
-      RETURN "TO_DATE('" + RTrim(DToS(uData)) + "','YYYYMMDD')"
-   Case cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_IBMDB2 .OR. nSystemID == SQLRDD_RDBMS_ADABAS)
-        RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
-   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_SQLBAS
-      RETURN "'" + SR_dtosDot(uData) + "'"
-   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_INFORM
-      RETURN "'" + SR_dtoUS(uData) + "'"
-   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_INGRES
-      RETURN "'" + SR_dtoDot(uData) + "'"
-   Case cType == "D" .AND. (nSystemID == SQLRDD_RDBMS_FIREBR .OR. nSystemID == SQLRDD_RDBMS_FIREBR3)
-      RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
-   Case cType == "D" .AND. nSystemID == SQLRDD_RDBMS_CACHE
-      RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
-   Case cType == "D"
-      RETURN "'" + DToS(uData) + "'"
-   Case cType == "N"
-      RETURN LTrim(Str(uData))
-   Case cType == "L" .AND. (nSystemID == SQLRDD_RDBMS_POSTGR .OR. nSystemID == SQLRDD_RDBMS_FIREBR3)
-      RETURN IIf(uData, "true", "false")
-   Case cType == "L" .AND. nSystemID == SQLRDD_RDBMS_INFORM
-      RETURN IIf(uData, "'t'", "'f'")
-   Case cType == "L"
-      RETURN IIf(uData, "1", "0")
-   case ctype == "T"  .AND. nSystemID == SQLRDD_RDBMS_POSTGR
-      IF Empty(uData)
-         RETURN 'NULL'
-      ENDIF
-
-      RETURN "'" + Transform(hb_ttos(uData), '@R 9999-99-99 99:99:99') + "'"
-   case ctype == "T" .AND. nSystemID == SQLRDD_RDBMS_ORACLE
-      IF Empty(uData)
-         RETURN 'NULL'
-      ENDIF
-      RETURN " TIMESTAMP '" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
-   Case cType == 'T'
-      IF Empty(uData)
-         RETURN 'NULL'
-      ENDIF
-      Set(_SET_DATEFORMAT, "yyyy-mm-dd")
-      cRet := hb_ttoc(uData)
-      Set(_SET_DATEFORMAT, cOldSet)
-      RETURN "'" + cRet + "'"
-
-   OtherWise
-      cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID)
-   EndCase
-#endif
-
    SWITCH cType
 
    CASE "C"
