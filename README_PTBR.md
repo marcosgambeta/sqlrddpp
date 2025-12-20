@@ -135,22 +135,6 @@ Caso tenha problemas na utilização deste projeto, informe na seção 'Issues':
 
 https://github.com/marcosgambeta/sqlrddpp/issues  
 
-## Contato com o desenvolvedor
-
-Envie sua mensagem usando uma das opções abaixo:
-
-E-mail:  
-marcosgambeta@outlook.com
-
-Telegram:  
-https://t.me/marcosgambeta
-
-## Informações e conteúdo extra
-
-Acompanhe o blog abaixo para mais informações e conteúdo extra:
-
-https://magsoftinfo.com/blog/
-
 ## Links
 
 SQLRDD para xHarbour e Harbour  
