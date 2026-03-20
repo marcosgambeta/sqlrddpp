@@ -939,7 +939,7 @@ HB_FUNC(SR_GETINFO)
 {
   char bBuffer[512] = {0};
   SQLSMALLINT wLen;
-  RETCODE wResult = SQLGetInfo((SQLHDBC)hb_parptr(1), (SQLUSMALLINT)hb_parnl(2), (SQLPOINTER)bBuffer, (SQLSMALLINT)512,
+  RETCODE wResult = SQLGetInfo((SQLHDBC)hb_parptr(1), (SQLUSMALLINT)hb_parni(2), (SQLPOINTER)bBuffer, (SQLSMALLINT)512,
                                (SQLSMALLINT *)&wLen);
   hb_storclen((char *)bBuffer, wLen, 3);
   hb_retni(wResult);
