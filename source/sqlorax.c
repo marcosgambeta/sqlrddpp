@@ -61,6 +61,8 @@
 #define MAX_CURSORS 65535
 #define MAX_COLUMNS 1024
 
+#define GET_OCI_SESSION(session, numpar) OCI_SESSION *session = (OCI_SESSION *)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
+
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
@@ -171,7 +173,7 @@ HB_FUNC(SQLO_CONNECT)
 
 HB_FUNC(SQLO_DBMSNAME)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
     hb_retc(session->server_version);
@@ -184,7 +186,7 @@ HB_FUNC(SQLO_DBMSNAME)
 
 HB_FUNC(SQLO_DISCONNECT)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
     sqlo_finish(session->dbh);
@@ -204,7 +206,7 @@ HB_FUNC(SQLO_DISCONNECT)
 
 HB_FUNC(SQLO_GETERRORDESCR)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
     hb_retc((char *)sqlo_geterror(session->dbh));
@@ -217,7 +219,7 @@ HB_FUNC(SQLO_GETERRORDESCR)
 
 HB_FUNC(SQLO_GETERRORCODE)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
     hb_retni(sqlo_geterrcode(session->dbh));
@@ -230,7 +232,7 @@ HB_FUNC(SQLO_GETERRORCODE)
 
 HB_FUNC(SQLO_EXECDIRECT)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   const char *stm = hb_parcx(2);
 
   if (session) {
@@ -257,7 +259,7 @@ HB_FUNC(SQLO_EXECDIRECT)
 
 HB_FUNC(SQLO_EXECUTE)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
   if (session) {
     if (lStmt) {
@@ -287,7 +289,7 @@ HB_FUNC(SQLO_EXECUTE)
 
 HB_FUNC(SQLO_NUMCOLS)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
     hb_retni(session->numcols);
@@ -372,7 +374,7 @@ int sqlo_sqldtype(HB_USHORT type)
 
 HB_FUNC(SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec, @nNull )
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   HB_USHORT dType, ncol;
   int prec, scale, nullok, namelen, dbsize, type;
   char *name;
@@ -419,7 +421,7 @@ HB_FUNC(SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec
 
 HB_FUNC(SQLO_FETCH)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t stmtParamRes;
 
   if (session) {
@@ -444,7 +446,7 @@ HB_FUNC(SQLO_FETCH)
 
 HB_FUNC(SQLO_COMMIT)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
     session->status = sqlo_commit(session->dbh);
@@ -462,7 +464,7 @@ HB_FUNC(SQLO_COMMIT)
 
 HB_FUNC(SQLO_ROLLBACK)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
     session->status = sqlo_rollback(session->dbh);
@@ -480,7 +482,7 @@ HB_FUNC(SQLO_ROLLBACK)
 
 HB_FUNC(SQLO_CLOSESTMT)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
 
@@ -665,7 +667,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
 
 HB_FUNC(SQLO_LINE)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   const char **line;
   const unsigned int *lens;
   PHB_ITEM ret, temp;
@@ -694,7 +696,7 @@ HB_FUNC(SQLO_LINE)
 
 HB_FUNC(SQLO_LINEPROCESSED)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   const char **line;
   const unsigned int *lens;
   HB_LONG lIndex;
@@ -732,7 +734,7 @@ HB_FUNC(SQLO_LINEPROCESSED)
 
 HB_FUNC(ORACLEWRITEMEMO)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   const char *sTable = hb_parc(2);
   HB_ULONG ulRecno = hb_parnl(3);
   const char *sRecnoName = hb_parcx(4);
@@ -819,7 +821,7 @@ void OracleFreeLink(int num_recs, POCI_SESSION p)
 HB_FUNC(ORACLEINBINDPARAM)
 {
 
-  POCI_SESSION Stmt = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(Stmt, 1);
   int iParamNum = hb_parni(2);
   int iParamType = hb_parni(3);
   int iFieldSize = hb_parni(4);
@@ -942,7 +944,7 @@ HB_FUNC(ORACLEINBINDPARAM)
 //  usage : ORACLEGETBINDDATA(hDbc,nParameterNumber)
 HB_FUNC(ORACLEGETBINDDATA)
 {
-  POCI_SESSION p = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(p, 1);
   int iPos;
 
   PHB_ITEM p1 = hb_param(2, HB_IT_ANY);
@@ -991,7 +993,7 @@ HB_FUNC(ORACLEGETBINDDATA)
 // ORACLEFREEBIND(nOrahandle)
 HB_FUNC(ORACLEFREEBIND)
 {
-  POCI_SESSION Stmt = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(Stmt, 1);
   if (Stmt->pLink) {
     OracleFreeLink(Stmt->ubBindNum, Stmt);
   }
@@ -1001,7 +1003,7 @@ HB_FUNC(ORACLEFREEBIND)
 // usage ORACLEPREPARE(nOracleHandle,cSql) -> nPreparedHandle)
 HB_FUNC(ORACLEPREPARE)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   const char *szSql = hb_parc(2);
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
 
@@ -1023,7 +1025,7 @@ HB_FUNC(ORACLEPREPARE)
 // ORACLEEXECDIR(nOraHandle[,nPreparedHandle]) ->nStatus
 HB_FUNC(ORACLEEXECDIR)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
   if (session) {
     ret = sqlo_execute(session->stmtParam, 1);
@@ -1034,7 +1036,7 @@ HB_FUNC(ORACLEEXECDIR)
 
 HB_FUNC(ORACLE_PROCCURSOR)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
   sqlo_stmt_handle_t st2h = SQLO_STH_INIT; // handle of the ref cursor
 
@@ -1084,7 +1086,7 @@ HB_FUNC(ORACLE_PROCCURSOR)
 }
 HB_FUNC(ORACLE_SAVE_HANDLE_ST)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   if (session) {
     hb_retptr((void *)session->stmtParam);
   }
@@ -1092,7 +1094,7 @@ HB_FUNC(ORACLE_SAVE_HANDLE_ST)
 
 HB_FUNC(ORACLE_CLOSE_FCURSOR)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (SQLO_SUCCESS != sqlo_close(session->stmtParamRes)) {
     session->stmtParamRes = SQLO_STH_INIT;
@@ -1112,7 +1114,7 @@ HB_FUNC(ORACLE_CLOSE_FCURSOR)
 
 HB_FUNC(ORACLE_BIND_BY_NAME)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   int iPos = hb_parni(2);
   hb_retni(sqlo_bind_by_name(session->stmtParam, ":c1", SQLOT_FLT, &session->pLink[iPos].dValue,
                              sizeof(session->pLink[iPos].dValue), 0, 0));
@@ -1120,7 +1122,7 @@ HB_FUNC(ORACLE_BIND_BY_NAME)
 
 HB_FUNC(ORACLEEXECDIRCURSOR)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
   if (session) {
     ret = sqlo_execute(session->stmtParam, 1);
@@ -1140,7 +1142,7 @@ HB_FUNC(ORACLEEXECDIRCURSOR)
 // ORACLEBINDALLOC(noraHandle,nNumberofParameters)
 HB_FUNC(ORACLEBINDALLOC)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   int iBind;
 
   if (session) {
@@ -1155,7 +1157,7 @@ HB_FUNC(ORACLEBINDALLOC)
 
 HB_FUNC(ORACLE_BINDCURSOR)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
   sqlo_stmt_handle_t st2h = SQLO_STH_INIT; // handle of the ref cursor
 
@@ -1186,7 +1188,7 @@ HB_FUNC(ORACLE_BINDCURSOR)
 
 HB_FUNC(ORACLE_EXECCURSOR)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   int ret = 1;
   // execute the PL/SQL block
   if (SQLO_SUCCESS != sqlo_execute(session->stmtParam, 1)) {
@@ -1207,7 +1209,7 @@ HB_FUNC(ORACLE_EXECCURSOR)
 }
 HB_FUNC(CLOSECURSOR)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
 
   if (session) {
     // sqlo_close(session->stmt);
@@ -1223,7 +1225,7 @@ HB_FUNC(CLOSECURSOR)
 
 HB_FUNC(GETAFFECTROWS)
 {
-  OCI_SESSION *session = (OCI_SESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(session, 1);
   if (session) {
     hb_retnl(session->uRows);
   } else {
@@ -1233,7 +1235,7 @@ HB_FUNC(GETAFFECTROWS)
 
 HB_FUNC(GETORAHANDLE)
 {
-  OCI_SESSION *p = (OCI_SESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(p, 1);
   if (p) {
     hb_retni(p->stmt);
   }
@@ -1241,7 +1243,7 @@ HB_FUNC(GETORAHANDLE)
 
 HB_FUNC(SETORAHANDLE)
 {
-  OCI_SESSION *p = (OCI_SESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_OCI_SESSION(p, 1);
   if (p) {
     p->stmt = hb_parni(2);
   }
