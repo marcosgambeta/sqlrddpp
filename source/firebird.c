@@ -230,7 +230,7 @@ HB_FUNC(FBCLOSE)
   int i;
   XSQLVAR *var;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     if (session->transac) {
       if (isc_commit_transaction(session->status, &(session->transac))) {
         ERRORLOGANDEXIT(session, "FBCLOSE");
@@ -628,7 +628,7 @@ HB_FUNC(FBNUMRESULTCOLS)
 {
   GET_FB_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_storni(session->sqlda->sqld, 2);
     hb_retni(SQL_SUCCESS);
   } else {
@@ -643,7 +643,7 @@ HB_FUNC(FBERROR)
 {
   GET_FB_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retc(session->msgerror);
     hb_storni(session->errorcode, 2);
   } else {
@@ -658,7 +658,7 @@ HB_FUNC(FBFETCH)
 {
   GET_FB_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     if (isc_dsql_fetch(session->status, &(session->stmt), session->sqlda->version, session->sqlda)) {
       hb_retni(SQL_NO_DATA_FOUND);
     } else {
@@ -1170,7 +1170,7 @@ HB_FUNC(FBLINEPROCESSED)
 
   HB_SIZE lLen, lDec;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     cols = (int)hb_arrayLen(pFields);
 
     for (icol = 1; icol <= cols; icol++) {
