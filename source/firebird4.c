@@ -94,6 +94,8 @@
 #define ISC_INT64_FORMAT PFLL
 #endif
 
+#define GET_FB_SESSION(session, numpar) PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
+
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
@@ -248,7 +250,7 @@ HB_FUNC(FBCONNECT4)
 // FBClose(hEnv)
 HB_FUNC(FBCLOSE4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
   int i;
   XSQLVAR *var;
 
@@ -286,7 +288,7 @@ HB_FUNC(FBCLOSE4)
 // FBBeginTransaction(hEnv)
 HB_FUNC(FBBEGINTRANSACTION4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
 
   if (CHECK_ERROR(session) && session->transac) {
     isc_rollback_transaction(session->status, &(session->transac));
@@ -343,7 +345,7 @@ HB_FUNC(FBBEGINTRANSACTION4)
 // FBBeginTransaction(hEnv)
 HB_FUNC(FBCOMMITTRANSACTION4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
 
   if (session->transac) {
     isc_commit_transaction(session->status, &(session->transac));
@@ -362,7 +364,7 @@ HB_FUNC(FBCOMMITTRANSACTION4)
 // FBRollBackTransaction(hEnv)
 HB_FUNC(FBROLLBACKTRANSACTION4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
 
   if (session->transac) {
     isc_rollback_transaction(session->status, &(session->transac));
@@ -381,7 +383,7 @@ HB_FUNC(FBROLLBACKTRANSACTION4)
 // FBExecute(hEnv, cCmd, nDialect)
 HB_FUNC(FBEXECUTE4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
   const char *command = hb_parcx(2);
   int i, dtype;
   XSQLVAR *var;
@@ -530,7 +532,7 @@ HB_FUNC(FBEXECUTE4)
 // FBExecuteImmediate(hEnv, cCmd, nDialect)
 HB_FUNC(FBEXECUTEIMMEDIATE4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
   const char *command = hb_parcx(2);
   // ISC_STATUS r;
 
@@ -566,7 +568,7 @@ HB_FUNC(FBEXECUTEIMMEDIATE4)
 // FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
 HB_FUNC(FBDESCRIBECOL4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
   int icol = hb_parni(2);
   int dtype, rettype, i;
   XSQLVAR *var;
@@ -674,7 +676,7 @@ HB_FUNC(FBDESCRIBECOL4)
 // FBNumResultCols(hEnv, @nResultSetColumnCount)
 HB_FUNC(FBNUMRESULTCOLS4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
 
   if (session) {
     hb_storni(session->sqlda->sqld, 2);
@@ -689,7 +691,7 @@ HB_FUNC(FBNUMRESULTCOLS4)
 // FBError(hEnv)
 HB_FUNC(FBERROR4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
 
   if (session) {
     hb_retc(session->msgerror);
@@ -704,7 +706,7 @@ HB_FUNC(FBERROR4)
 // FBFetch(hEnv)
 HB_FUNC(FBFETCH4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
 
   if (session) {
     ISC_STATUS stat;
@@ -726,7 +728,7 @@ HB_FUNC(FBFETCH4)
 // FBGetData(hEnv, nField, @uData)
 HB_FUNC(FBGETDATA4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
   int icol = hb_parni(2);
   int dtype, i;
   char data[MSG_BUFFER_LEN], *p;
@@ -1002,7 +1004,7 @@ HB_FUNC(FBVERSION4)
   ISC_LONG num_version = 0L;
   char tmp[1000];
 
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
 
   *tmp = 0;
 
@@ -1200,7 +1202,7 @@ static void FBFieldGet4(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
 
 HB_FUNC(FBLINEPROCESSED4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
   int icol, cols;
   int dtype, i;
   char data[MSG_BUFFER_LEN] = {0}, *p;
@@ -1469,7 +1471,7 @@ HB_FUNC(FBLINEPROCESSED4)
 
 HB_FUNC(FB_MORERESULTS4)
 {
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  GET_FB_SESSION(session, 1);
   if (session && session->sqlda->sqld >= 1) {
     if (session->queryType == isc_info_sql_stmt_exec_procedure) {
       XSQLVAR *var;
