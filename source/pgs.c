@@ -916,7 +916,7 @@ HB_FUNC(PGSLINEPROCESSED)
   assert(session->dbh != SR_NULLPTR);
   assert(session->stmt != SR_NULLPTR);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     cols = (HB_LONG)hb_arrayLen(pFields);
 
     for (i = 0; i < cols; i++) {
@@ -937,7 +937,7 @@ HB_FUNC(PGSLINEPROCESSED)
 HB_FUNC(PGSAFFECTEDROWS)
 {
   GET_PGSQL_SESSION(session, 1);
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retni(session->iAffectedRows);
     return;
   }
