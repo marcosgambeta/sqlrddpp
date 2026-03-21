@@ -206,7 +206,7 @@ HB_FUNC(SQLO2_DBMSNAME)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retc(session->server_version);
   } else {
     hb_retc("Not connected to Oracle");
@@ -219,7 +219,7 @@ HB_FUNC(SQLO2_DISCONNECT)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
 
     OCI_ConnectionFree(session->cn);
 
@@ -240,7 +240,7 @@ HB_FUNC(SQLO2_GETERRORDESCR)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retc((char *)OCI_ErrorGetString(OCI_GetLastError()));
   } else {
     hb_retc("Not connected to Oracle");
@@ -251,7 +251,7 @@ HB_FUNC(SQLO2_GETERRORCODE)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retni(OCI_ErrorGetType(OCI_GetLastError()));
   } else {
     hb_retni(SQL_ERROR);
@@ -262,7 +262,7 @@ HB_FUNC(SQLO2_NUMCOLS)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retni(session->numcols);
   } else {
     hb_retni(SQL_ERROR);
@@ -273,7 +273,7 @@ HB_FUNC(SQLO2_COMMIT)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     session->iStatus = OCI_Commit(session->cn) ? 0 : -1;
 
     if (SQLO2_SUCCESS == session->iStatus) {
@@ -292,7 +292,7 @@ HB_FUNC(SQLO2_ROLLBACK)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     session->iStatus = OCI_Rollback(session->cn) ? 0 : -1;
     if (SQLO2_SUCCESS == session->iStatus) {
       hb_retni(SQL_SUCCESS);
@@ -309,7 +309,7 @@ HB_FUNC(SQLO2_EXECDIRECT)
   GET_OCI_SESSION(session, 1);
   const char *stm = hb_parcx(2);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     session->stmt = OCI_StatementCreate(session->cn);
 
     if (OCI_ExecuteStmt(session->stmt, stm)) {
@@ -328,7 +328,7 @@ HB_FUNC(SQLO2_EXECUTE)
 {
   GET_OCI_SESSION(session, 1);
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
-  if (session) {
+  if (session != SR_NULLPTR) {
     char *stm = (char *)hb_parc(2);
     if (lStmt) {
       OCI_SetPrefetchSize(session->stmt, 100);
@@ -375,7 +375,7 @@ HB_FUNC(ORACLEINBINDPARAM2)
   HB_BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : HB_FALSE;
   HB_BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
 
-  if (Stmt) {
+  if (Stmt != SR_NULLPTR) {
 
     Stmt->pLink[iPos].bindname = (char *)hb_xgrabz(sizeof(char) * 10);
     //      memset(Stmt->pLink[iPos].bindname,'\0',10 * sizeof(char));
@@ -493,7 +493,7 @@ HB_FUNC(ORACLEGETBINDDATA2)
 
   PHB_ITEM p1 = hb_param(2, HB_IT_ANY);
 
-  if (HB_IS_NUMBER(p1) && p) {
+  if (HB_IS_NUMBER(p1) && p != SR_NULLPTR) {
 
     iPos = hb_itemGetNI(p1);
     if (p->pLink[iPos - 1].iType == 2) {
@@ -534,7 +534,7 @@ HB_FUNC(ORACLEEXECDIR2)
   GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
   int ret1;
-  if (session) {
+  if (session != SR_NULLPTR) {
     ret1 = OCI_Execute(session->stmt);
     if (ret1) {
       OCI_StatementFree(session->stmt);
@@ -555,7 +555,7 @@ HB_FUNC(ORACLEPREPARE2)
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
   int ret = -1;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     if (lStmt) {
       session->stmt = OCI_StatementCreate(session->cn);
       ret = OCI_Prepare(session->stmt, szSql);
@@ -578,7 +578,7 @@ HB_FUNC(ORACLEBINDALLOC2)
   GET_OCI_SESSION(session, 1);
   int iBind;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     iBind = hb_parni(2);
     session->pLink = (ORA_BIND_COLS2 *)hb_xgrabz(sizeof(ORA_BIND_COLS2) * iBind);
     // memset(session->pLink, 0, sizeof(ORA_BIND_COLS) * iBind);
@@ -808,7 +808,7 @@ HB_FUNC(SQLO2_LINE)
 
   ret = hb_itemNew(SR_NULLPTR);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
     line = SQLO2_values(stmtParamRes, SR_NULLPTR, 0);
     lens = SQLO2_value_lens(stmtParamRes, SR_NULLPTR);
@@ -839,7 +839,7 @@ HB_FUNC(SQLO2_LINEPROCESSED)
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
   //   SQLO2_stmt_handle_t stmtParamRes;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     // stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
     // line = SQLO2_values(stmtParamRes, NULL, 0);
     // lens = SQLO2_value_lens(stmtParamRes, NULL);
@@ -921,7 +921,7 @@ HB_FUNC(SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDe
   char *name;
   //     SQLO2_stmt_handle_t stmtParamRes;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     OCI_Column *col;
     ncol = hb_parni(2);
     // stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
@@ -998,7 +998,7 @@ HB_FUNC(SQLO2_FETCH)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
 
     session->iStatus = OCI_FetchNext(session->rs) ? 1 : -1;
 
@@ -1018,7 +1018,7 @@ HB_FUNC(SQLO2_CLOSESTMT)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     if (session->stmtParamRes) {
       OCI_StatementFree(session->stmtParamRes);
       session->stmtParamRes = SR_NULLPTR;
@@ -1115,7 +1115,7 @@ HB_FUNC(ORACLE_PROCCURSOR2)
   const char *stmt = hb_parc(2);
   const char *parc = hb_parc(3);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     // parse the statement
     // ret = SQLO2_prepare(session->dbh, stmt);
     session->stmt = OCI_StatementCreate(session->cn);
@@ -1155,7 +1155,7 @@ HB_FUNC(SQLO2_ORACLESETLOBPREFETCH)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retl(OCI_SetDefaultLobPrefetchSize(session->cn, (unsigned int)hb_parni(2)));
   } else {
     hb_retl(HB_FALSE);
@@ -1166,7 +1166,7 @@ HB_FUNC(SQLO2_SETSTATEMENTCACHESIZE)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retl(OCI_SetStatementCacheSize(session->cn, (unsigned int)hb_parni(2)));
   } else {
     hb_retl(HB_FALSE);
@@ -1177,7 +1177,7 @@ HB_FUNC(SQLO2_GETSTATEMENTCACHESIZE)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retni((unsigned int)OCI_GetStatementCacheSize(session->cn));
   } else {
     hb_retni(0);
@@ -1188,7 +1188,7 @@ HB_FUNC(GETORAHANDLE2)
 {
   GET_OCI_SESSION(p, 1);
 
-  if (p) {
+  if (p != SR_NULLPTR) {
     hb_retptr(p->stmt);
   }
 }
@@ -1197,7 +1197,7 @@ HB_FUNC(SETORAHANDLE2)
 {
   GET_OCI_SESSION(p, 1);
 
-  if (p) {
+  if (p != SR_NULLPTR) {
     p->stmt = (OCI_Statement *)hb_parptr(2);
   }
 }
