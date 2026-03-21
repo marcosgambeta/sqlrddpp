@@ -175,7 +175,7 @@ HB_FUNC(SQLO_DBMSNAME)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retc(session->server_version);
   } else {
     hb_retc("Not connected to Oracle");
@@ -188,7 +188,7 @@ HB_FUNC(SQLO_DISCONNECT)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     sqlo_finish(session->dbh);
 
     OCI_initilized--;
@@ -208,7 +208,7 @@ HB_FUNC(SQLO_GETERRORDESCR)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retc((char *)sqlo_geterror(session->dbh));
   } else {
     hb_retc("Not connected to Oracle");
@@ -221,7 +221,7 @@ HB_FUNC(SQLO_GETERRORCODE)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retni(sqlo_geterrcode(session->dbh));
   } else {
     hb_retni(SQL_ERROR);
@@ -235,7 +235,7 @@ HB_FUNC(SQLO_EXECDIRECT)
   GET_OCI_SESSION(session, 1);
   const char *stm = hb_parcx(2);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     while (SQLO_STILL_EXECUTING == (session->status = sqlo_exec(session->dbh, stm, &session->uRows))) {
       SQLO_USLEEP;
     }
@@ -261,7 +261,7 @@ HB_FUNC(SQLO_EXECUTE)
 {
   GET_OCI_SESSION(session, 1);
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
-  if (session) {
+  if (session != SR_NULLPTR) {
     if (lStmt) {
       while (SQLO_STILL_EXECUTING == (session->status = sqlo_executeselect(session->stmt, 1))) {
         SQLO_USLEEP;
@@ -291,7 +291,7 @@ HB_FUNC(SQLO_NUMCOLS)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retni(session->numcols);
   } else {
     hb_retni(SQL_ERROR);
@@ -380,7 +380,7 @@ HB_FUNC(SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec
   char *name;
   sqlo_stmt_handle_t stmtParamRes;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     ncol = (HB_USHORT)hb_parni(2) - 1;
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
     sqlo_describecol(stmtParamRes, ncol, &dType, &name, &namelen, &prec, &scale, &dbsize, &nullok);
@@ -424,7 +424,7 @@ HB_FUNC(SQLO_FETCH)
   GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t stmtParamRes;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
     while (SQLO_STILL_EXECUTING == (session->status = sqlo_fetch(stmtParamRes, 1))) {
       SQLO_USLEEP;
@@ -448,7 +448,7 @@ HB_FUNC(SQLO_COMMIT)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     session->status = sqlo_commit(session->dbh);
     if (SQLO_SUCCESS == session->status) {
       hb_retni(SQL_SUCCESS);
@@ -466,7 +466,7 @@ HB_FUNC(SQLO_ROLLBACK)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     session->status = sqlo_rollback(session->dbh);
     if (SQLO_SUCCESS == session->status) {
       hb_retni(SQL_SUCCESS);
@@ -484,7 +484,7 @@ HB_FUNC(SQLO_CLOSESTMT)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
 
     if (session->stmtParamRes != -1) {
       session->status = sqlo_close(session->stmtParamRes);
@@ -676,7 +676,7 @@ HB_FUNC(SQLO_LINE)
 
   ret = hb_itemNew(SR_NULLPTR);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
     line = sqlo_values(stmtParamRes, SR_NULLPTR, 0);
     lens = sqlo_value_lens(stmtParamRes, SR_NULLPTR);
@@ -709,7 +709,7 @@ HB_FUNC(SQLO_LINEPROCESSED)
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
   sqlo_stmt_handle_t stmtParamRes;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
     line = sqlo_values(stmtParamRes, SR_NULLPTR, 0);
     lens = sqlo_value_lens(stmtParamRes, SR_NULLPTR);
@@ -830,7 +830,7 @@ HB_FUNC(ORACLEINBINDPARAM)
   HB_BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : HB_FALSE;
   HB_BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
 
-  if (Stmt) {
+  if (Stmt != SR_NULLPTR) {
 
     Stmt->pLink[iPos].sVal = isNull ? -1 : 0;
     Stmt->pLink[iPos].iType = iParamType;
@@ -949,7 +949,7 @@ HB_FUNC(ORACLEGETBINDDATA)
 
   PHB_ITEM p1 = hb_param(2, HB_IT_ANY);
 
-  if (HB_IS_NUMBER(p1) && p) {
+  if (HB_IS_NUMBER(p1) && p != SR_NULLPTR) {
 
     iPos = hb_itemGetNI(p1);
     if (p->pLink[iPos - 1].iType == 4) {
@@ -1007,7 +1007,7 @@ HB_FUNC(ORACLEPREPARE)
   const char *szSql = hb_parc(2);
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     if (lStmt) {
       session->stmt = sqlo_prepare(session->dbh, szSql);
     } else {
@@ -1027,7 +1027,7 @@ HB_FUNC(ORACLEEXECDIR)
 {
   GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
-  if (session) {
+  if (session != SR_NULLPTR) {
     ret = sqlo_execute(session->stmtParam, 1);
     session->status = sqlo_close(session->stmtParam);
   }
@@ -1045,7 +1045,7 @@ HB_FUNC(ORACLE_PROCCURSOR)
   const char *stmt = hb_parc(2);
   const char *parc = hb_parc(3);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     // parse the statement
     ret = sqlo_prepare(session->dbh, stmt);
 
@@ -1087,7 +1087,7 @@ HB_FUNC(ORACLE_PROCCURSOR)
 HB_FUNC(ORACLE_SAVE_HANDLE_ST)
 {
   GET_OCI_SESSION(session, 1);
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retptr((void *)session->stmtParam);
   }
 }
@@ -1124,7 +1124,7 @@ HB_FUNC(ORACLEEXECDIRCURSOR)
 {
   GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
-  if (session) {
+  if (session != SR_NULLPTR) {
     ret = sqlo_execute(session->stmtParam, 1);
     if (ret == SQLO_SUCCESS) {
       ret = sqlo_execute(session->stmtParamRes, 1);
@@ -1145,7 +1145,7 @@ HB_FUNC(ORACLEBINDALLOC)
   GET_OCI_SESSION(session, 1);
   int iBind;
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     iBind = hb_parni(2);
     // session->pLink = (ORA_BIND_COLS *) hb_xgrab(sizeof(ORA_BIND_COLS) * iBind);
     // memset(session->pLink, 0, sizeof(ORA_BIND_COLS) * iBind);
@@ -1166,7 +1166,7 @@ HB_FUNC(ORACLE_BINDCURSOR)
   const char *stmt = hb_parc(2);
   const char *parc = hb_parc(3);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     // parse the statement
     ret = sqlo_prepare(session->dbh, stmt);
     if (ret == SQLO_SUCCESS) {
@@ -1211,7 +1211,7 @@ HB_FUNC(CLOSECURSOR)
 {
   GET_OCI_SESSION(session, 1);
 
-  if (session) {
+  if (session != SR_NULLPTR) {
     // sqlo_close(session->stmt);
     // sqlo_close(session->stmtParam);
     //  culik fecha primeiro o pai, apos fecha o cursor
@@ -1226,7 +1226,7 @@ HB_FUNC(CLOSECURSOR)
 HB_FUNC(GETAFFECTROWS)
 {
   GET_OCI_SESSION(session, 1);
-  if (session) {
+  if (session != SR_NULLPTR) {
     hb_retnl(session->uRows);
   } else {
     hb_retnl(0);
@@ -1236,7 +1236,7 @@ HB_FUNC(GETAFFECTROWS)
 HB_FUNC(GETORAHANDLE)
 {
   GET_OCI_SESSION(p, 1);
-  if (p) {
+  if (p != SR_NULLPTR) {
     hb_retni(p->stmt);
   }
 }
@@ -1244,7 +1244,7 @@ HB_FUNC(GETORAHANDLE)
 HB_FUNC(SETORAHANDLE)
 {
   GET_OCI_SESSION(p, 1);
-  if (p) {
+  if (p != SR_NULLPTR) {
     p->stmt = hb_parni(2);
   }
 }
