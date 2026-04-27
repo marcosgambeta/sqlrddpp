@@ -52,8 +52,6 @@
 #include "pgs.ch"
 #include "sqlodbc.ch"
 
-#include <assert.h>
-
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMXML = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
@@ -104,8 +102,13 @@ HB_FUNC(PGSCONNECT)
 HB_FUNC(PGSFINISH)
 {
   GET_PGSQL_SESSION(session, 1);
-  assert(session->dbh != SR_NULLPTR);
-  PQfinish(session->dbh);
+  if (session == SR_NULLPTR) {
+    hb_ret();
+    return;
+  }
+  if (session->dbh != SR_NULLPTR) {
+    PQfinish(session->dbh);
+  }
   hb_xfree(session);
   hb_ret();
 }
@@ -114,7 +117,10 @@ HB_FUNC(PGSFINISH)
 HB_FUNC(PGSSTATUS)
 {
   GET_PGSQL_SESSION(session, 1);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
 
   if (PQstatus(session->dbh) == CONNECTION_OK) {
     hb_retni(SQL_SUCCESS);
@@ -127,7 +133,10 @@ HB_FUNC(PGSSTATUS)
 HB_FUNC(PGSSTATUS2)
 {
   GET_PGSQL_SESSION(session, 1);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
   hb_retni((int)PQstatus(session->dbh));
 }
 
@@ -136,7 +145,10 @@ HB_FUNC(PGSRESULTSTATUS)
 {
   int ret;
   PGresult *res = (PGresult *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(res != SR_NULLPTR);
+  if (res == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
   ret = (int)PQresultStatus(res);
 
   switch (ret) {
@@ -175,9 +187,21 @@ HB_FUNC(PGSEXEC)
   // sr_TraceLog(SR_NULLPTR, "PGSExec : %s\n", hb_parc(2));
   GET_PGSQL_SESSION(session, 1);
   int ret;
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retptr(SR_NULLPTR);
+    return;
+  }
 
   session->stmt = PQexec(session->dbh, hb_parc(2));
+
+  if (session->stmt == SR_NULLPTR) {
+    sr_TraceLog(LOGFILE, "PGSExec: PQexec returned NULL (connection lost?)\n");
+    hb_retptr(SR_NULLPTR);
+    session->numcols = 0;
+    session->iAffectedRows = 0;
+    return;
+  }
+
   hb_retptr((void *)session->stmt);
 
   session->ifetch = -1;
@@ -200,8 +224,14 @@ HB_FUNC(PGSFETCH)
 {
   int iTpl;
   GET_PGSQL_SESSION(session, 1);
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_INVALID_HANDLE);
+    return;
+  }
+  if (session->stmt == SR_NULLPTR) {
+    hb_retni(SQL_INVALID_HANDLE);
+    return;
+  }
 
   iTpl = PQresultStatus(session->stmt);
   session->iAffectedRows = 0;
@@ -227,8 +257,14 @@ HB_FUNC(PGSFETCH)
 HB_FUNC(PGSRESSTATUS)
 {
   GET_PGSQL_SESSION(session, 1);
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
+  if (session->stmt == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
   hb_retc(PQresStatus(PQresultStatus(session->stmt)));
 }
 
@@ -236,7 +272,9 @@ HB_FUNC(PGSRESSTATUS)
 HB_FUNC(PGSCLEAR)
 {
   GET_PGSQL_SESSION(session, 1);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    return;
+  }
   if (session->stmt) {
     PQclear(session->stmt);
     session->stmt = SR_NULLPTR;
@@ -248,8 +286,14 @@ HB_FUNC(PGSCLEAR)
 HB_FUNC(PGSGETDATA)
 {
   GET_PGSQL_SESSION(session, 1);
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
+  if (session->stmt == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
   hb_retc(PQgetvalue(session->stmt, session->ifetch, hb_parnl(2) - 1));
 }
 
@@ -257,7 +301,10 @@ HB_FUNC(PGSGETDATA)
 HB_FUNC(PGSCOLS)
 {
   PGresult *res = (PGresult *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(res != SR_NULLPTR);
+  if (res == SR_NULLPTR) {
+    hb_retnl(0);
+    return;
+  }
   hb_retnl((long)PQnfields(res));
 }
 
@@ -265,7 +312,10 @@ HB_FUNC(PGSCOLS)
 HB_FUNC(PGSERRMSG)
 {
   GET_PGSQL_SESSION(session, 1);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
   hb_retc(PQerrorMessage(session->dbh));
 }
 
@@ -274,7 +324,10 @@ HB_FUNC(PGSCOMMIT)
 {
   GET_PGSQL_SESSION(session, 1);
   PGresult *res;
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
   res = PQexec(session->dbh, "COMMIT");
   if (PQresultStatus(res) == PGRES_COMMAND_OK) {
     hb_retni(SQL_SUCCESS);
@@ -288,7 +341,10 @@ HB_FUNC(PGSROLLBACK)
 {
   GET_PGSQL_SESSION(session, 1);
   PGresult *res;
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
   res = PQexec(session->dbh, "ROLLBACK");
   if (PQresultStatus(res) == PGRES_COMMAND_OK) {
     hb_retni(SQL_SUCCESS);
@@ -306,8 +362,14 @@ HB_FUNC(PGSQUERYATTR)
   HB_LONG typmod;
   GET_PGSQL_SESSION(session, 1);
 
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retnl(-1);
+    return;
+  }
+  if (session->stmt == SR_NULLPTR) {
+    hb_retnl(-1);
+    return;
+  }
 
   if (hb_pcount() != 1) {
     hb_retnl(-2);
@@ -508,7 +570,10 @@ HB_FUNC(PGSTABLEATTR)
   PGresult *stmtTemp;
   GET_PGSQL_SESSION(session, 1);
 
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retnl(-1);
+    return;
+  }
 
   if (hb_pcount() < 3) {
     hb_retnl(-2);
@@ -913,8 +978,9 @@ HB_FUNC(PGSLINEPROCESSED)
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
   HB_LONG lIndex, cols;
 
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
+    return;
+  }
 
   if (session != SR_NULLPTR) {
     cols = (HB_LONG)hb_arrayLen(pFields);
