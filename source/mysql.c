@@ -885,11 +885,8 @@ HB_FUNC(MYSTABLEATTR)
 HB_FUNC(MYSAFFECTEDROWS)
 {
   GET_MYSQL_SESSION(session, 1);
-  if (session != SR_NULLPTR) {
-    hb_retnll(session->ulAffected_rows);
-    return;
-  }
-  hb_retni(0);
+
+  hb_retnll(session != SR_NULLPTR ? session->ulAffected_rows : 0);
 }
 
 //-----------------------------------------------------------------------------//
