@@ -1003,10 +1003,8 @@ HB_FUNC(PGSLINEPROCESSED)
 HB_FUNC(PGSAFFECTEDROWS)
 {
   GET_PGSQL_SESSION(session, 1);
-  if (session != SR_NULLPTR) {
-    hb_retni(session->iAffectedRows);
-    return;
-  }
-  hb_retni(0);
+
+  hb_retni(session != SR_NULLPTR ? session->iAffectedRows : 0);
 }
+
 //-----------------------------------------------------------------------------//
