@@ -3811,74 +3811,145 @@ static HB_ERRCODE sqlExUnLock(SQLEXAREAP thiswa, PHB_ITEM pRecNo)
 
 //------------------------------------------------------------------------
 
+// clang-format off
 static const RDDFUNCS sqlTable = {
-    // Movement and positioning methods
+  // Movement and positioning methods
 
-    (DBENTRYP_BP)sqlExBof, (DBENTRYP_BP)sqlExEof, (DBENTRYP_BP)sqlExFound, (DBENTRYP_V)sqlExGoBottom,
-    (DBENTRYP_UL)sqlExGoTo, (DBENTRYP_I)sqlExGoToId, (DBENTRYP_V)sqlExGoTop, (DBENTRYP_BIB)sqlExSeek,
-    (DBENTRYP_L)sqlExSkip, (DBENTRYP_L)sqlExSkipFilter, (DBENTRYP_L)sqlExSkipRaw,
+  (DBENTRYP_BP)sqlExBof,
+  (DBENTRYP_BP)sqlExEof,
+  (DBENTRYP_BP)sqlExFound,
+  (DBENTRYP_V)sqlExGoBottom,
+  (DBENTRYP_UL)sqlExGoTo,
+  (DBENTRYP_I)sqlExGoToId,
+  (DBENTRYP_V)sqlExGoTop,
+  (DBENTRYP_BIB)sqlExSeek,
+  (DBENTRYP_L)sqlExSkip,
+  (DBENTRYP_L)sqlExSkipFilter,
+  (DBENTRYP_L)sqlExSkipRaw,
 
-    // Data management
+  // Data management
 
-    (DBENTRYP_VF)sqlExAddField, (DBENTRYP_B)sqlExAppend, (DBENTRYP_I)sqlExCreateFields, (DBENTRYP_V)sqlExDeleteRec,
-    (DBENTRYP_BP)sqlExDeleted, (DBENTRYP_SP)sqlExFieldCount, (DBENTRYP_VF)sqlExFieldDisplay,
-    (DBENTRYP_SSI)sqlExFieldInfo, (DBENTRYP_SCP)sqlExFieldName, (DBENTRYP_V)sqlExFlush, (DBENTRYP_PP)sqlExGetRec,
-    (DBENTRYP_SI)sqlExGetValue, (DBENTRYP_SVL)sqlExGetVarLen, (DBENTRYP_V)sqlExGoCold, (DBENTRYP_V)sqlExGoHot,
-    (DBENTRYP_P)sqlExPutRec, (DBENTRYP_SI)sqlExPutValue, (DBENTRYP_V)sqlExRecall, (DBENTRYP_ULP)sqlExRecCount,
-    (DBENTRYP_ISI)sqlExRecInfo, (DBENTRYP_ULP)sqlExRecNo, (DBENTRYP_I)sqlExRecId, (DBENTRYP_S)sqlExSetFieldExtent,
+  (DBENTRYP_VF)sqlExAddField,
+  (DBENTRYP_B)sqlExAppend,
+  (DBENTRYP_I)sqlExCreateFields,
+  (DBENTRYP_V)sqlExDeleteRec,
+  (DBENTRYP_BP)sqlExDeleted,
+  (DBENTRYP_SP)sqlExFieldCount,
+  (DBENTRYP_VF)sqlExFieldDisplay,
+  (DBENTRYP_SSI)sqlExFieldInfo,
+  (DBENTRYP_SCP)sqlExFieldName,
+  (DBENTRYP_V)sqlExFlush,
+  (DBENTRYP_PP)sqlExGetRec,
+  (DBENTRYP_SI)sqlExGetValue,
+  (DBENTRYP_SVL)sqlExGetVarLen,
+  (DBENTRYP_V)sqlExGoCold,
+  (DBENTRYP_V)sqlExGoHot,
+  (DBENTRYP_P)sqlExPutRec,
+  (DBENTRYP_SI)sqlExPutValue,
+  (DBENTRYP_V)sqlExRecall,
+  (DBENTRYP_ULP)sqlExRecCount,
+  (DBENTRYP_ISI)sqlExRecInfo,
+  (DBENTRYP_ULP)sqlExRecNo,
+  (DBENTRYP_I)sqlExRecId,
+  (DBENTRYP_S)sqlExSetFieldExtent,
 
-    // WorkArea/Database management
+  // WorkArea/Database management
 
-    (DBENTRYP_CP)sqlExAlias, (DBENTRYP_V)sqlExClose, (DBENTRYP_VO)sqlExCreate, (DBENTRYP_SI)sqlExInfo,
-    (DBENTRYP_V)sqlExNewArea, (DBENTRYP_VO)sqlExOpen, (DBENTRYP_V)sqlExRelease, (DBENTRYP_SP)sqlExStructSize,
-    (DBENTRYP_CP)sqlExSysName, (DBENTRYP_VEI)sqlExEval, (DBENTRYP_V)sqlExPack, (DBENTRYP_LSP)sqlExPackRec,
-    (DBENTRYP_VS)sqlExSort, (DBENTRYP_VT)sqlExTrans, (DBENTRYP_VT)sqlExTransRec, (DBENTRYP_V)sqlExZap,
+  (DBENTRYP_CP)sqlExAlias,
+  (DBENTRYP_V)sqlExClose,
+  (DBENTRYP_VO)sqlExCreate,
+  (DBENTRYP_SI)sqlExInfo,
+  (DBENTRYP_V)sqlExNewArea,
+  (DBENTRYP_VO)sqlExOpen,
+  (DBENTRYP_V)sqlExRelease,
+  (DBENTRYP_SP)sqlExStructSize,
+  (DBENTRYP_CP)sqlExSysName,
+  (DBENTRYP_VEI)sqlExEval,
+  (DBENTRYP_V)sqlExPack,
+  (DBENTRYP_LSP)sqlExPackRec,
+  (DBENTRYP_VS)sqlExSort,
+  (DBENTRYP_VT)sqlExTrans,
+  (DBENTRYP_VT)sqlExTransRec,
+  (DBENTRYP_V)sqlExZap,
 
-    // Relational Methods
+  // Relational Methods
 
-    (DBENTRYP_VR)sqlExChildEnd, (DBENTRYP_VR)sqlExChildStart, (DBENTRYP_VR)sqlExChildSync,
-    (DBENTRYP_V)sqlExSyncChildren, (DBENTRYP_V)sqlExClearRel, (DBENTRYP_V)sqlExForceRel, (DBENTRYP_SSP)sqlExRelArea,
-    (DBENTRYP_VR)sqlExRelEval, (DBENTRYP_SI)sqlExRelText, (DBENTRYP_VR)sqlExSetRel,
+  (DBENTRYP_VR)sqlExChildEnd,
+  (DBENTRYP_VR)sqlExChildStart,
+  (DBENTRYP_VR)sqlExChildSync,
+  (DBENTRYP_V)sqlExSyncChildren,
+  (DBENTRYP_V)sqlExClearRel,
+  (DBENTRYP_V)sqlExForceRel,
+  (DBENTRYP_SSP)sqlExRelArea,
+  (DBENTRYP_VR)sqlExRelEval,
+  (DBENTRYP_SI)sqlExRelText,
+  (DBENTRYP_VR)sqlExSetRel,
 
-    // Order Management
+  // Order Management
 
-    (DBENTRYP_VOI)sqlExOrderListAdd, (DBENTRYP_V)sqlExOrderListClear, (DBENTRYP_VOI)sqlExOrderListDelete,
-    (DBENTRYP_VOI)sqlExOrderListFocus, (DBENTRYP_V)sqlExOrderListRebuild, (DBENTRYP_VOO)sqlExOrderCondition,
-    (DBENTRYP_VOC)sqlExOrderCreate, (DBENTRYP_VOI)sqlExOrderDestroy, (DBENTRYP_SVOI)sqlExOrderInfo,
+  (DBENTRYP_VOI)sqlExOrderListAdd,
+  (DBENTRYP_V)sqlExOrderListClear,
+  (DBENTRYP_VOI)sqlExOrderListDelete,
+  (DBENTRYP_VOI)sqlExOrderListFocus,
+  (DBENTRYP_V)sqlExOrderListRebuild,
+  (DBENTRYP_VOO)sqlExOrderCondition,
+  (DBENTRYP_VOC)sqlExOrderCreate,
+  (DBENTRYP_VOI)sqlExOrderDestroy,
+  (DBENTRYP_SVOI)sqlExOrderInfo,
 
-    // Filters and Scope Settings
+  // Filters and Scope Settings
 
-    (DBENTRYP_V)sqlExClearFilter, (DBENTRYP_V)sqlExClearLocate, (DBENTRYP_V)sqlExClearScope,
-    (DBENTRYP_VPLP)sqlExCountScope, (DBENTRYP_I)sqlExFilterText, (DBENTRYP_SI)sqlExScopeInfo,
-    (DBENTRYP_VFI)sqlExSetFilter, (DBENTRYP_VLO)sqlExSetLocate, (DBENTRYP_VOS)sqlExSetScope,
-    (DBENTRYP_VPL)sqlExSkipScope, (DBENTRYP_B)sqlExLocate,
+  (DBENTRYP_V)sqlExClearFilter,
+  (DBENTRYP_V)sqlExClearLocate,
+  (DBENTRYP_V)sqlExClearScope,
+  (DBENTRYP_VPLP)sqlExCountScope,
+  (DBENTRYP_I)sqlExFilterText,
+  (DBENTRYP_SI)sqlExScopeInfo,
+  (DBENTRYP_VFI)sqlExSetFilter,
+  (DBENTRYP_VLO)sqlExSetLocate,
+  (DBENTRYP_VOS)sqlExSetScope,
+  (DBENTRYP_VPL)sqlExSkipScope,
+  (DBENTRYP_B)sqlExLocate,
 
-    // Miscellaneous
+  // Miscellaneous
 
-    (DBENTRYP_CC)sqlExCompile, (DBENTRYP_I)sqlExError, (DBENTRYP_I)sqlExEvalBlock,
+  (DBENTRYP_CC)sqlExCompile,
+  (DBENTRYP_I)sqlExError,
+  (DBENTRYP_I)sqlExEvalBlock,
 
-    // Network operations
+  // Network operations
 
-    (DBENTRYP_VSP)sqlExRawLock, (DBENTRYP_VL)sqlExLock, (DBENTRYP_I)sqlExUnLock,
+  (DBENTRYP_VSP)sqlExRawLock,
+  (DBENTRYP_VL)sqlExLock,
+  (DBENTRYP_I)sqlExUnLock,
 
-    // Memofile functions
+  // Memofile functions
 
-    (DBENTRYP_V)sqlExCloseMemFile, (DBENTRYP_VO)sqlExCreateMemFile, (DBENTRYP_SCCS)sqlExGetValueFile,
-    (DBENTRYP_VO)sqlExOpenMemFile, (DBENTRYP_SCCS)sqlExPutValueFile,
+  (DBENTRYP_V)sqlExCloseMemFile,
+  (DBENTRYP_VO)sqlExCreateMemFile,
+  (DBENTRYP_SCCS)sqlExGetValueFile,
+  (DBENTRYP_VO)sqlExOpenMemFile,
+  (DBENTRYP_SCCS)sqlExPutValueFile,
 
-    // Database file header handling
+  // Database file header handling
 
-    (DBENTRYP_V)sqlExReadDBHeader, (DBENTRYP_V)sqlExWriteDBHeader,
+  (DBENTRYP_V)sqlExReadDBHeader,
+  (DBENTRYP_V)sqlExWriteDBHeader,
 
-    // non WorkArea functions
+  // non WorkArea functions
 
-    (DBENTRYP_R)sqlExInit, (DBENTRYP_R)sqlExExit, (DBENTRYP_RVVL)sqlExDrop, (DBENTRYP_RVVL)sqlExExists,
-    (DBENTRYP_RVVVL)SR_NULLPTR, // sqlExRename
-    (DBENTRYP_RSLV)sqlExInfo,
+  (DBENTRYP_R)sqlExInit,
+  (DBENTRYP_R)sqlExExit,
+  (DBENTRYP_RVVL)sqlExDrop,
+  (DBENTRYP_RVVL)sqlExExists,
+  (DBENTRYP_RVVVL)SR_NULLPTR, // sqlExRename
+  (DBENTRYP_RSLV)sqlExInfo,
 
-    // Special and reserved methods
+  // Special and reserved methods
 
-    (DBENTRYP_SVP)sqlExWhoCares};
+  (DBENTRYP_SVP)sqlExWhoCares
+};
+// clang-format on
 
 HB_FUNC(SQLEX)
 {
