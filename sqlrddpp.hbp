@@ -22,7 +22,6 @@ source/exprudf.prg
 source/sqlconnection.prg
 source/sqlgen1.prg
 source/sqlmaria.prg
-source/sqlmy.prg
 #source/sqlnames.prg
 source/sqlodbc.prg
 source/sqloracle.prg
@@ -38,7 +37,6 @@ source/txml.prg
 source/sqly.c
 
 source/tracelog.c
-source/mysql.c
 source/pgs.c
 source/sqlact.c
 source/sqlex1.c
@@ -62,6 +60,10 @@ source/firebird/firebird.c
 source/firebird/firebird3.c
 source/firebird/firebird4.c
 source/firebird/firebird5.c
+
+# MySQL
+source/mysql/sqlmy.prg
+source/mysql/mysql.c
 
 -hbx=sqlrddpp.hbx
 sqlrddpp.hbx
