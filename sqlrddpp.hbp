@@ -26,7 +26,6 @@ source/sqlmaria.prg
 source/sqlodbc.prg
 source/sqloracle.prg
 source/sqloracle2.prg
-source/sqlpgs.prg
 source/sqlrdd0.prg
 source/sqlrdd2.prg
 source/utils.prg
@@ -37,7 +36,6 @@ source/txml.prg
 source/sqly.c
 
 source/tracelog.c
-source/pgs.c
 source/sqlact.c
 source/sqlex1.c
 source/sqlex2.c
@@ -64,6 +62,10 @@ source/firebird/firebird5.c
 # MySQL
 source/mysql/sqlmy.prg
 source/mysql/mysql.c
+
+# PostgreSQL
+source/postgresql/sqlpgs.prg
+source/postgresql/pgs.c
 
 -hbx=sqlrddpp.hbx
 sqlrddpp.hbx
