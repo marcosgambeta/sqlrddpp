@@ -20,10 +20,6 @@ source/exprsimpl.prg
 source/exprtransl.prg
 source/exprudf.prg
 source/sqlconnection.prg
-source/sqlfirebird.prg
-source/sqlfirebird3.prg
-source/sqlfirebird4.prg
-source/sqlfirebird5.prg
 source/sqlgen1.prg
 source/sqlmaria.prg
 source/sqlmy.prg
@@ -42,10 +38,6 @@ source/txml.prg
 source/sqly.c
 
 source/tracelog.c
-source/firebird.c
-source/firebird3.c
-source/firebird4.c
-source/firebird5.c
 source/mysql.c
 source/pgs.c
 source/sqlact.c
@@ -60,6 +52,16 @@ source/sqlsrodbc.c
 source/srxml.c
 source/xhbenum.c
 source/xthrow.c
+
+# Firebird
+source/firebird/sqlfirebird.prg
+source/firebird/sqlfirebird3.prg
+source/firebird/sqlfirebird4.prg
+source/firebird/sqlfirebird5.prg
+source/firebird/firebird.c
+source/firebird/firebird3.c
+source/firebird/firebird4.c
+source/firebird/firebird5.c
 
 -hbx=sqlrddpp.hbx
 sqlrddpp.hbx
