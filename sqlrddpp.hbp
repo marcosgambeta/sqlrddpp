@@ -22,7 +22,6 @@ source/exprudf.prg
 source/sqlconnection.prg
 source/sqlgen1.prg
 #source/sqlnames.prg
-source/sqlodbc.prg
 source/sqlrdd0.prg
 source/sqlrdd2.prg
 source/utils.prg
@@ -39,7 +38,6 @@ source/sqlex2.c
 source/sqlex3.c
 source/sqllex.c
 source/sqlrdd1.c
-source/sqlsrodbc.c
 source/srxml.c
 source/xhbenum.c
 source/xthrow.c
@@ -60,6 +58,10 @@ source/mariadb/sqlmaria.prg
 # MySQL
 source/mysql/sqlmy.prg
 source/mysql/mysql.c
+
+# ODBC
+source/odbc/sqlodbc.prg
+source/odbc/sqlsrodbc.c
 
 # Oracle
 source/oracle/sqloracle.prg
