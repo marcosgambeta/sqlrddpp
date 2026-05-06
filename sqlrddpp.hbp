@@ -23,8 +23,6 @@ source/sqlconnection.prg
 source/sqlgen1.prg
 #source/sqlnames.prg
 source/sqlodbc.prg
-source/sqloracle.prg
-source/sqloracle2.prg
 source/sqlrdd0.prg
 source/sqlrdd2.prg
 source/utils.prg
@@ -40,8 +38,6 @@ source/sqlex1.c
 source/sqlex2.c
 source/sqlex3.c
 source/sqllex.c
-source/sqlora.c
-source/sqlorax.c
 source/sqlrdd1.c
 source/sqlsrodbc.c
 source/srxml.c
@@ -64,6 +60,12 @@ source/mariadb/sqlmaria.prg
 # MySQL
 source/mysql/sqlmy.prg
 source/mysql/mysql.c
+
+# Oracle
+source/oracle/sqloracle.prg
+source/oracle/sqloracle2.prg
+source/oracle/sqlora.c
+source/oracle/sqlorax.c
 
 # PostgreSQL
 source/postgresql/sqlpgs.prg
