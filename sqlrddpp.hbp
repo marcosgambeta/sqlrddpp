@@ -21,7 +21,6 @@ source/exprtransl.prg
 source/exprudf.prg
 source/sqlconnection.prg
 source/sqlgen1.prg
-source/sqlmaria.prg
 #source/sqlnames.prg
 source/sqlodbc.prg
 source/sqloracle.prg
@@ -58,6 +57,9 @@ source/firebird/firebird.c
 source/firebird/firebird3.c
 source/firebird/firebird4.c
 source/firebird/firebird5.c
+
+# MariaDB
+source/mariadb/sqlmaria.prg
 
 # MySQL
 source/mysql/sqlmy.prg
