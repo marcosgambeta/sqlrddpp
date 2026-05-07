@@ -176,8 +176,8 @@ static void fb_log_status4(PFB_SESSION session, const char *from)
 
 //------------------------------------------------------------------------
 
-// FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
-HB_FUNC(FBCONNECT4)
+// SR_FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
+HB_FUNC(SR_FBCONNECT4)
 {
   XSQLVAR *var;
   const char *db_connect;
@@ -247,8 +247,8 @@ HB_FUNC(FBCONNECT4)
 
 //------------------------------------------------------------------------
 
-// FBClose(hEnv)
-HB_FUNC(FBCLOSE4)
+// SR_FBClose(hEnv)
+HB_FUNC(SR_FBCLOSE4)
 {
   GET_FB_SESSION(session, 1);
   int i;
@@ -285,8 +285,8 @@ HB_FUNC(FBCLOSE4)
 
 //------------------------------------------------------------------------
 
-// FBBeginTransaction(hEnv)
-HB_FUNC(FBBEGINTRANSACTION4)
+// SR_FBBeginTransaction(hEnv)
+HB_FUNC(SR_FBBEGINTRANSACTION4)
 {
   GET_FB_SESSION(session, 1);
 
@@ -342,8 +342,8 @@ HB_FUNC(FBBEGINTRANSACTION4)
 
 //------------------------------------------------------------------------
 
-// FBBeginTransaction(hEnv)
-HB_FUNC(FBCOMMITTRANSACTION4)
+// SR_FBBeginTransaction(hEnv)
+HB_FUNC(SR_FBCOMMITTRANSACTION4)
 {
   GET_FB_SESSION(session, 1);
 
@@ -361,8 +361,8 @@ HB_FUNC(FBCOMMITTRANSACTION4)
 
 //------------------------------------------------------------------------
 
-// FBRollBackTransaction(hEnv)
-HB_FUNC(FBROLLBACKTRANSACTION4)
+// SR_FBRollBackTransaction(hEnv)
+HB_FUNC(SR_FBROLLBACKTRANSACTION4)
 {
   GET_FB_SESSION(session, 1);
 
@@ -380,8 +380,8 @@ HB_FUNC(FBROLLBACKTRANSACTION4)
 
 //------------------------------------------------------------------------
 
-// FBExecute(hEnv, cCmd, nDialect)
-HB_FUNC(FBEXECUTE4)
+// SR_FBExecute(hEnv, cCmd, nDialect)
+HB_FUNC(SR_FBEXECUTE4)
 {
   GET_FB_SESSION(session, 1);
   const char *command = hb_parcx(2);
@@ -529,8 +529,8 @@ HB_FUNC(FBEXECUTE4)
 
 //------------------------------------------------------------------------
 
-// FBExecuteImmediate(hEnv, cCmd, nDialect)
-HB_FUNC(FBEXECUTEIMMEDIATE4)
+// SR_FBExecuteImmediate(hEnv, cCmd, nDialect)
+HB_FUNC(SR_FBEXECUTEIMMEDIATE4)
 {
   GET_FB_SESSION(session, 1);
   const char *command = hb_parcx(2);
@@ -565,8 +565,8 @@ HB_FUNC(FBEXECUTEIMMEDIATE4)
 
 //------------------------------------------------------------------------
 
-// FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
-HB_FUNC(FBDESCRIBECOL4)
+// SR_FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
+HB_FUNC(SR_FBDESCRIBECOL4)
 {
   GET_FB_SESSION(session, 1);
   int icol = hb_parni(2);
@@ -673,8 +673,8 @@ HB_FUNC(FBDESCRIBECOL4)
 
 //------------------------------------------------------------------------
 
-// FBNumResultCols(hEnv, @nResultSetColumnCount)
-HB_FUNC(FBNUMRESULTCOLS4)
+// SR_FBNumResultCols(hEnv, @nResultSetColumnCount)
+HB_FUNC(SR_FBNUMRESULTCOLS4)
 {
   GET_FB_SESSION(session, 1);
 
@@ -688,8 +688,8 @@ HB_FUNC(FBNUMRESULTCOLS4)
 
 //------------------------------------------------------------------------
 
-// FBError(hEnv)
-HB_FUNC(FBERROR4)
+// SR_FBError(hEnv)
+HB_FUNC(SR_FBERROR4)
 {
   GET_FB_SESSION(session, 1);
 
@@ -703,8 +703,8 @@ HB_FUNC(FBERROR4)
 
 //------------------------------------------------------------------------
 
-// FBFetch(hEnv)
-HB_FUNC(FBFETCH4)
+// SR_FBFetch(hEnv)
+HB_FUNC(SR_FBFETCH4)
 {
   GET_FB_SESSION(session, 1);
 
@@ -725,8 +725,8 @@ HB_FUNC(FBFETCH4)
 
 //------------------------------------------------------------------------
 
-// FBGetData(hEnv, nField, @uData)
-HB_FUNC(FBGETDATA4)
+// SR_FBGetData(hEnv, nField, @uData)
+HB_FUNC(SR_FBGETDATA4)
 {
   GET_FB_SESSION(session, 1);
   int icol = hb_parni(2);
@@ -934,7 +934,7 @@ HB_FUNC(FBGETDATA4)
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBCREATEDB4)
+HB_FUNC(SR_FBCREATEDB4)
 {
   isc_db_handle newdb = 0;
   isc_tr_handle trans = 0;
@@ -999,7 +999,7 @@ static void firebird_info_cb(void *arg, char const *s)
   }
 }
 
-HB_FUNC(FBVERSION4)
+HB_FUNC(SR_FBVERSION4)
 {
   ISC_LONG num_version = 0L;
   char tmp[1000];
@@ -1200,7 +1200,7 @@ static void FBFieldGet4(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
 
 //------------------------------------------------------------------------
 
-HB_FUNC(FBLINEPROCESSED4)
+HB_FUNC(SR_FBLINEPROCESSED4)
 {
   GET_FB_SESSION(session, 1);
   int icol, cols;
@@ -1469,7 +1469,7 @@ HB_FUNC(FBLINEPROCESSED4)
   }
 }
 
-HB_FUNC(FB_MORERESULTS4)
+HB_FUNC(SR_FB_MORERESULTS4)
 {
   GET_FB_SESSION(session, 1);
   if (session && session->sqlda->sqld >= 1) {

@@ -96,7 +96,7 @@ METHOD SR_FIREBIRD4:Getline(aFields, lTranslate, aArray)
    ENDIF
 
    IF ::aCurrLine == NIL
-      FBLINEPROCESSED4(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
+      SR_FBLINEPROCESSED4(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
       ::aCurrLine := aArray
       RETURN aArray
    ENDIF
@@ -114,7 +114,7 @@ METHOD SR_FIREBIRD4:FieldGet(nField, aFields, lTranslate)
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
       ::aCurrLine := Array(Len(aFields))
-      FBLINEPROCESSED4(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
+      SR_FBLINEPROCESSED4(::hEnv, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
 RETURN ::aCurrLine[nField]
@@ -128,7 +128,7 @@ METHOD SR_FIREBIRD4:FetchRaw(lTranslate, aFields)
    DEFAULT lTranslate TO .T.
 
    IF ::hEnv != NIL
-      ::nRetCode := FBFetch4(::hEnv)
+      ::nRetCode := SR_FBFetch4(::hEnv)
       ::aCurrLine := NIL
    ELSE
       ::RunTimeErr("", "FBFetch - Invalid cursor state" + SR_CRLF + SR_CRLF + ;
@@ -193,7 +193,7 @@ METHOD SR_FIREBIRD4:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, c
       ENDIF
    ENDIF
 
-   IF (::nRetCode := FBNumResultCols4(::hEnv, @nFields)) != SQL_SUCCESS
+   IF (::nRetCode := SR_FBNumResultCols4(::hEnv, @nFields)) != SQL_SUCCESS
       ::RunTimeErr("", "FBNumResultCols Error" + SR_CRLF + SR_CRLF + ;
          "Last command sent to database : " + SR_CRLF + ::cLastComm)
       RETURN NIL
@@ -206,7 +206,7 @@ METHOD SR_FIREBIRD4:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, c
 
       nDec := 0
 
-      IF (::nRetCode := FBDescribeCol4(::hEnv, n, @cName, @nType, @nLen, @nDec, @nNull)) != SQL_SUCCESS
+      IF (::nRetCode := SR_FBDescribeCol4(::hEnv, n, @cName, @nType, @nLen, @nDec, @nNull)) != SQL_SUCCESS
          ::RunTimeErr("", "FBDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
             "Last command sent to database : " + ::cLastComm)
          RETURN NIL
@@ -247,7 +247,7 @@ METHOD SR_FIREBIRD4:LastError()
    LOCAL cMsgError
    LOCAL nType := 0
 
-   cMsgError := FBError4(::hEnv, @nType)
+   cMsgError := SR_FBError4(::hEnv, @nType)
 
 RETURN AllTrim(cMsgError) + " - Native error code " + AllTrim(Str(nType))
 
@@ -275,7 +275,7 @@ METHOD SR_FIREBIRD4:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMa
    HB_SYMBOL_UNUSED(lCounter)
    HB_SYMBOL_UNUSED(lAutoCommit)
 
-   nRet := FBConnect4(::cDtb, ::cUser, ::cPassword, ::cCharSet, @hEnv)
+   nRet := SR_FBConnect4(::cDtb, ::cUser, ::cPassword, ::cCharSet, @hEnv)
 
    IF nRet != SQL_SUCCESS
       ::nRetCode := nRet
@@ -289,7 +289,7 @@ METHOD SR_FIREBIRD4:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMa
    cSystemVers := SubStr(cTargetDB, At("Firebird ", cTargetDB) + 9, 3)
    //tracelog("cTargetDB", cTargetDB, "cSystemVers", cSystemVers)
 
-   nRet := FBBeginTransaction4(hEnv)
+   nRet := SR_FBBeginTransaction4(hEnv)
 
    IF nRet != SQL_SUCCESS
       ::nRetCode := nRet
@@ -310,7 +310,7 @@ RETURN SELF
 METHOD SR_FIREBIRD4:End()
 
    ::Commit()
-   FBClose4(::hEnv)
+   SR_FBClose4(::hEnv)
 
 RETURN ::Super:End()
 
@@ -319,9 +319,9 @@ RETURN ::Super:End()
 METHOD SR_FIREBIRD4:Commit()
 
    ::Super:Commit()
-   ::nRetCode := FBCOMMITTRANSACTION4(::hEnv)
+   ::nRetCode := SR_FBCOMMITTRANSACTION4(::hEnv)
 
-RETURN (::nRetCode := FBBeginTransaction4(::hEnv))
+RETURN (::nRetCode := SR_FBBeginTransaction4(::hEnv))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -329,7 +329,7 @@ METHOD SR_FIREBIRD4:RollBack()
 
    ::super:RollBack()
 
-RETURN (::nRetCode := FBRollBackTransaction4(::hEnv))
+RETURN (::nRetCode := SR_FBRollBackTransaction4(::hEnv))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -338,10 +338,10 @@ METHOD SR_FIREBIRD4:ExecuteRaw(cCommand)
    LOCAL nRet
 
    IF Upper(Left(LTrim(cCommand), 6)) == "SELECT" .OR. "RETURNING" $ Upper(AllTrim(cCommand))
-      nRet := FBExecute4(::hEnv, cCommand, IB_DIALECT_CURRENT)
+      nRet := SR_FBExecute4(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .T.
    ELSE
-      nRet := FBExecuteImmediate4(::hEnv, cCommand, IB_DIALECT_CURRENT)
+      nRet := SR_FBExecuteImmediate4(::hEnv, cCommand, IB_DIALECT_CURRENT)
       ::lResultSet := .F.
    ENDIF
 
@@ -357,7 +357,7 @@ METHOD SR_FIREBIRD4:MoreResults(aArray, lTranslate)
 
    DEFAULT lTranslate TO .T.
 
-   nRet := FB_MoreResults4(::hEnv, @nValue)
+   nRet := SR_FB_MoreResults4(::hEnv, @nValue)
 
    IF nRet == SQL_SUCCESS
 
