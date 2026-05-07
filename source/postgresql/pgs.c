@@ -765,7 +765,7 @@ HB_FUNC(SR_PGSTABLEATTR)
 
 //-----------------------------------------------------------------------------//
 
-void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
+static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
                  HB_ULONG ulSystemID, HB_BOOL bTranslate)
 {
   HB_LONG lType;
