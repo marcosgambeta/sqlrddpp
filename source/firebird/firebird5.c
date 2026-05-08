@@ -1469,7 +1469,7 @@ HB_FUNC(SR_FBLINEPROCESSED5)
   }
 }
 
-HB_FUNC(SR_FB_MORERESULTS5)
+HB_FUNC(SR_FBMORERESULTS5)
 {
   GET_FB_SESSION(session, 1);
   if (session && session->sqlda->sqld >= 1) {

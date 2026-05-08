@@ -357,7 +357,7 @@ METHOD SR_FIREBIRD4:MoreResults(aArray, lTranslate)
 
    DEFAULT lTranslate TO .T.
 
-   nRet := SR_FB_MoreResults4(::hEnv, @nValue)
+   nRet := SR_FBMoreResults4(::hEnv, @nValue)
 
    IF nRet == SQL_SUCCESS
 
