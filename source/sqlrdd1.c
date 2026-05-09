@@ -1020,9 +1020,11 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE sqlAppend(SQLAREAP thiswa)
+static HB_ERRCODE sqlAppend(SQLAREAP thiswa, HB_BOOL value)
 {
   PHB_ITEM pItem;
+  
+  HB_SYMBOL_UNUSED(value);
 
   // sr_TraceLog(SR_NULLPTR, "sqlAppend\n");
 
