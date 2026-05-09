@@ -349,6 +349,7 @@ static void sqlGetCleanBuffer(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_BP)
 static HB_ERRCODE sqlBof(SQLAREAP thiswa, HB_BOOL *bof)
 {
   if (thiswa->firstinteract) {
@@ -369,6 +370,7 @@ static HB_ERRCODE sqlBof(SQLAREAP thiswa, HB_BOOL *bof)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_BP)
 static HB_ERRCODE sqlEof(SQLAREAP thiswa, HB_BOOL *eof)
 {
   if (thiswa->firstinteract) {
@@ -394,6 +396,7 @@ static HB_ERRCODE sqlEof(SQLAREAP thiswa, HB_BOOL *eof)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_BP)
 static HB_ERRCODE sqlFound(SQLAREAP thiswa, HB_BOOL *found)
 {
   if (thiswa->lpdbPendingRel) {
@@ -410,6 +413,7 @@ static HB_ERRCODE sqlFound(SQLAREAP thiswa, HB_BOOL *found)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
 {
   HB_LONG leof;
@@ -453,6 +457,8 @@ static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_UL)
+// TODO: HB_LONG -> HB_ULONG
 static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, HB_LONG recno)
 {
   PHB_ITEM pParam1;
@@ -479,6 +485,7 @@ static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, HB_LONG recno)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_I)
 static HB_ERRCODE sqlGoToId(SQLAREAP thiswa, PHB_ITEM pItem)
 {
 
@@ -507,6 +514,7 @@ static HB_ERRCODE sqlGoToId(SQLAREAP thiswa, PHB_ITEM pItem)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
 {
   HB_LONG lbof;
@@ -637,6 +645,7 @@ int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact) // TODO: static ?
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_BIB)
 static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_BOOL bFindLast)
 {
   PHB_ITEM pNewKey = SR_NULLPTR, pItem, pItem2;
@@ -707,6 +716,7 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_L)
 static HB_ERRCODE sqlSkip(SQLAREAP thiswa, HB_LONG lToSkip)
 {
   HB_ERRCODE ret;
@@ -737,6 +747,7 @@ static HB_ERRCODE sqlSkip(SQLAREAP thiswa, HB_LONG lToSkip)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_L)
 static HB_ERRCODE sqlSkipFilter(SQLAREAP thiswa, HB_LONG lUpDown)
 {
   HB_BOOL bOutOfRange, bDeleted;
@@ -818,6 +829,7 @@ static HB_ERRCODE ConcludeSkipraw(SQLAREAP thiswa, HB_LONG lToSkip)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_L)
 static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
 {
   HB_BOOL bEof, bBof;
@@ -1016,10 +1028,12 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VF)
 #define sqlAddField SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_B)
 static HB_ERRCODE sqlAppend(SQLAREAP thiswa, HB_BOOL value)
 {
   PHB_ITEM pItem;
@@ -1054,6 +1068,7 @@ static HB_ERRCODE sqlAppend(SQLAREAP thiswa, HB_BOOL value)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_I)
 static HB_ERRCODE sqlCreateFields(SQLAREAP thiswa, PHB_ITEM pStruct)
 {
   thiswa->aCreate = pStruct;
@@ -1062,6 +1077,7 @@ static HB_ERRCODE sqlCreateFields(SQLAREAP thiswa, PHB_ITEM pStruct)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlDeleteRec(SQLAREAP thiswa)
 {
   if (thiswa->firstinteract) {
@@ -1084,6 +1100,7 @@ static HB_ERRCODE sqlDeleteRec(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_BP)
 static HB_ERRCODE sqlDeleted(SQLAREAP thiswa, HB_BOOL *isDeleted)
 {
   if (thiswa->lpdbPendingRel) {
@@ -1102,6 +1119,7 @@ static HB_ERRCODE sqlDeleted(SQLAREAP thiswa, HB_BOOL *isDeleted)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SP)
 static HB_ERRCODE sqlFieldCount(SQLAREAP thiswa, HB_USHORT *fieldCount)
 {
   *fieldCount = thiswa->area.uiFieldCount;
@@ -1111,12 +1129,16 @@ static HB_ERRCODE sqlFieldCount(SQLAREAP thiswa, HB_USHORT *fieldCount)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VF)
 #define sqlFieldDisplay SR_NULLPTR
+// (DBENTRYP_SSI)
 #define sqlFieldInfo SR_NULLPTR
+// (DBENTRYP_SCP)
 #define sqlFieldName SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlFlush(SQLAREAP thiswa)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlFlush\n");
@@ -1126,10 +1148,12 @@ static HB_ERRCODE sqlFlush(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_PP)
 #define sqlGetRec SR_NULLPTR // leave it unUsed
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SI)
 static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM value)
 {
   PHB_ITEM itemTemp, itemTemp3;
@@ -1233,10 +1257,12 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SVL)
 #define sqlGetVarLen SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlGoCold(SQLAREAP thiswa)
 {
   if (hb_arrayGetL(thiswa->aInfo, AINFO_HOT) && (!hb_arrayGetL(thiswa->aInfo, AINFO_DELETED))) {
@@ -1247,11 +1273,14 @@ static HB_ERRCODE sqlGoCold(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 #define sqlGoHot SR_NULLPTR
+// (DBENTRYP_P)
 #define sqlPutRec SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SI)
 static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM value)
 {
   PHB_ITEM pDest;
@@ -1371,6 +1400,7 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlRecall(SQLAREAP thiswa)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlRecall\n");
@@ -1389,6 +1419,7 @@ static HB_ERRCODE sqlRecall(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_ULP)
 static HB_ERRCODE sqlRecCount(SQLAREAP thiswa, HB_ULONG *recCount)
 {
   if (thiswa->lpdbPendingRel) {
@@ -1408,10 +1439,12 @@ static HB_ERRCODE sqlRecCount(SQLAREAP thiswa, HB_ULONG *recCount)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_ISI)
 #define sqlRecInfo SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_ULP)
 static HB_ERRCODE sqlRecNo(SQLAREAP thiswa, HB_ULONG *recno)
 {
 #ifdef SQLRDD_NWG_SPECIFIC
@@ -1436,6 +1469,7 @@ static HB_ERRCODE sqlRecNo(SQLAREAP thiswa, HB_ULONG *recno)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_I)
 static HB_ERRCODE sqlRecId(SQLAREAP thiswa, PHB_ITEM recno)
 {
   if (thiswa->lpdbPendingRel) {
@@ -1458,6 +1492,7 @@ static HB_ERRCODE sqlRecId(SQLAREAP thiswa, PHB_ITEM recno)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_S)
 static HB_ERRCODE sqlSetFieldExtent(SQLAREAP thiswa, HB_USHORT uiFieldExtent)
 {
   HB_TRACE(HB_TR_DEBUG, ("sqlSetFieldExtent(%p, %hu)", thiswa, uiFieldExtent));
@@ -1485,10 +1520,12 @@ static HB_ERRCODE sqlSetFieldExtent(SQLAREAP thiswa, HB_USHORT uiFieldExtent)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_CP)
 #define sqlAlias SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlClose(SQLAREAP thiswa)
 {
   HB_ERRCODE uiError;
@@ -1548,6 +1585,7 @@ static HB_ERRCODE sqlClose(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VO)
 static HB_ERRCODE sqlCreate(SQLAREAP thiswa, LPDBOPENINFO pCreateInfo)
 {
   PHB_ITEM pTable = hb_itemNew(SR_NULLPTR);
@@ -1654,6 +1692,7 @@ static HB_ERRCODE sqlCreate(SQLAREAP thiswa, LPDBOPENINFO pCreateInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SI)
 static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
 {
   HB_BOOL flag = HB_TRUE;
@@ -1943,6 +1982,7 @@ static void startSQLRDDSymbols()
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlNewArea(SQLAREAP thiswa)
 {
   if (SUPER_NEW(&thiswa->area) == HB_FAILURE) {
@@ -1956,6 +1996,7 @@ static HB_ERRCODE sqlNewArea(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VO)
 static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
 {
   PHB_ITEM pConnection = hb_itemNew(SR_NULLPTR);
@@ -2099,10 +2140,12 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 #define sqlRelease SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SP)
 static HB_ERRCODE sqlStructSize(SQLAREAP thiswa, HB_USHORT *StructSize)
 {
   HB_SYMBOL_UNUSED(thiswa); // Avoid compiler warning
@@ -2112,11 +2155,14 @@ static HB_ERRCODE sqlStructSize(SQLAREAP thiswa, HB_USHORT *StructSize)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_CP)
 #define sqlSysName SR_NULLPTR
+// (DBENTRYP_VEI)
 #define sqlEval SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlPack(SQLAREAP thiswa)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlPack\n");
@@ -2127,13 +2173,18 @@ static HB_ERRCODE sqlPack(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_LSP)
 #define sqlPackRec SR_NULLPTR
+// (DBENTRYP_VS)
 #define sqlSort SR_NULLPTR
+// (DBENTRYP_VT)
 #define sqlTrans SR_NULLPTR
+// (DBENTRYP_VT)
 #define sqlTransRec SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlZap(SQLAREAP thiswa)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlZap\n");
@@ -2150,6 +2201,7 @@ static HB_ERRCODE sqlZap(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VR)
 static HB_ERRCODE sqlChildEnd(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 {
   HB_ERRCODE uiError;
@@ -2169,6 +2221,7 @@ static HB_ERRCODE sqlChildEnd(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VR)
 static HB_ERRCODE sqlChildStart(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 {
   HB_TRACE(HB_TR_DEBUG, ("sqlChildStart(%p, %p)", thiswa, pRelInfo));
@@ -2186,6 +2239,7 @@ static HB_ERRCODE sqlChildStart(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VR)
 static HB_ERRCODE sqlChildSync(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 {
   HB_TRACE(HB_TR_DEBUG, ("sqlChildSync(%p, %p)", thiswa, pRelInfo));
@@ -2200,14 +2254,17 @@ static HB_ERRCODE sqlChildSync(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 #define sqlSyncChildren SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 #define sqlClearRel SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlForceRel(SQLAREAP thiswa)
 {
   LPDBRELINFO lpdbPendingRel;
@@ -2228,13 +2285,18 @@ static HB_ERRCODE sqlForceRel(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SSP)
 #define sqlRelArea SR_NULLPTR
+// (DBENTRYP_VR)
 #define sqlRelEval SR_NULLPTR
+// (DBENTRYP_SI)
 #define sqlRelText SR_NULLPTR
+// (DBENTRYP_VR)
 #define sqlSetRel SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VOI)
 static HB_ERRCODE sqlOrderListAdd(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
   PHB_ITEM pNIL = SR_NULLPTR, pIndex, pTag;
@@ -2269,6 +2331,7 @@ static HB_ERRCODE sqlOrderListAdd(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlOrderListClear(SQLAREAP thiswa)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlOrderListClear\n");
@@ -2285,10 +2348,12 @@ static HB_ERRCODE sqlOrderListClear(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VOI)
 #define sqlOrderListDelete SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VOI)
 static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
   PHB_ITEM pTag;
@@ -2319,10 +2384,12 @@ static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 #define sqlOrderListRebuild SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VOO)
 static HB_ERRCODE sqlOrderCondition(SQLAREAP thiswa, LPDBORDERCONDINFO lpdbOrdCondInfo)
 {
   PHB_ITEM pItemFor, pItemWhile, pItemStart, pItemNext, pItemRecno, pItemRest, pItemDesc;
@@ -2370,6 +2437,7 @@ static HB_ERRCODE sqlOrderCondition(SQLAREAP thiswa, LPDBORDERCONDINFO lpdbOrdCo
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VOC)
 static HB_ERRCODE sqlOrderCreate(SQLAREAP thiswa, LPDBORDERCREATEINFO pOrderInfo)
 {
   PHB_ITEM pBagName, pAtomBagName;
@@ -2412,6 +2480,7 @@ static HB_ERRCODE sqlOrderCreate(SQLAREAP thiswa, LPDBORDERCREATEINFO pOrderInfo
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VOI)
 static HB_ERRCODE sqlOrderDestroy(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
   PHB_ITEM pTag;
@@ -2541,6 +2610,7 @@ static HB_ERRCODE sqlSetServerSideIndexScope(SQLAREAP thiswa, int nScope, PHB_IT
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SVOI)
 static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO pInfo)
 {
   HB_LONG lIndexes, lorder = 0;
@@ -2828,6 +2898,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 static HB_ERRCODE sqlClearFilter(SQLAREAP thiswa)
 {
   if (thiswa->sqlfilter) {
@@ -2839,18 +2910,22 @@ static HB_ERRCODE sqlClearFilter(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 #define sqlClearLocate SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 #define sqlClearScope SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VPLP)
 #define sqlCountScope SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_I)
 static HB_ERRCODE sqlFilterText(SQLAREAP thiswa, PHB_ITEM pFilter)
 {
   if (thiswa->sqlfilter) {
@@ -2864,6 +2939,7 @@ static HB_ERRCODE sqlFilterText(SQLAREAP thiswa, PHB_ITEM pFilter)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SI)
 static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem)
 {
   HB_LONG lIndexes, lorder;
@@ -2898,6 +2974,7 @@ static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VFI)
 static HB_ERRCODE sqlSetFilter(SQLAREAP thiswa, LPDBFILTERINFO pFilterInfo)
 {
   PHB_ITEM filtertext;
@@ -2929,10 +3006,12 @@ static HB_ERRCODE sqlSetFilter(SQLAREAP thiswa, LPDBFILTERINFO pFilterInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VLO)
 #define sqlSetLocate SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VOS)
 static HB_ERRCODE sqlSetScope(SQLAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 {
   PHB_ITEM scopetype;
@@ -2969,10 +3048,12 @@ static HB_ERRCODE sqlSetScope(SQLAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VPL)
 #define sqlSkipScope SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_B)
 static HB_ERRCODE sqlLocate(SQLAREAP thiswa, HB_BOOL fContinue)
 {
   HB_ERRCODE err;
@@ -2985,13 +3066,18 @@ static HB_ERRCODE sqlLocate(SQLAREAP thiswa, HB_BOOL fContinue)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_CC)
 #define sqlCompile SR_NULLPTR
+// (DBENTRYP_I)
 #define sqlError SR_NULLPTR
+// (DBENTRYP_I)
 #define sqlEvalBlock SR_NULLPTR
+// (DBENTRYP_VSP)
 #define sqlRawLock SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_VL)
 static HB_ERRCODE sqlLock(SQLAREAP thiswa, LPDBLOCKINFO pLockInfo)
 {
   PHB_ITEM pRecord;
@@ -3044,6 +3130,7 @@ static HB_ERRCODE sqlLock(SQLAREAP thiswa, LPDBLOCKINFO pLockInfo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_I)
 static HB_ERRCODE sqlUnLock(SQLAREAP thiswa, PHB_ITEM pRecNo)
 {
   if (thiswa->firstinteract) {
@@ -3062,17 +3149,26 @@ static HB_ERRCODE sqlUnLock(SQLAREAP thiswa, PHB_ITEM pRecNo)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_V)
 #define sqlCloseMemFile SR_NULLPTR
+// (DBENTRYP_VO)
 #define sqlCreateMemFile SR_NULLPTR
+// (DBENTRYP_SCCS)
 #define sqlGetValueFile SR_NULLPTR
+// (DBENTRYP_VO)
 #define sqlOpenMemFile SR_NULLPTR
+// (DBENTRYP_SCCS)
 #define sqlPutValueFile SR_NULLPTR
+// (DBENTRYP_V)
 #define sqlReadDBHeader SR_NULLPTR
+// (DBENTRYP_V)
 #define sqlWriteDBHeader SR_NULLPTR
+// (DBENTRYP_R)
 #define sqlInit SR_NULLPTR
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_R)
 static HB_ERRCODE sqlExit(LPRDDNODE pRDD)
 {
   HB_SYMBOL_UNUSED(pRDD);
@@ -3089,6 +3185,7 @@ static HB_ERRCODE sqlExit(LPRDDNODE pRDD)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_RVVL)
 static HB_ERRCODE sqlDrop(PHB_ITEM pItemTable)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlDrop\n");
@@ -3110,6 +3207,7 @@ static HB_ERRCODE sqlDrop(PHB_ITEM pItemTable)
 // returns 1 if exists, 0 else
 //------------------------------------------------------------------------
 
+// (DBENTRYP_RVVL)
 static HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlExists\n");
@@ -3136,6 +3234,12 @@ static HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_RVVVL)
+#define sqlRename SR_NULLPTR
+
+//------------------------------------------------------------------------
+
+// (DBENTRYP_RSLV)
 static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, HB_USHORT uiIndex, HB_ULONG ulConnect, PHB_ITEM pItem)
 {
   HB_TRACE(HB_TR_DEBUG, ("sqlRddInfo(%p, %hu, %lu, %p)", pRDD, uiIndex, ulConnect, pItem));
@@ -3164,6 +3268,7 @@ static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, HB_USHORT uiIndex, HB_ULONG ulConne
 
 //------------------------------------------------------------------------
 
+// (DBENTRYP_SVP)
 #define sqlWhoCares SR_NULLPTR
 
 //------------------------------------------------------------------------
@@ -3526,7 +3631,7 @@ static const RDDFUNCS sqlTable =
   (DBENTRYP_R)sqlExit,
   (DBENTRYP_RVVL)sqlDrop,
   (DBENTRYP_RVVL)sqlExists,
-  (DBENTRYP_RVVVL)SR_NULLPTR, // sqlRename
+  (DBENTRYP_RVVVL)sqlRename,
   (DBENTRYP_RSLV)sqlRddInfo,
 
   // Special and reserved methods
@@ -3606,9 +3711,9 @@ HB_INIT_SYMBOLS_BEGIN(sqlrdd1__InitSymbols)
   {"SQLRDD", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD)}, SR_NULLPTR},
   {"SQLRDD_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD_GETFUNCTABLE)}, SR_NULLPTR}
 HB_INIT_SYMBOLS_END(sqlrdd1__InitSymbols)
-    // clang-format on
+// clang-format on
 
-    // clang-format off
+// clang-format off
 HB_CALL_ON_STARTUP_BEGIN(_hb_sqlrdd_rdd_init_)
   hb_vmAtInit(hb_sqlrddRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlrdd_rdd_init_)
