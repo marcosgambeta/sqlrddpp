@@ -161,4 +161,4 @@ https://github.com/marcosgambeta/harbourpp-v1
 
 SQLRDD++ v2  
 https://github.com/marcosgambeta/sqlrddpp-v2  
-Versão em C++ para Harbour++
+Versão em C++ para Harbour e Harbour++
