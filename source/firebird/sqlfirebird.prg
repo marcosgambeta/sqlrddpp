@@ -281,7 +281,7 @@ METHOD SR_FIREBIRD:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMax
    ENDIF
 
    ::cConnect := cConnect
-   cTargetDB := StrTran(FBVERSION(hEnv), "(access method)", "")
+   cTargetDB := StrTran(SR_FBVERSION(hEnv), "(access method)", "")
    cSystemVers := SubStr(cTargetDB, At("Firebird ", cTargetDB) + 9, 3)
 
    nRet := SR_FBBeginTransaction(hEnv)
