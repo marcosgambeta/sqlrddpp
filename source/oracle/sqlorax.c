@@ -174,12 +174,7 @@ HB_FUNC(SR_SQLO_CONNECT)
 HB_FUNC(SR_SQLO_DBMSNAME)
 {
   GET_OCI_SESSION(session, 1);
-
-  if (session != SR_NULLPTR) {
-    hb_retc(session->server_version);
-  } else {
-    hb_retc("Not connected to Oracle");
-  }
+  hb_retc(session != SR_NULLPTR ? session->server_version : "Not connected to Oracle");
 }
 
 //-----------------------------------------------------------------------------//
@@ -207,12 +202,7 @@ HB_FUNC(SR_SQLO_DISCONNECT)
 HB_FUNC(SR_SQLO_GETERRORDESCR)
 {
   GET_OCI_SESSION(session, 1);
-
-  if (session != SR_NULLPTR) {
-    hb_retc((char *)sqlo_geterror(session->dbh));
-  } else {
-    hb_retc("Not connected to Oracle");
-  }
+  hb_retc(session != SR_NULLPTR ? (char *)sqlo_geterror(session->dbh) : "Not connected to Oracle");
 }
 
 //-----------------------------------------------------------------------------//
@@ -220,12 +210,7 @@ HB_FUNC(SR_SQLO_GETERRORDESCR)
 HB_FUNC(SR_SQLO_GETERRORCODE)
 {
   GET_OCI_SESSION(session, 1);
-
-  if (session != SR_NULLPTR) {
-    hb_retni(sqlo_geterrcode(session->dbh));
-  } else {
-    hb_retni(SQL_ERROR);
-  }
+  hb_retni(session != SR_NULLPTR ? sqlo_geterrcode(session->dbh) : SQL_ERROR);
 }
 
 //-----------------------------------------------------------------------------//
