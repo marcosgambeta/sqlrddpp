@@ -117,11 +117,11 @@ HB_FUNC(SR_MYSCONNECT)
     }
     hb_retptr((void *)session);
   } else {
-    mysql_close(NULL);
+    mysql_close(SR_NULLPTR);
     if (s_iConnectionCount == 0) {
       mysql_library_end();
     }
-    hb_retptr(NULL);
+    hb_retptr(SR_NULLPTR);
   }
 }
 
