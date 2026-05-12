@@ -72,7 +72,7 @@
 
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
-static int iConnectionCount = 0;
+static int s_iConnectionCount = 0;
 
 #define LOGFILE "mysql.log"
 
@@ -108,7 +108,7 @@ HB_FUNC(SR_MYSCONNECT)
   session->ifetch = -2;
 
   if (session->dbh != SR_NULLPTR) {
-    iConnectionCount++;
+    s_iConnectionCount++;
     mysql_options(session->dbh, MYSQL_OPT_CONNECT_TIMEOUT, (const char *)&uiTimeout);
     if (lCompress) {
       mysql_real_connect(session->dbh, szHost, szUser, szPass, szDb, uiPort, SR_NULLPTR, CLIENT_ALL_FLAGS);
@@ -118,7 +118,7 @@ HB_FUNC(SR_MYSCONNECT)
     hb_retptr((void *)session);
   } else {
     mysql_close(NULL);
-    if (iConnectionCount == 0) {
+    if (s_iConnectionCount == 0) {
       mysql_library_end();
     }
     hb_retptr(NULL);
@@ -133,10 +133,10 @@ HB_FUNC(SR_MYSFINISH)
   mysql_close(session->dbh);
 
   hb_xfree(session);
-  if (iConnectionCount > 0) {
-    iConnectionCount--;
+  if (s_iConnectionCount > 0) {
+    s_iConnectionCount--;
   }
-  if (iConnectionCount == 0) {
+  if (s_iConnectionCount == 0) {
     mysql_library_end();
   }
   hb_ret();
