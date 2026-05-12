@@ -117,7 +117,7 @@ METHOD SR_ORACLE:Getline(aFields, lTranslate, aArray)
    ENDIF
 
    IF ::aCurrLine == NIL
-      SQLO_LINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
+      SR_SQLO_LINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, aArray)
       ::aCurrLine := aArray
       RETURN aArray
    ENDIF
@@ -135,7 +135,7 @@ METHOD SR_ORACLE:FieldGet(nField, aFields, lTranslate)
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
       ::aCurrLine := Array(Len(aFields))
-      SQLO_LINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
+      SR_SQLO_LINEPROCESSED(::hDbc, 4096, aFields, ::lQueryOnly, ::nSystemID, lTranslate, ::aCurrLine)
    ENDIF
 
 RETURN ::aCurrLine[nField]
@@ -149,10 +149,10 @@ METHOD SR_ORACLE:FetchRaw(lTranslate, aFields)
    DEFAULT lTranslate TO .T.
 
    IF ::hDBC != NIL
-      ::nRetCode := SQLO_FETCH(::hDBC)
+      ::nRetCode := SR_SQLO_FETCH(::hDBC)
       ::aCurrLine := NIL
    ELSE
-      ::RunTimeErr("", "SQLO_FETCH - Invalid cursor state" + SR_CRLF + SR_CRLF + ;
+      ::RunTimeErr("", "SR_SQLO_FETCH - Invalid cursor state" + SR_CRLF + SR_CRLF + ;
          "Last command sent to database : " + SR_CRLF + ::cLastComm)
    ENDIF
 
@@ -163,8 +163,8 @@ RETURN ::nRetCode
 METHOD SR_ORACLE:FreeStatement()
 
    IF ::hDBC != NIL .AND. ::hstmt != NIL
-      IF SQLO_CLOSESTMT(::hDBC) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLO_CLOSESTMT error" + SR_CRLF + SR_CRLF + ;
+      IF SR_SQLO_CLOSESTMT(::hDBC) != SQL_SUCCESS
+         ::RunTimeErr("", "SR_SQLO_CLOSESTMT error" + SR_CRLF + SR_CRLF + ;
             "Last command sent to database : " + SR_CRLF + ::cLastComm)
       ENDIF
       ::hstmt := NIL
@@ -227,10 +227,10 @@ METHOD SR_ORACLE:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRec
       ENDIF
    ENDIF
 
-   ::nFields := SQLO_NUMCOLS(::hDBC)
+   ::nFields := SR_SQLO_NUMCOLS(::hDBC)
 
    IF ::nFields < 0
-      ::RunTimeErr("", "SQLO_NUMCOLS Error" + SR_CRLF + Str(::nFields) + SR_CRLF + ;
+      ::RunTimeErr("", "SR_SQLO_NUMCOLS Error" + SR_CRLF + Str(::nFields) + SR_CRLF + ;
          "Last command sent to database : " + ::cLastComm)
       RETURN NIL
    ENDIF
@@ -239,8 +239,8 @@ METHOD SR_ORACLE:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRec
 
    FOR n := 1 TO ::nFields
 
-      IF (::nRetCode := SQLO_DESCRIBECOL(::hDBC, n, @cName, @nType, @nLen, @nDec, @nNull)) != SQL_SUCCESS
-         ::RunTimeErr("", "SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+      IF (::nRetCode := SR_SQLO_DESCRIBECOL(::hDBC, n, @cName, @nType, @nLen, @nDec, @nNull)) != SQL_SUCCESS
+         ::RunTimeErr("", "SR_SQLDescribeCol Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
             "Last command sent to database : " + ::cLastComm)
         RETURN NIL
       ENDIF
@@ -280,8 +280,8 @@ RETURN aFields
 
 METHOD SR_ORACLE:LastError()
 
-RETURN SQLO_GETERRORDESCR(::hDBC) + " retcode: " + sr_val2Char(::nRetCode) + " - " + ;
-   AllTrim(Str(SQLO_GETERRORCODE(::hDBC)))
+RETURN SR_SQLO_GETERRORDESCR(::hDBC) + " retcode: " + sr_val2Char(::nRetCode) + " - " + ;
+   AllTrim(Str(SR_SQLO_GETERRORCODE(::hDBC)))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -309,7 +309,7 @@ METHOD SR_ORACLE:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBu
    HB_SYMBOL_UNUSED(lAutoCommit)
 
    ::hStmt := NIL
-   nret := SQLO_CONNECT(::cUser + "/" + ::cPassWord + "@" + ::cDtb, @hDbc)
+   nret := SR_SQLO_CONNECT(::cUser + "/" + ::cPassWord + "@" + ::cDtb, @hDbc)
    IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
       ::nRetCode := nRet
       ::hDbc := hDbc
@@ -321,7 +321,7 @@ METHOD SR_ORACLE:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBu
    ::cConnect := cConnect
    ::hDbc := hDbc
    cTargetDB := "Oracle"
-   cSystemVers := SQLO_DBMSNAME(hDbc)
+   cSystemVers := SR_SQLO_DBMSNAME(hDbc)
 
    ::cSystemName := cTargetDB
    ::cSystemVers := cSystemVers
@@ -344,7 +344,7 @@ METHOD SR_ORACLE:End()
    LOCAL nRet
 
    IF !Empty(::hDbc)
-     IF (nRet := SQLO_DISCONNECT(::hDbc)) != SQL_SUCCESS
+     IF (nRet := SR_SQLO_DISCONNECT(::hDbc)) != SQL_SUCCESS
         SR_MsgLogFile("Error disconnecting : " + Str(nRet) + SR_CRLF + ::LastError())
      ENDIF
    ENDIF
@@ -360,7 +360,7 @@ METHOD SR_ORACLE:Commit(lNoLog)
 
    ::Super:Commit(lNoLog)
 
-RETURN (::nRetcode := SQLO_COMMIT(::hdbc))
+RETURN (::nRetcode := SR_SQLO_COMMIT(::hdbc))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -368,7 +368,7 @@ METHOD SR_ORACLE:RollBack()
 
    ::Super:RollBack()
 
-RETURN (::nRetCode := SQLO_ROLLBACK(::hDbc))
+RETURN (::nRetCode := SR_SQLO_ROLLBACK(::hDbc))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -378,11 +378,11 @@ METHOD SR_ORACLE:ExecuteRaw(cCommand)
 
    IF Upper(Left(LTrim(cCommand), 6)) == "SELECT"
       ::hStmt := ::hDBC
-      nRet := SQLO_EXECUTE(::hDBC, cCommand)
+      nRet := SR_SQLO_EXECUTE(::hDBC, cCommand)
       ::lResultSet := .T.
    ELSE
       ::hStmt := NIL
-      nRet := SQLO_EXECDIRECT(::hDBC, cCommand)
+      nRet := SR_SQLO_EXECDIRECT(::hDBC, cCommand)
       ::lResultSet := .F.
    ENDIF
 
@@ -441,7 +441,7 @@ METHOD SR_ORACLE:BINDPARAM(lStart, lIn, nLen, cRet, nLenRet)
       ::nParamStart++
    ENDIF
 
-   //OracleinBindParam(::hdbc, ::nParamStart, SQL_LONGVARCHAR, nLen, 0, @cRet, @nLenRet, lIn)
+   //SR_OracleinBindParam(::hdbc, ::nParamStart, SQL_LONGVARCHAR, nLen, 0, @cRet, @nLenRet, lIn)
 
 RETURN SELF
 
@@ -458,7 +458,7 @@ RETURN cRet
 
 METHOD SR_ORACLE:WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)
 
-RETURN OracleWriteMemo(::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData)
+RETURN SR_OracleWriteMemo(::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -472,9 +472,9 @@ METHOD SR_ORACLE:ExecSP(cComm, aReturn, nParam, aType)
    DEFAULT aType TO {}
    DEFAULT nParam TO 1
 
-   oracleprePARE(::hdbc, cComm)
+   SR_oracleprePARE(::hdbc, cComm)
 
-   oraclebindalloc(::hdbc, nParam)
+   SR_oraclebindalloc(::hdbc, nParam)
 
    FOR i := 1 TO nParam
       n := -1
@@ -483,26 +483,26 @@ METHOD SR_ORACLE:ExecSP(cComm, aReturn, nParam, aType)
             n := 5
          ENDIF
       ENDIF
-      OracleinBindParam(::hdbc, i, n, 12, 0)
+      SR_OracleinBindParam(::hdbc, i, n, 12, 0)
    NEXT i
 
    BEGIN SEQUENCE WITH __BreakBlock()
-      nError := OracleExecDir(::hDbc)
+      nError := SR_OracleExecDir(::hDbc)
    RECOVER
       nerror := -1
    END SEQUENCE
 
    IF nError < 0
-      ::RunTimeErr("", Str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR(::hDbc))
+      ::RunTimeErr("", Str(SR_SQLO_GETERRORCODE(::hDbc), 4) + " - " + SR_SQLO_GETERRORDESCR(::hDbc))
    ELSE
    //IF nError >= 0
       FOR i := 1 TO nParam
-         AAdd(aReturn, ORACLEGETBINDDATA(::hdbc, i))
+         AAdd(aReturn, SR_ORACLEGETBINDDATA(::hdbc, i))
       NEXT i
    ENDIF
 
-   ORACLEFREEBIND(::hdbc)
-   CLOSECURSOR(::hDbc)
+   SR_ORACLEFREEBIND(::hdbc)
+   SR_CLOSECURSOR(::hDbc)
 
 RETURN nError
 
@@ -546,8 +546,8 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
    DEFAULT cDeletedName TO SR_DeletedName()
 
    BEGIN SEQUENCE WITH __BreakBlock()
-      nError := ORACLE_PROCCURSOR(::hDbc, cComm, cVar)
-      //nError := ORACLE_BINDCURSOR(::hDbc, cComm, cVar)
+      nError := SR_ORACLE_PROCCURSOR(::hDbc, cComm, cVar)
+      //nError := SR_ORACLE_BINDCURSOR(::hDbc, cComm, cVar)
       ::cLastComm := cComm
    RECOVER
       nError := -1
@@ -556,7 +556,7 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
    IF nError < 0
       IF lFetch
        //::RunTimeErr("", "SQLExecDirect Error Erro na STORE PROCEDURE")
-       ::RunTimeErr("", Str(SQLO_GETERRORCODE(::hDbc), 4) + " - " + SQLO_GETERRORDESCR(::hDbc) + ::cLastComm)
+       ::RunTimeErr("", Str(SR_SQLO_GETERRORCODE(::hDbc), 4) + " - " + SR_SQLO_GETERRORDESCR(::hDbc) + ::cLastComm)
       ENDIF
    ENDIF
 
@@ -565,10 +565,10 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
       DEFAULT cAlias TO cFileTemp
    ENDIF
 
-   //nCols := SQLO_NUMCOLS(::hDbc)
+   //nCols := SR_SQLO_NUMCOLS(::hDbc)
 
    //FOR i := 1 TO nCols
-   //   ORACLEBINDALLOC(::hDbc, i)
+   //   SR_ORACLEBINDALLOC(::hDbc, i)
    //NEXT i
 
    aFields := ::iniFields(.F.)
@@ -733,7 +733,7 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
 
    ENDIF
 
-   nerror := SQLO_CLOSESTMT(::hDbc)
+   nerror := SR_SQLO_CLOSESTMT(::hDbc)
 
    IF nError < 0
       IF lFetch
@@ -756,30 +756,30 @@ FUNCTION ExecuteSP(cComm, aReturn)
 
    DEFAULT aReturn TO {}
 
-   oracleprePARE(oConn:hdbc, cComm)
+   SR_oracleprePARE(oConn:hdbc, cComm)
 
-   oraclebindalloc(oConn:hdbc, 1)
+   SR_oraclebindalloc(oConn:hdbc, 1)
 
-   OracleinBindParam(oConn:hdbc, 1, -1, 12, 0)
+   SR_OracleinBindParam(oConn:hdbc, 1, -1, 12, 0)
 
    BEGIN SEQUENCE WITH __BreakBlock()
-      nError := OracleExecDir(oConn:hDbc)
+      nError := SR_OracleExecDir(oConn:hDbc)
    RECOVER
       nerror := -1
    END SEQUENCE
 
    IF nError >= 0
-      AAdd(aReturn, ORACLEGETBINDDATA(oConn:hdbc, 1))
+      AAdd(aReturn, SR_ORACLEGETBINDDATA(oConn:hdbc, 1))
    ENDIF
 
-   ORACLEFREEBIND(oConn:hdbc)
-   CLOSECURSOR(oConn:hDbc)
+   SR_ORACLEFREEBIND(oConn:hdbc)
+   SR_CLOSECURSOR(oConn:hDbc)
 
 RETURN nError
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_ORACLE:GetAffectedRows()
-RETURN GETAFFECTROWS(::hdbc)
+RETURN SR_GETAFFECTROWS(::hdbc)
 
 //-------------------------------------------------------------------------------------------------------------------//

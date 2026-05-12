@@ -137,7 +137,7 @@ static HB_USHORT OCI_initilized = 0;
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_CONNECT)
+HB_FUNC(SR_SQLO_CONNECT)
 {
   POCI_SESSION session = (POCI_SESSION)hb_xgrab(sizeof(OCI_SESSION));
 
@@ -171,7 +171,7 @@ HB_FUNC(SQLO_CONNECT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_DBMSNAME)
+HB_FUNC(SR_SQLO_DBMSNAME)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -184,7 +184,7 @@ HB_FUNC(SQLO_DBMSNAME)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_DISCONNECT)
+HB_FUNC(SR_SQLO_DISCONNECT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -204,7 +204,7 @@ HB_FUNC(SQLO_DISCONNECT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_GETERRORDESCR)
+HB_FUNC(SR_SQLO_GETERRORDESCR)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -217,7 +217,7 @@ HB_FUNC(SQLO_GETERRORDESCR)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_GETERRORCODE)
+HB_FUNC(SR_SQLO_GETERRORCODE)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -230,7 +230,7 @@ HB_FUNC(SQLO_GETERRORCODE)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_EXECDIRECT)
+HB_FUNC(SR_SQLO_EXECDIRECT)
 {
   GET_OCI_SESSION(session, 1);
   const char *stm = hb_parcx(2);
@@ -257,7 +257,7 @@ HB_FUNC(SQLO_EXECDIRECT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_EXECUTE)
+HB_FUNC(SR_SQLO_EXECUTE)
 {
   GET_OCI_SESSION(session, 1);
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
@@ -287,7 +287,7 @@ HB_FUNC(SQLO_EXECUTE)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_NUMCOLS)
+HB_FUNC(SR_SQLO_NUMCOLS)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -372,7 +372,7 @@ int sqlo_sqldtype(HB_USHORT type)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec, @nNull )
+HB_FUNC(SR_SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec, @nNull )
 {
   GET_OCI_SESSION(session, 1);
   HB_USHORT dType, ncol;
@@ -419,7 +419,7 @@ HB_FUNC(SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_FETCH)
+HB_FUNC(SR_SQLO_FETCH)
 {
   GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t stmtParamRes;
@@ -444,7 +444,7 @@ HB_FUNC(SQLO_FETCH)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_COMMIT)
+HB_FUNC(SR_SQLO_COMMIT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -462,7 +462,7 @@ HB_FUNC(SQLO_COMMIT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_ROLLBACK)
+HB_FUNC(SR_SQLO_ROLLBACK)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -480,7 +480,7 @@ HB_FUNC(SQLO_ROLLBACK)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_CLOSESTMT)
+HB_FUNC(SR_SQLO_CLOSESTMT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -665,7 +665,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_LINE)
+HB_FUNC(SR_SQLO_LINE)
 {
   GET_OCI_SESSION(session, 1);
   const char **line;
@@ -694,7 +694,7 @@ HB_FUNC(SQLO_LINE)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SQLO_LINEPROCESSED)
+HB_FUNC(SR_SQLO_LINEPROCESSED)
 {
   GET_OCI_SESSION(session, 1);
   const char **line;
@@ -732,7 +732,7 @@ HB_FUNC(SQLO_LINEPROCESSED)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(ORACLEWRITEMEMO)
+HB_FUNC(SR_ORACLEWRITEMEMO)
 {
   GET_OCI_SESSION(session, 1);
   const char *sTable = hb_parc(2);
@@ -809,7 +809,7 @@ void OracleFreeLink(int num_recs, POCI_SESSION p)
 
 // Bind an Parameter to Oracle stord procedure
 // usage
-// ORACLEINBINDPARAM(hDbc,nParamnum,nParamType,iFieldSize,iFieldDec,xData)
+// SR_ORACLEINBINDPARAM(hDbc,nParamnum,nParamType,iFieldSize,iFieldDec,xData)
 //    OracleinBindParam(oSql:hdbc, 1, 2, 12, 0, 8)
 // type 6->refcursor
 // type 2 ->double
@@ -818,7 +818,7 @@ void OracleFreeLink(int num_recs, POCI_SESSION p)
 // type 9 -> datetime
 // type 3 -> bool
 // type any->char
-HB_FUNC(ORACLEINBINDPARAM)
+HB_FUNC(SR_ORACLEINBINDPARAM)
 {
 
   GET_OCI_SESSION(Stmt, 1);
@@ -941,8 +941,8 @@ HB_FUNC(ORACLEINBINDPARAM)
 }
 
 // Get the content of an binded parameter returned from stored procedure
-//  usage : ORACLEGETBINDDATA(hDbc,nParameterNumber)
-HB_FUNC(ORACLEGETBINDDATA)
+//  usage : SR_ORACLEGETBINDDATA(hDbc,nParameterNumber)
+HB_FUNC(SR_ORACLEGETBINDDATA)
 {
   GET_OCI_SESSION(p, 1);
   int iPos;
@@ -990,8 +990,8 @@ HB_FUNC(ORACLEGETBINDDATA)
 
 // Free all Binded Parameters memory allocated
 // usage
-// ORACLEFREEBIND(nOrahandle)
-HB_FUNC(ORACLEFREEBIND)
+// SR_ORACLEFREEBIND(nOrahandle)
+HB_FUNC(SR_ORACLEFREEBIND)
 {
   GET_OCI_SESSION(Stmt, 1);
   if (Stmt->pLink) {
@@ -1000,8 +1000,8 @@ HB_FUNC(ORACLEFREEBIND)
 }
 
 // Prepare an stored procedure for execution
-// usage ORACLEPREPARE(nOracleHandle,cSql) -> nPreparedHandle)
-HB_FUNC(ORACLEPREPARE)
+// usage SR_ORACLEPREPARE(nOracleHandle,cSql) -> nPreparedHandle)
+HB_FUNC(SR_ORACLEPREPARE)
 {
   GET_OCI_SESSION(session, 1);
   const char *szSql = hb_parc(2);
@@ -1022,8 +1022,8 @@ HB_FUNC(ORACLEPREPARE)
 
 // Execute the  Stored Procedure
 // usage
-// ORACLEEXECDIR(nOraHandle[,nPreparedHandle]) ->nStatus
-HB_FUNC(ORACLEEXECDIR)
+// SR_ORACLEEXECDIR(nOraHandle[,nPreparedHandle]) ->nStatus
+HB_FUNC(SR_ORACLEEXECDIR)
 {
   GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
@@ -1034,7 +1034,7 @@ HB_FUNC(ORACLEEXECDIR)
   hb_retni(ret);
 }
 
-HB_FUNC(ORACLE_PROCCURSOR)
+HB_FUNC(SR_ORACLE_PROCCURSOR)
 {
   GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
@@ -1084,7 +1084,7 @@ HB_FUNC(ORACLE_PROCCURSOR)
   // sqlo_close(session->stmtParamRes);
   //
 }
-HB_FUNC(ORACLE_SAVE_HANDLE_ST)
+HB_FUNC(SR_ORACLE_SAVE_HANDLE_ST)
 {
   GET_OCI_SESSION(session, 1);
   if (session != SR_NULLPTR) {
@@ -1092,7 +1092,7 @@ HB_FUNC(ORACLE_SAVE_HANDLE_ST)
   }
 }
 
-HB_FUNC(ORACLE_CLOSE_FCURSOR)
+HB_FUNC(SR_ORACLE_CLOSE_FCURSOR)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1112,7 +1112,7 @@ HB_FUNC(ORACLE_CLOSE_FCURSOR)
   hb_retni(SQLO_SUCCESS);
 }
 
-HB_FUNC(ORACLE_BIND_BY_NAME)
+HB_FUNC(SR_ORACLE_BIND_BY_NAME)
 {
   GET_OCI_SESSION(session, 1);
   int iPos = hb_parni(2);
@@ -1120,7 +1120,7 @@ HB_FUNC(ORACLE_BIND_BY_NAME)
                              sizeof(session->pLink[iPos].dValue), 0, 0));
 }
 
-HB_FUNC(ORACLEEXECDIRCURSOR)
+HB_FUNC(SR_ORACLEEXECDIRCURSOR)
 {
   GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
@@ -1140,7 +1140,7 @@ HB_FUNC(ORACLEEXECDIRCURSOR)
 // Prepare the necessary data for Binded Parameters
 // usage
 // ORACLEBINDALLOC(noraHandle,nNumberofParameters)
-HB_FUNC(ORACLEBINDALLOC)
+HB_FUNC(SR_ORACLEBINDALLOC)
 {
   GET_OCI_SESSION(session, 1);
   int iBind;
@@ -1155,7 +1155,7 @@ HB_FUNC(ORACLEBINDALLOC)
   hb_retni(1);
 }
 
-HB_FUNC(ORACLE_BINDCURSOR)
+HB_FUNC(SR_ORACLE_BINDCURSOR)
 {
   GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
@@ -1186,7 +1186,7 @@ HB_FUNC(ORACLE_BINDCURSOR)
   hb_retni(ret);
 }
 
-HB_FUNC(ORACLE_EXECCURSOR)
+HB_FUNC(SR_ORACLE_EXECCURSOR)
 {
   GET_OCI_SESSION(session, 1);
   int ret = 1;
@@ -1207,7 +1207,7 @@ HB_FUNC(ORACLE_EXECCURSOR)
 
   hb_retni(ret);
 }
-HB_FUNC(CLOSECURSOR)
+HB_FUNC(SR_CLOSECURSOR)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1223,7 +1223,7 @@ HB_FUNC(CLOSECURSOR)
   hb_retni(SQL_SUCCESS);
 }
 
-HB_FUNC(GETAFFECTROWS)
+HB_FUNC(SR_GETAFFECTROWS)
 {
   GET_OCI_SESSION(session, 1);
   if (session != SR_NULLPTR) {
@@ -1233,7 +1233,7 @@ HB_FUNC(GETAFFECTROWS)
   }
 }
 
-HB_FUNC(GETORAHANDLE)
+HB_FUNC(SR_GETORAHANDLE)
 {
   GET_OCI_SESSION(p, 1);
   if (p != SR_NULLPTR) {
@@ -1241,7 +1241,7 @@ HB_FUNC(GETORAHANDLE)
   }
 }
 
-HB_FUNC(SETORAHANDLE)
+HB_FUNC(SR_SETORAHANDLE)
 {
   GET_OCI_SESSION(p, 1);
   if (p != SR_NULLPTR) {
