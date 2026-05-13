@@ -74,9 +74,9 @@
 static RDDFUNCS sqlrddSuper;
 
 static void startSQLRDDSymbols(void);
-
 static HB_BOOL ProcessFields(SQLAREAP ThisDb);
 static HB_BOOL SetFields(SQLAREAP ThisDb);
+static HB_BOOL iTemCompEqual(PHB_ITEM pItem1, PHB_ITEM pItem2);
 
 // static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder);
 HB_EXTERN_BEGIN
@@ -3461,7 +3461,7 @@ HB_FUNC(SR_ITEMCMP)
 
 //------------------------------------------------------------------------
 
-HB_BOOL iTemCompEqual(PHB_ITEM pItem1, PHB_ITEM pItem2) // TODO: static ?
+static HB_BOOL iTemCompEqual(PHB_ITEM pItem1, PHB_ITEM pItem2)
 {
   if (HB_IS_NIL(pItem1) || HB_IS_NIL(pItem2)) {
     return HB_FALSE;
