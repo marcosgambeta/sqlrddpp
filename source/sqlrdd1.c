@@ -3186,6 +3186,7 @@ static HB_ERRCODE sqlExit(LPRDDNODE pRDD)
 //------------------------------------------------------------------------
 
 // (DBENTRYP_RVVL)
+// TODO: mingw warning: cast between incompatible function types
 static HB_ERRCODE sqlDrop(PHB_ITEM pItemTable)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlDrop\n");
@@ -3208,6 +3209,7 @@ static HB_ERRCODE sqlDrop(PHB_ITEM pItemTable)
 //------------------------------------------------------------------------
 
 // (DBENTRYP_RVVL)
+// TODO: mingw warning: cast between incompatible function types
 static HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
 {
   // sr_TraceLog(SR_NULLPTR, "sqlExists\n");
