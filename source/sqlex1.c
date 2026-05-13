@@ -124,7 +124,7 @@ HB_BOOL SqlExIsLog();
 void SqlExLog(const char *str, int ver);
 
 HB_EXTERN_BEGIN
-extern PHB_ITEM loadTagDefault(SQLEXAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder);
+extern PHB_ITEM sr_loadTagDefault(SQLEXAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder);
 HB_EXTERN_END
 
 //------------------------------------------------------------------------
@@ -4166,7 +4166,7 @@ static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   const char *val1, *val2;
   char *valbuf = SR_NULLPTR;
 
-  pTag = loadTagDefault(thiswa, SR_NULLPTR, &lorder);
+  pTag = sr_loadTagDefault(thiswa, SR_NULLPTR, &lorder);
   if (pTag) {
     if (thiswa->firstinteract) {
       SELF_GOTOP((AREAP)thiswa);

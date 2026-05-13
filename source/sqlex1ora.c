@@ -102,7 +102,7 @@ extern void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL b
                           HB_BOOL bTranslate, OCI_Resultset *rs);
 extern HB_ERRCODE FeedSeekStmtOra(SQLEXORAAREAP thiswa, int queryLevel);
 HB_EXTERN_BEGIN
-extern PHB_ITEM loadTagDefault(SQLEXORAAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder);
+extern PHB_ITEM sr_loadTagDefault(SQLEXORAAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder);
 HB_EXTERN_END
 
 //------------------------------------------------------------------------
@@ -4099,7 +4099,7 @@ static int sqlKeyCompareEx(SQLEXORAAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 
   // sr_TraceLog(SR_NULLPTR, "sqlKeyCompare\n");
 
-  pTag = loadTagDefault(thiswa, SR_NULLPTR, &lorder);
+  pTag = sr_loadTagDefault(thiswa, SR_NULLPTR, &lorder);
   if (pTag) {
     if (thiswa->sqlarea.firstinteract) {
       SELF_GOTOP(&thiswa->sqlarea.area);

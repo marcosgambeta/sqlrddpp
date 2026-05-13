@@ -81,7 +81,7 @@ static int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact);
 
 // static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder);
 HB_EXTERN_BEGIN
-PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder);
+PHB_ITEM sr_loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder);
 HB_EXTERN_END
 
 HB_FUNC_EXTERN(SR_END);
@@ -567,7 +567,7 @@ static int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 
   // sr_TraceLog(SR_NULLPTR, "sqlKeyCompare\n");
 
-  pTag = loadTagDefault((SQLAREAP)thiswa, SR_NULLPTR, &lorder);
+  pTag = sr_loadTagDefault((SQLAREAP)thiswa, SR_NULLPTR, &lorder);
   if (pTag) {
     if (((SQLAREAP)thiswa)->firstinteract) {
       SELF_GOTOP((AREAP)thiswa);
@@ -2393,7 +2393,7 @@ static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
   // sr_TraceLog(SR_NULLPTR, "sqlOrderListFocus\n");
 
   // BagName.type = HB_IT_NIL;
-  pTag = loadTagDefault(thiswa, SR_NULLPTR, &lorder);
+  pTag = sr_loadTagDefault(thiswa, SR_NULLPTR, &lorder);
 
   if (pTag) {
     hb_arrayGet(pTag, ORDER_TAG, pOrderInfo->itmResult);
@@ -2523,7 +2523,7 @@ static HB_ERRCODE sqlOrderDestroy(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
     return HB_FAILURE;
   }
 
-  pTag = loadTagDefault(thiswa, SR_NULLPTR, &lorder);
+  pTag = sr_loadTagDefault(thiswa, SR_NULLPTR, &lorder);
 
   if (!pTag) {
     return HB_FAILURE;
@@ -2572,7 +2572,7 @@ static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
 
 //------------------------------------------------------------------------
 
-PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder) // TODO: static ?
+PHB_ITEM sr_loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
 {
   PHB_ITEM pOrder = hb_itemNew(SR_NULLPTR);
   PHB_ITEM pTag = SR_NULLPTR;
@@ -2676,7 +2676,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_CONDITION: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         pTemp = hb_itemArrayGet(pTag, FOR_CLAUSE);
         hb_itemCopy(pInfo->itmResult, pTemp);
@@ -2688,7 +2688,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_EXPRESSION: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
 
       if (pTag) {
         pTemp = hb_itemArrayGet(pTag, INDEX_KEY);
@@ -2705,7 +2705,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_BAGNAME: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         pTemp = hb_itemArrayGet(pTag, ORDER_NAME);
         hb_itemCopy(pInfo->itmResult, pTemp);
@@ -2717,7 +2717,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_NAME: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         pTemp = hb_itemArrayGet(pTag, ORDER_TAG);
         hb_itemCopy(pInfo->itmResult, pTemp);
@@ -2734,7 +2734,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_ISCOND: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         pTemp = hb_itemArrayGet(pTag, FOR_CLAUSE);
         hb_itemPutL(pInfo->itmResult, !HB_IS_NIL(pTemp));
@@ -2746,7 +2746,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_ISDESC: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         hb_itemPutL(pInfo->itmResult, hb_arrayGetL(pTag, DESCEND_INDEX_ORDER));
 
@@ -2766,7 +2766,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_UNIQUE: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         hb_itemPutL(pInfo->itmResult, hb_arrayGetL(pTag, AORDER_UNIQUE));
         hb_itemRelease(pTag);
@@ -2780,7 +2780,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_SCOPETOP: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         if (pInfo->itmResult) {
           pTemp = hb_itemArrayGet(pTag, TOP_SCOPE);
@@ -2797,7 +2797,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_SCOPEBOTTOM: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         if (pInfo->itmResult) {
           pTemp = hb_itemArrayGet(pTag, BOTTOM_SCOPE);
@@ -2814,21 +2814,21 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_SCOPETOPCLEAR: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         sqlSetServerSideIndexScope((SQLAREAP)thiswa, 0, SR_NULLPTR);
       }
       break;
     }
     case DBOI_SCOPEBOTTOMCLEAR: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         sqlSetServerSideIndexScope((SQLAREAP)thiswa, 1, SR_NULLPTR);
       }
       break;
     }
     case DBOI_SCOPESET: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         if (pInfo->itmResult) {
           pTemp = hb_itemArrayGet(pTag, TOP_SCOPE);
@@ -2853,7 +2853,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       break;
     }
     case DBOI_KEYVAL: {
-      pTag = loadTagDefault(thiswa, pInfo, &lorder);
+      pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         if (thiswa->firstinteract) {
           SELF_GOTOP(&thiswa->area);
