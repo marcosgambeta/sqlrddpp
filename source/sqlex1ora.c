@@ -1375,7 +1375,7 @@ HB_ERRCODE getWorkareaParamsOra(SQLEXORAAREAP thiswa)
     lCnnType = getMessageNL(thiswa->oSql, "NCONNECTIONTYPE");
 
     if (!(lCnnType == CONNECT_ORACLE || lCnnType == CONNECT_ORACLE_QUERY_ONLY)) {
-      commonError(&thiswa->sqlarea.area, EG_OPEN, ESQLRDD_OPEN, "sqlExOra supports only ODBC connections.");
+      sr_commonError(&thiswa->sqlarea.area, EG_OPEN, ESQLRDD_OPEN, "sqlExOra supports only ODBC connections.");
       return HB_FAILURE;
     }
     thiswa->bConnVerified = HB_TRUE;
@@ -1996,7 +1996,7 @@ static HB_ERRCODE trySkippingOnCache(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
       if (lSupposedPos >= 0 && lSupposedPos < thiswa->recordListSize) {
         thiswa->recordListPos = lSupposedPos;
         if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
-          commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+          sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
           return HB_FAILURE;
         }
         return HB_SUCCESS;
@@ -2020,7 +2020,7 @@ static HB_ERRCODE trySkippingOnCache(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
       if (lSupposedPos >= 0 && lSupposedPos < thiswa->recordListSize) {
         thiswa->recordListPos = lSupposedPos;
         if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
-          commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+          sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
           return HB_FAILURE;
         }
         return HB_SUCCESS;
@@ -2254,7 +2254,7 @@ static HB_ERRCODE sqlExOraGoBottom(SQLEXORAAREAP thiswa)
       // // // sr_TraceLog("aaa.log", "chamando getRecord list de  sqlExOraGoBottom\n");
       if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE) {
         OraErrorDiagRTE(thiswa->hStmt, "dbGoBottom", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
-        commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+        sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
       }
       // // // sr_TraceLog("aaa.log", "chamei getRecord list de  sqlExOraGoBottom\n");
@@ -2269,7 +2269,7 @@ static HB_ERRCODE sqlExOraGoBottom(SQLEXORAAREAP thiswa)
     // // // sr_TraceLog("aaa.log", "chamando getRecord list de  sqlExOraGoBottom\n");
     if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE) {
       OraErrorDiagRTE(thiswa->hStmt, "dbGoBottom", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
-      commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+      sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
     }
     // // // sr_TraceLog("aaa.log", "chamei getRecord list de  sqlExOraGoBottom\n");
@@ -2288,7 +2288,7 @@ static HB_ERRCODE sqlExOraGoBottom(SQLEXORAAREAP thiswa)
     thiswa->sqlarea.area.fBof = HB_FALSE;
     thiswa->lEofAt = thiswa->recordList[thiswa->recordListPos];
     if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
-      commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+      sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
     }
   }
@@ -2371,7 +2371,7 @@ static HB_ERRCODE sqlExOraGoToId(SQLEXORAAREAP thiswa, PHB_ITEM pItem)
   if (HB_IS_NUMERIC(pItem)) {
     return SELF_GOTO(&thiswa->sqlarea.area, hb_itemGetNL(pItem));
   } else {
-    commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+    sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
     return HB_FAILURE;
   }
 }
@@ -2404,7 +2404,7 @@ static HB_ERRCODE sqlExOraGoTop(SQLEXORAAREAP thiswa)
       // // // sr_TraceLog("aaa.log", "chamando getRecord list de  sqlExOraGoTop\n");
       if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE) {
         OraErrorDiagRTE(thiswa->hStmt, "dbGoTop", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
-        commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+        sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
       }
       // // // sr_TraceLog("aaa.log", "chamei getRecord list de  sqlExOraGoTop\n");
@@ -2418,7 +2418,7 @@ static HB_ERRCODE sqlExOraGoTop(SQLEXORAAREAP thiswa)
     // // // sr_TraceLog("aaa.log", "chamando getRecord list de  sqlExOraGoTop\n");
     if (getRecordList(thiswa, RECORD_LIST_SIZE / 10) == HB_FAILURE) {
       OraErrorDiagRTE(thiswa->hStmt, "dbGoTop", thiswa->sSql, SQL_ERROR, __LINE__, __FILE__);
-      commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+      sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
     }
     // // // sr_TraceLog("aaa.log", "chamei getRecord list de  sqlExOraGoTop\n");
@@ -2437,7 +2437,7 @@ static HB_ERRCODE sqlExOraGoTop(SQLEXORAAREAP thiswa)
     thiswa->sqlarea.area.fBof = HB_FALSE;
     thiswa->lBofAt = thiswa->recordList[thiswa->recordListPos];
     if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
-      commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+      sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
       return HB_FAILURE;
     }
   }
@@ -2474,7 +2474,7 @@ static HB_ERRCODE sqlExOraSeek(SQLEXORAAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM
   }
 
   if (thiswa->sqlarea.hOrdCurrent == 0) {
-    commonError(&thiswa->sqlarea.area, EG_NOORDER, EDBF_NOTINDEXED, thiswa->sTable);
+    sr_commonError(&thiswa->sqlarea.area, EG_NOORDER, EDBF_NOTINDEXED, thiswa->sTable);
     return HB_FAILURE;
   }
 
@@ -2819,7 +2819,7 @@ static HB_ERRCODE sqlExOraSkipRaw(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
       if (res == RESULTSET_OK) {
         break;
       } else if (res == HB_FAILURE) {
-        commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+        sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
       } else if (res == HB_RETRY) {
         if (lToSkip > 0) {
@@ -2836,7 +2836,7 @@ static HB_ERRCODE sqlExOraSkipRaw(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
 
     if (res == RESULTSET_OK) {
       if (updateRecordBuffer(thiswa, HB_FALSE) == HB_FAILURE) {
-        commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
+        sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
       }
       return ConcludeSkipraw(thiswa);
@@ -3234,7 +3234,7 @@ static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB
 #else
     char type_err[128];
     sprintf(type_err, "data type origin: %i - data type target %i", hb_itemType(value), hb_itemType(pDest));
-    commonError(&thiswa->sqlarea.area, EG_DATATYPE, ESQLRDD_DATATYPE, type_err);
+    sr_commonError(&thiswa->sqlarea.area, EG_DATATYPE, ESQLRDD_DATATYPE, type_err);
     return HB_FAILURE;
 #endif
   }
@@ -3318,7 +3318,7 @@ static HB_ERRCODE sqlExOraRecNo(SQLEXORAAREAP thiswa, HB_ULONG *recno)
 {
 #ifdef SQLRDD_NWG_SPECIFIC
   if (thiswa->bIsInsert) {
-    commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
+    sr_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
     return HB_FAILURE;
   }
 #endif

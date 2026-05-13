@@ -1386,7 +1386,7 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
     char type_err[128];
     sprintf(type_err, "data type origin: %i - data type target %i", hb_itemType(value), hb_itemType(pDest));
     hb_itemRelease(pDest);
-    commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, type_err);
+    sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, type_err);
     return HB_FAILURE;
 #endif
   }
@@ -1449,7 +1449,7 @@ static HB_ERRCODE sqlRecNo(SQLAREAP thiswa, HB_ULONG *recno)
 {
 #ifdef SQLRDD_NWG_SPECIFIC
   if (hb_arrayGetNL(thiswa->aInfo, hb_arrayGetL(thiswa->aInfo, AINFO_ISINSERT))) {
-    commonError(&thiswa->area, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
+    sr_commonError(&thiswa->area, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
     return HB_FAILURE;
   }
 #endif
@@ -1545,7 +1545,7 @@ static HB_ERRCODE sqlClose(SQLAREAP thiswa)
 
 #if 0
   else {
-    commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+    sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
     return HB_FAILURE;
   }
 #endif
@@ -1760,7 +1760,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
     if (HB_IS_OBJECT(thiswa->oWorkArea)) {
       hb_objSendMsg(thiswa->oWorkArea, "LTABLELOCKED", 0);
     } else {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+      sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
     hb_itemMove(pItem, hb_stackReturnItem());
@@ -1779,7 +1779,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
       hb_objSendMsg(thiswa->oWorkArea, "OSQL", 0);
       hb_objSendMsg(hb_stackReturnItem(), "CMGMNTVERS", 0);
     } else {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+      sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
     hb_itemMove(pItem, hb_stackReturnItem());
@@ -1790,7 +1790,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
       hb_objSendMsg(thiswa->oWorkArea, "OSQL", 0);
       hb_objSendMsg(hb_stackReturnItem(), "NSYSTEMID", 0);
     } else {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+      sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
     hb_itemMove(pItem, hb_stackReturnItem());
@@ -2127,7 +2127,7 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
     if (HB_IS_OBJECT(thiswa->oWorkArea)) {
       hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLOPENALLINDEXES, 0);
     } else {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+      sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
 
@@ -2526,7 +2526,7 @@ static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
     if (HB_IS_OBJECT(thiswa->oWorkArea)) {
       hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERLISTNUM, 1, pInfo->itmOrder);
     } else {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+      sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return SR_NULLPTR;
     }
 
@@ -2553,7 +2553,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
       if (HB_IS_OBJECT(thiswa->oWorkArea)) {
         hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERLISTNUM, 1, pInfo->itmOrder);
       } else {
-        commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+        sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
         return SR_NULLPTR;
       }
     } else {
@@ -2561,7 +2561,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
         hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERLISTNUM, 1, pOrder);
       } else {
         hb_itemRelease(pOrder);
-        commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+        sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
         return SR_NULLPTR;
       }
     }
@@ -2570,7 +2570,7 @@ PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
       hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERLISTNUM, 1, pOrder);
     } else {
       hb_itemRelease(pOrder);
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+      sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return SR_NULLPTR;
     }
   }
@@ -2957,7 +2957,7 @@ static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem
       hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERLISTNUM, 1, pOrder);
       hb_itemRelease(pOrder);
     } else {
-      commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+      sr_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
       return HB_FAILURE;
     }
     lorder = hb_itemGetNL(hb_stackReturnItem());
@@ -3198,7 +3198,7 @@ static HB_ERRCODE sqlDrop(PHB_ITEM pItemTable)
   if (hb_stackReturnItem()) {
     hb_objSendMessage(hb_stackReturnItem(), s_pSym_SQLDROP, 1, pItemTable);
   } else {
-    commonError(SR_NULLPTR, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+    sr_commonError(SR_NULLPTR, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
     return HB_FAILURE;
   }
 
@@ -3227,7 +3227,7 @@ static HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
       return HB_FAILURE;
     }
   } else {
-    commonError(SR_NULLPTR, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
+    sr_commonError(SR_NULLPTR, EG_DATATYPE, ESQLRDD_DATATYPE, SR_NULLPTR);
     return HB_FAILURE;
   }
 
@@ -3417,7 +3417,7 @@ static HB_BOOL SetFields(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-void commonError(AREAP thiswa, HB_USHORT uiGenCode, HB_USHORT uiSubCode, const char *filename)
+void sr_commonError(AREAP thiswa, HB_USHORT uiGenCode, HB_USHORT uiSubCode, const char *filename)
 {
   PHB_ITEM pError = hb_errNew();
 
