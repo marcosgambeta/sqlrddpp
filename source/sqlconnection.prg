@@ -1054,7 +1054,7 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
       ::lLowLevSqlDbg := (!Empty(GetEnv("QUERYDEBUG"))) .AND. Upper(GetEnv("QUERYDEBUG")) $ "Y,S,TRUE"
    ENDIF
 
-   ::oHashActiveWAs := SqlFastHash():new()
+   ::oHashActiveWAs := SR_SqlFastHash():new()
 
    IF cConnect == NIL .OR. Empty(cConnect)
       SR_MsgLogFile("Invalid connection string : " + SR_Val2Char(cConnect))
