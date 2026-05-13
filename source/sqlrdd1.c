@@ -1132,8 +1132,14 @@ static HB_ERRCODE sqlFieldCount(SQLAREAP thiswa, HB_USHORT *fieldCount)
 
 // (DBENTRYP_VF)
 #define sqlFieldDisplay SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_SSI)
 #define sqlFieldInfo SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_SCP)
 #define sqlFieldName SR_NULLPTR
 
@@ -1276,6 +1282,9 @@ static HB_ERRCODE sqlGoCold(SQLAREAP thiswa)
 
 // (DBENTRYP_V)
 #define sqlGoHot SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_P)
 #define sqlPutRec SR_NULLPTR
 
@@ -2158,6 +2167,9 @@ static HB_ERRCODE sqlStructSize(SQLAREAP thiswa, HB_USHORT *StructSize)
 
 // (DBENTRYP_CP)
 #define sqlSysName SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VEI)
 #define sqlEval SR_NULLPTR
 
@@ -2176,10 +2188,19 @@ static HB_ERRCODE sqlPack(SQLAREAP thiswa)
 
 // (DBENTRYP_LSP)
 #define sqlPackRec SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VS)
 #define sqlSort SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VT)
 #define sqlTrans SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VT)
 #define sqlTransRec SR_NULLPTR
 
@@ -2288,10 +2309,19 @@ static HB_ERRCODE sqlForceRel(SQLAREAP thiswa)
 
 // (DBENTRYP_SSP)
 #define sqlRelArea SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VR)
 #define sqlRelEval SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_SI)
 #define sqlRelText SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VR)
 #define sqlSetRel SR_NULLPTR
 
@@ -2542,7 +2572,7 @@ static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder)
 
 //------------------------------------------------------------------------
 
-PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder)
+PHB_ITEM loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder) // TODO: static ?
 {
   PHB_ITEM pOrder = hb_itemNew(SR_NULLPTR);
   PHB_ITEM pTag = SR_NULLPTR;
@@ -3069,10 +3099,19 @@ static HB_ERRCODE sqlLocate(SQLAREAP thiswa, HB_BOOL fContinue)
 
 // (DBENTRYP_CC)
 #define sqlCompile SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_I)
 #define sqlError SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_I)
 #define sqlEvalBlock SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VSP)
 #define sqlRawLock SR_NULLPTR
 
@@ -3152,18 +3191,39 @@ static HB_ERRCODE sqlUnLock(SQLAREAP thiswa, PHB_ITEM pRecNo)
 
 // (DBENTRYP_V)
 #define sqlCloseMemFile SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VO)
 #define sqlCreateMemFile SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_SCCS)
 #define sqlGetValueFile SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_VO)
 #define sqlOpenMemFile SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_SCCS)
 #define sqlPutValueFile SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_V)
 #define sqlReadDBHeader SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_V)
 #define sqlWriteDBHeader SR_NULLPTR
+
+//------------------------------------------------------------------------
+
 // (DBENTRYP_R)
 #define sqlInit SR_NULLPTR
 
@@ -3643,9 +3703,13 @@ static const RDDFUNCS sqlTable =
 };
 // clang-format on
 
+//------------------------------------------------------------------------
+
 HB_FUNC(SQLRDD)
 {
 }
+
+//------------------------------------------------------------------------
 
 HB_FUNC(SQLRDD_GETFUNCTABLE)
 {
@@ -3672,12 +3736,16 @@ HB_FUNC(SQLRDD_GETFUNCTABLE)
   }
 }
 
+//------------------------------------------------------------------------
+
 #define __PRG_SOURCE__ __FILE__
 
 #ifdef HB_PCODE_VER
 #undef HB_PRG_PCODE_VER
 #define HB_PRG_PCODE_VER HB_PCODE_VER
 #endif
+
+//------------------------------------------------------------------------
 
 static void hb_sqlrddRddInit(void *cargo)
 {
@@ -3709,6 +3777,8 @@ static void hb_sqlrddRddInit(void *cargo)
   hb_errInternal(HB_EI_RDDINVALID, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
 }
 
+//------------------------------------------------------------------------
+
 // clang-format off
 HB_INIT_SYMBOLS_BEGIN(sqlrdd1__InitSymbols)
   {"SQLRDD", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD)}, SR_NULLPTR},
@@ -3716,11 +3786,15 @@ HB_INIT_SYMBOLS_BEGIN(sqlrdd1__InitSymbols)
 HB_INIT_SYMBOLS_END(sqlrdd1__InitSymbols)
 // clang-format on
 
+//------------------------------------------------------------------------
+
 // clang-format off
 HB_CALL_ON_STARTUP_BEGIN(_hb_sqlrdd_rdd_init_)
   hb_vmAtInit(hb_sqlrddRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlrdd_rdd_init_)
 // clang-format on
+
+//------------------------------------------------------------------------
 
 #if defined(HB_PRAGMA_STARTUP)
 #pragma startup sqlrdd1__InitSymbols
@@ -3731,6 +3805,8 @@ HB_CALL_ON_STARTUP_END(_hb_sqlrdd_rdd_init_)
   HB_DATASEG_FUNC(_hb_sqlrdd_rdd_init_)
 #include "hbiniseg.h"
 #endif
+
+//------------------------------------------------------------------------
 
 HB_FUNC(SR_SETFOUND)
 {
@@ -3746,3 +3822,5 @@ HB_FUNC(SR_SETFOUND)
     hb_errRT_DBCMD(EG_NOTABLE, EDBCMD_NOTABLE, SR_NULLPTR, HB_ERR_FUNCNAME);
   }
 }
+
+//------------------------------------------------------------------------
