@@ -410,7 +410,7 @@ typedef SQLEXORAAREA *LPSQLEXORAAREA;
 
 // prototypes
 
-int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact);
+//int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact); NOTE: changed to static
 void odbcErrorDiag(OCI_Statement *hStmt, const char *routine, const char *szSql, int line);
 // void odbcErrorDiagRTE(OCI_Statement * hStmt, char * routine, char * szSql, int res, int line, char * module);
 void OraErrorDiagRTE(OCI_Statement *hStmt, char *routine, char *szSql, int res, int line, char *module);

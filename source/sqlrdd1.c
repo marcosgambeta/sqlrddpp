@@ -77,6 +77,7 @@ static void startSQLRDDSymbols(void);
 static HB_BOOL ProcessFields(SQLAREAP ThisDb);
 static HB_BOOL SetFields(SQLAREAP ThisDb);
 static HB_BOOL iTemCompEqual(PHB_ITEM pItem1, PHB_ITEM pItem2);
+static int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact);
 
 // static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder);
 HB_EXTERN_BEGIN
@@ -555,7 +556,7 @@ static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact) // TODO: static ?
+static int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 {
   HB_LONG lorder = 0;
   PHB_ITEM pTag, pKeyVal, itemTemp;
