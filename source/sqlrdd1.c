@@ -3445,8 +3445,8 @@ void sr_commonError(AREAP thiswa, HB_USHORT uiGenCode, HB_USHORT uiSubCode, cons
 
 //------------------------------------------------------------------------
 
-// ITEMCMP(cItem1, cItem2, nLenToCompare) ==> 0 == identical, < 0 if cItem1 < cIten2, > 0 == cItem1 > cIten2
-HB_FUNC(ITEMCMP)
+// SR_ITEMCMP(cItem1, cItem2, nLenToCompare) ==> 0 == identical, < 0 if cItem1 < cIten2, > 0 == cItem1 > cIten2
+HB_FUNC(SR_ITEMCMP)
 {
   int ret;
   const char *val1;
