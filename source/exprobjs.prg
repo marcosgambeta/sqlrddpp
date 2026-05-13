@@ -45,7 +45,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS Operator
+CLASS SR_Operator
 
    HIDDEN:
    DATA _cPattern
@@ -62,14 +62,14 @@ CLASS Operator
 
 ENDCLASS
 
-METHOD Operator:new(pName, pSymbols)
+METHOD SR_Operator:new(pName, pSymbols)
 
    ::cName := pName
    ::aSymbols := pSymbols
 
 RETURN SELF
 
-METHOD Operator:cPattern()
+METHOD SR_Operator:cPattern()
 
    IF ::_cPattern == NIL
       ::_cPattern := cJoin(::aSymbols, "|")
@@ -80,14 +80,14 @@ RETURN ::_cPattern
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ComparisonOperator FROM Operator
+CLASS SR_ComparisonOperator FROM SR_Operator
 
    EXPORTED:
    METHOD new(pName, pSymbols)
 
 ENDCLASS
 
-METHOD ComparisonOperator:new(pName, pSymbols)
+METHOD SR_ComparisonOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
 
@@ -95,7 +95,7 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS SerialOperator FROM Operator
+CLASS SR_SerialOperator FROM SR_Operator
 
    PROTECTED:
    DATA _nPriority
@@ -108,7 +108,7 @@ CLASS SerialOperator FROM Operator
 
 ENDCLASS
 
-METHOD SerialOperator:new(pName, pSymbols)
+METHOD SR_SerialOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
 
@@ -116,14 +116,14 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS LogicalOperator FROM SerialOperator
+CLASS SR_LogicalOperator FROM SR_SerialOperator
 
    EXPORTED:
    METHOD new(pName, pSymbols)
 
 ENDCLASS
 
-METHOD LogicalOperator:new(pName, pSymbols)
+METHOD SR_LogicalOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
    IF pName == "and"
@@ -136,14 +136,14 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ArithmeticOperator FROM SerialOperator
+CLASS SR_ArithmeticOperator FROM SR_SerialOperator
 
    EXPORTED:
    METHOD new(pName, pSymbols)
 
 ENDCLASS
 
-METHOD ArithmeticOperator:new(pName, pSymbols)
+METHOD SR_ArithmeticOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
    SWITCH pName
@@ -163,7 +163,7 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS AlgebraSet
+CLASS SR_AlgebraSet
 
    EXPORTED:
    DATA oOperator READONLY
@@ -182,7 +182,7 @@ CLASS AlgebraSet
 
 ENDCLASS
 
-METHOD AlgebraSet:new(pOperator, pType)
+METHOD SR_AlgebraSet:new(pOperator, pType)
 
    ::oOperator := pOperator
    ::cType := pType
@@ -223,12 +223,12 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ISerialComposition // just a dummy class that is used as interface
+CLASS SR_ISerialComposition // just a dummy class that is used as interface
 ENDCLASS
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ExpressionBase
+CLASS SR_ExpressionBase
 
    HIDDEN:
    DATA _oWorkArea
@@ -259,14 +259,14 @@ CLASS ExpressionBase
 
 ENDCLASS
 
-METHOD ExpressionBase:new(pContext, pClipperString)
+METHOD SR_ExpressionBase:new(pContext, pClipperString)
 
    ::oClipperExpression := ClipperExpression():new(pContext, pClipperString)
    ::cContext := Upper(pContext)
 
 RETURN SELF
 
-METHOD ExpressionBase:oWorkArea()
+METHOD SR_ExpressionBase:oWorkArea()
 
    IF ::_oWorkArea == NIL
       ::_oWorkArea := oGetWorkarea(::cContext)
@@ -276,7 +276,7 @@ RETURN ::_oWorkArea
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ConditionBase FROM ExpressionBase
+CLASS SR_ConditionBase FROM SR_ExpressionBase
 
    PROTECTED:
    DATA lDenied_ INIT .F. // bug with _lDenied, so I use lDenied_
@@ -296,13 +296,13 @@ CLASS ConditionBase FROM ExpressionBase
 
 ENDCLASS
 
-METHOD ConditionBase:new2(pContext, pClipperString, pDenied)
+METHOD SR_ConditionBase:new2(pContext, pClipperString, pDenied)
 
    ::lDenied_ := pDenied
 
 RETURN ::super:new(pContext, pClipperString)
 
-METHOD ConditionBase:lDenied(value)
+METHOD SR_ConditionBase:lDenied(value)
 
    IF value != NIL .AND. value != ::lDenied_
       ::lDenied_ := value
@@ -313,7 +313,7 @@ RETURN ::lDenied_
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS BooleanExpression FROM ConditionBase
+CLASS SR_BooleanExpression FROM SR_ConditionBase
 
    EXPORTED:
    DATA oExpression
@@ -333,13 +333,13 @@ CLASS BooleanExpression FROM ConditionBase
 
 ENDCLASS
 
-METHOD BooleanExpression:new2(pContext, pClipperString, pDenied, pExpr)
+METHOD SR_BooleanExpression:new2(pContext, pClipperString, pDenied, pExpr)
 
    ::lDenied_ := pDenied
 
 RETURN ::new(pContext, pClipperString, pExpr)
 
-METHOD BooleanExpression:new(pContext, pClipperString, pExpr)
+METHOD SR_BooleanExpression:new(pContext, pClipperString, pExpr)
 
    ::super:new(pContext, pClipperString)
    ::oExpression := pExpr
@@ -349,7 +349,7 @@ METHOD BooleanExpression:new(pContext, pClipperString, pExpr)
 RETURN SELF
 
 // not very usefull, but cleaner
-METHOD BooleanExpression:lDenied(value)
+METHOD SR_BooleanExpression:lDenied(value)
 
    IF value != NIL .AND. value != ::lDenied_ .AND. ::lIsSimple .AND. ::oExpression:ValueType = "value"
       ::lDenied_ := value
@@ -361,7 +361,7 @@ RETURN ::super:lDenied(value)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ComposedConditionBase FROM ConditionBase
+CLASS SR_ComposedConditionBase FROM SR_ConditionBase
 
    EXPORTED:
    DATA oOperand1
@@ -376,13 +376,13 @@ CLASS ComposedConditionBase FROM ConditionBase
 
 ENDCLASS
 
-METHOD ComposedConditionBase:new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2)
+METHOD SR_ComposedConditionBase:new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2)
 
    ::lDenied_ := pDenied
 
 RETURN ::new(pContext, pClipperString, /*pExpr,*/ pOperand1, pOperator, pOperand2)
 
-METHOD ComposedConditionBase:new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
+METHOD SR_ComposedConditionBase:new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
 
    ::super:new(pContext, pClipperString)
    ::oOperand1 := pOperand1
@@ -393,17 +393,17 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS Comparison FROM ComposedConditionBase
+CLASS SR_Comparison FROM SR_ComposedConditionBase
 ENDCLASS
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ComposedCondition FROM ComposedConditionBase
+CLASS SR_ComposedCondition FROM SR_ComposedConditionBase
 ENDCLASS
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS Expression FROM ExpressionBase
+CLASS SR_Expression FROM SR_ExpressionBase
 
    EXPORTED:
    METHOD GetType()
@@ -413,12 +413,12 @@ CLASS Expression FROM ExpressionBase
 
 ENDCLASS
 
-METHOD Expression:GetType()
+METHOD SR_Expression:GetType()
 RETURN ::oClipperExpression:cType
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ValueExpression FROM Expression
+CLASS SR_ValueExpression FROM SR_Expression
 
    EXPORTED:
    DATA Value
@@ -440,7 +440,7 @@ CLASS ValueExpression FROM Expression
 
 ENDCLASS
 
-METHOD ValueExpression:new(pContext, pValue)
+METHOD SR_ValueExpression:new(pContext, pValue)
 
    ::super:new(pContext, AllTrim(pValue))
 
@@ -459,7 +459,7 @@ METHOD ValueExpression:new(pContext, pValue)
 RETURN SELF
 
 // method redefined because it's faster than evaluate the expression.
-METHOD ValueExpression:GetType()
+METHOD SR_ValueExpression:GetType()
 
    IF ::cType == NIL
       SWITCH ::ValueType
@@ -487,7 +487,7 @@ RETURN ::cType
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS FunctionExpression FROM Expression
+CLASS SR_FunctionExpression FROM SR_Expression
 
    EXPORTED:
    DATA cFunctionName
@@ -498,7 +498,7 @@ CLASS FunctionExpression FROM Expression
 
 ENDCLASS
 
-METHOD FunctionExpression:new(pContext, pClipperString, pFunctionName, aParameters)
+METHOD SR_FunctionExpression:new(pContext, pClipperString, pFunctionName, aParameters)
 
    ::super:new(pContext, pClipperString)
    ::cFunctionName := Lower(pFunctionName)
@@ -508,7 +508,7 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS Parameter
+CLASS SR_Parameter
 
    EXPORTED:
    DATA lIsByRef
@@ -519,7 +519,7 @@ CLASS Parameter
 
 ENDCLASS
 
-METHOD Parameter:new(pExpression, pIsByRef)
+METHOD SR_Parameter:new(pExpression, pIsByRef)
 
    ::oExpression := pExpression
    ::lIsByRef := pIsByRef
@@ -528,7 +528,7 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ComposedExpression FROM Expression
+CLASS SR_ComposedExpression FROM SR_Expression
 
    EXPORTED:
    DATA oOperand1
@@ -546,7 +546,7 @@ CLASS ComposedExpression FROM Expression
 
 ENDCLASS
 
-METHOD ComposedExpression:new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
+METHOD SR_ComposedExpression:new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
 
    ::super:new(pContext, pClipperString)
    ::oOperand1 := pOperand1
@@ -555,7 +555,7 @@ METHOD ComposedExpression:new(pContext, pClipperString, pOperand1, pOperator, pO
 
 RETURN SELF
 
-METHOD ComposedExpression:GetType()
+METHOD SR_ComposedExpression:GetType()
 
    LOCAL cOperand1Type
 
@@ -577,20 +577,20 @@ PROCEDURE Visualize(oExpression) // for debuging
    LOCAL item
 
    alert(oExpression:className() + " - workarea: " + oExpression:cContext)
-   IF oExpression:isKindOf("ConditionBase")
+   IF oExpression:isKindOf("SR_ConditionBase")
       IF oExpression:lDenied
          alert("not")
       ENDIF
    ENDIF
-   IF oExpression:isKindOf("BooleanExpression")
+   IF oExpression:isKindOf("SR_BooleanExpression")
       Visualize(oExpression:oExpression)
-   ELSEIF oExpression:isKindOf("Comparison") .OR. oExpression:isKindOf("ComposedCondition") .OR. oExpression:isKindOf("ComposedExpression")
+   ELSEIF oExpression:isKindOf("SR_Comparison") .OR. oExpression:isKindOf("SR_ComposedCondition") .OR. oExpression:isKindOf("SR_ComposedExpression")
       Visualize(oExpression:oOperand1)
       alert(oExpression:oOperator:cName)
       Visualize(oExpression:oOperand2)
-   ELSEIF oExpression:isKindOf("ValueExpression")
+   ELSEIF oExpression:isKindOf("SR_ValueExpression")
       alert(oExpression:Value)
-   ELSEIF oExpression:isKindOf("FunctionExpression")
+   ELSEIF oExpression:isKindOf("SR_FunctionExpression")
       alert(oExpression:cFunctionName)
       alert(cstr(Len(oExpression:aParameters)) + " parameter(s) :")
       FOR EACH item IN oExpression:aParameters
@@ -605,12 +605,12 @@ FUNCTION CollectAliases(oExpression, aAliases)
    LOCAL item
 
    SR_aAddDistinct(aAliases, oExpression:cContext, {|x|Lower(x)})
-   IF oExpression:isKindOf("BooleanExpression")
+   IF oExpression:isKindOf("SR_BooleanExpression")
       CollectAliases(oExpression:oExpression, aAliases)
-   ELSEIF oExpression:isKindOf("Comparison") .OR. oExpression:isKindOf("ComposedCondition") .OR. oExpression:isKindOf("ComposedExpression")
+   ELSEIF oExpression:isKindOf("SR_Comparison") .OR. oExpression:isKindOf("SR_ComposedCondition") .OR. oExpression:isKindOf("SR_ComposedExpression")
       CollectAliases(oExpression:oOperand1, aAliases)
       CollectAliases(oExpression:oOperand2, aAliases)
-   ELSEIF oExpression:isKindOf("FunctionExpression")
+   ELSEIF oExpression:isKindOf("SR_FunctionExpression")
       FOR EACH item IN oExpression:aParameters
          CollectAliases(item:oExpression, aAliases)
       NEXT
@@ -620,8 +620,8 @@ RETURN aAliases
 
 FUNCTION ConvertToCondition(oExpression)
 
-   IF !oExpression:isKindOf("ComposedExpression") .AND. oExpression:GetType() == "L"
-      RETURN BooleanExpression():new(oExpression:cContext, oExpression:oClipperExpression:cValue, oExpression)
+   IF !oExpression:isKindOf("SR_ComposedExpression") .AND. oExpression:GetType() == "L"
+      RETURN SR_BooleanExpression():new(oExpression:cContext, oExpression:oClipperExpression:cValue, oExpression)
    ENDIF
 
 RETURN NIL

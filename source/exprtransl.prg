@@ -223,7 +223,7 @@ METHOD ExpressionTranslator:GetTranslation(oCondition)
       translation := ::Translate(item, @x)
       IF translation == NIL
          translation := item:oClipperExpression:cValue
-         IF item:isKindOf("ComposedCondition")
+         IF item:isKindOf("SR_ComposedCondition")
             translation := "(" + translation + ")"
          ENDIF
          AAdd(aClipperConditions, translation)
@@ -235,7 +235,7 @@ METHOD ExpressionTranslator:GetTranslation(oCondition)
          ELSEIF x == .T.
             LOOP
          ENDIF
-         IF item:isKindOf("ComposedCondition")
+         IF item:isKindOf("SR_ComposedCondition")
             translation := "(" + translation + ")"
          ENDIF
          AAdd(aSQLConditions, translation)
@@ -273,7 +273,7 @@ METHOD ExpressionTranslator:Translate(oExpression, x)
    BEGIN SEQUENCE WITH __BreakBlock()
       result := IIf(PCount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
 
-      IF oExpression:isKindOf("ConditionBase")
+      IF oExpression:isKindOf("SR_ConditionBase")
          IF Len(::aRelations) > 0
             resultHeader := "exists (select 0 from " + ::_oDefaultContext:cFileName + " " + ::cAs + " " + "A"
 
@@ -339,7 +339,7 @@ METHOD ExpressionTranslator:InternalTranslate(oExpression, x)
 
    LOCAL result
 
-   IF oExpression:isKindOf("ConditionBase")
+   IF oExpression:isKindOf("SR_ConditionBase")
       IF ::lSimplifyCondition
          oExpression := ::_oConditionSimplifier:Simplify(oExpression)
       ENDIF
@@ -347,7 +347,7 @@ METHOD ExpressionTranslator:InternalTranslate(oExpression, x)
          x := Upper(oExpression:Value) == ".T." // Value take denied into account.
       ENDIF
       result := ::TranslateCondition(oExpression)
-   ELSEIF oExpression:isKindOf("Expression")
+   ELSEIF oExpression:isKindOf("SR_Expression")
       result := ::TranslateExpression(oExpression)
    ENDIF
 
@@ -357,11 +357,11 @@ METHOD ExpressionTranslator:TranslateCondition(oCondition)
 
    LOCAL result
 
-   IF oCondition:isKindOf("Comparison")
+   IF oCondition:isKindOf("SR_Comparison")
       result := ::TranslateComparison(oCondition)
-   ELSEIF oCondition:isKindOf("BooleanExpression")
+   ELSEIF oCondition:isKindOf("SR_BooleanExpression")
       result := ::TranslateBooleanExpression(oCondition)
-   ELSEIF oCondition:isKindOf("ComposedCondition")
+   ELSEIF oCondition:isKindOf("SR_ComposedCondition")
       result := ::TranslateComposition(oCondition)
    ENDIF
    IF oCondition:lDenied
@@ -382,8 +382,8 @@ METHOD ExpressionTranslator:TranslateOperand(oOperand, oOperator)
 
    LOCAL result := ::InternalTranslate(oOperand)
 
-   IF       (oOperand:isKindOf("ComposedCondition") .OR. oOperand:isKindOf("ComposedExpression")) ;
-      .AND. oOperand:oOperator:nPriority < oOperator:nPriority // oOperand:isKindOf("ISerialComposition") problem with multipleinheritance
+   IF       (oOperand:isKindOf("SR_ComposedCondition") .OR. oOperand:isKindOf("SR_ComposedExpression")) ;
+      .AND. oOperand:oOperator:nPriority < oOperator:nPriority // oOperand:isKindOf("SR_ISerialComposition") problem with multipleinheritance
       result := "(" + result + ")"
    ENDIF
 
@@ -402,11 +402,11 @@ METHOD ExpressionTranslator:TranslateExpression(oExpression)
    IF !oExpression:lSimplified
       oExpression := ::_oExpressionSimplifier:Simplify(oExpression)
    ENDIF
-   IF oExpression:isKindOf("ComposedExpression")
+   IF oExpression:isKindOf("SR_ComposedExpression")
       result := ::TranslateComposition(oExpression)
-   ELSEIF oExpression:isKindOf("FunctionExpression")
+   ELSEIF oExpression:isKindOf("SR_FunctionExpression")
       result := ::TranslateFunctionExpression(oExpression)
-   ELSEIF oExpression:isKindOf("ValueExpression")
+   ELSEIF oExpression:isKindOf("SR_ValueExpression")
       result := ::TranslateValueExpression(oExpression)
    ENDIF
 
@@ -490,11 +490,11 @@ METHOD ExpressionTranslator:GetSQLOperator(oOperator)
    LOCAL aSQLOperators
 
    DO CASE
-   CASE oOperator:isKindOf("LogicalOperator")
+   CASE oOperator:isKindOf("SR_LogicalOperator")
       aSQLOperators := ::GetLogicalOperators()
-   CASE oOperator:isKindOf("ArithmeticOperator")
+   CASE oOperator:isKindOf("SR_ArithmeticOperator")
       aSQLOperators := ::GetArithmeticOperators()
-   CASE oOperator:isKindOf("ComparisonOperator")
+   CASE oOperator:isKindOf("SR_ComparisonOperator")
       aSQLOperators := ::GetComparisonOperators()
    ENDCASE
 
@@ -610,7 +610,7 @@ METHOD MSSQLExpressionTranslator:TranslateComparison(oComparison)
       RETURN ::TranslateExpression(oComparison:oOperand2) + Eval(bLike, ::TranslateExpression(oComparison:oOperand1))
    ELSEIF !set(_SET_EXACT) .AND. oComparison:oOperator:cName == "equal" .AND. oComparison:oOperand2:GetType() == "C"
       RETURN ::TranslateExpression(oComparison:oOperand1) + Eval(bLike, ::TranslateExpression(oComparison:oOperand2))
-   ELSEIF oComparison:oOperand2:isKindOf("ValueExpression") .AND. Upper(oComparison:oOperand2:Value) == "NIL"
+   ELSEIF oComparison:oOperand2:isKindOf("SR_ValueExpression") .AND. Upper(oComparison:oOperand2:Value) == "NIL"
       IF oComparison:oOperator:cName == "equal" .OR. oComparison:oOperator:cName == "equalEqual"
          RETURN ::TranslateExpression(oComparison:oOperand1) + " IS NULL"
       ELSEIF oComparison:oOperator:cName == "different"
@@ -657,8 +657,8 @@ METHOD MSSQLExpressionTranslator:TranslateFunctionExpression(oFunctionExpression
       RETURN "datepart(weekday, " + ::InternalTranslate(aParamExprs[1]) + ")"
    CASE "iif"
    CASE "if"
-      IF aParamExprs[2]:isKindOf("ConditionBase")
-         IF aParamExprs[2]:isKindOf("BooleanExpression") .AND. aParamExprs[3]:isKindOf("BooleanExpression")
+      IF aParamExprs[2]:isKindOf("SR_ConditionBase")
+         IF aParamExprs[2]:isKindOf("SR_BooleanExpression") .AND. aParamExprs[3]:isKindOf("SR_BooleanExpression")
             secondParam := ::super:TranslateBooleanExpression(aParamExprs[2])
             thirdParam := ::super:TranslateBooleanExpression(aParamExprs[3])
          ELSE
@@ -736,13 +736,13 @@ METHOD MSSQLExpressionTranslator:GetComparisonOperators()
    IF ::_aComparisonOperators == NIL
       ::_aComparisonOperators :=                             ;
          {                                                   ;
-          ComparisonOperator():new("equal", {"="}),          ;
-          ComparisonOperator():new("equalEqual", {"="}),     ;
-          ComparisonOperator():new("different", {"!="}),     ;
-          ComparisonOperator():new("lower", {"<"}),          ;
-          ComparisonOperator():new("higher", {">"}),         ;
-          ComparisonOperator():new("lowerOrEqual", {"<="}),  ;
-          ComparisonOperator():new("higherOrEqual", {">="}), ;
+          SR_ComparisonOperator():new("equal", {"="}),          ;
+          SR_ComparisonOperator():new("equalEqual", {"="}),     ;
+          SR_ComparisonOperator():new("different", {"!="}),     ;
+          SR_ComparisonOperator():new("lower", {"<"}),          ;
+          SR_ComparisonOperator():new("higher", {">"}),         ;
+          SR_ComparisonOperator():new("lowerOrEqual", {"<="}),  ;
+          SR_ComparisonOperator():new("higherOrEqual", {">="}), ;
          }
    ENDIF
 
@@ -753,8 +753,8 @@ METHOD MSSQLExpressionTranslator:GetLogicalOperators()
    IF ::_aLogicalOperators == NIL
       ::_aLogicalOperators :=                    ;
          {                                       ;
-          LogicalOperator():new("and", {"and"}), ;
-          LogicalOperator():new("or", {"or"})    ;
+          SR_LogicalOperator():new("and", {"and"}), ;
+          SR_LogicalOperator():new("or", {"or"})    ;
          }
    ENDIF
 
@@ -765,11 +765,11 @@ METHOD MSSQLExpressionTranslator:GetArithmeticOperators()
    IF ::_aArithmeticOperators == NIL
       ::_aArithmeticOperators :=                         ;
          {                                               ;
-          ArithmeticOperator():new("plus", {"+"}),       ;
-          ArithmeticOperator():new("minus", {"-"}),      ;
-          ArithmeticOperator():new("multiplied", {"*"}), ;
-          ArithmeticOperator():new("divided", {"/"}),    ;
-          ArithmeticOperator():new("exponent", {"^"})    ;
+          SR_ArithmeticOperator():new("plus", {"+"}),       ;
+          SR_ArithmeticOperator():new("minus", {"-"}),      ;
+          SR_ArithmeticOperator():new("multiplied", {"*"}), ;
+          SR_ArithmeticOperator():new("divided", {"/"}),    ;
+          SR_ArithmeticOperator():new("exponent", {"^"})    ;
          }
    ENDIF
 
@@ -913,7 +913,7 @@ RETURN instance
 
 FUNCTION SplitCondition(oCondition, aConditions)
 
-   DO WHILE oCondition:isKindOf("ComposedCondition") .AND. oCondition:oOperator:cName == "and"
+   DO WHILE oCondition:isKindOf("SR_ComposedCondition") .AND. oCondition:oOperator:cName == "and"
       SplitCondition(oCondition:oOperand1, aConditions)
       oCondition := oCondition:oOperand2
    ENDDO
@@ -927,12 +927,12 @@ FUNCTION GetJointsFields(oRelationExpr, oIndexExpr, oWorkArea1, oWorkArea2, aFie
    LOCAL oField2
 
    IF oRelationExpr:isKindOf(oIndexExpr)
-      IF oRelationExpr:isKindOf("ComposedExpression")
+      IF oRelationExpr:isKindOf("SR_ComposedExpression")
          RETURN       GetJointsFields(oRelationExpr:oOperand1, oIndexExpr:oOperand1, oWorkArea1, oWorkArea2, @aFields1, @aFields2) ;
                 .AND. GetJointsFields(oRelationExpr:oOperand2, oIndexExpr:oOperand2, oWorkArea1, oWorkArea2, @aFields1, @aFields2)
-      ELSEIF oRelationExpr:isKindOf("FunctionExpression") .AND. oRelationExpr:cFunctionName == oIndexExpr:cFunctionName
+      ELSEIF oRelationExpr:isKindOf("SR_FunctionExpression") .AND. oRelationExpr:cFunctionName == oIndexExpr:cFunctionName
          RETURN GetJointsFields(oRelationExpr:aParameters[1]:oExpression, oIndexExpr:aParameters[1]:oExpression, oWorkArea1, oWorkArea2, @aFields1, @aFields2)
-      ELSEIF oRelationExpr:isKindOf("ValueExpression")
+      ELSEIF oRelationExpr:isKindOf("SR_ValueExpression")
          oField1 := oWorkArea1:GetFieldByName(oRelationExpr:Value) // TODO: we could apply the same strategy with field of other workarea but we have to look for the relations with this workarea and to do this we need to translate an expression. => I don't deal with this case, it's very rare.
          oField2 := oWorkArea2:GetFieldByName(oIndexExpr:Value)
          IF       !oField1 == NIL ;

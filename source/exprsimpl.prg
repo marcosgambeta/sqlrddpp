@@ -103,7 +103,7 @@ METHOD ExpressionSimplifierBase:SimplifyComposition(oExpression)
       newOperands[i] := ::Simplify(newOperands[i])
       IF newOperands[i]:lIsSimple
          oSimpleExpression := newOperands[i]:oExpression
-         oAlgebraSet := AlgebraSet():new(oExpression:oOperator, oExpression:GetType())
+         oAlgebraSet := SR_AlgebraSet():new(oExpression:oOperator, oExpression:GetType())
          IF oAlgebraSet:cIdentityElement == Upper(newOperands[i]:Value)
             RETURN IIf(i == 1, ::Simplify(newOperands[2]), newOperands[1])
          ELSEIF oAlgebraSet:cAbsorbentElement != NIL .AND. oAlgebraSet:cAbsorbentElement == Upper(newOperands[i]:Value)
@@ -116,7 +116,7 @@ METHOD ExpressionSimplifierBase:SimplifyComposition(oExpression)
       newClipperString := newOperands[1]:oClipperExpression:cValue + " " + oExpression:oOperator:aSymbols[1] + " " + newOperands[2]:oClipperExpression:cValue
       RETURN ::NewComposedExpression(oExpression:cContext, newClipperString, newOperands[1], oExpression:oOperator, newOperands[2])
    ENDIF
-   
+
    HB_SYMBOL_UNUSED(oSimpleExpression)
 
 RETURN oExpression
@@ -149,10 +149,10 @@ CLASS ExpressionSimplifier FROM ExpressionSimplifierBase
    METHOD FunctionAssessable(oExpression)
 
    PROTECTED:
-   METHOD NewSimpleExpression(cContext, cClipperString) INLINE ValueExpression():new(cContext, cClipperString)
+   METHOD NewSimpleExpression(cContext, cClipperString) INLINE SR_ValueExpression():new(cContext, cClipperString)
 
    PROTECTED:
-   METHOD NewComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) INLINE ComposedExpression():new(cAlias, cExpression, oOperand1, oConnector, oOperand2)
+   METHOD NewComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) INLINE SR_ComposedExpression():new(cAlias, cExpression, oOperand1, oConnector, oOperand2)
 
    EXPORTED:
    METHOD new(pFixVariables, pIgnoreRelations, pContext, pConditionSimplifier)
@@ -190,29 +190,29 @@ METHOD ExpressionSimplifier:Simplify(oExpression)
          SWITCH ValType(newValue)
          CASE "C"
             newValue := "'" + newValue + "'"
-            result := ValueExpression():new(oExpression:cContext, newValue)
+            result := SR_ValueExpression():new(oExpression:cContext, newValue)
             EXIT
          CASE "N"
          CASE "L"
          CASE "U"
             newValue := cstr(newValue)
-            result := ValueExpression():new(oExpression:cContext, newValue)
+            result := SR_ValueExpression():new(oExpression:cContext, newValue)
             EXIT
          CASE "D"
             newValue := "'" + DToC(newValue) + "'"
-            result := FunctionExpression():new(oExpression:cContext, "ctod(" + newValue + ")", "ctod", {Parameter():new(ValueExpression():new(oExpression:cContext, newValue), .F.)})
+            result := SR_FunctionExpression():new(oExpression:cContext, "ctod(" + newValue + ")", "ctod", {SR_Parameter():new(SR_ValueExpression():new(oExpression:cContext, newValue), .F.)})
          ENDSWITCH
       ENDIF
    ENDIF
    IF !lEvaluated
-      IF oExpression:isKindOf("ComposedExpression")
+      IF oExpression:isKindOf("SR_ComposedExpression")
          result := ::SimplifyComposition(oExpression)
-      ELSEIF oExpression:isKindOf("FunctionExpression")
+      ELSEIF oExpression:isKindOf("SR_FunctionExpression")
          newParams := {}
          lAtLeastOneParamSimplified := .F.
          FOR i := 1 TO Len(oExpression:aParameters)
             oParameter := oExpression:aParameters[i]
-            IF oParameter:oExpression:isKindOf("ConditionBase")
+            IF oParameter:oExpression:isKindOf("SR_ConditionBase")
                simplifier := ::oConditionSimplifier
             ELSE
                simplifier := SELF
@@ -220,7 +220,7 @@ METHOD ExpressionSimplifier:Simplify(oExpression)
             IF oParameter:lIsByRef .OR. (oSimplifiedExpression := simplifier:Simplify(oParameter:oExpression)) == oParameter:oExpression
                AAdd(newParams, oParameter)
             ELSE
-               AAdd(newParams, Parameter():new(oSimplifiedExpression, .F.))
+               AAdd(newParams, SR_Parameter():new(oSimplifiedExpression, .F.))
                lAtLeastOneParamSimplified := .T.
             ENDIF
          NEXT i
@@ -229,7 +229,7 @@ METHOD ExpressionSimplifier:Simplify(oExpression)
             FOR i := 1 TO Len(newParams)
                newClipperString += newParams[i]:oExpression:oClipperExpression:cValue + IIf(i == Len(newParams), ")", ",")
             NEXT i
-            result := FunctionExpression():new(oExpression:cContext, newClipperString, oExpression:cFunctionName, newParams)
+            result := SR_FunctionExpression():new(oExpression:cContext, newClipperString, oExpression:cFunctionName, newParams)
          ENDIF
       ENDIF
    ENDIF
@@ -249,11 +249,11 @@ METHOD ExpressionSimplifier:Assessable(oExpression)
    ENDIF
 
    DO CASE
-   CASE oExpression:isKindOf("ValueExpression")
+   CASE oExpression:isKindOf("SR_ValueExpression")
       result := ::ValueAssessable(oExpression)
-   CASE oExpression:isKindOf("FunctionExpression")
+   CASE oExpression:isKindOf("SR_FunctionExpression")
       result := ::FunctionAssessable(oExpression)
-   CASE oExpression:isKindOf("ComposedExpression")
+   CASE oExpression:isKindOf("SR_ComposedExpression")
       result := ::CompositionAssessable(oExpression)
    ENDCASE
    oExpression:lAssessable := result
@@ -283,7 +283,7 @@ METHOD ExpressionSimplifier:FunctionAssessable(oExpression)
    LOCAL simplifier
 
    FOR EACH item IN oExpression:aParameters
-      IF item:oExpression:isKindOf("ConditionBase")
+      IF item:oExpression:isKindOf("SR_ConditionBase")
          simplifier := ::oConditionSimplifier
       ELSE
          simplifier := SELF
@@ -317,10 +317,10 @@ CLASS ConditionSimplifier FROM ExpressionSimplifierBase
    METHOD ComparisonAssessable(oCondition)
 
    PROTECTED:
-   METHOD NewSimpleExpression(cContext, cClipperString) INLINE BooleanExpression():new(cContext, cClipperString, ValueExpression():new(cContext, cClipperString))
+   METHOD NewSimpleExpression(cContext, cClipperString) INLINE SR_BooleanExpression():new(cContext, cClipperString, SR_ValueExpression():new(cContext, cClipperString))
 
    PROTECTED:
-   METHOD NewComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) INLINE ComposedCondition():new(cAlias, cExpression, oOperand1, oConnector, oOperand2)
+   METHOD NewComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2) INLINE SR_ComposedCondition():new(cAlias, cExpression, oOperand1, oConnector, oOperand2)
 
    EXPORTED:
    METHOD new(pFixVariables, pIgnoreRelations, pContext)
@@ -344,22 +344,22 @@ METHOD ConditionSimplifier:Simplify(oCondition)
 
    IF oCondition:lSimplified
       RETURN oCondition
-   ELSEIF oCondition:isKindOf("BooleanExpression")
+   ELSEIF oCondition:isKindOf("SR_BooleanExpression")
       newExpression := ::_oExpressionSimplifier:Simplify(oCondition:oExpression)
       IF !newExpression == oCondition:oExpression
          result := ConvertToCondition(newExpression)
       ENDIF
-   ELSEIF oCondition:isKindOf("Comparison")
+   ELSEIF oCondition:isKindOf("SR_Comparison")
       newOperand1 := ::_oExpressionSimplifier:Simplify(oCondition:oOperand1)
       newOperand2 := ::_oExpressionSimplifier:Simplify(oCondition:oOperand2)
       newClipperString := newOperand1:oClipperExpression:cValue + " " + oCondition:oOperator:aSymbols[1] + " " + newOperand2:oClipperExpression:cValue
-      IF newOperand1:isKindOf("ValueExpression") .AND. newOperand1:ValueType == "value" .AND. newOperand2:isKindOf("ValueExpression") .AND. newOperand2:ValueType == "value"
+      IF newOperand1:isKindOf("SR_ValueExpression") .AND. newOperand1:ValueType == "value" .AND. newOperand2:isKindOf("SR_ValueExpression") .AND. newOperand2:ValueType == "value"
          newValue := cstr(&newClipperString)
-         result := BooleanExpression():new(oCondition:cContext, newValue, ValueExpression():new(oCondition:cContext, newValue))
+         result := SR_BooleanExpression():new(oCondition:cContext, newValue, SR_ValueExpression():new(oCondition:cContext, newValue))
       ELSEIF !newOperand1 == oCondition:oOperand1 .OR. !newOperand2 == oCondition:oOperand2
-         result := Comparison():new(oCondition:cContext, newClipperString, newOperand1, oCondition:oOperator, newOperand2)
+         result := SR_Comparison():new(oCondition:cContext, newClipperString, newOperand1, oCondition:oOperator, newOperand2)
       ENDIF
-   ELSEIF oCondition:isKindOf("ComposedCondition")
+   ELSEIF oCondition:isKindOf("SR_ComposedCondition")
       result := ::SimplifyComposition(oCondition)
    ENDIF
    IF result == NIL
@@ -378,11 +378,11 @@ METHOD ConditionSimplifier:Assessable(oCondition)
       RETURN oCondition:lAssessable
    ENDIF
    DO CASE
-   CASE oCondition:isKindOf("BooleanExpression")
+   CASE oCondition:isKindOf("SR_BooleanExpression")
       result := ::BooleanExprAssessable(oCondition)
-   CASE oCondition:isKindOf("Comparison")
+   CASE oCondition:isKindOf("SR_Comparison")
       result := ::ComparisonAssessable(oCondition)
-   CASE oCondition:isKindOf("ComposedCondition")
+   CASE oCondition:isKindOf("SR_ComposedCondition")
       result := ::CompositionAssessable(oCondition)
    ENDCASE
    oCondition:lAssessable := result

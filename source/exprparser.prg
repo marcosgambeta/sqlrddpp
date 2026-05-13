@@ -261,18 +261,18 @@ METHOD ExpressionParser:GetOperators()
 
    IF ::_Operators == NIL
       ::_Operators := {                                               ;
-                       ArithmeticOperator():new("plus", {"+"}),       ;
-                       ArithmeticOperator():new("minus", {"-"}),      ;
-                       ArithmeticOperator():new("multiplied", {"*"}), ;
-                       ArithmeticOperator():new("divided", {"/"}),    ;
-                       ArithmeticOperator():new("exponent", {"^"})    ;
+                       SR_ArithmeticOperator():new("plus", {"+"}),       ;
+                       SR_ArithmeticOperator():new("minus", {"-"}),      ;
+                       SR_ArithmeticOperator():new("multiplied", {"*"}), ;
+                       SR_ArithmeticOperator():new("divided", {"/"}),    ;
+                       SR_ArithmeticOperator():new("exponent", {"^"})    ;
                       }
    ENDIF
 
 RETURN ::_Operators
 
 METHOD ExpressionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
-RETURN ComposedExpression():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
+RETURN SR_ComposedExpression():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
 
 METHOD ExpressionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
@@ -302,11 +302,11 @@ METHOD ExpressionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, 
          IF !cParameters == ""
             AAdd(aParameters, ::GetParameter(cParameters, cAlias))
          ENDIF
-         oOperand1 := FunctionExpression():new(cAlias, ::RestoreParenthesis(cExpression), cFunctionName, aParameters)
+         oOperand1 := SR_FunctionExpression():new(cAlias, ::RestoreParenthesis(cExpression), cFunctionName, aParameters)
       ELSEIF HB_RegExMatch(cRegMacro, cExpression, .F.)
          oOperand1 := ::InternParse(&(HB_RegExAtX(cRegMacro, cExpression)[2, 1]))
       ELSE
-         oOperand1 := ValueExpression():new(cAlias, ::RestoreParenthesis(cExpression), ::RestoreParenthesis(cExpression))
+         oOperand1 := SR_ValueExpression():new(cAlias, ::RestoreParenthesis(cExpression), ::RestoreParenthesis(cExpression))
       ENDIF
    ENDIF
 
@@ -322,14 +322,14 @@ METHOD ExpressionParser:GetParameter(cExpression, cAlias)
 
    IF hb_regexLike("^\s*$", cExpression)
       lByRef := .F.
-      oExpression := ValueExpression():new(cAlias, "nil")
+      oExpression := SR_ValueExpression():new(cAlias, "nil")
    ELSE
       aGroups := HB_RegExAtX(cRegParam, cExpression)
       lByRef := aGroups[2, 1] != ""
       oExpression := GetConditionOrExpression(::RestoreParenthesis(aGroups[3, 1]), cAlias)
    ENDIF
 
-RETURN Parameter():new(oExpression, lByRef)
+RETURN SR_Parameter():new(oExpression, lByRef)
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -366,14 +366,14 @@ METHOD ConditionParser:new(pWorkarea)
    ::super:new(pWorkarea)
    ::aClipperComparisonOperators :=                              ;
       {                                                          ;
-       ComparisonOperator():new("equal", {"="}),                 ;
-       ComparisonOperator():new("equalEqual", {"=="}),           ;
-       ComparisonOperator():new("different", {"!=", "<>", "#"}), ;
-       ComparisonOperator():new("lower", {"<"}),                 ;
-       ComparisonOperator():new("higher", {">"}),                ;
-       ComparisonOperator():new("lowerOrEqual", {"<="}),         ;
-       ComparisonOperator():new("higherOrEqual", {">="}),        ;
-       ComparisonOperator():new("included", {"$"})               ;
+       SR_ComparisonOperator():new("equal", {"="}),                 ;
+       SR_ComparisonOperator():new("equalEqual", {"=="}),           ;
+       SR_ComparisonOperator():new("different", {"!=", "<>", "#"}), ;
+       SR_ComparisonOperator():new("lower", {"<"}),                 ;
+       SR_ComparisonOperator():new("higher", {">"}),                ;
+       SR_ComparisonOperator():new("lowerOrEqual", {"<="}),         ;
+       SR_ComparisonOperator():new("higherOrEqual", {">="}),        ;
+       SR_ComparisonOperator():new("included", {"$"})               ;
       }
 
    cOperatorsChoice := cJoin(xSelect(::aClipperComparisonOperators, {|x|x:cPattern}), "|")
@@ -391,15 +391,15 @@ METHOD ConditionParser:GetOperators()
 
    IF ::_Operators == NIL
       ::_Operators := {                                           ;
-                       LogicalOperator():new("and", {".and."}),   ;
-                       LogicalOperator():new("or", {".or."})      ;
+                       SR_LogicalOperator():new("and", {".and."}),   ;
+                       SR_LogicalOperator():new("or", {".or."})      ;
                       }
    ENDIF
 
 RETURN ::_Operators
 
 METHOD ConditionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
-RETURN ComposedCondition():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
+RETURN SR_ComposedCondition():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
 
 METHOD ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
@@ -427,7 +427,7 @@ METHOD ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, o
 
             oComparisonOperator := xFirst(::aClipperComparisonOperators, {|y|aGroups[3, 1] $ y:aSymbols})
 
-            oOperand1 := Comparison():new(cAlias, ;
+            oOperand1 := SR_Comparison():new(cAlias, ;
                                           ::RestoreParenthesis(cExpression), ;
                                           oExpressionParser:Parse(::RestoreParenthesis(aGroups[2, 1])), ;
                                           oComparisonOperator, ;
@@ -439,7 +439,7 @@ METHOD ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, o
                   aGroups := HB_RegExAtX(::_cRegNegative2, cExpression)
                   cExpression2 := aGroups[3, 1]
                ENDIF
-               oOperand1 := BooleanExpression():new2(cAlias, ::RestoreParenthesis(cExpression), lDenied, oExpressionParser:Parse(::RestoreParenthesis(cExpression2)))
+               oOperand1 := SR_BooleanExpression():new2(cAlias, ::RestoreParenthesis(cExpression), lDenied, oExpressionParser:Parse(::RestoreParenthesis(cExpression2)))
          ENDIF
       ENDIF
    ENDIF
@@ -454,7 +454,7 @@ STATIC FUNCTION GetConditionOrExpression(cExpression, cAlias)
    LOCAL oParser := ConditionParser():new(cAlias)
    LOCAL oResult := oParser:Parse(cExpression)
 
-   IF oResult:isKindOf("BooleanExpression") .AND. oResult:oExpression:GetType() != "L"
+   IF oResult:isKindOf("SR_BooleanExpression") .AND. oResult:oExpression:GetType() != "L"
       cContext := oResult:cContext
       oResult := oResult:oExpression
       oResult:cContext := cContext
