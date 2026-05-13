@@ -421,7 +421,7 @@ METHOD SR_WORKAREA:sqlSetFilter(cFilter)
 
 #ifdef NG_DEVELOPMENT
    // Try with Maxime parser
-   oParser := ConditionParser():New(::cAlias)
+   oParser := SR_ConditionParser():New(::cAlias)
    oTranslator := MSSQLExpressionTranslator():New(::cAlias, .F., .T.)
    cExpr := oTranslator:GetTranslation(oParser:Parse(cFilter)):cSQLCondition
 

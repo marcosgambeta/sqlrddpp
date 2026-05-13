@@ -634,7 +634,7 @@ FUNCTION NewParseForClause(cFor, lFixVariables)
 
    ::cFilterExpression := cFor
 
-   oParser := ConditionParser():new(::cAlias)
+   oParser := SR_ConditionParser():new(::cAlias)
    otranslator := MSSQLExpressionTranslator():new(::cAlias, lFixVariables, .T.)
 
    oCondition := oParser:Parse(cFor)

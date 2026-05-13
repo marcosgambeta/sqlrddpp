@@ -282,7 +282,7 @@ METHOD ExpressionTranslator:Translate(oExpression, x)
                oRelation := ::aRelations[i]
                cFilterCondition := oRelation:oWorkArea2:cFilterExpression
                IF cFilterCondition != NIL .AND. !cFilterCondition == ""
-                  oParser := ConditionParser():new(oRelation:oWorkArea2:cAlias)
+                  oParser := SR_ConditionParser():new(oRelation:oWorkArea2:cAlias)
                   oFilterCondition := oParser:Parse(cFilterCondition)
                   AAdd(aFilters, ::InternalTranslate(oFilterCondition))
                ENDIF
@@ -858,7 +858,7 @@ METHOD EnchancedDirectRelation:oExpression(xValue)
       IF ::oClipperExpression:nLength > ::nMaxLength
          cRelationExpr := "left(" + cRelationExpr + ", " + Str(::nMaxLength) + ")"
       ENDIF
-      ::_oExpression := ExpressionParser():new(::oWorkarea1:cAlias):Parse(cRelationExpr)
+      ::_oExpression := SR_ExpressionParser():new(::oWorkarea1:cAlias):Parse(cRelationExpr)
    ENDIF
 
 RETURN ::_oExpression
@@ -874,7 +874,7 @@ METHOD EnchancedDirectRelation:oIndexExpression(xValue)
       IF ::oSeekIndex:nLength > ::nMaxLength
          cIndexExpr := "left(" + cIndexExpr + ", " + Str(::nMaxLength) + ")"
       ENDIF
-      ::_oIndexExpression := ExpressionParser():new(::oWorkarea2:cAlias):Parse(cIndexExpr)
+      ::_oIndexExpression := SR_ExpressionParser():new(::oWorkarea2:cAlias):Parse(cIndexExpr)
    ENDIF
 
 RETURN ::_oIndexExpression

@@ -45,7 +45,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ParserBase
+CLASS SR_ParserBase
 
    HIDDEN:
    DATA _SortedOperators
@@ -97,13 +97,13 @@ CLASS ParserBase
 
 ENDCLASS
 
-METHOD ParserBase:new(pWorkarea)
+METHOD SR_ParserBase:new(pWorkarea)
 
    ::_cDefaultContext := pWorkarea
 
 RETURN SELF
 
-METHOD ParserBase:SortedOperators
+METHOD SR_ParserBase:SortedOperators
 
    IF ::_SortedOperators == NIL
       ::_SortedOperators := ASort(::GetOperators(), , , {|x, y|x:nPriority < y:nPriority})
@@ -111,10 +111,10 @@ METHOD ParserBase:SortedOperators
 
 RETURN ::_SortedOperators
 
-METHOD ParserBase:Parse(cExpression)
+METHOD SR_ParserBase:Parse(cExpression)
 RETURN ::InternParse("?" + AtRepl(Chr(34), cExpression, "'") + "?", ::_cDefaultContext)
 
-METHOD ParserBase:InternParse(cExpression, cAlias)
+METHOD SR_ParserBase:InternParse(cExpression, cAlias)
 
    LOCAL oOperand1
    LOCAL oOperand2
@@ -128,7 +128,7 @@ METHOD ParserBase:InternParse(cExpression, cAlias)
 
 RETURN oOperand1
 
-METHOD ParserBase:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
+METHOD SR_ParserBase:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
    LOCAL o
    LOCAL aGroups
@@ -162,7 +162,7 @@ METHOD ParserBase:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOpera
 
 RETURN NIL
 
-METHOD ParserBase:ResolveParenthesis(cExpression)
+METHOD SR_ParserBase:ResolveParenthesis(cExpression)
 
    LOCAL i
    LOCAL nParenthesisDeep := 0
@@ -189,7 +189,7 @@ METHOD ParserBase:ResolveParenthesis(cExpression)
 
 RETURN NIL
 
-METHOD ParserBase:RestoreParenthesis(cExpression)
+METHOD SR_ParserBase:RestoreParenthesis(cExpression)
 
    LOCAL cParenthesis := "("
    LOCAL i
@@ -206,25 +206,25 @@ METHOD ParserBase:RestoreParenthesis(cExpression)
 
 RETURN cExpression
 
-METHOD ParserBase:ExtractAlias1(cExpression)
+METHOD SR_ParserBase:ExtractAlias1(cExpression)
 
    STATIC regex := "^(\w+)\s*->\s*(\?.+\?)$"
 
 RETURN ::ExtractAlias(@cExpression, regex)
 
-METHOD ParserBase:ExtractAlias2(cExpression)
+METHOD SR_ParserBase:ExtractAlias2(cExpression)
 
    STATIC regex := "^(\w+)\s*->\s*(\(.+\))$"
 
 RETURN ::ExtractAlias(@cExpression, regex)
 
-METHOD ParserBase:ExtractAlias3(cExpression)
+METHOD SR_ParserBase:ExtractAlias3(cExpression)
 
    STATIC regex := "^(\w+)\s*->\s*(\w+)$"
 
 RETURN ::ExtractAlias(@cExpression, regex)
 
-METHOD ParserBase:ExtractAlias(cExpression, cRegex)
+METHOD SR_ParserBase:ExtractAlias(cExpression, cRegex)
 
    LOCAL aGroups
 
@@ -238,7 +238,7 @@ RETURN NIL
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ExpressionParser FROM ParserBase
+CLASS SR_ExpressionParser FROM SR_ParserBase
 
    PROTECTED:
    METHOD GetOperators()
@@ -257,7 +257,7 @@ CLASS ExpressionParser FROM ParserBase
 
 ENDCLASS
 
-METHOD ExpressionParser:GetOperators()
+METHOD SR_ExpressionParser:GetOperators()
 
    IF ::_Operators == NIL
       ::_Operators := {                                               ;
@@ -271,10 +271,10 @@ METHOD ExpressionParser:GetOperators()
 
 RETURN ::_Operators
 
-METHOD ExpressionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
+METHOD SR_ExpressionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
 RETURN SR_ComposedExpression():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
 
-METHOD ExpressionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
+METHOD SR_ExpressionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
    LOCAL aGroups
    LOCAL aParamGroups
@@ -312,7 +312,7 @@ METHOD ExpressionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, 
 
 RETURN NIL
 
-METHOD ExpressionParser:GetParameter(cExpression, cAlias)
+METHOD SR_ExpressionParser:GetParameter(cExpression, cAlias)
 
    STATIC cRegParam := "^(@?)(.*)$"
 
@@ -333,7 +333,7 @@ RETURN SR_Parameter():new(oExpression, lByRef)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ConditionParser FROM ParserBase
+CLASS SR_ConditionParser FROM SR_ParserBase
 
    HIDDEN:
    DATA _cRegOperator
@@ -358,7 +358,7 @@ CLASS ConditionParser FROM ParserBase
 
 ENDCLASS
 
-METHOD ConditionParser:new(pWorkarea)
+METHOD SR_ConditionParser:new(pWorkarea)
 
    LOCAL cOperatorsChoice
    LOCAL cOperatorsChars
@@ -387,7 +387,7 @@ METHOD ConditionParser:new(pWorkarea)
 
 RETURN SELF
 
-METHOD ConditionParser:GetOperators()
+METHOD SR_ConditionParser:GetOperators()
 
    IF ::_Operators == NIL
       ::_Operators := {                                           ;
@@ -398,10 +398,10 @@ METHOD ConditionParser:GetOperators()
 
 RETURN ::_Operators
 
-METHOD ConditionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
+METHOD SR_ConditionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
 RETURN SR_ComposedCondition():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
 
-METHOD ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
+METHOD SR_ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
    LOCAL aGroups
    LOCAL oComparisonOperator
@@ -420,7 +420,7 @@ METHOD ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, o
       ELSE
          cAlias := IIf((cNewAlias := ::ExtractAlias3(@cExpression)) != NIL, cNewAlias, cAlias)
 
-         oExpressionParser := ExpressionParser():new(cAlias)
+         oExpressionParser := SR_ExpressionParser():new(cAlias)
 
          IF HB_RegExMatch(::_cRegOperator, cExpression, .F.)
             aGroups := HB_RegExAtX(::_cRegOperator, cExpression)
@@ -451,7 +451,7 @@ RETURN NIL
 STATIC FUNCTION GetConditionOrExpression(cExpression, cAlias)
 
    LOCAL cContext
-   LOCAL oParser := ConditionParser():new(cAlias)
+   LOCAL oParser := SR_ConditionParser():new(cAlias)
    LOCAL oResult := oParser:Parse(cExpression)
 
    IF oResult:isKindOf("SR_BooleanExpression") .AND. oResult:oExpression:GetType() != "L"
