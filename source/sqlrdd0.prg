@@ -1190,7 +1190,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION AddToMLHash(aField)
+FUNCTION SR_AddToMLHash(aField)
 
    s_hMultilangColumns[PadR(aField[1], 50) + PadR(aField[2], 50)] := aField
 

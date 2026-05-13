@@ -604,7 +604,7 @@ FUNCTION CollectAliases(oExpression, aAliases)
 
    LOCAL item
 
-   aAddDistinct(aAliases, oExpression:cContext, {|x|Lower(x)})
+   SR_aAddDistinct(aAliases, oExpression:cContext, {|x|Lower(x)})
    IF oExpression:isKindOf("BooleanExpression")
       CollectAliases(oExpression:oExpression, aAliases)
    ELSEIF oExpression:isKindOf("Comparison") .OR. oExpression:isKindOf("ComposedCondition") .OR. oExpression:isKindOf("ComposedExpression")

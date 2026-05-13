@@ -255,7 +255,7 @@ METHOD RelationManager:GetRelations(cAlias1, cAlias2)
             ELSE
                r := IndirectRelation():new()
                AAdd(r:aDirectRelations, oDirectRelation)
-               aAddRange(result, ::BuildRelations(r, oDirectRelation:oWorkarea2:cAlias, cAlias2))
+               SR_aAddRange(result, ::BuildRelations(r, oDirectRelation:oWorkarea2:cAlias, cAlias2))
             ENDIF
          ENDIF
       NEXT i
@@ -295,7 +295,7 @@ METHOD RelationManager:BuildRelations(oIndirectRelation, cAlias1, cAlias2)
          IF oDirectRelation:oWorkarea2:cAlias == cAlias2
             AAdd(result, r)
          ELSE
-            aAddRange(result, ::BuildRelations(r, oDirectRelation:oWorkarea2:cAlias, cAlias2))
+            SR_aAddRange(result, ::BuildRelations(r, oDirectRelation:oWorkarea2:cAlias, cAlias2))
          ENDIF
       ENDIF
    NEXT i
@@ -352,7 +352,7 @@ METHOD DbIndex:new(pWorkarea, pName)
       ::oWorkarea := pWorkarea
    ENDIF
    ::_cName := Upper(pName)
-   ::_aInfos := aWhere(pWorkarea:aIndex, {|x|x[10] == ::_cName})[1]
+   ::_aInfos := SR_aWhere(pWorkarea:aIndex, {|x|x[10] == ::_cName})[1]
    ::oClipperExpression := ClipperExpression():new(::oWorkarea:cAlias, ::_aInfos[4], ::lIsSynthetic)
 
 RETURN SELF

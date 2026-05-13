@@ -83,7 +83,7 @@ EXTERNAL SR_GetActiveConnection
 EXTERNAL SR_SetActiveConnection
 EXTERNAL SR_AddConnection
 EXTERNAL SR_ReloadMLHash
-EXTERNAL AddToMLHash
+EXTERNAL SR_AddToMLHash
 EXTERNAL GetMLHash
 EXTERNAL SR_ErrorOnGotoToInvalidRecord
 EXTERNAL SR_SetGoTopOnScope

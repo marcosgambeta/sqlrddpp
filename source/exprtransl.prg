@@ -183,7 +183,7 @@ CLASS ExpressionTranslator
    // METHOD CheckParams(oFunctionExpression)
 
    PROTECTED:
-   METHOD AaddRelations(aRelations) INLINE aAddRangeDistinct(::aRelations, xSelectMany(aRelations, {|y|IIf(y:isKindOf("DirectRelation"), {y}, y:aDirectRelations)}), {|x|x:oWorkArea2:cAlias})
+   METHOD AaddRelations(aRelations) INLINE SR_aAddRangeDistinct(::aRelations, xSelectMany(aRelations, {|y|IIf(y:isKindOf("DirectRelation"), {y}, y:aDirectRelations)}), {|x|x:oWorkArea2:cAlias})
 
    EXPORTED:
    METHOD new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
@@ -298,7 +298,7 @@ METHOD ExpressionTranslator:Translate(oExpression, x)
                DO WHILE Len(aInitRelations) > 0
                   lProgress := .F.
                   FOR i := 1 TO Len(aInitRelations)
-                     IF Len(aWhere(aInitRelations[i]:aDependingContexts, {|x|!Lower(x) $ addedAliases})) == 1
+                     IF Len(SR_aWhere(aInitRelations[i]:aDependingContexts, {|x|!Lower(x) $ addedAliases})) == 1
                         AAdd(addedAliases, Lower(aInitRelations[i]:oWorkArea2:cAlias))
                         AAdd(aSortedRelations, aInitRelations[i])
                         hb_ADel(aInitRelations, i, .T.)

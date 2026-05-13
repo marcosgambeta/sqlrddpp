@@ -71,11 +71,11 @@ FUNCTION xSelectMany(aArray, bSelector)
 
    LOCAL newArray := {}
 
-   AEval(aArray, {|x|aAddRange(newArray, Eval(bSelector, x))})
+   AEval(aArray, {|x|SR_aAddRange(newArray, Eval(bSelector, x))})
 
 RETURN newArray
 
-FUNCTION aWhere(aArray, bPredicate)
+FUNCTION SR_aWhere(aArray, bPredicate)
 
    LOCAL item
    LOCAL newArray := {}
@@ -106,7 +106,7 @@ FUNCTION xFirstOrDefault(aArray)
 
 RETURN aArray[1]
 
-FUNCTION aDistinct(aArray, bSelector)
+FUNCTION SR_aDistinct(aArray, bSelector)
 
    LOCAL item
    LOCAL newArray := {}
@@ -123,7 +123,7 @@ FUNCTION aDistinct(aArray, bSelector)
 
 RETURN newArray
 
-PROCEDURE aAddRange(aArray1, aArray2)
+PROCEDURE SR_aAddRange(aArray1, aArray2)
 
    LOCAL item
 
@@ -133,7 +133,7 @@ PROCEDURE aAddRange(aArray1, aArray2)
 
 RETURN
 
-PROCEDURE aAddDistinct(aArray1, xValue, bSelector)
+PROCEDURE sr_aAddDistinct(aArray1, xValue, bSelector)
 
    LOCAL id
 
@@ -147,12 +147,12 @@ PROCEDURE aAddDistinct(aArray1, xValue, bSelector)
 
 RETURN
 
-PROCEDURE aAddRangeDistinct(aArray1, aArray2, bSelector)
+PROCEDURE sr_aAddRangeDistinct(aArray1, aArray2, bSelector)
 
    LOCAL item
 
    FOR EACH item IN aArray2
-      aAddDistinct(aArray1, item, bSelector)
+      SR_aAddDistinct(aArray1, item, bSelector)
    NEXT
 
 RETURN
@@ -170,7 +170,7 @@ PROCEDURE RemoveAll(aArray, bPredicate)
 
 RETURN
 
-FUNCTION aReplaceNilBy(aArray, xValue)
+FUNCTION SR_aReplaceNilBy(aArray, xValue)
 RETURN AEval(aArray, {|x, n|IIf(x == NIL, aArray[n] := xValue, NIL)})
 
 ///////////////////////////////////////////////////////////////////////////////
