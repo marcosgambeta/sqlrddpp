@@ -422,7 +422,7 @@ METHOD SR_WORKAREA:sqlSetFilter(cFilter)
 #ifdef NG_DEVELOPMENT
    // Try with Maxime parser
    oParser := SR_ConditionParser():New(::cAlias)
-   oTranslator := MSSQLExpressionTranslator():New(::cAlias, .F., .T.)
+   oTranslator := SR_MSSQLExpressionTranslator():New(::cAlias, .F., .T.)
    cExpr := oTranslator:GetTranslation(oParser:Parse(cFilter)):cSQLCondition
 
    IF ::oSql:oSqlTransact:Exec("SELECT A.* FROM " + ::cQualifiedTableName + " A WHERE 0 = 1 AND (" + cExpr + ")", .F.) == SQL_SUCCESS

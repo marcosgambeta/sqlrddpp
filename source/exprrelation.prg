@@ -50,7 +50,7 @@
 FUNCTION NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
 
    DbSetRelation(cAlias, bRelation, cRelation, lScoped)
-   SR_RelationManager():new():AddRelation(EnchancedRelationFactory():new(), Alias(), cAlias, cRelation)
+   SR_RelationManager():new():AddRelation(SR_EnchancedRelationFactory():new(), Alias(), cAlias, cRelation)
 
 RETURN NIL
 
@@ -635,7 +635,7 @@ FUNCTION NewParseForClause(cFor, lFixVariables)
    ::cFilterExpression := cFor
 
    oParser := SR_ConditionParser():new(::cAlias)
-   otranslator := MSSQLExpressionTranslator():new(::cAlias, lFixVariables, .T.)
+   otranslator := SR_MSSQLExpressionTranslator():new(::cAlias, lFixVariables, .T.)
 
    oCondition := oParser:Parse(cFor)
 
