@@ -200,9 +200,9 @@ METHOD ExpressionTranslator:new(pWorkarea, pFixVariables, pSimplifyCondition, pI
    ::lSimplifyCondition := pSimplifyCondition == NIL .OR. pSimplifyCondition
    ::lFixVariables := pFixVariables != NIL .AND. pFixVariables
    ::lIndexExpression := pIndexExpression == NIL .OR. pIndexExpression
-   ::_oExpressionSimplifier := ExpressionSimplifier():new(::lFixVariables, .F., ::_oDefaultContext:cAlias)
+   ::_oExpressionSimplifier := SR_ExpressionSimplifier():new(::lFixVariables, .F., ::_oDefaultContext:cAlias)
    IF ::lSimplifyCondition
-      ::_oConditionSimplifier := ConditionSimplifier():new(::lFixVariables, .F., ::_oDefaultContext:cAlias)
+      ::_oConditionSimplifier := SR_ConditionSimplifier():new(::lFixVariables, .F., ::_oDefaultContext:cAlias)
    ENDIF
 
 RETURN SELF

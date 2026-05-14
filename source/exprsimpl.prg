@@ -45,7 +45,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ExpressionSimplifierBase
+CLASS SR_ExpressionSimplifierBase
 
    EXPORTED:
    DATA cContext
@@ -79,7 +79,7 @@ CLASS ExpressionSimplifierBase
 
 ENDCLASS
 
-METHOD ExpressionSimplifierBase:new(pFixVariables, pIgnoreRelations, pContext)
+METHOD SR_ExpressionSimplifierBase:new(pFixVariables, pIgnoreRelations, pContext)
 
    IF pFixVariables != NIL
       ::lFixVariables := pFixVariables
@@ -91,7 +91,7 @@ METHOD ExpressionSimplifierBase:new(pFixVariables, pIgnoreRelations, pContext)
 
 RETURN SELF
 
-METHOD ExpressionSimplifierBase:SimplifyComposition(oExpression)
+METHOD SR_ExpressionSimplifierBase:SimplifyComposition(oExpression)
 
    LOCAL oAlgebraSet
    LOCAL newClipperString
@@ -121,20 +121,20 @@ METHOD ExpressionSimplifierBase:SimplifyComposition(oExpression)
 
 RETURN oExpression
 
-METHOD ExpressionSimplifierBase:CompositionAssessable(oExpression)
+METHOD SR_ExpressionSimplifierBase:CompositionAssessable(oExpression)
 RETURN       (oExpression:oOperand1:lSimplified .OR. ::Assessable(oExpression:oOperand1)) ;
        .AND. (oExpression:oOperand2:lSimplified .OR. ::Assessable(oExpression:oOperand2))
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ExpressionSimplifier FROM ExpressionSimplifierBase
+CLASS SR_ExpressionSimplifier FROM SR_ExpressionSimplifierBase
 
    HIDDEN:
    DATA _oConditionSimplifier
 
    HIDDEN:
-   ACCESS oConditionSimplifier INLINE IIf(::_oConditionSimplifier == NIL, (::_oConditionSimplifier := ConditionSimplifier():new(::lFixVariables, ::lIgnoreRelations, ::cContext)), ::_oConditionSimplifier)
+   ACCESS oConditionSimplifier INLINE IIf(::_oConditionSimplifier == NIL, (::_oConditionSimplifier := SR_ConditionSimplifier():new(::lFixVariables, ::lIgnoreRelations, ::cContext)), ::_oConditionSimplifier)
 
    EXPORTED:
    METHOD Simplify(oExpression)
@@ -159,13 +159,13 @@ CLASS ExpressionSimplifier FROM ExpressionSimplifierBase
 
 ENDCLASS
 
-METHOD ExpressionSimplifier:new(pFixVariables, pIgnoreRelations, pContext, pConditionSimplifier)
+METHOD SR_ExpressionSimplifier:new(pFixVariables, pIgnoreRelations, pContext, pConditionSimplifier)
 
    ::_oConditionSimplifier := pConditionSimplifier
 
 RETURN ::super:new(pFixVariables, pIgnoreRelations, pContext)
 
-METHOD ExpressionSimplifier:Simplify(oExpression)
+METHOD SR_ExpressionSimplifier:Simplify(oExpression)
 
    LOCAL newValue
    LOCAL i
@@ -240,7 +240,7 @@ METHOD ExpressionSimplifier:Simplify(oExpression)
 
 RETURN result
 
-METHOD ExpressionSimplifier:Assessable(oExpression)
+METHOD SR_ExpressionSimplifier:Assessable(oExpression)
 
    LOCAL result
 
@@ -260,7 +260,7 @@ METHOD ExpressionSimplifier:Assessable(oExpression)
 
 RETURN result
 
-METHOD ExpressionSimplifier:ValueAssessable(oExpression)
+METHOD SR_ExpressionSimplifier:ValueAssessable(oExpression)
 
    LOCAL lRet
 
@@ -277,7 +277,7 @@ METHOD ExpressionSimplifier:ValueAssessable(oExpression)
 
 RETURN lRet
 
-METHOD ExpressionSimplifier:FunctionAssessable(oExpression)
+METHOD SR_ExpressionSimplifier:FunctionAssessable(oExpression)
 
    LOCAL item
    LOCAL simplifier
@@ -299,7 +299,7 @@ RETURN __DynsIsFun(__DynsGetIndex(oExpression:cFunctionName)) ;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ConditionSimplifier FROM ExpressionSimplifierBase
+CLASS SR_ConditionSimplifier FROM SR_ExpressionSimplifierBase
 
    HIDDEN:
    DATA _oExpressionSimplifier
@@ -327,13 +327,13 @@ CLASS ConditionSimplifier FROM ExpressionSimplifierBase
 
 ENDCLASS
 
-METHOD ConditionSimplifier:new(pFixVariables, pIgnoreRelations, pContext)
+METHOD SR_ConditionSimplifier:new(pFixVariables, pIgnoreRelations, pContext)
 
-   ::_oExpressionSimplifier := ExpressionSimplifier():new(pFixVariables, pIgnoreRelations, pContext, SELF)
+   ::_oExpressionSimplifier := SR_ExpressionSimplifier():new(pFixVariables, pIgnoreRelations, pContext, SELF)
 
 RETURN ::super:new(pFixVariables, pIgnoreRelations, pContext)
 
-METHOD ConditionSimplifier:Simplify(oCondition)
+METHOD SR_ConditionSimplifier:Simplify(oCondition)
 
    LOCAL newValue
    LOCAL newOperand1
@@ -370,7 +370,7 @@ METHOD ConditionSimplifier:Simplify(oCondition)
 
 RETURN result
 
-METHOD ConditionSimplifier:Assessable(oCondition)
+METHOD SR_ConditionSimplifier:Assessable(oCondition)
 
    LOCAL result
 
@@ -389,10 +389,10 @@ METHOD ConditionSimplifier:Assessable(oCondition)
 
 RETURN result
 
-METHOD ConditionSimplifier:BooleanExprAssessable(oCondition)
+METHOD SR_ConditionSimplifier:BooleanExprAssessable(oCondition)
 RETURN ::_oExpressionSimplifier:Assessable(oCondition:oExpression)
 
-METHOD ConditionSimplifier:ComparisonAssessable(oCondition)
+METHOD SR_ConditionSimplifier:ComparisonAssessable(oCondition)
 RETURN       ::_oExpressionSimplifier:Assessable(oCondition:oOperand1) ;
        .AND. ::_oExpressionSimplifier:Assessable(oCondition:oOperand2)
 
