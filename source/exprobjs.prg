@@ -261,7 +261,7 @@ ENDCLASS
 
 METHOD SR_ExpressionBase:new(pContext, pClipperString)
 
-   ::oClipperExpression := ClipperExpression():new(pContext, pClipperString)
+   ::oClipperExpression := SR_ClipperExpression():new(pContext, pClipperString)
    ::cContext := Upper(pContext)
 
 RETURN SELF
@@ -306,7 +306,7 @@ METHOD SR_ConditionBase:lDenied(value)
 
    IF value != NIL .AND. value != ::lDenied_
       ::lDenied_ := value
-      ::oClipperExpression := ClipperExpression():new(::cContext, "!(" + ::oClipperExpression:cValue + ")")
+      ::oClipperExpression := SR_ClipperExpression():new(::cContext, "!(" + ::oClipperExpression:cValue + ")")
    ENDIF
 
 RETURN ::lDenied_
@@ -353,7 +353,7 @@ METHOD SR_BooleanExpression:lDenied(value)
 
    IF value != NIL .AND. value != ::lDenied_ .AND. ::lIsSimple .AND. ::oExpression:ValueType = "value"
       ::lDenied_ := value
-      ::oClipperExpression := ClipperExpression():new(::cContext, ::Value)
+      ::oClipperExpression := SR_ClipperExpression():new(::cContext, ::Value)
       RETURN ::lDenied_
    ENDIF
 

@@ -272,7 +272,7 @@ METHOD ExpressionSimplifier:ValueAssessable(oExpression)
       lRet := ::lFixVariables
       EXIT
    CASE "field"
-      lRet := (::lIgnoreRelations .OR. !::cContext == oExpression:cContext .AND. Len(RelationManager():new():GetRelations(::cContext, oExpression:cContext)) == 0) .AND. ::lFixVariables
+      lRet := (::lIgnoreRelations .OR. !::cContext == oExpression:cContext .AND. Len(SR_RelationManager():new():GetRelations(::cContext, oExpression:cContext)) == 0) .AND. ::lFixVariables
    ENDSWITCH
 
 RETURN lRet

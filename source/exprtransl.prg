@@ -183,7 +183,7 @@ CLASS ExpressionTranslator
    // METHOD CheckParams(oFunctionExpression)
 
    PROTECTED:
-   METHOD AaddRelations(aRelations) INLINE SR_aAddRangeDistinct(::aRelations, xSelectMany(aRelations, {|y|IIf(y:isKindOf("DirectRelation"), {y}, y:aDirectRelations)}), {|x|x:oWorkArea2:cAlias})
+   METHOD AaddRelations(aRelations) INLINE SR_aAddRangeDistinct(::aRelations, xSelectMany(aRelations, {|y|IIf(y:isKindOf("SR_DirectRelation"), {y}, y:aDirectRelations)}), {|x|x:oWorkArea2:cAlias})
 
    EXPORTED:
    METHOD new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
@@ -447,7 +447,7 @@ METHOD ExpressionTranslator:TranslateValueExpression(oValueExpression)
    SWITCH oValueExpression:ValueType
    CASE "field"
       IF Upper(::_oDefaultContext:cAlias) != oValueExpression:cContext
-         aRelations := RelationManager():new():GetRelations(::_oDefaultContext:cAlias, oValueExpression:cContext)
+         aRelations := SR_RelationManager():new():GetRelations(::_oDefaultContext:cAlias, oValueExpression:cContext)
          IF Len(aRelations) > 1
             _SR_Throw(ErrorNew(, , , , "There is several relations between " + ::_oDefaultContext:cAlias + " and " + oValueExpression:cContext + ". Translation impossible."))
          ELSEIF Len(aRelations) == 1
@@ -792,7 +792,7 @@ ENDCLASS
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS EnchancedDirectRelation FROM DirectRelation
+CLASS EnchancedDirectRelation FROM SR_DirectRelation
 
    HIDDEN:
    DATA _oExpression
@@ -889,7 +889,7 @@ RETURN ::_aDependingContexts
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS EnchancedRelationFactory FROM RelationFactory
+CLASS EnchancedRelationFactory FROM SR_RelationFactory
 
    EXPORTED:
    METHOD NewDirectRelation(pWorkarea1, pWorkarea2, pExpression) INLINE EnchancedDirectRelation():new(pWorkarea1, pWorkarea2, pExpression)

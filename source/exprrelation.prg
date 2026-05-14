@@ -50,14 +50,14 @@
 FUNCTION NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
 
    DbSetRelation(cAlias, bRelation, cRelation, lScoped)
-   RelationManager():new():AddRelation(EnchancedRelationFactory():new(), Alias(), cAlias, cRelation)
+   SR_RelationManager():new():AddRelation(EnchancedRelationFactory():new(), Alias(), cAlias, cRelation)
 
 RETURN NIL
 
 FUNCTION NewdbClearRelation()
 
    dbClearRelation()
-   RelationManager():new():Clear(Alias())
+   SR_RelationManager():new():Clear(Alias())
 
 RETURN NIL
 
@@ -97,7 +97,7 @@ RETURN
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS RelationBase
+CLASS SR_RelationBase
 
    EXPORTED:
    DATA oWorkarea1
@@ -109,7 +109,7 @@ ENDCLASS
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS IndirectRelation FROM RelationBase
+CLASS SR_IndirectRelation FROM SR_RelationBase
 
    EXPORTED:
    DATA aDirectRelations INIT {}
@@ -124,7 +124,7 @@ ENDCLASS
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS DirectRelation FROM RelationBase
+CLASS SR_DirectRelation FROM SR_RelationBase
 
    EXPORTED:
    DATA oClipperExpression READONLY
@@ -134,7 +134,7 @@ CLASS DirectRelation FROM RelationBase
 
 ENDCLASS
 
-METHOD DirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
+METHOD SR_DirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
 
    IF HB_IsChar(pWorkarea1)
       ::oWorkarea1 := oGetWorkarea(pWorkarea1)
@@ -153,17 +153,17 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS RelationFactory
+CLASS SR_RelationFactory
 
    EXPORTED:
-   METHOD NewDirectRelation(pWorkarea1, pWorkarea2, pExpression) INLINE DirectRelation():new(pWorkarea1, pWorkarea2, pExpression)
+   METHOD NewDirectRelation(pWorkarea1, pWorkarea2, pExpression) INLINE SR_DirectRelation():new(pWorkarea1, pWorkarea2, pExpression)
 
    EXPORTED:
    METHOD new()
 
 ENDCLASS
 
-METHOD RelationFactory:new()
+METHOD SR_RelationFactory:new()
 
    STATIC instance
 
@@ -175,7 +175,7 @@ RETURN instance
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS RelationManager
+CLASS SR_RelationManager
 
    HIDDEN:
    DATA oInternDictionary INIT Dictionary():new()
@@ -200,7 +200,7 @@ CLASS RelationManager
 
 ENDCLASS
 
-METHOD RelationManager:new()
+METHOD SR_RelationManager:new()
 
    STATIC instance
 
@@ -210,14 +210,14 @@ METHOD RelationManager:new()
 
 RETURN instance
 
-METHOD RelationManager:Clear(cAlias)
+METHOD SR_RelationManager:Clear(cAlias)
 
    ::oInternDictionary:Clear()
    RemoveAll(::aDirectRelations, {|y|Lower(y:oWorkarea1:cAlias) == Lower(cAlias)})
 
 RETURN NIL
 
-METHOD RelationManager:AddRelation(oFactory, pAlias1, pAlias2, pExpression)
+METHOD SR_RelationManager:AddRelation(oFactory, pAlias1, pAlias2, pExpression)
 
    LOCAL cAlias1 := Upper(pAlias1)
    LOCAL cAlias2 := Upper(pAlias2)
@@ -233,7 +233,7 @@ METHOD RelationManager:AddRelation(oFactory, pAlias1, pAlias2, pExpression)
 
 RETURN NIL
 
-METHOD RelationManager:GetRelations(cAlias1, cAlias2)
+METHOD SR_RelationManager:GetRelations(cAlias1, cAlias2)
 
    LOCAL result := {}
    LOCAL r
@@ -253,7 +253,7 @@ METHOD RelationManager:GetRelations(cAlias1, cAlias2)
             IF cAlias2 == Upper(oDirectRelation:oWorkarea2:cAlias)
                AAdd(result, oDirectRelation)
             ELSE
-               r := IndirectRelation():new()
+               r := SR_IndirectRelation():new()
                AAdd(r:aDirectRelations, oDirectRelation)
                SR_aAddRange(result, ::BuildRelations(r, oDirectRelation:oWorkarea2:cAlias, cAlias2))
             ENDIF
@@ -270,7 +270,7 @@ METHOD RelationManager:GetRelations(cAlias1, cAlias2)
 
 RETURN result
 
-METHOD RelationManager:BuildRelations(oIndirectRelation, cAlias1, cAlias2)
+METHOD SR_RelationManager:BuildRelations(oIndirectRelation, cAlias1, cAlias2)
 
    LOCAL result := {}
    LOCAL r
@@ -285,7 +285,7 @@ METHOD RelationManager:BuildRelations(oIndirectRelation, cAlias1, cAlias2)
       oDirectRelation := ::aDirectRelations[i]
       IF cAlias1 == Upper(oDirectRelation:oWorkarea1:cAlias)
          oDirectRelation := ::aDirectRelations[i]
-         r := IndirectRelation():new()
+         r := SR_IndirectRelation():new()
          FOR j := 1 TO Len(oIndirectRelation:aDirectRelations)
              AAdd(r:aDirectRelations, oIndirectRelation:aDirectRelations[j])
          NEXT j
@@ -304,7 +304,7 @@ RETURN result
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS DbIndex
+CLASS SR_DbIndex
 
    HIDDEN:
    DATA _aInfos
@@ -344,7 +344,7 @@ CLASS DbIndex
 
 ENDCLASS
 
-METHOD DbIndex:new(pWorkarea, pName)
+METHOD SR_DbIndex:new(pWorkarea, pName)
 
    IF HB_IsChar(pWorkarea)
       ::oWorkarea := oGetWorkarea(pWorkarea)
@@ -357,7 +357,7 @@ METHOD DbIndex:new(pWorkarea, pName)
 
 RETURN SELF
 
-METHOD DbIndex:lIsSynthetic()
+METHOD SR_DbIndex:lIsSynthetic()
 
    IF ::_lIsSynthetic == NIL
       ::_lIsSynthetic := (::_aInfos[9] == "")
@@ -365,7 +365,7 @@ METHOD DbIndex:lIsSynthetic()
 
 RETURN ::_lIsSynthetic
 
-METHOD DbIndex:aDbFields()
+METHOD SR_DbIndex:aDbFields()
 
    LOCAL i
 
@@ -373,7 +373,7 @@ METHOD DbIndex:aDbFields()
       ::_aDbFields := {}
       IF ::lIsSynthetic()
          // ::oClipperExpression:nLength will evaluate the index expression which is a bit slow. It would be nice to have access to the legnth of a synthetic index.
-         AAdd(::_aDbFields, DbField():new(HB_RegExAtX(".*\[(.*?)\]", ::_aInfos[1], .F.)[2, 1], "C", ::oClipperExpression:nLength)) //the way to get the name of the field that contains the synthetic index isn't very clean... We also suppose that the synthtic index has a fix length
+         AAdd(::_aDbFields, SR_DbField():new(HB_RegExAtX(".*\[(.*?)\]", ::_aInfos[1], .F.)[2, 1], "C", ::oClipperExpression:nLength)) //the way to get the name of the field that contains the synthetic index isn't very clean... We also suppose that the synthtic index has a fix length
       ELSE
          FOR i := 1 TO Len(::_aInfos[3]) - 1 // not SR_RECNO
             AAdd(::_aDbFields, ::oWorkarea:GetFieldByName(::_aInfos[3][i][1]))
@@ -383,7 +383,7 @@ METHOD DbIndex:aDbFields()
 
 RETURN ::_aDbFields
 
-METHOD DbIndex:nLength()
+METHOD SR_DbIndex:nLength()
 
    LOCAL item
 
@@ -398,7 +398,7 @@ RETURN ::_nLength
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS DbField
+CLASS SR_DbField
 
    EXPORTED:
    DATA cName READONLY
@@ -414,7 +414,7 @@ CLASS DbField
 
 ENDCLASS
 
-METHOD DbField:new(pName, pType, pLength)
+METHOD SR_DbField:new(pName, pType, pLength)
 
    ::cName := pName
    ::cType := pType
@@ -569,7 +569,7 @@ FUNCTION GetIndexes(lOrdered)
       ::aIndexes := {}
       FOR i := 1 TO Len(::aIndex)
          IF hb_regexLike("^\w+$", ::aIndex[i, 10])
-            AAdd(::aIndexes, DbIndex():new(self, ::aIndex[i, 10]))
+            AAdd(::aIndexes, SR_DbIndex():new(self, ::aIndex[i, 10]))
          ENDIF
       NEXT i
    ENDIF
@@ -611,7 +611,7 @@ FUNCTION GetFields()
       ::aDbFields := Array(nCount)
       AFields(_aNames, _aTypes, _aLengths)
       FOR i := 1 TO nCount
-         ::aDbFields[i] := DbField():new(_aNames[i], _aTypes[i], _aLengths[i])
+         ::aDbFields[i] := SR_DbField():new(_aNames[i], _aTypes[i], _aLengths[i])
       NEXT i
       Select(save_slct)
    ENDIF
