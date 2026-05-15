@@ -175,7 +175,7 @@ RETURN AEval(aArray, {|x, n|IIf(x == NIL, aArray[n] := xValue, NIL)})
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS Dictionary
+CLASS SR_Dictionary
 
    HIDDEN:
    DATA aInternArray INIT {}
@@ -215,7 +215,7 @@ ENDCLASS
 // nMode = 1 : If the key exist, an exception is thrown
 // nMode = 2 : If the key exist, the method does nothing
 // nMode = 3 : If the key exist, the value is replaced
-METHOD Dictionary:aAdd(xKey, xValue, nMode)
+METHOD SR_Dictionary:aAdd(xKey, xValue, nMode)
 
    LOCAL lContainsKey := ::lContainsKey(xKey)
 
@@ -224,7 +224,7 @@ METHOD Dictionary:aAdd(xKey, xValue, nMode)
    ENDIF
    DO CASE
    CASE !lContainsKey
-      AAdd(::aInternArray, KeyValuePair():new(xKey, xValue))
+      AAdd(::aInternArray, SR_KeyValuePair():new(xKey, xValue))
    CASE nMode == 1 .AND. lContainsKey
       _SR_Throw(ErrorNew(, , , , "The given key already exists in the dictionary"))
    CASE nMode == 3 .AND. lContainsKey
@@ -233,7 +233,7 @@ METHOD Dictionary:aAdd(xKey, xValue, nMode)
 
 RETURN NIL
 
-METHOD Dictionary:GetKeyValuePair(xKey)
+METHOD SR_Dictionary:GetKeyValuePair(xKey)
 
    LOCAL result := xFirst(::aInternArray, {|y|y:xKey == xKey})
 
@@ -243,22 +243,22 @@ METHOD Dictionary:GetKeyValuePair(xKey)
 
 RETURN result
 
-METHOD Dictionary:At(nIndex)
+METHOD SR_Dictionary:At(nIndex)
 RETURN ::aInternArray[nIndex]
 
-METHOD Dictionary:xValue(xKey)
+METHOD SR_Dictionary:xValue(xKey)
 RETURN ::GetKeyValuePair(xKey):xValue
 
-METHOD Dictionary:SetValue(xKey, xValue)
+METHOD SR_Dictionary:SetValue(xKey, xValue)
 
    ::GetKeyValuePair(xKey):xValue := xValue
 
 RETURN NIL
 
-METHOD Dictionary:nIndexOfKey(xKey)
+METHOD SR_Dictionary:nIndexOfKey(xKey)
 RETURN AScan(::aInternArray, {|x|x:xKey == xKey})
 
-METHOD Dictionary:Remove(xKey)
+METHOD SR_Dictionary:Remove(xKey)
 
    LOCAL nIndex := ::nIndexOfKey(xKey)
 
@@ -268,18 +268,18 @@ METHOD Dictionary:Remove(xKey)
 
 RETURN hb_ADel(::aInternArray, nIndex, .T.)
 
-METHOD Dictionary:Clear()
+METHOD SR_Dictionary:Clear()
 
    ::aInternArray := {}
 
 RETURN NIL
 
-METHOD Dictionary:lContainsKey(xKey)
+METHOD SR_Dictionary:lContainsKey(xKey)
 RETURN ::nIndexOfKey(xKey) > 0
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS KeyValuePair
+CLASS SR_KeyValuePair
 
    EXPORTED:
    DATA xKey readonly
@@ -290,7 +290,7 @@ CLASS KeyValuePair
 
 ENDCLASS
 
-METHOD KeyValuePair:new(pKey, pValue)
+METHOD SR_KeyValuePair:new(pKey, pValue)
 
    ::xKey := pKey
    ::xValue := pValue
@@ -302,7 +302,7 @@ RETURN SELF
 FUNCTION ToDictionary(aArray, bKeySelector)
 
    LOCAL item
-   LOCAL result := Dictionary():new()
+   LOCAL result := SR_Dictionary():new()
 
    FOR EACH item IN aArray
       result:aadd(Eval(bKeySelector, item), item)

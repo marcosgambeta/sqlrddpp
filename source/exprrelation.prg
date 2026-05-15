@@ -178,7 +178,7 @@ RETURN instance
 CLASS SR_RelationManager
 
    HIDDEN:
-   DATA oInternDictionary INIT Dictionary():new()
+   DATA oInternDictionary INIT SR_Dictionary():new()
 
    HIDDEN:
    DATA aDirectRelations INIT {}
@@ -260,7 +260,7 @@ METHOD SR_RelationManager:GetRelations(cAlias1, cAlias2)
          ENDIF
       NEXT i
       IF dico2 == NIL
-         dico2 := Dictionary():new()
+         dico2 := SR_Dictionary():new()
          dico2:aadd(cAlias2, result)
          ::oInternDictionary:aadd(cAlias1, dico2 , 3)
       ELSE
