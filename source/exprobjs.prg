@@ -269,7 +269,7 @@ RETURN SELF
 METHOD SR_ExpressionBase:oWorkArea()
 
    IF ::_oWorkArea == NIL
-      ::_oWorkArea := oGetWorkarea(::cContext)
+      ::_oWorkArea := SR_oGetWorkarea(::cContext)
    ENDIF
 
 RETURN ::_oWorkArea

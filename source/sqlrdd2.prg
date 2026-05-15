@@ -2219,7 +2219,7 @@ METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
                RETURN "'" + uData + "'"
             ENDIF
             IF nTargetDB == SQLRDD_RDBMS_POSTGR
-               IF SETPGSOLDBEHAVIOR()
+               IF SR_SETPGSOLDBEHAVIOR()
                   RETURN "''"
                ELSE
                   RETURN "' '"

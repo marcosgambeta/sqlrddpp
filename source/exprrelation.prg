@@ -47,28 +47,28 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-FUNCTION NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
+FUNCTION SR_NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
 
    DbSetRelation(cAlias, bRelation, cRelation, lScoped)
    SR_RelationManager():new():AddRelation(SR_EnchancedRelationFactory():new(), Alias(), cAlias, cRelation)
 
 RETURN NIL
 
-FUNCTION NewdbClearRelation()
+FUNCTION SR_NewdbClearRelation()
 
    dbClearRelation()
    SR_RelationManager():new():Clear(Alias())
 
 RETURN NIL
 
-FUNCTION Newdbclearfilter()
+FUNCTION SR_Newdbclearfilter()
 
    dbclearfilter()
-   oGetWorkarea(Alias()):cFilterExpression := ""
+   SR_oGetWorkarea(Alias()):cFilterExpression := ""
 
 RETURN NIL
 
-FUNCTION oGetWorkarea(cAlias)
+FUNCTION SR_oGetWorkarea(cAlias)
 
    LOCAL result
    LOCAL oErr
@@ -82,7 +82,7 @@ FUNCTION oGetWorkarea(cAlias)
 
 RETURN result
 
-PROCEDURE SelectFirstAreaNotInUse()
+PROCEDURE SR_SelectFirstAreaNotInUse()
 
    LOCAL nArea
 
@@ -137,12 +137,12 @@ ENDCLASS
 METHOD SR_DirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
 
    IF HB_IsChar(pWorkarea1)
-      ::oWorkarea1 := oGetWorkarea(pWorkarea1)
+      ::oWorkarea1 := SR_oGetWorkarea(pWorkarea1)
    ELSE
       ::oWorkarea1 := pWorkarea1
    ENDIF
    IF HB_IsChar(pWorkarea2)
-      ::oWorkarea2 := oGetWorkarea(pWorkarea2)
+      ::oWorkarea2 := SR_oGetWorkarea(pWorkarea2)
    ELSE
       ::oWorkarea2 := pWorkarea2
    ENDIF
@@ -347,7 +347,7 @@ ENDCLASS
 METHOD SR_DbIndex:new(pWorkarea, pName)
 
    IF HB_IsChar(pWorkarea)
-      ::oWorkarea := oGetWorkarea(pWorkarea)
+      ::oWorkarea := SR_oGetWorkarea(pWorkarea)
    ELSE
       ::oWorkarea := pWorkarea
    ENDIF
@@ -490,8 +490,8 @@ METHOD SR_ClipperExpression:Evaluate(lIgnoreRelations)
    BEGIN SEQUENCE WITH __BreakBlock()
       IF PCount() == 1 .AND. lIgnoreRelations
          save_slct := Select()
-         SelectFirstAreaNotInUse()
-         USE &(oGetWorkarea(::cContext):cFileName) VIA "SQLRDD" ALIAS "AliasWithoutRelation"
+         SR_SelectFirstAreaNotInUse()
+         USE &(SR_oGetWorkarea(::cContext):cFileName) VIA "SQLRDD" ALIAS "AliasWithoutRelation"
          result := &(::cValue)
          CLOSE ("AliasWithoutRelation")
          Select(save_slct)
@@ -555,7 +555,7 @@ FUNCTION SR_ExtendWorkarea() // do not requires xhbcls.ch
 
    __clsAddMsg(SR_WORKAREA():classH, "cFilterExpression", __cls_IncData(SR_WORKAREA():classH), 32 + 1, NIL,)
 
-   __clsModMsg(SR_WORKAREA():classH, "ParseForClause", @NewParseForClause())
+   __clsModMsg(SR_WORKAREA():classH, "ParseForClause", @SR_NewParseForClause())
 
 RETURN NIL
 
@@ -625,7 +625,7 @@ FUNCTION SR_GetFieldByName(cName)
 RETURN SR_xFirst(::GetFields(), {|x|Lower(x:cName) == Lower(cName)})
 
 // should be implemented : GetTranslations() and lFixVariables
-FUNCTION NewParseForClause(cFor, lFixVariables)
+FUNCTION SR_NewParseForClause(cFor, lFixVariables)
 
    LOCAL self := HB_QSelf()
    LOCAL oParser

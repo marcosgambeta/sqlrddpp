@@ -1463,7 +1463,7 @@ RETURN cErrorLog
 
 #define INRANGE(xLo, xVal, xHi)       (xVal >= xLo .AND. xVal <= xHi)
 
-FUNCTION SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
+FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
    LOCAL nChoice
    LOCAL aSay

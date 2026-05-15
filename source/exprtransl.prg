@@ -193,7 +193,7 @@ ENDCLASS
 METHOD SR_ExpressionTranslator:new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
 
    IF HB_IsChar(pWorkarea)
-      ::_oDefaultContext := oGetWorkarea(pWorkarea)
+      ::_oDefaultContext := SR_oGetWorkarea(pWorkarea)
    ELSE
       ::_oDefaultContext := pWorkarea
    ENDIF
@@ -215,7 +215,7 @@ METHOD SR_ExpressionTranslator:GetTranslation(oCondition)
    LOCAL oResult := SR_TranslationResult():new()
    LOCAL aSQLConditions := {}
    LOCAL aClipperConditions := {}
-   LOCAL aConditions := SplitCondition(oCondition, {})
+   LOCAL aConditions := SR_SplitCondition(oCondition, {})
 
    FOR EACH item IN aConditions
       ::aRelations := {}
@@ -911,10 +911,10 @@ RETURN instance
 
 ///////////////////////////////////////////////////////////////////////////////
 
-FUNCTION SplitCondition(oCondition, aConditions)
+FUNCTION SR_SplitCondition(oCondition, aConditions)
 
    DO WHILE oCondition:isKindOf("SR_ComposedCondition") .AND. oCondition:oOperator:cName == "and"
-      SplitCondition(oCondition:oOperand1, aConditions)
+      SR_SplitCondition(oCondition:oOperand1, aConditions)
       oCondition := oCondition:oOperand2
    ENDDO
    AAdd(aConditions, oCondition)
