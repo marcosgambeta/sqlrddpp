@@ -147,7 +147,7 @@ METHOD SR_DirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
       ::oWorkarea2 := pWorkarea2
    ENDIF
 
-   ::oClipperExpression := ClipperExpression():new(::oWorkarea1:cAlias, pExpression, .T.)
+   ::oClipperExpression := SR_ClipperExpression():new(::oWorkarea1:cAlias, pExpression, .T.)
 
 RETURN SELF
 
@@ -353,7 +353,7 @@ METHOD SR_DbIndex:new(pWorkarea, pName)
    ENDIF
    ::_cName := Upper(pName)
    ::_aInfos := SR_aWhere(pWorkarea:aIndex, {|x|x[10] == ::_cName})[1]
-   ::oClipperExpression := ClipperExpression():new(::oWorkarea:cAlias, ::_aInfos[4], ::lIsSynthetic)
+   ::oClipperExpression := SR_ClipperExpression():new(::oWorkarea:cAlias, ::_aInfos[4], ::lIsSynthetic)
 
 RETURN SELF
 
@@ -424,7 +424,7 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CLASS ClipperExpression
+CLASS SR_ClipperExpression
 
    EXPORTED:
    DATA lIgnoreRelations
@@ -461,7 +461,7 @@ CLASS ClipperExpression
 
 ENDCLASS
 
-METHOD ClipperExpression:new(pContext, pValue, pIgnoreRelations)
+METHOD SR_ClipperExpression:new(pContext, pValue, pIgnoreRelations)
 
    ::cContext := pContext
    ::cValue := pValue
@@ -469,7 +469,7 @@ METHOD ClipperExpression:new(pContext, pValue, pIgnoreRelations)
 
 RETURN SELF
 
-METHOD ClipperExpression:cEvaluation()
+METHOD SR_ClipperExpression:cEvaluation()
 
    IF ::_cEvaluation == NIL
       ::_cEvaluation := cstr(::Evaluate(::lIgnoreRelations))
@@ -477,7 +477,7 @@ METHOD ClipperExpression:cEvaluation()
 
 RETURN NIL
 
-METHOD ClipperExpression:Evaluate(lIgnoreRelations)
+METHOD SR_ClipperExpression:Evaluate(lIgnoreRelations)
 
    LOCAL nSeconds
    LOCAL save_slct
@@ -507,7 +507,7 @@ METHOD ClipperExpression:Evaluate(lIgnoreRelations)
 
 RETURN result
 
-METHOD ClipperExpression:cType()
+METHOD SR_ClipperExpression:cType()
 
    IF ::_cType == NIL
       ::_cType := ValType(::cEvaluation())
@@ -515,7 +515,7 @@ METHOD ClipperExpression:cType()
 
 RETURN ::_cType
 
-METHOD ClipperExpression:nLength()
+METHOD SR_ClipperExpression:nLength()
 
    IF ::_nLength == NIL
       ::_nLength := Len(::cEvaluation())
