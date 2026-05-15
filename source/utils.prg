@@ -928,7 +928,7 @@ RETURN ""
 
 //------------------------------------------------------------------------
 
-FUNCTION IsSQLWorkarea()
+FUNCTION SR_IsSQLWorkarea()
 
 RETURN "*" + SR_GetRddName() + "*" $ "*SQLRDD*ODBCRDD*SQLEX*"
 
@@ -1414,7 +1414,7 @@ RETURN NIL
 
 //------------------------------------------------------------------------
 
-FUNCTION dbCount()
+FUNCTION SR_dbCount()
 
    IF IS_SQLRDD
       RETURN (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):KeyCount()

@@ -3346,7 +3346,7 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
          ::aFields[n, FIELD_WAOFFSET] := 0
 
          IF ::aFields[n, 2] == "M" .AND. SR_SetMultiLang()
-            aML := GetMLHash(::cFileName, ::aFields[n, 1])
+            aML := SR_GetMLHash(::cFileName, ::aFields[n, 1])
             IF aML != NIL
                ::aFields[n, 2] := aML[3]
                ::aFields[n, 3] := Val(aML[4])
@@ -3442,7 +3442,7 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
          ::aFields[n, FIELD_WAOFFSET] := 0
 
          IF ::aFields[n, 2] == "M" .AND. SR_SetMultiLang()
-            aML := GetMLHash(::cFileName, ::aFields[n, 1])
+            aML := SR_GetMLHash(::cFileName, ::aFields[n, 1])
             IF aML != NIL
                ::aFields[n, 2] := aML[3]
                ::aFields[n, 3] := Val(aML[4])

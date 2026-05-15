@@ -347,7 +347,7 @@ METHOD SR_ConditionSimplifier:Simplify(oCondition)
    ELSEIF oCondition:isKindOf("SR_BooleanExpression")
       newExpression := ::_oExpressionSimplifier:Simplify(oCondition:oExpression)
       IF !newExpression == oCondition:oExpression
-         result := ConvertToCondition(newExpression)
+         result := SR_ConvertToCondition(newExpression)
       ENDIF
    ELSEIF oCondition:isKindOf("SR_Comparison")
       newOperand1 := ::_oExpressionSimplifier:Simplify(oCondition:oOperand1)

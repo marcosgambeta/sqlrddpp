@@ -377,7 +377,7 @@ METHOD SR_ConditionParser:new(pWorkarea)
       }
 
    cOperatorsChoice := SR_cJoin(SR_xSelect(::aClipperComparisonOperators, {|x|x:cPattern}), "|")
-   cOperatorsChars := cPattern(CharList(SR_cJoin(SR_xSelectMany(::aClipperComparisonOperators, {|x|x:aSymbols}), "")))
+   cOperatorsChars := SR_cPattern(CharList(SR_cJoin(SR_xSelectMany(::aClipperComparisonOperators, {|x|x:aSymbols}), "")))
 
    ::_cRegOperator := ;
       HB_RegExComp("^((?:[^\'\?]*?(?:\'[^\']*\'|\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*?\?))*(?:[^\'\?]*?[^-" + ;
@@ -462,7 +462,7 @@ STATIC FUNCTION GetConditionOrExpression(cExpression, cAlias)
 
 RETURN oResult
 
-FUNCTION cPattern(cString)
+FUNCTION SR_cPattern(cString)
 
    LOCAL item
    LOCAL aSpecialChars := ".+-*/^$()#"

@@ -523,7 +523,7 @@ METHOD SR_ExpressionTranslator:TranslateRelationExpression(oDirectRelation)
    IF oDirectRelation:lSameLength // we try to make the joint on equality on each field whereas on the translated expressions because is it much faster on the database side : no conversion and no concatenation
       aFields1 := {}
       aFields2 := {}
-      IF GetJointsFields(oDirectRelation:oExpression, oDirectRelation:oIndexExpression, oDirectRelation:oWorkArea1, oDirectRelation:oWorkArea2, @aFields1, @aFields2)
+      IF SR_GetJointsFields(oDirectRelation:oExpression, oDirectRelation:oIndexExpression, oDirectRelation:oWorkArea1, oDirectRelation:oWorkArea2, @aFields1, @aFields2)
          aEqualityFields := {}
          FOR i := 1 TO Len(aFields1)
             AAdd(aEqualityFields, ::FormatField(oDirectRelation:oWorkArea1, aFields1[i]) + " " + ::GetComparisonOperatorSymbol("equalEqual") + " " + ::FormatField(oDirectRelation:oWorkArea2, aFields2[i]))
@@ -882,7 +882,7 @@ RETURN ::_oIndexExpression
 METHOD SR_EnchancedDirectRelation:aDependingContexts()
 
    IF ::_aDependingContexts == NIL
-      ::_aDependingContexts := CollectAliases(::oExpression, CollectAliases(::oIndexExpression, {}))
+      ::_aDependingContexts := SR_CollectAliases(::oExpression, SR_CollectAliases(::oIndexExpression, {}))
    ENDIF
 
 RETURN ::_aDependingContexts
@@ -921,17 +921,17 @@ FUNCTION SplitCondition(oCondition, aConditions)
 
 RETURN aConditions
 
-FUNCTION GetJointsFields(oRelationExpr, oIndexExpr, oWorkArea1, oWorkArea2, aFields1, aFields2)
+FUNCTION SR_GetJointsFields(oRelationExpr, oIndexExpr, oWorkArea1, oWorkArea2, aFields1, aFields2)
 
    LOCAL oField1
    LOCAL oField2
 
    IF oRelationExpr:isKindOf(oIndexExpr)
       IF oRelationExpr:isKindOf("SR_ComposedExpression")
-         RETURN       GetJointsFields(oRelationExpr:oOperand1, oIndexExpr:oOperand1, oWorkArea1, oWorkArea2, @aFields1, @aFields2) ;
-                .AND. GetJointsFields(oRelationExpr:oOperand2, oIndexExpr:oOperand2, oWorkArea1, oWorkArea2, @aFields1, @aFields2)
+         RETURN       SR_GetJointsFields(oRelationExpr:oOperand1, oIndexExpr:oOperand1, oWorkArea1, oWorkArea2, @aFields1, @aFields2) ;
+                .AND. SR_GetJointsFields(oRelationExpr:oOperand2, oIndexExpr:oOperand2, oWorkArea1, oWorkArea2, @aFields1, @aFields2)
       ELSEIF oRelationExpr:isKindOf("SR_FunctionExpression") .AND. oRelationExpr:cFunctionName == oIndexExpr:cFunctionName
-         RETURN GetJointsFields(oRelationExpr:aParameters[1]:oExpression, oIndexExpr:aParameters[1]:oExpression, oWorkArea1, oWorkArea2, @aFields1, @aFields2)
+         RETURN SR_GetJointsFields(oRelationExpr:aParameters[1]:oExpression, oIndexExpr:aParameters[1]:oExpression, oWorkArea1, oWorkArea2, @aFields1, @aFields2)
       ELSEIF oRelationExpr:isKindOf("SR_ValueExpression")
          oField1 := oWorkArea1:GetFieldByName(oRelationExpr:Value) // TODO: we could apply the same strategy with field of other workarea but we have to look for the relations with this workarea and to do this we need to translate an expression. => I don't deal with this case, it's very rare.
          oField2 := oWorkArea2:GetFieldByName(oIndexExpr:Value)

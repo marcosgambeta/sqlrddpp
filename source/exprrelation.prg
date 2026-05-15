@@ -543,15 +543,15 @@ FUNCTION ExtendWorkarea() // TODO: requires xhbcls.ch (to be deleted)
 RETURN NIL
 #endif
 
-FUNCTION ExtendWorkarea() // do not requires xhbcls.ch
+FUNCTION SR_ExtendWorkarea() // do not requires xhbcls.ch
 
    __clsAddMsg(SR_WORKAREA():classH, "aIndexes", __cls_IncData(SR_WORKAREA():classH), 32 + 1, NIL,)
-   __clsAddMsg(SR_WORKAREA():classH, "GetIndexes", @GetIndexes(), 0, NIL,)
-   __clsAddMsg(SR_WORKAREA():classH, "GetControllingIndex", @GetControllingIndex(), 0, NIL,)
+   __clsAddMsg(SR_WORKAREA():classH, "GetIndexes", @SR_GetIndexes(), 0, NIL,)
+   __clsAddMsg(SR_WORKAREA():classH, "GetControllingIndex", @SR_GetControllingIndex(), 0, NIL,)
 
    __clsAddMsg(SR_WORKAREA():classH, "aDbFields", __cls_IncData(SR_WORKAREA():classH), 32 + 1, NIL,)
-   __clsAddMsg(SR_WORKAREA():classH, "GetFields", @GetFields(), 0, NIL,)
-   __clsAddMsg(SR_WORKAREA():classH, "GetFieldByName", @GetFieldByName(), 0, NIL,)
+   __clsAddMsg(SR_WORKAREA():classH, "GetFields", @SR_GetFields(), 0, NIL,)
+   __clsAddMsg(SR_WORKAREA():classH, "GetFieldByName", @SR_GetFieldByName(), 0, NIL,)
 
    __clsAddMsg(SR_WORKAREA():classH, "cFilterExpression", __cls_IncData(SR_WORKAREA():classH), 32 + 1, NIL,)
 
@@ -559,7 +559,7 @@ FUNCTION ExtendWorkarea() // do not requires xhbcls.ch
 
 RETURN NIL
 
-FUNCTION GetIndexes(lOrdered)
+FUNCTION SR_GetIndexes(lOrdered)
 
    LOCAL self := HB_QSelf()
    LOCAL i
@@ -579,7 +579,7 @@ FUNCTION GetIndexes(lOrdered)
 
 RETURN ::aIndexes
 
-FUNCTION GetControllingIndex()
+FUNCTION SR_GetControllingIndex()
 
    LOCAL self := HB_QSelf()
    LOCAL aIndexes := ::GetIndexes(.F.)
@@ -591,7 +591,7 @@ FUNCTION GetControllingIndex()
 
 RETURN aIndexes[nIndex]
 
-FUNCTION GetFields()
+FUNCTION SR_GetFields()
 
    LOCAL self := HB_QSelf()
    LOCAL i
@@ -618,7 +618,7 @@ FUNCTION GetFields()
 
 RETURN ::aDbFields
 
-FUNCTION GetFieldByName(cName)
+FUNCTION SR_GetFieldByName(cName)
 
    LOCAL self := HB_QSelf()
 

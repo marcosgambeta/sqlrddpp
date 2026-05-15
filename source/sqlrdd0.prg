@@ -1198,7 +1198,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION GetMLHash(cTab, cCol)
+FUNCTION SR_GetMLHash(cTab, cCol)
 
    LOCAL cKey := PadR(Upper(cTab), 50) + PadR(Upper(cCol), 50)
    LOCAL nPos := hb_HPos(s_hMultilangColumns, cKey)

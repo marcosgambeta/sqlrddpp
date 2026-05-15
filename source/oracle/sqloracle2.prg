@@ -815,7 +815,7 @@ METHOD SR_ORACLE2:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMa
 
 RETURN 0
 
-FUNCTION ExecuteSP2(cComm, aReturn)
+FUNCTION SR_ExecuteSP2(cComm, aReturn)
 
    //LOCAL i
    //LOCAL n

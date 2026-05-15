@@ -749,7 +749,7 @@ RETURN  0
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION ExecuteSP(cComm, aReturn)
+FUNCTION SR_ExecuteSP(cComm, aReturn)
 
    LOCAL nError
    LOCAL oConn := SR_GetConnection()

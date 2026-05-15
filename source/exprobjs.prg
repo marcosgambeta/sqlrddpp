@@ -73,7 +73,7 @@ METHOD SR_Operator:cPattern()
 
    IF ::_cPattern == NIL
       ::_cPattern := SR_cJoin(::aSymbols, "|")
-      ::_cPattern := cPattern(::_cPattern)
+      ::_cPattern := SR_cPattern(::_cPattern)
    ENDIF
 
 RETURN ::_cPattern
@@ -600,25 +600,25 @@ PROCEDURE Visualize(oExpression) // for debuging
 
 RETURN
 
-FUNCTION CollectAliases(oExpression, aAliases)
+FUNCTION SR_CollectAliases(oExpression, aAliases)
 
    LOCAL item
 
    SR_aAddDistinct(aAliases, oExpression:cContext, {|x|Lower(x)})
    IF oExpression:isKindOf("SR_BooleanExpression")
-      CollectAliases(oExpression:oExpression, aAliases)
+      SR_CollectAliases(oExpression:oExpression, aAliases)
    ELSEIF oExpression:isKindOf("SR_Comparison") .OR. oExpression:isKindOf("SR_ComposedCondition") .OR. oExpression:isKindOf("SR_ComposedExpression")
-      CollectAliases(oExpression:oOperand1, aAliases)
-      CollectAliases(oExpression:oOperand2, aAliases)
+      SR_CollectAliases(oExpression:oOperand1, aAliases)
+      SR_CollectAliases(oExpression:oOperand2, aAliases)
    ELSEIF oExpression:isKindOf("SR_FunctionExpression")
       FOR EACH item IN oExpression:aParameters
-         CollectAliases(item:oExpression, aAliases)
+         SR_CollectAliases(item:oExpression, aAliases)
       NEXT
    ENDIF
 
 RETURN aAliases
 
-FUNCTION ConvertToCondition(oExpression)
+FUNCTION SR_ConvertToCondition(oExpression)
 
    IF !oExpression:isKindOf("SR_ComposedExpression") .AND. oExpression:GetType() == "L"
       RETURN SR_BooleanExpression():new(oExpression:cContext, oExpression:oClipperExpression:cValue, oExpression)
