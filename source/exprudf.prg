@@ -45,7 +45,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-FUNCTION cJoin(aArray, cString)
+FUNCTION SR_cJoin(aArray, cString)
 
    LOCAL result := ""
    LOCAL i
@@ -59,7 +59,7 @@ FUNCTION cJoin(aArray, cString)
 
 RETURN result
 
-FUNCTION xSelect(aArray, bSelector)
+FUNCTION SR_xSelect(aArray, bSelector)
 
    LOCAL newArray := Array(Len(aArray))
 
@@ -67,7 +67,7 @@ FUNCTION xSelect(aArray, bSelector)
 
 RETURN newArray
 
-FUNCTION xSelectMany(aArray, bSelector)
+FUNCTION SR_xSelectMany(aArray, bSelector)
 
    LOCAL newArray := {}
 
@@ -88,7 +88,7 @@ FUNCTION SR_aWhere(aArray, bPredicate)
 
 RETURN newArray
 
-FUNCTION xFirst(aArray, bPredicate)
+FUNCTION SR_xFirst(aArray, bPredicate)
 
    LOCAL i := AScan(aArray, bPredicate)
 
@@ -98,7 +98,7 @@ FUNCTION xFirst(aArray, bPredicate)
 
 RETURN aArray[i]
 
-FUNCTION xFirstOrDefault(aArray)
+FUNCTION SR_xFirstOrDefault(aArray)
 
    IF Len(aArray) == 0
       RETURN NIL
@@ -157,7 +157,7 @@ PROCEDURE sr_aAddRangeDistinct(aArray1, aArray2, bSelector)
 
 RETURN
 
-PROCEDURE RemoveAll(aArray, bPredicate)
+PROCEDURE SR_RemoveAll(aArray, bPredicate)
 
    LOCAL i
 
@@ -235,7 +235,7 @@ RETURN NIL
 
 METHOD SR_Dictionary:GetKeyValuePair(xKey)
 
-   LOCAL result := xFirst(::aInternArray, {|y|y:xKey == xKey})
+   LOCAL result := SR_xFirst(::aInternArray, {|y|y:xKey == xKey})
 
    IF result == NIL
       _SR_Throw(ErrorNew(, , , , "The key " + cstr(xKey) + " was not found."))
@@ -299,7 +299,7 @@ RETURN SELF
 
 ///////////////////////////////////////////////////////////////////////////////
 
-FUNCTION ToDictionary(aArray, bKeySelector)
+FUNCTION SR_ToDictionary(aArray, bKeySelector)
 
    LOCAL item
    LOCAL result := SR_Dictionary():new()
@@ -310,7 +310,7 @@ FUNCTION ToDictionary(aArray, bKeySelector)
 
 RETURN result
 
-FUNCTION GetFileName(cPath)
+FUNCTION SR_GetFileName(cPath)
 
    LOCAL aGroups
    LOCAL cRegEx := "^(?:(\w:(?:\\|/)?)((?:.+?(?:\\|/))*))?(\w+?)(\.\w+)?$"

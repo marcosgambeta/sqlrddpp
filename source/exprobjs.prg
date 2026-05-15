@@ -72,7 +72,7 @@ RETURN SELF
 METHOD SR_Operator:cPattern()
 
    IF ::_cPattern == NIL
-      ::_cPattern := cJoin(::aSymbols, "|")
+      ::_cPattern := SR_cJoin(::aSymbols, "|")
       ::_cPattern := cPattern(::_cPattern)
    ENDIF
 

@@ -183,7 +183,7 @@ CLASS SR_ExpressionTranslator
    // METHOD CheckParams(oFunctionExpression)
 
    PROTECTED:
-   METHOD AaddRelations(aRelations) INLINE SR_aAddRangeDistinct(::aRelations, xSelectMany(aRelations, {|y|IIf(y:isKindOf("SR_DirectRelation"), {y}, y:aDirectRelations)}), {|x|x:oWorkArea2:cAlias})
+   METHOD AaddRelations(aRelations) INLINE SR_aAddRangeDistinct(::aRelations, SR_xSelectMany(aRelations, {|y|IIf(y:isKindOf("SR_DirectRelation"), {y}, y:aDirectRelations)}), {|x|x:oWorkArea2:cAlias})
 
    EXPORTED:
    METHOD new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
@@ -247,8 +247,8 @@ METHOD SR_ExpressionTranslator:GetTranslation(oCondition)
    IF Len(aSQLConditions) == 0
       aSQLConditions := {"1 = 1"}
    ENDIF
-   oResult:cClipperCondition := cJoin(aClipperConditions, " .and. ")
-   oResult:cSQLCondition := cJoin(aSQLConditions, " " + ::GetLogicalOperatorSymbol("and") + " ")
+   oResult:cClipperCondition := SR_cJoin(aClipperConditions, " .and. ")
+   oResult:cSQLCondition := SR_cJoin(aSQLConditions, " " + ::GetLogicalOperatorSymbol("and") + " ")
 
 RETURN oResult
 
@@ -320,7 +320,7 @@ METHOD SR_ExpressionTranslator:Translate(oExpression, x)
                   resultFooter += cOperatorAnd + oRelation:cSQLJoin
                NEXT
             ENDIF
-            resultFooter += IIf(Len(aFilters) > 0, cOperatorAnd + cJoin(aFilters, cOperatorAnd), "") + ")"
+            resultFooter += IIf(Len(aFilters) > 0, cOperatorAnd + SR_cJoin(aFilters, cOperatorAnd), "") + ")"
             result := resultHeader + " where " + result + resultFooter
          ENDIF
       ENDIF
@@ -425,9 +425,9 @@ METHOD SR_ExpressionTranslator:TranslateFunctionExpression(oFunctionExpression)
       RETURN "SR_RECNO"
    ENDCASE
    cSQLFunctionName := ::GetFunctionName(oFunctionExpression)
-   aParameters := xSelect(oFunctionExpression:aParameters, {|x|::InternalTranslate(x:oExpression)})
+   aParameters := SR_xSelect(oFunctionExpression:aParameters, {|x|::InternalTranslate(x:oExpression)})
 
-RETURN cSQLFunctionName + "(" + cJoin(aParameters, ",") + ")"
+RETURN cSQLFunctionName + "(" + SR_cJoin(aParameters, ",") + ")"
 
 #if 0
 METHOD SR_ExpressionTranslator:CheckParams(oFunctionExpression)
@@ -501,7 +501,7 @@ METHOD SR_ExpressionTranslator:GetSQLOperator(oOperator)
 RETURN aSQLOperators[AScan(aSQLOperators, {|x|x:cName == oOperator:cName})]
 
 METHOD SR_ExpressionTranslator:GetOperatorSymbol(aOperators, cName)
-RETURN xFirst(aOperators, {|x|x:cName == cName}):aSymbols[1]
+RETURN SR_xFirst(aOperators, {|x|x:cName == cName}):aSymbols[1]
 
 METHOD SR_ExpressionTranslator:TranslateRelationExpression(oDirectRelation)
 
@@ -528,7 +528,7 @@ METHOD SR_ExpressionTranslator:TranslateRelationExpression(oDirectRelation)
          FOR i := 1 TO Len(aFields1)
             AAdd(aEqualityFields, ::FormatField(oDirectRelation:oWorkArea1, aFields1[i]) + " " + ::GetComparisonOperatorSymbol("equalEqual") + " " + ::FormatField(oDirectRelation:oWorkArea2, aFields2[i]))
          NEXT i
-         RETURN cJoin(aEqualityFields, " " + ::GetLogicalOperatorSymbol("and") + " ")
+         RETURN SR_cJoin(aEqualityFields, " " + ::GetLogicalOperatorSymbol("and") + " ")
       ENDIF
    ENDIF
 
@@ -636,7 +636,7 @@ METHOD SR_MSSQLExpressionTranslator:TranslateFunctionExpression(oFunctionExpress
    LOCAL aParamExprs
 
    // ::CheckParams(oFunctionExpression)
-   aParamExprs := xSelect(oFunctionExpression:aParameters, {|x|x:oExpression})
+   aParamExprs := SR_xSelect(oFunctionExpression:aParameters, {|x|x:oExpression})
 
    SWITCH cFunctionName
    CASE "substr"

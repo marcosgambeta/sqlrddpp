@@ -376,8 +376,8 @@ METHOD SR_ConditionParser:new(pWorkarea)
        SR_ComparisonOperator():new("included", {"$"})               ;
       }
 
-   cOperatorsChoice := cJoin(xSelect(::aClipperComparisonOperators, {|x|x:cPattern}), "|")
-   cOperatorsChars := cPattern(CharList(cJoin(xSelectMany(::aClipperComparisonOperators, {|x|x:aSymbols}), "")))
+   cOperatorsChoice := SR_cJoin(SR_xSelect(::aClipperComparisonOperators, {|x|x:cPattern}), "|")
+   cOperatorsChars := cPattern(CharList(SR_cJoin(SR_xSelectMany(::aClipperComparisonOperators, {|x|x:aSymbols}), "")))
 
    ::_cRegOperator := ;
       HB_RegExComp("^((?:[^\'\?]*?(?:\'[^\']*\'|\?(?:[^\'\?]*?(?:\'[^\']*\'))*[^\'\?]*?\?))*(?:[^\'\?]*?[^-" + ;
@@ -425,7 +425,7 @@ METHOD SR_ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector
          IF HB_RegExMatch(::_cRegOperator, cExpression, .F.)
             aGroups := HB_RegExAtX(::_cRegOperator, cExpression)
 
-            oComparisonOperator := xFirst(::aClipperComparisonOperators, {|y|aGroups[3, 1] $ y:aSymbols})
+            oComparisonOperator := SR_xFirst(::aClipperComparisonOperators, {|y|aGroups[3, 1] $ y:aSymbols})
 
             oOperand1 := SR_Comparison():new(cAlias, ;
                                           ::RestoreParenthesis(cExpression), ;

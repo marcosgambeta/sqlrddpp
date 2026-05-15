@@ -622,7 +622,7 @@ FUNCTION GetFieldByName(cName)
 
    LOCAL self := HB_QSelf()
 
-RETURN xFirst(::GetFields(), {|x|Lower(x:cName) == Lower(cName)})
+RETURN SR_xFirst(::GetFields(), {|x|Lower(x:cName) == Lower(cName)})
 
 // should be implemented : GetTranslations() and lFixVariables
 FUNCTION NewParseForClause(cFor, lFixVariables)
