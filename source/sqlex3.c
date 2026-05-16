@@ -80,7 +80,7 @@
 
 static void createSeekQuery(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints)
 {
-  if (getColumnList(thiswa)) {
+  if (SR_getColumnList(thiswa)) {
     thiswa->bConditionChanged1 = HB_TRUE; // SEKIP statements are no longer valid - column list has changed!
   }
   if (thiswa->sSql) {
@@ -123,7 +123,7 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
   }
 
   for (iCol = 1; iCol <= queryLevel; iCol++) {
-    BindStructure = GetBindStruct(thiswa, SeekBind);
+    BindStructure = SR_GetBindStruct(thiswa, SeekBind);
 
     if (BindStructure->isArgumentNull) {
       *bUseOptimizerHints = HB_FALSE; // We cannot use this high speed solution
@@ -161,7 +161,7 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
     SeekBind++; // place offset
   }
   bWhere = strlen(thiswa->sWhere) > 0;
-  SolveFilters(thiswa, bWhere);
+  SR_SolveFilters(thiswa, bWhere);
 
   return HB_SUCCESS;
 }
@@ -192,7 +192,7 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
    }
 
    for (iCol = 1; iCol <= queryLevel; iCol++) {
-      BindStructure = GetBindStruct(thiswa, SeekBind);
+      BindStructure = SR_GetBindStruct(thiswa, SeekBind);
 
       if (BindStructure->isArgumentNull) {
          *bUseOptimizerHints = HB_FALSE; // We cannot use this high speed solution
@@ -244,7 +244,7 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
       SeekBind++; // place offset
    }
 
-   SolveFilters(thiswa, bWhere);
+   SR_SolveFilters(thiswa, bWhere);
 
    return HB_SUCCESS;
 }
@@ -284,7 +284,7 @@ HB_ERRCODE prepareSeekQuery(SQLEXAREAP thiswa, INDEXBINDP SeekBind)
 
 //------------------------------------------------------------------------
 
-HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
+HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 {
   PHB_ITEM pColumns, pIndexRef;
   INDEXBINDP SeekBind;
@@ -296,7 +296,7 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
   // Alloc memory for binding structures, if first time
 
   if (!thiswa->IndexBindings[thiswa->hOrdCurrent]) {
-    SetIndexBindStructure(thiswa);
+    SR_SetIndexBindStructure(thiswa);
   }
 
   SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
@@ -326,8 +326,8 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 
     getSeekWhereExpression(thiswa, thiswa->recordListDirection == LIST_FORWARD ? LIST_SKIP_FWD : LIST_SKIP_BWD,
                            queryLevel, &bUseOptimizerHints);
-    getOrderByExpression(thiswa, bUseOptimizerHints);
-    setResultSetLimit(thiswa, 1);
+    SR_getOrderByExpression(thiswa, bUseOptimizerHints);
+    SR_setResultSetLimit(thiswa, 1);
     createSeekQuery(thiswa, bUseOptimizerHints);
 
     prepareSeekQuery(thiswa, SeekBind);
@@ -340,7 +340,7 @@ HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 
 //------------------------------------------------------------------------
 
-HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLevel)
+HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLevel)
 {
   INDEXBINDP SeekBind;
   COLUMNBINDP BindStructure;
@@ -358,7 +358,7 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLev
     SeekBind->hIndexOrder = thiswa->hOrdCurrent; // Store latest prepared index order query
 
     for (iCol = 1; iCol <= thiswa->indexColumns; iCol++) {
-      BindStructure = GetBindStruct(thiswa, SeekBind);
+      BindStructure = SR_GetBindStruct(thiswa, SeekBind);
 
       if (!thiswa->uiFieldList[(BindStructure->lFieldPosDB) - 1]) {
         thiswa->uiFieldList[(BindStructure->lFieldPosDB) - 1] = HB_TRUE; // Force index columns to be present in query
@@ -398,7 +398,7 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLev
     *queryLevel = thiswa->indexColumns;
 
     for (i = 1; i <= thiswa->indexColumns; i++) {
-      BindStructure = GetBindStruct(thiswa, SeekBind);
+      BindStructure = SR_GetBindStruct(thiswa, SeekBind);
       size = 0;
 
       switch (BindStructure->iCType) {
@@ -519,7 +519,7 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLev
     }
   } else {
     *queryLevel = 1;
-    BindStructure = GetBindStruct(thiswa, SeekBind);
+    BindStructure = SR_GetBindStruct(thiswa, SeekBind);
 
     if (HB_IS_NUMERIC(pKey)) {
       if (BindStructure->iCType != SQL_C_DOUBLE) { // Check column data type
@@ -567,7 +567,7 @@ HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLev
 
 //------------------------------------------------------------------------
 
-void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
+void SR_BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 {
   HSTMT hStmt;
   INDEXBINDP SeekBind, SeekBindParam;
@@ -587,7 +587,7 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
   iBind = 1;
 
   for (iLoop = 1; iLoop <= queryLevel; iLoop++) {
-    BindStructure = GetBindStruct(thiswa, SeekBindParam);
+    BindStructure = SR_GetBindStruct(thiswa, SeekBindParam);
     if (!BindStructure->isArgumentNull) {
       // Corrigido 27/12/2013 09:53 - lpereira
       // Estava atribuindo o valor de SQLRDD_RDBMS_ORACLE para thiswa->nSystemID.
@@ -637,7 +637,7 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
       }
       }
       if (CHECK_SQL_N_OK(res)) {
-        odbcErrorDiagRTE(hStmt, "BindSeekStmt", sSql, res, __LINE__, __FILE__);
+        SR_odbcErrorDiagRTE(hStmt, "BindSeekStmt", sSql, res, __LINE__, __FILE__);
       }
       iBind++;
       BindStructure->iParNum = iBind;
@@ -650,7 +650,7 @@ void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 
 //------------------------------------------------------------------------
 
-HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex,
+HB_ERRCODE SR_getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex,
                            HSTMT *hStmt) // Returns HB_TRUE if any result found
 {
   SQLRETURN res;
@@ -666,7 +666,7 @@ HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex,
   res = SQLExecute(*hStmt);
 
   if (CHECK_SQL_N_OK(res)) {
-    odbcErrorDiagRTE(*hStmt, "getPreparedSeek", "", res, __LINE__, __FILE__);
+    SR_odbcErrorDiagRTE(*hStmt, "getPreparedSeek", "", res, __LINE__, __FILE__);
     // SQLCloseCursor(*hStmt);
     SQLFreeStmt(*hStmt, SQL_CLOSE);
     return HB_FAILURE;

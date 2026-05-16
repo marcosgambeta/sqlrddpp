@@ -410,14 +410,14 @@ typedef SQLEXORAAREA *LPSQLEXORAAREA;
 
 // prototypes
 
-//int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact); NOTE: changed to static
-void odbcErrorDiag(OCI_Statement *hStmt, const char *routine, const char *szSql, int line);
-// void odbcErrorDiagRTE(OCI_Statement * hStmt, char * routine, char * szSql, int res, int line, char * module);
+//int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact); NOTE: changed to static
+void SR_odbcErrorDiag(OCI_Statement *hStmt, const char *routine, const char *szSql, int line);
+// void SR_odbcErrorDiagRTE(OCI_Statement * hStmt, char * routine, char * szSql, int res, int line, char * module);
 void OraErrorDiagRTE(OCI_Statement *hStmt, char *routine, char *szSql, int res, int line, char *module);
-void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_LONG lLenBuff, HB_BOOL bQueryOnly,
+void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_LONG lLenBuff, HB_BOOL bQueryOnly,
                   HB_ULONG ulSystemID, HB_BOOL bTranslate);
-char *QuoteTrimEscapeString(char *FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim, HB_ULONG *iSizeOut);
-char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
+char *SR_QuoteTrimEscapeString(char *FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim, HB_ULONG *iSizeOut);
+char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
                  HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL *bNullArgument);
 HB_BOOL SR_itemEmpty2(PHB_ITEM pItem);
 void sr_commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, const char *filename);

@@ -437,7 +437,7 @@ static HB_ERRCODE getMissingColumn(SQLEXORAAREAP thiswa, PHB_ITEM pFieldData, HB
 
   // res = SQLGetData(thiswa->colStmt[lFieldPosDB - 1], 1, SQL_CHAR, (char *) bBuffer, lLen, &lLenOut);
   // if (res == SQL_SUCCESS) {
-  //    odbcFieldGet(hb_arrayGetItemPtr(thiswa->aFields, lFieldPosDB), pFieldData, (char *) bBuffer, lLenOut, 0,
+  //    SR_odbcFieldGet(hb_arrayGetItemPtr(thiswa->aFields, lFieldPosDB), pFieldData, (char *) bBuffer, lLenOut, 0,
   //    thiswa->nSystemID, HB_FALSE);
   SQLO_FieldGet(hb_arrayGetItemPtr(thiswa->aFields, (HB_SIZE)lFieldPosDB), pFieldData, 1, 0, thiswa->nSystemID, 0, rs);
   // } else {

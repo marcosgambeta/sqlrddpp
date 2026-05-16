@@ -207,8 +207,8 @@ typedef struct _SQLEXAREA
   HSTMT hStmtUpdate;           // Statement handle with prepared phrase to insert a new record
   HDBC hDbc;                   // Database connection handle
   int nSystemID;               // Connected database ID
-  HB_ULONG lCurrentRecord;     // Should be filled by GetCurrentRecordNum() to be used in SKIP bindings
-  HB_ULONG lUpdatedRecord;     // Should be filled by GetCurrentRecordNum() to be used in UPDATE bindings
+  HB_ULONG lCurrentRecord;     // Should be filled by SR_GetCurrentRecordNum() to be used in SKIP bindings
+  HB_ULONG lUpdatedRecord;     // Should be filled by SR_GetCurrentRecordNum() to be used in UPDATE bindings
   HB_ULONG lBofAt;             // BOF Record optimizer
   HB_ULONG lEofAt;             // EOF Record optimizer
   HB_ULONG lLastRec;           // LastRec() + 1
@@ -272,46 +272,46 @@ typedef SQLEXAREA *LPSQLEXAREA;
 
 // prototypes
 
-//int sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact); NOTE: changed to static
-void odbcErrorDiag(HSTMT hStmt, const char *routine, const char *szSql, int line);
-void odbcErrorDiagRTE(HSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res, int line, const char *module);
-void odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly,
+//int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact); NOTE: changed to static
+void SR_odbcErrorDiag(HSTMT hStmt, const char *routine, const char *szSql, int line);
+void SR_odbcErrorDiagRTE(HSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res, int line, const char *module);
+void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly,
                   HB_ULONG ulSystemID, HB_BOOL bTranslate);
-char *QuoteTrimEscapeString(char *FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim, HB_ULONG *iSizeOut);
-char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
+char *SR_QuoteTrimEscapeString(char *FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim, HB_ULONG *iSizeOut);
+char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
                  HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL *bNullArgument);
 HB_BOOL SR_itemEmpty(PHB_ITEM pItem);
 void sr_commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, const char *filename);
-HB_ERRCODE SetBindEmptylValue(COLUMNBINDP BindStructure);
-HB_ERRCODE SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hStmt);
-char *QualifyName(char *szName, SQLEXAREAP thiswa);
-COLUMNBINDP GetBindStruct(SQLEXAREAP thiswa, INDEXBINDP IndexBind);
-HB_BOOL getColumnList(SQLEXAREAP thiswa);
-void SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere);
-void getOrderByExpression(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints);
-void setResultSetLimit(SQLEXAREAP thiswa, int iRows);
-void SetIndexBindStructure(SQLEXAREAP thiswa);
-void SetInsertRecordStructure(SQLEXAREAP thiswa);
-HB_ULONG GetCurrentRecordNum(SQLEXAREAP thiswa);
-extern void odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, HB_ULONG ulSystemID,
+HB_ERRCODE SR_SetBindEmptylValue(COLUMNBINDP BindStructure);
+HB_ERRCODE SR_SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hStmt);
+char *SR_QualifyName(char *szName, SQLEXAREAP thiswa);
+COLUMNBINDP SR_GetBindStruct(SQLEXAREAP thiswa, INDEXBINDP IndexBind);
+HB_BOOL SR_getColumnList(SQLEXAREAP thiswa);
+void SR_SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere);
+void SR_getOrderByExpression(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints);
+void SR_setResultSetLimit(SQLEXAREAP thiswa, int iRows);
+void SR_SetIndexBindStructure(SQLEXAREAP thiswa);
+void SR_SetInsertRecordStructure(SQLEXAREAP thiswa);
+HB_ULONG SR_GetCurrentRecordNum(SQLEXAREAP thiswa);
+extern void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, HB_ULONG ulSystemID,
                         HB_BOOL bTranslate, HB_USHORT ui);
 
 // INSERT and UPDATE prototypes
 
-void CreateInsertStmt(SQLEXAREAP thiswa);
-void SetCurrRecordStructure(SQLEXAREAP thiswa);
-HB_ERRCODE CreateUpdateStmt(SQLEXAREAP thiswa);
-HB_ERRCODE PrepareInsertStmt(SQLEXAREAP thiswa);
-HB_ERRCODE BindInsertColumns(SQLEXAREAP thiswa);
-HB_ERRCODE FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate);
-HB_ERRCODE ExecuteInsertStmt(SQLEXAREAP thiswa);
-HB_ERRCODE ExecuteUpdateStmt(SQLEXAREAP thiswa);
+void SR_CreateInsertStmt(SQLEXAREAP thiswa);
+void SR_SetCurrRecordStructure(SQLEXAREAP thiswa);
+HB_ERRCODE SR_CreateUpdateStmt(SQLEXAREAP thiswa);
+HB_ERRCODE SR_PrepareInsertStmt(SQLEXAREAP thiswa);
+HB_ERRCODE SR_BindInsertColumns(SQLEXAREAP thiswa);
+HB_ERRCODE SR_FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate);
+HB_ERRCODE SR_ExecuteInsertStmt(SQLEXAREAP thiswa);
+HB_ERRCODE SR_ExecuteUpdateStmt(SQLEXAREAP thiswa);
 
 // SEEK Prototypes
 
-HB_ERRCODE FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLevel);
-HB_BOOL CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel);
-void BindSeekStmt(SQLEXAREAP thiswa, int queryLevel);
-HB_ERRCODE getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex, HSTMT *hStmt);
+HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLevel);
+HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel);
+void SR_BindSeekStmt(SQLEXAREAP thiswa, int queryLevel);
+HB_ERRCODE SR_getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex, HSTMT *hStmt);
 
 #endif // ODBCRDD_H

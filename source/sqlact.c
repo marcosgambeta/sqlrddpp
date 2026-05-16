@@ -596,7 +596,7 @@ HB_FUNC(SR_ESCAPESTRING)
   }
 }
 
-char *QuoteTrimEscapeString(const char *FromBuffer, HB_SIZE iSize, int idatabase, HB_BOOL bRTrim, HB_SIZE *iSizeOut)
+char *SR_QuoteTrimEscapeString(const char *FromBuffer, HB_SIZE iSize, int idatabase, HB_BOOL bRTrim, HB_SIZE *iSizeOut) // TODO: static ?
 {
   char *ToBuffer;
 
@@ -1042,8 +1042,8 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
 
 //-----------------------------------------------------------------------------//
 
-char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
-                 HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL *bNullArgument)
+char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
+                 HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL *bNullArgument) // TODO: not used
 {
   char *sValue, sDate[9];
   HB_SIZE iSizeOut;
@@ -1067,7 +1067,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
     } else {
 #if 0 // TODO: old code for reference (to be deleted)
          if( HB_IS_STRING(pFieldData) && bTCCompat ) {
-            sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, HB_FALSE, &iSizeOut);
+            sValue = SR_QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, HB_FALSE, &iSizeOut);
             return sValue;
          } else if( HB_IS_STRING(pFieldData) ) {
             sValue = (char *) hb_xgrab(4);
@@ -1087,7 +1087,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
       case HB_IT_STRING:
       case HB_IT_MEMO: {
         if (bTCCompat) {
-          sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, HB_FALSE,
+          sValue = SR_QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, HB_FALSE,
                                          &iSizeOut);
           return sValue;
         } else {
@@ -1113,7 +1113,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
 
 #if 0 // TODO: old code for reference (to be deleted)
    if( HB_IS_STRING(pFieldData) ) {
-      sValue = QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, !bTCCompat, &iSizeOut);
+      sValue = SR_QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, !bTCCompat, &iSizeOut);
    } else if( HB_IS_NUMBER(pFieldData) ) {
       sValue = hb_itemStr(pFieldData, pFieldLen, pFieldDec);
       iTrim = 0;
@@ -1186,7 +1186,7 @@ char *quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB
   case HB_IT_STRING:
   case HB_IT_MEMO: {
     sValue =
-        QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, !bTCCompat, &iSizeOut);
+        SR_QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, !bTCCompat, &iSizeOut);
     break;
   }
   case HB_IT_INTEGER:
