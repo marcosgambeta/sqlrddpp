@@ -2264,9 +2264,11 @@ RETURN aLocks
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION DetectDBFromDSN(cConnect)
+#if 0
+FUNCTION DetectDBFromDSN(cConnect) // deprecated
 
 RETURN SR_DetectDBFromDSN(cConnect)
+#endif
 
 //-------------------------------------------------------------------------------------------------------------------//
 

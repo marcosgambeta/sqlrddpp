@@ -127,7 +127,7 @@ EXTERNAL SR_GetToolsOwner
 EXTERNAL SR_SetLocks
 EXTERNAL SR_ReleaseLocks
 EXTERNAL SR_ListLocks
-EXTERNAL DetectDBFromDSN
+//EXTERNAL DetectDBFromDSN (deprecated)
 EXTERNAL SR_DetectDBFromDSN
 EXTERNAL SR_Version
 

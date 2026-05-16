@@ -95,7 +95,7 @@ FUNCTION Connect(cRDD, cDatabase)
    ENDIF
 
    cConnString := hDsn["CONNSTRING"]
-   nDetected   := DetectDBFromDSN(cConnString)
+   nDetected   := SR_DetectDBFromDSN(cConnString)
 
    IF nDetected > SYSTEMID_UNKNOW
       ? "Connecting to", cConnString

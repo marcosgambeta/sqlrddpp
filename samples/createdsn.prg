@@ -33,7 +33,7 @@ FUNCTION MAIN(cDsn)
       Alert("If you go to ODBC setup panel you should find created DSN. Hit ok to try to connect to data source.")
 
       cConnString := "DSN=xHB001"
-      nDetected   := DetectDBFromDSN(cConnString)
+      nDetected   := SR_DetectDBFromDSN(cConnString)
 
       IF nDetected > SYSTEMID_UNKNOW
          ? "Connecting to", cConnString
