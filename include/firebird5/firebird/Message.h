@@ -267,15 +267,17 @@ struct FbVarChar
 	{
 		size_t len = strlen(s);
 		assert(len <= N);
-		length = (ISC_USHORT) (len <= N ? len : N);
-		memcpy(str, s, length);
+		if (len > N) len = N;
+		length = (ISC_USHORT) len;
+		memcpy(str, s, len);
 	}
 
 	void set(const char* s, unsigned len)
 	{
 		assert(len <= N);
-		length = (ISC_USHORT) (len <= N ? len : N);
-		memcpy(str, s, length);
+		if (len > N) len = N;
+		length = (ISC_USHORT) len;
+		memcpy(str, s, len);
 	}
 };
 
