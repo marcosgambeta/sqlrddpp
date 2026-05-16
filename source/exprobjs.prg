@@ -572,7 +572,7 @@ RETURN ::cType
 
 ///////////////////////////////////////////////////////////////////////////////
 
-PROCEDURE Visualize(oExpression) // for debuging
+PROCEDURE SR_Visualize(oExpression) // for debuging
 
    LOCAL item
 
@@ -583,18 +583,18 @@ PROCEDURE Visualize(oExpression) // for debuging
       ENDIF
    ENDIF
    IF oExpression:isKindOf("SR_BooleanExpression")
-      Visualize(oExpression:oExpression)
+      SR_Visualize(oExpression:oExpression)
    ELSEIF oExpression:isKindOf("SR_Comparison") .OR. oExpression:isKindOf("SR_ComposedCondition") .OR. oExpression:isKindOf("SR_ComposedExpression")
-      Visualize(oExpression:oOperand1)
+      SR_Visualize(oExpression:oOperand1)
       alert(oExpression:oOperator:cName)
-      Visualize(oExpression:oOperand2)
+      SR_Visualize(oExpression:oOperand2)
    ELSEIF oExpression:isKindOf("SR_ValueExpression")
       alert(oExpression:Value)
    ELSEIF oExpression:isKindOf("SR_FunctionExpression")
       alert(oExpression:cFunctionName)
       alert(cstr(Len(oExpression:aParameters)) + " parameter(s) :")
       FOR EACH item IN oExpression:aParameters
-         Visualize(item:oExpression)
+         SR_Visualize(item:oExpression)
       NEXT
    ENDIF
 
