@@ -47,10 +47,10 @@ source/firebird/sqlfirebird.prg
 source/firebird/sqlfirebird3.prg
 source/firebird/sqlfirebird4.prg
 source/firebird/sqlfirebird5.prg
-source/firebird/firebird.c
-source/firebird/firebird3.c
-source/firebird/firebird4.c
-source/firebird/firebird5.c
+#source/firebird/firebird.c
+#source/firebird/firebird3.c
+#source/firebird/firebird4.c
+#source/firebird/firebird5.c
 
 # MariaDB
 source/mariadb/sqlmaria.prg
