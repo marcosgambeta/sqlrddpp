@@ -177,10 +177,10 @@ HB_FUNC(SQLO2_CONNECT)
   //       pool = OCI_PoolCreate(hb_parc(1), hb_parc(2), hb_parc(3), OCI_POOL_CONNECTION, OCI_ORASESSION_DEFAULT, 0,
   //       MAX_CONN, 1);
   //    }
-  //    sr_TraceLog("pool.log","pool %p \n",pool);
+  //    SR_TraceLog("pool.log","pool %p \n",pool);
   //    sprintf(sPool, "session%i", OCI_initilized);
   //    session->cn = OCI_PoolGetConnection(pool,sPool);//OCI_ConnectionCreate(hb_parc(1), hb_parc(2), hb_parc(3),
-  //    OCI_SESSION_DEFAULT); sr_TraceLog("pool.log","secao %p \n",session->cn);
+  //    OCI_SESSION_DEFAULT); SR_TraceLog("pool.log","secao %p \n",session->cn);
   // } else {
   session->cn = OCI_ConnectionCreate(hb_parc(1), hb_parc(2), hb_parc(3), OCI_SESSION_DEFAULT);
   //}
@@ -680,7 +680,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+      SR_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
     }
   } else {
@@ -788,7 +788,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+      SR_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
     }
   }

@@ -78,7 +78,7 @@ static void myNoticeProcessor(void *arg, const char *message)
 {
   HB_SYMBOL_UNUSED(arg);
   HB_SYMBOL_UNUSED(message);
-  //   sr_TraceLog("sqlerror.log", "%s", message);
+  //   SR_TraceLog("sqlerror.log", "%s", message);
 }
 
 // SR_PGSConnect(ConnectionString) => ConnHandle
@@ -184,7 +184,7 @@ HB_FUNC(SR_PGSRESULTSTATUS)
 // SR_PGSExec(ConnHandle, cCommand) => ResultSet
 HB_FUNC(SR_PGSEXEC)
 {
-  // sr_TraceLog(SR_NULLPTR, "PGSExec : %s\n", hb_parc(2));
+  // SR_TraceLog(SR_NULLPTR, "PGSExec : %s\n", hb_parc(2));
   GET_PGSQL_SESSION(session, 1);
   int ret;
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -195,7 +195,7 @@ HB_FUNC(SR_PGSEXEC)
   session->stmt = PQexec(session->dbh, hb_parc(2));
 
   if (session->stmt == SR_NULLPTR) {
-    sr_TraceLog(LOGFILE, "PGSExec: PQexec returned NULL (connection lost?)\n");
+    SR_TraceLog(LOGFILE, "PGSExec: PQexec returned NULL (connection lost?)\n");
     hb_retptr(SR_NULLPTR);
     session->numcols = 0;
     session->iAffectedRows = 0;
@@ -545,7 +545,7 @@ HB_FUNC(SR_PGSQUERYATTR)
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Strange data type returned in query: %i\n", type);
+      SR_TraceLog(LOGFILE, "Strange data type returned in query: %i\n", type);
       break;
     }
     }
@@ -589,7 +589,7 @@ HB_FUNC(SR_PGSTABLEATTR)
   stmtTemp = PQexec(session->dbh, attcmm);
 
   if (PQresultStatus(stmtTemp) != PGRES_TUPLES_OK) {
-    sr_TraceLog(LOGFILE, "Query error : %i - %s\n", PQresultStatus(stmtTemp), PQresStatus(PQresultStatus(stmtTemp)));
+    SR_TraceLog(LOGFILE, "Query error : %i - %s\n", PQresultStatus(stmtTemp), PQresStatus(PQresultStatus(stmtTemp)));
     PQclear(stmtTemp);
   }
 
@@ -744,7 +744,7 @@ HB_FUNC(SR_PGSTABLEATTR)
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Strange data type returned: %i\n", type);
+      SR_TraceLog(LOGFILE, "Strange data type returned: %i\n", type);
       break;
     }
     }
@@ -823,7 +823,7 @@ static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+      SR_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
     }
   } else {
@@ -957,7 +957,7 @@ static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+      SR_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
     }
   }

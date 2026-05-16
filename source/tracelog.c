@@ -45,7 +45,7 @@
 
 #include "compat.h"
 
-void sr_TraceLog(const char *szFile, const char *szTraceMsg, ...)
+void SR_TraceLog(const char *szFile, const char *szTraceMsg, ...)
 {
   if (szTraceMsg) {
     FILE *hFile = hb_fopen(szFile ? szFile : "trace.log", "a");

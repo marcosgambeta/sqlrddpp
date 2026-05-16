@@ -58,7 +58,7 @@
 
 HB_EXTERN_BEGIN
 
-extern void sr_TraceLog(const char *sFile, const char *sTraceMsg, ...);
+extern void SR_TraceLog(const char *sFile, const char *sTraceMsg, ...);
 
 HB_EXTERN_END
 

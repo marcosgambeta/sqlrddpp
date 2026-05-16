@@ -551,7 +551,7 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
   iCols = hb_arrayLen(thiswa->aFields);
   for (i = 1; i <= iCols; i++) {
     if (InsertRecord->iCType == SQL_C_BINARY) {
-      // sr_TraceLog("ccc.log", "escrevendo lob  InsertRecord->asChar.value %s InsertRecord->asChar.size %lu \n ",
+      // SR_TraceLog("ccc.log", "escrevendo lob  InsertRecord->asChar.value %s InsertRecord->asChar.size %lu \n ",
       // InsertRecord->asChar.value, InsertRecord->asChar.size);
       res = OCI_LobSeek(InsertRecord->lob1, 0, OCI_SEEK_SET);
       res = OCI_LobWrite(InsertRecord->lob1, (void *)InsertRecord->asChar.value, InsertRecord->asChar.size);
@@ -710,7 +710,7 @@ HB_ERRCODE CreateUpdateStmtOra(SQLEXORAAREAP thiswa)
   sprintf(thiswa->sSql, "%s\n WHERE %c%s%c = %s", temp, OPEN_QUALIFIER(thiswa), thiswa->sRecnoName,
           CLOSE_QUALIFIER(thiswa), szBindName);
   hb_xfree(temp);
-  // sr_TraceLog("aaa.log", "query update %s\n", thiswa->sSql);
+  // SR_TraceLog("aaa.log", "query update %s\n", thiswa->sSql);
   res = OCI_Prepare(thiswa->hStmtUpdate, (char *)(thiswa->sSql));
   if (!res) {
     OraErrorDiagRTE(thiswa->hStmtUpdate, "CreateUpdateStmtOra", thiswa->sSql, res, __LINE__, __FILE__);

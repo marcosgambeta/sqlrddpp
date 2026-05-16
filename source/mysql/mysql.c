@@ -166,7 +166,7 @@ HB_FUNC(SR_MYSKILLCONNID)
 
 HB_FUNC(SR_MYSEXEC)
 {
-  // sr_TraceLog(SR_NULLPTR, "mysqlExec : %s\n", hb_parc(2));
+  // SR_TraceLog(SR_NULLPTR, "mysqlExec : %s\n", hb_parc(2));
   GET_MYSQL_SESSION(session, 1);
   const char *szQuery = hb_parc(2);
 
@@ -275,7 +275,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBu
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+      SR_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
     }
   } else {
@@ -383,7 +383,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBu
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
+      SR_TraceLog(LOGFILE, "Invalid data type detected: %i\n", lType);
     }
     }
   }
@@ -700,7 +700,7 @@ HB_FUNC(SR_MYSQUERYATTR)
       break;
     }
     default: {
-      sr_TraceLog(LOGFILE, "Invalid data type in query : %i\n", type);
+      SR_TraceLog(LOGFILE, "Invalid data type in query : %i\n", type);
     }
     }
 
@@ -738,7 +738,7 @@ HB_FUNC(SR_MYSTABLEATTR)
   session->stmt = mysql_store_result(session->dbh);
 
   if (!session->stmt) {
-    sr_TraceLog(LOGFILE, "Query error : %i - %s\n", mysql_errno(session->dbh), mysql_error(session->dbh));
+    SR_TraceLog(LOGFILE, "Query error : %i - %s\n", mysql_errno(session->dbh), mysql_error(session->dbh));
   }
 
   ret = hb_itemNew(SR_NULLPTR);

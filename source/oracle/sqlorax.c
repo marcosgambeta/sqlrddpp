@@ -539,7 +539,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
       break;
     }
     default: {
-      sr_TraceLog("oci.log", "Invalid data type detected: %i\n", lType);
+      SR_TraceLog("oci.log", "Invalid data type detected: %i\n", lType);
     }
     }
   } else {
@@ -642,7 +642,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
       break;
     }
     default: {
-      sr_TraceLog("oci.log", "Invalid data type detected: %i\n", lType);
+      SR_TraceLog("oci.log", "Invalid data type detected: %i\n", lType);
     }
     }
   }

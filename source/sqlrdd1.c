@@ -364,7 +364,7 @@ static HB_ERRCODE sqlBof(SQLAREAP thiswa, HB_BOOL *bof)
   thiswa->area.fBof = hb_arrayGetL(thiswa->aInfo, AINFO_BOF);
   *bof = thiswa->area.fBof;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlBof, returning %i\n", thiswa->area.fBof);
+  // SR_TraceLog(SR_NULLPTR, "sqlBof, returning %i\n", thiswa->area.fBof);
 
   return HB_SUCCESS;
 }
@@ -390,7 +390,7 @@ static HB_ERRCODE sqlEof(SQLAREAP thiswa, HB_BOOL *eof)
     *eof = thiswa->area.fEof;
   }
 
-  // sr_TraceLog(SR_NULLPTR, "sqlEof, returning %i\n", thiswa->area.fEof);
+  // SR_TraceLog(SR_NULLPTR, "sqlEof, returning %i\n", thiswa->area.fEof);
 
   return HB_SUCCESS;
 }
@@ -407,7 +407,7 @@ static HB_ERRCODE sqlFound(SQLAREAP thiswa, HB_BOOL *found)
   thiswa->area.fFound = hb_arrayGetL(thiswa->aInfo, AINFO_FOUND);
   *found = thiswa->area.fFound;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlFound, returning %i\n", thiswa->area.fFound);
+  // SR_TraceLog(SR_NULLPTR, "sqlFound, returning %i\n", thiswa->area.fFound);
 
   return HB_SUCCESS;
 }
@@ -422,7 +422,7 @@ static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
 
   eofat = hb_itemNew(SR_NULLPTR);
 
-  // sr_TraceLog(SR_NULLPTR, "sqlGoBottom\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlGoBottom\n");
 
   thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
@@ -464,7 +464,7 @@ static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, HB_LONG recno)
 {
   PHB_ITEM pParam1;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlGoTo %i\n", recno);
+  // SR_TraceLog(SR_NULLPTR, "sqlGoTo %i\n", recno);
 
   // Reset parent rel struct
   thiswa->lpdbPendingRel = SR_NULLPTR;
@@ -492,7 +492,7 @@ static HB_ERRCODE sqlGoToId(SQLAREAP thiswa, PHB_ITEM pItem)
 
   HB_TRACE(HB_TR_DEBUG, ("sqlGoToId1(%p, %p)", thiswa, pItem));
 
-  // sr_TraceLog(SR_NULLPTR, "sqlGoToId\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlGoToId\n");
 
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
@@ -520,7 +520,7 @@ static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
 {
   HB_LONG lbof;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlGoTop\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlGoTop\n");
 
   thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
@@ -565,7 +565,7 @@ static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   char *valbuf = SR_NULLPTR;
   const char *val1, *val2;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlKeyCompare\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlKeyCompare\n");
 
   pTag = sr_loadTagDefault((SQLAREAP)thiswa, SR_NULLPTR, &lorder);
   if (pTag) {
@@ -652,7 +652,7 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
   PHB_ITEM pNewKey = SR_NULLPTR, pItem, pItem2;
   HB_ERRCODE retvalue = HB_SUCCESS;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlSeek(%p, %d, %p, %d)", thiswa, bSoftSeek, pKey, bFindLast);
+  // SR_TraceLog(SR_NULLPTR, "sqlSeek(%p, %d, %p, %d)", thiswa, bSoftSeek, pKey, bFindLast);
 
   thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
@@ -722,7 +722,7 @@ static HB_ERRCODE sqlSkip(SQLAREAP thiswa, HB_LONG lToSkip)
 {
   HB_ERRCODE ret;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlSkip %i\n", lToSkip);
+  // SR_TraceLog(SR_NULLPTR, "sqlSkip %i\n", lToSkip);
 
   if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL(&thiswa->area);
@@ -755,7 +755,7 @@ static HB_ERRCODE sqlSkipFilter(SQLAREAP thiswa, HB_LONG lUpDown)
   PHB_ITEM pResult;
   HB_ERRCODE uiError;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlSkipFilter %i\n", lUpDown);
+  // SR_TraceLog(SR_NULLPTR, "sqlSkipFilter %i\n", lUpDown);
 
   if (!hb_setGetDeleted() && thiswa->area.dbfi.itmCobExpr == SR_NULLPTR) {
     return HB_SUCCESS;
@@ -836,7 +836,7 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
   HB_BOOL bEof, bBof;
   PHB_ITEM pToSkip;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlSkipRaw %i\n", lToSkip);
+  // SR_TraceLog(SR_NULLPTR, "sqlSkipRaw %i\n", lToSkip);
 
   bEof = hb_arrayGetL(thiswa->aInfo, AINFO_EOF);
   bBof = hb_arrayGetL(thiswa->aInfo, AINFO_BOF);
@@ -1041,7 +1041,7 @@ static HB_ERRCODE sqlAppend(SQLAREAP thiswa, HB_BOOL value)
   
   HB_SYMBOL_UNUSED(value);
 
-  // sr_TraceLog(SR_NULLPTR, "sqlAppend\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlAppend\n");
 
   // Reset parent rel struct
   thiswa->lpdbPendingRel = SR_NULLPTR;
@@ -1113,7 +1113,7 @@ static HB_ERRCODE sqlDeleted(SQLAREAP thiswa, HB_BOOL *isDeleted)
 
   *isDeleted = hb_arrayGetL(thiswa->aInfo, AINFO_DELETED);
 
-  // sr_TraceLog(SR_NULLPTR, "sqlDeleted, returning %i\n", *isDeleted);
+  // SR_TraceLog(SR_NULLPTR, "sqlDeleted, returning %i\n", *isDeleted);
 
   return HB_SUCCESS;
 }
@@ -1124,7 +1124,7 @@ static HB_ERRCODE sqlDeleted(SQLAREAP thiswa, HB_BOOL *isDeleted)
 static HB_ERRCODE sqlFieldCount(SQLAREAP thiswa, HB_USHORT *fieldCount)
 {
   *fieldCount = thiswa->area.uiFieldCount;
-  // sr_TraceLog(SR_NULLPTR, "sqlFieldCount, returning %i\n", thiswa->area.uiFieldCount);
+  // SR_TraceLog(SR_NULLPTR, "sqlFieldCount, returning %i\n", thiswa->area.uiFieldCount);
   return HB_SUCCESS;
 }
 
@@ -1148,7 +1148,7 @@ static HB_ERRCODE sqlFieldCount(SQLAREAP thiswa, HB_USHORT *fieldCount)
 // (DBENTRYP_V)
 static HB_ERRCODE sqlFlush(SQLAREAP thiswa)
 {
-  // sr_TraceLog(SR_NULLPTR, "sqlFlush\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlFlush\n");
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLFLUSH, 0);
   return HB_SUCCESS;
 }
@@ -1241,7 +1241,7 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
   } else {
 #if 0
     if (HB_IS_NIL(itemTemp)) {
-      sr_TraceLog(SR_NULLPTR, "Empty buffer found at position %i, fieldpos %i\n", (int)thiswa->uiBufferIndex[fieldNum - 1],
+      SR_TraceLog(SR_NULLPTR, "Empty buffer found at position %i, fieldpos %i\n", (int)thiswa->uiBufferIndex[fieldNum - 1],
         (int) fieldNum);
     }
 #endif
@@ -1301,7 +1301,7 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
   PHB_ITEM pFieldNum;
   // HB_BOOL bOk = HB_TRUE;
   // PHB_DYNS s_pSym_SR_FROMXML = NULL;
-  // sr_TraceLog(SR_NULLPTR, "sqlPutValue, writing column %i\n", fieldNum);
+  // SR_TraceLog(SR_NULLPTR, "sqlPutValue, writing column %i\n", fieldNum);
 
   if (thiswa->firstinteract) {
     SELF_GOTOP(&thiswa->area);
@@ -1413,7 +1413,7 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
 // (DBENTRYP_V)
 static HB_ERRCODE sqlRecall(SQLAREAP thiswa)
 {
-  // sr_TraceLog(SR_NULLPTR, "sqlRecall\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlRecall\n");
 
   if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL(&thiswa->area);
@@ -1442,7 +1442,7 @@ static HB_ERRCODE sqlRecCount(SQLAREAP thiswa, HB_ULONG *recCount)
     *recCount = (HB_ULONG)(hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT));
   }
 
-  // sr_TraceLog(SR_NULLPTR, "sqlRecCount, returning %i\n", *recCount);
+  // SR_TraceLog(SR_NULLPTR, "sqlRecCount, returning %i\n", *recCount);
 
   return HB_SUCCESS;
 }
@@ -1472,7 +1472,7 @@ static HB_ERRCODE sqlRecNo(SQLAREAP thiswa, HB_ULONG *recno)
 
   *recno = (HB_ULONG)hb_arrayGetNL(thiswa->aInfo, AINFO_RECNO);
 
-  // sr_TraceLog(SR_NULLPTR, "sqlRecNo %i\n", hb_arrayGetNI(thiswa->aInfo, AINFO_RECNO));
+  // SR_TraceLog(SR_NULLPTR, "sqlRecNo %i\n", hb_arrayGetNI(thiswa->aInfo, AINFO_RECNO));
 
   return HB_SUCCESS;
 }
@@ -1495,7 +1495,7 @@ static HB_ERRCODE sqlRecId(SQLAREAP thiswa, PHB_ITEM recno)
     hb_itemPutNL(recno, 0);
   }
 
-  // sr_TraceLog(SR_NULLPTR, "sqlRecID %i\n", hb_arrayGetNI(thiswa->aInfo, AINFO_RECNO));
+  // SR_TraceLog(SR_NULLPTR, "sqlRecID %i\n", hb_arrayGetNI(thiswa->aInfo, AINFO_RECNO));
 
   return HB_SUCCESS;
 }
@@ -1540,7 +1540,7 @@ static HB_ERRCODE sqlClose(SQLAREAP thiswa)
 {
   HB_ERRCODE uiError;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlClose\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlClose\n");
 
   // Reset parent rel struct
   thiswa->lpdbPendingRel = SR_NULLPTR;
@@ -1603,7 +1603,7 @@ static HB_ERRCODE sqlCreate(SQLAREAP thiswa, LPDBOPENINFO pCreateInfo)
   PHB_ITEM pArea = hb_itemNew(SR_NULLPTR);
   HB_ERRCODE errCode;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlCreate(%p, %p)", thiswa, pCreateInfo);
+  // SR_TraceLog(SR_NULLPTR, "sqlCreate(%p, %p)", thiswa, pCreateInfo);
 
   thiswa->creating = HB_TRUE;
 
@@ -1707,7 +1707,7 @@ static HB_ERRCODE sqlInfo(SQLAREAP thiswa, HB_USHORT uiIndex, PHB_ITEM pItem)
 {
   HB_BOOL flag = HB_TRUE;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlInfo(%p, %hu, %p)", thiswa, uiIndex, pItem);
+  // SR_TraceLog(SR_NULLPTR, "sqlInfo(%p, %hu, %p)", thiswa, uiIndex, pItem);
 
   switch (uiIndex) {
   case DBI_ISDBF:
@@ -2019,7 +2019,7 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
 
   char szAlias[HB_RDD_MAX_ALIAS_LEN + 1];
 
-  // sr_TraceLog(SR_NULLPTR, "sqlOpen\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlOpen\n");
 
   thiswa->szDataFileName = (char *)hb_xgrab(strlen((char *)pOpenInfo->abName) + 1);
   strcpy(thiswa->szDataFileName, (char *)pOpenInfo->abName);
@@ -2178,7 +2178,7 @@ static HB_ERRCODE sqlStructSize(SQLAREAP thiswa, HB_USHORT *StructSize)
 // (DBENTRYP_V)
 static HB_ERRCODE sqlPack(SQLAREAP thiswa)
 {
-  // sr_TraceLog(SR_NULLPTR, "sqlPack\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlPack\n");
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLPACK, 0);
   SELF_GOTOP(&thiswa->area);
   return HB_SUCCESS;
@@ -2209,7 +2209,7 @@ static HB_ERRCODE sqlPack(SQLAREAP thiswa)
 // (DBENTRYP_V)
 static HB_ERRCODE sqlZap(SQLAREAP thiswa)
 {
-  // sr_TraceLog(SR_NULLPTR, "sqlZap\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlZap\n");
 
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLZAP, 0);
 
@@ -2228,7 +2228,7 @@ static HB_ERRCODE sqlChildEnd(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 {
   HB_ERRCODE uiError;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlChildEnd\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlChildEnd\n");
 
   HB_TRACE(HB_TR_DEBUG, ("sqlChildEnd(%p, %p)", thiswa, pRelInfo));
 
@@ -2248,7 +2248,7 @@ static HB_ERRCODE sqlChildStart(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 {
   HB_TRACE(HB_TR_DEBUG, ("sqlChildStart(%p, %p)", thiswa, pRelInfo));
 
-  // sr_TraceLog(SR_NULLPTR, "sqlChildStart\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlChildStart\n");
 
   if (thiswa->firstinteract) {
     SELF_GOTOP(&thiswa->area);
@@ -2266,7 +2266,7 @@ static HB_ERRCODE sqlChildSync(SQLAREAP thiswa, LPDBRELINFO pRelInfo)
 {
   HB_TRACE(HB_TR_DEBUG, ("sqlChildSync(%p, %p)", thiswa, pRelInfo));
 
-  // sr_TraceLog(SR_NULLPTR, "sqlChildSync\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlChildSync\n");
 
   thiswa->lpdbPendingRel = pRelInfo;
   SELF_SYNCCHILDREN(&thiswa->area);
@@ -2332,7 +2332,7 @@ static HB_ERRCODE sqlOrderListAdd(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
   PHB_ITEM pNIL = SR_NULLPTR, pIndex, pTag;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlOrderListAdd\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlOrderListAdd\n");
 
   pIndex = pOrderInfo->atomBagName;
   pTag = pOrderInfo->itmOrder;
@@ -2365,7 +2365,7 @@ static HB_ERRCODE sqlOrderListAdd(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 // (DBENTRYP_V)
 static HB_ERRCODE sqlOrderListClear(SQLAREAP thiswa)
 {
-  // sr_TraceLog(SR_NULLPTR, "sqlOrderListClear\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlOrderListClear\n");
 
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERLISTCLEAR, 0);
 
@@ -2390,7 +2390,7 @@ static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
   PHB_ITEM pTag;
   HB_LONG lorder = 0;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlOrderListFocus\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlOrderListFocus\n");
 
   // BagName.type = HB_IT_NIL;
   pTag = sr_loadTagDefault(thiswa, SR_NULLPTR, &lorder);
@@ -2473,7 +2473,7 @@ static HB_ERRCODE sqlOrderCreate(SQLAREAP thiswa, LPDBORDERCREATEINFO pOrderInfo
 {
   PHB_ITEM pBagName, pAtomBagName;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlOrderCreate\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlOrderCreate\n");
 
   if (SELF_GOCOLD(&thiswa->area) == HB_FAILURE) {
     return HB_FAILURE;
@@ -2517,7 +2517,7 @@ static HB_ERRCODE sqlOrderDestroy(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
   PHB_ITEM pTag;
   HB_LONG lorder = 0;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlOrderDestroy\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlOrderDestroy\n");
 
   if (SELF_GOCOLD(&thiswa->area) == HB_FAILURE) {
     return HB_FAILURE;
@@ -2648,7 +2648,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
   PHB_ITEM pTag, pTemp;
   PHB_MACRO pMacro;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlOrderInfo, order: %i\n", uiIndex);
+  // SR_TraceLog(SR_NULLPTR, "sqlOrderInfo, order: %i\n", uiIndex);
 
   HB_TRACE(HB_TR_DEBUG, ("sqlOrderInfo(%p, %hu, %p)", thiswa, uiIndex, pInfo));
 
@@ -2976,7 +2976,7 @@ static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem
   HB_LONG lIndexes, lorder;
   PHB_ITEM pTag, pTemp;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlScopeInfo, nScope: %i\n", nScope);
+  // SR_TraceLog(SR_NULLPTR, "sqlScopeInfo, nScope: %i\n", nScope);
 
   hb_itemClear(pItem);
   lIndexes = (HB_LONG)hb_itemSize(thiswa->aOrders);
@@ -3049,7 +3049,7 @@ static HB_ERRCODE sqlSetScope(SQLAREAP thiswa, LPDBORDSCOPEINFO sInfo)
   PHB_ITEM scopeval;
   int res;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlSetScope\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlSetScope\n");
 
   scopetype = hb_itemPutNI(SR_NULLPTR, sInfo->nScope);
   scopeval = hb_itemNew(sInfo->scopeValue);
@@ -3122,7 +3122,7 @@ static HB_ERRCODE sqlLock(SQLAREAP thiswa, LPDBLOCKINFO pLockInfo)
 {
   PHB_ITEM pRecord;
 
-  // sr_TraceLog(SR_NULLPTR, "sqlLock\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlLock\n");
 
   if (thiswa->firstinteract) {
     SELF_GOTOP(&thiswa->area);
@@ -3250,7 +3250,7 @@ static HB_ERRCODE sqlExit(LPRDDNODE pRDD)
 // TODO: mingw warning: cast between incompatible function types
 static HB_ERRCODE sqlDrop(PHB_ITEM pItemTable)
 {
-  // sr_TraceLog(SR_NULLPTR, "sqlDrop\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlDrop\n");
 
   hb_vmPushDynSym(s_pSym_WORKAREA);
   hb_vmPushNil();
@@ -3273,7 +3273,7 @@ static HB_ERRCODE sqlDrop(PHB_ITEM pItemTable)
 // TODO: mingw warning: cast between incompatible function types
 static HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
 {
-  // sr_TraceLog(SR_NULLPTR, "sqlExists\n");
+  // SR_TraceLog(SR_NULLPTR, "sqlExists\n");
 
   hb_vmPushDynSym(s_pSym_WORKAREA);
   hb_vmPushNil();

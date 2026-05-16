@@ -85,7 +85,7 @@ static void createSeekQueryOra(SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints)
             thiswa->sOrderBy, // thiswa->sOrderBy has the index column list
             thiswa->sLimit2);
   }
-  // sr_TraceLog("aaa.log", "query %s\n", thiswa->sSql);
+  // SR_TraceLog("aaa.log", "query %s\n", thiswa->sSql);
 }
 
 //------------------------------------------------------------------------
@@ -568,7 +568,7 @@ void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
         //                        SQL_DATE_LEN,
         //                        0,
         //                        &(BindStructure->asDate), 0, NULL);
-        // sr_TraceLog("sqltrace.log", " %s  %i %i %i \n", sSql, BindStructure->asDate.year,
+        // SR_TraceLog("sqltrace.log", " %s  %i %i %i \n", sSql, BindStructure->asDate.year,
         // BindStructure->asDate.month, BindStructure->asDate.day);
         BindStructure->asDate1 = OCI_DateCreate(GetConnection(thiswa->hDbc));
         OCI_DateSetDate(BindStructure->asDate1, BindStructure->asDate.year, BindStructure->asDate.month,
