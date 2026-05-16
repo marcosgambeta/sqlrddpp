@@ -94,7 +94,7 @@ ENDCLASS
 METHOD sr_TXmlNode:New(nType, cName, aAttributes, cData)
 
    IF nType == NIL
-      ::nType := SRXML_TYPE_TAG
+      ::nType := SR_XML_TYPE_TAG
    ELSE
       ::nType := nType
    ENDIF
@@ -148,7 +148,7 @@ RETURN 0
 
 METHOD sr_TXmlNode:Path()
 
-   IF ::nType == SRXML_TYPE_DOCUMENT
+   IF ::nType == SR_XML_TYPE_DOCUMENT
       RETURN ""
    ENDIF
 
@@ -236,7 +236,7 @@ METHOD sr_TXmlIterator:Find(cName, cAttribute, cValue, cData)
    ::cValue := cValue
    ::cData := cData
 
-   IF ::oNode:nType == SRXML_TYPE_DOCUMENT
+   IF ::oNode:nType == SR_XML_TYPE_DOCUMENT
       IF ::oNode:oChild == NIL
          RETURN NIL
       ENDIF
@@ -399,13 +399,13 @@ ENDCLASS
 
 METHOD sr_TXMLDocument:New(xElem, nStyle)
 
-   ::nStatus := SRXML_STATUS_OK
-   ::nError := SRXML_ERROR_NONE
+   ::nStatus := SR_XML_STATUS_OK
+   ::nError := SR_XML_ERROR_NONE
    ::nLine := 1
    ::nNodeCount := 0
 
    IF xElem == NIL
-      ::oRoot := sr_TXMLNode():New(SRXML_TYPE_DOCUMENT)
+      ::oRoot := sr_TXMLNode():New(SR_XML_TYPE_DOCUMENT)
    ELSE
       SWITCH ValType(xElem)
       CASE "O"
@@ -413,7 +413,7 @@ METHOD sr_TXMLDocument:New(xElem, nStyle)
          EXIT
       CASE "N"
       CASE "C"
-         ::oRoot := sr_TXMLNode():New(SRXML_TYPE_DOCUMENT)
+         ::oRoot := sr_TXMLNode():New(SR_XML_TYPE_DOCUMENT)
          IF hb_FileExists(xElem)
             ::Read(hb_MemoRead(xElem), nStyle)
          ELSE
@@ -432,7 +432,7 @@ RETURN Self
 
 METHOD sr_TXMLDocument:Write(fHandle, nStyle)
 
-   LOCAL nResult := SRXML_STATUS_ERROR
+   LOCAL nResult := SR_XML_STATUS_ERROR
 
    IF HB_IsString(fHandle)  // It's a filename!
       fHandle := FCreate(fHandle)

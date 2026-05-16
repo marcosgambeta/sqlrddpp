@@ -46,44 +46,44 @@
 #define SR_XML_CH
 
 // Styles
-#define SRXML_STYLE_NOINDENT         0  // no indent nodes and insert new line after each node
-#define SRXML_STYLE_INDENT           1  // indent nodes with 1 space and insert new line after each node (default)
-#define SRXML_STYLE_TAB              2  // indent nodes with tab spaces and insert new line after each node
-#define SRXML_STYLE_THREESPACES      4  // indent nodes with 3 spaces and insert new line after each node
-#define SRXML_STYLE_NOESCAPE         8
-#define SRXML_STYLE_NONEWLINE        16 // no indent and no insert newline
+#define SR_XML_STYLE_NOINDENT         0  // no indent nodes and insert new line after each node
+#define SR_XML_STYLE_INDENT           1  // indent nodes with 1 space and insert new line after each node (default)
+#define SR_XML_STYLE_TAB              2  // indent nodes with tab spaces and insert new line after each node
+#define SR_XML_STYLE_THREESPACES      4  // indent nodes with 3 spaces and insert new line after each node
+#define SR_XML_STYLE_NOESCAPE         8
+#define SR_XML_STYLE_NONEWLINE        16 // no indent and no insert newline
 
 // Status values
-#define SRXML_STATUS_ERROR           0
-#define SRXML_STATUS_OK              1
-#define SRXML_STATUS_MORE            2
-#define SRXML_STATUS_DONE            3
-#define SRXML_STATUS_UNDEFINED       4
-#define SRXML_STATUS_MALFORMED       5
+#define SR_XML_STATUS_ERROR           0
+#define SR_XML_STATUS_OK              1
+#define SR_XML_STATUS_MORE            2
+#define SR_XML_STATUS_DONE            3
+#define SR_XML_STATUS_UNDEFINED       4
+#define SR_XML_STATUS_MALFORMED       5
 
 // Error codes
-#define SRXML_ERROR_NONE             0
-#define SRXML_ERROR_IO               1
-#define SRXML_ERROR_NOMEM            2
-#define SRXML_ERROR_OUTCHAR          3
-#define SRXML_ERROR_INVNODE          4
-#define SRXML_ERROR_INVATT           5
-#define SRXML_ERROR_MALFATT          6
-#define SRXML_ERROR_INVCHAR          7
-#define SRXML_ERROR_NAMETOOLONG      8
-#define SRXML_ERROR_ATTRIBTOOLONG    9
-#define SRXML_ERROR_VALATTOOLONG     10
-#define SRXML_ERROR_UNCLOSED         11
-#define SRXML_ERROR_UNCLOSEDENTITY   12
-#define SRXML_ERROR_WRONGENTITY      13
+#define SR_XML_ERROR_NONE             0
+#define SR_XML_ERROR_IO               1
+#define SR_XML_ERROR_NOMEM            2
+#define SR_XML_ERROR_OUTCHAR          3
+#define SR_XML_ERROR_INVNODE          4
+#define SR_XML_ERROR_INVATT           5
+#define SR_XML_ERROR_MALFATT          6
+#define SR_XML_ERROR_INVCHAR          7
+#define SR_XML_ERROR_NAMETOOLONG      8
+#define SR_XML_ERROR_ATTRIBTOOLONG    9
+#define SR_XML_ERROR_VALATTOOLONG     10
+#define SR_XML_ERROR_UNCLOSED         11
+#define SR_XML_ERROR_UNCLOSEDENTITY   12
+#define SR_XML_ERROR_WRONGENTITY      13
 
 // Node types
-#define SRXML_TYPE_TAG               0
-#define SRXML_TYPE_COMMENT           1
-#define SRXML_TYPE_PI                2
-#define SRXML_TYPE_DIRECTIVE         3
-#define SRXML_TYPE_DATA              4
-#define SRXML_TYPE_CDATA             5
-#define SRXML_TYPE_DOCUMENT          6
+#define SR_XML_TYPE_TAG               0
+#define SR_XML_TYPE_COMMENT           1
+#define SR_XML_TYPE_PI                2
+#define SR_XML_TYPE_DIRECTIVE         3
+#define SR_XML_TYPE_DATA              4
+#define SR_XML_TYPE_CDATA             5
+#define SR_XML_TYPE_DOCUMENT          6
 
 #endif // SR_XML_CH
