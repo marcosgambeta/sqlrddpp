@@ -195,11 +195,11 @@ METHOD SR_ParserBase:RestoreParenthesis(cExpression)
    LOCAL i
 
    FOR i := 1 TO Len(cExpression)
-      IF cExpression[i] == "'"
-         DO WHILE cExpression[++i] != "'"
+      IF substr(cExpression, i, 1) == "'"
+         DO WHILE substr(cExpression, ++i, 1) != "'"
          ENDDO
-      ELSEIF cExpression[i] == "?"
-         cExpression[i] := cParenthesis
+      ELSEIF substr(cExpression, i, 1) == "?"
+         cExpression := Stuff(cExpression, i, 1, cParenthesis)
          cParenthesis := IIf(cParenthesis == "(", ")", "(")
       ENDIF
    NEXT i
