@@ -28,7 +28,7 @@ PROCEDURE Main()
    rddSetDefault("SQLRDD")
 
    IF !file(DTB)
-      fbcreatedb3(DTB, UID, PWD, NIL, NIL, NIL)
+      SR_fbcreatedb3(DTB, UID, PWD, NIL, NIL, NIL)
    ENDIF
 
    nConnection := sr_AddConnection(CONNECT_FIREBIRD3, "FIREBIRD=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
