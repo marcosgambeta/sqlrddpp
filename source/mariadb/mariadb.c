@@ -717,6 +717,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
   hb_itemRelease(ret);
 }
 
+#if 0
 HB_FUNC_STATIC(SR_MARIADBTABLEATTR)
 {
   char attcmm[256] = {0};
@@ -883,6 +884,7 @@ HB_FUNC_STATIC(SR_MARIADBTABLEATTR)
   mysql_free_result(session->stmt);
   session->stmt = SR_NULLPTR;
 }
+#endif
 
 HB_FUNC_STATIC(SR_MARIADBAFFECTEDROWS)
 {
