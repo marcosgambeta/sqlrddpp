@@ -1457,7 +1457,7 @@ HB_FUNC_STATIC(SR_FBLINEPROCESSED3)
   }
 }
 
-HB_FUNC_STATIC(SR_FBMORERESULTS)
+HB_FUNC_STATIC(SR_FBMORERESULTS3)
 {
   GET_FB_SESSION(session, 1);
   if (session && session->sqlda->sqld >= 1) {
