@@ -84,7 +84,7 @@ static void myNoticeProcessor(void *arg, const char *message)
 }
 
 // SR_PGSConnect(ConnectionString) => ConnHandle
-HB_FUNC(SR_PGSCONNECT)
+HB_FUNC_STATIC(SR_PGSCONNECT)
 {
   // PPSQL_SESSION session = (PPSQL_SESSION) hb_xgrab(sizeof(PSQL_SESSION));
   PPSQL_SESSION session = (PPSQL_SESSION)hb_xgrabz(sizeof(PSQL_SESSION));
@@ -101,7 +101,7 @@ HB_FUNC(SR_PGSCONNECT)
 }
 
 // SR_PGSFinish(ConnHandle)
-HB_FUNC(SR_PGSFINISH)
+HB_FUNC_STATIC(SR_PGSFINISH)
 {
   GET_PGSQL_SESSION(session, 1);
   if (session == SR_NULLPTR) {
@@ -116,7 +116,7 @@ HB_FUNC(SR_PGSFINISH)
 }
 
 // SR_PGSStatus(ConnHandle) => nStatus
-HB_FUNC(SR_PGSSTATUS)
+HB_FUNC_STATIC(SR_PGSSTATUS)
 {
   GET_PGSQL_SESSION(session, 1);
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -132,7 +132,7 @@ HB_FUNC(SR_PGSSTATUS)
 }
 
 // SR_PGSStatus(ConnHandle) => nStatus
-HB_FUNC(SR_PGSSTATUS2)
+HB_FUNC_STATIC(SR_PGSSTATUS2)
 {
   GET_PGSQL_SESSION(session, 1);
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -143,7 +143,7 @@ HB_FUNC(SR_PGSSTATUS2)
 }
 
 // SR_PGSResultStatus(ResultSet) => nStatus
-HB_FUNC(SR_PGSRESULTSTATUS)
+HB_FUNC_STATIC(SR_PGSRESULTSTATUS)
 {
   int ret;
   PGresult *res = (PGresult *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
@@ -184,7 +184,7 @@ HB_FUNC(SR_PGSRESULTSTATUS)
 }
 
 // SR_PGSExec(ConnHandle, cCommand) => ResultSet
-HB_FUNC(SR_PGSEXEC)
+HB_FUNC_STATIC(SR_PGSEXEC)
 {
   // SR_TraceLog(SR_NULLPTR, "PGSExec : %s\n", hb_parc(2));
   GET_PGSQL_SESSION(session, 1);
@@ -222,7 +222,7 @@ HB_FUNC(SR_PGSEXEC)
 }
 
 // SR_PGSFetch(ResultSet) => nStatus
-HB_FUNC(SR_PGSFETCH)
+HB_FUNC_STATIC(SR_PGSFETCH)
 {
   int iTpl;
   GET_PGSQL_SESSION(session, 1);
@@ -256,7 +256,7 @@ HB_FUNC(SR_PGSFETCH)
 }
 
 // SR_PGSResStatus(ResultSet) => cErrMessage
-HB_FUNC(SR_PGSRESSTATUS)
+HB_FUNC_STATIC(SR_PGSRESSTATUS)
 {
   GET_PGSQL_SESSION(session, 1);
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -271,7 +271,7 @@ HB_FUNC(SR_PGSRESSTATUS)
 }
 
 // SR_PGSClear(ResultSet)
-HB_FUNC(SR_PGSCLEAR)
+HB_FUNC_STATIC(SR_PGSCLEAR)
 {
   GET_PGSQL_SESSION(session, 1);
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -285,7 +285,8 @@ HB_FUNC(SR_PGSCLEAR)
 }
 
 // SR_PGSGetData(ResultSet, nColumn) => cValue
-HB_FUNC(SR_PGSGETDATA)
+#if 0
+HB_FUNC_STATIC(SR_PGSGETDATA)
 {
   GET_PGSQL_SESSION(session, 1);
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -298,9 +299,10 @@ HB_FUNC(SR_PGSGETDATA)
   }
   hb_retc(PQgetvalue(session->stmt, session->ifetch, hb_parnl(2) - 1));
 }
+#endif
 
 // SR_PGSCols(ResultSet) => nColsInQuery
-HB_FUNC(SR_PGSCOLS)
+HB_FUNC_STATIC(SR_PGSCOLS)
 {
   PGresult *res = (PGresult *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   if (res == SR_NULLPTR) {
@@ -311,7 +313,7 @@ HB_FUNC(SR_PGSCOLS)
 }
 
 // SR_PGSErrMsg(ConnHandle) => cErrorMessage
-HB_FUNC(SR_PGSERRMSG)
+HB_FUNC_STATIC(SR_PGSERRMSG)
 {
   GET_PGSQL_SESSION(session, 1);
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -322,7 +324,8 @@ HB_FUNC(SR_PGSERRMSG)
 }
 
 // SR_PGSCommit(ConnHandle) => nError
-HB_FUNC(SR_PGSCOMMIT)
+#if 0
+HB_FUNC_STATIC(SR_PGSCOMMIT)
 {
   GET_PGSQL_SESSION(session, 1);
   PGresult *res;
@@ -337,9 +340,10 @@ HB_FUNC(SR_PGSCOMMIT)
     hb_retni(SQL_ERROR);
   }
 }
+#endif
 
 // SR_PGSRollBack(ConnHandle) => nError
-HB_FUNC(SR_PGSROLLBACK)
+HB_FUNC_STATIC(SR_PGSROLLBACK)
 {
   GET_PGSQL_SESSION(session, 1);
   PGresult *res;
@@ -356,7 +360,7 @@ HB_FUNC(SR_PGSROLLBACK)
 }
 
 // SR_PGSQueryAttr(ResultSet) => aStruct
-HB_FUNC(SR_PGSQUERYATTR)
+HB_FUNC_STATIC(SR_PGSQUERYATTR)
 {
   int row, rows, type;
 
@@ -564,7 +568,7 @@ HB_FUNC(SR_PGSQUERYATTR)
 }
 
 // SR_PGSTableAttr(ConnHandle, cTableName) => aStruct
-HB_FUNC(SR_PGSTABLEATTR)
+HB_FUNC_STATIC(SR_PGSTABLEATTR)
 {
   char attcmm[512];
   int row, rows;
@@ -967,7 +971,7 @@ static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_PGSLINEPROCESSED)
+HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
 {
   GET_PGSQL_SESSION(session, 1);
   PHB_ITEM temp;
@@ -1002,7 +1006,7 @@ HB_FUNC(SR_PGSLINEPROCESSED)
   }
 }
 
-HB_FUNC(SR_PGSAFFECTEDROWS)
+HB_FUNC_STATIC(SR_PGSAFFECTEDROWS)
 {
   GET_PGSQL_SESSION(session, 1);
 
