@@ -71,7 +71,7 @@ source/oracle/sqlorax.c
 
 # PostgreSQL
 source/postgresql/sqlpgs.prg
-source/postgresql/pgs.c
+#source/postgresql/pgs.c
 
 -hbx=sqlrddpp.hbx
 sqlrddpp.hbx
