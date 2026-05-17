@@ -179,7 +179,7 @@ static void fb_log_status5(PFB_SESSION session, const char *from)
 //------------------------------------------------------------------------
 
 // SR_FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
-HB_FUNC(SR_FBCONNECT5)
+HB_FUNC_STATIC(SR_FBCONNECT5)
 {
   XSQLVAR *var;
   const char *db_connect;
@@ -250,7 +250,7 @@ HB_FUNC(SR_FBCONNECT5)
 //------------------------------------------------------------------------
 
 // SR_FBClose(hEnv)
-HB_FUNC(SR_FBCLOSE5)
+HB_FUNC_STATIC(SR_FBCLOSE5)
 {
   GET_FB_SESSION(session, 1);
   int i;
@@ -288,7 +288,7 @@ HB_FUNC(SR_FBCLOSE5)
 //------------------------------------------------------------------------
 
 // SR_FBBeginTransaction(hEnv)
-HB_FUNC(SR_FBBEGINTRANSACTION5)
+HB_FUNC_STATIC(SR_FBBEGINTRANSACTION5)
 {
   GET_FB_SESSION(session, 1);
 
@@ -345,7 +345,7 @@ HB_FUNC(SR_FBBEGINTRANSACTION5)
 //------------------------------------------------------------------------
 
 // SR_FBBeginTransaction(hEnv)
-HB_FUNC(SR_FBCOMMITTRANSACTION5)
+HB_FUNC_STATIC(SR_FBCOMMITTRANSACTION5)
 {
   GET_FB_SESSION(session, 1);
 
@@ -364,7 +364,7 @@ HB_FUNC(SR_FBCOMMITTRANSACTION5)
 //------------------------------------------------------------------------
 
 // SR_FBRollBackTransaction(hEnv)
-HB_FUNC(SR_FBROLLBACKTRANSACTION5)
+HB_FUNC_STATIC(SR_FBROLLBACKTRANSACTION5)
 {
   GET_FB_SESSION(session, 1);
 
@@ -383,7 +383,7 @@ HB_FUNC(SR_FBROLLBACKTRANSACTION5)
 //------------------------------------------------------------------------
 
 // SR_FBExecute(hEnv, cCmd, nDialect)
-HB_FUNC(SR_FBEXECUTE5)
+HB_FUNC_STATIC(SR_FBEXECUTE5)
 {
   GET_FB_SESSION(session, 1);
   const char *command = hb_parcx(2);
@@ -532,7 +532,7 @@ HB_FUNC(SR_FBEXECUTE5)
 //------------------------------------------------------------------------
 
 // SR_FBExecuteImmediate(hEnv, cCmd, nDialect)
-HB_FUNC(SR_FBEXECUTEIMMEDIATE5)
+HB_FUNC_STATIC(SR_FBEXECUTEIMMEDIATE5)
 {
   GET_FB_SESSION(session, 1);
   const char *command = hb_parcx(2);
@@ -568,7 +568,7 @@ HB_FUNC(SR_FBEXECUTEIMMEDIATE5)
 //------------------------------------------------------------------------
 
 // SR_FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
-HB_FUNC(SR_FBDESCRIBECOL5)
+HB_FUNC_STATIC(SR_FBDESCRIBECOL5)
 {
   GET_FB_SESSION(session, 1);
   int icol = hb_parni(2);
@@ -676,7 +676,7 @@ HB_FUNC(SR_FBDESCRIBECOL5)
 //------------------------------------------------------------------------
 
 // SR_FBNumResultCols(hEnv, @nResultSetColumnCount)
-HB_FUNC(SR_FBNUMRESULTCOLS5)
+HB_FUNC_STATIC(SR_FBNUMRESULTCOLS5)
 {
   GET_FB_SESSION(session, 1);
 
@@ -691,7 +691,7 @@ HB_FUNC(SR_FBNUMRESULTCOLS5)
 //------------------------------------------------------------------------
 
 // SR_FBError(hEnv)
-HB_FUNC(SR_FBERROR5)
+HB_FUNC_STATIC(SR_FBERROR5)
 {
   GET_FB_SESSION(session, 1);
 
@@ -706,7 +706,7 @@ HB_FUNC(SR_FBERROR5)
 //------------------------------------------------------------------------
 
 // SR_FBFetch(hEnv)
-HB_FUNC(SR_FBFETCH5)
+HB_FUNC_STATIC(SR_FBFETCH5)
 {
   GET_FB_SESSION(session, 1);
 
@@ -728,7 +728,8 @@ HB_FUNC(SR_FBFETCH5)
 //------------------------------------------------------------------------
 
 // SR_FBGetData(hEnv, nField, @uData)
-HB_FUNC(SR_FBGETDATA5)
+#if 0
+HB_FUNC_STATIC(SR_FBGETDATA5)
 {
   GET_FB_SESSION(session, 1);
   int icol = hb_parni(2);
@@ -933,6 +934,7 @@ HB_FUNC(SR_FBGETDATA5)
     hb_retni(SQL_ERROR);
   }
 }
+#endif
 
 //------------------------------------------------------------------------
 
@@ -1001,7 +1003,7 @@ static void firebird_info_cb(void *arg, char const *s)
   }
 }
 
-HB_FUNC(SR_FBVERSION5)
+HB_FUNC_STATIC(SR_FBVERSION5)
 {
   ISC_LONG num_version = 0L;
   char tmp[1000];
@@ -1202,7 +1204,7 @@ static void FBFieldGet5(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
 
 //------------------------------------------------------------------------
 
-HB_FUNC(SR_FBLINEPROCESSED5)
+HB_FUNC_STATIC(SR_FBLINEPROCESSED5)
 {
   GET_FB_SESSION(session, 1);
   int icol, cols;
@@ -1471,7 +1473,7 @@ HB_FUNC(SR_FBLINEPROCESSED5)
   }
 }
 
-HB_FUNC(SR_FBMORERESULTS5)
+HB_FUNC_STATIC(SR_FBMORERESULTS5)
 {
   GET_FB_SESSION(session, 1);
   if (session && session->sqlda->sqld >= 1) {

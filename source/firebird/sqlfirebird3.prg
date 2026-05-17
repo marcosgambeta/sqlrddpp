@@ -307,7 +307,7 @@ RETURN SELF
 METHOD SR_FIREBIRD3:End()
 
    ::Commit()
-   SR_FBClose(::hEnv)
+   SR_FBClose3(::hEnv)
 
 RETURN ::Super:End()
 
