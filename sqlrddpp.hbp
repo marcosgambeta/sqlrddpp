@@ -58,7 +58,7 @@ source/mariadb/sr_maria.prg
 #source/mariadb/mariadb.c
 
 # MySQL
-source/mysql/sqlmy.prg
+source/mysql/sr_mysql.prg
 #source/mysql/mysql.c
 
 # ODBC
