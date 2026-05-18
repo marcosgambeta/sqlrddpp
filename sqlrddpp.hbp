@@ -12,6 +12,7 @@
 -Iinclude/oci
 -Iinclude/pgsql
 -Isource
+-Isource/oracle
 
 source/exprobjs.prg
 source/exprparser.prg
@@ -68,7 +69,8 @@ source/odbc/sqlodbc.prg
 source/oracle/sqloracle.prg
 source/oracle/sqloracle2.prg
 source/oracle/sqlora.c
-source/oracle/sqlorax.c
+#source/oracle/sqlora2.c
+#source/oracle/sqlorax.c
 
 # PostgreSQL
 source/postgresql/sqlpgs.prg

@@ -44,6 +44,8 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#pragma BEGINDUMP
+
 #include "sqlrddpp.h"
 #include "compat.h"
 
@@ -285,7 +287,7 @@ HB_FUNC(SR_SQLO_NUMCOLS)
 
 //-----------------------------------------------------------------------------//
 
-int sqlo_sqldtype(HB_USHORT type)
+static int sqlo_sqldtype(HB_USHORT type)
 {
   int isqltype;
 
@@ -1069,7 +1071,7 @@ HB_FUNC(SR_ORACLE_PROCCURSOR)
   // sqlo_close(session->stmtParamRes);
   //
 }
-HB_FUNC(SR_ORACLE_SAVE_HANDLE_ST)
+HB_FUNC(SR_ORACLE_SAVE_HANDLE_ST) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   if (session != SR_NULLPTR) {
@@ -1077,7 +1079,7 @@ HB_FUNC(SR_ORACLE_SAVE_HANDLE_ST)
   }
 }
 
-HB_FUNC(SR_ORACLE_CLOSE_FCURSOR)
+HB_FUNC(SR_ORACLE_CLOSE_FCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1097,7 +1099,7 @@ HB_FUNC(SR_ORACLE_CLOSE_FCURSOR)
   hb_retni(SQLO_SUCCESS);
 }
 
-HB_FUNC(SR_ORACLE_BIND_BY_NAME)
+HB_FUNC(SR_ORACLE_BIND_BY_NAME) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   int iPos = hb_parni(2);
@@ -1105,7 +1107,7 @@ HB_FUNC(SR_ORACLE_BIND_BY_NAME)
                              sizeof(session->pLink[iPos].dValue), 0, 0));
 }
 
-HB_FUNC(SR_ORACLEEXECDIRCURSOR)
+HB_FUNC(SR_ORACLEEXECDIRCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
@@ -1171,7 +1173,7 @@ HB_FUNC(SR_ORACLE_BINDCURSOR)
   hb_retni(ret);
 }
 
-HB_FUNC(SR_ORACLE_EXECCURSOR)
+HB_FUNC(SR_ORACLE_EXECCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   int ret = 1;
@@ -1218,7 +1220,7 @@ HB_FUNC(SR_GETAFFECTROWS)
   }
 }
 
-HB_FUNC(SR_GETORAHANDLE)
+HB_FUNC(SR_GETORAHANDLE) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(p, 1);
   if (p != SR_NULLPTR) {
@@ -1226,10 +1228,12 @@ HB_FUNC(SR_GETORAHANDLE)
   }
 }
 
-HB_FUNC(SR_SETORAHANDLE)
+HB_FUNC(SR_SETORAHANDLE) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(p, 1);
   if (p != SR_NULLPTR) {
     p->stmt = hb_parni(2);
   }
 }
+
+#pragma ENDDUMP
