@@ -44,10 +44,10 @@ source/xhbenum.c
 source/xthrow.c
 
 # Firebird
-source/firebird/sqlfirebird.prg
-source/firebird/sqlfirebird3.prg
-source/firebird/sqlfirebird4.prg
-source/firebird/sqlfirebird5.prg
+source/firebird/sr_firebird.prg
+source/firebird/sr_firebird3.prg
+source/firebird/sr_firebird4.prg
+source/firebird/sr_firebird5.prg
 #source/firebird/firebird.c
 #source/firebird/firebird3.c
 #source/firebird/firebird4.c
