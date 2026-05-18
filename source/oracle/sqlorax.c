@@ -139,7 +139,7 @@ static HB_USHORT OCI_initilized = 0;
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_CONNECT)
+HB_FUNC_STATIC(SR_SQLO_CONNECT)
 {
   POCI_SESSION session = (POCI_SESSION)hb_xgrab(sizeof(OCI_SESSION));
 
@@ -173,7 +173,7 @@ HB_FUNC(SR_SQLO_CONNECT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_DBMSNAME)
+HB_FUNC_STATIC(SR_SQLO_DBMSNAME)
 {
   GET_OCI_SESSION(session, 1);
   hb_retc(session != SR_NULLPTR ? session->server_version : "Not connected to Oracle");
@@ -181,7 +181,7 @@ HB_FUNC(SR_SQLO_DBMSNAME)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_DISCONNECT)
+HB_FUNC_STATIC(SR_SQLO_DISCONNECT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -201,7 +201,7 @@ HB_FUNC(SR_SQLO_DISCONNECT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_GETERRORDESCR)
+HB_FUNC_STATIC(SR_SQLO_GETERRORDESCR)
 {
   GET_OCI_SESSION(session, 1);
   hb_retc(session != SR_NULLPTR ? (char *)sqlo_geterror(session->dbh) : "Not connected to Oracle");
@@ -209,7 +209,7 @@ HB_FUNC(SR_SQLO_GETERRORDESCR)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_GETERRORCODE)
+HB_FUNC_STATIC(SR_SQLO_GETERRORCODE)
 {
   GET_OCI_SESSION(session, 1);
   hb_retni(session != SR_NULLPTR ? sqlo_geterrcode(session->dbh) : SQL_ERROR);
@@ -217,7 +217,7 @@ HB_FUNC(SR_SQLO_GETERRORCODE)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_EXECDIRECT)
+HB_FUNC_STATIC(SR_SQLO_EXECDIRECT)
 {
   GET_OCI_SESSION(session, 1);
   const char *stm = hb_parcx(2);
@@ -244,7 +244,7 @@ HB_FUNC(SR_SQLO_EXECDIRECT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_EXECUTE)
+HB_FUNC_STATIC(SR_SQLO_EXECUTE)
 {
   GET_OCI_SESSION(session, 1);
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
@@ -274,7 +274,7 @@ HB_FUNC(SR_SQLO_EXECUTE)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_NUMCOLS)
+HB_FUNC_STATIC(SR_SQLO_NUMCOLS)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -359,7 +359,7 @@ static int sqlo_sqldtype(HB_USHORT type)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec, @nNull )
+HB_FUNC_STATIC(SR_SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec, @nNull )
 {
   GET_OCI_SESSION(session, 1);
   HB_USHORT dType, ncol;
@@ -406,7 +406,7 @@ HB_FUNC(SR_SQLO_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @n
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_FETCH)
+HB_FUNC_STATIC(SR_SQLO_FETCH)
 {
   GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t stmtParamRes;
@@ -431,7 +431,7 @@ HB_FUNC(SR_SQLO_FETCH)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_COMMIT)
+HB_FUNC_STATIC(SR_SQLO_COMMIT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -449,7 +449,7 @@ HB_FUNC(SR_SQLO_COMMIT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_ROLLBACK)
+HB_FUNC_STATIC(SR_SQLO_ROLLBACK)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -467,7 +467,7 @@ HB_FUNC(SR_SQLO_ROLLBACK)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_CLOSESTMT)
+HB_FUNC_STATIC(SR_SQLO_CLOSESTMT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -652,7 +652,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_LINE)
+HB_FUNC_STATIC(SR_SQLO_LINE)
 {
   GET_OCI_SESSION(session, 1);
   const char **line;
@@ -681,7 +681,7 @@ HB_FUNC(SR_SQLO_LINE)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO_LINEPROCESSED)
+HB_FUNC_STATIC(SR_SQLO_LINEPROCESSED)
 {
   GET_OCI_SESSION(session, 1);
   const char **line;
@@ -719,7 +719,7 @@ HB_FUNC(SR_SQLO_LINEPROCESSED)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ORACLEWRITEMEMO)
+HB_FUNC_STATIC(SR_ORACLEWRITEMEMO)
 {
   GET_OCI_SESSION(session, 1);
   const char *sTable = hb_parc(2);
@@ -776,7 +776,7 @@ HB_FUNC(SR_ORACLEWRITEMEMO)
 }
 
 // Oracle Bind utility functions for usage with stored procedures with out parameters
-void OracleFreeLink(int num_recs, POCI_SESSION p)
+static void OracleFreeLink(int num_recs, POCI_SESSION p)
 {
   int i;
 
@@ -805,6 +805,7 @@ void OracleFreeLink(int num_recs, POCI_SESSION p)
 // type 9 -> datetime
 // type 3 -> bool
 // type any->char
+// NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_ORACLEINBINDPARAM)
 {
 
@@ -929,6 +930,7 @@ HB_FUNC(SR_ORACLEINBINDPARAM)
 
 // Get the content of an binded parameter returned from stored procedure
 //  usage : SR_ORACLEGETBINDDATA(hDbc,nParameterNumber)
+// NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_ORACLEGETBINDDATA)
 {
   GET_OCI_SESSION(p, 1);
@@ -978,6 +980,7 @@ HB_FUNC(SR_ORACLEGETBINDDATA)
 // Free all Binded Parameters memory allocated
 // usage
 // SR_ORACLEFREEBIND(nOrahandle)
+// NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_ORACLEFREEBIND)
 {
   GET_OCI_SESSION(Stmt, 1);
@@ -988,6 +991,7 @@ HB_FUNC(SR_ORACLEFREEBIND)
 
 // Prepare an stored procedure for execution
 // usage SR_ORACLEPREPARE(nOracleHandle,cSql) -> nPreparedHandle)
+// NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_ORACLEPREPARE)
 {
   GET_OCI_SESSION(session, 1);
@@ -1010,6 +1014,7 @@ HB_FUNC(SR_ORACLEPREPARE)
 // Execute the  Stored Procedure
 // usage
 // SR_ORACLEEXECDIR(nOraHandle[,nPreparedHandle]) ->nStatus
+// NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_ORACLEEXECDIR)
 {
   GET_OCI_SESSION(session, 1);
@@ -1021,7 +1026,7 @@ HB_FUNC(SR_ORACLEEXECDIR)
   hb_retni(ret);
 }
 
-HB_FUNC(SR_ORACLE_PROCCURSOR)
+HB_FUNC_STATIC(SR_ORACLE_PROCCURSOR)
 {
   GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
@@ -1071,7 +1076,7 @@ HB_FUNC(SR_ORACLE_PROCCURSOR)
   // sqlo_close(session->stmtParamRes);
   //
 }
-HB_FUNC(SR_ORACLE_SAVE_HANDLE_ST) // TODO: not used in the SQLRDD source code
+HB_FUNC_STATIC(SR_ORACLE_SAVE_HANDLE_ST) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   if (session != SR_NULLPTR) {
@@ -1079,7 +1084,7 @@ HB_FUNC(SR_ORACLE_SAVE_HANDLE_ST) // TODO: not used in the SQLRDD source code
   }
 }
 
-HB_FUNC(SR_ORACLE_CLOSE_FCURSOR) // TODO: not used in the SQLRDD source code
+HB_FUNC_STATIC(SR_ORACLE_CLOSE_FCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1099,7 +1104,7 @@ HB_FUNC(SR_ORACLE_CLOSE_FCURSOR) // TODO: not used in the SQLRDD source code
   hb_retni(SQLO_SUCCESS);
 }
 
-HB_FUNC(SR_ORACLE_BIND_BY_NAME) // TODO: not used in the SQLRDD source code
+HB_FUNC_STATIC(SR_ORACLE_BIND_BY_NAME) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   int iPos = hb_parni(2);
@@ -1107,7 +1112,7 @@ HB_FUNC(SR_ORACLE_BIND_BY_NAME) // TODO: not used in the SQLRDD source code
                              sizeof(session->pLink[iPos].dValue), 0, 0));
 }
 
-HB_FUNC(SR_ORACLEEXECDIRCURSOR) // TODO: not used in the SQLRDD source code
+HB_FUNC_STATIC(SR_ORACLEEXECDIRCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
@@ -1127,6 +1132,7 @@ HB_FUNC(SR_ORACLEEXECDIRCURSOR) // TODO: not used in the SQLRDD source code
 // Prepare the necessary data for Binded Parameters
 // usage
 // ORACLEBINDALLOC(noraHandle,nNumberofParameters)
+// NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_ORACLEBINDALLOC)
 {
   GET_OCI_SESSION(session, 1);
@@ -1142,7 +1148,7 @@ HB_FUNC(SR_ORACLEBINDALLOC)
   hb_retni(1);
 }
 
-HB_FUNC(SR_ORACLE_BINDCURSOR)
+HB_FUNC_STATIC(SR_ORACLE_BINDCURSOR)
 {
   GET_OCI_SESSION(session, 1);
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
@@ -1173,7 +1179,7 @@ HB_FUNC(SR_ORACLE_BINDCURSOR)
   hb_retni(ret);
 }
 
-HB_FUNC(SR_ORACLE_EXECCURSOR) // TODO: not used in the SQLRDD source code
+HB_FUNC_STATIC(SR_ORACLE_EXECCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   int ret = 1;
@@ -1194,6 +1200,8 @@ HB_FUNC(SR_ORACLE_EXECCURSOR) // TODO: not used in the SQLRDD source code
 
   hb_retni(ret);
 }
+
+// NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_CLOSECURSOR)
 {
   GET_OCI_SESSION(session, 1);
@@ -1210,7 +1218,7 @@ HB_FUNC(SR_CLOSECURSOR)
   hb_retni(SQL_SUCCESS);
 }
 
-HB_FUNC(SR_GETAFFECTROWS)
+HB_FUNC_STATIC(SR_GETAFFECTROWS)
 {
   GET_OCI_SESSION(session, 1);
   if (session != SR_NULLPTR) {
@@ -1220,7 +1228,7 @@ HB_FUNC(SR_GETAFFECTROWS)
   }
 }
 
-HB_FUNC(SR_GETORAHANDLE) // TODO: not used in the SQLRDD source code
+HB_FUNC_STATIC(SR_GETORAHANDLE) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(p, 1);
   if (p != SR_NULLPTR) {
@@ -1228,7 +1236,7 @@ HB_FUNC(SR_GETORAHANDLE) // TODO: not used in the SQLRDD source code
   }
 }
 
-HB_FUNC(SR_SETORAHANDLE) // TODO: not used in the SQLRDD source code
+HB_FUNC_STATIC(SR_SETORAHANDLE) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(p, 1);
   if (p != SR_NULLPTR) {
