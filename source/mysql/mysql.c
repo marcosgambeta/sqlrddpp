@@ -220,7 +220,7 @@ HB_FUNC_STATIC(SR_MYSFETCH)
 
 //-----------------------------------------------------------------------------//
 
-void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
+static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
                   HB_ULONG ulSystemID, HB_BOOL bTranslate)
 {
   HB_LONG lType;
