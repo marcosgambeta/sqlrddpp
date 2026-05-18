@@ -139,7 +139,7 @@ static HB_USHORT OCI_initilized = 0;
 
 //-----------------------------------------------------------------------------//
 
-void err_handler(OCI_Error *err)
+static void err_handler(OCI_Error *err)
 {
   int err_type = OCI_ErrorGetType(err);
   char *err_msg = (char *)OCI_ErrorGetString(err);
@@ -147,7 +147,7 @@ void err_handler(OCI_Error *err)
   printf("%s - %s\n", err_type == OCI_ERR_WARNING ? "warning" : "error", err_msg);
 }
 
-HB_FUNC(SR_SQLO2_CONNECT)
+HB_FUNC_STATIC(SR_SQLO2_CONNECT)
 {
   // POCI_ORASESSION session = (POCI_ORASESSION) hb_xgrab(sizeof(OCI_ORASESSION));
   POCI_ORASESSION session = (POCI_ORASESSION)hb_xgrabz(sizeof(OCI_ORASESSION));
@@ -204,7 +204,7 @@ HB_FUNC(SR_SQLO2_CONNECT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO2_DBMSNAME)
+HB_FUNC_STATIC(SR_SQLO2_DBMSNAME)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -217,7 +217,7 @@ HB_FUNC(SR_SQLO2_DBMSNAME)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO2_DISCONNECT)
+HB_FUNC_STATIC(SR_SQLO2_DISCONNECT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -238,7 +238,7 @@ HB_FUNC(SR_SQLO2_DISCONNECT)
   }
 }
 
-HB_FUNC(SR_SQLO2_GETERRORDESCR)
+HB_FUNC_STATIC(SR_SQLO2_GETERRORDESCR)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -249,7 +249,7 @@ HB_FUNC(SR_SQLO2_GETERRORDESCR)
   }
 }
 
-HB_FUNC(SR_SQLO2_GETERRORCODE)
+HB_FUNC_STATIC(SR_SQLO2_GETERRORCODE)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -260,7 +260,7 @@ HB_FUNC(SR_SQLO2_GETERRORCODE)
   }
 }
 
-HB_FUNC(SR_SQLO2_NUMCOLS)
+HB_FUNC_STATIC(SR_SQLO2_NUMCOLS)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -271,7 +271,7 @@ HB_FUNC(SR_SQLO2_NUMCOLS)
   }
 }
 
-HB_FUNC(SR_SQLO2_COMMIT)
+HB_FUNC_STATIC(SR_SQLO2_COMMIT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -290,7 +290,7 @@ HB_FUNC(SR_SQLO2_COMMIT)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SQLO2_ROLLBACK)
+HB_FUNC_STATIC(SR_SQLO2_ROLLBACK)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -306,7 +306,7 @@ HB_FUNC(SR_SQLO2_ROLLBACK)
   }
 }
 
-HB_FUNC(SR_SQLO2_EXECDIRECT)
+HB_FUNC_STATIC(SR_SQLO2_EXECDIRECT)
 {
   GET_OCI_SESSION(session, 1);
   const char *stm = hb_parcx(2);
@@ -326,7 +326,7 @@ HB_FUNC(SR_SQLO2_EXECDIRECT)
   }
 }
 
-HB_FUNC(SR_SQLO2_EXECUTE)
+HB_FUNC_STATIC(SR_SQLO2_EXECUTE)
 {
   GET_OCI_SESSION(session, 1);
   HB_BOOL lStmt = HB_ISLOG(3) ? hb_parl(3) : HB_FALSE;
@@ -365,7 +365,7 @@ HB_FUNC(SR_SQLO2_EXECUTE)
   }
 }
 
-HB_FUNC(SR_ORACLEINBINDPARAM2)
+HB_FUNC_STATIC(SR_ORACLEINBINDPARAM2)
 {
 
   GET_OCI_SESSION(Stmt, 1);
@@ -489,7 +489,7 @@ HB_FUNC(SR_ORACLEINBINDPARAM2)
 
 ///// getbinddata
 
-HB_FUNC(SR_ORACLEGETBINDDATA2)
+HB_FUNC_STATIC(SR_ORACLEGETBINDDATA2) // TODO: not used in SQLRDD source code
 {
 
   GET_OCI_SESSION(p, 1);
@@ -518,7 +518,7 @@ HB_FUNC(SR_ORACLEGETBINDDATA2)
 
       long lDate;
       long lTime;
-      
+
       HB_SYMBOL_UNUSED(lDate);
       HB_SYMBOL_UNUSED(lTime);
 
@@ -537,7 +537,7 @@ HB_FUNC(SR_ORACLEGETBINDDATA2)
   hb_retc("");
 }
 
-HB_FUNC(SR_ORACLEEXECDIR2)
+HB_FUNC_STATIC(SR_ORACLEEXECDIR2) // TODO: not used in SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   int ret = SQL_ERROR;
@@ -556,7 +556,7 @@ HB_FUNC(SR_ORACLEEXECDIR2)
   hb_retni(ret);
 }
 
-HB_FUNC(SR_ORACLEPREPARE2)
+HB_FUNC_STATIC(SR_ORACLEPREPARE2)
 {
   GET_OCI_SESSION(session, 1);
   const char *szSql = hb_parc(2);
@@ -581,7 +581,7 @@ HB_FUNC(SR_ORACLEPREPARE2)
   hb_retni(-1);
 }
 
-HB_FUNC(SR_ORACLEBINDALLOC2)
+HB_FUNC_STATIC(SR_ORACLEBINDALLOC2)
 {
   GET_OCI_SESSION(session, 1);
   int iBind;
@@ -594,7 +594,7 @@ HB_FUNC(SR_ORACLEBINDALLOC2)
   }
   hb_retni(1);
 }
-void OracleFreeLink2(int num_recs, POCI_ORASESSION p)
+static void OracleFreeLink2(int num_recs, POCI_ORASESSION p)
 {
   int i;
 
@@ -618,7 +618,7 @@ void OracleFreeLink2(int num_recs, POCI_ORASESSION p)
   }
 }
 
-HB_FUNC(SR_ORACLEFREEBIND2)
+HB_FUNC_STATIC(SR_ORACLEFREEBIND2)
 {
   GET_OCI_SESSION(Stmt, 1);
   if (Stmt->pLink) {
@@ -627,7 +627,7 @@ HB_FUNC(SR_ORACLEFREEBIND2)
   }
 }
 
-void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, HB_ULONG ulSystemID,
+static void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly, HB_ULONG ulSystemID,
                     HB_BOOL bTranslate, OCI_Resultset *rs)
 {
   HB_LONG lType;
@@ -806,7 +806,7 @@ void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryO
 //-----------------------------------------------------------------------------//
 
 #if 0
-HB_FUNC(SQLO2_LINE)
+HB_FUNC(SQLO2_LINE) // TODO: not used in SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   const char **line;
@@ -834,7 +834,7 @@ HB_FUNC(SQLO2_LINE)
 }
 #endif
 
-HB_FUNC(SR_SQLO2_LINEPROCESSED)
+HB_FUNC_STATIC(SR_SQLO2_LINEPROCESSED)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -869,7 +869,7 @@ HB_FUNC(SR_SQLO2_LINEPROCESSED)
   }
 }
 
-int SQLO2_sqldtype(int type)
+static int SQLO2_sqldtype(int type)
 {
   int isqltype;
 
@@ -921,7 +921,7 @@ int SQLO2_sqldtype(int type)
   return isqltype;
 }
 
-HB_FUNC(SR_SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec, @nNull )
+HB_FUNC_STATIC(SR_SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @nDec, @nNull )
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1003,7 +1003,7 @@ HB_FUNC(SR_SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nColSize, @
   }
 }
 
-HB_FUNC(SR_SQLO2_FETCH)
+HB_FUNC_STATIC(SR_SQLO2_FETCH)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1023,7 +1023,7 @@ HB_FUNC(SR_SQLO2_FETCH)
   }
 }
 
-HB_FUNC(SR_SQLO2_CLOSESTMT)
+HB_FUNC_STATIC(SR_SQLO2_CLOSESTMT)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1043,7 +1043,7 @@ HB_FUNC(SR_SQLO2_CLOSESTMT)
   hb_retni(SQL_SUCCESS);
 }
 
-HB_FUNC(SR_ORACLEWRITEMEMO2)
+HB_FUNC_STATIC(SR_ORACLEWRITEMEMO2)
 {
   GET_OCI_SESSION(session, 1);
   const char *sTable = hb_parc(2);
@@ -1113,7 +1113,7 @@ HB_FUNC(SR_ORACLEWRITEMEMO2)
   }
 }
 
-HB_FUNC(SR_ORACLE_PROCCURSOR2)
+HB_FUNC_STATIC(SR_ORACLE_PROCCURSOR2)
 {
   GET_OCI_SESSION(session, 1);
   //  SQLO2_stmt_handle_t sth = SQLO2_STH_INIT;
@@ -1160,7 +1160,7 @@ HB_FUNC(SR_ORACLE_PROCCURSOR2)
   //
 }
 
-HB_FUNC(SR_SQLO2_ORACLESETLOBPREFETCH)
+HB_FUNC_STATIC(SR_SQLO2_ORACLESETLOBPREFETCH) // TODO: not used in SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1171,7 +1171,7 @@ HB_FUNC(SR_SQLO2_ORACLESETLOBPREFETCH)
   }
 }
 
-HB_FUNC(SR_SQLO2_SETSTATEMENTCACHESIZE)
+HB_FUNC_STATIC(SR_SQLO2_SETSTATEMENTCACHESIZE)
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1182,7 +1182,7 @@ HB_FUNC(SR_SQLO2_SETSTATEMENTCACHESIZE)
   }
 }
 
-HB_FUNC(SR_SQLO2_GETSTATEMENTCACHESIZE)
+HB_FUNC_STATIC(SR_SQLO2_GETSTATEMENTCACHESIZE) // TODO: not used in SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
 
@@ -1193,7 +1193,7 @@ HB_FUNC(SR_SQLO2_GETSTATEMENTCACHESIZE)
   }
 }
 
-HB_FUNC(SR_GETORAHANDLE2)
+HB_FUNC_STATIC(SR_GETORAHANDLE2) // TODO: not used in SQLRDD source code
 {
   GET_OCI_SESSION(p, 1);
 
@@ -1202,7 +1202,7 @@ HB_FUNC(SR_GETORAHANDLE2)
   }
 }
 
-HB_FUNC(SR_SETORAHANDLE2)
+HB_FUNC_STATIC(SR_SETORAHANDLE2) // TODO: not used in SQLRDD source code
 {
   GET_OCI_SESSION(p, 1);
 
@@ -1211,7 +1211,7 @@ HB_FUNC(SR_SETORAHANDLE2)
   }
 }
 
-OCI_Connection *GetConnection(OCI_ORASESSION *p)
+static OCI_Connection *GetConnection(OCI_ORASESSION *p) // TODO: not used in SQLRDD source code
 {
   return p->cn;
 }
