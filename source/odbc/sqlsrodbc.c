@@ -41,6 +41,8 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#pragma BEGINDUMP
+
 #if defined(_MSC_VER)
 #pragma warning(disable : 4201)
 #endif
@@ -200,7 +202,7 @@ HB_FUNC(SR_UNINSTALLDSN)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ALLOCEN)
+HB_FUNC_STATIC(SR_ALLOCEN)
 {
   SQLHENV hEnv;
 #if ODBCVER >= 0x0300
@@ -216,7 +218,7 @@ HB_FUNC(SR_ALLOCEN)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ALLOCCO)
+HB_FUNC_STATIC(SR_ALLOCCO)
 {
   SQLHDBC hDbc;
   RETCODE ret = SQLAllocConnect(SR_PAR_SQLHENV(1), &hDbc);
@@ -227,7 +229,7 @@ HB_FUNC(SR_ALLOCCO)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_DRIVERC)
+HB_FUNC_STATIC(SR_DRIVERC)
 {
   HB_BYTE bBuffer1[1024] = {0};
   SQLSMALLINT wLen;
@@ -247,28 +249,28 @@ HB_FUNC(SR_DRIVERC)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_DISCONN)
+HB_FUNC_STATIC(SR_DISCONN)
 {
   hb_retni(SQLDisconnect(SR_PAR_SQLHDBC(1)));
 }
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_FREECON)
+HB_FUNC_STATIC(SR_FREECON)
 {
   hb_retni(SQLFreeConnect(SR_PAR_SQLHDBC(1)));
 }
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_FREEENV)
+HB_FUNC_STATIC(SR_FREEENV)
 {
   hb_retni(SQLFreeEnv(SR_PAR_SQLHENV(1)));
 }
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ALLOCST)
+HB_FUNC_STATIC(SR_ALLOCST)
 {
   SQLHSTMT hStmt;
   SQLHDBC hdbc = SR_PAR_SQLHDBC(1);
@@ -285,7 +287,7 @@ HB_FUNC(SR_ALLOCST)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_FREESTM)
+HB_FUNC_STATIC(SR_FREESTM)
 {
   SQLHSTMT p = SR_PAR_SQLHSTMT(1);
 
@@ -305,14 +307,14 @@ HB_FUNC(SR_FREESTM)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_EXECDIR)
+HB_FUNC_STATIC(SR_EXECDIR)
 {
   hb_retni(SQLExecDirect(SR_PAR_SQLHSTMT(1), (SQLCHAR *)hb_parcx(2), (SQLINTEGER)hb_parclen(2)));
 }
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_FETCH)
+HB_FUNC_STATIC(SR_FETCH)
 {
   SQLHSTMT hstmt = SR_PAR_SQLHSTMT(1);
   RETCODE wResult;
@@ -322,7 +324,7 @@ HB_FUNC(SR_FETCH)
 
 //-----------------------------------------------------------------------------//
 
-void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly,
+static void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly,
                   HB_ULONG ulSystemID, HB_BOOL bTranslate)
 {
   HB_LONG lType;
@@ -583,7 +585,7 @@ void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLe
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ODBCLINEPROCESSED)
+HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
 {
   // HB_LONG lLen, lInitBuff, lIndex;
   HB_LONG lLen;
@@ -639,7 +641,7 @@ HB_FUNC(SR_ODBCLINEPROCESSED)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTranslate, nCurrentFetch, aInfo,
+HB_FUNC_STATIC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTranslate, nCurrentFetch, aInfo,
                          // nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos)
 {
   // HB_LONG lLen, lLenOut, lInitBuff, lIndex;
@@ -784,7 +786,7 @@ HB_FUNC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTra
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_NUMRES)
+HB_FUNC_STATIC(SR_NUMRES)
 {
   SQLSMALLINT nCols;
   SQLHSTMT hstmt = SR_PAR_SQLHSTMT(1);
@@ -859,7 +861,7 @@ void SR_odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql,
 //-----------------------------------------------------------------------------//
 
 // SR_DESCRIB(p1, p2, @p3, p4, @p5, @p6, @p7, @p8, @p9, p10) --> numeric
-HB_FUNC(SR_DESCRIB)
+HB_FUNC_STATIC(SR_DESCRIB)
 {
   SQLSMALLINT lLen = SR_PAR_SQLSMALLINT(4);
   SQLSMALLINT wBufLen = SR_PAR_SQLSMALLINT(5);
@@ -904,7 +906,8 @@ HB_FUNC(SR_DESCRIB)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_COLATTRIBUTE)
+#if 0
+HB_FUNC_STATIC(SR_COLATTRIBUTE)
 {
   SQLSMALLINT lLen = SR_PAR_SQLSMALLINT(5);
   char *bBuffer = (char *)hb_xgrab(lLen);
@@ -923,10 +926,11 @@ HB_FUNC(SR_COLATTRIBUTE)
   hb_xfree((PTR)bBuffer);
   hb_retni(wResult);
 }
+#endif
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ERROR)
+HB_FUNC_STATIC(SR_ERROR)
 {
   SQLTCHAR bBuffer1[256] = {0}, szErrorMsg[256] = {0};
   SQLINTEGER lError;
@@ -943,7 +947,7 @@ HB_FUNC(SR_ERROR)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_GETINFO)
+HB_FUNC_STATIC(SR_GETINFO)
 {
   char bBuffer[512] = {0};
   SQLSMALLINT wLen;
@@ -955,7 +959,7 @@ HB_FUNC(SR_GETINFO)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SETCONNECTATTR)
+HB_FUNC_STATIC(SR_SETCONNECTATTR)
 {
   // hb_retnl((HB_LONG) SQLSetConnectAttr((SQLHDBC) hb_parptr(1), (UWORD) hb_parnl(2),
   //    (HB_ULONG) HB_ISCHAR(3) ? (SQLPOINTER) hb_parcx(3) : (SQLPOINTER) hb_parnl(3), hb_parni(4)));
@@ -971,7 +975,7 @@ HB_FUNC(SR_SETCONNECTATTR)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SETCONNECTOPTION)
+HB_FUNC_STATIC(SR_SETCONNECTOPTION)
 {
 #if ODBCVER >= 0x0300
   hb_retni(SQLSetConnectAttr(SR_PAR_SQLHDBC(1), SR_PAR_SQLINTEGER(2),
@@ -985,7 +989,7 @@ HB_FUNC(SR_SETCONNECTOPTION)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_SETSTMTOPTION)
+HB_FUNC_STATIC(SR_SETSTMTOPTION)
 {
 #if ODBCVER >= 0x0300
   hb_retni(SQLSetStmtAttr(SR_PAR_SQLHSTMT(1), SR_PAR_SQLINTEGER(2),
@@ -999,7 +1003,7 @@ HB_FUNC(SR_SETSTMTOPTION)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_GETCONNECTOPTION)
+HB_FUNC_STATIC(SR_GETCONNECTOPTION)
 {
 #if ODBCVER >= 0x0300
   SQLPOINTER buffer[512];
@@ -1020,21 +1024,21 @@ HB_FUNC(SR_GETCONNECTOPTION)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_COMMIT) // hEnv, hDbc
+HB_FUNC_STATIC(SR_COMMIT) // hEnv, hDbc
 {
   hb_retni(SQLTransact(SR_PAR_SQLHENV(1), SR_PAR_SQLHDBC(2), SQL_COMMIT));
 }
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ROLLBACK) // hEnv, hDbc
+HB_FUNC_STATIC(SR_ROLLBACK) // hEnv, hDbc
 {
   hb_retni(SQLTransact(SR_PAR_SQLHENV(1), SR_PAR_SQLHDBC(2), SQL_ROLLBACK));
 }
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_MORERESULTS) // hEnv, hDbc
+HB_FUNC_STATIC(SR_MORERESULTS) // hEnv, hDbc
 {
   hb_retni(SQLMoreResults(SR_PAR_SQLHSTMT(1)));
 }
@@ -1062,7 +1066,7 @@ void SR_odbcErrorDiag(SQLHSTMT hStmt, const char *routine, const char *szSql, in
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_TABLES)
+HB_FUNC_STATIC(SR_TABLES)
 {
   RETCODE ret;
   ret = SQLTables(SR_PAR_SQLHSTMT(1), SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS,
@@ -1072,7 +1076,7 @@ HB_FUNC(SR_TABLES)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_ODBCWRITEMEMO)
+HB_FUNC_STATIC(SR_ODBCWRITEMEMO)
 {
   SQLHDBC hDbc;
   SQLHSTMT hStmt;
@@ -1269,7 +1273,7 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
 }
 
 #if defined(HB_OS_WIN_32) || defined(HB_OS_WIN)
-HB_FUNC(SR_BINDBYVALUE)
+HB_FUNC(SR_BINDBYVALUE) // TODO: not used in SQLRDD source code
 {
   hb_retni(MessageBox(0, hb_parcx(1), hb_parcx(2), hb_parni(3)));
 }
@@ -1277,3 +1281,5 @@ HB_FUNC(SR_BINDBYVALUE)
 #endif
 
 //-----------------------------------------------------------------------------//
+
+#pragma ENDDUMP

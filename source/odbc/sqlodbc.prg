@@ -590,3 +590,7 @@ METHOD SR_ODBC:WriteMemo(cFileName, nRecno, cRecnoName, aColumnsAndData)
 RETURN SR_ODBCWriteMemo(::hDbc, cFileName, nRecno, cRecnoName, aColumnsAndData)
 
 //-------------------------------------------------------------------------------------------------------------------//
+
+#include "sqlsrodbc.c"
+
+//-------------------------------------------------------------------------------------------------------------------//

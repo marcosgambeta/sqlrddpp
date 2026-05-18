@@ -275,8 +275,8 @@ typedef SQLEXAREA *LPSQLEXAREA;
 //int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact); NOTE: changed to static
 void SR_odbcErrorDiag(HSTMT hStmt, const char *routine, const char *szSql, int line);
 void SR_odbcErrorDiagRTE(HSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res, int line, const char *module);
-void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly,
-                  HB_ULONG ulSystemID, HB_BOOL bTranslate);
+//void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBuff, HB_BOOL bQueryOnly,
+//                  HB_ULONG ulSystemID, HB_BOOL bTranslate); NOTE: changed to static
 char *SR_QuoteTrimEscapeString(char *FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim, HB_ULONG *iSizeOut);
 char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
                  HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL *bNullArgument);

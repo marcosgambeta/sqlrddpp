@@ -62,7 +62,7 @@ source/mysql/sqlmy.prg
 
 # ODBC
 source/odbc/sqlodbc.prg
-source/odbc/sqlsrodbc.c
+#source/odbc/sqlsrodbc.c
 
 # Oracle
 source/oracle/sqloracle.prg
