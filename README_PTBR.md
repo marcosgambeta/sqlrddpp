@@ -162,3 +162,15 @@ https://github.com/marcosgambeta/harbourpp-v1
 SQLRDD++ v2  
 https://github.com/marcosgambeta/sqlrddpp-v2  
 Versão em C++ para Harbour e Harbour++
+
+## Donativos
+
+Caso deseje apoiar o desenvolvimento deste projeto através de donativos,
+basta utilizar a chave PIX abaixo:
+
+![Chave PIX](chavepix.png)
+
+A frequência e o valor dos donativos ficam à critério de cada desenvolvedor. Seu apoio
+permitirá investir mais tempo na manutenção e desenvolvimento deste projeto.
+
+
