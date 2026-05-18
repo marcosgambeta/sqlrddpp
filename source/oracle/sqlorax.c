@@ -652,6 +652,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenB
 
 //-----------------------------------------------------------------------------//
 
+#if 0
 HB_FUNC_STATIC(SR_SQLO_LINE)
 {
   GET_OCI_SESSION(session, 1);
@@ -678,6 +679,7 @@ HB_FUNC_STATIC(SR_SQLO_LINE)
   hb_itemReturnForward(ret);
   hb_itemRelease(ret);
 }
+#endif
 
 //-----------------------------------------------------------------------------//
 
@@ -1076,6 +1078,8 @@ HB_FUNC_STATIC(SR_ORACLE_PROCCURSOR)
   // sqlo_close(session->stmtParamRes);
   //
 }
+
+#if 0
 HB_FUNC_STATIC(SR_ORACLE_SAVE_HANDLE_ST) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
@@ -1083,7 +1087,9 @@ HB_FUNC_STATIC(SR_ORACLE_SAVE_HANDLE_ST) // TODO: not used in the SQLRDD source 
     hb_retptr((void *)session->stmtParam);
   }
 }
+#endif
 
+#if 0
 HB_FUNC_STATIC(SR_ORACLE_CLOSE_FCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
@@ -1103,7 +1109,9 @@ HB_FUNC_STATIC(SR_ORACLE_CLOSE_FCURSOR) // TODO: not used in the SQLRDD source c
 
   hb_retni(SQLO_SUCCESS);
 }
+#endif
 
+#if 0
 HB_FUNC_STATIC(SR_ORACLE_BIND_BY_NAME) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
@@ -1111,7 +1119,9 @@ HB_FUNC_STATIC(SR_ORACLE_BIND_BY_NAME) // TODO: not used in the SQLRDD source co
   hb_retni(sqlo_bind_by_name(session->stmtParam, ":c1", SQLOT_FLT, &session->pLink[iPos].dValue,
                              sizeof(session->pLink[iPos].dValue), 0, 0));
 }
+#endif
 
+#if 0
 HB_FUNC_STATIC(SR_ORACLEEXECDIRCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
@@ -1128,6 +1138,7 @@ HB_FUNC_STATIC(SR_ORACLEEXECDIRCURSOR) // TODO: not used in the SQLRDD source co
     hb_retni(ret);
   }
 }
+#endif
 
 // Prepare the necessary data for Binded Parameters
 // usage
@@ -1148,6 +1159,7 @@ HB_FUNC(SR_ORACLEBINDALLOC)
   hb_retni(1);
 }
 
+#if 0
 HB_FUNC_STATIC(SR_ORACLE_BINDCURSOR)
 {
   GET_OCI_SESSION(session, 1);
@@ -1178,7 +1190,9 @@ HB_FUNC_STATIC(SR_ORACLE_BINDCURSOR)
   }
   hb_retni(ret);
 }
+#endif
 
+#if 0
 HB_FUNC_STATIC(SR_ORACLE_EXECCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
@@ -1200,6 +1214,7 @@ HB_FUNC_STATIC(SR_ORACLE_EXECCURSOR) // TODO: not used in the SQLRDD source code
 
   hb_retni(ret);
 }
+#endif
 
 // NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_CLOSECURSOR)
@@ -1228,6 +1243,7 @@ HB_FUNC_STATIC(SR_GETAFFECTROWS)
   }
 }
 
+#if 0
 HB_FUNC_STATIC(SR_GETORAHANDLE) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(p, 1);
@@ -1235,7 +1251,9 @@ HB_FUNC_STATIC(SR_GETORAHANDLE) // TODO: not used in the SQLRDD source code
     hb_retni(p->stmt);
   }
 }
+#endif
 
+#if 0
 HB_FUNC_STATIC(SR_SETORAHANDLE) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(p, 1);
@@ -1243,5 +1261,6 @@ HB_FUNC_STATIC(SR_SETORAHANDLE) // TODO: not used in the SQLRDD source code
     p->stmt = hb_parni(2);
   }
 }
+#endif
 
 #pragma ENDDUMP
