@@ -42,6 +42,8 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#pragma BEGINDUMP
+
 // this is workaround for problems with xHarbour core header files which
 // define _WINSOCKAPI_ what effectively breaks compilation of code using
 // sockets. It means that we have to include windows.h before xHarbour
@@ -90,7 +92,7 @@ typedef struct _MYSQL_SESSION
 
 typedef MYSQL_SESSION *PMYSQL_SESSION;
 
-HB_FUNC(SR_MYSCONNECT)
+HB_FUNC_STATIC(SR_MYSCONNECT)
 {
   // PMYSQL_SESSION session = (PMYSQL_SESSION) hb_xgrab(sizeof(MYSQL_SESSION));
   PMYSQL_SESSION session = (PMYSQL_SESSION)hb_xgrabz(sizeof(MYSQL_SESSION));
@@ -125,7 +127,7 @@ HB_FUNC(SR_MYSCONNECT)
   }
 }
 
-HB_FUNC(SR_MYSFINISH)
+HB_FUNC_STATIC(SR_MYSFINISH)
 {
   GET_MYSQL_SESSION(session, 1);
   assert(session != SR_NULLPTR);
@@ -142,7 +144,7 @@ HB_FUNC(SR_MYSFINISH)
   hb_ret();
 }
 
-HB_FUNC(SR_MYSGETCONNID)
+HB_FUNC_STATIC(SR_MYSGETCONNID)
 {
   GET_MYSQL_SESSION(session, 1);
 
@@ -154,7 +156,7 @@ HB_FUNC(SR_MYSGETCONNID)
   hb_retnl(ulThreadID);
 }
 
-HB_FUNC(SR_MYSKILLCONNID)
+HB_FUNC_STATIC(SR_MYSKILLCONNID)
 {
   GET_MYSQL_SESSION(session, 1);
   HB_ULONG ulThreadID = (HB_ULONG)hb_itemGetNL(hb_param(2, HB_IT_LONG));
@@ -164,7 +166,7 @@ HB_FUNC(SR_MYSKILLCONNID)
   hb_retni(mysql_kill(session->dbh, ulThreadID));
 }
 
-HB_FUNC(SR_MYSEXEC)
+HB_FUNC_STATIC(SR_MYSEXEC)
 {
   // SR_TraceLog(SR_NULLPTR, "mysqlExec : %s\n", hb_parc(2));
   GET_MYSQL_SESSION(session, 1);
@@ -187,7 +189,7 @@ HB_FUNC(SR_MYSEXEC)
 }
 
 // MYSFetch(ConnHandle, ResultSet) => nStatus
-HB_FUNC(SR_MYSFETCH)
+HB_FUNC_STATIC(SR_MYSFETCH)
 {
   GET_MYSQL_SESSION(session, 1);
   int rows;
@@ -391,7 +393,7 @@ void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBu
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC(SR_MYSLINEPROCESSED)
+HB_FUNC_STATIC(SR_MYSLINEPROCESSED)
 {
   GET_MYSQL_SESSION(session, 1);
   int col, cols;
@@ -444,7 +446,7 @@ HB_FUNC(SR_MYSLINEPROCESSED)
   }
 }
 
-HB_FUNC(SR_MYSSTATUS)
+HB_FUNC_STATIC(SR_MYSSTATUS)
 {
   int ret;
   GET_MYSQL_SESSION(session, 1);
@@ -462,7 +464,7 @@ HB_FUNC(SR_MYSSTATUS)
   hb_retni(ret);
 }
 
-HB_FUNC(SR_MYSRESULTSTATUS)
+HB_FUNC_STATIC(SR_MYSRESULTSTATUS)
 {
   HB_UINT ret;
   GET_MYSQL_SESSION(session, 1);
@@ -489,7 +491,7 @@ HB_FUNC(SR_MYSRESULTSTATUS)
   hb_retnl((HB_LONG)ret);
 }
 
-HB_FUNC(SR_MYSRESSTATUS)
+HB_FUNC_STATIC(SR_MYSRESSTATUS)
 {
   GET_MYSQL_SESSION(session, 1);
 
@@ -498,7 +500,7 @@ HB_FUNC(SR_MYSRESSTATUS)
   hb_retc((char *)mysql_error(session->dbh));
 }
 
-HB_FUNC(SR_MYSCLEAR)
+HB_FUNC_STATIC(SR_MYSCLEAR)
 {
   GET_MYSQL_SESSION(session, 1);
 
@@ -512,7 +514,7 @@ HB_FUNC(SR_MYSCLEAR)
   }
 }
 
-HB_FUNC(SR_MYSCOLS)
+HB_FUNC_STATIC(SR_MYSCOLS)
 {
   GET_MYSQL_SESSION(session, 1);
 
@@ -522,7 +524,7 @@ HB_FUNC(SR_MYSCOLS)
 }
 
 // MYSVERS(hConnection) => nVersion
-HB_FUNC(SR_MYSVERS)
+HB_FUNC_STATIC(SR_MYSVERS)
 {
   GET_MYSQL_SESSION(session, 1);
   assert(session != SR_NULLPTR);
@@ -530,7 +532,7 @@ HB_FUNC(SR_MYSVERS)
   hb_retnl((long)mysql_get_server_version(session->dbh));
 }
 
-HB_FUNC(SR_MYSERRMSG)
+HB_FUNC_STATIC(SR_MYSERRMSG)
 {
   GET_MYSQL_SESSION(session, 1);
   assert(session != SR_NULLPTR);
@@ -538,7 +540,7 @@ HB_FUNC(SR_MYSERRMSG)
   hb_retc((char *)mysql_error(session->dbh));
 }
 
-HB_FUNC(SR_MYSCOMMIT)
+HB_FUNC_STATIC(SR_MYSCOMMIT)
 {
   GET_MYSQL_SESSION(session, 1);
 
@@ -552,7 +554,7 @@ HB_FUNC(SR_MYSCOMMIT)
   }
 }
 
-HB_FUNC(SR_MYSROLLBACK)
+HB_FUNC_STATIC(SR_MYSROLLBACK)
 {
   GET_MYSQL_SESSION(session, 1);
 
@@ -566,7 +568,7 @@ HB_FUNC(SR_MYSROLLBACK)
   }
 }
 
-HB_FUNC(SR_MYSQUERYATTR)
+HB_FUNC_STATIC(SR_MYSQUERYATTR)
 {
   int row, rows, type;
   PHB_ITEM ret, temp, atemp;
@@ -715,7 +717,8 @@ HB_FUNC(SR_MYSQUERYATTR)
   hb_itemRelease(ret);
 }
 
-HB_FUNC(SR_MYSTABLEATTR)
+#if 0
+HB_FUNC_STATIC(SR_MYSTABLEATTR)
 {
   char attcmm[256] = {0};
   int row, rows, type;
@@ -881,8 +884,9 @@ HB_FUNC(SR_MYSTABLEATTR)
   mysql_free_result(session->stmt);
   session->stmt = SR_NULLPTR;
 }
+#endif
 
-HB_FUNC(SR_MYSAFFECTEDROWS)
+HB_FUNC_STATIC(SR_MYSAFFECTEDROWS)
 {
   GET_MYSQL_SESSION(session, 1);
 
@@ -890,3 +894,5 @@ HB_FUNC(SR_MYSAFFECTEDROWS)
 }
 
 //-----------------------------------------------------------------------------//
+
+#pragma ENDDUMP
