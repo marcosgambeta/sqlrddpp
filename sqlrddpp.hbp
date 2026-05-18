@@ -66,8 +66,8 @@ source/odbc/sr_odbc.prg
 #source/odbc/sqlsrodbc.c
 
 # Oracle
-source/oracle/sqloracle.prg
-source/oracle/sqloracle2.prg
+source/oracle/sr_oracle.prg
+source/oracle/sr_oracle2.prg
 source/oracle/sqlora.c
 #source/oracle/sqlora2.c
 #source/oracle/sqlorax.c
