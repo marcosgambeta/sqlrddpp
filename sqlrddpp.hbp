@@ -45,13 +45,13 @@ source/xthrow.c
 
 # Firebird
 source/firebird/sr_firebird.prg
+#source/firebird/sr_firebird_bind.c
 source/firebird/sr_firebird3.prg
+#source/firebird/sr_firebird3_bind.c
 source/firebird/sr_firebird4.prg
+#source/firebird/sr_firebird4_bind.c
 source/firebird/sr_firebird5.prg
-#source/firebird/firebird.c
-#source/firebird/firebird3.c
-#source/firebird/firebird4.c
-#source/firebird/firebird5.c
+#source/firebird/sr_firebird5_bind.c
 
 # MariaDB
 source/mariadb/sr_maria.prg
