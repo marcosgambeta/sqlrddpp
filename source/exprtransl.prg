@@ -270,6 +270,68 @@ METHOD SR_ExpressionTranslator:Translate(oExpression, x)
    LOCAL resultFooter := ""
    LOCAL aFilters := {}
 
+#ifdef __XHARBOUR__
+   TRY
+      result := IIf(PCount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
+
+      IF oExpression:isKindOf("SR_ConditionBase")
+         IF Len(::aRelations) > 0
+            resultHeader := "exists (select 0 from " + ::_oDefaultContext:cFileName + " " + ::cAs + " " + "A"
+
+            // we have to look for the filter aplying on the workarea in relation. This action could eventually modify ::aRelations
+            FOR i := 1 TO Len(::aRelations)
+               oRelation := ::aRelations[i]
+               cFilterCondition := oRelation:oWorkArea2:cFilterExpression
+               IF cFilterCondition != NIL .AND. !cFilterCondition == ""
+                  oParser := SR_ConditionParser():new(oRelation:oWorkArea2:cAlias)
+                  oFilterCondition := oParser:Parse(cFilterCondition)
+                  AAdd(aFilters, ::InternalTranslate(oFilterCondition))
+               ENDIF
+               oRelation:cSQLJoin := ::TranslateRelationExpression(oRelation)
+            NEXT i
+
+            cOperatorAnd := " " + ::GetLogicalOperatorSymbol("and") + " "
+
+            IF ::lFetchJoin
+               addedAliases := {Lower(::_oDefaultContext:cAlias)}
+               aInitRelations := AClone(::aRelations)
+               aSortedRelations := {}
+               DO WHILE Len(aInitRelations) > 0
+                  lProgress := .F.
+                  FOR i := 1 TO Len(aInitRelations)
+                     IF Len(SR_aWhere(aInitRelations[i]:aDependingContexts, {|x|!Lower(x) $ addedAliases})) == 1
+                        AAdd(addedAliases, Lower(aInitRelations[i]:oWorkArea2:cAlias))
+                        AAdd(aSortedRelations, aInitRelations[i])
+                        hb_ADel(aInitRelations, i, .T.)
+                        lProgress := .T.
+                        i--
+                     ENDIF
+                  NEXT i
+                  if !lProgress
+                     _SR_Throw(ErrorNew(, , , , "Circular dependency in the relations. Pass the parameter lFetchJoin to .F. to avoid this problem."))
+                  ENDIF
+               ENDDO
+
+               FOR EACH oRelation IN aSortedRelations
+                  resultHeader += " inner join " + oRelation:oWorkArea2:cFileName + " " + ::cAs + " " + Upper(oRelation:oWorkArea2:cAlias) + " on " + oRelation:cSQLJoin
+               NEXT
+            ELSE
+               FOR EACH oRelation IN ::aRelations
+                  resultHeader += ", " + oRelation:oWorkArea2:cFileName + " " + ::cAs + " " + Upper(oRelation:oWorkArea2:cAlias)
+                  resultFooter += cOperatorAnd + oRelation:cSQLJoin
+               NEXT
+            ENDIF
+            resultFooter += IIf(Len(aFilters) > 0, cOperatorAnd + SR_cJoin(aFilters, cOperatorAnd), "") + ")"
+            result := resultHeader + " where " + result + resultFooter
+         ENDIF
+      ENDIF
+   CATCH oErr
+      #ifdef DEBUG
+         throw(oErr)
+      #endif
+      result := NIL
+   END
+#else
    BEGIN SEQUENCE WITH __BreakBlock()
       result := IIf(PCount() == 2, ::InternalTranslate(oExpression, @x), ::InternalTranslate(oExpression))
 
@@ -330,6 +392,7 @@ METHOD SR_ExpressionTranslator:Translate(oExpression, x)
       #endif
       result := NIL
    END SEQUENCE
+#endif
 
    HB_SYMBOL_UNUSED(oErr)
 
@@ -444,6 +507,35 @@ METHOD SR_ExpressionTranslator:TranslateValueExpression(oValueExpression)
    LOCAL result
    LOCAL aRelations
 
+#ifdef __XHARBOUR__
+   DO CASE
+   CASE oValueExpression:ValueType == "field"
+      IF Upper(::_oDefaultContext:cAlias) != oValueExpression:cContext
+         aRelations := SR_RelationManager():new():GetRelations(::_oDefaultContext:cAlias, oValueExpression:cContext)
+         IF Len(aRelations) > 1
+            throw(ErrorNew(, , , , "There is several relations between " + ::_oDefaultContext:cAlias + " and " + oValueExpression:cContext + ". Translation impossible."))
+         ELSEIF Len(aRelations) == 1
+            ::AaddRelations(aRelations)
+         ENDIF
+      ENDIF
+      result := ::FormatField(oValueExpression:oWorkArea, oValueExpression:Value)
+   CASE oValueExpression:ValueType == "variable"
+      IF !::lFixVariables
+         throw(ErrorNew(, , , , "The variable " + oValueExpression:Value + " isn't SQL valid"))
+      ENDIF
+   CASE oValueExpression:ValueType == "value"
+      DO CASE
+      CASE Upper(oValueExpression:Value) == ".T."
+         result := ::cTrue
+      CASE Upper(oValueExpression:Value) == ".F."
+         result := ::cFalse
+      CASE Upper(oValueExpression:Value) == "NIL"
+         result := ::cNull
+      OTHERWISE
+         result := oValueExpression:Value
+      ENDCASE
+   ENDCASE
+#else
    SWITCH oValueExpression:ValueType
    CASE "field"
       IF Upper(::_oDefaultContext:cAlias) != oValueExpression:cContext
@@ -476,6 +568,7 @@ METHOD SR_ExpressionTranslator:TranslateValueExpression(oValueExpression)
          result := oValueExpression:Value
       ENDSWITCH
    ENDSWITCH
+#endif
 
 RETURN result
 
@@ -638,6 +731,71 @@ METHOD SR_MSSQLExpressionTranslator:TranslateFunctionExpression(oFunctionExpress
    // ::CheckParams(oFunctionExpression)
    aParamExprs := SR_xSelect(oFunctionExpression:aParameters, {|x|x:oExpression})
 
+#ifdef __XHARBOUR__
+   DO CASE
+   CASE cFunctionName == "substr"
+      thirdParam := IIf(Len(aParamExprs) == 3, ::InternalTranslate(aParamExprs[3]), "999999")
+      RETURN "substring(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + "," + thirdParam + ")"
+   CASE cFunctionName == "cstr"
+      RETURN "convert(char, " + ::InternalTranslate(aParamExprs[1]) + ")"
+   CASE cFunctionName == "val"
+      IF set(_SET_FIXED)
+         RETURN "convert(decimal(38," + AllTrim(Str(set(_SET_DECIMALS))) + "), " + ::InternalTranslate(aParamExprs[1]) + ")"
+      ENDIF
+      RETURN "convert(float, " + ::InternalTranslate(aParamExprs[1]) + ")"
+   CASE cFunctionName == "int"
+      RETURN "round(" + ::InternalTranslate(aParamExprs[1]) + ", 0)"
+   CASE cFunctionName == "alltrim"
+      RETURN "ltrim(rtrim(" + ::InternalTranslate(aParamExprs[1]) + "))"
+   CASE cFunctionName == "dow" // cdow not implemented as it is used to format date values in a textual way.
+      RETURN "datepart(weekday, " + ::InternalTranslate(aParamExprs[1]) + ")"
+   CASE cFunctionName == "iif" .OR. cFunctionName == "if"
+      IF aParamExprs[2]:isKindOf("SR_ConditionBase")
+         IF aParamExprs[2]:isKindOf("SR_BooleanExpression") .AND. aParamExprs[3]:isKindOf("SR_BooleanExpression")
+            secondParam := ::super:TranslateBooleanExpression(aParamExprs[2])
+            thirdParam := ::super:TranslateBooleanExpression(aParamExprs[3])
+         ELSE
+            _SR_Throw(ErrorNew(, , , , "TSQL doesn't support condition as the second or third parameter of the 'CASE WHEN ELSE END' structure"))
+         ENDIF
+      ELSE
+         secondParam := ::InternalTranslate(aParamExprs[2])
+         thirdParam := ::InternalTranslate(aParamExprs[3])
+      ENDIF
+      RETURN "CASE WHEN " + ::InternalTranslate(aParamExprs[1]) + " THEN " + secondParam + " ELSE " + thirdParam + " END"
+   CASE cFunctionName == "at"
+      IF Len(aParamExprs) <= 3
+         RETURN "charindex(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + IIf(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), "") + ")"
+      ENDIF
+   CASE cFunctionName == "islower" // http://www.simple-talk.com/sql/t-sql-programming/sql-string-user-function-workbench-part-1/
+      RETURN ::InternalTranslate(aParamExprs[1]) + " like '[A-Z]%' COLLATE Latin1_General_CS_AI"
+   CASE cFunctionName == "isupper"
+      RETURN ::InternalTranslate(aParamExprs[1]) + " like '[a-z]%' COLLATE Latin1_General_CS_AI"
+   CASE cFunctionName == "isalpha"
+      RETURN ::InternalTranslate(aParamExprs[1]) + " like '[A-Z]%'"
+   CASE cFunctionName == "isdigit"
+      RETURN ::InternalTranslate(aParamExprs[1]) + " like '[0-9]%'"
+   CASE cFunctionName == "dtos"
+      RETURN "convert(char, " + ::InternalTranslate(aParamExprs[1]) + ", 112)"
+   CASE cFunctionName == "ctod"
+      firstParam := ::InternalTranslate(aParamExprs[1])
+      IF hb_regexLike("\'.*\'", firstParam)
+         IF hb_regexLike("\'\s*\'", firstParam)
+            RETURN ::cNull
+         ENDIF
+         cSavedFormat := set(_SET_DATEFORMAT)
+         dDate := oFunctionExpression:oClipperExpression:Evaluate()
+         SET DATE AMERICAN
+         result := "'" + DToC(dDate) + "'"
+         SET DATE FORMAT cSavedFormat
+         RETURN result
+      ENDIF
+      RETURN firstParam
+   CASE cFunctionName == "strtran"
+      IF Len(aParamExprs) < 3
+         RETURN "replace(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + IIf(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), ", ''") + ")"
+      ENDIF
+   ENDCASE
+#else
    SWITCH cFunctionName
    CASE "substr"
       thirdParam := IIf(Len(aParamExprs) == 3, ::InternalTranslate(aParamExprs[3]), "999999")
@@ -703,6 +861,7 @@ METHOD SR_MSSQLExpressionTranslator:TranslateFunctionExpression(oFunctionExpress
          RETURN "replace(" + ::InternalTranslate(aParamExprs[1]) + ", " + ::InternalTranslate(aParamExprs[2]) + IIf(Len(aParamExprs) == 3, ", " + ::InternalTranslate(aParamExprs[3]), ", ''") + ")"
       ENDIF
    ENDSWITCH
+#endif
 
 RETURN ::super:TranslateFunctionExpression(oFunctionExpression)
 

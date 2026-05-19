@@ -73,12 +73,21 @@ FUNCTION SR_oGetWorkarea(cAlias)
    LOCAL result
    LOCAL oErr
 
+#ifdef __XHARBOUR__
+   TRY
+      result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
+   CATCH oErr
+      oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
+      throw(oErr)
+   END
+#else
    BEGIN SEQUENCE WITH __BreakBlock()
       result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
    RECOVER USING oErr
       oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
       _SR_Throw(oErr)
    END SEQUENCE
+#endif
 
 RETURN result
 
@@ -487,6 +496,23 @@ METHOD SR_ClipperExpression:Evaluate(lIgnoreRelations)
    // can be very slow with relations...
    nseconds := Seconds()
 
+#ifdef __XHARBOUR__
+   TRY
+      IF PCount() == 1 .AND. lIgnoreRelations
+         save_slct := Select()
+         SR_SelectFirstAreaNotInUse()
+         USE &(SR_oGetWorkarea(::cContext):cFileName) VIA "SQLRDD" ALIAS "AliasWithoutRelation"
+         result := &(::cValue)
+         CLOSE ("AliasWithoutRelation")
+         Select(save_slct)
+      ELSE
+         result := &(::cContext)->(&(::cValue))
+      ENDIF
+   CATCH oErr
+      oErr:description += ";The value unseccessfully evaluated was : " + ::cValue   + ";"
+      throw(oErr)
+   END
+#else
    BEGIN SEQUENCE WITH __BreakBlock()
       IF PCount() == 1 .AND. lIgnoreRelations
          save_slct := Select()
@@ -502,7 +528,8 @@ METHOD SR_ClipperExpression:Evaluate(lIgnoreRelations)
       oErr:description += ";The value unseccessfully evaluated was : " + ::cValue   + ";"
       _SR_Throw(oErr)
    END SEQUENCE
-   
+#endif
+
    HB_SYMBOL_UNUSED(nseconds)
 
 RETURN result

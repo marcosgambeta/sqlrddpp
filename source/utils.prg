@@ -532,7 +532,11 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN "'" + RTrim(StrTran(uData, "'", "'" + "'")) + "'"
       CASE SQLRDD_RDBMS_POSTGR
          RETURN "E'" + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
       ENDSWITCH
 
@@ -556,7 +560,11 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
       CASE SQLRDD_RDBMS_CACHE
          RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          RETURN "'" + DToS(uData) + "'"
       ENDSWITCH
 
@@ -572,7 +580,11 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN IIf(uData, "true", "false")
       CASE SQLRDD_RDBMS_INFORM
          RETURN IIf(uData, "'t'", "'f'")
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          RETURN IIf(uData, "1", "0")
       ENDSWITCH
 
@@ -585,14 +597,22 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN "'" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       CASE SQLRDD_RDBMS_ORACLE
          RETURN " TIMESTAMP '" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
          cRet := hb_ttoc(uData)
          Set(_SET_DATEFORMAT, cOldSet)
          RETURN "'" + cRet + "'"
       ENDSWITCH
 
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       cRet := SR_STRTOHEX(HB_Serialize(uData))
       RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID)
 
@@ -617,6 +637,32 @@ FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
 
    HB_SYMBOL_UNUSED(oCnn)
 
+#ifdef __XHARBOUR__
+   TRY
+
+      IF !sr_PhFile("long_qry.dbf")
+         DBCreate("long_qry.dbf", TRACE_STRUCT, "DBFNTX")
+      ENDIF
+
+      DO WHILE .T.
+         DBUseArea(.T., "DBFNTX", "long_qry.dbf", "LONG_QRY", .T., .F.)
+         IF !NetErr()
+            exit
+         ENDIF
+         hb_idleSleep(500 / 1000)
+      ENDDO
+
+      LONG_QRY->(DBAppend())
+      REPLACE LONG_QRY->DATA         WITH Date()
+      REPLACE LONG_QRY->HORA         WITH Time()
+      REPLACE LONG_QRY->COMANDO      WITH cComm
+      REPLACE LONG_QRY->CUSTO        WITH nLimisencos
+      LONG_QRY->(DBCloseArea())
+
+   CATCH
+
+   END
+#else
    BEGIN SEQUENCE WITH __BreakBlock()
 
       IF !sr_PhFile("long_qry.dbf")
@@ -641,6 +687,7 @@ FUNCTION SR_WriteTimeLog(cComm, oCnn, nLimisencos)
    RECOVER
 
    END SEQUENCE
+#endif
 
    DBSelectArea(nAlAtual)
 
@@ -687,6 +734,31 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
 
    DEFAULT cComm TO ""
 
+#ifdef __XHARBOUR__
+   TRY
+
+      IF !sr_phFile("sqllog.dbf")
+         DBCreate("sqllog.dbf", TRACE_STRUCT, "DBFNTX")
+      ENDIF
+
+      DO WHILE .T.
+         DBUseArea(.T., "DBFNTX", "sqllog.dbf", "SQLLOG", .T., .F.)
+         IF !NetErr()
+            EXIT
+         ENDIF
+         hb_idleSleep(500 / 1000)
+      ENDDO
+
+      SQLLOG->(DBAppend())
+      REPLACE SQLLOG->DATA         WITH Date()
+      REPLACE SQLLOG->HORA         WITH Time()
+      REPLACE SQLLOG->COMANDO      WITH cComm
+      SQLLOG->(DBCloseArea())
+
+   CATCH
+
+   END
+#else
    BEGIN SEQUENCE WITH __BreakBlock()
 
       IF !sr_phFile("sqllog.dbf")
@@ -710,6 +782,7 @@ FUNCTION SR_WriteDbLog(cComm, oCnn)
    RECOVER
 
    END SEQUENCE
+#endif
 
    DBSelectArea(nAlAtual)
 
@@ -770,7 +843,11 @@ FUNCTION SR_Val2CharQ(uData)
       RETURN "{Object}"
    CASE "B"
       RETURN "{||Block}"
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       RETURN "NIL"
    ENDSWITCH
 
@@ -813,7 +890,11 @@ FUNCTION SR_BlankVar(cType, nLen, nDec)
          CASE 6
             nVal := 0.000000
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             nVal := 0.00
          ENDSWITCH
          RETURN nVal
@@ -1572,7 +1653,11 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       CASE "B"
          xMessage := "{||...}"
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          xMessage := "NIL"
       ENDSWITCH
 
@@ -1808,7 +1893,11 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             nChoice := 0
             lWhile := .F.
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := AScan(aHotkey, {|x|x == Upper(Chr(nKey))})
                lWhile := .F.
@@ -1902,7 +1991,11 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                nDelay := 0
             ENDIF
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := AScan(aHotkey, {|x|x == Upper(Chr(nKey))})
                lWhile := .F.
@@ -1959,7 +2052,11 @@ STATIC FUNCTION COLORLETTER(cColor)
   CASE 13 ; cColor := "RB+" ; EXIT
   CASE 14 ; cColor := "GR+" ; EXIT
   CASE 15 ; cColor := "W+"  ; EXIT
+#ifdef __XHARBOUR__
+  DEFAULT
+#else
   OTHERWISE
+#endif
      cColor := "W+" // 15 is the max.
   ENDSWITCH
 

@@ -382,7 +382,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             Case SQLRDD_RDBMS_MARIADB
                cSql += "CURDATE() "
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                cSql += "CURRENT_DATE "
             ENDSWITCH
             PASSTHROUGH
@@ -403,7 +407,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SQLRDD_RDBMS_MSSQL7
                cSql += "AVG("
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                cSql += "AVERAGE("
             ENDSWITCH
             RECURSIVE_CALL
@@ -424,7 +432,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             Case SQLRDD_RDBMS_MARIADB
                cSql += "COALESCE("
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                cSql += "ISNULL("
             ENDSWITCH
             RECURSIVE_CALL
@@ -451,7 +463,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SQLRDD_RDBMS_SYBASE
                cSql += "SUBSTRING("
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                cSql += "SUBSTR("
             ENDSWITCH
             RECURSIVE_CALL
@@ -462,7 +478,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SQLRDD_RDBMS_SYBASE
                cSql += "SUBSTRING("
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                cSql += "SUBSTR("
             ENDSWITCH
             RECURSIVE_CALL
@@ -476,7 +496,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SQLRDD_RDBMS_MSSQL7
                cSql += "dbo.trim("
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                cSql += "TRIM("
             ENDSWITCH
             RECURSIVE_CALL
@@ -541,7 +565,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql += " NULLS FIRST"
                ENDIF
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                SKIPFWD
                cSql += SR_DBQUALIFY(uData, nSystemID) + " ASC"
                IF nSystemId == SQLRDD_RDBMS_ORACLE
@@ -572,7 +600,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql += " NULLS FIRST"
                ENDIF
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                SKIPFWD
                cSql += SR_DBQUALIFY(uData, nSystemID) + " DESC"
                IF nSystemId == SQLRDD_RDBMS_ORACLE
@@ -1042,7 +1074,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
 
             EXIT
 
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             nIP++
          ENDSWITCH
 
@@ -1262,7 +1298,11 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
       CASE SQLRDD_RDBMS_MYSQL
       CASE SQLRDD_RDBMS_MARIADB
          RETURN "str_to_date( '" + DToS(uData) + "', '%Y%m%d' )"
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          RETURN "'" + DToS(uData) + "'"
       ENDSWITCH
 
@@ -1275,7 +1315,11 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
          RETURN IIf(uData, "true", "false")
       CASE SQLRDD_RDBMS_INFORM
          RETURN IIf(uData, "'t'", "'f'")
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          RETURN IIf(uData, "1", "0")
       ENDSWITCH
 

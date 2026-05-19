@@ -61,7 +61,9 @@
 #include <hbapi.h>
 #include <hbapierr.h>
 #include <hbapiitm.h>
+#ifndef __XHARBOUR__
 #include <hbapicls.h>
+#endif
 #include <hbapifs.h>
 #include <hbvm.h>
 #include "srxml.h"

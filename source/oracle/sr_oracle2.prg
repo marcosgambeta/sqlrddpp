@@ -555,11 +555,19 @@ METHOD SR_ORACLE2:ExecSP(cComm, aReturn, nParam, aType)
       SR_OracleinBindParam(::hdbc, i, n, 12, 0)
    NEXT i
 
+#ifdef __XHARBOUR__
+   TRY
+      nError := OracleExecDir(::hDbc)
+   CATCH
+      nerror := -1
+   END
+#else
    BEGIN SEQUENCE WITH __BreakBlock()
       nError := OracleExecDir(::hDbc)
    RECOVER
       nerror := -1
    END SEQUENCE
+#endif
 
    IF nError < 0
       ::RunTimeErr("", Str(SR_SQLO2_GETERRORCODE(::hDbc), 4) + " - " + SR_SQLO2_GETERRORDESCR(::hDbc))
@@ -613,6 +621,15 @@ METHOD SR_ORACLE2:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMa
    DEFAULT cRecnoName TO SR_RecnoName()
    DEFAULT cDeletedName TO SR_DeletedName()
 
+#ifdef __XHARBOUR__
+   TRY
+      nError := SR_ORACLE_PROCCURSOR2(::hDbc, cComm, cVar)
+      //nError := ORACLE_BINDCURSOR(::hDbc, cComm, cVar)
+      ::cLastComm := cComm
+   CATCH
+      nError := - 1
+   END
+#else
    BEGIN SEQUENCE WITH __BreakBlock()
       nError := SR_ORACLE_PROCCURSOR2(::hDbc, cComm, cVar)
       //nError := ORACLE_BINDCURSOR(::hDbc, cComm, cVar)
@@ -620,6 +637,7 @@ METHOD SR_ORACLE2:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMa
    RECOVER
       nError := - 1
    END SEQUENCE
+#endif
 
    IF nError < 0
       IF lFetch
@@ -782,7 +800,11 @@ METHOD SR_ORACLE2:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMa
                CASE ARRAY_BLOCK4
                   nAllocated := ARRAY_BLOCK5
                   EXIT
+#ifdef __XHARBOUR__
+               DEFAULT
+#else
                OTHERWISE
+#endif
                   nAllocated += ARRAY_BLOCK5
                ENDSWITCH
                ASize(aArray, nAllocated)
@@ -832,11 +854,19 @@ FUNCTION SR_ExecuteSP2(cComm, aReturn)
 
    SR_OracleinBindParam(oConn:hdbc, 1, -1, 12, 0)
 
+#ifdef __XHARBOUR__
+   TRY
+      nError := SR_OracleExecDir(oConn:hDbc)
+   CATCH
+      nerror := -1
+   END
+#else
    BEGIN SEQUENCE WITH __BreakBlock()
       nError := SR_OracleExecDir(oConn:hDbc)
    RECOVER
       nerror := -1
    END SEQUENCE
+#endif
 
    IF nError >=0
       AAdd(aReturn, SR_ORACLEGETBINDDATA(oConn:hdbc, 1))

@@ -146,6 +146,16 @@ ENDCLASS
 METHOD SR_ArithmeticOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
+#ifdef __XHARBOUR__
+   DO CASE
+   CASE pName == "exponent"
+      ::_nPriority := 2
+   CASE pName == "multiplied" .OR. pName == "divided"
+      ::_nPriority := 1
+   CASE pName == "plus" .OR. pName == "minus"
+      ::_nPriority := 0
+   ENDCASE
+#else
    SWITCH pName
    CASE "exponent"
       ::_nPriority := 2
@@ -158,6 +168,7 @@ METHOD SR_ArithmeticOperator:new(pName, pSymbols)
    CASE "minus"
       ::_nPriority := 0
    ENDSWITCH
+#endif
 
 RETURN SELF
 
@@ -187,6 +198,33 @@ METHOD SR_AlgebraSet:new(pOperator, pType)
    ::oOperator := pOperator
    ::cType := pType
 
+#ifdef __XHARBOUR__
+   DO CASE
+   CASE ::oOperator:cName == "plus" .OR. ::oOperator:cName == "minus"
+      SWITCH ::cType
+      CASE "C"
+         ::cIdentityElement := "''"
+         EXIT
+      CASE "N"
+         ::cIdentityElement := "0"
+         EXIT
+      CASE "D"
+         ::cIdentityElement := "0"
+      ENDSWITCH
+   CASE ::oOperator:cName == "multiplied" .OR. ::oOperator:cName == "divided" .OR. ::oOperator:cName == "exponent"
+      ::cIdentityElement := "1"
+      ::cAbsorbentElement := "0"
+      ::cType := "N"
+   CASE ::oOperator:cName == "and"
+      ::cIdentityElement := ".T."
+      ::cAbsorbentElement := ".F."
+      ::cType := "L"
+   CASE ::oOperator:cName == "or"
+      ::cIdentityElement := ".F."
+      ::cAbsorbentElement := ".T."
+      ::cType := "L"
+   ENDCASE
+#else
    SWITCH ::oOperator:cName
    CASE "plus"
    CASE "minus"
@@ -218,6 +256,7 @@ METHOD SR_AlgebraSet:new(pOperator, pType)
       ::cAbsorbentElement := ".T."
       ::cType := "L"
    ENDSWITCH
+#endif
 
 RETURN SELF
 
@@ -462,6 +501,24 @@ RETURN SELF
 METHOD SR_ValueExpression:GetType()
 
    IF ::cType == NIL
+#ifdef __XHARBOUR__
+      DO CASE
+      CASE ::ValueType == "field"
+         ::cType := ::oWorkArea:GetFieldByName(::Value):cType
+      CASE ::ValueType == "variable"
+         ::cType := ::super:GetType()
+      CASE ::ValueType == "value"
+         IF hb_regexLike("\d+", ::Value)
+            ::cType := "N"
+         ELSEIF hb_regexLike("'.*'", ::Value)
+            ::cType := "C"
+         ELSEIF AScan({".T.", ".F."}, Upper(::Value)) > 0
+            ::cType := "L"
+         ENDIF
+      OTHERWISE
+         ::cType := "U"
+      ENDCASE
+#else
       SWITCH ::ValueType
       CASE "field"
          ::cType := ::oWorkArea:GetFieldByName(::Value):cType
@@ -481,6 +538,7 @@ METHOD SR_ValueExpression:GetType()
       OTHERWISE
          ::cType := "U"
       ENDSWITCH
+#endif
    ENDIF
 
 RETURN ::cType

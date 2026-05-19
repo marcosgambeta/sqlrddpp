@@ -181,11 +181,19 @@ METHOD SR_ExpressionSimplifier:Simplify(oExpression)
    IF oExpression:lSimplified
       RETURN oExpression
    ELSEIF ::Assessable(oExpression)
+#ifdef __XHARBOUR__
+      TRY
+         newValue := oExpression:oClipperExpression:Evaluate()
+         lEvaluated := .T.
+      CATCH
+      END
+#else
       BEGIN SEQUENCE WITH __BreakBlock()
          newValue := oExpression:oClipperExpression:Evaluate()
          lEvaluated := .T.
       RECOVER
       END SEQUENCE
+#endif
       IF lEvaluated
          SWITCH ValType(newValue)
          CASE "C"
@@ -264,6 +272,16 @@ METHOD SR_ExpressionSimplifier:ValueAssessable(oExpression)
 
    LOCAL lRet
 
+#ifdef __XHARBOUR__
+   DO CASE
+   CASE oExpression:ValueType == "value"
+      lRet := .T.
+   CASE oExpression:ValueType == "variable"
+      lRet := ::lFixVariables
+   CASE oExpression:ValueType == "field"
+      lRet := (::lIgnoreRelations .OR. !::cContext == oExpression:cContext .AND. Len(SR_RelationManager():new():GetRelations(::cContext, oExpression:cContext)) == 0) .AND. ::lFixVariables
+   ENDCASE
+#else
    SWITCH oExpression:ValueType
    CASE "value"
       lRet := .T.
@@ -274,6 +292,7 @@ METHOD SR_ExpressionSimplifier:ValueAssessable(oExpression)
    CASE "field"
       lRet := (::lIgnoreRelations .OR. !::cContext == oExpression:cContext .AND. Len(SR_RelationManager():new():GetRelations(::cContext, oExpression:cContext)) == 0) .AND. ::lFixVariables
    ENDSWITCH
+#endif
 
 RETURN lRet
 

@@ -76,8 +76,8 @@ source/oracle/sqlora.c
 source/postgresql/sr_pgs.prg
 #source/postgresql/pgs.c
 
--hbx=sqlrddpp.hbx
-sqlrddpp.hbx
+{!xhb}-hbx=sqlrddpp.hbx
+{!xhb}sqlrddpp.hbx
 
 # if necessary, add manually:
 # hbmk2 sqlrddpp.hbp -cflag=-fpermissive
@@ -90,4 +90,4 @@ sqlrddpp.hbx
 #xhb.hbc
 
 # disable this line to NOT INSTALL the library in addons
-$hb_pkg_install.hbm
+{!xhb}$hb_pkg_install.hbm

@@ -61,7 +61,9 @@ REQUEST HB_Serialize
 // Need this modules linked
 REQUEST SR_WORKAREA
 
+#ifndef __XHARBOUR__
 STATIC s_mutex := hb_mutexcreate()
+#endif
 STATIC s_aConnections := {}
 STATIC s_nActiveConnection := 0
 
@@ -181,7 +183,11 @@ FUNCTION SR_GetSyntheticIndexMinimun()
    CASE SQLRDD_RDBMS_POSTGR
    CASE SQLRDD_RDBMS_ORACLE
       EXIT
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       nRet := 10
    ENDSWITCH
 
@@ -385,7 +391,9 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
    LOCAL oConnect
    LOCAL oConnect2
 
+#ifndef __XHARBOUR__
    hb_mutexlock(s_mutex)
+#endif
 
    DEFAULT nType TO CONNECT_ODBC
    DEFAULT lAutoCommit TO .F.
@@ -507,9 +515,15 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       oConnect:lQueryOnly := .T.
 #endif
       EXIT
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + Str(nType))
+#ifndef __XHARBOUR__
       hb_mutexunlock(s_mutex)
+#endif
       RETURN -1
    ENDSWITCH
 
@@ -518,7 +532,9 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
          nTimeout)
    ELSE
       SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + Str(nType))
+#ifndef __XHARBOUR__
       hb_mutexunlock(s_mutex)
+#endif
       RETURN -1
    ENDIF
 
@@ -550,12 +566,16 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
 
       IF !lNoSetEnv
          IF Empty(SR_SetEnvSQLRDD(oConnect))
+#ifndef __XHARBOUR__
             hb_mutexunlock(s_mutex)
+#endif
             RETURN -1
          ENDIF
       ELSE
          IF Empty(SR_SetEnvMinimal(oConnect))
+#ifndef __XHARBOUR__
             hb_mutexunlock(s_mutex)
+#endif
             RETURN -1
          ENDIF
       ENDIF
@@ -578,7 +598,9 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
 
    ENDIF
 
+#ifndef __XHARBOUR__
    hb_mutexunlock(s_mutex)
+#endif
 
 RETURN nRet
 
@@ -936,7 +958,11 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          oConnect:Exec("CREATE TABLE " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS (LOCK_ CHAR(250) NOT NULL UNIQUE, WSID_ CHAR(250) NOT NULL, SPID_ DECIMAL(8), LOGIN_TIME_ TIMESTAMP )", .F.)
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          oConnect:Exec("CREATE TABLE " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS (LOCK_ CHAR(250) NOT NULL UNIQUE, WSID_ CHAR(250) NOT NULL, SPID_ CHAR(10), LOGIN_TIME_ CHAR(50))", .F.)
       ENDSWITCH
@@ -1399,7 +1425,9 @@ FUNCTION SR_EndConnection(nConnection)
    LOCAL oCnn
    LOCAL uRet
 
+#ifndef __XHARBOUR__
    hb_mutexlock(s_mutex)
+#endif
 
    //DEFAULT s_nActiveConnection TO 0
    DEFAULT nConnection TO s_nActiveConnection
@@ -1408,7 +1436,9 @@ FUNCTION SR_EndConnection(nConnection)
    SR_CheckConnection(nConnection)
 
    IF nConnection > Len(s_aConnections) .OR. nConnection == 0 .OR. nConnection < 0
+#ifndef __XHARBOUR__
       hb_mutexunlock(s_mutex)
+#endif
       RETURN NIL
    ENDIF
 
@@ -1429,8 +1459,10 @@ FUNCTION SR_EndConnection(nConnection)
    ENDIF
 
    s_nActiveConnection := Len(s_aConnections)
-   
+
+#ifndef __XHARBOUR__
    hb_mutexunlock(s_mutex)
+#endif
 
 RETURN uRet
 
@@ -1738,7 +1770,11 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
          ENDIF
          oCnn:Exec("DROP INDEX " + cPhisicalName + IIf(oCnn:lComments, " /* DROP Index */", ""), .F.)
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          oCnn:Exec("DROP INDEX " + cPhisicalName + IIf(oCnn:lComments, " /* DROP Index */", ""), .F.)
       ENDSWITCH
 
@@ -2282,6 +2318,36 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
    FOR EACH aItem IN aCon
       aToken := hb_atokens(aItem,"=")
       cBuff := Upper(aToken[1])
+#ifdef __XHARBOUR__
+      DO CASE
+      CASE cBuff == "OCI"
+         RETURN CONNECT_ORACLE
+      CASE cBuff == "OCI2"
+         RETURN CONNECT_ORACLE2
+      CASE cBuff == "PGS"
+         RETURN CONNECT_POSTGRES
+      CASE cBuff == "MYSQL"
+         RETURN CONNECT_MYSQL
+      CASE cBuff == "MARIA"
+         RETURN CONNECT_MARIA
+      CASE cBuff == "FB" .OR. ;
+           cBuff == "FIREBIRD" .OR. ;
+           cBuff == "IB"
+         RETURN CONNECT_FIREBIRD
+      CASE cBuff == "FB3" .OR. ;
+           cBuff == "FIREBIRD3"
+         RETURN CONNECT_FIREBIRD3
+      CASE cBuff == "FB4" .OR. ;
+           cBuff == "FIREBIRD4"
+         RETURN CONNECT_FIREBIRD4
+      CASE cBuff == "FB5" .OR. ;
+           cBuff == "FIREBIRD5"
+         RETURN CONNECT_FIREBIRD5
+      CASE cBuff == "DSN" .OR. ;
+           cBuff == "DRIVER"
+         RETURN CONNECT_ODBC
+      ENDCASE
+#else
       SWITCH cBuff
       CASE "OCI"
          RETURN CONNECT_ORACLE
@@ -2310,6 +2376,7 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
       CASE "DRIVER"
          RETURN CONNECT_ODBC
       ENDSWITCH
+#endif
    NEXT
 
 RETURN SQLRDD_RDBMS_UNKNOW

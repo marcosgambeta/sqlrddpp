@@ -656,7 +656,11 @@ METHOD SR_WORKAREA:GetSyntheticVirtualExpr(aExpr, cAlias)
                "0" + IIf(::aFields[nPos, 4] > 0, "." + replicate("9", ::aFields[nPos, 4]), "") + "'),2," + ;
                Str(::aFields[nPos, 3]) + ")"
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             ::RunTimeErr("31", SR_Msg(31) + cColName + "(2) Table : " + ::cFileName)
          ENDSWITCH
       ENDIF
@@ -1055,7 +1059,11 @@ METHOD SR_WORKAREA:GetNextRecordNumber()
             nRet := aRet[1, 1]
          ENDIF
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          nRet := ::aInfo[AINFO_RCOUNT] + 1
       ENDSWITCH
    ENDIF
@@ -1456,7 +1464,11 @@ METHOD SR_WORKAREA:LineCount(lMsg)
          CASE SQLRDD_RDBMS_CACHE
             ::oSql:Exec("SELECT TOP 1 " + SR_DBQUALIFY(::cRecnoName, SQLRDD_RDBMS_CACHE) + " FROM " + ::cOwner + ::cFileName + " ORDER BY " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " DESC", lMsg, .T., @aRet)
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
            ::oSql:Exec("SELECT MAX( " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " ) FROM " + ::cQualifiedTableName + IIf(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
          ENDSWITCH
 
@@ -1574,7 +1586,11 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
                cSqlD += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " DESC,"
             ENDIF
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             cSqlA += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ","
             cSqlD += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " DESC,"
          ENDSWITCH
@@ -1888,7 +1904,11 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
       ENDIF
       EXIT
 
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       ::lNoData := .T.
       DEFAULT ::cLastComm TO ::oSql:cLastComm
       ::RunTimeErr("999", "[Fetch Failure/First][" + AllTrim(Str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
@@ -2139,7 +2159,11 @@ METHOD SR_WORKAREA:Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
          RETURN "'" + SR_dtoDot(uData) + "'"
       CASE SQLRDD_RDBMS_CACHE
          RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          RETURN "'" + DToS(uData) + "'"
       ENDSWITCH
 
@@ -2155,7 +2179,11 @@ METHOD SR_WORKAREA:Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
          RETURN "'" + HB_TSTOSTR(uData) + "'"
       CASE SQLRDD_RDBMS_ORACLE
          RETURN " TIMESTAMP '" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          cRet := SR_STRTOHEX(HB_Serialize(uData))
          RETURN ::Quoted(SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, trim, nLen, nDec, nTargetDB)
       ENDSWITCH
@@ -2176,11 +2204,20 @@ METHOD SR_WORKAREA:Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
          RETURN IIf(uData, "true", "false")
       CASE SQLRDD_RDBMS_INFORM
          RETURN IIf(uData, "'t'", "'f'")
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          RETURN IIf(uData, "1", "0")
       ENDSWITCH
 
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
+
       IF HB_IsArray(uData) .AND. SR_SetSerializeArrayAsJson()
          cRet := hb_jsonencode(uData,.F.)
          RETURN ::Quoted(cRet, trim, nLen, nDec, nTargetDB)
@@ -2276,7 +2313,11 @@ METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
             RETURN "'" + SR_dtoDot(uData) + "'"
          CASE SQLRDD_RDBMS_CACHE
             RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             RETURN "'" + DToS(uData) + "'"
          ENDSWITCH
       ENDIF
@@ -2298,7 +2339,11 @@ METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
          RETURN "'" + HB_TSTOSTR(uData) + "'"
       CASE SQLRDD_RDBMS_ORACLE
          RETURN " TIMESTAMP '" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
          cRet := hb_ttoc(uData)
          Set(_SET_DATEFORMAT, cOldSet)
@@ -2325,7 +2370,11 @@ METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
       cRet := SR_STRTOHEX(HB_Serialize(uData))
       RETURN ::Quoted(SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, .F., , , nTargetDB)
 
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       IF HB_IsArray(uData) .AND. SR_SetSerializeArrayAsJson()
          cRet := hb_jsonencode(uData, .F.)
          RETURN ::Quoted(cRet, .F., , , nTargetDB)
@@ -2715,7 +2764,11 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                      cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                   ENDIF
                   EXIT
+#ifdef __XHARBOUR__
+               DEFAULT
+#else
                OTHERWISE
+#endif
                   cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                ENDSWITCH
                lFirst := .F.
@@ -3181,7 +3234,11 @@ METHOD SR_WORKAREA:Refresh(lGoCold)
             CASE ARRAY_BLOCK4
                nAllocated := ARRAY_BLOCK5
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                nAllocated += ARRAY_BLOCK5
             ENDSWITCH
 
@@ -4710,7 +4767,11 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
          EXIT  // Leave this exist HERE !!!!
       ENDIF
 
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       IF ::aInfo[AINFO_REVERSE_INDEX]
          cTemp := IIf(nDirection != ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
       ELSE
@@ -4914,7 +4975,11 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
       ENDIF
 
       EXIT
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       ::lNoData := .T.
       DEFAULT ::cLastComm TO ::oSql:cLastComm
       ::RunTimeErr("999", "[Fetch Failure/First][" + AllTrim(Str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
@@ -5495,7 +5560,11 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
                cSql += "CHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
             ENDIF
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
          EXIT
@@ -5536,7 +5605,11 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          CASE SQLRDD_RDBMS_SQLANY
             cSql += "TIMESTAMP"
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
          EXIT
@@ -5579,7 +5652,11 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          CASE SQLRDD_RDBMS_INGRES
             cSql += "tinyint"
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
          EXIT
@@ -5640,7 +5717,11 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          CASE SQLRDD_RDBMS_FIREBR5
             cSql += "BLOB SUB_TYPE 1" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
          EXIT
@@ -5778,7 +5859,11 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          CASE SQLRDD_RDBMS_ACCESS
             cSql += "NUMERIC"
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
          EXIT
@@ -5813,7 +5898,11 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          CASE SQLRDD_RDBMS_MSSQL7 // .AND. ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
             cSql += "DATETIME NULL "
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
          EXIT
@@ -5826,7 +5915,11 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          ENDIF
          EXIT
 
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
 
       ENDSWITCH
@@ -6349,7 +6442,11 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
             CASE ARRAY_BLOCK4
                nAllocated := ARRAY_BLOCK5
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                nAllocated += ARRAY_BLOCK5
             ENDSWITCH
 
@@ -6739,7 +6836,11 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
             cSqlD := " ORDER BY "
          ENDIF
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          cSqlA := " ORDER BY "
          cSqlD := " ORDER BY "
       ENDSWITCH
@@ -6783,7 +6884,11 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
                cSqlD += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " DESC,"
             ENDIF
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             cSqlA += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ","
             cSqlD += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " DESC,"
          ENDSWITCH
@@ -6833,7 +6938,11 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
             cSqlD := Left(cSqlD, Len(cSqlD) - 1) + " "
          ENDIF
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          cSqlA := Left(cSqlA, Len(cSqlA) - 1) + " "
          cSqlD := Left(cSqlD, Len(cSqlD) - 1) + " "
       ENDSWITCH
@@ -7585,7 +7694,11 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          cSql +=  + IIf(::oSql:lComments, " /* Create regular Index */", "")
          lRet := ::oSql:Exec(cSql, .T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          FOR EACH cName IN aOldPhisNames
             ::oSql:Exec("DROP INDEX " + cName + IIf(::oSql:lComments, " /* Create Index */", ""), .F.)
          NEXT
@@ -7716,7 +7829,11 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
          cSql +=  + IIf(::oSql:lComments, " /* Create regular Index */", "")
          lRet := ::oSql:Exec(cSql, .T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          FOR EACH cName IN aOldPhisNames
             ::oSql:Exec("DROP INDEX " + cName + IIf(::oSql:lComments, " /* Create Index */", ""), .F.)
          NEXT
@@ -7862,7 +7979,11 @@ METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
          ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] := uKey
          ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          RETURN -1         // Error
       ENDSWITCH
 
@@ -9068,7 +9189,11 @@ METHOD SR_WORKAREA:DropColRules(cColumn, lDisplayErrorMessage, aDeletedIndexes)
                nRet := ::oSql:Exec("DROP INDEX " + cPhisicalName + "R" + IIf(::oSql:lComments, " /* Drop index before drop column */", ""), lDisplayErrorMessage)
                ::oSql:Commit()
                EXIT
+#ifdef __XHARBOUR__
+            DEFAULT
+#else
             OTHERWISE
+#endif
                nRet := ::oSql:Exec("DROP INDEX " + cPhisicalName + IIf(::oSql:lComments, " /* Drop index before drop column */", ""), lDisplayErrorMessage)
             ENDSWITCH
 
@@ -10140,7 +10265,11 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
       CASE "N"
          uVal := "0"
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          lOk := .F.
 //         ::RunTimeErr("", "Cannot change NULL constraint to datatype: " + ::aFields[nCol, 2])
          EXIT
@@ -10394,7 +10523,11 @@ METHOD SR_WORKAREA:DropConstraint(cTable, cConstraintName, lFKs, cConstrType)
          CASE SQLRDD_RDBMS_ORACLE
             cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
             EXIT
+#ifdef __XHARBOUR__
+         DEFAULT
+#else
          OTHERWISE
+#endif
             cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
          ENDSWITCH
 
@@ -10534,7 +10667,11 @@ METHOD SR_WORKAREA:CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, 
             cSql := "ALTER TABLE " + ::cOwner + StrTran(SR_DBQUALIFY(cSourceTable,::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + StrTran(SR_DBQUALIFY(cTargetTable,::oSql:nSystemID), Chr(34), "") + " (" + cTargetColumns + ")"
          ENDIF
          EXIT
+#ifdef __XHARBOUR__
+      DEFAULT
+#else
       OTHERWISE
+#endif
          IF lPk
             cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
          ELSE

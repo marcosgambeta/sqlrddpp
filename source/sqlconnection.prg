@@ -618,7 +618,11 @@ METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRec
                      CASE ARRAY_BLOCK4
                         nAllocated := ARRAY_BLOCK5
                         EXIT
+#ifdef __XHARBOUR__
+                     DEFAULT
+#else
                      OTHERWISE
+#endif
                         nAllocated += ARRAY_BLOCK5
                      ENDSWITCH
 
@@ -1074,6 +1078,80 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
          IF Len(aToken) == 1
             AAdd(aToken, "")
          ENDIF
+#ifdef __XHARBOUR__
+         DO CASE
+         CASE cBuff == "UID" .OR. ;
+              cBuff == "UIID" .OR. ;
+              cBuff == "USR"
+            ::cUser += aToken[2]
+         CASE cBuff == "PWD"
+            ::cPassword += aToken[2]
+         CASE cBuff == "DSN"
+            ::cDSN += aToken[2]
+         CASE cBuff == "DBS"
+            ::cDBS += aToken[2]
+         CASE cBuff == "HST" .OR. ;
+              cBuff == "OCI" .OR. ;
+              cBuff == "MYSQL" .OR. ;
+              cBuff == "PGS" .OR. ;
+              cBuff == "SERVER" .OR. ;
+              cBuff == "MARIA"
+            ::cHost += aToken[2]
+         CASE cBuff == "PRT"
+            ::cPort := Val(sr_val2char(aToken[2]))
+         CASE cBuff == "DRV" .OR. ;
+              cBuff == "DRIVER"
+            ::cDRV += aToken[2]
+         CASE cBuff == "CHARSET"
+            ::cCharSet := aToken[2]
+         CASE cBuff == "AUTOCOMMIT"
+            ::nAutoCommit := Val(aToken[2])
+         CASE cBuff == "DTB" .OR. ;
+              cBuff == "FB" .OR. ;
+              cBuff == "FIREBIRD" .OR. ;
+              cBuff == "FB3" .OR. ;
+              cBuff == "FIREBIRD3" .OR. ;
+              cBuff == "FB4" .OR. ;
+              cBuff == "FIREBIRD4" .OR. ;
+              cBuff == "FB5" .OR. ;
+              cBuff == "FIREBIRD5" .OR. ;
+              cBuff == "IB" .OR. ;
+              cBuff == "TNS" .OR. ;
+              cBuff == "DATABASE"
+            ::cDTB += aToken[2]
+         CASE cBuff == "TABLESPACE_DATA"
+            ::cDsnTblData := aToken[2]
+         CASE cBuff == "TABLESPACE_INDEX"
+            ::cDsnTblIndx := aToken[2]
+         CASE cBuff == "TABLESPACE_LOB"
+            ::cDsnTblLob := aToken[2]
+         CASE cBuff == "CLUSTER"
+            ::lCluster := Upper(aToken[2]) $ "Y,S,TRUE"
+         CASE cBuff == "OWNER" //.AND. Empty(::cOwner)
+            ::cOwner := aToken[2]
+            IF !Empty(::cOwner) .AND. Right(::cOwner, 1) != "."
+               ::cOwner += "."
+            ENDIF
+         CASE cBuff == "NETWORK" .OR. ;
+              cBuff == "LIBRARY" .OR. ;
+              cBuff == "NETLIBRARY"
+            ::cNetLibrary := aToken[2]
+         CASE cBuff == "APP"
+            ::cApp := aToken[2]
+         CASE cBuff == "SSLCERT"
+            ::sslcert := aToken[2]
+         CASE cBuff == "SSLKEY"
+            ::sslkey := aToken[2]
+         CASE cBuff == "SSLROOTCERT"
+            ::sslrootcert := aToken[2]
+         CASE cBuff == "SSLCRL"
+            ::sslcrl := aToken[2]
+         CASE cBuff == "COMPRESS"
+            ::lCompress := Upper(aToken[2]) $ "Y,S,TRUE"
+//         OtherWise
+//            SR_MsgLogFile("Invalid connection string entry : " + cBuff + " = " + SR_Val2Char(aToken[2]))
+         ENDCASE
+#else
          SWITCH cBuff
          CASE "UID"
          CASE "UIID"
@@ -1167,6 +1245,7 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
 //         OtherWise
 //            SR_MsgLogFile("Invalid connection string entry : " + cBuff + " = " + SR_Val2Char(aToken[2]))
          ENDSWITCH
+#endif
       NEXT
    ENDIF
 
@@ -1178,7 +1257,11 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
    CASE SQLRDD_RDBMS_ORACLE
       ::cLockWait := " WAIT " + Str(Int(::nLockWaitTime))
       EXIT
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       ::cLockWait := ""
    ENDSWITCH
 

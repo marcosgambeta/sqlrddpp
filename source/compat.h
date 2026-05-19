@@ -54,7 +54,9 @@
 #include <hbvm.h>
 #include <hbstack.h>
 #include <hbdate.h>
+#ifndef __XHARBOUR__
 #include <hbapicls.h>
+#endif
 
 HB_EXTERN_BEGIN
 
