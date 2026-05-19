@@ -63,7 +63,7 @@ source/mysql/sr_mysql.prg
 
 # ODBC
 source/odbc/sr_odbc.prg
-#source/odbc/sqlsrodbc.c
+#source/odbc/sr_odbc_bind.c
 
 # Oracle
 source/oracle/sr_oracle.prg
