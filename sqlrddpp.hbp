@@ -90,4 +90,4 @@ source/postgresql/sr_pgs.prg
 #xhb.hbc
 
 # disable this line to NOT INSTALL the library in addons
-{!xhb}$hb_pkg_install.hbm
+$hb_pkg_install.hbm
