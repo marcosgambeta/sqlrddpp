@@ -74,7 +74,7 @@ source/oracle/sqlora.c
 
 # PostgreSQL
 source/postgresql/sr_pgs.prg
-#source/postgresql/pgs.c
+#source/postgresql/sr_pgs_bind.c
 
 {!xhb}-hbx=sqlrddpp.hbx
 {!xhb}sqlrddpp.hbx
