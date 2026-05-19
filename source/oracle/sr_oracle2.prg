@@ -914,4 +914,4 @@ RETURN b
 METHOD SR_ORACLE2:GetAffectedRows()
 RETURN 0
 
-#include "sqlora2.c"
+#include "sr_oracle2_bind.c"

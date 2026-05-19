@@ -67,10 +67,10 @@ source/odbc/sr_odbc.prg
 
 # Oracle
 source/oracle/sr_oracle.prg
+#source/oracle/sr_oracle_bind.c
 source/oracle/sr_oracle2.prg
+#source/oracle/sr_oracle2_bind.c
 source/oracle/sqlora.c
-#source/oracle/sqlora2.c
-#source/oracle/sqlorax.c
 
 # PostgreSQL
 source/postgresql/sr_pgs.prg
