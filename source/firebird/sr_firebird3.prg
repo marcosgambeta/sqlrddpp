@@ -75,6 +75,7 @@ CLASS SR_FIREBIRD3 FROM SR_CONNECTION
    METHOD FieldGet(nField, aFields, lTranslate)
    METHOD Getline(aFields, lTranslate, aArray)
    METHOD MoreResults(aArray, lTranslate)
+   METHOD CreateDatabase(cDatabaseName, cUserName, cPassword, nPageSize, cCharset, nDialect)
 
 ENDCLASS
 
@@ -368,6 +369,11 @@ METHOD SR_FIREBIRD3:MoreResults(aArray, lTranslate)
    ENDIF
 
 RETURN nRet
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_FIREBIRD3:CreateDatabase(cDatabaseName, cUserName, cPassword, nPageSize, cCharset, nDialect)
+RETURN SR_FBCREATEDB3(cDatabaseName, cUserName, cPassword, nPageSize, cCharset, nDialect)
 
 //-------------------------------------------------------------------------------------------------------------------//
 

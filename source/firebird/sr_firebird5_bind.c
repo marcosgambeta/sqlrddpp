@@ -938,6 +938,7 @@ HB_FUNC_STATIC(SR_FBGETDATA5)
 
 //------------------------------------------------------------------------
 
+// SR_FBCREATEDB5(cDatabaseName, cUserName, cPassword, nPageSize=default, cCharset=default, nDialect=3) -> numeric (SQL_SUCCESS/SQL_ERROR)
 HB_FUNC(SR_FBCREATEDB5)
 {
   isc_db_handle newdb = 0;

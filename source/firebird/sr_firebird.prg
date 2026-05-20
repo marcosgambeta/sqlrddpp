@@ -74,6 +74,7 @@ CLASS SR_FIREBIRD FROM SR_CONNECTION
    METHOD FetchRaw(lTranslate, aFields)
    METHOD FieldGet(nField, aFields, lTranslate)
    METHOD Getline(aFields, lTranslate, aArray)
+   METHOD CreateDatabase(cDatabaseName, cUserName, cPassword, nPageSize, cCharset, nDialect)
 
 ENDCLASS
 
@@ -341,6 +342,11 @@ METHOD SR_FIREBIRD:ExecuteRaw(cCommand)
    ENDIF
 
 RETURN nRet
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_FIREBIRD:CreateDatabase(cDatabaseName, cUserName, cPassword, nPageSize, cCharset, nDialect)
+RETURN SR_FBCREATEDB(cDatabaseName, cUserName, cPassword, nPageSize, cCharset, nDialect)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
