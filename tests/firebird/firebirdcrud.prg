@@ -9,13 +9,13 @@
 // Make a copy of this file and change the values below.
 // NOTE: the database must exist before runnning the test.
 
-#define FIREBIRD3_SERVER "inet://"
-#define FIREBIRD3_UID    "SYSDBA"
-#define FIREBIRD3_PWD    "masterkey"
-#define FIREBIRD3_DTB    "C:\PATHTODATABASE\TEST.FDB"
+#define FIREBIRD5_SERVER "inet://"
+#define FIREBIRD5_UID    "SYSDBA"
+#define FIREBIRD5_PWD    "masterkey"
+#define FIREBIRD5_DTB    "C:\PATHTODATABASE\TEST.FDB"
 
 REQUEST SQLRDD
-REQUEST SR_FIREBIRD3
+REQUEST SR_FIREBIRD5
 
 PROCEDURE Main()
 
@@ -34,7 +34,7 @@ PROCEDURE Main()
 
    CLS
 
-   nConnection := sr_AddConnection(CONNECT_FIREBIRD3, "FIREBIRD=" + FIREBIRD3_SERVER + ";UID=" + FIREBIRD3_UID + ";PWD=" + FIREBIRD3_PWD + ";DTB=" + FIREBIRD3_DTB)
+   nConnection := sr_AddConnection(CONNECT_FIREBIRD5, "FIREBIRD=" + FIREBIRD5_SERVER + ";UID=" + FIREBIRD5_UID + ";PWD=" + FIREBIRD5_PWD + ";DTB=" + FIREBIRD5_DTB)
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")

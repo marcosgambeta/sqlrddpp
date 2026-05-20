@@ -1,5 +1,5 @@
 // SQLRDD++
-// test with Firebird 3
+// test with Firebird 5
 // To compile:
 // hbmk2 firebird1a -lfbclient
 
@@ -13,7 +13,7 @@
 #define DTB    "C:\PATHTODATABASE\TEST.FDB"
 
 REQUEST SQLRDD
-REQUEST SR_FIREBIRD3
+REQUEST SR_FIREBIRD5
 
 PROCEDURE Main()
 
@@ -24,7 +24,7 @@ PROCEDURE Main()
 
    rddSetDefault("SQLRDD")
 
-   nConnection := sr_AddConnection(CONNECT_FIREBIRD3, "FIREBIRD=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
+   nConnection := sr_AddConnection(CONNECT_FIREBIRD5, "FIREBIRD=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")

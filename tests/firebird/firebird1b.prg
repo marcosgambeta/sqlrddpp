@@ -1,5 +1,5 @@
 // SQLRDD++
-// test with Firebird 3
+// test with Firebird 5
 // To compile:
 // hbmk2 firebird1b -lfbclient
 
@@ -10,10 +10,10 @@
 #define SERVER ""
 #define UID    "SYSDBA"
 #define PWD    "masterkey"
-#define DTB    "fb3dbtest1.fdb"
+#define DTB    "fb5dbtest1.fdb"
 
 REQUEST SQLRDD
-REQUEST SR_FIREBIRD3
+REQUEST SR_FIREBIRD5
 
 PROCEDURE Main()
 
@@ -25,10 +25,11 @@ PROCEDURE Main()
    rddSetDefault("SQLRDD")
 
    IF !file(DTB)
-      SR_fbcreatedb3(DTB, UID, PWD, NIL, NIL, NIL)
+      //SR_fbcreatedb5(DTB, UID, PWD, NIL, NIL, NIL) (deprecated)
+      SR_FIREBIRD5():CreateDatabase(DTB, UID, PWD, NIL, NIL, NIL)
    ENDIF
 
-   nConnection := sr_AddConnection(CONNECT_FIREBIRD3, "FIREBIRD=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
+   nConnection := sr_AddConnection(CONNECT_FIREBIRD5, "FIREBIRD=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")
@@ -67,9 +68,9 @@ PROCEDURE Main()
    browse()
 
    CLOSE DATABASE
-   
+
    sr_StopLog(nConnection)
-   
+
    sr_EndConnection(nConnection)
 
 RETURN
