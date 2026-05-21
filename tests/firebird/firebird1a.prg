@@ -7,10 +7,11 @@
 
 // Make a copy of this file and change the values below.
 // NOTE: the database must exist before runnning the test.
-#define SERVER "inet://"
-#define UID    "SYSDBA"
-#define PWD    "masterkey"
-#define DTB    "C:\PATHTODATABASE\TEST.FDB"
+
+STATIC s_SERVER := "inet://"
+STATIC s_UID    := "SYSDBA"
+STATIC s_PWD    := "masterkey"
+STATIC s_DTB    := "C:\PATHTODATABASE\TEST.FDB"
 
 REQUEST SQLRDD
 REQUEST SR_FIREBIRD5
@@ -22,9 +23,34 @@ PROCEDURE Main()
 
    SetMode(25, maxcol() + 1)
 
+   n := 1
+   DO WHILE n <= PCount()
+      IF HB_PValue(n) == "--server"
+         ++n
+         s_SERVER := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--uid"
+         ++n
+         s_UID := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--pwd"
+         ++n
+         s_PWD := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--dtb"
+         ++n
+         s_DTB := HB_PValue(n)
+         LOOP
+      ENDIF
+      ++n
+   ENDDO
+
    rddSetDefault("SQLRDD")
 
-   nConnection := sr_AddConnection(CONNECT_FIREBIRD5, "FIREBIRD=" + SERVER + ";UID=" + UID + ";PWD=" + PWD + ";DTB=" + DTB)
+   nConnection := sr_AddConnection(CONNECT_FIREBIRD5, "FIREBIRD=" + s_SERVER + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")
