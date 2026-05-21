@@ -17,6 +17,9 @@
 #define ODBC_CLIENT   "fbclient.dll"
 #define ODBC_CHARSET  "ISO8859_1"
 
+#define RDD_NAME "SQLEX"
+#define TABLE_NAME "test"
+
 REQUEST SQLEX
 REQUEST SR_ODBC
 
@@ -29,7 +32,7 @@ PROCEDURE Main()
 
    SetMode(25, maxcol() + 1)
 
-   rddSetDefault("SQLRDD")
+   rddSetDefault(RDD_NAME)
 
    nConnection := sr_AddConnection(CONNECT_ODBC, ;
       "driver="   + ODBC_DRIVER   + ";" + ;
@@ -45,20 +48,20 @@ PROCEDURE Main()
       alert("Connection error. See sqlerror.log for details.")
       QUIT
    ENDIF
-   
+
    sr_StartLog(nConnection)
 
-   IF !sr_ExistTable("test")
-      dbCreate("test", {{"ID",      "N", 10, 0}, ;
-                        {"FIRST",   "C", 30, 0}, ;
-                        {"LAST",    "C", 30, 0}, ;
-                        {"AGE",     "N",  3, 0}, ;
-                        {"DATE",    "D",  8, 0}, ;
-                        {"MARRIED", "L",  1, 0}, ;
-                        {"VALUE",   "N", 12, 2}}, "SQLRDD")
+   IF !sr_ExistTable(TABLE_NAME)
+      dbCreate(TABLE_NAME, {{"ID",      "N", 10, 0}, ;
+                            {"FIRST",   "C", 30, 0}, ;
+                            {"LAST",    "C", 30, 0}, ;
+                            {"AGE",     "N",  3, 0}, ;
+                            {"DATE",    "D",  8, 0}, ;
+                            {"MARRIED", "L",  1, 0}, ;
+                            {"VALUE",   "N", 12, 2}}, RDD_NAME)
    ENDIF
 
-   USE test EXCLUSIVE VIA "SQLRDD"
+   USE (TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
 
    IF reccount() < 100
       FOR n := 1 TO 100
@@ -113,9 +116,9 @@ PROCEDURE Main()
    ENDDO
 
    CLOSE DATABASE
-   
+
    sr_StopLog(nConnection)
-   
+
    sr_EndConnection(nConnection)
 
 RETURN
