@@ -9,10 +9,10 @@
 // Make a copy of this file and change the values below.
 // NOTE: the database must exist before runnning the test.
 
-#define POSTGRES_SERVER  "localhost"
-#define POSTGRES_UID     "postgres"
-#define POSTGRES_PWD     "password"
-#define POSTGRES_DTB     "dbtest"
+STATIC s_SERVER := "localhost"
+STATIC s_UID    := "postgres"
+STATIC s_PWD    := "password"
+STATIC s_DTB    := "dbtest"
 
 REQUEST SQLRDD
 REQUEST SR_PGS
@@ -20,13 +20,36 @@ REQUEST SR_PGS
 PROCEDURE Main()
 
    LOCAL nConnection
-#if 0
    LOCAL n
-#endif
    LOCAL oTB
    LOCAL nKey
 
    SetMode(25, maxcol() + 1)
+
+   n := 1
+   DO WHILE n <= PCount()
+      IF HB_PValue(n) == "--server"
+         ++n
+         s_SERVER := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--uid"
+         ++n
+         s_UID := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--pwd"
+         ++n
+         s_PWD := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--dtb"
+         ++n
+         s_DTB := HB_PValue(n)
+         LOOP
+      ENDIF
+      ++n
+   ENDDO
 
    SET DELETED ON
 
@@ -34,7 +57,7 @@ PROCEDURE Main()
 
    CLS
 
-   nConnection := sr_AddConnection(CONNECT_POSTGRES, "PGS=" + POSTGRES_SERVER + ";UID=" + POSTGRES_UID + ";PWD=" + POSTGRES_PWD + ";DTB=" + POSTGRES_DTB)
+   nConnection := sr_AddConnection(CONNECT_POSTGRES, "PGS=" + s_SERVER + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")
