@@ -8,14 +8,17 @@
 
 // Make a copy of this file and change the values below.
 // NOTE: the database must exist before runnning the test.
-#define ODBC_DRIVER   "Firebird/InterBase(r) driver"
-#define ODBC_SERVER   "localhost"
-#define ODBC_PORT     "3050"
-#define ODBC_UID      "SYSDBA"
-#define ODBC_PWD      "masterkey"
-#define ODBC_DATABASE "C:\PATHTODATABASE\TEST.FDB"
-#define ODBC_CLIENT   "fbclient.dll"
-#define ODBC_CHARSET  "ISO8859_1"
+// To use the command line parameters:
+// odbcfirebird2 --driver <drivername> --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> --client <options> --charset <charset>
+
+STATIC s_ODBC_DRIVER   := "Firebird/InterBase(r) driver"
+STATIC s_ODBC_SERVER   := "localhost"
+STATIC s_ODBC_PORT     := "3050"
+STATIC s_ODBC_UID      := "SYSDBA"
+STATIC s_ODBC_PWD      := "masterkey"
+STATIC s_ODBC_DATABASE := "C:\PATHTODATABASE\TEST.FDB"
+STATIC s_ODBC_CLIENT   := "fbclient.dll"
+STATIC s_ODBC_CHARSET  := "ISO8859_1"
 
 #define RDD_NAME "SQLEX"
 #define TABLE_NAME "test"
@@ -32,17 +35,63 @@ PROCEDURE Main()
 
    SetMode(25, maxcol() + 1)
 
+   n := 1
+   DO WHILE n <= PCount()
+      IF HB_PValue(n) == "--driver"
+         ++n
+         s_ODBC_DRIVER := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--server"
+         ++n
+         s_ODBC_SERVER := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--port"
+         ++n
+         s_ODBC_PORT := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--uid"
+         ++n
+         s_ODBC_UID := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--pwd"
+         ++n
+         s_ODBC_PWD := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--database"
+         ++n
+         s_ODBC_DATABASE := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--client"
+         ++n
+         s_ODBC_CLIENT := HB_PValue(n)
+         LOOP
+      ENDIF
+      ++n
+      IF HB_PValue(n) == "--charset"
+         ++n
+         s_ODBC_CHARSET := HB_PValue(n)
+         LOOP
+      ENDIF
+      ++n
+   ENDDO
+
    rddSetDefault(RDD_NAME)
 
    nConnection := sr_AddConnection(CONNECT_ODBC, ;
-      "driver="   + ODBC_DRIVER   + ";" + ;
-      "server="   + ODBC_SERVER   + ";" + ;
-      "port="     + ODBC_PORT     + ";" + ;
-      "uid="      + ODBC_UID      + ";" + ;
-      "pwd="      + ODBC_PWD      + ";" + ;
-      "database=" + ODBC_DATABASE + ";" + ;
-      "client="   + ODBC_CLIENT   + ";" + ;
-      "charset="  + ODBC_CHARSET  + ";")
+      "driver="   + s_ODBC_DRIVER   + ";" + ;
+      "server="   + s_ODBC_SERVER   + ";" + ;
+      "port="     + s_ODBC_PORT     + ";" + ;
+      "uid="      + s_ODBC_UID      + ";" + ;
+      "pwd="      + s_ODBC_PWD      + ";" + ;
+      "database=" + s_ODBC_DATABASE + ";" + ;
+      "client="   + s_ODBC_CLIENT   + ";" + ;
+      "charset="  + s_ODBC_CHARSET  + ";")
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")
