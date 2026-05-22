@@ -14,8 +14,8 @@ Create a folder for the application.
 
 From the extracted files above, copy these folders and files to the application folder:
 
-<intl>  
-<plugins>  
+intl  
+plugins  
 fbclient.dll  
 firebird.conf  
 firebird.msg  
@@ -25,8 +25,8 @@ Compile the test tests\firebird\firebird1b.prg.
 
 Move the executable to the application folder:
 
-<intl>  
-<plugins>  
+intl  
+plugins  
 fbclient.dll  
 firebird.conf  
 firebird.msg  
