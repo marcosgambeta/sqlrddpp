@@ -11,7 +11,9 @@
 -Iinclude/mysql
 -Iinclude/oci
 -Iinclude/pgsql
+
 -Isource
+-Isource/parser
 -Isource/oracle
 
 source/exprobjs.prg
@@ -29,8 +31,9 @@ source/utils.prg
 source/utilslang.prg
 source/txml.prg
 
-#source/sql.y
-source/sqly.c
+# parser
+#source/parser/sql.y
+source/parser/sqly.c
 
 source/tracelog.c
 source/sqlact.c
