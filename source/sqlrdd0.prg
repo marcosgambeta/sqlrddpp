@@ -468,8 +468,10 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       oConnect2 := &("SR_FIREBIRD5()")
 #endif
       EXIT
-   CASE CONNECT_MARIA
-   CASE CONNECT_MARIA_NOEXLOCK
+   //CASE CONNECT_MARIA (deprecated)
+   CASE CONNECT_MARIADB
+   //CASE CONNECT_MARIA_NOEXLOCK (deprecated)
+   CASE CONNECT_MARIADB_NOEXLOCK
 #ifndef MYSQLRDD
       oConnect := &("SR_MARIA()")
       oConnect2 := &("SR_MARIA()")
@@ -509,7 +511,8 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       oConnect:lQueryOnly := .T.
 #endif
       EXIT
-   CASE CONNECT_MARIA_QUERY_ONLY
+   //CASE CONNECT_MARIA_QUERY_ONLY (deprecated)
+   CASE CONNECT_MARIADB_QUERY_ONLY
 #ifndef MYSQLRDD
       oConnect := &("SR_MARIA()")
       oConnect:lQueryOnly := .T.
@@ -2329,7 +2332,8 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
       CASE cBuff == "MYSQL"
          RETURN CONNECT_MYSQL
       CASE cBuff == "MARIA"
-         RETURN CONNECT_MARIA
+         //RETURN CONNECT_MARIA (deprecated)
+         RETURN CONNECT_MARIADB
       CASE cBuff == "FB" .OR. ;
            cBuff == "FIREBIRD" .OR. ;
            cBuff == "IB"
@@ -2358,7 +2362,8 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
       CASE "MYSQL"
          RETURN CONNECT_MYSQL
       CASE "MARIA"
-         RETURN CONNECT_MARIA
+         //RETURN CONNECT_MARIA (deprecated)
+         RETURN CONNECT_MARIADB
       CASE "FB"
       CASE "FIREBIRD"
       CASE "IB"
