@@ -641,8 +641,9 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
 
 //-----------------------------------------------------------------------------//
 
-HB_FUNC_STATIC(SR_ODBCGETLINES) // (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTranslate, nCurrentFetch, aInfo,
-                         // nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos)
+// (::hStmt, nLenBuff, aFields, aCache, nSystemID, lTranslate, nCurrentFetch, aInfo,
+// nDirection, hnRecno, lFetchAll, aFetch, uRecord, nPos)
+HB_FUNC_STATIC(SR_ODBCGETLINES)
 {
   // HB_LONG lLen, lLenOut, lInitBuff, lIndex;
   HB_LONG lInitBuff, lIndex;

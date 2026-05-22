@@ -369,7 +369,6 @@ HB_FUNC_STATIC(SR_SQLO2_EXECUTE)
 
 HB_FUNC_STATIC(SR_ORACLEINBINDPARAM2)
 {
-
   GET_OCI_SESSION(Stmt, 1);
   int iParamNum = hb_parni(2);
   int iParamType = hb_parni(3);
@@ -494,7 +493,6 @@ HB_FUNC_STATIC(SR_ORACLEINBINDPARAM2)
 #if 0
 HB_FUNC_STATIC(SR_ORACLEGETBINDDATA2) // TODO: not used in SQLRDD source code
 {
-
   GET_OCI_SESSION(p, 1);
   int iPos;
 

@@ -810,7 +810,6 @@ static void OracleFreeLink(int num_recs, POCI_SESSION p)
 // NOTE: used by SR_ORACLE and SR_ORACLE2
 HB_FUNC(SR_ORACLEINBINDPARAM)
 {
-
   GET_OCI_SESSION(Stmt, 1);
   int iParamNum = hb_parni(2);
   int iParamType = hb_parni(3);
