@@ -60,7 +60,7 @@
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-CLASS SR_MARIA FROM SR_CONNECTION
+CLASS SR_MARIADB FROM SR_CONNECTION
 
    DATA aCurrLine
 
@@ -84,7 +84,7 @@ ENDCLASS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:MoreResults(aArray, lTranslate)
+METHOD SR_MARIADB:MoreResults(aArray, lTranslate)
 
    HB_SYMBOL_UNUSED(aArray)
    HB_SYMBOL_UNUSED(lTranslate)
@@ -93,7 +93,7 @@ RETURN -1
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:Getline(aFields, lTranslate, aArray)
+METHOD SR_MARIADB:Getline(aFields, lTranslate, aArray)
 
    LOCAL i
 
@@ -119,7 +119,7 @@ RETURN aArray
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:FieldGet(nField, aFields, lTranslate)
+METHOD SR_MARIADB:FieldGet(nField, aFields, lTranslate)
 
    IF ::aCurrLine == NIL
       DEFAULT lTranslate TO .T.
@@ -131,7 +131,7 @@ RETURN ::aCurrLine[nField]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:FetchRaw(lTranslate, aFields)
+METHOD SR_MARIADB:FetchRaw(lTranslate, aFields)
 
    ::nRetCode := SQL_ERROR
    DEFAULT aFields TO ::aFields
@@ -149,7 +149,7 @@ RETURN ::nRetCode
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:FreeStatement()
+METHOD SR_MARIADB:FreeStatement()
 
    IF ::hStmt != NIL
       SR_MARIADBClear(::hDbc)
@@ -160,7 +160,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
+METHOD SR_MARIADB:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
 
    LOCAL aFields
    LOCAL nRet
@@ -214,7 +214,7 @@ RETURN aFields
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:LastError()
+METHOD SR_MARIADB:LastError()
 
    IF ::hStmt != NIL
       RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + SR_MARIADBResStatus(::hDbc) + " - " + SR_MARIADBErrMsg(::hDbc)
@@ -224,7 +224,7 @@ RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + SR_MARIADBErrMsg(::hDbc)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
+METHOD SR_MARIADB:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
    nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
 
    LOCAL hDbc
@@ -284,7 +284,7 @@ RETURN Self
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:End()
+METHOD SR_MARIADB:End()
 
    ::Commit(.T.)
    ::FreeStatement()
@@ -297,7 +297,7 @@ RETURN ::super:End()
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:Commit(lNoLog)
+METHOD SR_MARIADB:Commit(lNoLog)
 
    ::super:Commit(lNoLog)
 
@@ -305,7 +305,7 @@ RETURN (::nRetCode := SR_MARIADBCommit(::hDbc))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:RollBack()
+METHOD SR_MARIADB:RollBack()
 
    ::super:RollBack()
 
@@ -313,7 +313,7 @@ RETURN (::nRetCode := SR_MARIADBRollBack(::hDbc))
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:ExecuteRaw(cCommand)
+METHOD SR_MARIADB:ExecuteRaw(cCommand)
 
    IF Upper(Left(LTrim(cCommand), 6)) == "SELECT" .OR. Upper(Left(LTrim(cCommand), 5)) == "SHOW "
       ::lResultSet := .T.
@@ -327,8 +327,14 @@ RETURN SR_MARIADBResultStatus(::hDbc)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_MARIA:GetAffectedRows()
+METHOD SR_MARIADB:GetAffectedRows()
 RETURN SR_MARIADBAFFECTEDROWS(::hDbc)
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// For compatibility (SR_MARIA class is deprecated).
+CLASS SR_MARIA FROM SR_MARIADB
+ENDCLASS
 
 //-------------------------------------------------------------------------------------------------------------------//
 

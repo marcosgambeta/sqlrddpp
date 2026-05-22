@@ -473,8 +473,10 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
    //CASE CONNECT_MARIA_NOEXLOCK (deprecated)
    CASE CONNECT_MARIADB_NOEXLOCK
 #ifndef MYSQLRDD
-      oConnect := &("SR_MARIA()")
-      oConnect2 := &("SR_MARIA()")
+      //oConnect := &("SR_MARIA()") (deprecated)
+      oConnect := &("SR_MARIADB()")
+      //oConnect2 := &("SR_MARIA()") (deprecated)
+      oConnect2 := &("SR_MARIADB()")
 #endif
       EXIT
    CASE CONNECT_ODBC_QUERY_ONLY
@@ -514,7 +516,8 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
    //CASE CONNECT_MARIA_QUERY_ONLY (deprecated)
    CASE CONNECT_MARIADB_QUERY_ONLY
 #ifndef MYSQLRDD
-      oConnect := &("SR_MARIA()")
+      //oConnect := &("SR_MARIA()") (deprecated)
+      oConnect := &("SR_MARIADB()")
       oConnect:lQueryOnly := .T.
 #endif
       EXIT
