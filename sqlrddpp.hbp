@@ -29,11 +29,6 @@ source/sqlrdd0.prg
 source/sqlrdd2.prg
 source/utils.prg
 source/utilslang.prg
-source/txml.prg
-
-# parser
-#source/parser/sql.y
-source/parser/sqly.c
 
 source/tracelog.c
 source/sqlact.c
@@ -42,9 +37,16 @@ source/sqlex2.c
 source/sqlex3.c
 source/sqllex.c
 source/sqlrdd1.c
-source/srxml.c
 source/xhbenum.c
 source/xthrow.c
+
+# parser
+#source/parser/sql.y
+source/parser/sqly.c
+
+# XML
+source/xml/txml.prg
+source/xml/srxml.c
 
 # Firebird
 source/firebird/sr_firebird.prg
