@@ -43,6 +43,8 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#ifndef __XHARBOUR__
+
 #include <fileio.ch>
 #include <hbclass.ch>
 
@@ -480,3 +482,5 @@ METHOD sr_TXMLDocument:GetContext()
 RETURN oDoc
 
 //-------------------------------------------------------------------------------------------------------------------//
+
+#endif

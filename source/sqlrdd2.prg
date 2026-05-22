@@ -55,7 +55,11 @@
 #include "msg.ch"
 #include "set.ch"
 #include "sqlrddsetup.ch"
+#ifdef __XHARBOUR__
+#include "hbxml.ch" // Culik added to support arrays as xml
+#else
 #include "srxml.ch" // Culik added to support arrays as xml
+#endif
 
 #define DUPL_IND_DETECT                .F.
 #define SQLRDD_LEARNING_REPETITIONS     5
@@ -2565,8 +2569,13 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   cRet += IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(aBuffer[nThisField], .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo) + " "
                ELSEIF ::aFields[nThisField, 6] ==SQL_LONGVARCHARXML
                   oXml := sr_arraytoXml(aBuffer[nThisField])
+#ifdef __XHARBOUR__
+                  nlen := Len(oxml:tostring(HBXML_STYLE_NONEWLINE))
+                  cVal := IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(oxml:tostring(HBXML_STYLE_NONEWLINE), .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
+#else
                   nlen := Len(oxml:tostring(SR_XML_STYLE_NONEWLINE))
                   cVal := IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(oxml:tostring(SR_XML_STYLE_NONEWLINE), .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
+#endif
                ELSEIF ::aFields[nthisField, 6] == SQL_VARBINARY .AND. ::osql:nsystemID ==SQLRDD_RDBMS_MSSQL7
                   cVal := '0x'+hb_StrtoHex(aBuffer[nThisField])
                ELSE
@@ -2754,8 +2763,13 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 #endif
                CASE SQL_LONGVARCHARXML
                   oXml := sr_arraytoXml(cMemo)
+#ifdef __XHARBOUR__
+                  nlen := Len(oxml:tostring(HBXML_STYLE_NONEWLINE))
+                  cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(oXml:tostring(HBXML_STYLE_NONEWLINE), .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
+#else
                   nlen := Len(oxml:tostring(SR_XML_STYLE_NONEWLINE))
                   cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(oXml:tostring(SR_XML_STYLE_NONEWLINE), .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
+#endif
                   EXIT
                CASE SQL_VARBINARY
                   IF ::osql:nsystemID ==SQLRDD_RDBMS_MSSQL7
@@ -11009,7 +11023,11 @@ FUNCTION SR_arraytoXml(a)
 
    //LOCAL cItem
    LOCAL hHash
+#ifdef __XHARBOUR__
+   LOCAL oXml := TXmlDocument():new() // Cria um objeto Xml
+#else
    LOCAL oXml := sr_TXmlDocument():new() // Cria um objeto Xml
+#endif
    LOCAL oNode
    //LOCAL oNode1
    LOCAL aItem
@@ -11020,15 +11038,24 @@ FUNCTION SR_arraytoXml(a)
    hHash["version"] := "1.0"
 
    hHash[ "encoding"] := "utf-8"
+#ifdef __XHARBOUR__
+   oNode := tXMLNode():New(HBXML_TYPE_PI, "xml", hHash, ;
+      "version=" + Chr(34) + "1.0" + Chr(34) + " encoding=" + Chr(34) + "utf-8" + Chr(34) + "")
+#else
    oNode := sr_tXMLNode():New(SR_XML_TYPE_PI, "xml", hHash, ;
       "version=" + Chr(34) + "1.0" + Chr(34) + " encoding=" + Chr(34) + "utf-8" + Chr(34) + "")
+#endif
    oXml:oRoot:Addbelow(oNode)
    hhash := hb_hash()
    hhash["Type"] := ValType(a)
    hhash["Len"] := AllTrim(Str(Len(a)))
    hHash["Id"] := AllTrim(Str(s_nStartId))
    hHash["FatherId"] := AllTrim("-1")
+#ifdef __XHARBOUR__
+   oNode := tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
+#else
    oNode := sr_tXMLNode():New(SR_XML_TYPE_TAG, "Array", hhash)
+#endif
    FOR EACH aItem IN a
       addNode(aItem, ONode)
    NEXT
@@ -11061,7 +11088,11 @@ STATIC FUNCTION AddNode(a, oNode)
       AAdd(s_aPos, s_nPosData)
 
       s_nPosData := 0
+#ifdef __XHARBOUR__
+      oNode1 := tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
+#else
       oNode1 := sr_tXMLNode():New(SR_XML_TYPE_TAG, "Array", hhash)
+#endif
       FOR EACH aItem IN a
          AddNode(aItem, oNode1)
          //oNode1:addbelow(onode2)
@@ -11083,7 +11114,11 @@ STATIC FUNCTION AddNode(a, oNode)
       ENDIF
       hHash["Pos"] := AllTrim(Str(++s_nPosData))
       hHash["Id"] := AllTrim(Str(s_nStartId))
+#ifdef __XHARBOUR__
+      oNode1 := tXMLNode():New(HBXML_TYPE_TAG, "Data", hhash)
+#else
       oNode1 := sr_tXMLNode():New(SR_XML_TYPE_TAG, "Data", hhash)
+#endif
       oNode:addBelow(oNode1)
    ENDIF
 
@@ -11107,7 +11142,11 @@ FUNCTION SR_fromXml(oDoc, aRet, nLen, c)
       c := "<?xml version=" + Chr(34) + "1.0" + Chr(34) + " encoding=" + Chr(34) + "utf-8" + Chr(34) + "?>" + c
    ENDIF
    IF oDoc == NIL
+#ifdef __XHARBOUR
+      oDoc := txmldocument():new(c)
+#else
       oDoc := sr_txmldocument():new(c)
+#endif
    ENDIF
 
    oNode := oDoc:CurNode

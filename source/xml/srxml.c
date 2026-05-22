@@ -57,6 +57,8 @@
 // Original MXML lib can be obtained requesting it at
 // Giancarlo Niccolai <giancarlo@niccolai.org>
 
+#ifndef __XHARBOUR__
+
 #include "sqlrddpp.h"
 #include <hbapi.h>
 #include <hbapierr.h>
@@ -2185,3 +2187,5 @@ HB_FUNC(SR_XML_NODE_WRITE)
   iRet = mxml_node_write(&out, pNode, iStyle);
   hb_retni(iRet);
 }
+
+#endif
