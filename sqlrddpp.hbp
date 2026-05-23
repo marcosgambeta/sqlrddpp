@@ -52,36 +52,36 @@ source/xml/srxml.c
 
 # Firebird
 source/firebird/sr_firebird.prg
-#source/firebird/sr_firebird_bind.c
+#source/firebird/sr_firebird_bind.c (embedded in sr_firebird.prg via #include)
 source/firebird/sr_firebird3.prg
-#source/firebird/sr_firebird3_bind.c
+#source/firebird/sr_firebird3_bind.c (embedded in sr_firebird3.prg via #include)
 source/firebird/sr_firebird4.prg
-#source/firebird/sr_firebird4_bind.c
+#source/firebird/sr_firebird4_bind.c (embedded in sr_firebird4.prg via #include)
 source/firebird/sr_firebird5.prg
-#source/firebird/sr_firebird5_bind.c
+#source/firebird/sr_firebird5_bind.c (embedded in sr_firebird5.prg via #include)
 
 # MariaDB
 source/mariadb/sr_mariadb.prg
-#source/mariadb/sr_mariadb_bind.c
+#source/mariadb/sr_mariadb_bind.c (embedded in sr_mariadb.prg via #include)
 
 # MySQL
 source/mysql/sr_mysql.prg
-#source/mysql/sr_mysql_bind.c
+#source/mysql/sr_mysql_bind.c (embedded in sr_mysql.prg via #include)
 
 # ODBC
 source/odbc/sr_odbc.prg
-#source/odbc/sr_odbc_bind.c
+#source/odbc/sr_odbc_bind.c (embedded in sr_odbc.prg via #include)
 
 # Oracle
 source/oracle/sr_oracle.prg
-#source/oracle/sr_oracle_bind.c
+#source/oracle/sr_oracle_bind.c (embedded in sr_oracle.prg via #include)
 source/oracle/sr_oracle2.prg
-#source/oracle/sr_oracle2_bind.c
+#source/oracle/sr_oracle2_bind.c (embedded in sr_oracle2.prg via #include)
 source/oracle/sqlora.c
 
 # PostgreSQL
 source/postgresql/sr_pgs.prg
-#source/postgresql/sr_pgs_bind.c
+#source/postgresql/sr_pgs_bind.c (embedded in sr_pgs.prg via #include)
 
 {!xhb}-hbx=sqlrddpp.hbx
 {!xhb}sqlrddpp.hbx
@@ -94,6 +94,7 @@ source/postgresql/sr_pgs.prg
 
 {allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
 
+# SQLRDD++ do not require contrib/xhb
 #xhb.hbc
 
 # disable this line to NOT INSTALL the library in addons
