@@ -30,7 +30,6 @@ source/sqlrdd2.prg
 source/utils.prg
 source/utilslang.prg
 
-source/tracelog.c
 source/sqlact.c
 source/sqlex1.c
 source/sqlex2.c
@@ -39,6 +38,9 @@ source/sqllex.c
 source/sqlrdd1.c
 source/xhbenum.c
 source/xthrow.c
+
+# Misc
+source/misc/tracelog.c
 
 # parser
 #source/parser/sql.y
