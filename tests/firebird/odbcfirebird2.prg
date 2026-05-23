@@ -22,6 +22,7 @@ STATIC s_ODBC_CHARSET  := "ISO8859_1"
 
 #define RDD_NAME "SQLEX"
 #define TABLE_NAME "test"
+#define NUM_REC 100
 
 REQUEST SQLEX
 REQUEST SR_ODBC
@@ -33,7 +34,11 @@ PROCEDURE Main()
    LOCAL oTB
    LOCAL nKey
 
+   hb_RandomSeed()
+
    SetMode(25, maxcol() + 1)
+   
+   CLS
 
    n := 1
    DO WHILE n <= PCount()
@@ -112,13 +117,13 @@ PROCEDURE Main()
 
    USE (TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
 
-   IF reccount() < 100
-      FOR n := 1 TO 100
+   IF reccount() < NUM_REC
+      FOR n := 1 TO NUM_REC
          APPEND BLANK
          REPLACE ID      WITH n
          REPLACE FIRST   WITH "FIRST" + hb_ntos(n)
          REPLACE LAST    WITH "LAST" + hb_ntos(n)
-         REPLACE AGE     WITH n + 18
+         REPLACE AGE     WITH hb_RandomInt(18, 90) // n + 18
          REPLACE DATE    WITH date() - n
          REPLACE MARRIED WITH iif(n / 2 == int(n / 2), .T., .F.)
          REPLACE VALUE   WITH n * 1000 / 100
