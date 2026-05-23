@@ -1095,7 +1095,8 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
               cBuff == "MYSQL" .OR. ;
               cBuff == "PGS" .OR. ;
               cBuff == "SERVER" .OR. ;
-              cBuff == "MARIA"
+              cBuff == "MARIA" .OR. ; /* deprecated */
+              cBuff == "MARIADB"
             ::cHost += aToken[2]
          CASE cBuff == "PRT"
             ::cPort := Val(sr_val2char(aToken[2]))
@@ -1172,7 +1173,8 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
          CASE "MYSQL"
          CASE "PGS"
          CASE "SERVER"
-         CASE "MARIA"
+         CASE "MARIA" // deprecated
+         CASE "MARIADB"
             ::cHost += aToken[2]
             EXIT
          CASE "PRT"
