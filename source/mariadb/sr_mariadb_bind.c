@@ -65,8 +65,6 @@
 #include "errmsg.h"
 #include "sqlodbc.ch"
 
-#include <assert.h>
-
 #define MYSQL_OK 0
 
 #define CLIENT_ALL_FLAGS (CLIENT_COMPRESS | CLIENT_MULTI_RESULTS | CLIENT_MULTI_STATEMENTS)
@@ -130,8 +128,12 @@ HB_FUNC_STATIC(SR_MARIADBCONNECT)
 HB_FUNC_STATIC(SR_MARIADBFINISH)
 {
   GET_MARIADB_SESSION(session, 1);
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_ret();
+    return;
+  }
+
   mysql_close(session->dbh);
 
   hb_xfree(session);
@@ -150,19 +152,26 @@ HB_FUNC_STATIC(SR_MARIADBGETCONNID)
 
   HB_ULONG ulThreadID;
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retnl(0); // TODO: is 0 the correct value to return ?
+    return;
+  }
+
   ulThreadID = mysql_thread_id(session->dbh);
   hb_retnl(ulThreadID);
 }
 
+// TODO: change return to .T. or .F.
 HB_FUNC_STATIC(SR_MARIADBKILLCONNID)
 {
   GET_MARIADB_SESSION(session, 1);
   HB_ULONG ulThreadID = (HB_ULONG)hb_itemGetNL(hb_param(2, HB_IT_LONG));
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(-1);
+    return;
+  }
+
   hb_retni(mysql_kill(session->dbh, ulThreadID));
 }
 
@@ -172,8 +181,11 @@ HB_FUNC_STATIC(SR_MARIADBEXEC)
   GET_MARIADB_SESSION(session, 1);
   const char *szQuery = hb_parc(2);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retptr(SR_NULLPTR);
+    return;
+  }
+
   session->ulAffected_rows = 0;
   // mysql_query(session->dbh, szQuery);
   mysql_real_query(session->dbh, szQuery, (unsigned long)hb_parclen(2));
@@ -194,9 +206,10 @@ HB_FUNC_STATIC(SR_MARIADBFETCH)
   GET_MARIADB_SESSION(session, 1);
   int rows;
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
+    hb_retni(SQL_INVALID_HANDLE);
+    return;
+  }
 
   session->status = mysql_errno(session->dbh);
 
@@ -408,9 +421,10 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
   HB_BOOL bTranslate = hb_parl(6);
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
+    hb_retni(SQL_INVALID_HANDLE);
+    return;
+  }
 
   session->status = mysql_errno(session->dbh);
 
@@ -451,8 +465,10 @@ HB_FUNC_STATIC(SR_MARIADBSTATUS)
   int ret;
   GET_MARIADB_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
 
   ret = mysql_errno(session->dbh);
 
@@ -469,8 +485,10 @@ HB_FUNC_STATIC(SR_MARIADBRESULTSTATUS)
   HB_UINT ret;
   GET_MARIADB_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retnl(SQL_ERROR);
+    return;
+  }
 
   ret = (HB_UINT)mysql_errno(session->dbh);
 
@@ -495,8 +513,11 @@ HB_FUNC_STATIC(SR_MARIADBRESSTATUS)
 {
   GET_MARIADB_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
+
   hb_retc((char *)mysql_error(session->dbh));
 }
 
@@ -504,8 +525,9 @@ HB_FUNC_STATIC(SR_MARIADBCLEAR)
 {
   GET_MARIADB_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    return;
+  }
 
   if (session->stmt) {
     mysql_free_result(session->stmt);
@@ -518,8 +540,11 @@ HB_FUNC_STATIC(SR_MARIADBCOLS)
 {
   GET_MARIADB_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(0); // TODO: is 0 the correct value to return ?
+    return;
+  }
+
   hb_retni(session->numcols);
 }
 
@@ -527,16 +552,24 @@ HB_FUNC_STATIC(SR_MARIADBCOLS)
 HB_FUNC_STATIC(SR_MARIADBVERS)
 {
   GET_MARIADB_SESSION(session, 1);
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retnl(0); // TODO: is 0 the correct value to return ?
+    return;
+  }
+
   hb_retnl((long)mysql_get_server_version(session->dbh));
 }
 
 HB_FUNC_STATIC(SR_MARIADBERRMSG)
 {
   GET_MARIADB_SESSION(session, 1);
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
+
   hb_retc((char *)mysql_error(session->dbh));
 }
 
@@ -544,8 +577,10 @@ HB_FUNC_STATIC(SR_MARIADBCOMMIT)
 {
   GET_MARIADB_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
 
   if (mysql_commit(session->dbh)) {
     hb_retni(SQL_SUCCESS);
@@ -558,8 +593,10 @@ HB_FUNC_STATIC(SR_MARIADBROLLBACK)
 {
   GET_MARIADB_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
 
   if (mysql_rollback(session->dbh)) {
     hb_retni(SQL_SUCCESS);
@@ -572,16 +609,18 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
 {
   int row, rows, type;
   PHB_ITEM ret, temp, atemp;
-  PMARIADB_SESSION session;
   MYSQL_FIELD *field;
+
+  GET_MARIADB_SESSION(session, 1);
+
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
+    hb_retnl(-2);
+    return;
+  }
 
   if (hb_pcount() != 1) {
     hb_retnl(-2);
   }
-
-  session = (PMARIADB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
 
   rows = session->numcols;
   ret = hb_itemNew(SR_NULLPTR);
