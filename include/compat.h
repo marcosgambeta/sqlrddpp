@@ -58,6 +58,13 @@
 #include <hbapicls.h>
 #endif
 
+#ifdef __XHARBOUR__
+#define HB_SCHAR SCHAR
+#define HB_LONGLONG LONGLONG
+#include <hbfast.h>
+#include <hashapi.h>
+#endif
+
 HB_EXTERN_BEGIN
 
 extern void SR_TraceLog(const char *sFile, const char *sTraceMsg, ...);
