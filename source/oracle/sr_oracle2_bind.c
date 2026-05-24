@@ -139,6 +139,7 @@ static HB_USHORT OCI_initilized = 0;
 
 //-----------------------------------------------------------------------------//
 
+/*
 #if 0
 static void err_handler(OCI_Error *err)
 {
@@ -148,6 +149,7 @@ static void err_handler(OCI_Error *err)
   printf("%s - %s\n", err_type == OCI_ERR_WARNING ? "warning" : "error", err_msg);
 }
 #endif
+*/
 
 HB_FUNC_STATIC(SR_SQLO2_CONNECT)
 {
@@ -490,6 +492,7 @@ HB_FUNC_STATIC(SR_ORACLEINBINDPARAM2)
 
 ///// getbinddata
 
+/*
 #if 0
 HB_FUNC_STATIC(SR_ORACLEGETBINDDATA2) // TODO: not used in SQLRDD source code
 {
@@ -538,7 +541,9 @@ HB_FUNC_STATIC(SR_ORACLEGETBINDDATA2) // TODO: not used in SQLRDD source code
   hb_retc("");
 }
 #endif
+*/
 
+/*
 #if 0
 HB_FUNC_STATIC(SR_ORACLEEXECDIR2) // TODO: not used in SQLRDD source code
 {
@@ -559,6 +564,7 @@ HB_FUNC_STATIC(SR_ORACLEEXECDIR2) // TODO: not used in SQLRDD source code
   hb_retni(ret);
 }
 #endif
+*/
 
 HB_FUNC_STATIC(SR_ORACLEPREPARE2)
 {
@@ -809,6 +815,7 @@ static void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL 
 
 //-----------------------------------------------------------------------------//
 
+/*
 #if 0
 HB_FUNC(SQLO2_LINE) // TODO: not used in SQLRDD source code
 {
@@ -837,6 +844,7 @@ HB_FUNC(SQLO2_LINE) // TODO: not used in SQLRDD source code
   hb_itemRelease(ret);
 }
 #endif
+*/
 
 HB_FUNC_STATIC(SR_SQLO2_LINEPROCESSED)
 {
@@ -952,6 +960,7 @@ HB_FUNC_STATIC(SR_SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nCol
     // type = SQLO2_sqldtype(dType);
     hb_storni(type, 4);
 
+/*
 #if 0 // TODO: old code for reference (to be deleted)
       if( type == SQL_CHAR ) {
          hb_storni(0, 6);
@@ -972,6 +981,7 @@ HB_FUNC_STATIC(SR_SQLO2_DESCRIBECOL) // ( hStmt, nCol, @cName, @nDataType, @nCol
          hb_storni(scale, 6);
       }
 #endif
+*/
     switch (type) {
     case SQL_CHAR: {
       hb_storni(0, 6);
@@ -1164,6 +1174,7 @@ HB_FUNC_STATIC(SR_ORACLE_PROCCURSOR2)
   //
 }
 
+/*
 #if 0
 HB_FUNC_STATIC(SR_SQLO2_ORACLESETLOBPREFETCH) // TODO: not used in SQLRDD source code
 {
@@ -1176,6 +1187,7 @@ HB_FUNC_STATIC(SR_SQLO2_ORACLESETLOBPREFETCH) // TODO: not used in SQLRDD source
   }
 }
 #endif
+*/
 
 HB_FUNC_STATIC(SR_SQLO2_SETSTATEMENTCACHESIZE)
 {
@@ -1188,6 +1200,7 @@ HB_FUNC_STATIC(SR_SQLO2_SETSTATEMENTCACHESIZE)
   }
 }
 
+/*
 #if 0
 HB_FUNC_STATIC(SR_SQLO2_GETSTATEMENTCACHESIZE) // TODO: not used in SQLRDD source code
 {
@@ -1200,7 +1213,9 @@ HB_FUNC_STATIC(SR_SQLO2_GETSTATEMENTCACHESIZE) // TODO: not used in SQLRDD sourc
   }
 }
 #endif
+*/
 
+/*
 #if 0
 HB_FUNC_STATIC(SR_GETORAHANDLE2) // TODO: not used in SQLRDD source code
 {
@@ -1211,7 +1226,9 @@ HB_FUNC_STATIC(SR_GETORAHANDLE2) // TODO: not used in SQLRDD source code
   }
 }
 #endif
+*/
 
+/*
 #if 0
 HB_FUNC_STATIC(SR_SETORAHANDLE2) // TODO: not used in SQLRDD source code
 {
@@ -1222,12 +1239,15 @@ HB_FUNC_STATIC(SR_SETORAHANDLE2) // TODO: not used in SQLRDD source code
   }
 }
 #endif
+*/
 
+/*
 #if 0
 static OCI_Connection *GetConnection(OCI_ORASESSION *p) // TODO: not used in SQLRDD source code
 {
   return p->cn;
 }
 #endif
+*/
 
 #pragma ENDDUMP

@@ -285,6 +285,7 @@ HB_FUNC_STATIC(SR_PGSCLEAR)
 }
 
 // SR_PGSGetData(ResultSet, nColumn) => cValue
+/*
 #if 0
 HB_FUNC_STATIC(SR_PGSGETDATA)
 {
@@ -300,6 +301,7 @@ HB_FUNC_STATIC(SR_PGSGETDATA)
   hb_retc(PQgetvalue(session->stmt, session->ifetch, hb_parnl(2) - 1));
 }
 #endif
+*/
 
 // SR_PGSCols(ResultSet) => nColsInQuery
 HB_FUNC_STATIC(SR_PGSCOLS)
@@ -324,6 +326,7 @@ HB_FUNC_STATIC(SR_PGSERRMSG)
 }
 
 // SR_PGSCommit(ConnHandle) => nError
+/*
 #if 0
 HB_FUNC_STATIC(SR_PGSCOMMIT)
 {
@@ -341,6 +344,7 @@ HB_FUNC_STATIC(SR_PGSCOMMIT)
   }
 }
 #endif
+*/
 
 // SR_PGSRollBack(ConnHandle) => nError
 HB_FUNC_STATIC(SR_PGSROLLBACK)
@@ -406,11 +410,13 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
     if (typmod < 0L) {
       typmod = (HB_LONG)PQfsize(session->stmt, row);
     }
+/*
 #if 0
     if (typmod < 0L) {
       typmod = 20L;
     }
 #endif
+*/
     switch (type) {
     case CHAROID:
     case NAMEOID:

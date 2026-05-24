@@ -124,10 +124,12 @@ typedef struct vary1
   char vary_string[1];
 } VARY;
 
+/*
 #if 0 // TODO:  warning: unused variable 'divider' [-Wunused-const-variable] [clang++]
 const double divider4[19] = {1,    1E1,  1E2,  1E3,  1E4,  1E5,  1E6,  1E7,  1E8, 1E9,
                              1E10, 1E11, 1E12, 1E13, 1E14, 1E15, 1E16, 1E17, 1E18};
 #endif
+*/
 
 //------------------------------------------------------------------------
 
@@ -728,6 +730,7 @@ HB_FUNC_STATIC(SR_FBFETCH4)
 //------------------------------------------------------------------------
 
 // SR_FBGetData(hEnv, nField, @uData)
+/*
 #if 0
 HB_FUNC_STATIC(SR_FBGETDATA4)
 {
@@ -935,6 +938,7 @@ HB_FUNC_STATIC(SR_FBGETDATA4)
   }
 }
 #endif
+*/
 
 //------------------------------------------------------------------------
 
