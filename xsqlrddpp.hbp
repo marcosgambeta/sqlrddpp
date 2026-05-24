@@ -101,7 +101,7 @@ source/postgresql/sr_pgs.prg
 # hbmk2 sqlrddpp.hbp -cflag=-fpermissive
 # harbour, gcc and c++ mode
 # harbour++
-#{allgcc}-cflag=-fpermissive
+{allgcc}-cflag=-fpermissive
 
 {allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
 
