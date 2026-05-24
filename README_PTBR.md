@@ -1,6 +1,9 @@
 # SQLRDD++
 
-SQLRDD para Harbour e Harbour++
+SQLRDD para Harbour e Harbour++.
+
+Este projeto é um 'fork' (projeto derivado) da SQLRDD do xHarbour. O projeto original pode ser encontrado aqui:  
+https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLRDD  
 
 ## SGBD suportados
 
@@ -165,12 +168,9 @@ Versão em C++ para Harbour e Harbour++
 
 ## Donativos
 
-Caso deseje apoiar o desenvolvimento deste projeto através de donativos,
-basta utilizar a chave PIX abaixo:
+Caso deseje apoiar o desenvolvimento deste projeto através de donativos, basta utilizar a chave PIX abaixo:
 
 ![Chave PIX](chavepix.png)
 
-A frequência e o valor dos donativos ficam à critério de cada desenvolvedor. Seu apoio
-permitirá investir mais tempo na manutenção e desenvolvimento deste projeto.
-
-
+A frequência e o valor dos donativos ficam à critério de cada desenvolvedor. Este apoio permitirá
+investir mais tempo no desenvolvimento e manutenção deste projeto.

@@ -1,6 +1,9 @@
 # SQLRDD++
 
-SQLRDD for Harbour and Harbour++
+SQLRDD for Harbour and Harbour++.
+
+This project is a fork of the xHarbour SQLRDD. The original project can be found here:  
+https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLRDD  
 
 ## Supported database systems
 
