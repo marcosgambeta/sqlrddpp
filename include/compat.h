@@ -61,6 +61,8 @@
 #ifdef __XHARBOUR__
 #define HB_SCHAR SCHAR
 #define HB_LONGLONG LONGLONG
+#define HB_ULONGLONG ULONGLONG
+#define HB_EVALINFO EVALINFO
 #include <hbfast.h>
 #include <hashapi.h>
 #endif
