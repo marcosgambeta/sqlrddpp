@@ -764,11 +764,14 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          EXIT
 
       CASE SQLRDD_RDBMS_POSTGR
+#if 0
+         // Select disabled. Table 'SQ_NRECNO' do not exist.
          IF SR_UseSequences() .AND. i == 1
             aRet := {}
             oCnn:Exec("SELECT * FROM SQ_NRECNO", .F., .T., @aRet)
             oCnn:Commit()
          ENDIF
+#endif
          oCnn:Exec("SET CLIENT_ENCODING to 'LATIN1'", .F., .T., @aRet)
          oCnn:Exec("SET xmloption to 'DOCUMENT'", .F., .T., @aRet)
          // Locking system housekeeping
