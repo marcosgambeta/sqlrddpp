@@ -119,7 +119,7 @@ const double divider[19] = {1,    1E1,  1E2,  1E3,  1E4,  1E5,  1E6,  1E7,  1E8,
 #endif
 */
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 static void fb_log_status(PFB_SESSION session, const char *from)
 {
@@ -154,7 +154,7 @@ static void fb_log_status(PFB_SESSION session, const char *from)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
 HB_FUNC_STATIC(SR_FBCONNECT)
@@ -225,7 +225,7 @@ HB_FUNC_STATIC(SR_FBCONNECT)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBClose(hEnv)
 HB_FUNC_STATIC(SR_FBCLOSE)
@@ -261,7 +261,7 @@ HB_FUNC_STATIC(SR_FBCLOSE)
   hb_retni(SQL_SUCCESS);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBBeginTransaction(hEnv)
 HB_FUNC_STATIC(SR_FBBEGINTRANSACTION)
@@ -318,7 +318,7 @@ HB_FUNC_STATIC(SR_FBBEGINTRANSACTION)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBBeginTransaction(hEnv)
 HB_FUNC_STATIC(SR_FBCOMMITTRANSACTION)
@@ -337,7 +337,7 @@ HB_FUNC_STATIC(SR_FBCOMMITTRANSACTION)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBRollBackTransaction(hEnv)
 HB_FUNC_STATIC(SR_FBROLLBACKTRANSACTION)
@@ -356,7 +356,7 @@ HB_FUNC_STATIC(SR_FBROLLBACKTRANSACTION)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBExecute(hEnv, cCmd, nDialect)
 HB_FUNC_STATIC(SR_FBEXECUTE)
@@ -486,7 +486,7 @@ HB_FUNC_STATIC(SR_FBEXECUTE)
   hb_retni(SQL_SUCCESS);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBExecuteImmediate(hEnv, cCmd, nDialect)
 HB_FUNC_STATIC(SR_FBEXECUTEIMMEDIATE)
@@ -522,7 +522,7 @@ HB_FUNC_STATIC(SR_FBEXECUTEIMMEDIATE)
   hb_retni(SQL_SUCCESS);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
 HB_FUNC_STATIC(SR_FBDESCRIBECOL)
@@ -625,7 +625,7 @@ HB_FUNC_STATIC(SR_FBDESCRIBECOL)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBNumResultCols(hEnv, @nResultSetColumnCount)
 HB_FUNC_STATIC(SR_FBNUMRESULTCOLS)
@@ -640,7 +640,7 @@ HB_FUNC_STATIC(SR_FBNUMRESULTCOLS)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBError(hEnv)
 HB_FUNC_STATIC(SR_FBERROR)
@@ -655,7 +655,7 @@ HB_FUNC_STATIC(SR_FBERROR)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBFetch(hEnv)
 HB_FUNC_STATIC(SR_FBFETCH)
@@ -673,7 +673,7 @@ HB_FUNC_STATIC(SR_FBFETCH)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBGetData(hEnv, nField, @uData)
 /*
@@ -881,7 +881,7 @@ HB_FUNC_STATIC(SR_FBGETDATA)
 #endif
 */
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBCREATEDB(cDatabaseName, cUserName, cPassword, nPageSize=default, cCharset=default, nDialect=3) -> numeric (SQL_SUCCESS/SQL_ERROR)
 HB_FUNC(SR_FBCREATEDB)
@@ -937,7 +937,7 @@ HB_FUNC(SR_FBCREATEDB)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 static void firebird_info_cb(void *arg, char const *s)
 {
@@ -948,6 +948,8 @@ static void firebird_info_cb(void *arg, char const *s)
     strcpy((char *)arg, s);
   }
 }
+
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_FBVERSION)
 {
@@ -965,7 +967,7 @@ HB_FUNC_STATIC(SR_FBVERSION)
   hb_retc(tmp);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
                        HB_ULONG ulSystemID, HB_BOOL bTranslate)
@@ -1147,7 +1149,7 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_FBLINEPROCESSED)
 {
@@ -1417,4 +1419,6 @@ HB_FUNC_STATIC(SR_FBLINEPROCESSED)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
+
+#pragma ENDDUMP

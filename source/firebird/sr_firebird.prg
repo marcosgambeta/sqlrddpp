@@ -56,7 +56,7 @@
 #define DEBUGSESSION     .F.
 #define ARRAY_BLOCK      500
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 CLASS SR_FIREBIRD FROM SR_CONNECTION
 
@@ -78,7 +78,7 @@ CLASS SR_FIREBIRD FROM SR_CONNECTION
 
 ENDCLASS
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:Getline(aFields, lTranslate, aArray)
 
@@ -104,7 +104,7 @@ METHOD SR_FIREBIRD:Getline(aFields, lTranslate, aArray)
 
 RETURN aArray
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:FieldGet(nField, aFields, lTranslate)
 
@@ -116,7 +116,7 @@ METHOD SR_FIREBIRD:FieldGet(nField, aFields, lTranslate)
 
 RETURN ::aCurrLine[nField]
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:FetchRaw(lTranslate, aFields)
 
@@ -134,7 +134,7 @@ METHOD SR_FIREBIRD:FetchRaw(lTranslate, aFields)
 
 RETURN ::nRetCode
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:AllocStatement()
 
@@ -147,7 +147,7 @@ METHOD SR_FIREBIRD:AllocStatement()
 
 RETURN SQL_SUCCESS
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
 
@@ -237,7 +237,7 @@ METHOD SR_FIREBIRD:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cR
 
 RETURN aFields
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:LastError()
 
@@ -248,7 +248,7 @@ METHOD SR_FIREBIRD:LastError()
 
 RETURN AllTrim(cMsgError) + " - Native error code " + AllTrim(Str(nType))
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
    nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
@@ -301,7 +301,7 @@ METHOD SR_FIREBIRD:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMax
 
 RETURN SELF
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:End()
 
@@ -310,7 +310,7 @@ METHOD SR_FIREBIRD:End()
 
 RETURN ::Super:End()
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:Commit()
 
@@ -319,7 +319,7 @@ METHOD SR_FIREBIRD:Commit()
 
 RETURN (::nRetCode := SR_FBBeginTransaction(::hEnv))
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:RollBack()
 
@@ -327,7 +327,7 @@ METHOD SR_FIREBIRD:RollBack()
 
 RETURN (::nRetCode := SR_FBRollBackTransaction(::hEnv))
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:ExecuteRaw(cCommand)
 
@@ -343,13 +343,13 @@ METHOD SR_FIREBIRD:ExecuteRaw(cCommand)
 
 RETURN nRet
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_FIREBIRD:CreateDatabase(cDatabaseName, cUserName, cPassword, nPageSize, cCharset, nDialect)
 RETURN SR_FBCREATEDB(cDatabaseName, cUserName, cPassword, nPageSize, cCharset, nDialect)
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "sr_firebird_bind.c"
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

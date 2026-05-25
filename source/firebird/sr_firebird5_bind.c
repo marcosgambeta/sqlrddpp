@@ -131,7 +131,7 @@ const double divider5[19] = {1,    1E1,  1E2,  1E3,  1E4,  1E5,  1E6,  1E7,  1E8
 #endif
 */
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 static void isSelect(PFB_SESSION session)
 {
@@ -144,6 +144,8 @@ static void isSelect(PFB_SESSION session)
   iLength = isc_vax_integer(&acBuffer[1], 2);
   session->queryType = isc_vax_integer(&acBuffer[3], (short)iLength);
 }
+
+//----------------------------------------------------------------------------//
 
 static void fb_log_status5(PFB_SESSION session, const char *from)
 {
@@ -178,7 +180,7 @@ static void fb_log_status5(PFB_SESSION session, const char *from)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBConnect(cDatabase, cUser, cPassword, [charset], @hEnv)
 HB_FUNC_STATIC(SR_FBCONNECT5)
@@ -249,7 +251,7 @@ HB_FUNC_STATIC(SR_FBCONNECT5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBClose(hEnv)
 HB_FUNC_STATIC(SR_FBCLOSE5)
@@ -287,7 +289,7 @@ HB_FUNC_STATIC(SR_FBCLOSE5)
   hb_retni(SQL_SUCCESS);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBBeginTransaction(hEnv)
 HB_FUNC_STATIC(SR_FBBEGINTRANSACTION5)
@@ -344,7 +346,7 @@ HB_FUNC_STATIC(SR_FBBEGINTRANSACTION5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBBeginTransaction(hEnv)
 HB_FUNC_STATIC(SR_FBCOMMITTRANSACTION5)
@@ -363,7 +365,7 @@ HB_FUNC_STATIC(SR_FBCOMMITTRANSACTION5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBRollBackTransaction(hEnv)
 HB_FUNC_STATIC(SR_FBROLLBACKTRANSACTION5)
@@ -382,7 +384,7 @@ HB_FUNC_STATIC(SR_FBROLLBACKTRANSACTION5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBExecute(hEnv, cCmd, nDialect)
 HB_FUNC_STATIC(SR_FBEXECUTE5)
@@ -531,7 +533,7 @@ HB_FUNC_STATIC(SR_FBEXECUTE5)
   hb_retni(SQL_SUCCESS);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBExecuteImmediate(hEnv, cCmd, nDialect)
 HB_FUNC_STATIC(SR_FBEXECUTEIMMEDIATE5)
@@ -567,7 +569,7 @@ HB_FUNC_STATIC(SR_FBEXECUTEIMMEDIATE5)
   hb_retni(SQL_SUCCESS);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBDescribeCol(hStmt, nCol, @cName, @nType, @nLen, @nDec, @nNull)
 HB_FUNC_STATIC(SR_FBDESCRIBECOL5)
@@ -675,7 +677,7 @@ HB_FUNC_STATIC(SR_FBDESCRIBECOL5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBNumResultCols(hEnv, @nResultSetColumnCount)
 HB_FUNC_STATIC(SR_FBNUMRESULTCOLS5)
@@ -690,7 +692,7 @@ HB_FUNC_STATIC(SR_FBNUMRESULTCOLS5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBError(hEnv)
 HB_FUNC_STATIC(SR_FBERROR5)
@@ -705,7 +707,7 @@ HB_FUNC_STATIC(SR_FBERROR5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBFetch(hEnv)
 HB_FUNC_STATIC(SR_FBFETCH5)
@@ -727,7 +729,7 @@ HB_FUNC_STATIC(SR_FBFETCH5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBGetData(hEnv, nField, @uData)
 /*
@@ -940,7 +942,7 @@ HB_FUNC_STATIC(SR_FBGETDATA5)
 #endif
 */
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 // SR_FBCREATEDB5(cDatabaseName, cUserName, cPassword, nPageSize=default, cCharset=default, nDialect=3) -> numeric (SQL_SUCCESS/SQL_ERROR)
 HB_FUNC(SR_FBCREATEDB5)
@@ -996,7 +998,7 @@ HB_FUNC(SR_FBCREATEDB5)
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 static void firebird_info_cb(void *arg, char const *s)
 {
@@ -1007,6 +1009,8 @@ static void firebird_info_cb(void *arg, char const *s)
     strcpy((char *)arg, s);
   }
 }
+
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_FBVERSION5)
 {
@@ -1024,7 +1028,7 @@ HB_FUNC_STATIC(SR_FBVERSION5)
   hb_retc(tmp);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 static void FBFieldGet5(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
                         HB_ULONG ulSystemID, HB_BOOL bTranslate)
@@ -1207,7 +1211,7 @@ static void FBFieldGet5(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
   }
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_FBLINEPROCESSED5)
 {
@@ -1479,6 +1483,8 @@ HB_FUNC_STATIC(SR_FBLINEPROCESSED5)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_FBMORERESULTS5)
 {
   GET_FB_SESSION(session, 1);
@@ -1497,4 +1503,6 @@ HB_FUNC_STATIC(SR_FBMORERESULTS5)
   hb_retni(SQL_ERROR);
 }
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------//
+
+#pragma ENDDUMP
