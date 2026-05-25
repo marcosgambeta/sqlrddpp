@@ -317,6 +317,14 @@ METHOD SR_PGS:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff,
       ::uSid := Val(Str(aRet[1, 1], 8, 0))
    ENDIF
 
+   /* Open initial transaction block. The rest of SQLRDD assumes the connection
+      is always inside a transaction (since Commit/RollBack emit COMMIT;BEGIN and
+      BEGIN respectively). Without this initial BEGIN, the very first Commit()
+      after connect would trigger "there is no transaction in progress". */
+   IF !Empty(::nSystemID)
+      ::Exec("BEGIN", .F.)
+   ENDIF
+
 RETURN Self
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -340,17 +348,58 @@ RETURN NIL
 
 METHOD SR_PGS:Commit(lNoLog)
 
+   LOCAL nStat
+
    ::Super:Commit(lNoLog)
 
-RETURN (::nRetCode := ::Exec("COMMIT;BEGIN", .F.))
+   /* PostgreSQL emits the warning "there is no transaction in progress"
+      whenever COMMIT/ROLLBACK is sent while the backend is not inside a
+      transaction block. PQtransactionStatus() is available since libpq 7.3,
+      so this check is safe for every supported server version (8.0+).
+        PQTRANS_IDLE    (0) - no transaction; only BEGIN, no COMMIT
+        PQTRANS_INTRANS (2) - clean transaction; COMMIT then BEGIN
+        PQTRANS_INERROR (3) - failed transaction; must ROLLBACK, then BEGIN
+        PQTRANS_ACTIVE  (1) / PQTRANS_UNKNOWN (4) - leave it alone
+   */
+   nStat := SR_PGSTransStatus(::hDbc)
+
+   DO CASE
+   CASE nStat == 0   // PQTRANS_IDLE
+      ::nRetCode := ::Exec("BEGIN", .F.)
+   CASE nStat == 2   // PQTRANS_INTRANS
+      ::nRetCode := ::Exec("COMMIT;BEGIN", .F.)
+   CASE nStat == 3   // PQTRANS_INERROR
+      ::nRetCode := ::Exec("ROLLBACK;BEGIN", .F.)
+   OTHERWISE
+      // PQTRANS_ACTIVE or PQTRANS_UNKNOWN: do not interfere
+      ::nRetCode := SQL_SUCCESS
+   ENDCASE
+
+RETURN ::nRetCode
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_PGS:RollBack()
 
+   LOCAL nStat
+
    ::Super:RollBack()
-   ::nRetCode := SR_PGSRollBack(::hDbc)
-   ::Exec("BEGIN", .F.)
+
+   nStat := SR_PGSTransStatus(::hDbc)
+
+   /* Only issue ROLLBACK if there is actually a transaction to roll back.
+      Then reopen with BEGIN so the connection remains inside a transaction
+      block as the rest of SQLRDD expects. */
+   IF nStat == 2 .OR. nStat == 3   // INTRANS or INERROR
+      ::nRetCode := SR_PGSRollBack(::hDbc)
+   ELSE
+      ::nRetCode := SQL_SUCCESS
+   ENDIF
+
+   /* Open a fresh transaction only if we are now idle */
+   IF SR_PGSTransStatus(::hDbc) == 0   // PQTRANS_IDLE
+      ::Exec("BEGIN", .F.)
+   ENDIF
 
 RETURN ::nRetCode
 
