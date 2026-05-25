@@ -94,6 +94,9 @@ source/postgresql/sr_pgs.prg
 
 {allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
 
+# activate the Harbour internal API
+-cflag=-D_HB_API_INTERNAL_
+
 # SQLRDD++ do not require contrib/xhb
 #xhb.hbc
 
