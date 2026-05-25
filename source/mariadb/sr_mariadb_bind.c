@@ -92,6 +92,7 @@ typedef MARIADB_SESSION *PMARIADB_SESSION;
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBCONNECT(cHost, cUser, cPasssword, cDatabase, nPort, , nTimeout, lCompress) -> pSession
 HB_FUNC_STATIC(SR_MARIADBCONNECT)
 {
   // PMARIADB_SESSION session = (PMARIADB_SESSION) hb_xgrab(sizeof(MARIADB_SESSION));
@@ -129,6 +130,7 @@ HB_FUNC_STATIC(SR_MARIADBCONNECT)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBFINISH(pSession) -> NIL
 HB_FUNC_STATIC(SR_MARIADBFINISH)
 {
   GET_MARIADB_SESSION(session, 1);
@@ -152,6 +154,7 @@ HB_FUNC_STATIC(SR_MARIADBFINISH)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBGETCONNID(pSession) -> nThreadID
 HB_FUNC_STATIC(SR_MARIADBGETCONNID)
 {
   GET_MARIADB_SESSION(session, 1);
@@ -169,6 +172,7 @@ HB_FUNC_STATIC(SR_MARIADBGETCONNID)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBKILLCONNID(pSession, nThreadID) -> numeric
 // TODO: change return to .T. or .F.
 HB_FUNC_STATIC(SR_MARIADBKILLCONNID)
 {
@@ -185,6 +189,7 @@ HB_FUNC_STATIC(SR_MARIADBKILLCONNID)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBEXEC(pSession, cQuery) -> pointer
 HB_FUNC_STATIC(SR_MARIADBEXEC)
 {
   // SR_TraceLog(SR_NULLPTR, "mysqlExec : %s\n", hb_parc(2));
@@ -208,11 +213,11 @@ HB_FUNC_STATIC(SR_MARIADBEXEC)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBFETCH(pSession, ) -> numeric
 // MYSFetch(ConnHandle, ResultSet) => nStatus
 HB_FUNC_STATIC(SR_MARIADBFETCH)
 {
   GET_MARIADB_SESSION(session, 1);
-  int rows;
 
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
     hb_retni(SQL_INVALID_HANDLE);
@@ -225,6 +230,7 @@ HB_FUNC_STATIC(SR_MARIADBFETCH)
     hb_retni(SQL_INVALID_HANDLE);
   } else {
     if (session->ifetch >= -1) {
+      int rows;
       session->ifetch++;
       rows = (int)(mysql_num_rows(session->stmt) - 1);
       hb_retni(session->ifetch > rows ? SQL_NO_DATA_FOUND : SQL_SUCCESS);
@@ -409,20 +415,10 @@ static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBLINEPROCESSED(pSession, , aFields, lQueryOnly, nSystemID, lTranslate, aReturn) -> numeric
 HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
 {
   GET_MARIADB_SESSION(session, 1);
-  int col, cols;
-  PHB_ITEM temp;
-  MYSQL_ROW thisrow;
-  HB_ULONG *lens;
-  HB_LONG lIndex;
-
-  PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
-  HB_BOOL bQueryOnly = hb_parl(4);
-  HB_ULONG ulSystemID = hb_parnl(5);
-  HB_BOOL bTranslate = hb_parl(6);
-  PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
     hb_retni(SQL_INVALID_HANDLE);
@@ -433,38 +429,52 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
 
   if (session->status != MYSQL_OK) {
     hb_retni(SQL_INVALID_HANDLE);
-  } else {
-    if (session->ifetch >= -1) {
-      cols = (int)hb_arrayLen(pFields);
+    return;
+  }
 
-      mysql_data_seek(session->stmt, session->ifetch);
-      thisrow = mysql_fetch_row(session->stmt);
-      lens = mysql_fetch_lengths(session->stmt);
+  if (session->ifetch >= -1) {
+    int cols;
+    MYSQL_ROW thisrow;
+    HB_ULONG *lens;
+    int col;
+    PHB_ITEM temp;
+    HB_LONG lIndex;
+    PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
+    HB_BOOL bQueryOnly = hb_parl(4);
+    HB_ULONG ulSystemID = hb_parnl(5);
+    HB_BOOL bTranslate = hb_parl(6);
+    PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
-      for (col = 0; col < cols; col++) {
-        temp = hb_itemNew(SR_NULLPTR);
-        lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, col + 1), FIELD_ENUM);
+    cols = (int)hb_arrayLen(pFields);
 
-        if (lIndex != 0) {
-          if (thisrow[lIndex - 1]) {
-            MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), temp, (char *)thisrow[lIndex - 1], lens[lIndex - 1],
-                         bQueryOnly, ulSystemID, bTranslate);
-          } else {
-            MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), temp, "", 0, bQueryOnly, ulSystemID, bTranslate);
-          }
+    mysql_data_seek(session->stmt, session->ifetch);
+    thisrow = mysql_fetch_row(session->stmt);
+    lens = mysql_fetch_lengths(session->stmt);
+
+    for (col = 0; col < cols; col++) {
+      temp = hb_itemNew(SR_NULLPTR);
+      lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, col + 1), FIELD_ENUM);
+
+      if (lIndex != 0) {
+        if (thisrow[lIndex - 1]) {
+          MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), temp, (char *)thisrow[lIndex - 1], lens[lIndex - 1],
+                       bQueryOnly, ulSystemID, bTranslate);
+        } else {
+          MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), temp, "", 0, bQueryOnly, ulSystemID, bTranslate);
         }
-        hb_arraySetForward(pRet, col + 1, temp);
-        hb_itemRelease(temp);
       }
-      hb_retni(SQL_SUCCESS);
-    } else {
-      hb_retni(SQL_INVALID_HANDLE);
+      hb_arraySetForward(pRet, col + 1, temp);
+      hb_itemRelease(temp);
     }
+    hb_retni(SQL_SUCCESS);
+  } else {
+    hb_retni(SQL_INVALID_HANDLE);
   }
 }
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBSTATUS(pSession) -> numeric
 HB_FUNC_STATIC(SR_MARIADBSTATUS)
 {
   int ret;
@@ -482,6 +492,7 @@ HB_FUNC_STATIC(SR_MARIADBSTATUS)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBRESULTSTATUS(pSession) -> numeric
 HB_FUNC_STATIC(SR_MARIADBRESULTSTATUS)
 {
   HB_UINT ret;
@@ -513,6 +524,7 @@ HB_FUNC_STATIC(SR_MARIADBRESULTSTATUS)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBRESSTATUS(pSession) -> string
 HB_FUNC_STATIC(SR_MARIADBRESSTATUS)
 {
   GET_MARIADB_SESSION(session, 1);
@@ -527,6 +539,7 @@ HB_FUNC_STATIC(SR_MARIADBRESSTATUS)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBCLEAR(pSession) -> NIL
 HB_FUNC_STATIC(SR_MARIADBCLEAR)
 {
   GET_MARIADB_SESSION(session, 1);
@@ -544,6 +557,7 @@ HB_FUNC_STATIC(SR_MARIADBCLEAR)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBCOLS(pSession) -> numeric
 HB_FUNC_STATIC(SR_MARIADBCOLS)
 {
   GET_MARIADB_SESSION(session, 1);
@@ -558,6 +572,7 @@ HB_FUNC_STATIC(SR_MARIADBCOLS)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBVERS(pSession) -> numeric
 // MYSVERS(hConnection) => nVersion
 HB_FUNC_STATIC(SR_MARIADBVERS)
 {
@@ -573,6 +588,7 @@ HB_FUNC_STATIC(SR_MARIADBVERS)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBERRMSG(pSession) -> string
 // TODO: same as SR_MARIADBRESSTATUS
 HB_FUNC_STATIC(SR_MARIADBERRMSG)
 {
@@ -588,6 +604,7 @@ HB_FUNC_STATIC(SR_MARIADBERRMSG)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBCOMMIT(pSession) -> numeric
 HB_FUNC_STATIC(SR_MARIADBCOMMIT)
 {
   GET_MARIADB_SESSION(session, 1);
@@ -602,6 +619,7 @@ HB_FUNC_STATIC(SR_MARIADBCOMMIT)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBROLLBACK(pSession) -> numeric
 HB_FUNC_STATIC(SR_MARIADBROLLBACK)
 {
   GET_MARIADB_SESSION(session, 1);
@@ -616,6 +634,7 @@ HB_FUNC_STATIC(SR_MARIADBROLLBACK)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBQUERYATTR(pSession) -> numeric/array
 HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
 {
   int row, rows, type;
@@ -942,6 +961,7 @@ HB_FUNC_STATIC(SR_MARIADBTABLEATTR)
 
 //----------------------------------------------------------------------------//
 
+// SR_MARIADBAFFECTEDROWS(pSession) -> numeric
 HB_FUNC_STATIC(SR_MARIADBAFFECTEDROWS)
 {
   GET_MARIADB_SESSION(session, 1);
