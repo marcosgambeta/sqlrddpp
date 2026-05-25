@@ -83,6 +83,8 @@ static void myNoticeProcessor(void *arg, const char *message)
   //   SR_TraceLog("sqlerror.log", "%s", message);
 }
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSConnect(ConnectionString) => ConnHandle
 HB_FUNC_STATIC(SR_PGSCONNECT)
 {
@@ -100,6 +102,8 @@ HB_FUNC_STATIC(SR_PGSCONNECT)
   hb_retptr((void *)session);
 }
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSFinish(ConnHandle)
 HB_FUNC_STATIC(SR_PGSFINISH)
 {
@@ -114,6 +118,8 @@ HB_FUNC_STATIC(SR_PGSFINISH)
   hb_xfree(session);
   hb_ret();
 }
+
+//----------------------------------------------------------------------------//
 
 // SR_PGSStatus(ConnHandle) => nStatus
 HB_FUNC_STATIC(SR_PGSSTATUS)
@@ -131,6 +137,8 @@ HB_FUNC_STATIC(SR_PGSSTATUS)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSStatus(ConnHandle) => nStatus
 HB_FUNC_STATIC(SR_PGSSTATUS2)
 {
@@ -141,6 +149,8 @@ HB_FUNC_STATIC(SR_PGSSTATUS2)
   }
   hb_retni((int)PQstatus(session->dbh));
 }
+
+//----------------------------------------------------------------------------//
 
 // SR_PGSResultStatus(ResultSet) => nStatus
 HB_FUNC_STATIC(SR_PGSRESULTSTATUS)
@@ -183,6 +193,8 @@ HB_FUNC_STATIC(SR_PGSRESULTSTATUS)
   hb_retni(ret);
 }
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSExec(ConnHandle, cCommand) => ResultSet
 HB_FUNC_STATIC(SR_PGSEXEC)
 {
@@ -221,6 +233,8 @@ HB_FUNC_STATIC(SR_PGSEXEC)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSFetch(ResultSet) => nStatus
 HB_FUNC_STATIC(SR_PGSFETCH)
 {
@@ -255,6 +269,8 @@ HB_FUNC_STATIC(SR_PGSFETCH)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSResStatus(ResultSet) => cErrMessage
 HB_FUNC_STATIC(SR_PGSRESSTATUS)
 {
@@ -270,6 +286,8 @@ HB_FUNC_STATIC(SR_PGSRESSTATUS)
   hb_retc(PQresStatus(PQresultStatus(session->stmt)));
 }
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSClear(ResultSet)
 HB_FUNC_STATIC(SR_PGSCLEAR)
 {
@@ -283,6 +301,8 @@ HB_FUNC_STATIC(SR_PGSCLEAR)
     session->ifetch = -2;
   }
 }
+
+//----------------------------------------------------------------------------//
 
 // SR_PGSGetData(ResultSet, nColumn) => cValue
 /*
@@ -303,6 +323,8 @@ HB_FUNC_STATIC(SR_PGSGETDATA)
 #endif
 */
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSCols(ResultSet) => nColsInQuery
 HB_FUNC_STATIC(SR_PGSCOLS)
 {
@@ -314,6 +336,8 @@ HB_FUNC_STATIC(SR_PGSCOLS)
   hb_retnl((long)PQnfields(res));
 }
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSErrMsg(ConnHandle) => cErrorMessage
 HB_FUNC_STATIC(SR_PGSERRMSG)
 {
@@ -324,6 +348,8 @@ HB_FUNC_STATIC(SR_PGSERRMSG)
   }
   hb_retc(PQerrorMessage(session->dbh));
 }
+
+//----------------------------------------------------------------------------//
 
 // SR_PGSCommit(ConnHandle) => nError
 /*
@@ -346,6 +372,8 @@ HB_FUNC_STATIC(SR_PGSCOMMIT)
 #endif
 */
 
+//----------------------------------------------------------------------------//
+
 // SR_PGSRollBack(ConnHandle) => nError
 HB_FUNC_STATIC(SR_PGSROLLBACK)
 {
@@ -362,6 +390,8 @@ HB_FUNC_STATIC(SR_PGSROLLBACK)
     hb_retni(SQL_ERROR);
   }
 }
+
+//----------------------------------------------------------------------------//
 
 // SR_PGSTransStatus(ConnHandle) => nStatus
 // Returns PQtransactionStatus() result. Available in libpq since PostgreSQL 7.3,
@@ -380,6 +410,8 @@ HB_FUNC_STATIC(SR_PGSTRANSSTATUS)
   }
   hb_retni((int)PQtransactionStatus(session->dbh));
 }
+
+//----------------------------------------------------------------------------//
 
 // SR_PGSQueryAttr(ResultSet) => aStruct
 HB_FUNC_STATIC(SR_PGSQUERYATTR)
@@ -590,6 +622,8 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
   hb_itemReturnForward(ret);
   hb_itemRelease(ret);
 }
+
+//----------------------------------------------------------------------------//
 
 // SR_PGSTableAttr(ConnHandle, cTableName) => aStruct
 HB_FUNC_STATIC(SR_PGSTABLEATTR)
@@ -993,7 +1027,7 @@ static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
   }
 }
 
-//-----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
 {
@@ -1030,6 +1064,8 @@ HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_PGSAFFECTEDROWS)
 {
   GET_PGSQL_SESSION(session, 1);
@@ -1037,6 +1073,6 @@ HB_FUNC_STATIC(SR_PGSAFFECTEDROWS)
   hb_retni(session != SR_NULLPTR ? session->iAffectedRows : 0);
 }
 
-//-----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #pragma ENDDUMP
