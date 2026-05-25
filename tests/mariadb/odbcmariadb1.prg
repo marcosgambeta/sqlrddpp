@@ -17,6 +17,7 @@
 
 #define RDD_NAME "SQLEX"
 #define TABLE_NAME "test"
+#define NUM_REC 100
 
 REQUEST SQLEX
 REQUEST SR_ODBC
@@ -58,8 +59,8 @@ PROCEDURE Main()
 
    USE (TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
 
-   IF reccount() < 100
-      FOR n := 1 TO 100
+   IF reccount() < NUM_REC
+      FOR n := 1 TO NUM_REC
          APPEND BLANK
          REPLACE ID      WITH n
          REPLACE FIRST   WITH "FIRST" + hb_ntos(n)

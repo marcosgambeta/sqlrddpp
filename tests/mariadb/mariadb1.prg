@@ -9,6 +9,10 @@
 // mariadb1 --server <servername> --uid <username> --pwd <userpassword> --dtb <databasename>
 // NOTE: the database must exist before runnning the test.
 
+#define RDD_NAME "SQLRDD"
+#define TABLE_NAME "test"
+#define NUM_REC 100
+
 REQUEST SQLRDD
 REQUEST SR_MARIADB
 
@@ -49,7 +53,7 @@ PROCEDURE Main()
       ++n
    ENDDO
 
-   rddSetDefault("SQLRDD")
+   rddSetDefault(RDD_NAME)
 
    nConnection := sr_AddConnection(CONNECT_MARIADB, "MARIADB=" + s_SERVER + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
 
@@ -60,20 +64,20 @@ PROCEDURE Main()
 
    sr_StartLog(nConnection)
 
-   IF !sr_ExistTable("test")
-      dbCreate("test", {{"ID",      "N", 10, 0}, ;
-                        {"FIRST",   "C", 30, 0}, ;
-                        {"LAST",    "C", 30, 0}, ;
-                        {"AGE",     "N",  3, 0}, ;
-                        {"DATE",    "D",  8, 0}, ;
-                        {"MARRIED", "L",  1, 0}, ;
-                        {"VALUE",   "N", 12, 2}}, "SQLRDD")
+   IF !sr_ExistTable(TABLE_NAME)
+      dbCreate(TABLE_NAME, {{"ID",      "N", 10, 0}, ;
+                            {"FIRST",   "C", 30, 0}, ;
+                            {"LAST",    "C", 30, 0}, ;
+                            {"AGE",     "N",  3, 0}, ;
+                            {"DATE",    "D",  8, 0}, ;
+                            {"MARRIED", "L",  1, 0}, ;
+                            {"VALUE",   "N", 12, 2}}, RDD_NAME)
    ENDIF
 
-   USE test EXCLUSIVE VIA "SQLRDD"
+   USE (TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
 
-   IF reccount() < 100
-      FOR n := 1 TO 100
+   IF reccount() < NUM_REC
+      FOR n := 1 TO NUM_REC
          APPEND BLANK
          REPLACE ID      WITH n
          REPLACE FIRST   WITH "FIRST" + hb_ntos(n)
