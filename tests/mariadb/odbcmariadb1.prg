@@ -5,15 +5,10 @@
 
 #include "sqlrdd.ch"
 
-// Make a copy of this file and change the values below.
+// Make a copy of this file and change the values below or use the command line parameters.
+// To run the test:
+// odbcmariadb1 --driver <drivername> --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> --options <options>
 // NOTE: the database must exist before runnning the test.
-#define ODBC_DRIVER   "MariaDB ODBC 3.2 Driver"
-#define ODBC_SERVER   "localhost"
-#define ODBC_PORT     "3306"
-#define ODBC_UID      "root"
-#define ODBC_PWD      "password"
-#define ODBC_DATABASE "dbtest"
-#define ODBC_OPTIONS  "TCPIP=1"
 
 #define RDD_NAME "SQLEX"
 #define TABLE_NAME "test"
@@ -22,6 +17,14 @@
 REQUEST SQLEX
 REQUEST SR_ODBC
 
+STATIC s_ODBC_DRIVER   := "MariaDB ODBC 3.2 Driver"
+STATIC s_ODBC_SERVER   := "localhost"
+STATIC s_ODBC_PORT     := "3306"
+STATIC s_ODBC_UID      := "root"
+STATIC s_ODBC_PWD      := "password"
+STATIC s_ODBC_DATABASE := "dbtest"
+STATIC s_ODBC_OPTIONS  := "TCPIP=1"
+
 PROCEDURE Main()
 
    LOCAL nConnection
@@ -29,16 +32,58 @@ PROCEDURE Main()
 
    SetMode(25, maxcol() + 1)
 
+   CLS
+
+   n := 1
+   DO WHILE n <= PCount()
+      IF HB_PValue(n) == "--driver"
+         ++n
+         s_ODBC_DRIVER := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--server"
+         ++n
+         s_ODBC_SERVER := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--port"
+         ++n
+         s_ODBC_PORT := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--uid"
+         ++n
+         s_ODBC_UID := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--pwd"
+         ++n
+         s_ODBC_PWD := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--database"
+         ++n
+         s_ODBC_DATABASE := HB_PValue(n)
+         LOOP
+      ENDIF
+      IF HB_PValue(n) == "--options"
+         ++n
+         s_ODBC_OPTIONS := HB_PValue(n)
+         LOOP
+      ENDIF
+      ++n
+   ENDDO
+
    rddSetDefault(RDD_NAME)
 
    nConnection := sr_AddConnection(CONNECT_ODBC, ;
-      "Driver="   + ODBC_DRIVER   + ";" + ;
-      "Server="   + ODBC_SERVER   + ";" + ;
-      "Port="     + ODBC_PORT     + ";" + ;
-      "Database=" + ODBC_DATABASE + ";" + ;
-      "Uid="      + ODBC_UID      + ";" + ;
-      "Pwd="      + ODBC_PWD      + ";" + ;
-      ""          + ODBC_OPTIONS  + ";")
+      "Driver="   + s_ODBC_DRIVER   + ";" + ;
+      "Server="   + s_ODBC_SERVER   + ";" + ;
+      "Port="     + s_ODBC_PORT     + ";" + ;
+      "Database=" + s_ODBC_DATABASE + ";" + ;
+      "Uid="      + s_ODBC_UID      + ";" + ;
+      "Pwd="      + s_ODBC_PWD      + ";" + ;
+      ""          + s_ODBC_OPTIONS  + ";")
 
    IF nConnection < 0
       alert("Connection error. See sqlerror.log for details.")
