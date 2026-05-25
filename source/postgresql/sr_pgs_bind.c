@@ -363,6 +363,24 @@ HB_FUNC_STATIC(SR_PGSROLLBACK)
   }
 }
 
+// SR_PGSTransStatus(ConnHandle) => nStatus
+// Returns PQtransactionStatus() result. Available in libpq since PostgreSQL 7.3,
+// so it is safe to use across the entire range of supported server versions (8.0+).
+//   0 = PQTRANS_IDLE    (no transaction open)
+//   1 = PQTRANS_ACTIVE  (query in progress)
+//   2 = PQTRANS_INTRANS (idle, inside a transaction block)
+//   3 = PQTRANS_INERROR (inside a failed transaction block)
+//   4 = PQTRANS_UNKNOWN (connection is bad)
+HB_FUNC_STATIC(SR_PGSTRANSSTATUS)
+{
+  GET_PGSQL_SESSION(session, 1);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(4); // PQTRANS_UNKNOWN
+    return;
+  }
+  hb_retni((int)PQtransactionStatus(session->dbh));
+}
+
 // SR_PGSQueryAttr(ResultSet) => aStruct
 HB_FUNC_STATIC(SR_PGSQUERYATTR)
 {
