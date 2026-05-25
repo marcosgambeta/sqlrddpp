@@ -260,32 +260,34 @@ HB_FUNC_STATIC(SR_FBCLOSE4)
   int i;
   XSQLVAR *var;
 
-  if (session != SR_NULLPTR) {
-    if (session->transac) {
-      if (isc_commit_transaction(session->status, &(session->transac))) {
-        ERRORLOGANDEXIT(session, "FBCLOSE");
-      }
-    }
-
-    if (isc_detach_database(session->status, &(session->db))) {
-      ERRORLOGANDEXIT(session, "FBCLOSE");
-    }
-
-    for (i = 0, var = session->sqlda->sqlvar; i < MAX_COLUMNS_IN_QUERY; i++, var++) {
-      if (var->sqldata) {
-        hb_xfree(var->sqldata);
-        hb_xfree(var->sqlind);
-      }
-    }
-
-    if (session->msgerror) {
-      hb_xfree(session->msgerror);
-    }
-
-    hb_xfree(session->sqlda);
-    hb_xfree(session);
+  if (session == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
   }
 
+  if (session->transac) {
+    if (isc_commit_transaction(session->status, &(session->transac))) {
+      ERRORLOGANDEXIT(session, "FBCLOSE");
+    }
+  }
+
+  if (isc_detach_database(session->status, &(session->db))) {
+    ERRORLOGANDEXIT(session, "FBCLOSE");
+  }
+
+  for (i = 0, var = session->sqlda->sqlvar; i < MAX_COLUMNS_IN_QUERY; i++, var++) {
+    if (var->sqldata) {
+      hb_xfree(var->sqldata);
+      hb_xfree(var->sqlind);
+    }
+  }
+
+  if (session->msgerror) {
+    hb_xfree(session->msgerror);
+  }
+
+  hb_xfree(session->sqlda);
+  hb_xfree(session);
   hb_retni(SQL_SUCCESS);
 }
 
