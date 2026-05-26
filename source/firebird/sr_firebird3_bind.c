@@ -287,10 +287,15 @@ HB_FUNC_STATIC(SR_FBBEGINTRANSACTION3)
 {
   GET_FB_SESSION(session, 1);
 
+  if (session == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
+
   if (CHECK_ERROR(session) && session->transac) {
     isc_rollback_transaction(session->status, &(session->transac));
     if (CHECK_ERROR(session)) {
-      ERRORLOGANDEXIT(session, "FBROLLBACKTRANSACTION");
+      ERRORLOGANDEXIT(session, "FBBEGINTRANSACTION");
     } else {
       session->transac = 0;
       session->transactionPending = 0;
@@ -306,8 +311,8 @@ HB_FUNC_STATIC(SR_FBBEGINTRANSACTION3)
         ERRORLOGANDEXIT(session, "FBBEGINTRANSACTION1_1");
       }
 
-      // if( isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)
-      // sizeof(isc_tpb), isc_tpb) )
+      // if (isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)
+      //                           sizeof(isc_tpb), isc_tpb))
       isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)sizeof(isc_tpb),
                             isc_tpb);
       if (CHECK_ERROR(session)) {
@@ -324,8 +329,8 @@ HB_FUNC_STATIC(SR_FBBEGINTRANSACTION3)
       }
     }
 
-    // if( isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)
-    // sizeof(isc_tpb), isc_tpb) )
+    // if (isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)
+    //                           sizeof(isc_tpb), isc_tpb))
     isc_start_transaction(session->status, &(session->transac), 1, &(session->db), (unsigned short)sizeof(isc_tpb),
                           isc_tpb);
     if (CHECK_ERROR(session)) {
@@ -344,6 +349,11 @@ HB_FUNC_STATIC(SR_FBCOMMITTRANSACTION3)
 {
   GET_FB_SESSION(session, 1);
 
+  if (session == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
+
   if (session->transac) {
     isc_commit_transaction(session->status, &(session->transac));
     if (CHECK_ERROR(session)) {
@@ -353,6 +363,8 @@ HB_FUNC_STATIC(SR_FBCOMMITTRANSACTION3)
       session->transactionPending = 0;
       hb_retni(SQL_SUCCESS);
     }
+  } else {
+    hb_retni(SQL_ERROR);
   }
 }
 
@@ -363,6 +375,11 @@ HB_FUNC_STATIC(SR_FBROLLBACKTRANSACTION3)
 {
   GET_FB_SESSION(session, 1);
 
+  if (session == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
+
   if (session->transac) {
     isc_rollback_transaction(session->status, &(session->transac));
     if (CHECK_ERROR(session)) {
@@ -372,6 +389,8 @@ HB_FUNC_STATIC(SR_FBROLLBACKTRANSACTION3)
       session->transactionPending = 0;
       hb_retni(SQL_SUCCESS);
     }
+  } else {
+    hb_retni(SQL_ERROR);
   }
 }
 
