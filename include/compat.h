@@ -63,6 +63,7 @@
 #define HB_LONGLONG LONGLONG
 #define HB_ULONGLONG ULONGLONG
 #define HB_EVALINFO EVALINFO
+#define hb_vmCDP() hb_cdppage()
 #include <hbfast.h>
 #include <hashapi.h>
 #endif
