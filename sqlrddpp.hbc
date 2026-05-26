@@ -9,4 +9,4 @@ libs=sqlrddpp
 {unix&darwin}libs=iodbc
 #libs=xhb.hbc
 
-prgflags=-gc3
+{!xhb}prgflags=-gc3
