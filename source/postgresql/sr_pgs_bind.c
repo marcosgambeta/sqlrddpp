@@ -1010,13 +1010,21 @@ static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
 #endif
     case SQL_DATETIME: {
       long lJulian, lMilliSec;
+#ifdef __XHARBOUR__
+      hb_dateTimeStampStrGet( bBuffer, &lJulian, &lMilliSec );
+#else
       hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
+#endif
       hb_itemPutTDT(pItem, lJulian, lMilliSec);
       break;
     }
     case SQL_TIME: {
       long lMilliSec;
+#ifdef __XHARBOUR__
+      lMilliSec = hb_timeEncStr(bBuffer);
+#else
       lMilliSec = hb_timeUnformat(bBuffer, SR_NULLPTR); // TOCHECK:
+#endif
       hb_itemPutTDT(pItem, 0, lMilliSec);
       break;
     }
