@@ -646,12 +646,20 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                ASort(aOuters,,, {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
                FOR EACH outer IN aOuters
+#ifdef __XHARBOUR__
+                  IF outer[1] != cAtual .AND. hb_enumIndex() > 1
+#else
                   IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
+#endif
                      cSql += ", "
                      cSql += SR_CRLF
                   ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                      cSql += " AND "
+#ifdef __XHARBOUR__
+                  ELSEIF hb_enumIndex() > 1
+#else
                   ELSEIF outer:__enumIndex() > 1
+#endif
                      cSql += SR_CRLF
                   ENDIF
 
@@ -717,7 +725,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                ENDIF
 
                FOR EACH cTbl IN aQualifiedTables
+#ifdef __XHARBOUR__
+                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(hb_enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
+#else
                   cSql += cTbl + " " + aAlias[cTbl:__enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(cTbl:__enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
+#endif
                NEXT
 
                cSql += cTmp + cTrailler
@@ -759,11 +771,19 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                      //ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                      IF outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += " AND "
+#ifdef __XHARBOUR__
+                     ELSEIF hb_enumIndex() > 1
+#else
                      ELSEIF outer:__enumIndex() > 1
+#endif
                         cSql += SR_CRLF
                      ENDIF
 
+#ifdef __XHARBOUR__
+                     IF hb_enumIndex() = 1
+#else
                      IF outer:__enumIndex() = 1
+#endif
                         //IF outer[1] != cAtual
                         nPos := AScan(aAlias, SR_DBQUALIFY(outer[1], nSystemID))
                         IF nPos == 0
@@ -799,12 +819,20 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
                   FOR EACH outer IN aOuters
+#ifdef __XHARBOUR__
+                     IF outer[1] != cAtual .AND. hb_enumIndex() > 1
+#else
                      IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
+#endif
                         cSql += ", "
                         cSql += SR_CRLF
                      ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += " AND "
+#ifdef __XHARBOUR__
+                     ELSEIF hb_enumIndex() > 1
+#else
                      ELSEIF outer:__enumIndex() > 1
+#endif
                         cSql += SR_CRLF
                      ENDIF
 
@@ -872,7 +900,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                ENDIF
 
                FOR EACH cTbl IN aQualifiedTables
+#ifdef __XHARBOUR__
+                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(hb_enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
+#else
                   cSql += cTbl + " " + aAlias[cTbl:__enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(cTbl:__enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
+#endif
                NEXT
 
                cSql += cTmp + cTrailler
@@ -1106,11 +1138,19 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                //ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                IF outer[1] = cAtual .AND. outer[2] = cAtual2
                   cSql += " AND "
+#ifdef __XHARBOUR__
+               ELSEIF hb_enumIndex() > 1
+#else
                ELSEIF outer:__enumIndex() > 1
+#endif
                   cSql += SR_CRLF
                ENDIF
 
+#ifdef __XHARBOUR__
+               IF hb_enumIndex() = 1
+#else
                IF outer:__enumIndex() = 1
+#endif
                   //IF outer[1] != cAtual
                   nPos := AScan(aAlias, SR_DBQUALIFY(outer[1], nSystemID))
                   IF nPos == 0
@@ -1146,12 +1186,20 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
             FOR EACH outer IN aOuters
+#ifdef __XHARBOUR__
+               IF outer[1] != cAtual .AND. hb_enumIndex() > 1
+#else
                IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
+#endif
                   cSql += ", "
                   cSql += SR_CRLF
                ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                   cSql += " AND "
+#ifdef __XHARBOUR__
+               ELSEIF hb_enumIndex() > 1
+#else
                ELSEIF outer:__enumIndex() > 1
+#endif
                   cSql += SR_CRLF
                ENDIF
 
@@ -1219,7 +1267,11 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          ENDIF
 
          FOR EACH cTbl IN aQualifiedTables
+#ifdef __XHARBOUR__
+            cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(hb_enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
+#else
             cSql += cTbl + " " + aAlias[cTbl:__enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(cTbl:__enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
+#endif
          NEXT
 
          cSql += cTmp + cTrailler

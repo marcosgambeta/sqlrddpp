@@ -203,7 +203,11 @@ METHOD SR_MARIADB:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRe
    ::aFields := aFields
 
    FOR EACH aFld IN ::aFields
+#ifdef __XHARBOUR__
+      aFld[FIELD_ENUM] := hb_enumIndex()
+#else
       aFld[FIELD_ENUM] := aFld:__enumIndex()
+#endif
    NEXT
 
    IF lReSelect .AND. !lLoadCache

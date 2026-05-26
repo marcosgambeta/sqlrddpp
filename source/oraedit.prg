@@ -301,7 +301,11 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
       axColumns := Array(FCount())
 
       FOR EACH i IN axColumns
+#ifdef __XHARBOUR__
+         i := FieldName(hb_EnumIndex())
+#else
          i := FieldName(i:__EnumIndex())
+#endif
       NEXT
 
    ENDIF

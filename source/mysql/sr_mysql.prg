@@ -204,7 +204,11 @@ METHOD SR_MYSQL:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecn
    ::aFields := aFields
 
    FOR EACH aFld IN ::aFields
+#ifdef __XHARBOUR__
+      aFld[FIELD_ENUM] := hb_enumIndex()
+#else
       aFld[FIELD_ENUM] := aFld:__enumIndex()
+#endif
    NEXT
 
    IF lReSelect .AND. !lLoadCache
