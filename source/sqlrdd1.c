@@ -1193,7 +1193,13 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
   }
 
   if (HB_IS_ARRAY(itemTemp)) {
+#ifdef __XHARBOUR__
+    itemTemp3 = hb_arrayClone(itemTemp, SR_NULLPTR);
+    hb_itemForwardValue(value, itemTemp3);
+    hb_itemRelease(itemTemp3);
+#else
     hb_arrayCloneTo(value, itemTemp);
+#endif
   } else if (HB_IS_HASH(itemTemp) && sr_isMultilang()) {
     pField = thiswa->area.lpFields + fieldNum - 1;
 

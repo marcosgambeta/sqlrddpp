@@ -536,7 +536,11 @@ HB_ERRCODE SR_FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
             // Transform multilang field in HASH
             PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
             pTemp = hb_hashNew(NULL);
+#ifdef __XHARBOUR__
+            hb_hashAdd(pTemp, ULONG_MAX, sr_getBaseLang(pLangItem), pFieldData);
+#else
             hb_hashAdd(pTemp, sr_getBaseLang(pLangItem), pFieldData);
+#endif
             hb_itemRelease(pLangItem);
             hb_itemMove(pFieldData, pTemp);
             hb_itemRelease(pTemp);

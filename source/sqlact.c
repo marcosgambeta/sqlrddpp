@@ -1010,6 +1010,18 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
   case HB_IT_DOUBLE: {
     return hb_itemGetND(pItem) == 0.0;
   }
+#ifdef __XHARBOUR__
+  case HB_IT_DATE: {
+#ifdef SQLRDD_COMPAT_PRE_1_1
+    return hb_itemGetDL(pItem) == 0;
+#else
+    return hb_itemGetDL(pItem) == 0 && hb_itemGetT(pItem) == 0;
+#endif // SQLRDD_COMPAT_PRE_1_1
+  }
+  case HB_IT_TIMEFLAG: {
+    return hb_itemGetDL(pItem) == 0 && hb_itemGetT(pItem) == 0;
+  }
+#else
   case HB_IT_DATE: {
     return hb_itemGetDL(pItem) == 0;
   }
@@ -1018,6 +1030,7 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
     hb_itemGetTDT(pItem, &lDate, &lTime);
     return lDate == 0 && lTime == 0;
   }
+#endif // __XHARBOUR__
   case HB_IT_LOGICAL: {
     return !hb_itemGetL(pItem);
   }
@@ -1027,6 +1040,8 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
   case HB_IT_POINTER: {
     return hb_itemGetPtr(pItem) == SR_NULLPTR;
   }
+// TODO: check
+// #ifndef __XHARBOUR__
   case HB_IT_SYMBOL: {
     PHB_SYMB pSym = hb_itemGetSymbol(pItem);
     if (pSym && (pSym->scope.value & HB_FS_DEFERRED) && pSym->pDynSym) {
@@ -1034,6 +1049,7 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
     }
     return pSym == SR_NULLPTR || pSym->value.pFunPtr == SR_NULLPTR;
   }
+// #endif
   default: {
     return HB_TRUE;
   }
