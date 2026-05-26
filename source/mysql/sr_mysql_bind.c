@@ -374,13 +374,21 @@ static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE
 #endif
     case SQL_DATETIME: {
       long lJulian, lMilliSec;
+#ifdef __XHARBOUR__
+      hb_dateTimeStampStrGet(bBuffer, &lJulian, &lMilliSec);
+#else
       hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
+#endif
       hb_itemPutTDT(pItem, lJulian, lMilliSec);
       break;
     }
     case SQL_TIME: {
       long lMilliSec;
+#ifdef __XHARBOUR__
+      lMilliSec = hb_timeEncStr(bBuffer);
+#else
       lMilliSec = hb_timeUnformat(bBuffer, SR_NULLPTR); // TOCHECK:
+#endif
       hb_itemPutTDT(pItem, 0, lMilliSec);
       break;
     }
@@ -422,7 +430,7 @@ HB_FUNC_STATIC(SR_MYSLINEPROCESSED)
 
       mysql_data_seek(session->stmt, session->ifetch);
       thisrow = mysql_fetch_row(session->stmt);
-      lens = mysql_fetch_lengths(session->stmt);
+      lens = (HB_ULONG *)mysql_fetch_lengths(session->stmt);
 
       for (col = 0; col < cols; col++) {
         temp = hb_itemNew(SR_NULLPTR);
