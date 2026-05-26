@@ -474,7 +474,11 @@ static void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_I
       } else if (ulSystemID == SQLRDD_RDBMS_IBMDB2 && (lType == SQL_TIMESTAMP || lType == SQL_TYPE_TIMESTAMP)) {
         // hb_itemPutCL(pItem, bBuffer, lLenBuff);
         long lJulian, lMilliSec;
+#ifdef __XHARBOUR__
+        hb_dateTimeStampStrGet(bBuffer, &lJulian, &lMilliSec);
+#else
         hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
+#endif
         hb_itemPutTDT(pItem, lJulian, lMilliSec);
         break;
       } else if (((ulSystemID == SQLRDD_RDBMS_POSTGR) || (ulSystemID == SQLRDD_RDBMS_ORACLE) ||
@@ -484,7 +488,11 @@ static void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_I
                   (ulSystemID == SQLRDD_RDBMS_MSSQL7 && sr_lsql2008newTypes())) &&
                  (lType == SQL_TIMESTAMP || lType == SQL_TYPE_TIMESTAMP)) {
         long lJulian, lMilliSec;
+#ifdef __XHARBOUR__
+        hb_dateTimeStampStrGet(bBuffer, &lJulian, &lMilliSec);
+#else
         hb_timeStampStrRawGet(bBuffer, &lJulian, &lMilliSec); // TOCHECK:
+#endif
         hb_itemPutTDT(pItem, lJulian, lMilliSec);
         break;
       } else {
@@ -1264,8 +1272,13 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
   case SQL_TYPE_TIMESTAMP: {
     TIMESTAMP_STRUCT val = {0, 0, 0, 0, 0, 0, 0};
     if (SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_TIMESTAMP, &val, sizeof(val), &iLen))) {
+#ifdef __XHARBOUR__
+      hb_itemPutTDT(pItem, hb_dateEncode(val.year, val.month, val.day),
+                    hb_timeEncode(val.hour, val.minute, val.second));
+#else
       hb_itemPutTDT(pItem, hb_dateEncode(val.year, val.month, val.day),
                     hb_timeEncode(val.hour, val.minute, val.second, val.fraction / 1000000));
+#endif
     }
     if ((int)iLen == SQL_NULL_DATA) {
       hb_itemPutTDT(pItem, 0, 0);
