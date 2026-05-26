@@ -1155,13 +1155,21 @@ static void FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE l
 #endif
     case SQL_TIME: {
       long lMilliSec;
+#ifdef __XHARBOUR__
+      lMilliSec = hb_timeEncStr(bBuffer);
+#else
       lMilliSec = hb_timeUnformat(bBuffer, SR_NULLPTR); // TOCHECK:
+#endif
       hb_itemPutTDT(pItem, 0, lMilliSec);
       break;
     }
     case SQL_DATETIME: {
       long lJulian, lMilliSec;
+#ifdef __XHARBOUR__
+      hb_dateTimeStampStrGet(bBuffer, &lJulian, &lMilliSec);
+#else
       hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
+#endif
       hb_itemPutTDT(pItem, lJulian, lMilliSec);
       break;
     }
@@ -1414,7 +1422,11 @@ HB_FUNC_STATIC(SR_FBLINEPROCESSED)
                        bTranslate);
             hb_arraySetForward(pRet, icol, temp);
 
+#ifdef __XHARBOUR__
+            hb_storclenAdopt(read_blob, blob_size, 3);
+#else
             hb_storclen_buffer(read_blob, blob_size, 3);
+#endif
             hb_xfree(read_blob);
             break;
           }
