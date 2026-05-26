@@ -1381,7 +1381,11 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
     hb_arraySet(thiswa->aBuffer, fieldindex, value);
   } else if (HB_IS_STRING(value) && HB_IS_HASH(pDest) && sr_isMultilang()) {
     PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
+#ifdef __XHARBOUR__
+    hb_hashAdd(pDest, ULONG_MAX, sr_getBaseLang(pLangItem), value);
+#else
     hb_hashAdd(pDest, sr_getBaseLang(pLangItem), value);
+#endif
     hb_itemRelease(pLangItem);
   } else if (pField->uiType == HB_FT_MEMO) {
     // Memo fields can hold ANY datatype
