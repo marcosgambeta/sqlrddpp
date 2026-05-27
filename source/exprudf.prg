@@ -41,6 +41,10 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#ifdef __XHARBOUR__
+#xtranslate HB_ADEL([<x,...>]) => ADEL(<x>)
+#endif
+
 #include <hbclass.ch>
 
 ///////////////////////////////////////////////////////////////////////////////

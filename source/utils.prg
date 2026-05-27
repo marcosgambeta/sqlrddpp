@@ -42,6 +42,25 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+// xHarbour compatibility
+#ifdef __XHARBOUR__
+#xtranslate HB_HASH([<x,...>]) => hash(<x>)
+#xtranslate HB_HALLOCATE([<x,...>]) => hallocate(<x>)
+#xtranslate HB_HPOS([<x,...>]) => hgetpos(<x>)
+#xtranslate HB_HVALUEAT([<x,...>]) => hgetvalueat(<x>)
+#xtranslate HB_HVALUEAT([<x,...>]) => hsetvalueat(<x>)
+#xtranslate HB_HDELAT([<x,...>]) => hdelat(<x>)
+#xtranslate HB_HEVAL([<x,...>]) => heval(<x>)
+#xtranslate HB_TTOS([<x>]) => TTOS(<x>)
+#xtranslate HB_TTOC([<x,...>]) => TTOC(<x>)
+#xtranslate HB_DATETIME([<x,...>]) => DATETIME(<x>)
+#endif
+
+// for xHarbour compatibility
+#ifndef HB_SYMBOL_UNUSED
+#define HB_SYMBOL_UNUSED(symbol) (symbol := (symbol))
+#endif
+
 #include <hbclass.ch>
 #include <common.ch>
 #include <fileio.ch>
@@ -1216,7 +1235,11 @@ METHOD SR_SqlFastHash:Find(uHashKey, nIndex, nPart)
    nIndex := hb_HPos(::hHash, uHashKey)
 
    IF nIndex > 0
+#ifdef __XHARBOUR__
+      aData := HGETVALUEAT(::hHash, nIndex)
+#else
       aData := hb_HValueAt(::hHash, nIndex)
+#endif
    ENDIF
 
    nPart := 1     // Compatible with old version
@@ -1251,7 +1274,11 @@ METHOD SR_SqlFastHash:Update(uHashKey, uValue)
    nIndex := hb_HPos(::hHash, uHashKey)
 
    IF nIndex > 0
+#ifdef __XHARBOUR__
+      HSETVALUEAT(::hHash, nIndex, uValue)
+#else
       hb_HValueAt(::hHash, nIndex, uValue)
+#endif
       RETURN .T.
    ENDIF
 
@@ -1263,7 +1290,11 @@ METHOD SR_SqlFastHash:UpdateIndex(nPos, nPart, uValue)
 
    // nPart not used - Compatible with old version
    HB_SYMBOL_UNUSED(nPart)
+#ifdef __XHARBOUR__
+   HSETVALUEAT(::hHash, nPos, uValue)
+#else
    hb_HValueAt(::hHash, nPos, uValue)
+#endif
 
 RETURN .F.
 

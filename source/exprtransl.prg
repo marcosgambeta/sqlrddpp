@@ -41,6 +41,15 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+#ifdef __XHARBOUR__
+#xtranslate HB_ADEL([<x,...>]) => ADEL(<x>)
+#endif
+
+// for xHarbour compatibility
+#ifndef HB_SYMBOL_UNUSED
+#define HB_SYMBOL_UNUSED(symbol) (symbol := (symbol))
+#endif
+
 #include <dbinfo.ch>
 #include <hbclass.ch>
 #include <inkey.ch>

@@ -43,6 +43,27 @@
 // If you do not wish that, delete this exception notice.
 // $END_LICENSE$
 
+// xHarbour compatibility
+#ifdef __XHARBOUR__
+#xtranslate HB_HASH([<x,...>]) => HASH(<x>)
+#xtranslate HB_HALLOCATE([<x,...>]) => HALLOCATE(<x>)
+#xtranslate HB_HPOS([<x,...>]) => HGETPOS(<x>)
+//#xtranslate HB_HVALUEAT([<x,...>]) => HGETVALUEAT(<x>)
+//#xtranslate HB_HVALUEAT([<x,...>]) => HSETVALUEAT(<x>)
+#xtranslate HB_HDELAT([<x,...>]) => HDELAT(<x>)
+#xtranslate HB_HEVAL([<x,...>]) => HEVAL(<x>)
+#xtranslate HB_TTOS([<x>]) => TTOS(<x>)
+#xtranslate HB_TTOC([<x,...>]) => TTOC(<x>)
+#xtranslate HB_STRTOHEX([<c,...>]) => STRTOHEX(<c>)
+#xtranslate HB_STOT([<x>]) => STOT(<x>)
+#xtranslate HB_ADEL([<x,...>]) => ADEL(<x>)
+#endif
+
+// for xHarbour compatibility
+#ifndef HB_SYMBOL_UNUSED
+#define HB_SYMBOL_UNUSED(symbol) (symbol := (symbol))
+#endif
+
 #include <common.ch>
 #include <hbclass.ch>
 #include <error.ch>
@@ -3449,7 +3470,11 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
       nPos := hb_HPos(::oSql:aFieldModifier, ::cFileName)
 
       IF nPos > 0
+#ifdef __XHARBOUR__
+         aFlds := HGETVALUEAT(::oSql:aFieldModifier, nPos)
+#else
          aFlds := hb_HValueAt(::oSql:aFieldModifier, nPos)
+#endif
       ENDIF
 
       FOR n := 1 TO ::nFields
@@ -6338,7 +6363,11 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
    ELSE
       nPos := hb_HPos(::oSql:aTableInfo, ::cOriginalFN)
       IF nPos > 0
+#ifdef __XHARBOUR__
+         aCacheInfo := AClone(HGETVALUEAT(::oSql:aTableInfo, nPos))
+#else
          aCacheInfo := AClone(hb_HValueAt(::oSql:aTableInfo, nPos))
+#endif
          aRet := aCacheInfo[CACHEINFO_TABINFO]
          ::cFileName := aCacheInfo[CACHEINFO_TABNAME]
          ::oSql := aCacheInfo[CACHEINFO_CONNECT]
@@ -11185,7 +11214,7 @@ FUNCTION SR_fromXml(oDoc, aRet, nLen, c)
       c := "<?xml version=" + Chr(34) + "1.0" + Chr(34) + " encoding=" + Chr(34) + "utf-8" + Chr(34) + "?>" + c
    ENDIF
    IF oDoc == NIL
-#ifdef __XHARBOUR
+#ifdef __XHARBOUR__
       oDoc := txmldocument():new(c)
 #else
       oDoc := sr_txmldocument():new(c)

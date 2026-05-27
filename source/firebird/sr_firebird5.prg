@@ -45,6 +45,11 @@
 // TODO: inherit from SR_FIREBIRD3 or 4
 //       remove duplicated code
 
+// for xHarbour compatibility
+#ifndef HB_SYMBOL_UNUSED
+#define HB_SYMBOL_UNUSED(symbol) (symbol := (symbol))
+#endif
+
 #include <hbclass.ch>
 #include <common.ch>
 #include <error.ch>
