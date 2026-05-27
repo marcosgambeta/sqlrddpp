@@ -2,6 +2,8 @@
 # This is a work in progress. The C code have errors to be fixed.
 # How to use:
 # hbmk2 xsqlrddpp.hbp -xhb
+# If necessary, add the compiler. Example:
+# hbmk2 xsqlrddpp.hbp -xhb -comp=mingw
 # xHarbour developers can get hbmk2 from here:
 # https://sourceforge.net/projects/harbour-project/files/binaries-windows/nightly/harbour-nightly-win.7z/download
 # Extract and copy the bin\hbmk2*.* files to xHarbour bin folder.
