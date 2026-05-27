@@ -65,6 +65,11 @@
 
 #define GET_OCI_SESSION(session, numpar) OCI_SESSION *session = (OCI_SESSION *)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
 
+#ifdef __XHARBOUR__
+#define HB_LONG LONG
+#define HB_ULONG ULONG
+#endif
+
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 

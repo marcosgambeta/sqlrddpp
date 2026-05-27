@@ -91,6 +91,11 @@ static const char *closeQuotes = "\"\"\"]\"\"\"\"\"\"\"\"`\"\"\"`\"\"`\"\"\"";
 #define SQL_FAKE_DATE -101
 #define SQL_FAKE_NUM -102
 
+#ifdef __XHARBOUR__
+#define HB_LONG LONG
+#define HB_ULONG ULONG
+#endif
+
 // ODBC Column binding. I know that some information in structure below does exist in
 // other parts... I mean, it's duplicated, but I prefer to waste a few bytes more and have
 // things at hand, making this RDD faster

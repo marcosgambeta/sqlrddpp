@@ -59,6 +59,11 @@
 
 #define SUPERTABLE (&sqlrddSuper)
 
+#ifdef __XHARBOUR__
+#define HB_LONG LONG
+#define HB_ULONG ULONG
+#endif
+
 // SQL WORKAREA
 
 typedef struct _SQLAREA

@@ -108,6 +108,11 @@ typedef unsigned char SQLTCHAR;
 #define SR_PAR_SQLSMALLINT(n) (SQLSMALLINT)hb_parni(n)
 #define SR_PAR_SQLUSMALLINT(n) (SQLUSMALLINT)hb_parni(n)
 
+#ifdef __XHARBOUR__
+#define HB_LONG LONG
+#define HB_ULONG ULONG
+#endif
+
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 void SR_odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res, int line,

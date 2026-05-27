@@ -80,6 +80,11 @@ enum sqlo_status_codes
 
 #define GET_OCI_SESSION(session, numpar) OCI_ORASESSION *session = (OCI_ORASESSION *)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
 
+#ifdef __XHARBOUR__
+#define HB_LONG LONG
+#define HB_ULONG ULONG
+#endif
+
 enum SQLO2_iStatus_codes
 {
   SQLO2_SUCCESS = 0,             //*< General success code (maps to OCI_SUCCESS)
