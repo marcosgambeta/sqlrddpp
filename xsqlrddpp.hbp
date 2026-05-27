@@ -103,7 +103,7 @@ source/postgresql/sr_pgs.prg
 # harbour, gcc and c++ mode
 # harbour++
 {allgcc}-cflag=-fpermissive
-{allgcc}-cflag=-Wno-cast-function-type
+#{allgcc}-cflag=-Wno-cast-function-type
 {allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
 #-cflag=-DHB_CDP_SUPPORT_OFF
 
