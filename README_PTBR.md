@@ -1,6 +1,6 @@
 # SQLRDD++
 
-SQLRDD para Harbour e Harbour++.
+SQLRDD para Harbour, xHarbour, Harbour 3.4 e Harbour++, 
 
 Este projeto é um 'fork' (projeto derivado) da SQLRDD do xHarbour. O projeto original pode ser encontrado aqui:  
 https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLRDD  
@@ -47,6 +47,10 @@ https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLR
 | Harbour     | Clang            | 32-bit        | Compilando com avisos   | ...                 |
 | Harbour     | Clang            | 64-bit        | Compilando com avisos   | ...                 |
 | Harbour     | BCC 5.8.2        | 32-bit        | Compilando com avisos   | -aflag=/P64         |
+| ----------- | ---------------- | ------------- | ----------------------- | ------------------- |
+| xHarbour    | MinGW            | 32-bit        | Compilando com avisos   | ...                 |
+| xHarbour    | MinGW            | 64-bit        | Compilando com avisos   | ...                 |
+| ----------- | ---------------- | ------------- | ----------------------- | ------------------- |
 | Harbour 3.4 | MinGW            | 32-bit        | ...                     | ...                 |
 | Harbour 3.4 | MinGW            | 64-bit        | ...                     | ...                 |
 | Harbour 3.4 | MSVC             | 32-bit        | ...                     | ...                 |
@@ -55,6 +59,7 @@ https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLR
 | Harbour 3.4 | Clang            | 64-bit        | ...                     | ...                 |
 | Harbour 3.4 | BCC 7.3          | 32-bit        | ...                     | ...                 |
 | Harbour 3.4 | BCC 7.3          | 64-bit        | ...                     | ...                 |
+| ----------- | ---------------- | ------------- | ----------------------- | ------------------- |
 | Harbour++   | MinGW            | 32-bit        | Compilando com avisos   | ...                 |
 | Harbour++   | MinGW            | 64-bit        | Compilando com avisos   | ...                 |
 | Harbour++   | MSVC             | 32-bit        | ...                     | ...                 |
@@ -63,6 +68,7 @@ https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLR
 | Harbour++   | Clang            | 64-bit        | Compilando com avisos   | ...                 |
 | Harbour++   | BCC 7.3          | 32-bit        | ...                     | ...                 |
 | Harbour++   | BCC 7.3          | 64-bit        | ...                     | ...                 |
+| ----------- | ---------------- | ------------- | ----------------------- | ------------------- |
 
 ## Compilando o projeto
 
