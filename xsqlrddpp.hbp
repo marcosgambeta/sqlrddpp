@@ -9,7 +9,8 @@
 
 -hblib
 
--olib/${hb_plat}/${hb_comp}/${hb_name}
+#-olib/${hb_plat}/${hb_comp}/${hb_name}
+-olib/${hb_plat}/${hb_comp}/sqlrddpp
 
 #-prgflag=-n -w3 -es2 -gc3
 -prgflag=-n -w2 -es2
