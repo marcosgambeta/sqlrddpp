@@ -52,6 +52,8 @@ https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLR
 | xHarbour    | MinGW            | 64-bit        | Compiling with warnings | ...                 |
 | xHarbour    | MSVC 2022        | 32-bit        | Compiling with warnings | ...                 |
 | xHarbour    | MSVC 2022        | 64-bit        | Compiling with warnings | ...                 |
+| xHarbour    | BCC 7.3          | 32-bit        | Compiling with warnings | ...                 |
+| xHarbour    | BCC 7.3          | 64-bit        | ...                     | ...                 |
 | ----------- | ---------------- | ------------- | ----------------------- | ------------------- |
 | Harbour 3.4 | MinGW            | 32-bit        | ...                     | ...                 |
 | Harbour 3.4 | MinGW            | 64-bit        | ...                     | ...                 |
