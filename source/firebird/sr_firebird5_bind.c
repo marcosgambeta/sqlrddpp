@@ -98,6 +98,11 @@
 
 #define GET_FB_SESSION(session, numpar) PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
 
+#ifdef __XHARBOUR__
+#define HB_LONG LONG
+#define HB_ULONG ULONG
+#endif
+
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
