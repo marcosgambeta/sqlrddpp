@@ -50,6 +50,8 @@ https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLR
 | ----------- | ---------------- | ------------- | ----------------------- | ------------------- |
 | xHarbour    | MinGW            | 32-bit        | Compilando com avisos   | ...                 |
 | xHarbour    | MinGW            | 64-bit        | Compilando com avisos   | ...                 |
+| xHarbour    | MSVC 2022        | 32-bit        | Compilando com avisos   | ...                 |
+| xHarbour    | MSVC 2022        | 64-bit        | Compilando com avisos   | ...                 |
 | ----------- | ---------------- | ------------- | ----------------------- | ------------------- |
 | Harbour 3.4 | MinGW            | 32-bit        | ...                     | ...                 |
 | Harbour 3.4 | MinGW            | 64-bit        | ...                     | ...                 |
