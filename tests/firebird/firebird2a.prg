@@ -3,6 +3,10 @@
 // To compile:
 // hbmk2 firebird2a -lfbclient
 
+#ifdef __XHARBOUR__
+#xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
+#endif
+
 #include "sqlrdd.ch"
 #include "inkey.ch"
 

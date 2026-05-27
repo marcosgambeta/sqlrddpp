@@ -3,6 +3,10 @@
 // To compile:
 // hbmk2 pgsql1 -llibpq
 
+#ifdef __XHARBOUR__
+#xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
+#endif
+
 #include "sqlrdd.ch"
 #include "inkey.ch"
 

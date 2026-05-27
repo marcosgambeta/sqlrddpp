@@ -3,6 +3,10 @@
 // To compile:
 // hbmk2 pgsql4 -llibpq
 
+#ifdef __XHARBOUR__
+#xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
+#endif
+
 #include "sqlrdd.ch"
 
 // Make a copy of this file and change the values below.

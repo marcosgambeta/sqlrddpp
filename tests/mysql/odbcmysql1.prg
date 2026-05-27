@@ -3,6 +3,10 @@
 // To compile:
 // hbmk2 odbcmysql1
 
+#ifdef __XHARBOUR__
+#xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
+#endif
+
 #include "sqlrdd.ch"
 
 // To run the test:
