@@ -111,11 +111,19 @@ cd sqlrddpp
 hbmk2 sqlrddpp.hbp
 ```
 
+Para compilar para xHarbour, use o script xsqlrddpp.hbp. Veja o arquivo para mais informações.
+
+```Batch
+git clone https://github.com/marcosgambeta/sqlrddpp
+cd sqlrddpp
+hbmk2 xsqlrddpp.hbp -xhb
+```
+
 ### Notas
 
 SQLRDD++ não requer a utilização de xhb.hbc (contrib/xhb) para compilar a biblioteca.
 
-Após compilada, a biblioteca é automaticamente instalada na pasta addons.
+Após compilada, a biblioteca é automaticamente instalada na pasta addons (exceto quando estiver usando xHarbour).
 
 Para desativar este comportamento, edite o arquivo sqlrddpp.hbp e desative a linha abaixo:
 
@@ -143,6 +151,12 @@ hbmk2 <filename> sqlrddpp.hbc -lfbclient
 ### Notas
 
 SQLRDD++ não requer a utilização de xhb.hbc (contrib/xhb) para utilizar a biblioteca.
+
+Quando estiver usando xHarbour, adicione o parâmetro -xhb:
+
+```Batch
+hbmk2 <filename> sqlrddpp.hbc -xhb ...
+```
 
 ## Problemas na utilização
 
