@@ -76,6 +76,11 @@
 #include <sqltypes.h>
 #include "sqlex.h"
 
+#ifdef __XHARBOUR__
+#undef HB_LONG
+#undef HB_ULONG
+#endif
+
 //------------------------------------------------------------------------
 
 static void createSeekQuery(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints)
