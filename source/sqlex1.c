@@ -154,7 +154,7 @@ HB_ULONG SR_GetCurrentRecordNum(SQLEXAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-HB_BOOL IsItemNull(PHB_ITEM pFieldData, SQLEXAREAP thiswa)
+static HB_BOOL IsItemNull(PHB_ITEM pFieldData, SQLEXAREAP thiswa)
 {
   if (SR_itemEmpty(pFieldData) && (!(HB_IS_ARRAY(pFieldData) || HB_IS_OBJECT(pFieldData) || HB_IS_HASH(pFieldData))) &&
       (((thiswa->nSystemID == SQLRDD_RDBMS_POSTGR) && HB_IS_DATE(pFieldData)) ||
