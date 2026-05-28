@@ -3035,7 +3035,7 @@ static HB_ERRCODE sqlSetFilter(SQLAREAP thiswa, LPDBFILTERINFO pFilterInfo)
 
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLSETFILTER, 1, filtertext);
   hb_itemRelease(filtertext);
-  res = hb_itemGetNI(hb_stackReturnItem());
+  res = (HB_ERRCODE)hb_itemGetNI(hb_stackReturnItem());
 
   if (res == HB_SUCCESS) {
     thiswa->sqlfilter = HB_TRUE;

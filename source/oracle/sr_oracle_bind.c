@@ -164,7 +164,7 @@ HB_FUNC_STATIC(SR_SQLO_CONNECT)
     hb_retni(SQL_ERROR);
   }
 
-  session->status = sqlo_connect(&(session->dbh), hb_parcx(1));
+  session->status = sqlo_connect(&(session->dbh), (CONST char *)hb_parcx(1));
 
   if (SQLO_SUCCESS != session->status) {
     hb_retni(SQL_ERROR);
@@ -228,7 +228,7 @@ HB_FUNC_STATIC(SR_SQLO_EXECDIRECT)
   const char *stm = hb_parcx(2);
 
   if (session != SR_NULLPTR) {
-    while (SQLO_STILL_EXECUTING == (session->status = sqlo_exec(session->dbh, stm, &session->uRows))) {
+    while (SQLO_STILL_EXECUTING == (session->status = sqlo_exec(session->dbh, (CONST char *)stm, &session->uRows))) {
       SQLO_USLEEP;
     }
     switch (session->status) {
@@ -260,7 +260,7 @@ HB_FUNC_STATIC(SR_SQLO_EXECUTE)
       }
     } else {
       while (SQLO_STILL_EXECUTING ==
-             (session->status = sqlo_open2(&(session->stmt), session->dbh, hb_parcx(2), 0, SR_NULLPTR))) {
+             (session->status = sqlo_open2(&(session->stmt), session->dbh, (CONST char *)hb_parcx(2), 0, SR_NULLPTR))) {
         SQLO_USLEEP;
       }
     }
@@ -711,7 +711,7 @@ HB_FUNC_STATIC(SR_SQLO_LINEPROCESSED)
 
   if (session != SR_NULLPTR) {
     stmtParamRes = session->stmtParamRes != -1 ? session->stmtParamRes : session->stmt;
-    line = sqlo_values(stmtParamRes, SR_NULLPTR, 0);
+    line = (const char **)sqlo_values(stmtParamRes, SR_NULLPTR, 0);
     lens = sqlo_value_lens(stmtParamRes, SR_NULLPTR);
 
     cols = hb_arrayLen(pFields);
@@ -1037,9 +1037,9 @@ HB_FUNC(SR_ORACLEPREPARE)
 
   if (session != SR_NULLPTR) {
     if (lStmt) {
-      session->stmt = sqlo_prepare(session->dbh, szSql);
+      session->stmt = sqlo_prepare(session->dbh, (CONST char *)szSql);
     } else {
-      session->stmtParam = sqlo_prepare(session->dbh, szSql);
+      session->stmtParam = sqlo_prepare(session->dbh, (CONST char *)szSql);
     }
     hb_retni(1);
     return;
@@ -1076,12 +1076,12 @@ HB_FUNC_STATIC(SR_ORACLE_PROCCURSOR)
 
   if (session != SR_NULLPTR) {
     // parse the statement
-    ret = sqlo_prepare(session->dbh, stmt);
+    ret = sqlo_prepare(session->dbh, (CONST char *)stmt);
 
     if (ret >= SQLO_SUCCESS) {
       if (0 <= (sth = ret)) {
         // bind all variables
-        if (SQLO_SUCCESS != sqlo_bind_ref_cursor(sth, parc, &st2h)) {
+        if (SQLO_SUCCESS != sqlo_bind_ref_cursor(sth, (CONST char *)parc, &st2h)) {
           hb_retni(SQL_ERROR);
           return;
         }

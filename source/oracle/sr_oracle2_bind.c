@@ -500,7 +500,7 @@ HB_FUNC_STATIC(SR_ORACLEINBINDPARAM2)
       if (HB_ISCHAR(6)) {
         hb_xmemcpy(Stmt->pLink[iPos].col_name, hb_parc(6), hb_parclen(6));
         Stmt->pLink[iPos].col_name[hb_parclen(6)] = '\0';
-        ret = OCI_BindString(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].col_name, hb_parclen(6));
+        ret = OCI_BindString(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].col_name, (unsigned int)hb_parclen(6));
       } else {
         ret = OCI_BindString(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].col_name, iFieldSize);
       }
@@ -694,9 +694,9 @@ static void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL 
       //             sr_escapeNumber(szResult, (HB_ULONG) lLen, (HB_ULONG) lDec, pItem);
       //             hb_itemPutNL(pItem,0);
       if (lDec > 0) {
-        hb_itemPutNDLen(pItem, 0, lLen, lDec);
+        hb_itemPutNDLen(pItem, 0, (int)lLen, (int)lDec);
       } else {
-        hb_itemPutNIntLen(pItem, 0, lLen);
+        hb_itemPutNIntLen(pItem, 0, (int)lLen);
       }
       break;
     }
@@ -741,9 +741,9 @@ static void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL 
     case SQL_NUMERIC: {
       if (lDec > 0) {
         lLen -= (lDec + 1);
-        hb_itemPutNDLen(pItem, OCI_GetDouble(rs, iField), lLen, lDec);
+        hb_itemPutNDLen(pItem, OCI_GetDouble(rs, iField), (int)lLen, (int)lDec);
       } else {
-        hb_itemPutNIntLen(pItem, OCI_GetBigInt(rs, iField), lLen);
+        hb_itemPutNIntLen(pItem, OCI_GetBigInt(rs, iField), (int)lLen);
       }
       break;
     }
@@ -1133,7 +1133,7 @@ HB_FUNC_STATIC(SR_ORACLEWRITEMEMO2)
       lob1 = OCI_GetLob2(rs, ":b1");
 
       // status = SQLO2_lob_write_buffer(session->dbh, loblp, strlen(sMemo), sMemo, strlen(sMemo), SQLO2_ONE_PIECE);
-      status = OCI_LobWrite(lob1, (void *)sMemo, strlen(sMemo));
+      status = OCI_LobWrite(lob1, (void *)sMemo, (unsigned int)strlen(sMemo));
 
       if (status < 0) {
         // SQLO2_free_lob_desc(session->dbh, &loblp);
