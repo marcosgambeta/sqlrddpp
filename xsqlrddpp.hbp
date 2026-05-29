@@ -1,5 +1,5 @@
 # Script to compile SQLRDD++ for xHarbour using hbmk2
-# This is a work in progress. The C code have errors to be fixed.
+# This is a work in progress. The C code have warnings, but no errors.
 # How to use:
 # hbmk2 xsqlrddpp.hbp -xhb
 # If necessary, add the compiler. Example:
