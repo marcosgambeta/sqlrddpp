@@ -93,6 +93,8 @@ source/postgresql/sr_pgs.prg
 #{allgcc}-cflag=-fpermissive
 
 {allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
+{allgcc}-cflag=-Wno-missing-field-initializers
+{allgcc}-cflag=-Wno-write-strings
 
 # activate the Harbour internal API
 -cflag=-D_HB_API_INTERNAL_
