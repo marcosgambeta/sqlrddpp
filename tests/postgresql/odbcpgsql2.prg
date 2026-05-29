@@ -82,6 +82,9 @@ PROCEDURE Main()
 
    oTB := TBrowseDB(0, 0, maxrow(), maxcol())
 
+   oTB:HeadSep := "-"
+   oTB:ColSep := "|"
+
    oTB:addColumn(TBColumnNew("ID", {||(TABLE_NAME)->ID}))
    oTB:addColumn(TBColumnNew("FIRST", {||(TABLE_NAME)->FIRST}))
    oTB:addColumn(TBColumnNew("LAST", {||(TABLE_NAME)->LAST}))

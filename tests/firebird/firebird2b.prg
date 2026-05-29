@@ -107,6 +107,9 @@ PROCEDURE Main()
    GO TOP
 
    oTB := TBrowseDB(0, 0, maxrow(), maxcol())
+   
+   oTB:HeadSep := "-"
+   oTB:ColSep := "|"
 
    oTB:addColumn(TBColumnNew("ID", {||TEST->ID}))
    oTB:addColumn(TBColumnNew("FIRST", {||TEST->FIRST}))
