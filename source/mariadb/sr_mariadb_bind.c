@@ -140,20 +140,24 @@ HB_FUNC_STATIC(SR_MARIADBFINISH)
 {
   GET_MARIADB_SESSION(session, 1);
 
-  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+  if (session == SR_NULLPTR) {
     hb_ret();
     return;
   }
 
-  mysql_close(session->dbh);
-
-  hb_xfree(session);
-  if (s_iConnectionCount > 0) {
-    s_iConnectionCount--;
+  if (session->dbh != SR_NULLPTR) {
+    mysql_close(session->dbh);
+    if (s_iConnectionCount > 0) {
+      s_iConnectionCount--;
+    }
   }
+
   if (s_iConnectionCount == 0) {
     mysql_library_end();
   }
+
+  hb_xfree(session);
+
   hb_ret();
 }
 
