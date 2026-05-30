@@ -65,8 +65,6 @@
 #include "errmsg.h"
 #include "sqlodbc.ch"
 
-#include <assert.h>
-
 #define MYSQL_OK 0
 
 #define CLIENT_ALL_FLAGS (CLIENT_COMPRESS | CLIENT_MULTI_RESULTS | CLIENT_MULTI_STATEMENTS)
@@ -96,6 +94,8 @@ typedef struct _MYSQL_SESSION
 } MYSQL_SESSION;
 
 typedef MYSQL_SESSION *PMYSQL_SESSION;
+
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_MYSCONNECT)
 {
@@ -132,11 +132,20 @@ HB_FUNC_STATIC(SR_MYSCONNECT)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSFINISH)
 {
   GET_MYSQL_SESSION(session, 1);
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_ret();
+    return;
+  }
+
+  // TODO: session != SR_NULLPTR && session->dbh == SR_NULLPTR
+  // hb_xfree(session);
+
   mysql_close(session->dbh);
 
   hb_xfree(session);
@@ -149,27 +158,39 @@ HB_FUNC_STATIC(SR_MYSFINISH)
   hb_ret();
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSGETCONNID)
 {
   GET_MYSQL_SESSION(session, 1);
 
   HB_ULONG ulThreadID;
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retnl(0); // TODO: is 0 the correct value to return ?
+    return;
+  }
+
   ulThreadID = mysql_thread_id(session->dbh);
   hb_retnl(ulThreadID);
 }
+
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_MYSKILLCONNID)
 {
   GET_MYSQL_SESSION(session, 1);
   HB_ULONG ulThreadID = (HB_ULONG)hb_itemGetNL(hb_param(2, HB_IT_LONG));
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(0); // TODO: is 0 the correct value to return ?
+    return;
+  }
+
   hb_retni(mysql_kill(session->dbh, ulThreadID));
 }
+
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_MYSEXEC)
 {
@@ -177,8 +198,11 @@ HB_FUNC_STATIC(SR_MYSEXEC)
   GET_MYSQL_SESSION(session, 1);
   const char *szQuery = hb_parc(2);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retptr(SR_NULLPTR);
+    return;
+  }
+
   session->ulAffected_rows = 0;
   // mysql_query(session->dbh, szQuery);
   mysql_real_query(session->dbh, szQuery, (unsigned long)hb_parclen(2));
@@ -193,15 +217,18 @@ HB_FUNC_STATIC(SR_MYSEXEC)
   session->ifetch = -1;
 }
 
+//----------------------------------------------------------------------------//
+
 // MYSFetch(ConnHandle, ResultSet) => nStatus
 HB_FUNC_STATIC(SR_MYSFETCH)
 {
   GET_MYSQL_SESSION(session, 1);
   int rows;
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
+    hb_retni(SQL_INVALID_HANDLE);
+    return;
+  }
 
   session->status = mysql_errno(session->dbh);
 
@@ -223,7 +250,7 @@ HB_FUNC_STATIC(SR_MYSFETCH)
   }
 }
 
-//-----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
                   HB_ULONG ulSystemID, HB_BOOL bTranslate)
@@ -405,7 +432,7 @@ static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE
   }
 }
 
-//-----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_MYSLINEPROCESSED)
 {
@@ -422,9 +449,10 @@ HB_FUNC_STATIC(SR_MYSLINEPROCESSED)
   HB_BOOL bTranslate = hb_parl(6);
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
+    hb_retni(SQL_INVALID_HANDLE);
+    return;
+  }
 
   session->status = mysql_errno(session->dbh);
 
@@ -460,13 +488,17 @@ HB_FUNC_STATIC(SR_MYSLINEPROCESSED)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSSTATUS)
 {
   int ret;
   GET_MYSQL_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
 
   ret = mysql_errno(session->dbh);
 
@@ -478,13 +510,17 @@ HB_FUNC_STATIC(SR_MYSSTATUS)
   hb_retni(ret);
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSRESULTSTATUS)
 {
   HB_UINT ret;
   GET_MYSQL_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retnl(SQL_ERROR);
+    return;
+  }
 
   ret = (HB_UINT)mysql_errno(session->dbh);
 
@@ -505,21 +541,29 @@ HB_FUNC_STATIC(SR_MYSRESULTSTATUS)
   hb_retnl((HB_LONG)ret);
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSRESSTATUS)
 {
   GET_MYSQL_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
+
   hb_retc((char *)mysql_error(session->dbh));
 }
+
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_MYSCLEAR)
 {
   GET_MYSQL_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    return;
+  }
 
   if (session->stmt) {
     mysql_free_result(session->stmt);
@@ -528,38 +572,59 @@ HB_FUNC_STATIC(SR_MYSCLEAR)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSCOLS)
 {
   GET_MYSQL_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(0);
+    return;
+  }
+
   hb_retni(session->numcols);
 }
+
+//----------------------------------------------------------------------------//
 
 // MYSVERS(hConnection) => nVersion
 HB_FUNC_STATIC(SR_MYSVERS)
 {
   GET_MYSQL_SESSION(session, 1);
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retnl(0);
+    return;
+  }
+
   hb_retnl((long)mysql_get_server_version(session->dbh));
 }
+
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_MYSERRMSG)
 {
   GET_MYSQL_SESSION(session, 1);
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retc("");
+    return;
+  }
+
   hb_retc((char *)mysql_error(session->dbh));
 }
+
+//----------------------------------------------------------------------------//
 
 HB_FUNC_STATIC(SR_MYSCOMMIT)
 {
   GET_MYSQL_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
 
   if (mysql_commit(session->dbh)) {
     hb_retni(SQL_SUCCESS);
@@ -568,12 +633,16 @@ HB_FUNC_STATIC(SR_MYSCOMMIT)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSROLLBACK)
 {
   GET_MYSQL_SESSION(session, 1);
 
-  assert(session != SR_NULLPTR);
-  assert(session->dbh != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
 
   if (mysql_rollback(session->dbh)) {
     hb_retni(SQL_SUCCESS);
@@ -582,20 +651,23 @@ HB_FUNC_STATIC(SR_MYSROLLBACK)
   }
 }
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSQUERYATTR)
 {
+  GET_MYSQL_SESSION(session, 1);
   int row, rows, type;
   PHB_ITEM ret, temp, atemp;
-  PMYSQL_SESSION session;
   MYSQL_FIELD *field;
 
   if (hb_pcount() != 1) {
     hb_retnl(-2);
   }
 
-  session = (PMYSQL_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
-  assert(session->dbh != SR_NULLPTR);
-  assert(session->stmt != SR_NULLPTR);
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
+    hb_retnl(-2);
+    return;
+  }
 
   rows = session->numcols;
   ret = hb_itemNew(SR_NULLPTR);
@@ -730,6 +802,8 @@ HB_FUNC_STATIC(SR_MYSQUERYATTR)
   hb_itemReturnForward(ret);
   hb_itemRelease(ret);
 }
+
+//----------------------------------------------------------------------------//
 
 /*
 #if 0
@@ -902,6 +976,8 @@ HB_FUNC_STATIC(SR_MYSTABLEATTR)
 #endif
 */
 
+//----------------------------------------------------------------------------//
+
 HB_FUNC_STATIC(SR_MYSAFFECTEDROWS)
 {
   GET_MYSQL_SESSION(session, 1);
@@ -909,6 +985,6 @@ HB_FUNC_STATIC(SR_MYSAFFECTEDROWS)
   hb_retnll(session != SR_NULLPTR ? session->ulAffected_rows : 0);
 }
 
-//-----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #pragma ENDDUMP
