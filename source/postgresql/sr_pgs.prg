@@ -58,7 +58,7 @@
 #include "pgs.ch"
 #include "sqlrddsetup.ch"
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 CLASS SR_PGS FROM SR_CONNECTION
 
@@ -82,7 +82,7 @@ CLASS SR_PGS FROM SR_CONNECTION
 
 ENDCLASS
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:MoreResults(aArray, lTranslate)
 
@@ -91,7 +91,7 @@ METHOD SR_PGS:MoreResults(aArray, lTranslate)
 
 RETURN -1
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:Getline(aFields, lTranslate, aArray)
 
@@ -117,7 +117,7 @@ METHOD SR_PGS:Getline(aFields, lTranslate, aArray)
 
 RETURN aArray
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:FieldGet(nField, aFields, lTranslate)
 
@@ -129,7 +129,7 @@ METHOD SR_PGS:FieldGet(nField, aFields, lTranslate)
 
 RETURN ::aCurrLine[nField]
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:FetchRaw(lTranslate, aFields)
 
@@ -147,7 +147,7 @@ METHOD SR_PGS:FetchRaw(lTranslate, aFields)
 
 RETURN ::nRetCode
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:FreeStatement()
 
@@ -158,7 +158,7 @@ METHOD SR_PGS:FreeStatement()
 
 RETURN NIL
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoName, cDeletedName)
 
@@ -218,7 +218,7 @@ METHOD SR_PGS:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecnoN
 
 RETURN aFields
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:LastError()
 
@@ -228,7 +228,7 @@ METHOD SR_PGS:LastError()
 
 RETURN "(" + AllTrim(Str(::nRetCode)) + ") " + SR_PGSErrMsg(::hDbc)
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, cConnect, nPrefetch, cTargetDB, ;
    nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit)
@@ -322,17 +322,17 @@ METHOD SR_PGS:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff,
       ::uSid := Val(Str(aRet[1, 1], 8, 0))
    ENDIF
 
-   /* Open initial transaction block. The rest of SQLRDD assumes the connection
-      is always inside a transaction (since Commit/RollBack emit COMMIT;BEGIN and
-      BEGIN respectively). Without this initial BEGIN, the very first Commit()
-      after connect would trigger "there is no transaction in progress". */
+   // Open initial transaction block. The rest of SQLRDD assumes the connection
+   // is always inside a transaction (since Commit/RollBack emit COMMIT;BEGIN and
+   // BEGIN respectively). Without this initial BEGIN, the very first Commit()
+   // after connect would trigger "there is no transaction in progress".
    IF !Empty(::nSystemID)
       ::Exec("BEGIN", .F.)
    ENDIF
 
 RETURN Self
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:End()
 
@@ -349,7 +349,7 @@ METHOD SR_PGS:End()
 
 RETURN NIL
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:Commit(lNoLog)
 
@@ -357,32 +357,38 @@ METHOD SR_PGS:Commit(lNoLog)
 
    ::Super:Commit(lNoLog)
 
-   /* PostgreSQL emits the warning "there is no transaction in progress"
-      whenever COMMIT/ROLLBACK is sent while the backend is not inside a
-      transaction block. PQtransactionStatus() is available since libpq 7.3,
-      so this check is safe for every supported server version (8.0+).
-        PQTRANS_IDLE    (0) - no transaction; only BEGIN, no COMMIT
-        PQTRANS_INTRANS (2) - clean transaction; COMMIT then BEGIN
-        PQTRANS_INERROR (3) - failed transaction; must ROLLBACK, then BEGIN
-        PQTRANS_ACTIVE  (1) / PQTRANS_UNKNOWN (4) - leave it alone
-   */
+   // PostgreSQL emits the warning "there is no transaction in progress"
+   // whenever COMMIT/ROLLBACK is sent while the backend is not inside a
+   // transaction block. PQtransactionStatus() is available since libpq 7.3,
+   // so this check is safe for every supported server version (8.0+).
+   //   PQTRANS_IDLE    (0) - no transaction; only BEGIN, no COMMIT
+   //   PQTRANS_INTRANS (2) - clean transaction; COMMIT then BEGIN
+   //   PQTRANS_INERROR (3) - failed transaction; must ROLLBACK, then BEGIN
+   //   PQTRANS_ACTIVE  (1) / PQTRANS_UNKNOWN (4) - leave it alone
    nStat := SR_PGSTransStatus(::hDbc)
 
-   DO CASE
-   CASE nStat == 0   // PQTRANS_IDLE
+   SWITCH nStat
+   CASE 0 // PQTRANS_IDLE
       ::nRetCode := ::Exec("BEGIN", .F.)
-   CASE nStat == 2   // PQTRANS_INTRANS
+      EXIT
+   CASE 2 // PQTRANS_INTRANS
       ::nRetCode := ::Exec("COMMIT;BEGIN", .F.)
-   CASE nStat == 3   // PQTRANS_INERROR
+      EXIT
+   CASE 3 // PQTRANS_INERROR
       ::nRetCode := ::Exec("ROLLBACK;BEGIN", .F.)
+      EXIT
+#ifdef __XHARBOUR__
+   DEFAULT
+#else
    OTHERWISE
+#endif
       // PQTRANS_ACTIVE or PQTRANS_UNKNOWN: do not interfere
       ::nRetCode := SQL_SUCCESS
-   ENDCASE
+   ENDSWITCH
 
 RETURN ::nRetCode
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:RollBack()
 
@@ -392,23 +398,23 @@ METHOD SR_PGS:RollBack()
 
    nStat := SR_PGSTransStatus(::hDbc)
 
-   /* Only issue ROLLBACK if there is actually a transaction to roll back.
-      Then reopen with BEGIN so the connection remains inside a transaction
-      block as the rest of SQLRDD expects. */
-   IF nStat == 2 .OR. nStat == 3   // INTRANS or INERROR
+   // Only issue ROLLBACK if there is actually a transaction to roll back.
+   // Then reopen with BEGIN so the connection remains inside a transaction
+   // block as the rest of SQLRDD expects.
+   IF nStat == 2 .OR. nStat == 3 // INTRANS or INERROR
       ::nRetCode := SR_PGSRollBack(::hDbc)
    ELSE
       ::nRetCode := SQL_SUCCESS
    ENDIF
 
-   /* Open a fresh transaction only if we are now idle */
-   IF SR_PGSTransStatus(::hDbc) == 0   // PQTRANS_IDLE
+   // Open a fresh transaction only if we are now idle
+   IF SR_PGSTransStatus(::hDbc) == 0 // PQTRANS_IDLE
       ::Exec("BEGIN", .F.)
    ENDIF
 
 RETURN ::nRetCode
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:ExecuteRaw(cCommand)
 
@@ -422,7 +428,7 @@ METHOD SR_PGS:ExecuteRaw(cCommand)
 
 RETURN SR_PGSResultStatus(::hStmt)
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:AllocStatement()
 
@@ -436,13 +442,13 @@ METHOD SR_PGS:AllocStatement()
 
 RETURN SQL_SUCCESS
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 METHOD SR_PGS:GetAffectedRows()
 RETURN SR_PGSAFFECTEDROWS(::hDbc)
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "sr_pgs_bind.c"
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
