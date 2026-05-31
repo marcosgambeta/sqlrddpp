@@ -1523,10 +1523,17 @@ HB_FUNC_STATIC(SR_FBLINEPROCESSED4)
 
 //----------------------------------------------------------------------------//
 
+// SR_FBMORERESULTS4(pSession, @nValue) -> numeric
 HB_FUNC_STATIC(SR_FBMORERESULTS4)
 {
   GET_FB_SESSION(session, 1);
-  if (session && session->sqlda->sqld >= 1) {
+
+  if (session == SR_NULLPTR) {
+    hb_retni(SQL_ERROR);
+    return;
+  }
+
+  if (session->sqlda->sqld >= 1) {
     if (session->queryType == isc_info_sql_stmt_exec_procedure) {
       XSQLVAR *var;
       ISC_INT64 value;
@@ -1534,11 +1541,12 @@ HB_FUNC_STATIC(SR_FBMORERESULTS4)
       value = (ISC_INT64) * (ISC_INT64 ISC_FAR *)var->sqldata;
       hb_stornint((ISC_INT64)value, 2);
       hb_retni(SQL_SUCCESS);
-      return;
+    } else {
+      hb_retni(SQL_ERROR);
     }
+  } else {
     hb_retni(SQL_ERROR);
   }
-  hb_retni(SQL_ERROR);
 }
 
 //----------------------------------------------------------------------------//
