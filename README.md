@@ -111,6 +111,8 @@ cd sqlrddpp
 hbmk2 sqlrddpp.hbp
 ```
 
+### xHarbour
+
 To build for xHarbour, use the script xsqlrddpp.hbp. See the file for more info.
 
 ```Batch
