@@ -91,11 +91,18 @@ STATIC s_aPos := {}
 STATIC s_nPosData := 0
 STATIC s_lUseXmlField := .F.
 STATIC s_lUseJSONField := .F.
+#ifdef __XHARBOUR__
+// NOTE: to avoid warning about variable declared but not used in function.
+STATIC s_ItP11 := NIL
+STATIC s_ItP14 := NIL
+STATIC s_ItP2 := NIL
+STATIC s_ItP3 := NIL
+#else
 STATIC s_ItP11
 STATIC s_ItP14
 STATIC s_ItP2
 STATIC s_ItP3
-
+#endif
 STATIC s_lGoTopOnFirstInteract := .T.
 STATIC s_lUseDTHISTAuto := .F.
 STATIC s_nLineCountResult := 0
