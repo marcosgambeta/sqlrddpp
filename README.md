@@ -121,6 +121,8 @@ cd sqlrddpp
 hbmk2 xsqlrddpp.hbp -xhb
 ```
 
+Alternatively,  you can use the Makefiles. See the files for more info.
+
 ### Notes
 
 SQLRDD++ do not require xhb.hbc (contrib/xhb) to compile the library.
