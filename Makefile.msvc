@@ -1,6 +1,8 @@
 # Mafile for xHarbour and MSVC
 # Usage:
-# set HB_INC_DIR=<path to Harbour include dir>
+# mkdir lib
+# mkdir obj
+# set HB_INC_DIR=<path to xHarbour include dir>
 # nmake -f Makefile.msvc
 
 LIB_NAME = lib\sqlrddpp.lib

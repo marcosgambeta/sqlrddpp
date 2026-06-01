@@ -1,6 +1,8 @@
 # Mafile for xHarbour and MinGW
 # Usage:
-# set HB_INC_DIR=<path to Harbour include dir>
+# mkdir lib
+# mkdir obj
+# set HB_INC_DIR=<path to xHarbour include dir>
 # mingw32-make -f Makefile.mingw
 
 LIB_NAME = lib/sqlrddpp.a

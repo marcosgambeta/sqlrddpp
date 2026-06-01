@@ -1,6 +1,8 @@
 # Mafile for xHarbour and BCC64
 # Usage:
-# set HB_INC_DIR=<path to Harbour include dir>
+# mkdir lib
+# mkdir obj
+# set HB_INC_DIR=<path to xHarbour include dir>
 # make -f Makefile.bcc64
 
 LIB_NAME = lib\sqlrddpp.a
