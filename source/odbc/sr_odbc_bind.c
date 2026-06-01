@@ -644,8 +644,7 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
     if (lIndex == 0) {
       hb_arraySetForward(pRet, i, temp);
     } else {
-      SR_odbcGetData(SR_PAR_SQLHSTMT(1), (PHB_ITEM)hb_arrayGetItemPtr(pFields, i), (PHB_ITEM)temp, (HB_BOOL)bQueryOnly,
-                  (HB_ULONG)ulSystemID, (HB_BOOL)bTranslate, (HB_USHORT)lIndex);
+      SR_odbcGetData(SR_PAR_SQLHSTMT(1), hb_arrayGetItemPtr(pFields, i), temp, bQueryOnly, ulSystemID, bTranslate, lIndex);
       hb_arraySetForward(pRet, i, temp);
     }
     hb_itemRelease(temp);
@@ -685,21 +684,21 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
   HB_ULONG ulPosCache = hb_arrayGetNL(pInfo, AINFO_NPOSCACHE);
 
   if (!pFields) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 
   cols = (int)hb_arrayLen(pFields);
 
   if (cols <= 0) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 
   lLen = (hb_pcount() > 1 ? hb_parnl(2) : 4096);
 
   if (lLen <= 0) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1), hb_paramError(2),
                          hb_paramError(3));
   }
 
