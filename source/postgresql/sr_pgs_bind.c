@@ -807,20 +807,15 @@ HB_FUNC_STATIC(SR_PGSTABLEATTR)
 
 //-----------------------------------------------------------------------------//
 
-static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
-                 HB_ULONG ulSystemID, HB_BOOL bTranslate)
+static void sr_PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const HB_SIZE lLenBuff, /*HB_BOOL bQueryOnly,*/
+                 /*(HB_ULONG ulSystemID,*/ const HB_BOOL bTranslate)
 {
-  HB_LONG lType;
-  HB_SIZE lLen, lDec;
-  PHB_ITEM pTemp;
-  PHB_ITEM pTemp1;
+  const HB_LONG lType = hb_arrayGetNL(pField, 6);
+  const HB_SIZE lLen = hb_arrayGetNL(pField, 3);
+  const HB_SIZE lDec = hb_arrayGetNL(pField, 4);
 
-  HB_SYMBOL_UNUSED(bQueryOnly);
-  HB_SYMBOL_UNUSED(ulSystemID);
-
-  lType = hb_arrayGetNL(pField, 6);
-  lLen = hb_arrayGetNL(pField, 3);
-  lDec = hb_arrayGetNL(pField, 4);
+  //HB_SYMBOL_UNUSED(bQueryOnly);
+  //HB_SYMBOL_UNUSED(ulSystemID);
 
   if (lLenBuff <= 0) { // database content is NULL
     switch (lType) {
@@ -900,6 +895,7 @@ static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
       break;
     }
     case SQL_LONGVARCHAR: {
+      PHB_ITEM pTemp;
       if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) &&
           (sr_lSerializeArrayAsJson())) {
         if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
@@ -954,6 +950,8 @@ static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
     }
     // xmltoarray
     case SQL_LONGVARCHARXML: {
+      PHB_ITEM pTemp;
+      PHB_ITEM pTemp1;
       if (s_pSym_SR_FROMXML == SR_NULLPTR) {
         s_pSym_SR_FROMXML = hb_dynsymFindName("SR_FROMXML");
         if (s_pSym_SR_FROMXML == SR_NULLPTR) {
@@ -1016,6 +1014,11 @@ static void PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE 
 
 //----------------------------------------------------------------------------//
 
+// SR_PGSLINEPROCESSED(pSession, p2, aFields, lQueryOnly, nSystemID, lTranslate, aReturn) -> NIL
+// NOTES:
+// . parameter 'p2' not used
+// . parameter 'lQueryOnly' not used
+// . parameter 'nSystemID' not used
 HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
 {
   GET_PGSQL_SESSION(session, 1);
@@ -1023,8 +1026,8 @@ HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
   HB_USHORT i;
   char *col;
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
-  HB_BOOL bQueryOnly = hb_parl(4);
-  HB_ULONG ulSystemID = hb_parnl(5);
+  //HB_BOOL bQueryOnly = hb_parl(4); (not used)
+  //HB_ULONG ulSystemID = hb_parnl(5); (not used)
   HB_BOOL bTranslate = hb_parl(6);
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
   HB_LONG lIndex, cols;
@@ -1041,7 +1044,7 @@ HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
 
     if (lIndex != 0) {
       col = PQgetvalue(session->stmt, session->ifetch, lIndex - 1);
-      PGSFieldGet(hb_arrayGetItemPtr(pFields, i + 1), temp, (char *)col, strlen(col), bQueryOnly, ulSystemID,
+      sr_PGSFieldGet(hb_arrayGetItemPtr(pFields, i + 1), temp, (char *)col, strlen(col), /*bQueryOnly,*/ /*ulSystemID,*/
                   bTranslate);
     }
     hb_arraySetForward(pRet, i + 1, temp);
