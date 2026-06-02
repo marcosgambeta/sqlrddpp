@@ -1056,18 +1056,14 @@ HB_FUNC_STATIC(SR_FBVERSION4)
 
 //----------------------------------------------------------------------------//
 
-static void sr_FBFieldGet4(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, /*HB_BOOL bQueryOnly,*/
-                        /*HB_ULONG ulSystemID,*/ HB_BOOL bTranslate)
+static void sr_FBFieldGet4(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const HB_SIZE lLenBuff, /*HB_BOOL bQueryOnly,*/
+                        /*HB_ULONG ulSystemID,*/ const HB_BOOL bTranslate)
 {
-  HB_LONG lType;
-  HB_SIZE lLen, lDec;
-  PHB_ITEM pTemp;
+  const HB_LONG lType = hb_arrayGetNL(pField, 6);
+  const HB_SIZE lLen = hb_arrayGetNL(pField, 3);
+  const HB_SIZE lDec = hb_arrayGetNL(pField, 4);
   //HB_SYMBOL_UNUSED(bQueryOnly); (not used)
   //HB_SYMBOL_UNUSED(ulSystemID); (not used)
-
-  lType = hb_arrayGetNL(pField, 6);
-  lLen = hb_arrayGetNL(pField, 3);
-  lDec = hb_arrayGetNL(pField, 4);
 
   if (lLenBuff <= 0) { // database content is NULL
     switch (lType) {
@@ -1152,6 +1148,7 @@ static void sr_FBFieldGet4(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SI
       break;
     }
     case SQL_LONGVARCHAR: {
+      PHB_ITEM pTemp;
       if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) &&
           (sr_lSerializeArrayAsJson())) {
         if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
