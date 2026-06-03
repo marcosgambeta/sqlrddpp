@@ -181,10 +181,10 @@ static void fb_log_status3(PFB_SESSION session, const char *from)
 HB_FUNC_STATIC(SR_FBCONNECT3)
 {
   XSQLVAR *var;
-  const char *db_connect;
-  const char *user;
-  const char *passwd;
-  const char *charset;
+  const char *db_connect = hb_parcx(1);
+  const char *user = hb_parcx(2);
+  const char *passwd = hb_parcx(3);
+  const char *charset = hb_parc(4);
   char dpb[256];
   int i, len;
 
@@ -203,11 +203,6 @@ HB_FUNC_STATIC(SR_FBCONNECT3)
   for (i = 0, var = session->sqlda->sqlvar; i < MAX_COLUMNS_IN_QUERY; i++, var++) {
     var->sqldata = SR_NULLPTR;
   }
-
-  db_connect = hb_parcx(1);
-  user = hb_parcx(2);
-  passwd = hb_parcx(3);
-  charset = hb_parc(4);
 
   i = 0;
   dpb[i++] = isc_dpb_version1;
