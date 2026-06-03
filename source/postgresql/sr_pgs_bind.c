@@ -1022,7 +1022,7 @@ static void sr_PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const
 HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
 {
   GET_PGSQL_SESSION(session, 1);
-  PHB_ITEM temp;
+  //PHB_ITEM temp;
   HB_USHORT i;
   char *col;
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
@@ -1039,16 +1039,17 @@ HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
   cols = (HB_LONG)hb_arrayLen(pFields);
 
   for (i = 0; i < cols; i++) {
-    temp = hb_itemNew(SR_NULLPTR);
+    //temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+    HB_ITEM temp = {0};
     lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i + 1), FIELD_ENUM);
 
     if (lIndex != 0) {
       col = PQgetvalue(session->stmt, session->ifetch, lIndex - 1);
-      sr_PGSFieldGet(hb_arrayGetItemPtr(pFields, i + 1), temp, (char *)col, strlen(col), /*bQueryOnly,*/ /*ulSystemID,*/
+      sr_PGSFieldGet(hb_arrayGetItemPtr(pFields, i + 1), &temp, (char *)col, strlen(col), /*bQueryOnly,*/ /*ulSystemID,*/
                   bTranslate);
     }
-    hb_arraySetForward(pRet, i + 1, temp);
-    hb_itemRelease(temp);
+    hb_arraySetForward(pRet, i + 1, &temp);
+    //hb_itemRelease(temp);
   }
 }
 
