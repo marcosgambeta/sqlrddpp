@@ -1,14 +1,20 @@
+################################################
 # Makefile for xHarbour and Clang
+################################################
 # Usage:
 # mkdir lib
 # mkdir obj
 # set HB_INC_DIR=<path to xHarbour include dir>
 # mingw32-make -f Makefile.clang
-
-LIB_NAME = lib/sqlrddpp.a
+################################################
 
 OBJ_DIR = obj
+LIB_DIR = lib
+SRC_DIR = source
+INC_DIR = include
 OBJ_EXT = .o
+LIB_EXT = .a
+LIB_PRE = lib
 
 HB = harbour
 
@@ -16,8 +22,8 @@ HBFLAGS = \
 	-n \
 	-w2 \
 	-es2 \
-	-Iinclude \
-	-Isource \
+	-I$(INC_DIR) \
+	-I$(SRC_DIR) \
 	-I$(HB_INC_DIR)
 
 CC = clang
@@ -25,20 +31,26 @@ CC = clang
 CFLAGS = \
 	-Wall \
 	-O2 \
-	-Iinclude \
-	-Iinclude/firebird \
-	-Iinclude/mysql \
-	-Iinclude/oci \
-	-Iinclude/pgsql \
-	-Isource \
-	-Isource/parser \
-	-Isource/oracle \
+	-I$(INC_DIR) \
+	-I$(INC_DIR)/firebird \
+	-I$(INC_DIR)/mysql \
+	-I$(INC_DIR)/oci \
+	-I$(INC_DIR)/pgsql \
+	-I$(SRC_DIR) \
+	-I$(SRC_DIR)/parser \
+	-I$(SRC_DIR)/oracle \
 	-I$(HB_INC_DIR) \
 	-D_HB_API_INTERNAL_ \
 	-Wno-missing-prototype-for-cc \
 	-Wno-unused-function
 
+LIB_NAME = $(LIB_DIR)/$(LIB_PRE)sqlrddpp$(LIB_EXT)
+
 all: $(LIB_NAME)
+
+###########
+# .o -> .a
+###########
 
 $(LIB_NAME): \
 	$(OBJ_DIR)/exprobjs$(OBJ_EXT) \
@@ -76,116 +88,116 @@ $(LIB_NAME): \
 	ar rc $@ $^
 	ranlib $@
 
-################
-# .prg -> .c/.o
-################
+###################
+# .prg -> .c -> .o
+###################
 
-$(OBJ_DIR)/exprobjs.c : source/exprobjs.prg
+$(OBJ_DIR)/exprobjs.c : $(SRC_DIR)/exprobjs.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/exprobjs$(OBJ_EXT) : $(OBJ_DIR)/exprobjs.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/exprparser.c : source/exprparser.prg
+$(OBJ_DIR)/exprparser.c : $(SRC_DIR)/exprparser.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/exprparser$(OBJ_EXT) : $(OBJ_DIR)/exprparser.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/exprrelation.c : source/exprrelation.prg
+$(OBJ_DIR)/exprrelation.c : $(SRC_DIR)/exprrelation.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/exprrelation$(OBJ_EXT) : $(OBJ_DIR)/exprrelation.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/exprsimpl.c : source/exprsimpl.prg
+$(OBJ_DIR)/exprsimpl.c : $(SRC_DIR)/exprsimpl.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/exprsimpl$(OBJ_EXT) : $(OBJ_DIR)/exprsimpl.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/exprtransl.c : source/exprtransl.prg
+$(OBJ_DIR)/exprtransl.c : $(SRC_DIR)/exprtransl.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/exprtransl$(OBJ_EXT) : $(OBJ_DIR)/exprtransl.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/exprudf.c : source/exprudf.prg
+$(OBJ_DIR)/exprudf.c : $(SRC_DIR)/exprudf.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/exprudf$(OBJ_EXT) : $(OBJ_DIR)/exprudf.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlconnection.c : source/sqlconnection.prg
+$(OBJ_DIR)/sqlconnection.c : $(SRC_DIR)/sqlconnection.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sqlconnection$(OBJ_EXT) : $(OBJ_DIR)/sqlconnection.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlgen1.c : source/sqlgen1.prg
+$(OBJ_DIR)/sqlgen1.c : $(SRC_DIR)/sqlgen1.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sqlgen1$(OBJ_EXT) : $(OBJ_DIR)/sqlgen1.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlrdd0.c : source/sqlrdd0.prg
+$(OBJ_DIR)/sqlrdd0.c : $(SRC_DIR)/sqlrdd0.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sqlrdd0$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd0.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlrdd2.c : source/sqlrdd2.prg
+$(OBJ_DIR)/sqlrdd2.c : $(SRC_DIR)/sqlrdd2.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sqlrdd2$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd2.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/utils.c : source/utils.prg
+$(OBJ_DIR)/utils.c : $(SRC_DIR)/utils.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/utils$(OBJ_EXT) : $(OBJ_DIR)/utils.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/utilslang.c : source/utilslang.prg
+$(OBJ_DIR)/utilslang.c : $(SRC_DIR)/utilslang.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/utilslang$(OBJ_EXT) : $(OBJ_DIR)/utilslang.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_firebird.c : source/firebird/sr_firebird.prg
+$(OBJ_DIR)/sr_firebird.c : $(SRC_DIR)/firebird/sr_firebird.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_firebird$(OBJ_EXT) : $(OBJ_DIR)/sr_firebird.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_firebird3.c : source/firebird/sr_firebird3.prg
+$(OBJ_DIR)/sr_firebird3.c : $(SRC_DIR)/firebird/sr_firebird3.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_firebird3$(OBJ_EXT) : $(OBJ_DIR)/sr_firebird3.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_firebird4.c : source/firebird/sr_firebird4.prg
+$(OBJ_DIR)/sr_firebird4.c : $(SRC_DIR)/firebird/sr_firebird4.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_firebird4$(OBJ_EXT) : $(OBJ_DIR)/sr_firebird4.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_firebird5.c : source/firebird/sr_firebird5.prg
+$(OBJ_DIR)/sr_firebird5.c : $(SRC_DIR)/firebird/sr_firebird5.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_firebird5$(OBJ_EXT) : $(OBJ_DIR)/sr_firebird5.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_mariadb.c : source/mariadb/sr_mariadb.prg
+$(OBJ_DIR)/sr_mariadb.c : $(SRC_DIR)/mariadb/sr_mariadb.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_mariadb$(OBJ_EXT) : $(OBJ_DIR)/sr_mariadb.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_mysql.c : source/mysql/sr_mysql.prg
+$(OBJ_DIR)/sr_mysql.c : $(SRC_DIR)/mysql/sr_mysql.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_mysql$(OBJ_EXT) : $(OBJ_DIR)/sr_mysql.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_odbc.c : source/odbc/sr_odbc.prg
+$(OBJ_DIR)/sr_odbc.c : $(SRC_DIR)/odbc/sr_odbc.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_odbc$(OBJ_EXT) : $(OBJ_DIR)/sr_odbc.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_oracle.c : source/oracle/sr_oracle.prg
+$(OBJ_DIR)/sr_oracle.c : $(SRC_DIR)/oracle/sr_oracle.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_oracle$(OBJ_EXT) : $(OBJ_DIR)/sr_oracle.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_oracle2.c : source/oracle/sr_oracle2.prg
+$(OBJ_DIR)/sr_oracle2.c : $(SRC_DIR)/oracle/sr_oracle2.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_oracle2$(OBJ_EXT) : $(OBJ_DIR)/sr_oracle2.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sr_pgs.c : source/postgresql/sr_pgs.prg
+$(OBJ_DIR)/sr_pgs.c : $(SRC_DIR)/postgresql/sr_pgs.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sr_pgs$(OBJ_EXT) : $(OBJ_DIR)/sr_pgs.c
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -194,32 +206,32 @@ $(OBJ_DIR)/sr_pgs$(OBJ_EXT) : $(OBJ_DIR)/sr_pgs.c
 # .c -> .o
 ###########
 
-$(OBJ_DIR)/sqlact$(OBJ_EXT) : source/sqlact.c
+$(OBJ_DIR)/sqlact$(OBJ_EXT) : $(SRC_DIR)/sqlact.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlex1$(OBJ_EXT) : source/sqlex1.c
+$(OBJ_DIR)/sqlex1$(OBJ_EXT) : $(SRC_DIR)/sqlex1.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlex2$(OBJ_EXT) : source/sqlex2.c
+$(OBJ_DIR)/sqlex2$(OBJ_EXT) : $(SRC_DIR)/sqlex2.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlex3$(OBJ_EXT) : source/sqlex3.c
+$(OBJ_DIR)/sqlex3$(OBJ_EXT) : $(SRC_DIR)/sqlex3.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqllex$(OBJ_EXT) : source/sqllex.c
+$(OBJ_DIR)/sqllex$(OBJ_EXT) : $(SRC_DIR)/sqllex.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlrdd1$(OBJ_EXT) : source/sqlrdd1.c
+$(OBJ_DIR)/sqlrdd1$(OBJ_EXT) : $(SRC_DIR)/sqlrdd1.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/tracelog$(OBJ_EXT) : source/misc/tracelog.c
+$(OBJ_DIR)/tracelog$(OBJ_EXT) : $(SRC_DIR)/misc/tracelog.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/xthrow$(OBJ_EXT) : source/misc/xthrow.c
+$(OBJ_DIR)/xthrow$(OBJ_EXT) : $(SRC_DIR)/misc/xthrow.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqly$(OBJ_EXT) : source/parser/sqly.c
+$(OBJ_DIR)/sqly$(OBJ_EXT) : $(SRC_DIR)/parser/sqly.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/sqlora$(OBJ_EXT) : source/oracle/sqlora.c
+$(OBJ_DIR)/sqlora$(OBJ_EXT) : $(SRC_DIR)/oracle/sqlora.c
 	$(CC) $(CFLAGS) -c $< -o $@
