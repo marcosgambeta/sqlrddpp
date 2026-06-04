@@ -615,7 +615,8 @@ HB_ERRCODE SR_ExecuteInsertStmt(SQLEXAREAP thiswa)
     break;
   }
   case SQLRDD_RDBMS_ORACLE:
-  case SQLRDD_RDBMS_MYSQL: {
+  case SQLRDD_RDBMS_MYSQL:
+  case SQLRDD_RDBMS_MARIADB: {
     SQLRETURN _res;
     char ident[200] = {0};
     char tablename[100] = {0};
@@ -630,7 +631,8 @@ HB_ERRCODE SR_ExecuteInsertStmt(SQLEXAREAP thiswa)
         sprintf(ident, "SELECT %s%s_SQ.CURRVAL FROM DUAL", thiswa->sOwner, tablename);
         break;
       }
-      case SQLRDD_RDBMS_MYSQL: {
+      case SQLRDD_RDBMS_MYSQL:
+      case SQLRDD_RDBMS_MARIADB: {
         sprintf(ident, "SELECT LAST_INSERT_ID()");
         break; // TODO: unnecessary break
       }
