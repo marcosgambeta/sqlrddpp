@@ -1224,7 +1224,7 @@ char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
   }
   case HB_IT_DATE: {
     hb_dateDecStr(sDate, hb_itemGetDL(pFieldData));
-    sValue = (char *)hb_xgrab(30);
+    sValue = (char *)hb_xgrab(31);
     switch (nSystemID) {
     case SQLRDD_RDBMS_ORACLE: {
       if (!bMemo) {
