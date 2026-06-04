@@ -43,7 +43,8 @@ CFLAGS = \
 	-D_HB_API_INTERNAL_ \
 	-std=c11 \
 	-Wno-missing-declarations \
-	-Wno-visibility
+	-Wno-visibility \
+	-Wno-comment
 
 LIB_NAME = $(LIB_DIR)\$(LIB_PRE)sqlrddpp$(LIB_EXT)
 
