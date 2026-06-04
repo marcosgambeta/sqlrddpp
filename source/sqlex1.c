@@ -181,20 +181,20 @@ static HB_ERRCODE ConcludeSkipraw(SQLEXAREAP thiswa)
 static void sqlGetCleanBuffer(SQLEXAREAP thiswa)
 {
   HB_SIZE nPos, nLen;
-  PHB_ITEM pCol;
+  //PHB_ITEM pCol; (using stack instead of heap)
+  HB_ITEM pCol = {0};
 
-  pCol = hb_itemNew(SR_NULLPTR);
+  //pCol = hb_itemNew(SR_NULLPTR);
   for (nPos = 1, nLen = hb_arrayLen(thiswa->aEmptyBuff); nPos <= nLen; nPos++) {
-    hb_arrayGet(thiswa->aEmptyBuff, nPos, pCol);
-    hb_arraySet(thiswa->aOldBuffer, nPos, pCol);
-    hb_arraySetForward(thiswa->aBuffer, nPos, pCol);
+    hb_arrayGet(thiswa->aEmptyBuff, nPos, &pCol);
+    hb_arraySet(thiswa->aOldBuffer, nPos, &pCol);
+    hb_arraySetForward(thiswa->aBuffer, nPos, &pCol);
   }
 
-  hb_itemRelease(pCol);
+  //hb_itemRelease(pCol);
 
   // fix lastrec() + 1
-  pCol = hb_arrayGetItemPtr(thiswa->aInfo, AINFO_RCOUNT);
-  thiswa->lLastRec = hb_itemGetNL(pCol) + 1;
+  thiswa->lLastRec = hb_itemGetNL(hb_arrayGetItemPtr(thiswa->aInfo, AINFO_RCOUNT)) + 1;
   thiswa->area.fEof = HB_TRUE;
 }
 
