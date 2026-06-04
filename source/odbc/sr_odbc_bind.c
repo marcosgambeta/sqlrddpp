@@ -661,7 +661,8 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
   PTR bBuffer, bOut;
   RETCODE wResult, wReturn = SQL_ERROR;
   int iReallocs;
-  PHB_ITEM pLine, temp;
+  PHB_ITEM pLine;
+  //PHB_ITEM temp;
   int i, cols, line;
 
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
@@ -736,23 +737,24 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
     }
 
     for (i = 1; i <= cols; i++) {
+      HB_ITEM temp = {0};
       bOut = SR_NULLPTR;
       lInitBuff = (HB_LONG)lLen;
       lLenOut = 0;
       iReallocs = 0;
-      temp = hb_itemNew(SR_NULLPTR);
+      //temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
       lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i), FIELD_ENUM);
       lIndex = lIndex ? lIndex : i;
 
       if (lIndex == 0) {
-        hb_arraySetForward(pLine, i, temp);
+        hb_arraySetForward(pLine, i, &temp);
       } else {
         do {
           wResult = SQLGetData(SR_PAR_SQLHSTMT(1), (SQLUSMALLINT)lIndex, (SQLSMALLINT)SQL_CHAR, (PTR)bBuffer,
                                (SQLLEN)lLen, (SQLLEN *)&lLenOut);
           if (wResult == SQL_SUCCESS && iReallocs == 0) {
-            sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), temp, (char *)bBuffer, lLenOut, 0, ulSystemID, bTranslate);
-            hb_arraySetForward(pLine, i, temp);
+            sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bBuffer, lLenOut, 0, ulSystemID, bTranslate);
+            hb_arraySetForward(pLine, i, &temp);
             break;
           } else if (wResult == SQL_SUCCESS_WITH_INFO && iReallocs == 0) {
             // Perheps a data truncation
@@ -764,15 +766,15 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
               bBuffer = (char *)hb_xrealloc(bBuffer, lLen);
               iReallocs++;
             } else {
-              sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), temp, (char *)bBuffer, lLenOut, 0, ulSystemID, bTranslate);
-              hb_arraySetForward(pLine, i, temp);
+              sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bBuffer, lLenOut, 0, ulSystemID, bTranslate);
+              hb_arraySetForward(pLine, i, &temp);
               break;
             }
           } else if ((wResult == SQL_SUCCESS || wResult == SQL_SUCCESS_WITH_INFO) && iReallocs > 0) {
             strcat((char *)bOut, (char *)bBuffer);
-            sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), temp, (char *)bOut, lLenOut + lInitBuff - 1, 0, ulSystemID,
+            sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bOut, lLenOut + lInitBuff - 1, 0, ulSystemID,
                          bTranslate);
-            hb_arraySetForward(pLine, i, temp);
+            hb_arraySetForward(pLine, i, &temp);
             hb_xfree((PTR)bOut);
             break;
           } else {
@@ -780,7 +782,7 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
           }
         } while (wResult != SQL_NO_DATA);
       }
-      hb_itemRelease(temp);
+      //hb_itemRelease(temp);
     }
 
     hb_itemPutNL(pRec, hb_arrayGetNL(pLine, ulnRecno));
