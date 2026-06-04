@@ -603,7 +603,7 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
   // PTR bBuffer, bOut;
   // RETCODE wResult;
   // int iReallocs;
-  PHB_ITEM temp;
+  //PHB_ITEM temp;
   int i, cols;
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
   HB_BOOL bQueryOnly = hb_parl(4);
@@ -633,16 +633,17 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
   // bBuffer = hb_xgrab((HB_ULONG) lLen + 1);
 
   for (i = 1; i <= cols; i++) {
-    temp = hb_itemNew(SR_NULLPTR);
+    //temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+    HB_ITEM temp = {0};
     lIndex = (HB_USHORT)hb_arrayGetNI(hb_arrayGetItemPtr(pFields, i), FIELD_ENUM);
 
     if (lIndex == 0) {
-      hb_arraySetForward(pRet, i, temp);
+      hb_arraySetForward(pRet, i, &temp);
     } else {
-      SR_odbcGetData(SR_PAR_SQLHSTMT(1), hb_arrayGetItemPtr(pFields, i), temp, bQueryOnly, ulSystemID, bTranslate, lIndex);
-      hb_arraySetForward(pRet, i, temp);
+      SR_odbcGetData(SR_PAR_SQLHSTMT(1), hb_arrayGetItemPtr(pFields, i), &temp, bQueryOnly, ulSystemID, bTranslate, lIndex);
+      hb_arraySetForward(pRet, i, &temp);
     }
-    hb_itemRelease(temp);
+    //hb_itemRelease(temp);
   }
   // hb_xfree((PTR) bBuffer);
 }
