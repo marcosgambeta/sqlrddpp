@@ -432,7 +432,7 @@ static void sr_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, cons
     case SQL_GUID: {
       HB_SIZE lPos;
       char *szResult = (char *)hb_xgrab(lLen + 1);
-      hb_xmemcpy(szResult, bBuffer, ((HB_ISIZ)lLen < lLenBuff ? lLen : lLenBuff));
+      hb_xmemcpy(szResult, bBuffer, lLen < (HB_SIZE)lLenBuff ? lLen : (HB_SIZE)lLenBuff);
       for (lPos = lLenBuff; lPos < lLen; lPos++) {
         szResult[lPos] = ' ';
       }
