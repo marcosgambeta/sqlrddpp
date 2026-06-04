@@ -380,7 +380,7 @@ static HB_ERRCODE getMissingColumn(SQLEXAREAP thiswa, PHB_ITEM pFieldData, HB_LO
   PHB_ITEM pFieldStruct;
   char *colName;
   char sSql[DEFAULT_INDEX_COLUMN_MAX_LEN];
-  HB_ERRCODE res;
+  SQLRETURN res; // HB_ERRCODE res;
   // HB_LONG lLen, lLenOut, lInitBuff;
   // char * bBuffer;
   // char * bOut = NULL;
@@ -439,7 +439,7 @@ static HB_ERRCODE getMissingColumn(SQLEXAREAP thiswa, PHB_ITEM pFieldData, HB_LO
 
   res = SQLFetch(thiswa->colStmt[lFieldPosDB - 1]);
   if (res != SQL_SUCCESS) {
-    if (res == (unsigned int)SQL_ERROR) {
+    if (res == SQL_ERROR) {
       SR_odbcErrorDiagRTE(thiswa->colStmt[lFieldPosDB - 1], "getMissingColumn/SQLFetch", sSql, (SQLRETURN)res, __LINE__,
                        __FILE__);
       SQLFreeStmt(thiswa->colStmt[lFieldPosDB - 1], SQL_CLOSE);
