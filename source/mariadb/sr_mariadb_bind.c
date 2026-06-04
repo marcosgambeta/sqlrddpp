@@ -251,19 +251,15 @@ HB_FUNC_STATIC(SR_MARIADBFETCH)
 
 //----------------------------------------------------------------------------//
 
-static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE lLenBuff, HB_BOOL bQueryOnly,
-                  HB_ULONG ulSystemID, HB_BOOL bTranslate)
+static void sr_MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const HB_SIZE lLenBuff, /*HB_BOOL bQueryOnly,*/
+                  /*HB_ULONG ulSystemID,*/ const HB_BOOL bTranslate)
 {
-  HB_LONG lType;
-  HB_SIZE lLen, lDec;
-  PHB_ITEM pTemp;
+  const HB_LONG lType = hb_arrayGetNL(pField, FIELD_DOMAIN);
+  const HB_SIZE lLen = hb_arrayGetNL(pField, FIELD_LEN);
+  const HB_SIZE lDec = hb_arrayGetNL(pField, FIELD_DEC);
 
-  HB_SYMBOL_UNUSED(bQueryOnly);
-  HB_SYMBOL_UNUSED(ulSystemID);
-
-  lType = hb_arrayGetNL(pField, FIELD_DOMAIN);
-  lLen = hb_arrayGetNL(pField, FIELD_LEN);
-  lDec = hb_arrayGetNL(pField, FIELD_DEC);
+  //HB_SYMBOL_UNUSED(bQueryOnly);
+  //HB_SYMBOL_UNUSED(ulSystemID);
 
   if (lLenBuff <= 0) { // database content is NULL
     switch (lType) {
@@ -344,6 +340,7 @@ static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE
       break;
     }
     case SQL_LONGVARCHAR: {
+      PHB_ITEM pTemp;
       if (lLenBuff > 0 && (strncmp(bBuffer, "[", 1) == 0 || strncmp(bBuffer, "[]", 2)) &&
           (sr_lSerializeArrayAsJson())) {
         if (s_pSym_SR_FROMJSON == SR_NULLPTR) {
@@ -433,7 +430,11 @@ static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE
 
 //----------------------------------------------------------------------------//
 
-// SR_MARIADBLINEPROCESSED(pSession, , aFields, lQueryOnly, nSystemID, lTranslate, aReturn) -> numeric
+// SR_MARIADBLINEPROCESSED(pSession, p2, aFields, lQueryOnly, nSystemID, lTranslate, aReturn) -> numeric
+// NOTES:
+// parameter 'p2' not used
+// parameter 'lQueryOnly' not used
+// parameter 'nSystemID' not used
 HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
 {
   GET_MARIADB_SESSION(session, 1);
@@ -458,8 +459,8 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
     //PHB_ITEM temp;
     HB_LONG lIndex;
     PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
-    HB_BOOL bQueryOnly = hb_parl(4);
-    HB_ULONG ulSystemID = hb_parnl(5);
+    //HB_BOOL bQueryOnly = hb_parl(4); (not used)
+    //HB_ULONG ulSystemID = hb_parnl(5); (not used)
     HB_BOOL bTranslate = hb_parl(6);
     PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
@@ -476,10 +477,10 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
 
       if (lIndex != 0) {
         if (thisrow[lIndex - 1]) {
-          MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), &TempItem, (char *)thisrow[lIndex - 1], lens[lIndex - 1],
-                       bQueryOnly, ulSystemID, bTranslate);
+          sr_MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), &TempItem, (char *)thisrow[lIndex - 1], lens[lIndex - 1],
+                       /*bQueryOnly,*/ /*ulSystemID,*/ bTranslate);
         } else {
-          MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), &TempItem, "", 0, bQueryOnly, ulSystemID, bTranslate);
+          sr_MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), &TempItem, "", 0, /*bQueryOnly,*/ /*ulSystemID,*/ bTranslate);
         }
       }
       hb_arraySetForward(pRet, col + 1, &TempItem);
@@ -563,15 +564,13 @@ HB_FUNC_STATIC(SR_MARIADBCLEAR)
 {
   GET_MARIADB_SESSION(session, 1);
 
-  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
     return;
   }
 
-  if (session->stmt) {
-    mysql_free_result(session->stmt);
-    session->stmt = SR_NULLPTR;
-    session->ifetch = -2;
-  }
+  mysql_free_result(session->stmt);
+  session->stmt = SR_NULLPTR;
+  session->ifetch = -2;
 }
 
 //----------------------------------------------------------------------------//
