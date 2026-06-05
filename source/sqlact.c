@@ -1232,6 +1232,7 @@ char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
         return sValue;
       }
     }
+    /* fallthrough */
     default: {
       if (!bMemo) {
         sprintf(sValue, "\'%s\'", sDate);
