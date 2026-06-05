@@ -15,7 +15,6 @@
 // NOTE: the database must exist before runnning the test.
 
 REQUEST SQLRDD
-REQUEST SQLEX
 REQUEST SR_MYSQL
 
 STATIC s_SERVER := "localhost"
