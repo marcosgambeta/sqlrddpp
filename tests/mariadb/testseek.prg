@@ -38,6 +38,8 @@ PROCEDURE Main()
    LOCAL dDate
    LOCAL nRand
 
+   hb_RandomSeed()
+
    SetMode(25, maxcol() + 1)
 
    CLS
