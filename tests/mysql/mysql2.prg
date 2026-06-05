@@ -33,6 +33,8 @@ PROCEDURE Main()
    LOCAL oTB
    LOCAL nKey
 
+   hb_RandomSeed()
+
    SetMode(25, maxcol() + 1)
 
    n := 1
@@ -89,7 +91,7 @@ PROCEDURE Main()
          REPLACE ID      WITH n
          REPLACE FIRST   WITH "FIRST" + hb_ntos(n)
          REPLACE LAST    WITH "LAST" + hb_ntos(n)
-         REPLACE AGE     WITH n + 18
+         REPLACE AGE     WITH hb_RandomInt(18, 90) // n + 18
          REPLACE DATE    WITH date() - n
          REPLACE MARRIED WITH iif(n / 2 == int(n / 2), .T., .F.)
          REPLACE VALUE   WITH n * 1000 / 100
