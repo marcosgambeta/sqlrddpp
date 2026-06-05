@@ -8,10 +8,10 @@
 # nmake -f Makefile.msvc
 ################################################
 
-OBJ_DIR = obj
-LIB_DIR = lib
-SRC_DIR = source
 INC_DIR = include
+LIB_DIR = lib
+OBJ_DIR = obj
+SRC_DIR = source
 OBJ_EXT = .obj
 LIB_EXT = .lib
 LIB_PRE = 
