@@ -19,6 +19,10 @@ STATIC s_MYSQL_UID    := "root"
 STATIC s_MYSQL_PWD    := "password"
 STATIC s_MYSQL_DTB    := "dbtest"
 
+#define RDD_NAME "SQLRDD"
+#define TABLE_NAME "tabcrud"
+#define NUM_REC 100
+
 REQUEST SQLRDD
 REQUEST SR_MYSQL
 
@@ -58,7 +62,7 @@ PROCEDURE Main()
 
    SET DELETED ON
 
-   rddSetDefault("SQLRDD")
+   rddSetDefault(RDD_NAME)
 
    CLS
 
@@ -71,21 +75,21 @@ PROCEDURE Main()
 
    sr_StartLog(nConnection)
 
-   IF !sr_ExistTable("tabcrud")
-      dbCreate("tabcrud", {{"ID",      "N", 10, 0}, ;
-                           {"FIRST",   "C", 30, 0}, ;
-                           {"LAST",    "C", 30, 0}, ;
-                           {"AGE",     "N",  3, 0}, ;
-                           {"DATE",    "D",  8, 0}, ;
-                           {"MARRIED", "L",  1, 0}, ;
-                           {"VALUE",   "N", 12, 2}}, "SQLRDD")
+   IF !sr_ExistTable(TABLE_NAME)
+      dbCreate(TABLE_NAME, {{"ID",      "N", 10, 0}, ;
+                            {"FIRST",   "C", 30, 0}, ;
+                            {"LAST",    "C", 30, 0}, ;
+                            {"AGE",     "N",  3, 0}, ;
+                            {"DATE",    "D",  8, 0}, ;
+                            {"MARRIED", "L",  1, 0}, ;
+                            {"VALUE",   "N", 12, 2}}, RDD_NAME)
    ENDIF
 
-   USE tabcrud EXCLUSIVE VIA "SQLRDD"
+   USE (TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
 
 #if 0
-   IF reccount() < 100
-      FOR n := 1 TO 100
+   IF reccount() < NUM_REC
+      FOR n := 1 TO NUM_REC
          APPEND BLANK
          REPLACE ID      WITH n
          REPLACE FIRST   WITH "FIRST" + hb_ntos(n)
