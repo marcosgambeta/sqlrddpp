@@ -8,7 +8,6 @@
 #endif
 
 #include "sqlrdd.ch"
-#include "inkey.ch"
 
 // Make a copy of this file and change the values below (if necessary).
 // NOTE: the database will be created automatically.

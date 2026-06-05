@@ -12,7 +12,7 @@
 // Make a copy of this file and change the values below.
 // NOTE: the database must exist before runnning the test.
 // To use the command line parameters:
-// odbcfirebird1 --driver <drivername> --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> --client <options> --charset <charset>
+// odbctestseek --driver <drivername> --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> --client <options> --charset <charset>
 
 STATIC s_ODBC_DRIVER   := "Firebird/InterBase(r) driver"
 STATIC s_ODBC_SERVER   := "localhost"
