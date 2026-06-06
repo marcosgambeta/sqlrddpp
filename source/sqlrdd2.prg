@@ -4054,46 +4054,46 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
    IF lSoft .AND. ::lISAM .AND. ::oSql:nSystemID == SQLRDD_RDBMS_ORACLE .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL .AND. HB_IsChar(uKey)
 
-         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
-         nCons := 0
-         nLenKey := Len(uKey)
-         cPart := ""
-         HB_SYMBOL_UNUSED(cPart)
+      nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
+      nCons := 0
+      nLenKey := Len(uKey)
+      cPart := ""
+      HB_SYMBOL_UNUSED(cPart)
 
-         FOR i := 1 TO nLen
+      FOR i := 1 TO nLen
 
-            nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
-            cPart := SubStr(uKey, nCons + 1, nThis)
+         nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+         cPart := SubStr(uKey, nCons + 1, nThis)
 
-            AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+         AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
 
-            cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
-            nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
-            HB_SYMBOL_UNUSED(nFDec)
-            nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
-            HB_SYMBOL_UNUSED(nFLen)
+         cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
+         lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
+         nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+         HB_SYMBOL_UNUSED(nFDec)
+         nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+         HB_SYMBOL_UNUSED(nFLen)
 
-            IF i == 1 .AND. nThis >= Len(uKey)
-               IF uKey == ""
-                  EXIT
-               ENDIF
-            ELSE
-               IF Len(cPart) == 0
-                  EXIT
-               ENDIF
-            ENDIF
-
-            AAdd(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis, ::aInfo[AINFO_REVERSE_INDEX]), !lSoft, , , , lNull)) // Reverse Index should add % to end of string or seek will never find current record if partial
-            AAdd(::aDat,    ::ConvType(IIf(lSoft, cPart, RTrim(cPart)), cType, , nThis))
-
-            nCons += nThis
-
-            IF nLenKey < nCons
+         IF i == 1 .AND. nThis >= Len(uKey)
+            IF uKey == ""
                EXIT
             ENDIF
+         ELSE
+            IF Len(cPart) == 0
+               EXIT
+            ENDIF
+         ENDIF
 
-         NEXT i
+         AAdd(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis, ::aInfo[AINFO_REVERSE_INDEX]), !lSoft, , , , lNull)) // Reverse Index should add % to end of string or seek will never find current record if partial
+         AAdd(::aDat,    ::ConvType(IIf(lSoft, cPart, RTrim(cPart)), cType, , nThis))
+
+         nCons += nThis
+
+         IF nLenKey < nCons
+            EXIT
+         ENDIF
+
+      NEXT i
 
       cJoin1 := " " + ::cQualifiedTableName + " A "
       cJoin3 := ::GetSelectList()
