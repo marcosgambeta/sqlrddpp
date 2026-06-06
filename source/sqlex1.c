@@ -2447,7 +2447,7 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
     HB_BOOL bTranslate;
     // PTR bBuffer, bOut;
     // HB_USHORT iReallocs;
-    PHB_ITEM temp;
+    //PHB_ITEM temp; (using stack instead of heap)
     // HB_ITEM temp;
     int iComp;
     PHB_ITEM aRecord = hb_itemNew(SR_NULLPTR);
@@ -2467,22 +2467,23 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
       // lLenOut = 0;
       // iReallocs = 0;
 
-      temp = hb_itemNew(SR_NULLPTR);
+      //temp = hb_itemNew(SR_NULLPTR);
+      HB_ITEM temp = {0};
       // temp.type = HB_IT_NIL; // I know this is not a good practice, but we save tons of allocs.
       // please keep as is. ML.
 
       if ((thiswa->uiFieldList[i - 1] == 0) && thiswa->iColumnListStatus != FIELD_LIST_LEARNING) {
-        hb_arraySetForward(aRecord, i, temp); // Field is temporaly NIL since it's have never
+        hb_arraySetForward(aRecord, i, &temp); // Field is temporaly NIL since it's have never
                                               // been needed in current WA. Will be filled on demand
       } else {
         // HB_LONG lType = hb_arrayGetNL(hb_arrayGetItemPtr(thiswa->aFields, thiswa->uiBufferIndex[i - 1]),
         // FIELD_DOMAIN);
         ++iIndex;
-        SR_odbcGetData((HSTMT)hStmt, hb_arrayGetItemPtr(thiswa->aFields, thiswa->uiBufferIndex[i - 1]), temp, 0,
+        SR_odbcGetData((HSTMT)hStmt, hb_arrayGetItemPtr(thiswa->aFields, thiswa->uiBufferIndex[i - 1]), &temp, 0,
                     thiswa->nSystemID, bTranslate, iIndex);
-        hb_arraySetForward(aRecord, i, temp);
+        hb_arraySetForward(aRecord, i, &temp);
       }
-      hb_itemRelease(temp);
+      //hb_itemRelease(temp);
     }
 
     hb_arrayCopy(aRecord, thiswa->aBuffer, SR_NULLPTR, SR_NULLPTR, SR_NULLPTR);
