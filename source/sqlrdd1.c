@@ -649,7 +649,9 @@ static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 // (DBENTRYP_BIB)
 static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_BOOL bFindLast)
 {
-  PHB_ITEM pNewKey = SR_NULLPTR, pItem, pItem2;
+  PHB_ITEM pNewKey = SR_NULLPTR; //, pItem, pItem2;
+  HB_ITEM pItem = {0};
+  HB_ITEM pItem2 = {0};
   HB_ERRCODE retvalue = HB_SUCCESS;
 
   // SR_TraceLog(SR_NULLPTR, "sqlSeek(%p, %d, %p, %d)", thiswa, bSoftSeek, pKey, bFindLast);
@@ -658,8 +660,10 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
-  pItem = hb_itemPutL(SR_NULLPTR, bSoftSeek);
-  pItem2 = hb_itemPutL(SR_NULLPTR, bFindLast);
+  //pItem = hb_itemPutL(SR_NULLPTR, bSoftSeek); (using stack instead of heap)
+  hb_itemPutL(&pItem, bSoftSeek);
+  //pItem2 = hb_itemPutL(SR_NULLPTR, bFindLast); (using stack instead of heap)
+  hb_itemPutL(&pItem2, bFindLast);
 
 #ifndef HB_CDP_SUPPORT_OFF
   if (HB_IS_STRING(pKey)) {
@@ -672,7 +676,7 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
   }
 #endif
 
-  hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLSEEK, 3, pKey, pItem, pItem2);
+  hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLSEEK, 3, pKey, &pItem, &pItem2);
 
   thiswa->area.fFound = hb_arrayGetL(thiswa->aInfo, AINFO_FOUND);
   thiswa->area.fBof = hb_arrayGetL(thiswa->aInfo, AINFO_BOF);
@@ -683,17 +687,17 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
 
     if (thiswa->area.fEof) {
       thiswa->area.fFound = HB_FALSE;
-      hb_itemPutL(pItem, thiswa->area.fFound);
-      hb_arraySetForward(thiswa->aInfo, AINFO_FOUND, pItem);
+      hb_itemPutL(&pItem, thiswa->area.fFound);
+      hb_arraySetForward(thiswa->aInfo, AINFO_FOUND, &pItem);
     } else {
       if (SR_sqlKeyCompare(&thiswa->area, pKey, HB_FALSE) != 0) {
         thiswa->area.fFound = HB_TRUE;
-        hb_itemPutL(pItem, thiswa->area.fFound);
-        hb_arraySetForward(thiswa->aInfo, AINFO_FOUND, pItem);
+        hb_itemPutL(&pItem, thiswa->area.fFound);
+        hb_arraySetForward(thiswa->aInfo, AINFO_FOUND, &pItem);
       } else {
         thiswa->area.fFound = HB_FALSE;
-        hb_itemPutL(pItem, thiswa->area.fFound);
-        hb_arraySetForward(thiswa->aInfo, AINFO_FOUND, pItem);
+        hb_itemPutL(&pItem, thiswa->area.fFound);
+        hb_arraySetForward(thiswa->aInfo, AINFO_FOUND, &pItem);
 
         if (!bSoftSeek) {
           sqlGetCleanBuffer(thiswa);
@@ -702,8 +706,8 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
     }
   }
 
-  hb_itemRelease(pItem);
-  hb_itemRelease(pItem2);
+  //hb_itemRelease(pItem);
+  //hb_itemRelease(pItem2);
   if (pNewKey) {
     hb_itemRelease(pNewKey);
   }
