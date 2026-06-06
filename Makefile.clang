@@ -1,5 +1,5 @@
 ################################################
-# Makefile for xHarbour and Clang
+# Makefile for xHarbour and Clang 32-bit/64-bit
 ################################################
 # Usage:
 # mkdir lib

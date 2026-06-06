@@ -1,5 +1,5 @@
 ################################################
-# Makefile for xHarbour and MSVC
+# Makefile for xHarbour and MSVC 32-bit/64-bit
 ################################################
 # Usage:
 # mkdir lib

@@ -1,5 +1,5 @@
 ################################################
-# Makefile for xHarbour and MinGW
+# Makefile for xHarbour and MinGW 32-bit/64-bit
 ################################################
 # Usage:
 # mkdir lib
