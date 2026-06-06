@@ -324,20 +324,21 @@ static void sqlGetBufferFromCache2(SQLAREAP thiswa, HB_LONG lPos)
 static void sqlGetCleanBuffer(SQLAREAP thiswa)
 {
   HB_SIZE nPos, nLen;
-  PHB_ITEM pCol;
+  //PHB_ITEM pCol; (using stack instead of heap)
+  HB_ITEM pCol = {0};
 
-  pCol = hb_itemNew(SR_NULLPTR);
+  //pCol = hb_itemNew(SR_NULLPTR);
   for (nPos = 1, nLen = hb_arrayLen(thiswa->aEmptyBuff); nPos <= nLen; nPos++) {
-    hb_arrayGet(thiswa->aEmptyBuff, nPos, pCol);
-    hb_arraySet(thiswa->aOldBuffer, nPos, pCol);
-    hb_arraySetForward(thiswa->aBuffer, nPos, pCol);
+    hb_arrayGet(thiswa->aEmptyBuff, nPos, &pCol);
+    hb_arraySet(thiswa->aOldBuffer, nPos, &pCol);
+    hb_arraySetForward(thiswa->aBuffer, nPos, &pCol);
   }
   hb_arraySetL(thiswa->aInfo, AINFO_DELETED, HB_FALSE);
   hb_arraySetL(thiswa->aInfo, AINFO_EOF, HB_TRUE);
-  hb_arrayGet(thiswa->aInfo, AINFO_RCOUNT, pCol);
-  hb_itemPutNL(pCol, hb_itemGetNL(pCol) + 1);
-  hb_arraySetForward(thiswa->aInfo, AINFO_RECNO, pCol);
-  hb_itemRelease(pCol);
+  hb_arrayGet(thiswa->aInfo, AINFO_RCOUNT, &pCol);
+  hb_itemPutNL(&pCol, hb_itemGetNL(&pCol) + 1);
+  hb_arraySetForward(thiswa->aInfo, AINFO_RECNO, &pCol);
+  //hb_itemRelease(pCol);
   if (!thiswa->isam) {
     hb_arraySetNL(thiswa->aInfo, AINFO_NPOSCACHE, (long)hb_arrayLen(thiswa->aCache) + 1);
   }
