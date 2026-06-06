@@ -291,34 +291,31 @@ static void setCurrentFromCache(SQLAREAP thiswa, HB_LONG lPos)
 static void sqlGetBufferFromCache2(SQLAREAP thiswa, HB_LONG lPos)
 {
   HB_SIZE nPos, nLen;
-  PHB_ITEM pCacheRecord, pCol;
+  PHB_ITEM pCacheRecord;//, pCol; (using stack instead of heap)
+  HB_ITEM pCol = {0};
 
-  pCacheRecord = (PHB_ITEM)hb_arrayGetItemPtr(thiswa->aCache, lPos);
+  pCacheRecord = hb_arrayGetItemPtr(thiswa->aCache, lPos);
 
-  pCol = hb_itemNew(SR_NULLPTR);
+  //pCol = hb_itemNew(SR_NULLPTR);
 
   for (nPos = 1, nLen = hb_arrayLen(pCacheRecord); nPos <= nLen; nPos++) {
-    hb_arrayGet(pCacheRecord, nPos, pCol);
-    hb_arraySet(thiswa->aOldBuffer, nPos, pCol);
+    hb_arrayGet(pCacheRecord, nPos, &pCol);
+    hb_arraySet(thiswa->aOldBuffer, nPos, &pCol);
     if (nPos == thiswa->ulhRecno) {
-      hb_arraySet(thiswa->aInfo, AINFO_RECNO, pCol);
+      hb_arraySet(thiswa->aInfo, AINFO_RECNO, &pCol);
     }
     if (nPos == thiswa->ulhDeleted) {
-      const char *deleted = hb_itemGetCPtr(pCol);
-      if (*deleted == 'T' || *deleted == '*') {
-        hb_arraySetL(thiswa->aInfo, AINFO_DELETED, HB_TRUE);
-      } else {
-        hb_arraySetL(thiswa->aInfo, AINFO_DELETED, HB_FALSE);
-      }
+      const char *deleted = hb_itemGetCPtr(&pCol);
+      hb_arraySetL(thiswa->aInfo, AINFO_DELETED, (*deleted == 'T' || *deleted == '*') ? HB_TRUE : HB_FALSE);
     }
-    hb_arraySetForward(thiswa->aBuffer, nPos, pCol);
+    hb_arraySetForward(thiswa->aBuffer, nPos, &pCol);
   }
 
   if (thiswa->ulhDeleted == 0) {
     hb_arraySetL(thiswa->aInfo, AINFO_DELETED, HB_FALSE);
   }
 
-  hb_itemRelease(pCol);
+  //hb_itemRelease(pCol);
   hb_arraySetNL(thiswa->aInfo, AINFO_NPOSCACHE, lPos);
 }
 
