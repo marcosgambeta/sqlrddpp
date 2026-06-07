@@ -121,7 +121,7 @@ PROCEDURE Main()
 
    USE (TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
 
-   IF reccount() < NUM_REC
+   IF reccount() == 0
       FOR n := 1 TO NUM_REC
          APPEND BLANK
          REPLACE ID      WITH n

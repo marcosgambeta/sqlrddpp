@@ -80,7 +80,7 @@ PROCEDURE Main()
 
    USE test EXCLUSIVE VIA "SQLRDD"
 
-   IF reccount() < 100
+   IF reccount() == 0
       FOR n := 1 TO 100
          APPEND BLANK
          REPLACE ID      WITH n
