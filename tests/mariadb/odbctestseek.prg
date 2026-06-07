@@ -44,9 +44,9 @@ PROCEDURE Main()
 
    hb_RandomSeed()
 
-   SetMode(25, maxcol() + 1)
+   //SetMode(25, maxcol() + 1)
 
-   CLS
+   //CLS
 
    n := 1
    DO WHILE n <= PCount()
@@ -140,7 +140,7 @@ PROCEDURE Main()
    INDEX ON DATE TO index3
    INDEX ON NAME + dtos(DATE) TO index4
 
-   ? "Testing index 1"
+   ? "Testing index 1 (ID)"
    SET INDEX TO index1
    nSeekFound := 0
    nSeekNotFound := 0
@@ -172,7 +172,45 @@ PROCEDURE Main()
    // must be 0
    ? "nSeekFailed", nSeekFailed, iif(nSeekFailed == 0, "OK", "ERROR")
 
-   ? "Testing index 2"
+   ? "Testing index 1 (ID) with scope"
+   SET INDEX TO index1
+   SET SCOPE TO 101, (NUM_REC - 100)
+   nSeekFound := 0
+   nSeekNotFound := 0
+   nSeekFailed := 0
+   ? time()
+   FOR n := 1 TO NUM_REC * NUM_TIMES
+      // create a valid id
+      nID := hb_RandomInt(101, NUM_REC - 100)
+      SEEK nID
+      IF found() .AND. !bof() .AND. !eof() .AND. FIELD->ID == nId
+         ++nSeekFound
+      ELSE
+         ++nSeekFailed
+      ENDIF
+      // create a invalid id
+      SWITCH hb_RandomInt(1, 3)
+      CASE 1; nID := hb_RandomInt(1, 100); EXIT // key is valid, but out of scope
+      CASE 2; nID := hb_RandomInt(NUM_REC - 100 + 1, NUM_REC); EXIT // key is valid, but out of scope
+      CASE 3; nID := hb_RandomInt(NUM_REC + 1, NUM_REC + NUM_REC); EXIT // key is invalid
+      ENDSWITCH
+      SEEK nId
+      IF !found() .AND. !bof() .AND. eof()
+         ++nSeekNotFound
+      ELSE
+         ++nSeekFailed
+      ENDIF
+   NEXT n
+   ? time()
+   // must be NUM_REC * NUM_TIMES
+   ? "nSeekFound", nSeekFound, iif(nSeekFound == NUM_REC * NUM_TIMES, "OK", "ERROR")
+   // must be NUM_REC * NUM_TIMES
+   ? "nSeekNotFound", nSeekNotFound, iif(nSeekNotFound == NUM_REC * NUM_TIMES, "OK", "ERROR")
+   // must be 0
+   ? "nSeekFailed", nSeekFailed, iif(nSeekFailed == 0, "OK", "ERROR")
+   SET SCOPE TO
+
+   ? "Testing index 2 (NAME)"
    SET INDEX TO index2
    nSeekFound := 0
    nSeekNotFound := 0
@@ -204,7 +242,7 @@ PROCEDURE Main()
    // must be 0
    ? "nSeekFailed", nSeekFailed, iif(nSeekFailed == 0, "OK", "ERROR")
 
-   ? "Testing index 3"
+   ? "Testing index 3 (DATE"
    SET INDEX TO index3
    nSeekFound := 0
    nSeekNotFound := 0
@@ -236,7 +274,7 @@ PROCEDURE Main()
    // must be 0
    ? "nSeekFailed", nSeekFailed, iif(nSeekFailed == 0, "OK", "ERROR")
 
-   ? "Testing index 4"
+   ? "Testing index 4 (NAME+DTOS(DATE))"
    SET INDEX TO index4
    nSeekFound := 0
    nSeekNotFound := 0
