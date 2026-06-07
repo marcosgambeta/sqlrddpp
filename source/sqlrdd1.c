@@ -2015,12 +2015,16 @@ static HB_ERRCODE sqlNewArea(SQLAREAP thiswa)
 // (DBENTRYP_VO)
 static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
 {
-  PHB_ITEM pConnection = hb_itemNew(SR_NULLPTR);
-  PHB_ITEM pTable = hb_itemNew(SR_NULLPTR);
-  PHB_ITEM pArea = hb_itemNew(SR_NULLPTR);
-  PHB_ITEM pAlias = hb_itemNew(SR_NULLPTR);
-  PHB_ITEM pShared = hb_itemNew(SR_NULLPTR);
-  PHB_ITEM pReadOnly = hb_itemNew(SR_NULLPTR);
+  //PHB_ITEM pConnection = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  HB_ITEM pConnection = {0};
+  PHB_ITEM pTable = hb_itemNew(SR_NULLPTR); // TODO: heap -> stack
+  //PHB_ITEM pArea = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  HB_ITEM pArea = {0};
+  PHB_ITEM pAlias = hb_itemNew(SR_NULLPTR); // TODO: heap -> stack
+  //PHB_ITEM pShared = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  HB_ITEM pShared = {0};
+  //PHB_ITEM pReadOnly = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  HB_ITEM pReadOnly = {0};
   HB_ERRCODE errCode;
 
   char szAlias[HB_RDD_MAX_ALIAS_LEN + 1];
@@ -2055,11 +2059,11 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
 
   thiswa->area.uiMaxFieldNameLength = 64;
 
-  hb_itemPutNL(pConnection, pOpenInfo->ulConnection);
+  hb_itemPutNL(&pConnection, pOpenInfo->ulConnection);
   hb_itemPutC(pTable, thiswa->szDataFileName);
-  hb_itemPutNL(pArea, pOpenInfo->uiArea);
-  hb_itemPutL(pShared, thiswa->shared);
-  hb_itemPutL(pReadOnly, thiswa->readonly);
+  hb_itemPutNL(&pArea, pOpenInfo->uiArea);
+  hb_itemPutL(&pShared, thiswa->shared);
+  hb_itemPutL(&pReadOnly, thiswa->readonly);
   hb_itemPutC(pAlias, (char *)pOpenInfo->atomAlias);
 
 #ifndef HB_CDP_SUPPORT_OFF
@@ -2078,7 +2082,7 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
   hb_vmDo(0);
   thiswa->oWorkArea = hb_itemNew(hb_stackReturnItem());
 
-  hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLOPEN, 6, pTable, pArea, pShared, pReadOnly, pAlias, pConnection);
+  hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLOPEN, 6, pTable, &pArea, &pShared, &pReadOnly, pAlias, &pConnection);
 
   hb_objSendMsg(thiswa->oWorkArea, "AINFO", 0);
   thiswa->aInfo = hb_itemNew(hb_stackReturnItem());
@@ -2114,11 +2118,11 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
   thiswa->wasdel = HB_FALSE;
 
   hb_itemRelease(pTable);
-  hb_itemRelease(pArea);
+  //hb_itemRelease(pArea);
   hb_itemRelease(pAlias);
-  hb_itemRelease(pShared);
-  hb_itemRelease(pReadOnly);
-  hb_itemRelease(pConnection);
+  //hb_itemRelease(pShared);
+  //hb_itemRelease(pReadOnly);
+  //hb_itemRelease(pConnection);
 
   hb_objSendMsg(thiswa->oWorkArea, "LOPENED", 0);
 
