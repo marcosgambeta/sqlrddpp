@@ -3985,7 +3985,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL nLen
    LOCAL i
    LOCAL j
-   LOCAL cType := ""
+   LOCAL cType //:= "" (value not used)
    LOCAL lPartialSeek := .F.
    LOCAL cRet := ""
    LOCAL nFDec
@@ -3993,7 +3993,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL nThis
    LOCAL cSep
    LOCAL cSql
-   LOCAL c1 := ""
+   //LOCAL c1 := "" (variable not used)
    LOCAL cQot
    LOCAL cNam
    LOCAL nSimpl
@@ -4004,18 +4004,18 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL cJoin3
    LOCAL lNull
    LOCAL uSet
-   LOCAL lBlockSearch := .T.
+   //LOCAL lBlockSearch := .T. (variable not used)
    LOCAL cField
    LOCAL nfieldPos
    LOCAL lLikeSep := .F.
    LOCAL cKeyValue
-   LOCAL lIsIndKey := .F.
+   //LOCAL lIsIndKey := .F. (variable not used)
 
-   HB_SYMBOL_UNUSED(cType)
-   HB_SYMBOL_UNUSED(c1)
-   HB_SYMBOL_UNUSED(lBlockSearch)
-   HB_SYMBOL_UNUSED(lIsIndKey)
-   HB_SYMBOL_UNUSED(lLast)
+   //HB_SYMBOL_UNUSED(cType)
+   //HB_SYMBOL_UNUSED(c1)
+   //HB_SYMBOL_UNUSED(lBlockSearch)
+   //HB_SYMBOL_UNUSED(lIsIndKey)
+   //HB_SYMBOL_UNUSED(lLast)
 
    IF ::lCollectingBehavior
       FOR EACH i IN ::aSelectList
@@ -4057,8 +4057,8 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
       nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
       nCons := 0
       nLenKey := Len(uKey)
-      cPart := ""
-      HB_SYMBOL_UNUSED(cPart)
+      //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
+      //HB_SYMBOL_UNUSED(cPart)
 
       FOR i := 1 TO nLen
 
@@ -4069,10 +4069,12 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
          cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
          lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
-         nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
-         HB_SYMBOL_UNUSED(nFDec)
-         nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
-         HB_SYMBOL_UNUSED(nFLen)
+         // unnecessary, the value is not used
+         //nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+         //HB_SYMBOL_UNUSED(nFDec)
+         // unnecessary, the value is not used
+         //nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+         //HB_SYMBOL_UNUSED(nFLen)
 
          IF i == 1 .AND. nThis >= Len(uKey)
             IF uKey == ""
@@ -4195,7 +4197,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_IsNumeric(uKey)
                cField :=  Upper(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])
                IF "VAL(" $ CFIELD
-
                   CfIELD := StrTran(CfIELD, "VAL(", "")
                   CfIELD := StrTran(CfIELD, ")", "")
                   nfieldPos := AScan(::aFields, {|x|x[1] == cField})
@@ -4237,8 +4238,8 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
          nLenKey := Len(uKey)
-         cPart := ""
-         HB_SYMBOL_UNUSED(cPart)
+         //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
+         //HB_SYMBOL_UNUSED(cPart)
 
          FOR i := 1 TO nLen
 
@@ -4249,10 +4250,12 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
             cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
             lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
-            nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
-            HB_SYMBOL_UNUSED(nFDec)
-            nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
-            HB_SYMBOL_UNUSED(nFLen)
+            // unnecessary, the value is not used
+            //nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+            //HB_SYMBOL_UNUSED(nFDec)
+            // unnecessary, the value is not used
+            //nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+            //HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= Len(uKey)
                IF uKey == ""
@@ -4465,7 +4468,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_IsNumeric(uKey)
             cField :=  Upper(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])
             IF "VAL(" $ CFIELD
-
                CfIELD := StrTran(CfIELD, "VAL(", "")
                CfIELD := StrTran(CfIELD, ")", "")
                nfieldPos := AScan(::aFields, {|x|x[1] == cField})
@@ -4534,8 +4536,8 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
          nLenKey := Len(uKey)
-         cPart := ""
-         HB_SYMBOL_UNUSED(cPart)
+         //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
+         //HB_SYMBOL_UNUSED(cPart)
 
          FOR i := 1 TO nLen
 
@@ -4545,12 +4547,15 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
 
             cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 2]
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
-            HB_SYMBOL_UNUSED(lNull)
-            nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
-            HB_SYMBOL_UNUSED(nFDec)
-            nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
-            HB_SYMBOL_UNUSED(nFLen)
+            // unnecessary, the value is not used
+            //lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 5]
+            //HB_SYMBOL_UNUSED(lNull)
+            // unnecessary, the value is not used
+            //nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 4]
+            //HB_SYMBOL_UNUSED(nFDec)
+            // unnecessary, the value is not used
+            //nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], 3]
+            //HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= Len(uKey)
                IF uKey == ""
