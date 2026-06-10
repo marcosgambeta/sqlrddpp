@@ -2338,10 +2338,10 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
    LOCAL aItem
    LOCAL cBuff
    LOCAL aToken
-   LOCAL aCon := hb_atokens(cConnect,";")
+   LOCAL aCon := hb_atokens(cConnect, ";")
 
    FOR EACH aItem IN aCon
-      aToken := hb_atokens(aItem,"=")
+      aToken := hb_atokens(aItem, "=")
       cBuff := Upper(aToken[1])
 #ifdef __XHARBOUR__
       DO CASE
@@ -2355,6 +2355,8 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
          RETURN CONNECT_MYSQL
       CASE cBuff == "MARIA"
          //RETURN CONNECT_MARIA (deprecated)
+         RETURN CONNECT_MARIADB
+      CASE cBuff == "MARIADB"
          RETURN CONNECT_MARIADB
       CASE cBuff == "FB" .OR. ;
            cBuff == "FIREBIRD" .OR. ;
@@ -2384,6 +2386,7 @@ FUNCTION SR_DetectDBFromDSN(cConnect)
       CASE "MYSQL"
          RETURN CONNECT_MYSQL
       CASE "MARIA"
+      CASE "MARIADB"
          //RETURN CONNECT_MARIA (deprecated)
          RETURN CONNECT_MARIADB
       CASE "FB"
