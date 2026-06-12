@@ -434,7 +434,7 @@ HB_FUNC_STATIC(SR_FBEXECUTE3)
   isc_dsql_prepare(session->status, &(session->transac), &(session->stmt), 0, command, (unsigned short)hb_parni(3),
                    session->sqlda);
   if (CHECK_ERROR(session)) {
-    ERRORLOGANDEXIT(session, (char *)command);
+    ERRORLOGANDEXIT(session, command);
   }
 
   isSelect(session);
@@ -566,13 +566,13 @@ HB_FUNC_STATIC(SR_FBEXECUTEIMMEDIATE3)
 
   // if( isc_dsql_execute_immediate(session->status, &(session->db), &(session->transac), 0, command, hb_parni(3), NULL)
   // ) {
-  //    ERRORLOGANDEXIT(session, (char *) command);
+  //    ERRORLOGANDEXIT(session, command);
   // }
   isc_dsql_execute_immediate(session->status, &(session->db), &(session->transac), 0, command,
                              (unsigned short)hb_parni(3), SR_NULLPTR);
 
   if (CHECK_ERROR(session)) {
-    ERRORLOGANDEXIT(session, (char *)command);
+    ERRORLOGANDEXIT(session, command);
   }
 
   session->transactionPending = 1;
