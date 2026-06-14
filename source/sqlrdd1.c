@@ -1210,13 +1210,13 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
       }
       hb_itemRelease(pLangItem);
     } else {
-      PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
+      HB_ITEM pLangItem = {0};
       HB_SIZE nLen = pField->uiLen, nSrcLen;
       char *empty = (char *)hb_xgrab(nLen + 1);
 
-      if (hb_hashScan(itemTemp, sr_getBaseLang(pLangItem), &nPos) ||
-          hb_hashScan(itemTemp, sr_getSecondLang(pLangItem), &nPos) ||
-          hb_hashScan(itemTemp, sr_getRootLang(pLangItem), &nPos)) {
+      if (hb_hashScan(itemTemp, sr_getBaseLang(&pLangItem), &nPos) ||
+          hb_hashScan(itemTemp, sr_getSecondLang(&pLangItem), &nPos) ||
+          hb_hashScan(itemTemp, sr_getRootLang(&pLangItem), &nPos)) {
         itemTemp3 = hb_hashGetValueAt(itemTemp, nPos);
         nSrcLen = hb_itemGetCLen(itemTemp3);
         hb_xmemcpy(empty, hb_itemGetCPtr(itemTemp3), HB_MIN(nLen, nSrcLen));
@@ -1238,7 +1238,6 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
       }
       empty[nLen] = '\0';
       hb_itemPutCLPtr(value, empty, nLen);
-      hb_itemRelease(pLangItem);
     }
   } else {
 #if 0
@@ -1382,13 +1381,12 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
 
     hb_arraySet(thiswa->aBuffer, fieldindex, value);
   } else if (HB_IS_STRING(value) && HB_IS_HASH(pDest) && sr_isMultilang()) {
-    PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
+    HB_ITEM pLangItem = {0};
 #ifdef __XHARBOUR__
-    hb_hashAdd(pDest, ULONG_MAX, sr_getBaseLang(pLangItem), value);
+    hb_hashAdd(pDest, ULONG_MAX, sr_getBaseLang(&pLangItem), value);
 #else
-    hb_hashAdd(pDest, sr_getBaseLang(pLangItem), value);
+    hb_hashAdd(pDest, sr_getBaseLang(&pLangItem), value);
 #endif
-    hb_itemRelease(pLangItem);
   } else if (pField->uiType == HB_FT_MEMO) {
     // Memo fields can hold ANY datatype
     hb_arraySet(thiswa->aBuffer, fieldindex, value);

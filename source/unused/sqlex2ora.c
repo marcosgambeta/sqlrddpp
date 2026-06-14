@@ -513,10 +513,9 @@ HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
         } else {
           if (InsertRecord->isMultiLang && HB_IS_STRING(pFieldData)) {
             // Transform multilang field in HASH
-            PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR);
+            HB_ITEM pLangItem = {0};
             pTemp = hb_hashNew(NULL);
-            hb_hashAdd(pTemp, sr_getBaseLang(pLangItem), pFieldData);
-            hb_itemRelease(pLangItem);
+            hb_hashAdd(pTemp, sr_getBaseLang(&pLangItem), pFieldData);
             hb_itemMove(pFieldData, pTemp);
             hb_itemRelease(pTemp);
           }
