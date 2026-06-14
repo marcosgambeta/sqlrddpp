@@ -1120,7 +1120,6 @@ static void sr_FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const 
         hb_itemMove(pTemp, hb_stackReturnItem());
 
         if (HB_IS_HASH(pTemp) && sr_isMultilang() && bTranslate) {
-          //PHB_ITEM pLangItem = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
           HB_ITEM pLangItem = {0};
           HB_SIZE ulPos;
           if (hb_hashScan(pTemp, sr_getBaseLang(&pLangItem), &ulPos) ||
@@ -1128,7 +1127,6 @@ static void sr_FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const 
               hb_hashScan(pTemp, sr_getRootLang(&pLangItem), &ulPos)) {
             hb_itemCopy(pItem, hb_hashGetValueAt(pTemp, ulPos));
           }
-          //hb_itemRelease(pLangItem);
         } else {
           hb_itemMove(pItem, pTemp);
         }
