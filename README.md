@@ -137,17 +137,22 @@ $hb_pkg_install.hbm
 
 ## Using
 
-### Compiling with SQLRDD and MySQL
+### Compiling with SQLRDD++ and MySQL
 ```Batch
 hbmk2 <filename> sqlrddpp.hbc -llibmysql
 ```
 
-### Compiling with SQLRDD and PostgreSQL
+### Compiling with SQLRDD++ and MariaDB
+```Batch
+hbmk2 <filename> sqlrddpp.hbc -llibmariadb
+```
+
+### Compiling with SQLRDD++ and PostgreSQL
 ```Batch
 hbmk2 <filename> sqlrddpp.hbc -llibpq
 ```
 
-### Compiling with SQLRDD and Firebird
+### Compiling with SQLRDD++ and Firebird
 ```Batch
 hbmk2 <filename> sqlrddpp.hbc -lfbclient
 ```
