@@ -166,6 +166,31 @@ When using xHarbour, add the parameter -xhb:
 hbmk2 <filename> sqlrddpp.hbc -xhb ...
 ```
 
+## Problems using this project
+
+If you have any problems using this project, please report them in the 'Issues' section:
+
+https://github.com/marcosgambeta/sqlrddpp/issues  
+
+If possible, try to create a self-contained example that reproduce the problem.
+
+Others topics can be discussed in the 'Discussions' section:
+
+https://github.com/marcosgambeta/sqlrddpp/discussions
+
+## SQLRDD++ v1 vs SQLRDD++ v2
+
+The version 1 of SQLRDD++ use the C language and mantain compatibility with old C compilers
+like BCC 5.8.2.
+
+The version 2 use the C++ language (Modern C++) and require a C++ compiler that support the
+standard C++11 or upper.
+
+So, if you are using a modern compiler, you can use the version 2 of the SQLRDD++ instead
+of the version 1 (if you wish, of course).
+
+See the link in the section below.
+
 ## Links
 
 SQLRDD for xHarbour and Harbour  
