@@ -336,7 +336,6 @@ METHOD SR_CONNECTION:ListCatTables(cOwner)
       ELSE
          ::Exec("select RDB$RELATION_NAME from RDB$RELATIONS where RDB$FLAGS = 1 AND RDB$OWNER_NAME = '" + cOwner + "' order by RDB$RELATION_NAME", .T., .T., @aRet)
       ENDIF
-      EXIT
    ENDSWITCH
 
    aRet2 := Array(Len(aRet))

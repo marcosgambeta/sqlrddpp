@@ -544,7 +544,6 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                EXIT
             CASE SQLRDD_RDBMS_IBMDB2
                cTrailler := " fetch first " + LTrim(Str(uData)) + " rows only"
-               EXIT
             ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_SELECT_ORDER_ASC
@@ -1022,7 +1021,6 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             CASE SQLRDD_RDBMS_MYSQL
             CASE SQLRDD_RDBMS_MARIADB
                cSql += " || "
-               EXIT
             ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_OPERATOR_JOIN
@@ -1032,7 +1030,6 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                EXIT
             CASE SQLRDD_RDBMS_ORACLE
                cSql += " = "
-               EXIT
             ENDSWITCH
             PASSTHROUGH
          CASE SQL_PCODE_OPERATOR_LEFT_OUTER_JOIN
@@ -1826,7 +1823,6 @@ STATIC FUNCTION SR_ComparOpText(nOp)
       EXIT
    CASE SQL_PCODE_OPERATOR_IS_NOT_NULL
       cSql += " IS NOT NULL "
-      EXIT
    ENDSWITCH
 
 RETURN cSql

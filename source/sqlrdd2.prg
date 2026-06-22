@@ -1031,7 +1031,6 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
                AAdd(::aIndexMgmnt, aThisIndex)
             ENDIF
          NEXT
-         EXIT
       ENDSWITCH
    ENDIF
 
@@ -1181,7 +1180,6 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
                   EXIT
                CASE "6"  // <=
                   cOut := ShiftLeftAddParentesis(cOut) + " IS NULL OR " + cFieldName + " < 0 )"
-                  EXIT
                ENDSWITCH
             ELSE
                SWITCH SubStr(cSql, i + 1, 1)
@@ -1199,7 +1197,6 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
                   EXIT
                CASE "6"  // <=
                   cOut += " IS NULL"
-                  EXIT
                ENDSWITCH
             ENDIF
          ELSE
@@ -1230,7 +1227,6 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
                ELSE
                   cOut += " <= " + aQuot[nIndexCol]
                ENDIF
-               EXIT
             ENDSWITCH
          ENDIF
          i += 2
@@ -1441,8 +1437,6 @@ METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
          Inkey(0.5)         // wait .5 seconds before trying again
       NEXT i
 
-      EXIT
-
    ENDSWITCH
 
    IF !lCheck4ExcLock .AND. lRet
@@ -1485,7 +1479,6 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
    CASE SQLRDD_RDBMS_POSTGR
    CASE SQLRDD_RDBMS_AZURE
       SR_ReleaseLocks({EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), FLOCK_TABLE_LOCK_SIGN + Upper(::cFileName)}, ::oSql)
-      EXIT
    ENDSWITCH
 
    ::lTableLocked := .F.
@@ -2761,15 +2754,14 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                      cVal += IIf(!lFirst, ", ", "( ") + LTrim(Str(aBuffer[::hnRecno], 15))
                      lFirst := .F.
                      EXIT
-                  CASE SQLRDD_RDBMS_INFORM
-                  CASE SQLRDD_RDBMS_ORACLE
-                  CASE SQLRDD_RDBMS_MSSQL7
-                  CASE SQLRDD_RDBMS_POSTGR
-                  CASE SQLRDD_RDBMS_MSSQL6
-                  CASE SQLRDD_RDBMS_SYBASE
-                  CASE SQLRDD_RDBMS_IBMDB2    // Use IDENTITY column (or similar)
-                  CASE SQLRDD_RDBMS_AZURE
-                     EXIT
+                  CASE SQLRDD_RDBMS_INFORM // TODO: unnecessary
+                  CASE SQLRDD_RDBMS_ORACLE // TODO: unnecessary
+                  CASE SQLRDD_RDBMS_MSSQL7 // TODO: unnecessary
+                  CASE SQLRDD_RDBMS_POSTGR // TODO: unnecessary
+                  CASE SQLRDD_RDBMS_MSSQL6 // TODO: unnecessary
+                  CASE SQLRDD_RDBMS_SYBASE // TODO: unnecessary
+                  CASE SQLRDD_RDBMS_IBMDB2 // Use IDENTITY column (or similar) // TODO: unnecessary
+                  CASE SQLRDD_RDBMS_AZURE // TODO: unnecessary
                   ENDSWITCH
                ENDIF
             ELSE
@@ -2889,7 +2881,6 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
             IF ::oSql:lUseSequences .AND. ::lUseSequences
                cIdent := "  RETURNING  " + ::cRecnoName
             ENDIF
-            EXIT
          ENDSWITCH
 
          aRet := {}
@@ -2997,7 +2988,6 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   IF Len(aRet) > 0
                      aBuffer[::hnRecno] := aRet[1, 1]
                   ENDIF
-                  EXIT
                ENDSWITCH
                EXIT
             CASE SQLRDD_RDBMS_POSTGR
@@ -3030,7 +3020,6 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   IF Len(aRet) > 0
                      aBuffer[::hnRecno] := aRet[1, 1]
                   ENDIF
-                  EXIT
                ENDSWITCH
                EXIT
             CASE SQLRDD_RDBMS_MYSQL
@@ -3671,8 +3660,8 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
             ::cRecnoName := aflds[1, 4]
          ENDIF
          EXIT
-      CASE SQLRDD_RDBMS_ORACLE
-      CASE SQLRDD_RDBMS_POSTGR
+      CASE SQLRDD_RDBMS_ORACLE // TODO: unnecessary
+      CASE SQLRDD_RDBMS_POSTGR // TODO: unnecessary
       ENDSWITCH
 
       IF Empty(::hnRecno)
@@ -4318,7 +4307,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
                         CASE SQLRDD_RDBMS_MARIADB
                            cTemp := StrTran(cTemp, "%", "\%")
                            cTemp := StrTran(cTemp, "_", "\_")
-                           EXIT
                         ENDSWITCH
                         cQot := cTemp + "%'"
                      ENDIF
@@ -6275,7 +6263,6 @@ METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
          ::Optmizer_1s := " TOP 1"
          ::Optmizer_ns := {|x|" TOP " + Str(x + 2, 5)}
       ENDIF
-      EXIT
    ENDSWITCH
 
    ::aInfo[AINFO_HNRECNO] := ::hnRecno
@@ -6662,7 +6649,6 @@ METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) 
             ::Optmizer_1s := " TOP 1"
             ::Optmizer_ns := {|x|" TOP " + Str(x + 2, 5)}
          ENDIF
-         EXIT
       ENDSWITCH
    ENDIF
 
@@ -7955,7 +7941,6 @@ METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable,
                   lRet := ::oSql:Exec(cSql, .T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
                   ::oSql:Commit()
                ENDIF
-               EXIT
             ENDSWITCH
          ENDIF
 
@@ -8572,7 +8557,7 @@ METHOD SR_WORKAREA:sqlLock(nType, uRecord)
       ENDIF
       EXIT
 
-   CASE SQLRDD_RDBMS_CACHE
+   CASE SQLRDD_RDBMS_CACHE // TODO: unnecessary
 /*
 drop function newage.LOCK
 drop function newage.UNLOCK
@@ -9360,7 +9345,6 @@ METHOD SR_WORKAREA:DropColumn(cColumn, lDisplayErrorMessage, lRemoveFromWA)
    CASE SQLRDD_RDBMS_FIREBR
       nRet := ::oSql:Exec("ALTER TABLE " + ::cQualifiedTableName + " DROP " + SR_DBQUALIFY(cColumn, ::oSql:nSystemID), lDisplayErrorMessage)
       ::oSql:Commit()
-      EXIT
    ENDSWITCH
 
    IF !lDisplayErrorMessage .AND. nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO
@@ -10370,7 +10354,6 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
 #endif
          lOk := .F.
 //         ::RunTimeErr("", "Cannot change NULL constraint to datatype: " + ::aFields[nCol, 2])
-         EXIT
       ENDSWITCH
 
       ::oSql:Commit()
@@ -11022,7 +11005,6 @@ FUNCTION SR_TCNextRecord(oWA)
    CASE SQLRDD_RDBMS_MYSQL
    CASE SQLRDD_RDBMS_MARIADB
       oWA:Exec("SELECT coalesce(max(R_E_C_N_O_),0) + 1 AS R_E_C_N_O_ FROM " + SR_DBQUALIFY(oWA:cFileName, oWA:oSql:nSystemID), .F., .T., @aRet)
-      EXIT
    ENDSWITCH
 
 RETURN IIf(Len(aRet) > 0, aRet[1, 1], 0)

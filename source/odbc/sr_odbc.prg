@@ -509,7 +509,6 @@ METHOD SR_ODBC:ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff
       IF Len(aRet) > 0
          ::uSid := Val(Str(aRet[1, 1], 8, 0))
       ENDIF
-      EXIT
    ENDSWITCH
 
 RETURN SELF

@@ -1071,7 +1071,7 @@ STATIC FUNCTION dbe_processKey(nKey, oTb)
    CASE K_CTRL_HOME  ; oTb:panHome()  ; EXIT
    CASE K_CTRL_END   ; oTb:panEnd()   ; EXIT
    CASE K_CTRL_LEFT  ; oTb:panLeft()  ; EXIT
-   CASE K_CTRL_RIGHT ; oTb:panRight() ; EXIT
+   CASE K_CTRL_RIGHT ; oTb:panRight()
    ENDSWITCH
 #endif
 

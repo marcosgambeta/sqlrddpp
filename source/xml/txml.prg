@@ -429,7 +429,6 @@ METHOD sr_TXMLDocument:New(xElem, nStyle)
          IF !Empty(::oRoot:oChild) .AND. ::oRoot:oChild:cName == "xml"
             ::cHeader := "<=xml " + ::oRoot:oChild:cData + "?>"
          ENDIF
-         EXIT
       ENDSWITCH
    ENDIF
 

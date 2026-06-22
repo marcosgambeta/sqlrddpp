@@ -1536,9 +1536,8 @@ FUNCTION OraTBrowse(nCursor1, cSql, c, oBrowse, bBLock)
          osql:Exec(cSql, , .T., , cTempFile)
          GO TOP
          EXIT
-      CASE  _ORATBROWSE_EXIT
+      CASE _ORATBROWSE_EXIT
         Ret := .F.
-        EXIT
       ENDSWITCH
    ENDDO
 

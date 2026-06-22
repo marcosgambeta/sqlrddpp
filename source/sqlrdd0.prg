@@ -854,7 +854,6 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          ENDIF
 
          oCnn:Commit()
-         EXIT
 
       ENDSWITCH
    NEXT i
@@ -1123,7 +1122,6 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          EXIT
       CASE SQLRDD_RDBMS_FIREBR
          oConnect:Exec("CREATE TABLE " + SR_GetToolsOwner() + "SR_MGMNTLOGCHG (SPID_ DECIMAL(12) NOT NULL, WPID_ DECIMAL(12), TYPE_ CHAR(2), APPUSER_ CHAR(50), TIME_ CHAR(16), QUERY_ BLOB SUB_TYPE 1, CALLSTACK_ BLOB SUB_TYPE 1, SITE_ CHAR(10), FREE1_ CHAR(50) )", .F.)
-         EXIT
       ENDSWITCH
 
       oConnect:Commit()
@@ -1213,7 +1211,6 @@ STATIC FUNCTION SR_SetEnvMinimal(oConnect)
    CASE SQLRDD_RDBMS_POSTGR
       oCnn:Exec("SET CLIENT_ENCODING to 'SQL_ASCII'", .F., .T., @aRet)
       oCnn:Commit()
-      EXIT
 
    ENDSWITCH
 
@@ -1505,10 +1502,8 @@ FUNCTION SR_GetConnectionInfo(nConnection, nInfo)
    SWITCH nInfo
    CASE SQL_DBMS_NAME
       RETURN oCnn:cTargetDB
-      //EXIT
    CASE SQL_DBMS_VER
       RETURN oCnn:cSystemVers
-      //EXIT
    ENDSWITCH
 
 RETURN ""
@@ -1994,7 +1989,6 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
          nRet := oCnn:Exec("RENAME " + cOwner + cTable + "_sq" + " TO " + cOwner + cNewName + "_sq", .F.)
          HB_SYMBOL_UNUSED(nRet)
       ENDIF
-      EXIT
 
    ENDSWITCH
 
@@ -2175,8 +2169,7 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
          cDel := "DELETE FROM " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS WHERE SPID_ NOT IN (select pg_stat_get_backend_pid(pg_stat_get_backend_idset()))"
          EXIT
-      CASE SQLRDD_RDBMS_IBMDB2
-         EXIT
+      CASE SQLRDD_RDBMS_IBMDB2 // TODO: unnecessary
       ENDSWITCH
 
       nRet := oCnn:oSqlTransact:Exec(cIns, .F.)
@@ -2223,7 +2216,6 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
          CASE SQLRDD_RDBMS_AZURE
             cSql := "DELETE FROM " + SR_GetToolsOwner() + ;
                "SR_MGMNTLOCKS WHERE LOCK_ = '" + cValue + "' AND WSID_ = '" + SR_GetInternalID() + "'"
-            EXIT
          ENDSWITCH
          oCnn:oSqlTransact:Exec(cSql, .F.)
          oCnn:oSqlTransact:Commit()
@@ -2266,7 +2258,6 @@ FUNCTION SR_ReleaseLocks(uLocks, oCnn)
       CASE SQLRDD_RDBMS_AZURE
          cSql := "DELETE FROM " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS WHERE LOCK_ = '" + cValue + "' AND WSID_ = '" + SR_GetInternalID() + "'"
-         EXIT
       ENDSWITCH
 
       oCnn:oSqlTransact:Exec(cSql, .T.)
@@ -2296,11 +2287,11 @@ FUNCTION SR_ListLocks(oCnn, lAll)
          "SR_MGMNTLOCKS WHERE SPID_ NOT IN (select " + Chr(34) + "SID" + Chr(34) + " from " + ;
          IIf(oCnn:lCluster, "g", "") + "v$session)", .F.)
       EXIT
-   CASE SQLRDD_RDBMS_INGRES
+   CASE SQLRDD_RDBMS_INGRES // TODO: unnecessary
       EXIT
-   CASE SQLRDD_RDBMS_IBMDB2
+   CASE SQLRDD_RDBMS_IBMDB2 // TODO: unnecessary
       EXIT
-   CASE SQLRDD_RDBMS_SYBASE
+   CASE SQLRDD_RDBMS_SYBASE // TODO: unnecessary
       EXIT
    CASE SQLRDD_RDBMS_MSSQL7
    CASE SQLRDD_RDBMS_MSSQL6
@@ -2308,13 +2299,12 @@ FUNCTION SR_ListLocks(oCnn, lAll)
       oCnn:oSqlTransact:Exec("DELETE FROM " + SR_GetToolsOwner() + ;
          "SR_MGMNTLOCKS WHERE convert( CHAR(10), SPID_ ) + convert( CHAR(23), LOGIN_TIME_, 21 ) NOT IN (SELECT convert( CHAR(10), SPID) + CONVERT( CHAR(23), LOGIN_TIME, 21 ) FROM MASTER.DBO.SYSPROCESSES)", .F.)
       EXIT
-   CASE SQLRDD_RDBMS_MYSQL
-   CASE SQLRDD_RDBMS_MARIADB
+   CASE SQLRDD_RDBMS_MYSQL // TODO: unnecessary
+   CASE SQLRDD_RDBMS_MARIADB // TODO: unnecessary
       EXIT
    CASE SQLRDD_RDBMS_POSTGR
       oCnn:oSqlTransact:Exec("DELETE FROM  " + SR_GetToolsOwner() + ;
          "SR_MGMNTLOCKS WHERE SPID_ NOT IN (select pg_stat_get_backend_pid(pg_stat_get_backend_idset()))", .F.)
-      EXIT
    ENDSWITCH
 
    oCnn:oSqlTransact:Commit()
