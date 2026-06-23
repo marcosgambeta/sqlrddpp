@@ -1102,7 +1102,8 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
               cBuff == "MARIA" .OR. ; /* deprecated */
               cBuff == "MARIADB"
             ::cHost += aToken[2]
-         CASE cBuff == "PRT"
+         CASE cBuff == "PRT" .OR. ;
+              cBuff == "PORT"
             ::cPort := Val(sr_val2char(aToken[2]))
          CASE cBuff == "DRV" .OR. ;
               cBuff == "DRIVER"
@@ -1182,6 +1183,7 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
             ::cHost += aToken[2]
             EXIT
          CASE "PRT"
+         CASE "PORT"
             ::cPort := Val(sr_val2char(aToken[2]))
             EXIT
          CASE "DRV"
