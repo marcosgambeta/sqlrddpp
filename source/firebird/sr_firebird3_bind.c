@@ -156,8 +156,7 @@ static void fb_log_status3(PFB_SESSION session, const char *from)
 
   while (fb_interpret((ISC_SCHAR *)s, sizeof(s), &pVect)) {
     // const char * nl = (s[0] ? s[strlen(s) - 1] != '\n' : true) ? "\n" : "";
-    strcat(session->msgerror, (const char *)s);
-    strcat(session->msgerror, "\n");
+    snprintf(session->msgerror + strlen(session->msgerror), 8192 - strlen(session->msgerror), "%s\n", (const char *)s);
     // util_output("%s%s", s, nl);
   }
 
@@ -1009,10 +1008,10 @@ HB_FUNC(SR_FBCREATEDB3)
 static void firebird_info_cb(void *arg, char const *s)
 {
   if (*(char *)arg) {
-    strcat((char *)arg, " ");
+    snprintf((char *)arg + strlen((char *)arg), 2, " ");
     // strcat((char*)arg, s);
   } else {
-    strcpy((char *)arg, s);
+    snprintf((char *)arg, 1000, "%s", s);
   }
 }
 
