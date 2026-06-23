@@ -101,12 +101,12 @@ typedef unsigned char SQLTCHAR;
 #define LOGFILE "odbc.log"
 
 // macros for parameters
-#define SR_PAR_SQLHDBC(n) (SQLHDBC)hb_parptr(n)
-#define SR_PAR_SQLHENV(n) (SQLHENV)hb_parptr(n)
-#define SR_PAR_SQLHSTMT(n) (SQLHSTMT)hb_parptr(n)
-#define SR_PAR_SQLINTEGER(n) (SQLINTEGER)hb_parnl(n)
-#define SR_PAR_SQLSMALLINT(n) (SQLSMALLINT)hb_parni(n)
-#define SR_PAR_SQLUSMALLINT(n) (SQLUSMALLINT)hb_parni(n)
+#define SR_PAR_SQLHDBC(n) (SQLHDBC) hb_parptr(n)
+#define SR_PAR_SQLHENV(n) (SQLHENV) hb_parptr(n)
+#define SR_PAR_SQLHSTMT(n) (SQLHSTMT) hb_parptr(n)
+#define SR_PAR_SQLINTEGER(n) (SQLINTEGER) hb_parnl(n)
+#define SR_PAR_SQLSMALLINT(n) (SQLSMALLINT) hb_parni(n)
+#define SR_PAR_SQLUSMALLINT(n) (SQLUSMALLINT) hb_parni(n)
 
 #ifdef __XHARBOUR__
 #define HB_LONG LONG
@@ -115,10 +115,10 @@ typedef unsigned char SQLTCHAR;
 
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
-void SR_odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res, int line,
-                      const char *module);
-void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, HB_ULONG ulSystemID,
-                 HB_BOOL bTranslate, HB_USHORT ui);
+void SR_odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res,
+                         int line, const char *module);
+void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly,
+                    HB_ULONG ulSystemID, HB_BOOL bTranslate, HB_USHORT ui);
 
 //----------------------------------------------------------------------------//
 
@@ -288,14 +288,15 @@ HB_FUNC_STATIC(SR_DRIVERC)
   HB_BYTE bBuffer1[1024] = {0};
   SQLSMALLINT wLen;
 #if defined(HB_OS_WIN_32) || defined(HB_OS_WIN)
-  RETCODE ret =
-      SQLDriverConnect(SR_PAR_SQLHDBC(1), GetDesktopWindow(), (SQLCHAR *)hb_parcx(2),
-                       (SQLSMALLINT)strlen(hb_parcx(2)), (SQLCHAR *)bBuffer1, (SQLSMALLINT)1024, (SQLSMALLINT *)&wLen,
-                       (SQLUSMALLINT)SQL_DRIVER_NOPROMPT); // SQL_DRIVER_COMPLETE);
+  RETCODE ret = SQLDriverConnect(SR_PAR_SQLHDBC(1), GetDesktopWindow(), (SQLCHAR *)hb_parcx(2),
+                                 (SQLSMALLINT)strlen(hb_parcx(2)), (SQLCHAR *)bBuffer1,
+                                 (SQLSMALLINT)1024, (SQLSMALLINT *)&wLen,
+                                 (SQLUSMALLINT)SQL_DRIVER_NOPROMPT); // SQL_DRIVER_COMPLETE);
 #elif defined(HB_OS_UNIX)
   RETCODE ret =
-      SQLDriverConnect(SR_PAR_SQLHDBC(1), 0, (SQLCHAR *)hb_parcx(2), (SQLSMALLINT)strlen(hb_parcx(2)),
-                       (SQLCHAR *)bBuffer1, (SQLSMALLINT)1024, (SQLSMALLINT *)&wLen, (SQLUSMALLINT)SQL_DRIVER_COMPLETE);
+      SQLDriverConnect(SR_PAR_SQLHDBC(1), 0, (SQLCHAR *)hb_parcx(2),
+                       (SQLSMALLINT)strlen(hb_parcx(2)), (SQLCHAR *)bBuffer1, (SQLSMALLINT)1024,
+                       (SQLSMALLINT *)&wLen, (SQLUSMALLINT)SQL_DRIVER_COMPLETE);
 #endif
   hb_storc((char *)bBuffer1, 3);
   hb_retni(ret);
@@ -363,7 +364,8 @@ HB_FUNC_STATIC(SR_FREESTM)
 
 HB_FUNC_STATIC(SR_EXECDIR)
 {
-  hb_retni(SQLExecDirect(SR_PAR_SQLHSTMT(1), (SQLCHAR *)hb_parcx(2), (SQLINTEGER)hb_parclen(2)));
+  hb_retni(
+      SQLExecDirect(SR_PAR_SQLHSTMT(1), (SQLCHAR *)hb_parcx(2), (SQLINTEGER)hb_parclen(2)));
 }
 
 //----------------------------------------------------------------------------//
@@ -378,8 +380,9 @@ HB_FUNC_STATIC(SR_FETCH)
 
 //----------------------------------------------------------------------------//
 
-static void sr_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const HB_ISIZ lLenBuff, const HB_BOOL bQueryOnly,
-                  const HB_ULONG ulSystemID, const HB_BOOL bTranslate)
+static void sr_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer,
+                            const HB_ISIZ lLenBuff, const HB_BOOL bQueryOnly,
+                            const HB_ULONG ulSystemID, const HB_BOOL bTranslate)
 {
   const HB_LONG lType = hb_arrayGetNL(pField, FIELD_DOMAIN);
   const HB_SIZE lLen = hb_arrayGetNL(pField, FIELD_LEN);
@@ -429,8 +432,9 @@ static void sr_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, cons
         // hb_itemPutCLPtr(pItem, szResult, lLen);
         hb_itemPutTDT(pItem, 0, 0);
       } else {
-        if ((ulSystemID == SQLRDD_RDBMS_POSTGR) || (ulSystemID == SQLRDD_RDBMS_ORACLE) || (ulSystemID == SQLRDD_RDBMS_FIREBR) ||
-            (ulSystemID == SQLRDD_RDBMS_FIREBR3) || (ulSystemID == SQLRDD_RDBMS_FIREBR4) || (ulSystemID == SQLRDD_RDBMS_FIREBR5) ||
+        if ((ulSystemID == SQLRDD_RDBMS_POSTGR) || (ulSystemID == SQLRDD_RDBMS_ORACLE) ||
+            (ulSystemID == SQLRDD_RDBMS_FIREBR) || (ulSystemID == SQLRDD_RDBMS_FIREBR3) ||
+            (ulSystemID == SQLRDD_RDBMS_FIREBR4) || (ulSystemID == SQLRDD_RDBMS_FIREBR5) ||
             (ulSystemID == SQLRDD_RDBMS_MYSQL) || (ulSystemID == SQLRDD_RDBMS_MARIADB) ||
             (ulSystemID == SQLRDD_RDBMS_MSSQL7 && sr_lsql2008newTypes())) {
           hb_itemPutTDT(pItem, 0, 0);
@@ -519,7 +523,8 @@ static void sr_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, cons
         dt[5] = bBuffer[1];
         dt[6] = bBuffer[3];
         dt[7] = bBuffer[4];
-      } else if (ulSystemID == SQLRDD_RDBMS_IBMDB2 && (lType == SQL_TIMESTAMP || lType == SQL_TYPE_TIMESTAMP)) {
+      } else if (ulSystemID == SQLRDD_RDBMS_IBMDB2 &&
+                 (lType == SQL_TIMESTAMP || lType == SQL_TYPE_TIMESTAMP)) {
         // hb_itemPutCL(pItem, bBuffer, lLenBuff);
         long lJulian, lMilliSec;
 #ifdef __XHARBOUR__
@@ -531,8 +536,9 @@ static void sr_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, cons
         break;
       } else if (((ulSystemID == SQLRDD_RDBMS_POSTGR) || (ulSystemID == SQLRDD_RDBMS_ORACLE) ||
                   (ulSystemID == SQLRDD_RDBMS_FIREBR) || (ulSystemID == SQLRDD_RDBMS_FIREBR3) ||
-                  (ulSystemID == SQLRDD_RDBMS_FIREBR4) || (ulSystemID == SQLRDD_RDBMS_FIREBR5) ||
-                  (ulSystemID == SQLRDD_RDBMS_MYSQL) || (ulSystemID == SQLRDD_RDBMS_MARIADB) ||
+                  (ulSystemID == SQLRDD_RDBMS_FIREBR4) ||
+                  (ulSystemID == SQLRDD_RDBMS_FIREBR5) || (ulSystemID == SQLRDD_RDBMS_MYSQL) ||
+                  (ulSystemID == SQLRDD_RDBMS_MARIADB) ||
                   (ulSystemID == SQLRDD_RDBMS_MSSQL7 && sr_lsql2008newTypes())) &&
                  (lType == SQL_TIMESTAMP || lType == SQL_TYPE_TIMESTAMP)) {
         long lJulian, lMilliSec;
@@ -581,7 +587,8 @@ static void sr_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, cons
         // TOFIX:
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
-      } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString())) {
+      } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 &&
+                 (!sr_lSerializedAsString())) {
         if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
           s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
           if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
@@ -650,7 +657,7 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
   // PTR bBuffer, bOut;
   // RETCODE wResult;
   // int iReallocs;
-  //PHB_ITEM temp;
+  // PHB_ITEM temp;
   int i, cols;
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
   HB_BOOL bQueryOnly = hb_parl(4);
@@ -659,38 +666,39 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
   if (!pFields) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
-                         hb_paramError(3));
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1),
+                         hb_paramError(2), hb_paramError(3));
   }
 
   cols = (int)hb_arrayLen(pFields);
 
   if (cols <= 0) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
-                         hb_paramError(3));
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1),
+                         hb_paramError(2), hb_paramError(3));
   }
 
   lLen = (HB_LONG)(hb_pcount() > 1 ? hb_parnl(2) : 4096);
 
   if (lLen <= 0) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1), hb_paramError(2),
-                         hb_paramError(3));
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1),
+                         hb_paramError(2), hb_paramError(3));
   }
 
   // bBuffer = hb_xgrab((HB_ULONG) lLen + 1);
 
   for (i = 1; i <= cols; i++) {
-    //temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+    // temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
     HB_ITEM temp = {0};
     lIndex = (HB_USHORT)hb_arrayGetNI(hb_arrayGetItemPtr(pFields, i), FIELD_ENUM);
 
     if (lIndex == 0) {
       hb_arraySetForward(pRet, i, &temp);
     } else {
-      SR_odbcGetData(SR_PAR_SQLHSTMT(1), hb_arrayGetItemPtr(pFields, i), &temp, bQueryOnly, ulSystemID, bTranslate, lIndex);
+      SR_odbcGetData(SR_PAR_SQLHSTMT(1), hb_arrayGetItemPtr(pFields, i), &temp, bQueryOnly,
+                     ulSystemID, bTranslate, lIndex);
       hb_arraySetForward(pRet, i, &temp);
     }
-    //hb_itemRelease(temp);
+    // hb_itemRelease(temp);
   }
   // hb_xfree((PTR) bBuffer);
 }
@@ -709,7 +717,7 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
   RETCODE wResult, wReturn = SQL_ERROR;
   int iReallocs;
   PHB_ITEM pLine;
-  //PHB_ITEM temp;
+  // PHB_ITEM temp;
   int i, cols, line;
 
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
@@ -728,22 +736,22 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
   HB_ULONG ulPosCache = hb_arrayGetNL(pInfo, AINFO_NPOSCACHE);
 
   if (!pFields) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1), hb_paramError(2),
-                         hb_paramError(3));
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1),
+                         hb_paramError(2), hb_paramError(3));
   }
 
   cols = (int)hb_arrayLen(pFields);
 
   if (cols <= 0) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1), hb_paramError(2),
-                         hb_paramError(3));
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1),
+                         hb_paramError(2), hb_paramError(3));
   }
 
   lLen = (hb_pcount() > 1 ? hb_parnl(2) : 4096);
 
   if (lLen <= 0) {
-    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1), hb_paramError(2),
-                         hb_paramError(3));
+    hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1),
+                         hb_paramError(2), hb_paramError(3));
   }
 
   bBuffer = hb_xgrab(lLen + 1);
@@ -789,7 +797,7 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
       lInitBuff = (HB_LONG)lLen;
       lLenOut = 0;
       iReallocs = 0;
-      //temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+      // temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
       lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i), FIELD_ENUM);
       lIndex = lIndex ? lIndex : i;
 
@@ -797,10 +805,11 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
         hb_arraySetForward(pLine, i, &temp);
       } else {
         do {
-          wResult = SQLGetData(SR_PAR_SQLHSTMT(1), (SQLUSMALLINT)lIndex, (SQLSMALLINT)SQL_CHAR, (PTR)bBuffer,
-                               (SQLLEN)lLen, (SQLLEN *)&lLenOut);
+          wResult = SQLGetData(SR_PAR_SQLHSTMT(1), (SQLUSMALLINT)lIndex, (SQLSMALLINT)SQL_CHAR,
+                               (PTR)bBuffer, (SQLLEN)lLen, (SQLLEN *)&lLenOut);
           if (wResult == SQL_SUCCESS && iReallocs == 0) {
-            sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bBuffer, lLenOut, 0, ulSystemID, bTranslate);
+            sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bBuffer, lLenOut, 0,
+                            ulSystemID, bTranslate);
             hb_arraySetForward(pLine, i, &temp);
             break;
           } else if (wResult == SQL_SUCCESS_WITH_INFO && iReallocs == 0) {
@@ -813,14 +822,16 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
               bBuffer = (char *)hb_xrealloc(bBuffer, lLen);
               iReallocs++;
             } else {
-              sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bBuffer, lLenOut, 0, ulSystemID, bTranslate);
+              sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bBuffer, lLenOut,
+                              0, ulSystemID, bTranslate);
               hb_arraySetForward(pLine, i, &temp);
               break;
             }
-          } else if ((wResult == SQL_SUCCESS || wResult == SQL_SUCCESS_WITH_INFO) && iReallocs > 0) {
+          } else if ((wResult == SQL_SUCCESS || wResult == SQL_SUCCESS_WITH_INFO) &&
+                     iReallocs > 0) {
             strcat((char *)bOut, (char *)bBuffer);
-            sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bOut, lLenOut + lInitBuff - 1, 0, ulSystemID,
-                         bTranslate);
+            sr_odbcFieldGet(hb_arrayGetItemPtr(pFields, i), &temp, (char *)bOut,
+                            lLenOut + lInitBuff - 1, 0, ulSystemID, bTranslate);
             hb_arraySetForward(pLine, i, &temp);
             hb_xfree((PTR)bOut);
             break;
@@ -829,7 +840,7 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
           }
         } while (wResult != SQL_NO_DATA);
       }
-      //hb_itemRelease(temp);
+      // hb_itemRelease(temp);
     }
 
     hb_itemPutNL(pRec, hb_arrayGetNL(pLine, ulnRecno));
@@ -859,8 +870,8 @@ HB_FUNC_STATIC(SR_NUMRES)
 
 //----------------------------------------------------------------------------//
 
-void SR_odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res, int line,
-                      const char *module)
+void SR_odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res,
+                         int line, const char *module)
 {
   PHB_ITEM pArg;
   PHB_ITEM pError = hb_errNew();
@@ -878,15 +889,16 @@ void SR_odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql,
   Msg[0] = '\0';
 
   i = 1;
-  while ((SQLGetDiagRec(SQL_HANDLE_STMT, hStmt, i, SqlState, &NativeError, Msg, sizeof(Msg), &MsgLen)) != SQL_NO_DATA) {
+  while ((SQLGetDiagRec(SQL_HANDLE_STMT, hStmt, i, SqlState, &NativeError, Msg, sizeof(Msg),
+                        &MsgLen)) != SQL_NO_DATA) {
     if (i > 5) {
       break; // Or we can be lead to an infinite loop (ODBC sucks!)
     }
     i++;
   }
 
-  sprintf(ErrMsg, "SQL execution error at %s, return code: %i, state: %s, description: %s.", routine, res, SqlState,
-          Msg);
+  sprintf(ErrMsg, "SQL execution error at %s, return code: %i, state: %s, description: %s.",
+          routine, res, SqlState, Msg);
 
   if (szSql) {
     pArg = hb_itemNew(SR_NULLPTR);
@@ -941,13 +953,13 @@ HB_FUNC_STATIC(SR_DESCRIB)
   bBuffer = (SQLTCHAR *)hb_xgrab(lLen * sizeof(SQLTCHAR));
   bBuffer[0] = '\0';
 
-  wResult = SQLDescribeCol((HSTMT)hb_parptr(1), SR_PAR_SQLUSMALLINT(2), (SQLTCHAR *)bBuffer, lLen,
-                           &wBufLen, &wDataType, &wColSize,
-                           &wDecimals, &wNullable);
+  wResult = SQLDescribeCol((HSTMT)hb_parptr(1), SR_PAR_SQLUSMALLINT(2), (SQLTCHAR *)bBuffer,
+                           lLen, &wBufLen, &wDataType, &wColSize, &wDecimals, &wNullable);
   if (wDataType == -8 && ulSystemID == SQLRDD_RDBMS_MYSQL) {
     // MySQL ODBC Bug
-    SR_odbcErrorDiagRTE(SR_PAR_SQLHSTMT(1), "SQLCONNECT", "MySQL Driver version 5 is not compatible with SQLRDD", 0,
-                     __LINE__, __FILE__);
+    SR_odbcErrorDiagRTE(SR_PAR_SQLHSTMT(1), "SQLCONNECT",
+                        "MySQL Driver version 5 is not compatible with SQLRDD", 0, __LINE__,
+                        __FILE__);
   }
 
   if (wResult == SQL_SUCCESS || wResult == SQL_SUCCESS_WITH_INFO) {
@@ -974,8 +986,8 @@ HB_FUNC_STATIC(SR_COLATTRIBUTE)
   SQLSMALLINT wBufLen = SR_PAR_SQLSMALLINT(6);
   SQLLEN wNumPtr = (SQLLEN)hb_parnint(7);
   RETCODE wResult =
-      SQLColAttribute(SR_PAR_SQLHSTMT(1), SR_PAR_SQLUSMALLINT(2), SR_PAR_SQLUSMALLINT(3), (SQLPOINTER)bBuffer,
-                      SR_PAR_SQLSMALLINT(5), (SQLSMALLINT *)&wBufLen, (SQLLEN *)&wNumPtr);
+      SQLColAttribute(SR_PAR_SQLHSTMT(1), SR_PAR_SQLUSMALLINT(2), SR_PAR_SQLUSMALLINT(3),
+(SQLPOINTER)bBuffer, SR_PAR_SQLSMALLINT(5), (SQLSMALLINT *)&wBufLen, (SQLLEN *)&wNumPtr);
 
   if (wResult == SQL_SUCCESS || wResult == SQL_SUCCESS_WITH_INFO) {
     // hb_storclen((LPSTR) bBuffer, (int) wBufLen, 4);
@@ -997,9 +1009,9 @@ HB_FUNC_STATIC(SR_ERROR)
   SQLINTEGER lError;
   SQLSMALLINT wLen;
 
-  hb_retni(SQLError(SR_PAR_SQLHENV(1), SR_PAR_SQLHDBC(2), SR_PAR_SQLHSTMT(3), (SQLTCHAR *)bBuffer1,
-                    (SQLINTEGER *)&lError, (SQLTCHAR *)szErrorMsg, (SQLSMALLINT)HB_SIZEOFARRAY(szErrorMsg),
-                    (SQLSMALLINT *)&wLen));
+  hb_retni(SQLError(SR_PAR_SQLHENV(1), SR_PAR_SQLHDBC(2), SR_PAR_SQLHSTMT(3),
+                    (SQLTCHAR *)bBuffer1, (SQLINTEGER *)&lError, (SQLTCHAR *)szErrorMsg,
+                    (SQLSMALLINT)HB_SIZEOFARRAY(szErrorMsg), (SQLSMALLINT *)&wLen));
 
   hb_storc((char *)bBuffer1, 4);
   hb_stornl(lError, 5);
@@ -1012,8 +1024,8 @@ HB_FUNC_STATIC(SR_GETINFO)
 {
   char bBuffer[512] = {0};
   SQLSMALLINT wLen;
-  RETCODE wResult = SQLGetInfo(SR_PAR_SQLHDBC(1), SR_PAR_SQLUSMALLINT(2), (SQLPOINTER)bBuffer, (SQLSMALLINT)512,
-                               (SQLSMALLINT *)&wLen);
+  RETCODE wResult = SQLGetInfo(SR_PAR_SQLHDBC(1), SR_PAR_SQLUSMALLINT(2), (SQLPOINTER)bBuffer,
+                               (SQLSMALLINT)512, (SQLSMALLINT *)&wLen);
   hb_storclen((char *)bBuffer, wLen, 3);
   hb_retni(wResult);
 }
@@ -1023,11 +1035,13 @@ HB_FUNC_STATIC(SR_GETINFO)
 HB_FUNC_STATIC(SR_SETCONNECTATTR)
 {
   // hb_retnl((HB_LONG) SQLSetConnectAttr((SQLHDBC) hb_parptr(1), (UWORD) hb_parnl(2),
-  //    (HB_ULONG) HB_ISCHAR(3) ? (SQLPOINTER) hb_parcx(3) : (SQLPOINTER) hb_parnl(3), hb_parni(4)));
+  //    (HB_ULONG) HB_ISCHAR(3) ? (SQLPOINTER) hb_parcx(3) : (SQLPOINTER) hb_parnl(3),
+  //    hb_parni(4)));
 #if ODBCVER >= 0x0300
-  hb_retni(SQLSetConnectAttr(SR_PAR_SQLHDBC(1), SR_PAR_SQLINTEGER(2),
-                             HB_ISCHAR(3) ? (SQLPOINTER)hb_parc(3) : (SQLPOINTER)(HB_PTRUINT)hb_parnint(3),
-                             HB_ISCHAR(3) ? (SQLINTEGER)hb_parclen(3) : (SQLINTEGER)SQL_IS_INTEGER));
+  hb_retni(SQLSetConnectAttr(
+      SR_PAR_SQLHDBC(1), SR_PAR_SQLINTEGER(2),
+      HB_ISCHAR(3) ? (SQLPOINTER)hb_parc(3) : (SQLPOINTER)(HB_PTRUINT)hb_parnint(3),
+      HB_ISCHAR(3) ? (SQLINTEGER)hb_parclen(3) : (SQLINTEGER)SQL_IS_INTEGER));
 #else
   hb_retni(SQLSetConnectOption(SR_PAR_SQLHDBC(1), SR_PAR_SQLUSMALLINT(2),
                                HB_ISCHAR(3) ? (SQLULEN)hb_parc(3) : (SQLULEN)hb_parnl(3)));
@@ -1039,12 +1053,14 @@ HB_FUNC_STATIC(SR_SETCONNECTATTR)
 HB_FUNC_STATIC(SR_SETCONNECTOPTION)
 {
 #if ODBCVER >= 0x0300
-  hb_retni(SQLSetConnectAttr(SR_PAR_SQLHDBC(1), SR_PAR_SQLINTEGER(2),
-                             HB_ISCHAR(3) ? (SQLPOINTER)hb_parc(3) : (SQLPOINTER)(HB_PTRUINT)hb_parnint(3),
-                             HB_ISCHAR(3) ? (SQLINTEGER)hb_parclen(3) : (SQLINTEGER)SQL_IS_INTEGER));
+  hb_retni(SQLSetConnectAttr(
+      SR_PAR_SQLHDBC(1), SR_PAR_SQLINTEGER(2),
+      HB_ISCHAR(3) ? (SQLPOINTER)hb_parc(3) : (SQLPOINTER)(HB_PTRUINT)hb_parnint(3),
+      HB_ISCHAR(3) ? (SQLINTEGER)hb_parclen(3) : (SQLINTEGER)SQL_IS_INTEGER));
 #else
   hb_retni(SQLSetConnectOption(SR_PAR_SQLHDBC(1), SR_PAR_SQLINTEGER(2),
-                               HB_ISCHAR(3) ? (SQLPOINTER)hb_parc(3) : (SQLPOINTER)(HB_PTRUINT)hb_parnint(3)));
+                               HB_ISCHAR(3) ? (SQLPOINTER)hb_parc(3)
+                                            : (SQLPOINTER)(HB_PTRUINT)hb_parnint(3)));
 #endif
 }
 
@@ -1053,9 +1069,10 @@ HB_FUNC_STATIC(SR_SETCONNECTOPTION)
 HB_FUNC_STATIC(SR_SETSTMTOPTION)
 {
 #if ODBCVER >= 0x0300
-  hb_retni(SQLSetStmtAttr(SR_PAR_SQLHSTMT(1), SR_PAR_SQLINTEGER(2),
-                          HB_ISCHAR(3) ? (SQLPOINTER)hb_parc(3) : (SQLPOINTER)(HB_PTRUINT)hb_parnint(3),
-                          HB_ISCHAR(3) ? (SQLINTEGER)hb_parclen(3) : (SQLINTEGER)SQL_IS_INTEGER));
+  hb_retni(SQLSetStmtAttr(
+      SR_PAR_SQLHSTMT(1), SR_PAR_SQLINTEGER(2),
+      HB_ISCHAR(3) ? (SQLPOINTER)hb_parc(3) : (SQLPOINTER)(HB_PTRUINT)hb_parnint(3),
+      HB_ISCHAR(3) ? (SQLINTEGER)hb_parclen(3) : (SQLINTEGER)SQL_IS_INTEGER));
 #else
   hb_retni(SQLSetStmtOption(SR_PAR_SQLHSTMT(1), SR_PAR_SQLINTEGER(2),
                             HB_ISCHAR(3) ? (SQLULEN)hb_parc(3) : (SQLULEN)hb_parnl(3)));
@@ -1075,7 +1092,8 @@ HB_FUNC_STATIC(SR_GETCONNECTOPTION)
   hb_storclen((char *)buffer, lLen, 3);
 #else
   HB_BYTE bBuffer[512] = {0};
-  RETCODE wResult = SQLGetConnectOption(SR_PAR_SQLHDBC(1), SR_PAR_SQLSMALLINT(2), (SQLPOINTER)bBuffer);
+  RETCODE wResult =
+      SQLGetConnectOption(SR_PAR_SQLHDBC(1), SR_PAR_SQLSMALLINT(2), (SQLPOINTER)bBuffer);
   if (wResult == SQL_SUCCESS) {
     hb_storclen((char *)bBuffer, 512, 3);
   }
@@ -1106,7 +1124,8 @@ HB_FUNC_STATIC(SR_MORERESULTS) // hEnv, hDbc
 
 //----------------------------------------------------------------------------//
 
-void SR_odbcErrorDiag(SQLHSTMT hStmt, const char *routine, const char *szSql, int line) // TODO: static ?
+void SR_odbcErrorDiag(SQLHSTMT hStmt, const char *routine, const char *szSql,
+                      int line) // TODO: static ?
 {
   SQLTCHAR SqlState[6] = {0}, Msg[2048] = {0};
   SQLINTEGER NativeError = 0;
@@ -1116,13 +1135,15 @@ void SR_odbcErrorDiag(SQLHSTMT hStmt, const char *routine, const char *szSql, in
   Msg[0] = '\0';
 
   i = 1;
-  while ((SQLGetDiagRec(SQL_HANDLE_STMT, hStmt, (SQLSMALLINT)i, (SQLTCHAR *)SqlState, (SQLINTEGER *)&NativeError,
-                        (SQLTCHAR *)Msg, (SQLSMALLINT)sizeof(Msg), (SQLSMALLINT *)&MsgLen)) != SQL_NO_DATA) {
+  while ((SQLGetDiagRec(SQL_HANDLE_STMT, hStmt, (SQLSMALLINT)i, (SQLTCHAR *)SqlState,
+                        (SQLINTEGER *)&NativeError, (SQLTCHAR *)Msg, (SQLSMALLINT)sizeof(Msg),
+                        (SQLSMALLINT *)&MsgLen)) != SQL_NO_DATA) {
     i++;
   }
 
-  SR_TraceLog(LOGFILE, "Error at %s, local %i: State: %s - Message: %s\r\nOriginal SQL code:\n%s\n", routine, line,
-              SqlState, Msg, szSql);
+  SR_TraceLog(LOGFILE,
+              "Error at %s, local %i: State: %s - Message: %s\r\nOriginal SQL code:\n%s\n",
+              routine, line, SqlState, Msg, szSql);
 }
 
 //----------------------------------------------------------------------------//
@@ -1130,8 +1151,8 @@ void SR_odbcErrorDiag(SQLHSTMT hStmt, const char *routine, const char *szSql, in
 HB_FUNC_STATIC(SR_TABLES)
 {
   RETCODE ret;
-  ret = SQLTables(SR_PAR_SQLHSTMT(1), SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS,
-                  (SQLCHAR *)"TABLE", 5);
+  ret = SQLTables(SR_PAR_SQLHSTMT(1), SR_NULLPTR, SQL_NTS, SR_NULLPTR, SQL_NTS, SR_NULLPTR,
+                  SQL_NTS, (SQLCHAR *)"TABLE", 5);
   hb_retni(ret);
 }
 
@@ -1164,12 +1185,13 @@ HB_FUNC_STATIC(SR_ODBCWRITEMEMO)
       char szSql[512] = {0};
       const char *sMemo = hb_arrayGetCPtr(pFieldDesc, 2);
       const char *sField = hb_arrayGetCPtr(pFieldDesc, 1);
-      sprintf(szSql, "UPDATE %s SET %s = ? WHERE %s = %lu", sTable, sField, sRecnoName, ulRecno);
+      sprintf(szSql, "UPDATE %s SET %s = ? WHERE %s = %lu", sTable, sField, sRecnoName,
+              ulRecno);
 
       cbSize = strlen(sMemo);
 
-      retcode = SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, cbSize, 0, (void *)sMemo,
-                                 cbSize, &cbSize);
+      retcode = SQLBindParameter(hStmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_LONGVARCHAR, cbSize,
+                                 0, (void *)sMemo, cbSize, &cbSize);
 
       if (!(retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO)) {
         SR_odbcErrorDiag(hStmt, "SQLBindParameter", szSql, __LINE__);
@@ -1200,8 +1222,8 @@ HB_FUNC_STATIC(SR_ODBCWRITEMEMO)
 
 //----------------------------------------------------------------------------//
 
-void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly, HB_ULONG ulSystemID,
-                 HB_BOOL bTranslate, HB_USHORT ui)
+void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly,
+                    HB_ULONG ulSystemID, HB_BOOL bTranslate, HB_USHORT ui)
 {
   HB_LONG lType;
   HB_SIZE lDec, lLen;
@@ -1239,7 +1261,8 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
         char *val = (char *)hb_xgrab(lLenOut + 1);
         res = SQLGetData((HSTMT)hStmt, ui, SQL_CHAR, val, lLenOut + 1, &lLenOut);
         if (SQL_SUCCEEDED(res)) {
-          sr_odbcFieldGet(pField, pItem, (char *)val, lLenOut, bQueryOnly, ulSystemID, bTranslate);
+          sr_odbcFieldGet(pField, pItem, (char *)val, lLenOut, bQueryOnly, ulSystemID,
+                          bTranslate);
           // hb_arraySetForward(pRet, i, temp);
         }
         if (val) {

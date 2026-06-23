@@ -65,7 +65,8 @@ static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
 #define LOGFILE "pgs.log"
 
-#define GET_PGSQL_SESSION(session, numpar) PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
+#define GET_PGSQL_SESSION(session, numpar)                                                     \
+  PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
 
 typedef struct _PSQL_SESSION
 {
@@ -442,7 +443,7 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
 
   rows = PQnfields(session->stmt);
   ret = hb_itemNew(SR_NULLPTR);
-  //temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   atemp = hb_itemNew(SR_NULLPTR);
 
   hb_arrayNew(ret, rows);
@@ -459,18 +460,19 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
     type = (int)PQftype(session->stmt, row);
     typmod = PQfmod(session->stmt, row);
 
-    // nullable = PQgetisnull(session->stmt, row,PQfnumber(session->stmt, PQfname(session->stmt, row)));
+    // nullable = PQgetisnull(session->stmt, row,PQfnumber(session->stmt, PQfname(session->stmt,
+    // row)));
 
     if (typmod < 0L) {
       typmod = (HB_LONG)PQfsize(session->stmt, row);
     }
-/*
-#if 0
-    if (typmod < 0L) {
-      typmod = 20L;
-    }
-#endif
-*/
+    /*
+    #if 0
+        if (typmod < 0L) {
+          typmod = 20L;
+        }
+    #endif
+    */
     switch (type) {
     case CHAROID:
     case NAMEOID:
@@ -485,13 +487,13 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
     case INETOID:
     case CIDROID:
     case TIMETZOID: {
-    // case TIMESTAMPOID:
-    // case TIMESTAMPTZOID:
+      // case TIMESTAMPOID:
+      // case TIMESTAMPTZOID:
       int fieldLen;
 
       // moved below
-      //hb_itemPutC(temp, "C");
-      //hb_arraySetForward(atemp, FIELD_TYPE, temp);
+      // hb_itemPutC(temp, "C");
+      // hb_arraySetForward(atemp, FIELD_TYPE, temp);
 
       if (typmod >= 4) {
         fieldLen = typmod - 4;
@@ -510,7 +512,8 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
     }
     case UNKNOWNOID: {
       hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&temp, "C"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&temp, PQgetlength(session->stmt, 0, row)));
+      hb_arraySetForward(atemp, FIELD_LEN,
+                         hb_itemPutNI(&temp, PQgetlength(session->stmt, 0, row)));
       hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&temp, 0));
       hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&temp, SQL_CHAR));
       break;
@@ -613,7 +616,7 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
     hb_arraySetForward(ret, row + 1, atemp);
   }
   hb_itemRelease(atemp);
-  //hb_itemRelease(temp);
+  // hb_itemRelease(temp);
   hb_itemReturnForward(ret);
   hb_itemRelease(ret);
 }
@@ -641,22 +644,25 @@ HB_FUNC_STATIC(SR_PGSTABLEATTR)
   }
 
   sprintf(attcmm,
-          "select a.attname, a.atttypid, a.atttypmod, a.attnotnull from pg_attribute a left join pg_class b on "
-          "a.attrelid = b.oid left join pg_namespace c on b.relnamespace = c.oid where a.attisdropped IS FALSE and "
+          "select a.attname, a.atttypid, a.atttypmod, a.attnotnull from pg_attribute a left "
+          "join pg_class b on "
+          "a.attrelid = b.oid left join pg_namespace c on b.relnamespace = c.oid where "
+          "a.attisdropped IS FALSE and "
           "a.attnum > 0 and b.relname = '%s' and c.nspname = '%s' order by attnum",
           hb_parc(2), hb_parc(3));
 
   stmtTemp = PQexec(session->dbh, attcmm);
 
   if (PQresultStatus(stmtTemp) != PGRES_TUPLES_OK) {
-    SR_TraceLog(LOGFILE, "Query error : %i - %s\n", PQresultStatus(stmtTemp), PQresStatus(PQresultStatus(stmtTemp)));
+    SR_TraceLog(LOGFILE, "Query error : %i - %s\n", PQresultStatus(stmtTemp),
+                PQresStatus(PQresultStatus(stmtTemp)));
     PQclear(stmtTemp);
   }
 
   rows = PQntuples(stmtTemp);
   ret = hb_itemNew(SR_NULLPTR);
   atemp = hb_itemNew(SR_NULLPTR);
-  //temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
 
   hb_arrayNew(ret, rows);
 
@@ -799,7 +805,7 @@ HB_FUNC_STATIC(SR_PGSTABLEATTR)
     hb_arraySetForward(ret, row + 1, atemp);
   }
   hb_itemRelease(atemp);
-  //hb_itemRelease(temp);
+  // hb_itemRelease(temp);
   hb_itemReturnForward(ret);
   hb_itemRelease(ret);
   PQclear(stmtTemp);
@@ -807,15 +813,16 @@ HB_FUNC_STATIC(SR_PGSTABLEATTR)
 
 //-----------------------------------------------------------------------------//
 
-static void sr_PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const HB_SIZE lLenBuff, /*HB_BOOL bQueryOnly,*/
-                 /*(HB_ULONG ulSystemID,*/ const HB_BOOL bTranslate)
+static void sr_PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer,
+                           const HB_SIZE lLenBuff, /*HB_BOOL bQueryOnly,*/
+                           /*(HB_ULONG ulSystemID,*/ const HB_BOOL bTranslate)
 {
   const HB_LONG lType = hb_arrayGetNL(pField, 6);
   const HB_SIZE lLen = hb_arrayGetNL(pField, 3);
   const HB_SIZE lDec = hb_arrayGetNL(pField, 4);
 
-  //HB_SYMBOL_UNUSED(bQueryOnly);
-  //HB_SYMBOL_UNUSED(ulSystemID);
+  // HB_SYMBOL_UNUSED(bQueryOnly);
+  // HB_SYMBOL_UNUSED(ulSystemID);
 
   if (lLenBuff <= 0) { // database content is NULL
     switch (lType) {
@@ -913,7 +920,8 @@ static void sr_PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const
         // TOFIX:
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
-      } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString())) {
+      } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 &&
+                 (!sr_lSerializedAsString())) {
         if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
           s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
           if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
@@ -986,7 +994,7 @@ static void sr_PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const
     case SQL_DATETIME: {
       long lJulian, lMilliSec;
 #ifdef __XHARBOUR__
-      hb_dateTimeStampStrGet( bBuffer, &lJulian, &lMilliSec );
+      hb_dateTimeStampStrGet(bBuffer, &lJulian, &lMilliSec);
 #else
       hb_timeStampStrGetDT(bBuffer, &lJulian, &lMilliSec);
 #endif
@@ -1020,12 +1028,12 @@ static void sr_PGSFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, const
 HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
 {
   GET_PGSQL_SESSION(session, 1);
-  //PHB_ITEM temp;
+  // PHB_ITEM temp;
   HB_USHORT i;
   char *col;
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
-  //HB_BOOL bQueryOnly = hb_parl(4); (not used)
-  //HB_ULONG ulSystemID = hb_parnl(5); (not used)
+  // HB_BOOL bQueryOnly = hb_parl(4); (not used)
+  // HB_ULONG ulSystemID = hb_parnl(5); (not used)
   HB_BOOL bTranslate = hb_parl(6);
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
   HB_LONG lIndex, cols;
@@ -1037,17 +1045,18 @@ HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
   cols = (HB_LONG)hb_arrayLen(pFields);
 
   for (i = 0; i < cols; i++) {
-    //temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+    // temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
     HB_ITEM temp = {0};
     lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, i + 1), FIELD_ENUM);
 
     if (lIndex != 0) {
       col = PQgetvalue(session->stmt, session->ifetch, lIndex - 1);
-      sr_PGSFieldGet(hb_arrayGetItemPtr(pFields, i + 1), &temp, (char *)col, strlen(col), /*bQueryOnly,*/ /*ulSystemID,*/
-                  bTranslate);
+      sr_PGSFieldGet(hb_arrayGetItemPtr(pFields, i + 1), &temp, (char *)col, strlen(col),
+                     /*bQueryOnly,*/ /*ulSystemID,*/
+                     bTranslate);
     }
     hb_arraySetForward(pRet, i + 1, &temp);
-    //hb_itemRelease(temp);
+    // hb_itemRelease(temp);
   }
 }
 

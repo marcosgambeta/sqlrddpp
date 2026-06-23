@@ -53,7 +53,8 @@
 #include "sqlprototypes.h"
 
 // #undef HB_IS_OBJECT
-// #define HB_IS_OBJECT(p)  ( ( p ) && HB_IS_OF_TYPE(p, HB_IT_OBJECT) && ( p )->item.asArray.value->uiClass != 0 )
+// #define HB_IS_OBJECT(p)  ( ( p ) && HB_IS_OF_TYPE(p, HB_IT_OBJECT) && ( p
+// )->item.asArray.value->uiClass != 0 )
 
 #include <ctype.h>
 #include <assert.h>
@@ -226,30 +227,30 @@ static HB_LONG searchCacheBWD(SQLAREAP thiswa, HB_LONG lPreviousCacheStatus)
 
 static void readCachePageFWD(SQLAREAP thiswa)
 {
-  //PHB_ITEM pOrd = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // PHB_ITEM pOrd = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   HB_ITEM pOrd = {0};
-  //PHB_ITEM pDel = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // PHB_ITEM pDel = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   HB_ITEM pDel = {0};
   hb_itemPutNL(&pOrd, ORD_DIR_FWD);
   hb_itemPutL(&pDel, thiswa->wasdel);
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_READPAGE, 2, &pOrd, &pDel);
-  //hb_itemRelease(pOrd);
-  //hb_itemRelease(pDel);
+  // hb_itemRelease(pOrd);
+  // hb_itemRelease(pDel);
 }
 
 //------------------------------------------------------------------------
 
 static void readCachePageBWD(SQLAREAP thiswa)
 {
-  //PHB_ITEM pOrd = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // PHB_ITEM pOrd = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   HB_ITEM pOrd = {0};
-  //PHB_ITEM pDel = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // PHB_ITEM pDel = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   HB_ITEM pDel = {0};
   hb_itemPutNL(&pOrd, ORD_DIR_BWD);
   hb_itemPutL(&pDel, thiswa->wasdel);
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_READPAGE, 2, &pOrd, &pDel);
-  //hb_itemRelease(pOrd);
-  //hb_itemRelease(pDel);
+  // hb_itemRelease(pOrd);
+  // hb_itemRelease(pDel);
 }
 
 //------------------------------------------------------------------------
@@ -264,7 +265,7 @@ static void setCurrentFromCache(SQLAREAP thiswa, HB_LONG lPos)
 
   pCacheRecord = hb_arrayGetItemPtr(thiswa->aCache, lPos);
 
-  //pCol = hb_itemNew(SR_NULLPTR);
+  // pCol = hb_itemNew(SR_NULLPTR);
 
   for (nPos = 1, nLen = hb_arrayLen(pCacheRecord); nPos <= nLen; nPos++) {
     hb_arrayGet(pCacheRecord, nPos, &pCol);
@@ -274,7 +275,8 @@ static void setCurrentFromCache(SQLAREAP thiswa, HB_LONG lPos)
     }
     if (nPos == thiswa->ulhDeleted) {
       const char *deleted = hb_itemGetCPtr(&pCol);
-      hb_arraySetL(thiswa->aInfo, AINFO_DELETED, (*deleted == 'T' || *deleted == '*') ? HB_TRUE : HB_FALSE);
+      hb_arraySetL(thiswa->aInfo, AINFO_DELETED,
+                   (*deleted == 'T' || *deleted == '*') ? HB_TRUE : HB_FALSE);
     }
     hb_arraySetForward(thiswa->aBuffer, nPos, &pCol);
   }
@@ -283,7 +285,7 @@ static void setCurrentFromCache(SQLAREAP thiswa, HB_LONG lPos)
     hb_arraySetL(thiswa->aInfo, AINFO_DELETED, HB_FALSE);
   }
 
-  //hb_itemRelease(pCol);
+  // hb_itemRelease(pCol);
 }
 
 //------------------------------------------------------------------------
@@ -291,12 +293,12 @@ static void setCurrentFromCache(SQLAREAP thiswa, HB_LONG lPos)
 static void sqlGetBufferFromCache2(SQLAREAP thiswa, HB_LONG lPos)
 {
   HB_SIZE nPos, nLen;
-  PHB_ITEM pCacheRecord;//, pCol; (using stack instead of heap)
+  PHB_ITEM pCacheRecord; //, pCol; (using stack instead of heap)
   HB_ITEM pCol = {0};
 
   pCacheRecord = hb_arrayGetItemPtr(thiswa->aCache, lPos);
 
-  //pCol = hb_itemNew(SR_NULLPTR);
+  // pCol = hb_itemNew(SR_NULLPTR);
 
   for (nPos = 1, nLen = hb_arrayLen(pCacheRecord); nPos <= nLen; nPos++) {
     hb_arrayGet(pCacheRecord, nPos, &pCol);
@@ -306,7 +308,8 @@ static void sqlGetBufferFromCache2(SQLAREAP thiswa, HB_LONG lPos)
     }
     if (nPos == thiswa->ulhDeleted) {
       const char *deleted = hb_itemGetCPtr(&pCol);
-      hb_arraySetL(thiswa->aInfo, AINFO_DELETED, (*deleted == 'T' || *deleted == '*') ? HB_TRUE : HB_FALSE);
+      hb_arraySetL(thiswa->aInfo, AINFO_DELETED,
+                   (*deleted == 'T' || *deleted == '*') ? HB_TRUE : HB_FALSE);
     }
     hb_arraySetForward(thiswa->aBuffer, nPos, &pCol);
   }
@@ -315,7 +318,7 @@ static void sqlGetBufferFromCache2(SQLAREAP thiswa, HB_LONG lPos)
     hb_arraySetL(thiswa->aInfo, AINFO_DELETED, HB_FALSE);
   }
 
-  //hb_itemRelease(pCol);
+  // hb_itemRelease(pCol);
   hb_arraySetNL(thiswa->aInfo, AINFO_NPOSCACHE, lPos);
 }
 
@@ -324,10 +327,10 @@ static void sqlGetBufferFromCache2(SQLAREAP thiswa, HB_LONG lPos)
 static void sqlGetCleanBuffer(SQLAREAP thiswa)
 {
   HB_SIZE nPos, nLen;
-  //PHB_ITEM pCol; (using stack instead of heap)
+  // PHB_ITEM pCol; (using stack instead of heap)
   HB_ITEM pCol = {0};
 
-  //pCol = hb_itemNew(SR_NULLPTR);
+  // pCol = hb_itemNew(SR_NULLPTR);
   for (nPos = 1, nLen = hb_arrayLen(thiswa->aEmptyBuff); nPos <= nLen; nPos++) {
     hb_arrayGet(thiswa->aEmptyBuff, nPos, &pCol);
     hb_arraySet(thiswa->aOldBuffer, nPos, &pCol);
@@ -338,7 +341,7 @@ static void sqlGetCleanBuffer(SQLAREAP thiswa)
   hb_arrayGet(thiswa->aInfo, AINFO_RCOUNT, &pCol);
   hb_itemPutNL(&pCol, hb_itemGetNL(&pCol) + 1);
   hb_arraySetForward(thiswa->aInfo, AINFO_RECNO, &pCol);
-  //hb_itemRelease(pCol);
+  // hb_itemRelease(pCol);
   if (!thiswa->isam) {
     hb_arraySetNL(thiswa->aInfo, AINFO_NPOSCACHE, (long)hb_arrayLen(thiswa->aCache) + 1);
   }
@@ -414,10 +417,10 @@ static HB_ERRCODE sqlFound(SQLAREAP thiswa, HB_BOOL *found)
 static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
 {
   HB_LONG leof;
-  //PHB_ITEM eofat; (using stack instead of heap)
+  // PHB_ITEM eofat; (using stack instead of heap)
   HB_ITEM eofat = {0};
 
-  //eofat = hb_itemNew(SR_NULLPTR);
+  // eofat = hb_itemNew(SR_NULLPTR);
 
   // SR_TraceLog(SR_NULLPTR, "sqlGoBottom\n");
 
@@ -442,7 +445,7 @@ static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
   thiswa->area.fBottom = HB_TRUE;
   thiswa->area.fEof = hb_arrayGetL(thiswa->aInfo, AINFO_EOF);
   thiswa->area.fBof = hb_arrayGetL(thiswa->aInfo, AINFO_BOF);
-  //hb_itemRelease(eofat);
+  // hb_itemRelease(eofat);
 
   SELF_SKIPFILTER(&thiswa->area, -1);
 
@@ -455,7 +458,7 @@ static HB_ERRCODE sqlGoBottom(SQLAREAP thiswa)
 // TODO: HB_LONG -> HB_ULONG
 static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, HB_LONG recno)
 {
-  //PHB_ITEM pParam1; (using stack instead of heap)
+  // PHB_ITEM pParam1; (using stack instead of heap)
   HB_ITEM pParam1 = {0};
 
   // SR_TraceLog(SR_NULLPTR, "sqlGoTo %i\n", recno);
@@ -465,13 +468,13 @@ static HB_ERRCODE sqlGoTo(SQLAREAP thiswa, HB_LONG recno)
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
-  //pParam1 = hb_itemPutNL(SR_NULLPTR, recno);
+  // pParam1 = hb_itemPutNL(SR_NULLPTR, recno);
   hb_itemPutNL(&pParam1, recno);
   if (hb_arrayGetL(thiswa->aInfo, AINFO_HOT)) {
     hb_objSendMessage(thiswa->oWorkArea, s_pSym_WRITEBUFFER, 0);
   }
   hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLGOTO, 1, &pParam1);
-  //hb_itemRelease(pParam1);
+  // hb_itemRelease(pParam1);
 
   thiswa->area.fEof = hb_arrayGetL(thiswa->aInfo, AINFO_EOF);
   thiswa->area.fBof = hb_arrayGetL(thiswa->aInfo, AINFO_BOF);
@@ -527,11 +530,11 @@ static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
   lbof = hb_arrayGetNL(thiswa->aInfo, AINFO_BOF_AT);
 
   if (lbof) {
-    //PHB_ITEM pBOF = hb_itemPutNL(SR_NULLPTR, lbof); (using stack instead of heap)
+    // PHB_ITEM pBOF = hb_itemPutNL(SR_NULLPTR, lbof); (using stack instead of heap)
     HB_ITEM pBOF = {0};
     hb_itemPutNL(&pBOF, lbof);
     hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLGOTO, 1, &pBOF);
-    //hb_itemRelease(pBOF);
+    // hb_itemRelease(pBOF);
   } else {
     hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLGOTOP, 0);
   }
@@ -567,8 +570,11 @@ static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
     }
     itemTemp = hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK);
     if (HB_IS_NUMBER(itemTemp)) {
-      pKeyVal = hb_itemArrayGet(((SQLAREAP)thiswa)->aBuffer, hb_arrayGetNL(pTag, INDEX_KEY_CODEBLOCK));
-      len1 = (HB_BYTE)hb_strRTrimLen(hb_itemGetCPtr(pKeyVal), hb_itemGetCLen(pKeyVal), HB_FALSE) - 15;
+      pKeyVal = hb_itemArrayGet(((SQLAREAP)thiswa)->aBuffer,
+                                hb_arrayGetNL(pTag, INDEX_KEY_CODEBLOCK));
+      len1 =
+          (HB_BYTE)hb_strRTrimLen(hb_itemGetCPtr(pKeyVal), hb_itemGetCLen(pKeyVal), HB_FALSE) -
+          15;
       val1 = hb_itemGetCPtr(pKeyVal);
     } else {
       HB_EVALINFO info;
@@ -652,9 +658,9 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
-  //pItem = hb_itemPutL(SR_NULLPTR, bSoftSeek); (using stack instead of heap)
+  // pItem = hb_itemPutL(SR_NULLPTR, bSoftSeek); (using stack instead of heap)
   hb_itemPutL(&pItem, bSoftSeek);
-  //pItem2 = hb_itemPutL(SR_NULLPTR, bFindLast); (using stack instead of heap)
+  // pItem2 = hb_itemPutL(SR_NULLPTR, bFindLast); (using stack instead of heap)
   hb_itemPutL(&pItem2, bFindLast);
 
 #ifndef HB_CDP_SUPPORT_OFF
@@ -674,7 +680,8 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
   thiswa->area.fBof = hb_arrayGetL(thiswa->aInfo, AINFO_BOF);
   thiswa->area.fEof = hb_arrayGetL(thiswa->aInfo, AINFO_EOF);
 
-  if ((hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != SR_NULLPTR) && !thiswa->area.fEof) {
+  if ((hb_setGetDeleted() || thiswa->area.dbfi.itmCobExpr != SR_NULLPTR) &&
+      !thiswa->area.fEof) {
     retvalue = SELF_SKIPFILTER(&thiswa->area, (bFindLast ? -1 : 1));
 
     if (thiswa->area.fEof) {
@@ -698,8 +705,8 @@ static HB_ERRCODE sqlSeek(SQLAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey, HB_
     }
   }
 
-  //hb_itemRelease(pItem);
-  //hb_itemRelease(pItem2);
+  // hb_itemRelease(pItem);
+  // hb_itemRelease(pItem2);
   if (pNewKey) {
     hb_itemRelease(pNewKey);
   }
@@ -850,7 +857,8 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
     return HB_SUCCESS; // <===========| RETURNING
   }
 
-  hb_arraySetNL(thiswa->aInfo, AINFO_SKIPCOUNT, hb_arrayGetNL(thiswa->aInfo, AINFO_SKIPCOUNT) + lToSkip);
+  hb_arraySetNL(thiswa->aInfo, AINFO_SKIPCOUNT,
+                hb_arrayGetNL(thiswa->aInfo, AINFO_SKIPCOUNT) + lToSkip);
 
   if (thiswa->isam) {
     HB_LONG lPosCache, lFound, lPreviousCacheStatus;
@@ -986,7 +994,8 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
       hb_arraySetL(thiswa->aInfo, AINFO_EOF, bEof);
       return ConcludeSkipraw(thiswa, lToSkip);
     } else if (hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip > 0 &&
-               hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip <= (HB_LONG)hb_arrayLen(thiswa->aCache)) {
+               hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip <=
+                   (HB_LONG)hb_arrayLen(thiswa->aCache)) {
       sqlGetBufferFromCache2(thiswa, hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip);
       hb_arraySetL(thiswa->aInfo, AINFO_BOF, HB_FALSE);
       hb_arraySetL(thiswa->aInfo, AINFO_EOF, HB_FALSE);
@@ -1006,7 +1015,8 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
       thiswa->area.fBof = HB_TRUE;
       thiswa->area.fEof = HB_FALSE;
       return ConcludeSkipraw(thiswa, lToSkip);
-    } else if (hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip > (HB_LONG)hb_arrayLen(thiswa->aCache)) {
+    } else if (hb_arrayGetNL(thiswa->aInfo, AINFO_NPOSCACHE) + lToSkip >
+               (HB_LONG)hb_arrayLen(thiswa->aCache)) {
       hb_arraySetL(thiswa->aInfo, AINFO_BOF, HB_FALSE);
       sqlGetCleanBuffer(thiswa);
     }
@@ -1034,7 +1044,7 @@ static HB_ERRCODE sqlSkipRaw(SQLAREAP thiswa, HB_LONG lToSkip)
 static HB_ERRCODE sqlAppend(SQLAREAP thiswa, HB_BOOL value)
 {
   PHB_ITEM pItem;
-  
+
   HB_SYMBOL_UNUSED(value);
 
   // SR_TraceLog(SR_NULLPTR, "sqlAppend\n");
@@ -1252,7 +1262,8 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
       PHB_CODEPAGE cdpDest = thiswa->cdPageCnv ? thiswa->cdPageCnv : hb_vmCDP();
       if (thiswa->area.cdPage && thiswa->area.cdPage != cdpDest) {
         HB_SIZE nLen = hb_itemGetCLen(itemTemp);
-        char *pszVal = hb_cdpnDup(hb_itemGetCPtr(itemTemp), &nLen, thiswa->area.cdPage, cdpDest);
+        char *pszVal =
+            hb_cdpnDup(hb_itemGetCPtr(itemTemp), &nLen, thiswa->area.cdPage, cdpDest);
         hb_itemPutCLPtr(itemTemp, pszVal, nLen);
       }
     }
@@ -1348,17 +1359,20 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
   //   bOk = HB_FALSE;
   //   hb_arraySet(thiswa->aBuffer, fieldindex, value);
   // }
-  if ((HB_IS_NUMBER(pDest) && HB_IS_NUMBER(value)) || (HB_IS_STRING(pDest) && HB_IS_STRING(value)) ||
-      (HB_IS_LOGICAL(pDest) && HB_IS_LOGICAL(value)) || (HB_IS_DATE(pDest) && HB_IS_DATE(value)) ||
-      (HB_IS_TIMESTAMP(pDest) && HB_IS_DATETIME(value)) || (HB_IS_DATETIME(pDest) && HB_IS_DATETIME(value))) {
+  if ((HB_IS_NUMBER(pDest) && HB_IS_NUMBER(value)) ||
+      (HB_IS_STRING(pDest) && HB_IS_STRING(value)) ||
+      (HB_IS_LOGICAL(pDest) && HB_IS_LOGICAL(value)) ||
+      (HB_IS_DATE(pDest) && HB_IS_DATE(value)) ||
+      (HB_IS_TIMESTAMP(pDest) && HB_IS_DATETIME(value)) ||
+      (HB_IS_DATETIME(pDest) && HB_IS_DATETIME(value))) {
 
     if (pField->uiType == HB_FT_STRING) {
       HB_SIZE nSize = hb_itemGetCLen(value), nLen = pField->uiLen;
 
       cfield = (char *)hb_xgrab(nLen + 1);
 #ifndef HB_CDP_SUPPORT_OFF
-      hb_cdpnDup2(hb_itemGetCPtr(value), nSize, cfield, &nLen, thiswa->cdPageCnv ? thiswa->cdPageCnv : hb_vmCDP(),
-                  thiswa->area.cdPage);
+      hb_cdpnDup2(hb_itemGetCPtr(value), nSize, cfield, &nLen,
+                  thiswa->cdPageCnv ? thiswa->cdPageCnv : hb_vmCDP(), thiswa->area.cdPage);
       nSize = nLen;
       nLen = pField->uiLen;
 #else
@@ -1398,7 +1412,8 @@ static HB_ERRCODE sqlPutValue(SQLAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM valu
     return HB_SUCCESS;
 #else
     char type_err[128];
-    sprintf(type_err, "data type origin: %i - data type target %i", hb_itemType(value), hb_itemType(pDest));
+    sprintf(type_err, "data type origin: %i - data type target %i", hb_itemType(value),
+            hb_itemType(pDest));
     hb_itemRelease(pDest);
     SR_commonError(&thiswa->area, EG_DATATYPE, ESQLRDD_DATATYPE, type_err);
     return HB_FAILURE;
@@ -1635,7 +1650,8 @@ static HB_ERRCODE sqlCreate(SQLAREAP thiswa, LPDBOPENINFO pCreateInfo)
   thiswa->oWorkArea = hb_itemNew(SR_NULLPTR);
   hb_itemCopy(thiswa->oWorkArea, hb_stackReturnItem());
   if (s_pSym_SQLCREATE) {
-    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLCREATE, 4, thiswa->aCreate, pTable, pAlias, pArea);
+    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLCREATE, 4, thiswa->aCreate, pTable, pAlias,
+                      pArea);
   }
 
   hb_objSendMsg(thiswa->oWorkArea, "AINFO", 0);
@@ -2013,15 +2029,15 @@ static HB_ERRCODE sqlNewArea(SQLAREAP thiswa)
 // (DBENTRYP_VO)
 static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
 {
-  //PHB_ITEM pConnection = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // PHB_ITEM pConnection = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   HB_ITEM pConnection = {0};
   PHB_ITEM pTable = hb_itemNew(SR_NULLPTR); // TODO: heap -> stack
-  //PHB_ITEM pArea = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // PHB_ITEM pArea = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   HB_ITEM pArea = {0};
   PHB_ITEM pAlias = hb_itemNew(SR_NULLPTR); // TODO: heap -> stack
-  //PHB_ITEM pShared = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // PHB_ITEM pShared = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   HB_ITEM pShared = {0};
-  //PHB_ITEM pReadOnly = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
+  // PHB_ITEM pReadOnly = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
   HB_ITEM pReadOnly = {0};
   HB_ERRCODE errCode;
 
@@ -2080,7 +2096,8 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
   hb_vmDo(0);
   thiswa->oWorkArea = hb_itemNew(hb_stackReturnItem());
 
-  hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLOPEN, 6, pTable, &pArea, &pShared, &pReadOnly, pAlias, &pConnection);
+  hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLOPEN, 6, pTable, &pArea, &pShared, &pReadOnly,
+                    pAlias, &pConnection);
 
   hb_objSendMsg(thiswa->oWorkArea, "AINFO", 0);
   thiswa->aInfo = hb_itemNew(hb_stackReturnItem());
@@ -2116,11 +2133,11 @@ static HB_ERRCODE sqlOpen(SQLAREAP thiswa, LPDBOPENINFO pOpenInfo)
   thiswa->wasdel = HB_FALSE;
 
   hb_itemRelease(pTable);
-  //hb_itemRelease(pArea);
+  // hb_itemRelease(pArea);
   hb_itemRelease(pAlias);
-  //hb_itemRelease(pShared);
-  //hb_itemRelease(pReadOnly);
-  //hb_itemRelease(pConnection);
+  // hb_itemRelease(pShared);
+  // hb_itemRelease(pReadOnly);
+  // hb_itemRelease(pConnection);
 
   hb_objSendMsg(thiswa->oWorkArea, "LOPENED", 0);
 
@@ -2412,7 +2429,8 @@ static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
 
   if (pOrderInfo->itmOrder) {
     PHB_ITEM pBagName = hb_itemNew(pOrderInfo->atomBagName);
-    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERLISTFOCUS, 2, pOrderInfo->itmOrder, pBagName);
+    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERLISTFOCUS, 2, pOrderInfo->itmOrder,
+                      pBagName);
     hb_itemRelease(pBagName);
     thiswa->hOrdCurrent = hb_itemGetNL(hb_stackReturnItem());
     return HB_SUCCESS;
@@ -2459,8 +2477,8 @@ static HB_ERRCODE sqlOrderCondition(SQLAREAP thiswa, LPDBORDERCONDINFO lpdbOrdCo
     hb_itemPutL(pItemDesc, lpdbOrdCondInfo->fDescending);
   }
 
-  hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERCONDITION, 7, pItemFor, pItemWhile, pItemStart, pItemNext,
-                    pItemRecno, pItemRest, pItemDesc);
+  hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERCONDITION, 7, pItemFor, pItemWhile,
+                    pItemStart, pItemNext, pItemRecno, pItemRest, pItemDesc);
 
   hb_itemRelease(pItemFor);
   hb_itemRelease(pItemWhile);
@@ -2497,14 +2515,16 @@ static HB_ERRCODE sqlOrderCreate(SQLAREAP thiswa, LPDBORDERCREATEINFO pOrderInfo
     pTarget = hb_itemPutC(SR_NULLPTR, pOrderInfo->lpdbConstraintInfo->abTargetName);
     pEnable = hb_itemPutL(SR_NULLPTR, pOrderInfo->lpdbConstraintInfo->fEnabled);
 
-    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERCREATE, 7, pBagName, pOrderInfo->abExpr, pAtomBagName,
-                      pConstrName, pTarget, pOrderInfo->lpdbConstraintInfo->itmRelationKey, pEnable);
+    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERCREATE, 7, pBagName, pOrderInfo->abExpr,
+                      pAtomBagName, pConstrName, pTarget,
+                      pOrderInfo->lpdbConstraintInfo->itmRelationKey, pEnable);
 
     hb_itemRelease(pConstrName);
     hb_itemRelease(pTarget);
     hb_itemRelease(pEnable);
   } else {
-    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERCREATE, 3, pBagName, pOrderInfo->abExpr, pAtomBagName);
+    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERCREATE, 3, pBagName, pOrderInfo->abExpr,
+                      pAtomBagName);
   }
 
   hb_itemRelease(pBagName);
@@ -2540,7 +2560,8 @@ static HB_ERRCODE sqlOrderDestroy(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
   if (pOrderInfo->itmOrder) {
     PHB_ITEM pBagName = hb_itemNew(pOrderInfo->atomBagName);
 
-    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERDESTROY, 2, pOrderInfo->itmOrder, pBagName);
+    hb_objSendMessage(thiswa->oWorkArea, s_pSym_SQLORDERDESTROY, 2, pOrderInfo->itmOrder,
+                      pBagName);
     hb_itemRelease(pBagName);
 
     if (hb_itemGetNL(hb_stackReturnItem())) {
@@ -2760,8 +2781,10 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
 
         if (pInfo->itmNewVal && HB_IS_LOGICAL(pInfo->itmNewVal)) {
           hb_itemPutL(pInfo->itmResult, hb_arrayGetL(thiswa->aInfo, AINFO_REVERSE_INDEX));
-          hb_itemPutL(hb_arrayGetItemPtr(pTag, DESCEND_INDEX_ORDER), hb_itemGetL(pInfo->itmNewVal));
-          hb_itemPutL(hb_arrayGetItemPtr(thiswa->aInfo, AINFO_REVERSE_INDEX), hb_itemGetL(pInfo->itmNewVal));
+          hb_itemPutL(hb_arrayGetItemPtr(pTag, DESCEND_INDEX_ORDER),
+                      hb_itemGetL(pInfo->itmNewVal));
+          hb_itemPutL(hb_arrayGetItemPtr(thiswa->aInfo, AINFO_REVERSE_INDEX),
+                      hb_itemGetL(pInfo->itmNewVal));
           hb_arraySetForward(pTag, ORDER_SKIP_UP, hb_itemNew(SR_NULLPTR));
           hb_arraySetForward(pTag, ORDER_SKIP_DOWN, hb_itemNew(SR_NULLPTR));
           hb_itemPutNL(hb_arrayGetItemPtr(thiswa->aInfo, AINFO_BOF_AT), 0);
@@ -3311,7 +3334,8 @@ static HB_BOOL sqlExists(PHB_ITEM pItemTable, PHB_ITEM pItemIndex)
 //------------------------------------------------------------------------
 
 // (DBENTRYP_RSLV)
-static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, HB_USHORT uiIndex, HB_ULONG ulConnect, PHB_ITEM pItem)
+static HB_ERRCODE sqlRddInfo(LPRDDNODE pRDD, HB_USHORT uiIndex, HB_ULONG ulConnect,
+                             PHB_ITEM pItem)
 {
   HB_TRACE(HB_TR_DEBUG, ("sqlRddInfo(%p, %hu, %lu, %p)", pRDD, uiIndex, ulConnect, pItem));
 
@@ -3486,7 +3510,8 @@ static HB_BOOL SetFields(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-void SR_commonError(AREAP thiswa, HB_USHORT uiGenCode, HB_USHORT uiSubCode, const char *filename)
+void SR_commonError(AREAP thiswa, HB_USHORT uiGenCode, HB_USHORT uiSubCode,
+                    const char *filename)
 {
   PHB_ITEM pError = hb_errNew();
 
@@ -3514,7 +3539,8 @@ void SR_commonError(AREAP thiswa, HB_USHORT uiGenCode, HB_USHORT uiSubCode, cons
 
 //------------------------------------------------------------------------
 
-// SR_ITEMCMP(cItem1, cItem2, nLenToCompare) ==> 0 == identical, < 0 if cItem1 < cIten2, > 0 == cItem1 > cIten2
+// SR_ITEMCMP(cItem1, cItem2, nLenToCompare) ==> 0 == identical, < 0 if cItem1 < cIten2, > 0 ==
+// cItem1 > cIten2
 HB_FUNC(SR_ITEMCMP)
 {
   int ret;
@@ -3792,11 +3818,11 @@ HB_INIT_SYMBOLS_BEGIN(sqlrdd1__InitSymbols)
   {"SQLRDD", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD)}, SR_NULLPTR},
   {"SQLRDD_GETFUNCTABLE", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME(SQLRDD_GETFUNCTABLE)}, SR_NULLPTR}
 HB_INIT_SYMBOLS_END(sqlrdd1__InitSymbols)
-// clang-format on
+    // clang-format on
 
-//------------------------------------------------------------------------
+    //------------------------------------------------------------------------
 
-// clang-format off
+    // clang-format off
 HB_CALL_ON_STARTUP_BEGIN(_hb_sqlrdd_rdd_init_)
   hb_vmAtInit(hb_sqlrddRddInit, SR_NULLPTR);
 HB_CALL_ON_STARTUP_END(_hb_sqlrdd_rdd_init_)
@@ -3808,8 +3834,8 @@ HB_CALL_ON_STARTUP_END(_hb_sqlrdd_rdd_init_)
 #pragma startup sqlrdd1__InitSymbols
 #pragma startup _hb_sqlrdd_rdd_init_
 #elif defined(HB_DATASEG_STARTUP)
-#define HB_DATASEG_BODY                                                                                                \
-  HB_DATASEG_FUNC(sqlrdd1__InitSymbols)                                                                                \
+#define HB_DATASEG_BODY                                                                        \
+  HB_DATASEG_FUNC(sqlrdd1__InitSymbols)                                                        \
   HB_DATASEG_FUNC(_hb_sqlrdd_rdd_init_)
 #include "hbiniseg.h"
 #endif

@@ -86,7 +86,8 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
 
   // Remove starting spaces
 
-  while (queryEnd > queryPtr && (isspace(*queryPtr) || *queryPtr == '\n' || *queryPtr == '\r' || *queryPtr == '\t')) {
+  while (queryEnd > queryPtr &&
+         (isspace(*queryPtr) || *queryPtr == '\n' || *queryPtr == '\r' || *queryPtr == '\t')) {
     ++queryPtr;
   }
 
@@ -110,7 +111,8 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
         return ERRORVAL;
       }
     }
-    while (isspace(*queryPtr) && (isspace(*queryPtr) || *queryPtr == '\n' || *queryPtr == '\r' || *queryPtr == '\t')) {
+    while (isspace(*queryPtr) && (isspace(*queryPtr) || *queryPtr == '\n' ||
+                                  *queryPtr == '\r' || *queryPtr == '\t')) {
       if (++queryPtr == queryEnd) {
         stmt->errMsg = SQL_PARSER_ERROR_NUMBER_EOF;
         return ERRORVAL;
@@ -331,17 +333,20 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'a':
     case 'A': {
       if (queryPtr + 3 <= queryEnd && (queryPtr[1] == 'l' || queryPtr[1] == 'L') &&
-          (queryPtr[2] == 'l' || queryPtr[2] == 'L') && (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
+          (queryPtr[2] == 'l' || queryPtr[2] == 'L') &&
+          (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
         stmt->queryPtr = queryPtr + 3;
         return ALL;
       }
       if (queryPtr + 3 <= queryEnd && (queryPtr[1] == 'n' || queryPtr[1] == 'N') &&
-          (queryPtr[2] == 'd' || queryPtr[2] == 'D') && (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
+          (queryPtr[2] == 'd' || queryPtr[2] == 'D') &&
+          (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
         stmt->queryPtr = queryPtr + 3;
         return AND_OP;
       }
       if (queryPtr + 3 <= queryEnd && (queryPtr[1] == 's' || queryPtr[1] == 'S') &&
-          (queryPtr[2] == 'c' || queryPtr[2] == 'C') && (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
+          (queryPtr[2] == 'c' || queryPtr[2] == 'C') &&
+          (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
         stmt->queryPtr = queryPtr + 3;
         return ASC;
       }
@@ -351,12 +356,14 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
         return AS;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'b' || queryPtr[1] == 'B') &&
-          (queryPtr[2] == 's' || queryPtr[2] == 'S') && (queryPtr[3] == '(') && (queryPtr + 4 != queryEnd)) {
+          (queryPtr[2] == 's' || queryPtr[2] == 'S') && (queryPtr[3] == '(') &&
+          (queryPtr + 4 != queryEnd)) {
         stmt->queryPtr = queryPtr + 4;
         return ABS;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'v' || queryPtr[1] == 'V') &&
-          (queryPtr[2] == 'g' || queryPtr[2] == 'G') && (queryPtr[3] == '(') && (queryPtr + 4 != queryEnd)) {
+          (queryPtr[2] == 'g' || queryPtr[2] == 'G') && (queryPtr[3] == '(') &&
+          (queryPtr + 4 != queryEnd)) {
         stmt->queryPtr = queryPtr + 4;
         return AVG;
       }
@@ -374,14 +381,18 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'c':
     case 'C': {
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'o' || queryPtr[1] == 'O') &&
-          (queryPtr[2] == 'u' || queryPtr[2] == 'U') && (queryPtr[3] == 'n' || queryPtr[3] == 'N') &&
-          (queryPtr[4] == 't' || queryPtr[4] == 'T') && (queryPtr[5] == '(') && (queryPtr + 6 != queryEnd)) {
+          (queryPtr[2] == 'u' || queryPtr[2] == 'U') &&
+          (queryPtr[3] == 'n' || queryPtr[3] == 'N') &&
+          (queryPtr[4] == 't' || queryPtr[4] == 'T') && (queryPtr[5] == '(') &&
+          (queryPtr + 6 != queryEnd)) {
         stmt->queryPtr = queryPtr + 6;
         return COUNT;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'o' || queryPtr[1] == 'O') &&
-          (queryPtr[2] == 'n' || queryPtr[2] == 'N') && (queryPtr[3] == 'c' || queryPtr[3] == 'C') &&
-          (queryPtr[4] == 'a' || queryPtr[4] == 'A') && (queryPtr[5] == 't' || queryPtr[5] == 'T') &&
+          (queryPtr[2] == 'n' || queryPtr[2] == 'N') &&
+          (queryPtr[3] == 'c' || queryPtr[3] == 'C') &&
+          (queryPtr[4] == 'a' || queryPtr[4] == 'A') &&
+          (queryPtr[5] == 't' || queryPtr[5] == 'T') &&
           (queryPtr + 6 == queryEnd || !isalnum_(queryPtr[6]))) {
         stmt->queryPtr = queryPtr + 6;
         lvalp->iOperator = SQL_PCODE_OPERATOR_CONCAT;
@@ -392,29 +403,36 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'd':
     case 'D': {
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'e' || queryPtr[1] == 'E') &&
-          (queryPtr[2] == 's' || queryPtr[2] == 'S') && (queryPtr[3] == 'c' || queryPtr[3] == 'C') &&
+          (queryPtr[2] == 's' || queryPtr[2] == 'S') &&
+          (queryPtr[3] == 'c' || queryPtr[3] == 'C') &&
           (queryPtr + 4 == queryEnd || !isalnum_(queryPtr[4]))) {
         stmt->queryPtr = queryPtr + 4;
         return DESC;
       }
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'e' || queryPtr[1] == 'E') &&
-          (queryPtr[2] == 'l' || queryPtr[2] == 'L') && (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
-          (queryPtr[4] == 't' || queryPtr[4] == 'T') && (queryPtr[5] == 'e' || queryPtr[5] == 'E') &&
+          (queryPtr[2] == 'l' || queryPtr[2] == 'L') &&
+          (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
+          (queryPtr[4] == 't' || queryPtr[4] == 'T') &&
+          (queryPtr[5] == 'e' || queryPtr[5] == 'E') &&
           (queryPtr + 6 == queryEnd || !isalnum_(queryPtr[6]))) {
         stmt->queryPtr = queryPtr + 6;
         return DELETE_SQL;
       }
       if (queryPtr + 8 <= queryEnd && (queryPtr[1] == 'i' || queryPtr[1] == 'I') &&
-          (queryPtr[2] == 's' || queryPtr[2] == 'S') && (queryPtr[3] == 't' || queryPtr[3] == 'T') &&
-          (queryPtr[4] == 'i' || queryPtr[4] == 'I') && (queryPtr[5] == 'n' || queryPtr[5] == 'N') &&
-          (queryPtr[6] == 'c' || queryPtr[6] == 'C') && (queryPtr[7] == 't' || queryPtr[7] == 'T') &&
+          (queryPtr[2] == 's' || queryPtr[2] == 'S') &&
+          (queryPtr[3] == 't' || queryPtr[3] == 'T') &&
+          (queryPtr[4] == 'i' || queryPtr[4] == 'I') &&
+          (queryPtr[5] == 'n' || queryPtr[5] == 'N') &&
+          (queryPtr[6] == 'c' || queryPtr[6] == 'C') &&
+          (queryPtr[7] == 't' || queryPtr[7] == 'T') &&
           (queryPtr + 8 == queryEnd || !isalnum_(queryPtr[8]))) {
         stmt->queryPtr = queryPtr + 8;
         return DISTINCT;
       }
       if (queryPtr + 5 <= queryEnd && (queryPtr[1] == 'a' || queryPtr[1] == 'A') &&
-          (queryPtr[2] == 't' || queryPtr[2] == 'T') && (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
-          (queryPtr[4] == '(') && (queryPtr + 5 != queryEnd)) {
+          (queryPtr[2] == 't' || queryPtr[2] == 'T') &&
+          (queryPtr[3] == 'e' || queryPtr[3] == 'E') && (queryPtr[4] == '(') &&
+          (queryPtr + 5 != queryEnd)) {
         stmt->queryPtr = queryPtr + 5;
         return CURRENT_DATE;
       }
@@ -423,7 +441,8 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'f':
     case 'F': {
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'r' || queryPtr[1] == 'R') &&
-          (queryPtr[2] == 'o' || queryPtr[2] == 'O') && (queryPtr[3] == 'm' || queryPtr[3] == 'M') &&
+          (queryPtr[2] == 'o' || queryPtr[2] == 'O') &&
+          (queryPtr[3] == 'm' || queryPtr[3] == 'M') &&
           (queryPtr + 4 == queryEnd || !isalnum_(queryPtr[4]))) {
         stmt->queryPtr = queryPtr + 4;
         return FROM;
@@ -433,8 +452,10 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'g':
     case 'G': {
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'r' || queryPtr[1] == 'R') &&
-          (queryPtr[2] == 'o' || queryPtr[2] == 'O') && (queryPtr[3] == 'u' || queryPtr[3] == 'U') &&
-          (queryPtr[4] == 'p' || queryPtr[4] == 'P') && (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
+          (queryPtr[2] == 'o' || queryPtr[2] == 'O') &&
+          (queryPtr[3] == 'u' || queryPtr[3] == 'U') &&
+          (queryPtr[4] == 'p' || queryPtr[4] == 'P') &&
+          (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
         stmt->queryPtr = queryPtr + 5;
         return GROUP;
       }
@@ -443,9 +464,11 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'i':
     case 'I': {
       if (queryPtr + 7 <= queryEnd && (queryPtr[1] == 's' || queryPtr[1] == 'S') &&
-          (queryPtr[2] == 'n' || queryPtr[2] == 'N') && (queryPtr[3] == 'u' || queryPtr[3] == 'U') &&
-          (queryPtr[4] == 'l' || queryPtr[4] == 'L') && (queryPtr[5] == 'l' || queryPtr[5] == 'L') &&
-          (queryPtr[6] == '(') && (queryPtr + 7 != queryEnd)) {
+          (queryPtr[2] == 'n' || queryPtr[2] == 'N') &&
+          (queryPtr[3] == 'u' || queryPtr[3] == 'U') &&
+          (queryPtr[4] == 'l' || queryPtr[4] == 'L') &&
+          (queryPtr[5] == 'l' || queryPtr[5] == 'L') && (queryPtr[6] == '(') &&
+          (queryPtr + 7 != queryEnd)) {
         stmt->queryPtr = queryPtr + 7;
         return TOKEN_ISNULL;
       }
@@ -455,7 +478,8 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
         return IS_OP;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'n' || queryPtr[1] == 'N') &&
-          (queryPtr[2] == 't' || queryPtr[2] == 'T') && (queryPtr[3] == 'o' || queryPtr[3] == 'O') &&
+          (queryPtr[2] == 't' || queryPtr[2] == 'T') &&
+          (queryPtr[3] == 'o' || queryPtr[3] == 'O') &&
           (queryPtr + 4 == queryEnd || !isalnum_(queryPtr[4]))) {
         stmt->queryPtr = queryPtr + 4;
         return INTO;
@@ -466,8 +490,10 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
         return IN_OP;
       }
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'n' || queryPtr[1] == 'N') &&
-          (queryPtr[2] == 's' || queryPtr[2] == 'S') && (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
-          (queryPtr[4] == 'r' || queryPtr[4] == 'R') && (queryPtr[5] == 't' || queryPtr[5] == 'T') &&
+          (queryPtr[2] == 's' || queryPtr[2] == 'S') &&
+          (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
+          (queryPtr[4] == 'r' || queryPtr[4] == 'R') &&
+          (queryPtr[5] == 't' || queryPtr[5] == 'T') &&
           (queryPtr + 6 == queryEnd || !isalnum_(queryPtr[6]))) {
         stmt->queryPtr = queryPtr + 6;
         return INSERT;
@@ -477,7 +503,8 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'j':
     case 'J': {
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'o' || queryPtr[1] == 'O') &&
-          (queryPtr[2] == 'i' || queryPtr[2] == 'I') && (queryPtr[3] == 'n' || queryPtr[3] == 'N') &&
+          (queryPtr[2] == 'i' || queryPtr[2] == 'I') &&
+          (queryPtr[3] == 'n' || queryPtr[3] == 'N') &&
           (queryPtr + 4 == queryEnd || !isalnum_(queryPtr[4]))) {
         stmt->queryPtr = queryPtr + 4;
         return JOIN;
@@ -491,26 +518,31 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'l':
     case 'L': {
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'e' || queryPtr[1] == 'E') &&
-          (queryPtr[2] == 'f' || queryPtr[2] == 'F') && (queryPtr[3] == 't' || queryPtr[3] == 'T') &&
+          (queryPtr[2] == 'f' || queryPtr[2] == 'F') &&
+          (queryPtr[3] == 't' || queryPtr[3] == 'T') &&
           (queryPtr + 4 == queryEnd || !isalnum_(queryPtr[4]))) {
         stmt->queryPtr = queryPtr + 4;
         return LEFT;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'o' || queryPtr[1] == 'O') &&
-          (queryPtr[2] == 'c' || queryPtr[2] == 'C') && (queryPtr[3] == 'k' || queryPtr[3] == 'K') &&
+          (queryPtr[2] == 'c' || queryPtr[2] == 'C') &&
+          (queryPtr[3] == 'k' || queryPtr[3] == 'K') &&
           (queryPtr + 4 == queryEnd || !isalnum_(queryPtr[4]))) {
         stmt->queryPtr = queryPtr + 4;
         return LOCK;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'i' || queryPtr[1] == 'I') &&
-          (queryPtr[2] == 'k' || queryPtr[2] == 'K') && (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
+          (queryPtr[2] == 'k' || queryPtr[2] == 'K') &&
+          (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
           (queryPtr + 4 == queryEnd || !isalnum_(queryPtr[4]))) {
         stmt->queryPtr = queryPtr + 4;
         return LIKE;
       }
       if (queryPtr + 5 <= queryEnd && (queryPtr[1] == 'i' || queryPtr[1] == 'I') &&
-          (queryPtr[2] == 'm' || queryPtr[2] == 'M') && (queryPtr[3] == 'i' || queryPtr[3] == 'I') &&
-          (queryPtr[4] == 't' || queryPtr[4] == 'T') && (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
+          (queryPtr[2] == 'm' || queryPtr[2] == 'M') &&
+          (queryPtr[3] == 'i' || queryPtr[3] == 'I') &&
+          (queryPtr[4] == 't' || queryPtr[4] == 'T') &&
+          (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
         stmt->queryPtr = queryPtr + 5;
         return LIMIT;
       }
@@ -519,12 +551,14 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'm':
     case 'M': {
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'a' || queryPtr[1] == 'A') &&
-          (queryPtr[2] == 'x' || queryPtr[2] == 'X') && (queryPtr[3] == '(') && (queryPtr + 4 != queryEnd)) {
+          (queryPtr[2] == 'x' || queryPtr[2] == 'X') && (queryPtr[3] == '(') &&
+          (queryPtr + 4 != queryEnd)) {
         stmt->queryPtr = queryPtr + 4;
         return MAX;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'i' || queryPtr[1] == 'I') &&
-          (queryPtr[2] == 'n' || queryPtr[2] == 'N') && (queryPtr[3] == '(') && (queryPtr + 4 != queryEnd)) {
+          (queryPtr[2] == 'n' || queryPtr[2] == 'N') && (queryPtr[3] == '(') &&
+          (queryPtr + 4 != queryEnd)) {
         stmt->queryPtr = queryPtr + 4;
         return MIN;
       }
@@ -533,12 +567,14 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'n':
     case 'N': {
       if (queryPtr + 3 <= queryEnd && (queryPtr[1] == 'o' || queryPtr[1] == 'O') &&
-          (queryPtr[2] == 't' || queryPtr[2] == 'T') && (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
+          (queryPtr[2] == 't' || queryPtr[2] == 'T') &&
+          (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
         stmt->queryPtr = queryPtr + 3;
         return NOT;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'u' || queryPtr[1] == 'U') &&
-          (queryPtr[2] == 'l' || queryPtr[2] == 'L') && (queryPtr[3] == 'l' || queryPtr[3] == 'L') &&
+          (queryPtr[2] == 'l' || queryPtr[2] == 'L') &&
+          (queryPtr[3] == 'l' || queryPtr[3] == 'L') &&
           (queryPtr + 4 == queryEnd || !isalnum_(queryPtr[4]))) {
         stmt->queryPtr = queryPtr + 4;
         return NULLVAL;
@@ -553,14 +589,18 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
         return OR;
       }
       if (queryPtr + 5 <= queryEnd && (queryPtr[1] == 'r' || queryPtr[1] == 'R') &&
-          (queryPtr[2] == 'd' || queryPtr[2] == 'D') && (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
-          (queryPtr[4] == 'r' || queryPtr[4] == 'R') && (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
+          (queryPtr[2] == 'd' || queryPtr[2] == 'D') &&
+          (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
+          (queryPtr[4] == 'r' || queryPtr[4] == 'R') &&
+          (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
         stmt->queryPtr = queryPtr + 5;
         return ORDER;
       }
       if (queryPtr + 5 <= queryEnd && (queryPtr[1] == 'u' || queryPtr[1] == 'U') &&
-          (queryPtr[2] == 't' || queryPtr[2] == 'T') && (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
-          (queryPtr[4] == 'r' || queryPtr[4] == 'R') && (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
+          (queryPtr[2] == 't' || queryPtr[2] == 'T') &&
+          (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
+          (queryPtr[4] == 'r' || queryPtr[4] == 'R') &&
+          (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
         stmt->queryPtr = queryPtr + 5;
         return OUTER;
       }
@@ -569,8 +609,10 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'p':
     case 'P': {
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'o' || queryPtr[1] == 'O') &&
-          (queryPtr[2] == 'w' || queryPtr[2] == 'W') && (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
-          (queryPtr[4] == 'r' || queryPtr[4] == 'R') && (queryPtr[5] == '(') && (queryPtr + 6 != queryEnd)) {
+          (queryPtr[2] == 'w' || queryPtr[2] == 'W') &&
+          (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
+          (queryPtr[4] == 'r' || queryPtr[4] == 'R') && (queryPtr[5] == '(') &&
+          (queryPtr + 6 != queryEnd)) {
         stmt->queryPtr = queryPtr + 6;
         return POWER;
       }
@@ -579,13 +621,16 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'r':
     case 'R': {
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'o' || queryPtr[1] == 'O') &&
-          (queryPtr[2] == 'u' || queryPtr[2] == 'U') && (queryPtr[3] == 'n' || queryPtr[3] == 'N') &&
-          (queryPtr[4] == 'd' || queryPtr[4] == 'D') && (queryPtr[5] == '(') && (queryPtr + 6 != queryEnd)) {
+          (queryPtr[2] == 'u' || queryPtr[2] == 'U') &&
+          (queryPtr[3] == 'n' || queryPtr[3] == 'N') &&
+          (queryPtr[4] == 'd' || queryPtr[4] == 'D') && (queryPtr[5] == '(') &&
+          (queryPtr + 6 != queryEnd)) {
         stmt->queryPtr = queryPtr + 6;
         return ROUND;
       }
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'i' || queryPtr[1] == 'I') &&
-          (queryPtr[2] == 'g' || queryPtr[2] == 'G') && (queryPtr[3] == 'h' || queryPtr[3] == 'H') &&
+          (queryPtr[2] == 'g' || queryPtr[2] == 'G') &&
+          (queryPtr[3] == 'h' || queryPtr[3] == 'H') &&
           (queryPtr[4] == 't' || queryPtr[4] == 'T') && (queryPtr[5] == '(') &&
           (queryPtr + 6 == queryEnd || !isalnum_(queryPtr[6]))) {
         stmt->queryPtr = queryPtr + 6;
@@ -596,26 +641,32 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 's':
     case 'S': {
       if (queryPtr + 3 <= queryEnd && (queryPtr[1] == 'e' || queryPtr[1] == 'E') &&
-          (queryPtr[2] == 't' || queryPtr[2] == 'T') && (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
+          (queryPtr[2] == 't' || queryPtr[2] == 'T') &&
+          (queryPtr + 3 == queryEnd || !isalnum_(queryPtr[3]))) {
         stmt->queryPtr = queryPtr + 3;
         return SET;
       }
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'e' || queryPtr[1] == 'E') &&
-          (queryPtr[2] == 'l' || queryPtr[2] == 'L') && (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
-          (queryPtr[4] == 'c' || queryPtr[4] == 'C') && (queryPtr[5] == 't' || queryPtr[5] == 'T') &&
+          (queryPtr[2] == 'l' || queryPtr[2] == 'L') &&
+          (queryPtr[3] == 'e' || queryPtr[3] == 'E') &&
+          (queryPtr[4] == 'c' || queryPtr[4] == 'C') &&
+          (queryPtr[5] == 't' || queryPtr[5] == 'T') &&
           (queryPtr + 6 == queryEnd || !isalnum_(queryPtr[6]))) {
         stmt->queryPtr = queryPtr + 6;
         return SELECT;
       }
       if (queryPtr + 7 <= queryEnd && (queryPtr[1] == 'u' || queryPtr[1] == 'U') &&
-          (queryPtr[2] == 'b' || queryPtr[2] == 'B') && (queryPtr[3] == 's' || queryPtr[3] == 'S') &&
-          (queryPtr[4] == 't' || queryPtr[4] == 'T') && (queryPtr[5] == 'r' || queryPtr[5] == 'R') &&
-          (queryPtr[6] == '(') && (queryPtr + 7 != queryEnd)) {
+          (queryPtr[2] == 'b' || queryPtr[2] == 'B') &&
+          (queryPtr[3] == 's' || queryPtr[3] == 'S') &&
+          (queryPtr[4] == 't' || queryPtr[4] == 'T') &&
+          (queryPtr[5] == 'r' || queryPtr[5] == 'R') && (queryPtr[6] == '(') &&
+          (queryPtr + 7 != queryEnd)) {
         stmt->queryPtr = queryPtr + 7;
         return SUBSTR;
       }
       if (queryPtr + 4 <= queryEnd && (queryPtr[1] == 'u' || queryPtr[1] == 'U') &&
-          (queryPtr[2] == 'm' || queryPtr[2] == 'M') && (queryPtr[3] == '(') && (queryPtr + 4 != queryEnd)) {
+          (queryPtr[2] == 'm' || queryPtr[2] == 'M') && (queryPtr[3] == '(') &&
+          (queryPtr + 4 != queryEnd)) {
         stmt->queryPtr = queryPtr + 4;
         return SUM;
       }
@@ -624,8 +675,9 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 't':
     case 'T': {
       if (queryPtr + 5 <= queryEnd && (queryPtr[1] == 'r' || queryPtr[1] == 'R') &&
-          (queryPtr[2] == 'i' || queryPtr[2] == 'I') && (queryPtr[3] == 'm' || queryPtr[3] == 'M') &&
-          (queryPtr[4] == '(') && (queryPtr + 5 != queryEnd)) {
+          (queryPtr[2] == 'i' || queryPtr[2] == 'I') &&
+          (queryPtr[3] == 'm' || queryPtr[3] == 'M') && (queryPtr[4] == '(') &&
+          (queryPtr + 5 != queryEnd)) {
         stmt->queryPtr = queryPtr + 5;
         return TRIM;
       }
@@ -634,15 +686,19 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'u':
     case 'U': {
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'p' || queryPtr[1] == 'P') &&
-          (queryPtr[2] == 'd' || queryPtr[2] == 'D') && (queryPtr[3] == 'a' || queryPtr[3] == 'A') &&
-          (queryPtr[4] == 't' || queryPtr[4] == 'T') && (queryPtr[5] == 'e' || queryPtr[5] == 'E') &&
+          (queryPtr[2] == 'd' || queryPtr[2] == 'D') &&
+          (queryPtr[3] == 'a' || queryPtr[3] == 'A') &&
+          (queryPtr[4] == 't' || queryPtr[4] == 'T') &&
+          (queryPtr[5] == 'e' || queryPtr[5] == 'E') &&
           (queryPtr + 6 == queryEnd || !isalnum_(queryPtr[6]))) {
         stmt->queryPtr = queryPtr + 6;
         return UPDATE;
       }
       if (queryPtr + 5 <= queryEnd && (queryPtr[1] == 'n' || queryPtr[1] == 'N') &&
-          (queryPtr[2] == 'i' || queryPtr[2] == 'I') && (queryPtr[3] == 'o' || queryPtr[3] == 'O') &&
-          (queryPtr[4] == 'n' || queryPtr[4] == 'N') && (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
+          (queryPtr[2] == 'i' || queryPtr[2] == 'I') &&
+          (queryPtr[3] == 'o' || queryPtr[3] == 'O') &&
+          (queryPtr[4] == 'n' || queryPtr[4] == 'N') &&
+          (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
         stmt->queryPtr = queryPtr + 5;
         return UNION;
       }
@@ -651,8 +707,10 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'v':
     case 'V': {
       if (queryPtr + 6 <= queryEnd && (queryPtr[1] == 'a' || queryPtr[1] == 'A') &&
-          (queryPtr[2] == 'l' || queryPtr[2] == 'L') && (queryPtr[3] == 'u' || queryPtr[3] == 'U') &&
-          (queryPtr[4] == 'e' || queryPtr[4] == 'E') && (queryPtr[5] == 's' || queryPtr[5] == 'S') &&
+          (queryPtr[2] == 'l' || queryPtr[2] == 'L') &&
+          (queryPtr[3] == 'u' || queryPtr[3] == 'U') &&
+          (queryPtr[4] == 'e' || queryPtr[4] == 'E') &&
+          (queryPtr[5] == 's' || queryPtr[5] == 'S') &&
           (queryPtr + 6 == queryEnd || !isalnum_(queryPtr[6]))) {
         stmt->queryPtr = queryPtr + 6;
         return VALUES;
@@ -662,8 +720,10 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
     case 'w':
     case 'W': {
       if (queryPtr + 5 <= queryEnd && (queryPtr[1] == 'h' || queryPtr[1] == 'H') &&
-          (queryPtr[2] == 'e' || queryPtr[2] == 'E') && (queryPtr[3] == 'r' || queryPtr[3] == 'R') &&
-          (queryPtr[4] == 'e' || queryPtr[4] == 'E') && (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
+          (queryPtr[2] == 'e' || queryPtr[2] == 'E') &&
+          (queryPtr[3] == 'r' || queryPtr[3] == 'R') &&
+          (queryPtr[4] == 'e' || queryPtr[4] == 'E') &&
+          (queryPtr + 5 == queryEnd || !isalnum_(queryPtr[5]))) {
         stmt->queryPtr = queryPtr + 5;
         return WHERE;
       }

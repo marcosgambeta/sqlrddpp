@@ -62,77 +62,77 @@
 
 // Standard definitions
 #ifdef HB_OS_MAC
-   #define MXML_LINE_TERMINATOR       '\r'
-   #define MXML_SOFT_LINE_TERMINATOR  '\n'
+#define MXML_LINE_TERMINATOR '\r'
+#define MXML_SOFT_LINE_TERMINATOR '\n'
 #else
 // Notice, this works for both Unix and Windows
-   #define MXML_LINE_TERMINATOR       '\n'
-   #define MXML_SOFT_LINE_TERMINATOR  '\r'
+#define MXML_LINE_TERMINATOR '\n'
+#define MXML_SOFT_LINE_TERMINATOR '\r'
 #endif
 
-#define MXML_EOF                      -256
+#define MXML_EOF -256
 
-#define MXML_ALLOC_BLOCK              128
-#define MXML_MAX_DEPTH                64
+#define MXML_ALLOC_BLOCK 128
+#define MXML_MAX_DEPTH 64
 
 // Styles
-#define MXML_STYLE_INDENT             0x0001
-#define MXML_STYLE_TAB                0x0002
-#define MXML_STYLE_THREESPACES        0x0004
-#define MXML_STYLE_NOESCAPE           0x0008
-#define MXML_STYLE_NONEWLINE          0x0010
+#define MXML_STYLE_INDENT 0x0001
+#define MXML_STYLE_TAB 0x0002
+#define MXML_STYLE_THREESPACES 0x0004
+#define MXML_STYLE_NOESCAPE 0x0008
+#define MXML_STYLE_NONEWLINE 0x0010
 
 // Status values
 
 typedef enum
 {
-   MXML_STATUS_ERROR = 0,
-   MXML_STATUS_OK    = 1,
-   MXML_STATUS_MORE,
-   MXML_STATUS_DONE,
-   MXML_STATUS_UNDEFINED,
-   MXML_STATUS_MALFORMED
+  MXML_STATUS_ERROR = 0,
+  MXML_STATUS_OK = 1,
+  MXML_STATUS_MORE,
+  MXML_STATUS_DONE,
+  MXML_STATUS_UNDEFINED,
+  MXML_STATUS_MALFORMED
 } MXML_STATUS;
 
 // Error codes
 typedef enum
 {
-   MXML_ERROR_NONE = 0,
-   MXML_ERROR_IO   = 1,
-   MXML_ERROR_NOMEM,
+  MXML_ERROR_NONE = 0,
+  MXML_ERROR_IO = 1,
+  MXML_ERROR_NOMEM,
 
-   MXML_ERROR_OUTCHAR,
-   MXML_ERROR_INVNODE,
-   MXML_ERROR_INVATT,
-   MXML_ERROR_MALFATT,
-   MXML_ERROR_INVCHAR,
-   MXML_ERROR_NAMETOOLONG,
-   MXML_ERROR_ATTRIBTOOLONG,
-   MXML_ERROR_VALATTOOLONG,
-   MXML_ERROR_UNCLOSED,
-   MXML_ERROR_UNCLOSEDENTITY,
-   MXML_ERROR_WRONGENTITY
+  MXML_ERROR_OUTCHAR,
+  MXML_ERROR_INVNODE,
+  MXML_ERROR_INVATT,
+  MXML_ERROR_MALFATT,
+  MXML_ERROR_INVCHAR,
+  MXML_ERROR_NAMETOOLONG,
+  MXML_ERROR_ATTRIBTOOLONG,
+  MXML_ERROR_VALATTOOLONG,
+  MXML_ERROR_UNCLOSED,
+  MXML_ERROR_UNCLOSEDENTITY,
+  MXML_ERROR_WRONGENTITY
 } MXML_ERROR_CODE;
 
 // Node types
 
 typedef enum
 {
-   MXML_TYPE_TAG = 0,
-   MXML_TYPE_COMMENT,
-   MXML_TYPE_PI,
-   MXML_TYPE_DIRECTIVE,
-   MXML_TYPE_DATA,
-   MXML_TYPE_CDATA,     // Used for <![CDATA[ nodes
-   MXML_TYPE_DOCUMENT   // used for document level root node
+  MXML_TYPE_TAG = 0,
+  MXML_TYPE_COMMENT,
+  MXML_TYPE_PI,
+  MXML_TYPE_DIRECTIVE,
+  MXML_TYPE_DATA,
+  MXML_TYPE_CDATA,   // Used for <![CDATA[ nodes
+  MXML_TYPE_DOCUMENT // used for document level root node
 } MXML_NODE_TYPE;
 
 // Refil function
 struct tag_mxml_refil;
 struct tag_mxml_output;
 
-typedef void ( *MXML_REFIL_FUNC )( struct tag_mxml_refil * ref );
-typedef void ( *MXML_OUTPUT_FUNC )( struct tag_mxml_output * out, const char * data, HB_ISIZ len );
+typedef void (*MXML_REFIL_FUNC)(struct tag_mxml_refil *ref);
+typedef void (*MXML_OUTPUT_FUNC)(struct tag_mxml_output *out, const char *data, HB_ISIZ len);
 
 // --- Structures holding the XML data ---
 
@@ -140,82 +140,80 @@ typedef void ( *MXML_OUTPUT_FUNC )( struct tag_mxml_output * out, const char * d
 
 typedef struct tag_mxml_refil
 {
-   // status variables
-   MXML_STATUS     status;
-   MXML_ERROR_CODE error;
+  // status variables
+  MXML_STATUS status;
+  MXML_ERROR_CODE error;
 
-   // buffer for reading data
-   unsigned char * buffer;
-   HB_ISIZ         bufsize; // size of the whole buffer
-   HB_ISIZ         buflen;  // valid characters in the current buffer
-   HB_ISIZ         bufpos;  // current position
+  // buffer for reading data
+  unsigned char *buffer;
+  HB_ISIZ bufsize; // size of the whole buffer
+  HB_ISIZ buflen;  // valid characters in the current buffer
+  HB_ISIZ bufpos;  // current position
 
-   // length of the stream for implementing progress indicators
-   HB_ISIZ streampos;
-   HB_ISIZ streamlen;
+  // length of the stream for implementing progress indicators
+  HB_ISIZ streampos;
+  HB_ISIZ streamlen;
 
-   // callback funcs
-   MXML_REFIL_FUNC refil_func;
+  // callback funcs
+  MXML_REFIL_FUNC refil_func;
 
-   // ungetc implementation
-   int sparechar;
+  // ungetc implementation
+  int sparechar;
 
-   // data available for callback functions
-   union
-   {
-      HB_FHANDLE hFile;
-      void *     vPtr;
-   } u;
+  // data available for callback functions
+  union {
+    HB_FHANDLE hFile;
+    void *vPtr;
+  } u;
 
 } MXML_REFIL;
 
 typedef struct tag_mxml_output
 {
-   // status variables
-   MXML_STATUS     status;
-   MXML_ERROR_CODE error;
+  // status variables
+  MXML_STATUS status;
+  MXML_ERROR_CODE error;
 
-   // output operation
-   MXML_OUTPUT_FUNC output_func;
+  // output operation
+  MXML_OUTPUT_FUNC output_func;
 
-   // data to implement progress indicators
-   int node_count;
-   int node_done;
+  // data to implement progress indicators
+  int node_count;
+  int node_done;
 
-   // data available for callback functions
-   union
-   {
-      HB_FHANDLE hFile;
-      void *     vPtr;
-   } u;
+  // data available for callback functions
+  union {
+    HB_FHANDLE hFile;
+    void *vPtr;
+  } u;
 
 } MXML_OUTPUT;
 
 // tag mxml self growing string
 typedef struct
 {
-   char *  buffer;
-   HB_ISIZ allocated;
-   HB_ISIZ length;
+  char *buffer;
+  HB_ISIZ allocated;
+  HB_ISIZ length;
 } MXML_SGS;
 
 typedef struct
 {
-   PHB_ITEM pName;
-   PHB_ITEM pValue;
-} HBXML_ATTRIBUTE, * PHBXML_ATTRIBUTE;
+  PHB_ITEM pName;
+  PHB_ITEM pValue;
+} HBXML_ATTRIBUTE, *PHBXML_ATTRIBUTE;
 
 // Allocator and deletor functions are meant to be redeclared by includers
 #ifndef MXML_ALLOCATOR
-   #define MXML_ALLOCATOR    hb_xgrab
+#define MXML_ALLOCATOR hb_xgrab
 #endif
 
 #ifndef MXML_DELETOR
-   #define MXML_DELETOR      hb_xfree
+#define MXML_DELETOR hb_xfree
 #endif
 
 #ifndef MXML_REALLOCATOR
-   #define MXML_REALLOCATOR  hb_xrealloc
+#define MXML_REALLOCATOR hb_xrealloc
 #endif
 
 #endif // SR_XML_H

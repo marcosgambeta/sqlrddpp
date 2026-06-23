@@ -80,10 +80,12 @@ HB_FUNC(SR_SQLPARSE) // SqlParse(cCommand, @nError, @nErrorPos)
     sqlIniPos = sqlPhrase = hb_parc(1);
 
     if (SqlParse(stmt, sqlPhrase, PARSE_ALL_QUERY)) {
-      // printf("Parse OK. Retornado array de %i posicoes.\n", stmt->pArray->item.asArray.value->ulLen);
+      // printf("Parse OK. Retornado array de %i posicoes.\n",
+      // stmt->pArray->item.asArray.value->ulLen);
     } else {
       stmt->pArray = hb_itemArrayNew(0);
-      // printf("Parse ERROR. Retornado array de %i posicoes.\n", stmt->pArray->item.asArray.value->ulLen);
+      // printf("Parse ERROR. Retornado array de %i posicoes.\n",
+      // stmt->pArray->item.asArray.value->ulLen);
 
       if (HB_ISBYREF(2)) {
         hb_itemPutNI((PHB_ITEM)hb_param(2, HB_IT_ANY), stmt->errMsg);
@@ -596,7 +598,8 @@ HB_FUNC(SR_ESCAPESTRING)
   }
 }
 
-char *SR_QuoteTrimEscapeString(const char *FromBuffer, HB_SIZE iSize, int idatabase, HB_BOOL bRTrim, HB_SIZE *iSizeOut) // TODO: static ?
+char *SR_QuoteTrimEscapeString(const char *FromBuffer, HB_SIZE iSize, int idatabase,
+                               HB_BOOL bRTrim, HB_SIZE *iSizeOut) // TODO: static ?
 {
   char *ToBuffer;
 
@@ -672,8 +675,8 @@ HB_FUNC(SR_ESCAPENUM)
   FromBuffer = hb_parc(1);
 
   if (!(HB_ISCHAR(1) && HB_ISNUM(2) && HB_ISNUM(3))) {
-    hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_ESCAPENUM", 3, hb_param(1, HB_IT_ANY), hb_param(2, HB_IT_ANY),
-                         hb_param(3, HB_IT_ANY));
+    hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_ESCAPENUM", 3, hb_param(1, HB_IT_ANY),
+                         hb_param(2, HB_IT_ANY), hb_param(3, HB_IT_ANY));
     return;
   }
 
@@ -1040,8 +1043,8 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
   case HB_IT_POINTER: {
     return hb_itemGetPtr(pItem) == SR_NULLPTR;
   }
-// TODO: check
-// #ifndef __XHARBOUR__
+    // TODO: check
+    // #ifndef __XHARBOUR__
   case HB_IT_SYMBOL: {
     PHB_SYMB pSym = hb_itemGetSymbol(pItem);
     if (pSym && (pSym->scope.value & HB_FS_DEFERRED) && pSym->pDynSym) {
@@ -1049,7 +1052,7 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
     }
     return pSym == SR_NULLPTR || pSym->value.pFunPtr == SR_NULLPTR;
   }
-// #endif
+    // #endif
   default: {
     return HB_TRUE;
   }
@@ -1058,8 +1061,9 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
 
 //-----------------------------------------------------------------------------//
 
-char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec, HB_BOOL bNullable, int nSystemID,
-                 HB_BOOL bTCCompat, HB_BOOL bMemo, HB_BOOL *bNullArgument) // TODO: not used
+char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
+                    HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo,
+                    HB_BOOL *bNullArgument) // TODO: not used
 {
   char *sValue, sDate[9];
   HB_SIZE iSizeOut;
@@ -1068,7 +1072,8 @@ char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
 
   *bNullArgument = HB_FALSE;
 
-  if (SR_itemEmpty(pFieldData) && (!(HB_IS_ARRAY(pFieldData) || HB_IS_OBJECT(pFieldData) || HB_IS_HASH(pFieldData))) &&
+  if (SR_itemEmpty(pFieldData) &&
+      (!(HB_IS_ARRAY(pFieldData) || HB_IS_OBJECT(pFieldData) || HB_IS_HASH(pFieldData))) &&
       (((nSystemID == SQLRDD_RDBMS_POSTGR) && HB_IS_DATE(pFieldData)) ||
        ((nSystemID != SQLRDD_RDBMS_POSTGR) && (!HB_IS_LOGICAL(pFieldData))))) {
     if (bNullable || HB_IS_DATE(pFieldData)) {
@@ -1103,8 +1108,9 @@ char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
       case HB_IT_STRING:
       case HB_IT_MEMO: {
         if (bTCCompat) {
-          sValue = SR_QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, HB_FALSE,
-                                         &iSizeOut);
+          sValue =
+              SR_QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData),
+                                       nSystemID, HB_FALSE, &iSizeOut);
           return sValue;
         } else {
           sValue = (char *)hb_xgrab(4);
@@ -1201,8 +1207,8 @@ char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
   switch (hb_itemType(pFieldData)) {
   case HB_IT_STRING:
   case HB_IT_MEMO: {
-    sValue =
-        SR_QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData), nSystemID, !bTCCompat, &iSizeOut);
+    sValue = SR_QuoteTrimEscapeString(hb_itemGetCPtr(pFieldData), hb_itemGetCLen(pFieldData),
+                                      nSystemID, !bTCCompat, &iSizeOut);
     break;
   }
   case HB_IT_INTEGER:

@@ -106,7 +106,8 @@ typedef struct _SQLAREA
   int iFieldListStatus; // field list status - see sqlprototypes.h
 
   LPDBRELINFO lpdbPendingRel; // Pointer to parent rel struct
-  char editMask[MAX_FIELDS];  // Flags if a column was updated - must be cleared on every GO_COLD - USED BY ODBCRDD
+  char editMask[MAX_FIELDS]; // Flags if a column was updated - must be cleared on every GO_COLD
+                             // - USED BY ODBCRDD
 
 } SQLAREA;
 
@@ -118,6 +119,7 @@ typedef SQLAREA *LPSQLAREA;
 
 // prototypes
 
-void SR_commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode, const char *filename);
+void SR_commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode,
+                    const char *filename);
 
 #endif // SQLRDD_H
