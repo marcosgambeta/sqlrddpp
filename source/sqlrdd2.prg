@@ -2612,7 +2612,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 #endif
                ELSEIF ::aFields[nThisField, 6] != SQL_GUID
                   cRet += IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(aBuffer[nThisField], .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo) + " "
-               ELSEIF ::aFields[nThisField, 6] ==SQL_LONGVARCHARXML
+               ELSEIF ::aFields[nThisField, 6] == SQL_LONGVARCHARXML
                   oXml := sr_arraytoXml(aBuffer[nThisField])
 #ifdef __XHARBOUR__
                   nlen := Len(oxml:tostring(HBXML_STYLE_NONEWLINE))
@@ -2621,7 +2621,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   nlen := Len(oxml:tostring(SR_XML_STYLE_NONEWLINE))
                   cVal := IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField], ::oSql:nSystemID) + " = " + ::QuotedNull(oxml:tostring(SR_XML_STYLE_NONEWLINE), .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
 #endif
-               ELSEIF ::aFields[nthisField, 6] == SQL_VARBINARY .AND. ::osql:nsystemID ==SQLRDD_RDBMS_MSSQL7
+               ELSEIF ::aFields[nthisField, 6] == SQL_VARBINARY .AND. ::osql:nsystemID == SQLRDD_RDBMS_MSSQL7
                   cVal := '0x'+hb_StrtoHex(aBuffer[nThisField])
                ELSE
                   LOOP
@@ -2639,7 +2639,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                FOR nInd := 1 TO Len(::aIndexMgmnt)
                   IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
                      cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
-                     IF ::osql:nsystemID ==SQLRDD_RDBMS_POSTGR
+                     IF ::osql:nsystemID == SQLRDD_RDBMS_POSTGR
                         cRet += ", " + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS], ::oSql:nSystemID) + " = E'" + cKey + "' "
                      ELSE
                         cRet += ", " + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS], ::oSql:nSystemID) + " = '" + cKey + "' "
@@ -2648,7 +2648,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   ENDIF
                   IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_FOR_CODEBLOCK])
                      cKey := (::cAlias)->(Eval(::aIndexMgmnt[nInd, INDEXMAN_FOR_CODEBLOCK]))
-                     IF ::osql:nsystemID ==SQLRDD_RDBMS_POSTGR
+                     IF ::osql:nsystemID == SQLRDD_RDBMS_POSTGR
                         cRet += ", " + SR_DBQUALIFY("INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3), ::oSql:nSystemID) + " = E'" + cKey + "' "
                      ELSE
                         cRet += ", " + SR_DBQUALIFY("INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3), ::oSql:nSystemID) + " = '" + cKey + "' "
@@ -2713,7 +2713,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
             lNull := ::aFields[i, 5]
             lMemo := ::aFields[i, FIELD_TYPE] == "M"
             lML := ::aFields[i, FIELD_MULTILANG]
-            IF lMemo .AND. ::aFields[i, 6] ==SQL_LONGVARCHARXML
+            IF lMemo .AND. ::aFields[i, 6] == SQL_LONGVARCHARXML
                lMemo := .F.
             ENDIF
 
@@ -2816,7 +2816,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 #endif
                   EXIT
                CASE SQL_VARBINARY
-                  IF ::osql:nsystemID ==SQLRDD_RDBMS_MSSQL7
+                  IF ::osql:nsystemID == SQLRDD_RDBMS_MSSQL7
                      cVal += IIf(!lFirst, ", ", "( ") + "0x" + hb_StrtoHex(cmemo)
                   ELSE
                      cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
@@ -2841,7 +2841,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS], ::oSql:nSystemID)
                ENDIF
                cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
-               IF ::osql:nsystemID ==SQLRDD_RDBMS_POSTGR
+               IF ::osql:nsystemID == SQLRDD_RDBMS_POSTGR
                   cVal += IIf(!lFirst, ", E'", "( E'") + cKey + "'"
                ELSE
                   cVal += IIf(!lFirst, ", '", "( '") + cKey + "'"
@@ -2853,7 +2853,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3), ::oSql:nSystemID)
                ENDIF
                cKey := (::cAlias)->(Eval(::aIndexMgmnt[nInd, INDEXMAN_FOR_CODEBLOCK]))
-               IF ::osql:nsystemID ==SQLRDD_RDBMS_POSTGR
+               IF ::osql:nsystemID == SQLRDD_RDBMS_POSTGR
                   cVal += IIf(!lFirst, ", E'", "( E'") + cKey + "'"
                ELSE
                   cVal += IIf(!lFirst, ", '", "( '") + cKey + "'"
