@@ -11,7 +11,7 @@
 
 // Make a copy of this file and change the values below or use the command line parameters.
 // To run the test:
-// odbctestseek --driver <drivername> --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> --options <options>
+// odbctestseek --driver <drivername> --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> --options <options> --newtable --droptable
 // NOTE: the database must exist before runnning the test.
 
 #define RDD_NAME "SQLEX"
@@ -22,13 +22,15 @@
 REQUEST SQLEX
 REQUEST SR_ODBC
 
-STATIC s_ODBC_DRIVER   := "MySQL ODBC 9.4 ANSI Driver"
-STATIC s_ODBC_SERVER   := "localhost"
-STATIC s_ODBC_PORT     := "3306"
-STATIC s_ODBC_UID      := "root"
-STATIC s_ODBC_PWD      := "password"
-STATIC s_ODBC_DATABASE := "dbtest"
-STATIC s_ODBC_OPTIONS  := "TCPIP=1"
+STATIC s_DRIVER     := "MySQL ODBC 9.4 ANSI Driver"
+STATIC s_SERVER     := "localhost"
+STATIC s_PORT       := "3306"
+STATIC s_UID        := "root"
+STATIC s_PWD        := ""
+STATIC s_DATABASE   := "dbtest"
+STATIC s_OPTIONS    := "TCPIP=1"
+STATIC s_NEW_TABLE  := .F.
+STATIC s_DROP_TABLE := .F.
 
 PROCEDURE Main()
 
@@ -50,63 +52,40 @@ PROCEDURE Main()
 
    n := 1
    DO WHILE n <= PCount()
-      IF HB_PValue(n) == "--driver"
-         ++n
-         s_ODBC_DRIVER := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--server"
-         ++n
-         s_ODBC_SERVER := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--port"
-         ++n
-         s_ODBC_PORT := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--uid"
-         ++n
-         s_ODBC_UID := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--pwd"
-         ++n
-         s_ODBC_PWD := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--database"
-         ++n
-         s_ODBC_DATABASE := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--options"
-         ++n
-         s_ODBC_OPTIONS := HB_PValue(n)
-         LOOP
-      ENDIF
+      DO CASE
+      CASE HB_PValue(n) == "--driver"    ; s_DRIVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--server"    ; s_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--port"      ; s_PORT := HB_PValue(++n)
+      CASE HB_PValue(n) == "--uid"       ; s_UID := HB_PValue(++n)
+      CASE HB_PValue(n) == "--pwd"       ; s_PWD := HB_PValue(++n)
+      CASE HB_PValue(n) == "--database"  ; s_DATABASE := HB_PValue(++n)
+      CASE HB_PValue(n) == "--options"   ; s_OPTIONS := HB_PValue(++n)
+      CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
+      CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
+      ENDCASE
       ++n
    ENDDO
 
    rddSetDefault(RDD_NAME)
 
    nConnection := sr_AddConnection(CONNECT_ODBC, ;
-      "Driver="   + s_ODBC_DRIVER   + ";" + ;
-      "Server="   + s_ODBC_SERVER   + ";" + ;
-      "Port="     + s_ODBC_PORT     + ";" + ;
-      "Database=" + s_ODBC_DATABASE + ";" + ;
-      "Uid="      + s_ODBC_UID      + ";" + ;
-      "Pwd="      + s_ODBC_PWD      + ";" + ;
-      ""          + s_ODBC_OPTIONS  + ";")
+      "Driver="   + s_DRIVER   + ";" + ;
+      "Server="   + s_SERVER   + ";" + ;
+      "Port="     + s_PORT     + ";" + ;
+      "Database=" + s_DATABASE + ";" + ;
+      "Uid="      + s_UID      + ";" + ;
+      "Pwd="      + s_PWD      + ";" + ;
+      ""          + s_OPTIONS  + ";")
 
    IF nConnection < 0
-      alert("Connection error. See sqlerror.log for details.")
+      ? "Connection error. See sqlerror.log for details."
+      WAIT
       QUIT
    ENDIF
 
    sr_StartLog(nConnection)
 
-   IF sr_ExistTable(TABLE_NAME)
+   IF s_NEW_TABLE .AND. sr_ExistTable(TABLE_NAME)
       sr_DropTable(TABLE_NAME)
    ENDIF
 
@@ -320,8 +299,10 @@ PROCEDURE Main()
    ? "Closing table"
    CLOSE DATABASE
 
-   ? "Removing table"
-   sr_DropTable(TABLE_NAME)
+   IF s_DROP_TABLE .AND. sr_ExistTable(TABLE_NAME)
+      ? "Removing table"
+      sr_DropTable(TABLE_NAME)
+   ENDIF
 
    sr_StopLog(nConnection)
 

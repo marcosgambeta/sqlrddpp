@@ -10,7 +10,7 @@
 #include "sqlrdd.ch"
 
 // To run the test:
-// mysql1 --server <servername> --uid <username> --pwd <userpassword> --dtb <databasename>
+// mysql1 --server <servername> --port <port> --uid <username> --pwd <userpassword> --dtb <databasename> --newtable --droptable
 // NOTE: the database must exist before runnning the test.
 
 #define RDD_NAME "SQLRDD"
@@ -20,10 +20,13 @@
 REQUEST SQLRDD
 REQUEST SR_MYSQL
 
-STATIC s_SERVER := "localhost"
-STATIC s_UID    := "root"
-STATIC s_PWD    := "password"
-STATIC s_DTB    := "dbtest"
+STATIC s_SERVER     := "localhost"
+STATIC s_PORT       := "3306"
+STATIC s_UID        := "root"
+STATIC s_PWD        := "password"
+STATIC s_DTB        := "dbtest"
+STATIC s_NEW_TABLE  := .F.
+STATIC s_DROP_TABLE := .F.
 
 PROCEDURE Main()
 
@@ -36,39 +39,33 @@ PROCEDURE Main()
 
    n := 1
    DO WHILE n <= PCount()
-      IF HB_PValue(n) == "--server"
-         ++n
-         s_SERVER := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--uid"
-         ++n
-         s_UID := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--pwd"
-         ++n
-         s_PWD := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--dtb"
-         ++n
-         s_DTB := HB_PValue(n)
-         LOOP
-      ENDIF
+      DO CASE
+      CASE HB_PValue(n) == "--server"    ; s_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--port"      ; s_PORT := HB_PValue(++n)
+      CASE HB_PValue(n) == "--uid"       ; s_UID := HB_PValue(++n)
+      CASE HB_PValue(n) == "--pwd"       ; s_PWD := HB_PValue(++n)
+      CASE HB_PValue(n) == "--dtb"       ; s_DTB := HB_PValue(++n)
+      CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
+      CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
+      ENDCASE
       ++n
    ENDDO
 
    rddSetDefault(RDD_NAME)
 
-   nConnection := sr_AddConnection(CONNECT_MYSQL, "MySQL=" + s_SERVER + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
+   nConnection := sr_AddConnection(CONNECT_MYSQL, "MySQL=" + s_SERVER + ";PORT=" + s_PORT + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
 
    IF nConnection < 0
-      alert("Connection error. See sqlerror.log for details.")
+      ? "Connection error. See sqlerror.log for details."
+      WAIT
       QUIT
    ENDIF
 
    sr_StartLog(nConnection)
+
+   IF s_NEW_TABLE .AND. sr_ExistTable(TABLE_NAME)
+      sr_DropTable(TABLE_NAME)
+   ENDIF
 
    IF !sr_ExistTable(TABLE_NAME)
       dbCreate(TABLE_NAME, {{"ID",      "N", 10, 0}, ;
@@ -100,6 +97,10 @@ PROCEDURE Main()
    browse()
 
    CLOSE DATABASE
+
+   IF s_DROP_TABLE .AND. sr_ExistTable(TABLE_NAME)
+      sr_DropTable(TABLE_NAME)
+   ENDIF
 
    sr_StopLog(nConnection)
 
