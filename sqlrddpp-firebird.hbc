@@ -1,0 +1,12 @@
+incpaths=include
+
+libpaths=lib/${hb_plat}/${hb_comp}
+
+libs=sqlrddpp-firebird
+{win}libs=odbc32
+{win}libs=odbccp32
+{unix&!darwin}libs=odbc
+{unix&darwin}libs=iodbc
+#libs=xhb.hbc
+
+{!xhb}prgflags=-gc3
