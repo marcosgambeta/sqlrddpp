@@ -42,8 +42,7 @@ CFLAGS = \
 	-I$(HB_INC_DIR) \
 	-D_HB_API_INTERNAL_ \
 	-Wno-missing-field-initializers \
-	-Wno-write-strings \
-	-fpermissive
+	-Wno-write-strings
 
 LIB_NAME = $(LIB_DIR)/$(LIB_PRE)sqlrddpp$(LIB_EXT)
 LIB_NAME_FIREBIRD = $(LIB_DIR)/$(LIB_PRE)sqlrddpp-firebird$(LIB_EXT)
