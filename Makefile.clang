@@ -45,8 +45,11 @@ CFLAGS = \
 	-Wno-unused-function
 
 LIB_NAME = $(LIB_DIR)/$(LIB_PRE)sqlrddpp$(LIB_EXT)
+LIB_NAME_FIREBIRD = $(LIB_DIR)/$(LIB_PRE)sqlrddpp-firebird$(LIB_EXT)
+LIB_NAME_MYSQL = $(LIB_DIR)/$(LIB_PRE)sqlrddpp-mysql$(LIB_EXT)
+LIB_NAME_POSTGRESQL = $(LIB_DIR)/$(LIB_PRE)sqlrddpp-postgresql$(LIB_EXT)
 
-all: $(LIB_NAME)
+all: $(LIB_NAME) $(LIB_NAME_FIREBIRD) $(LIB_NAME_MYSQL) $(LIB_NAME_POSTGRESQL)
 
 ###########
 # .o -> .a
@@ -85,6 +88,91 @@ $(LIB_NAME): \
 	$(OBJ_DIR)/xthrow$(OBJ_EXT) \
 	$(OBJ_DIR)/sqly$(OBJ_EXT) \
 	$(OBJ_DIR)/sqlora$(OBJ_EXT)
+	ar rc $@ $^
+	ranlib $@
+
+$(LIB_NAME_FIREBIRD): \
+	$(OBJ_DIR)/exprobjs$(OBJ_EXT) \
+	$(OBJ_DIR)/exprparser$(OBJ_EXT) \
+	$(OBJ_DIR)/exprrelation$(OBJ_EXT) \
+	$(OBJ_DIR)/exprsimpl$(OBJ_EXT) \
+	$(OBJ_DIR)/exprtransl$(OBJ_EXT) \
+	$(OBJ_DIR)/exprudf$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlconnection$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlgen1$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd0_firebird$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd2_firebird$(OBJ_EXT) \
+	$(OBJ_DIR)/utils$(OBJ_EXT) \
+	$(OBJ_DIR)/utilslang$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_firebird$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_firebird3$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_firebird4$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_firebird5$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_odbc$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlact$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex1$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex2$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex3$(OBJ_EXT) \
+	$(OBJ_DIR)/sqllex$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd1$(OBJ_EXT) \
+	$(OBJ_DIR)/tracelog$(OBJ_EXT) \
+	$(OBJ_DIR)/xthrow$(OBJ_EXT) \
+	$(OBJ_DIR)/sqly$(OBJ_EXT)
+	ar rc $@ $^
+	ranlib $@
+
+$(LIB_NAME_MYSQL): \
+	$(OBJ_DIR)/exprobjs$(OBJ_EXT) \
+	$(OBJ_DIR)/exprparser$(OBJ_EXT) \
+	$(OBJ_DIR)/exprrelation$(OBJ_EXT) \
+	$(OBJ_DIR)/exprsimpl$(OBJ_EXT) \
+	$(OBJ_DIR)/exprtransl$(OBJ_EXT) \
+	$(OBJ_DIR)/exprudf$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlconnection$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlgen1$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd0_mysql$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd2_mysql$(OBJ_EXT) \
+	$(OBJ_DIR)/utils$(OBJ_EXT) \
+	$(OBJ_DIR)/utilslang$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_mariadb$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_mysql$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_odbc$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlact$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex1$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex2$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex3$(OBJ_EXT) \
+	$(OBJ_DIR)/sqllex$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd1$(OBJ_EXT) \
+	$(OBJ_DIR)/tracelog$(OBJ_EXT) \
+	$(OBJ_DIR)/xthrow$(OBJ_EXT) \
+	$(OBJ_DIR)/sqly$(OBJ_EXT)
+	ar rc $@ $^
+	ranlib $@
+
+$(LIB_NAME_POSTGRESQL): \
+	$(OBJ_DIR)/exprobjs$(OBJ_EXT) \
+	$(OBJ_DIR)/exprparser$(OBJ_EXT) \
+	$(OBJ_DIR)/exprrelation$(OBJ_EXT) \
+	$(OBJ_DIR)/exprsimpl$(OBJ_EXT) \
+	$(OBJ_DIR)/exprtransl$(OBJ_EXT) \
+	$(OBJ_DIR)/exprudf$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlconnection$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlgen1$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd0_postgresql$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd2_postgresql$(OBJ_EXT) \
+	$(OBJ_DIR)/utils$(OBJ_EXT) \
+	$(OBJ_DIR)/utilslang$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_odbc$(OBJ_EXT) \
+	$(OBJ_DIR)/sr_pgs$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlact$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex1$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex2$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlex3$(OBJ_EXT) \
+	$(OBJ_DIR)/sqllex$(OBJ_EXT) \
+	$(OBJ_DIR)/sqlrdd1$(OBJ_EXT) \
+	$(OBJ_DIR)/tracelog$(OBJ_EXT) \
+	$(OBJ_DIR)/xthrow$(OBJ_EXT) \
+	$(OBJ_DIR)/sqly$(OBJ_EXT)
 	ar rc $@ $^
 	ranlib $@
 
@@ -137,9 +225,39 @@ $(OBJ_DIR)/sqlrdd0.c : $(SRC_DIR)/sqlrdd0.prg
 $(OBJ_DIR)/sqlrdd0$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd0.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJ_DIR)/sqlrdd0_firebird.c : $(SRC_DIR)/sqlrdd0_firebird.prg
+	$(HB) $(HBFLAGS) $< -o$@
+$(OBJ_DIR)/sqlrdd0_firebird$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd0_firebird.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/sqlrdd0_mysql.c : $(SRC_DIR)/sqlrdd0_mysql.prg
+	$(HB) $(HBFLAGS) $< -o$@
+$(OBJ_DIR)/sqlrdd0_mysql$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd0_mysql.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/sqlrdd0_postgresql.c : $(SRC_DIR)/sqlrdd0_postgresql.prg
+	$(HB) $(HBFLAGS) $< -o$@
+$(OBJ_DIR)/sqlrdd0_postgresql$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd0_postgresql.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 $(OBJ_DIR)/sqlrdd2.c : $(SRC_DIR)/sqlrdd2.prg
 	$(HB) $(HBFLAGS) $< -o$@
 $(OBJ_DIR)/sqlrdd2$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd2.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/sqlrdd2_firebird.c : $(SRC_DIR)/sqlrdd2_firebird.prg
+	$(HB) $(HBFLAGS) $< -o$@
+$(OBJ_DIR)/sqlrdd2_firebird$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd2_firebird.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/sqlrdd2_mysql.c : $(SRC_DIR)/sqlrdd2_mysql.prg
+	$(HB) $(HBFLAGS) $< -o$@
+$(OBJ_DIR)/sqlrdd2_mysql$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd2_mysql.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/sqlrdd2_postgresql.c : $(SRC_DIR)/sqlrdd2_postgresql.prg
+	$(HB) $(HBFLAGS) $< -o$@
+$(OBJ_DIR)/sqlrdd2_postgresql$(OBJ_EXT) : $(OBJ_DIR)/sqlrdd2_postgresql.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/utils.c : $(SRC_DIR)/utils.prg
