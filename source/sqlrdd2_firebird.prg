@@ -1233,22 +1233,8 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
             cCol := SubStr(aCols[i], 1, nPosAt)
          ENDIF
 
-         SWITCH ::oSql:nSystemID
-         CASE SQLRDD_RDBMS_FIREBR
-         CASE SQLRDD_RDBMS_FIREBR3
-         CASE SQLRDD_RDBMS_FIREBR4
-         CASE SQLRDD_RDBMS_FIREBR5
-            cSqlA += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " NULLS FIRST,"
-            cSqlD += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " DESC NULLS LAST,"
-            EXIT
-#ifdef __XHARBOUR__
-         DEFAULT
-#else
-         OTHERWISE
-#endif
-            cSqlA += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ","
-            cSqlD += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " DESC,"
-         ENDSWITCH
+         cSqlA += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " NULLS FIRST,"
+         cSqlD += " A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + " DESC NULLS LAST,"
 
          IF (nPos := AScan(::aNames, {|x|x == cCol})) != 0
             IF ::aNames[nPos] != ::cRecnoName
@@ -1782,30 +1768,11 @@ METHOD SR_WORKAREA:Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
       EXIT
 
    CASE "D"
-      SWITCH ::oSql:nSystemID
-      CASE SQLRDD_RDBMS_FIREBR
-      CASE SQLRDD_RDBMS_FIREBR3
-      CASE SQLRDD_RDBMS_FIREBR4
-      CASE SQLRDD_RDBMS_FIREBR5
-         RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
-         RETURN "'" + DToS(uData) + "'"
-      ENDSWITCH
+      RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
 
    CASE "T"
-      SWITCH ::oSql:nSystemID
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
-         cRet := SR_STRTOHEX(HB_Serialize(uData))
-         RETURN ::Quoted(SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, trim, nLen, nDec, nTargetDB)
-      ENDSWITCH
+      cRet := SR_STRTOHEX(HB_Serialize(uData))
+      RETURN ::Quoted(SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, trim, nLen, nDec, nTargetDB)
 
    CASE "N"
       IF nLen == NIL
@@ -1920,17 +1887,10 @@ METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
       IF Empty(uData)
          RETURN "NULL"
       ENDIF
-      SWITCH ::oSql:nSystemID
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
-         Set(_SET_DATEFORMAT, "yyyy-mm-dd")
-         cRet := hb_ttoc(uData)
-         Set(_SET_DATEFORMAT, cOldSet)
-         RETURN "'" + cRet + "'"
-      ENDSWITCH
+      Set(_SET_DATEFORMAT, "yyyy-mm-dd")
+      cRet := hb_ttoc(uData)
+      Set(_SET_DATEFORMAT, cOldSet)
+      RETURN "'" + cRet + "'"
 
    CASE "N"
       IF nLen != NIL .AND. !lMemo
@@ -3502,8 +3462,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
                      cSep := IIf(lSoft, IIf(j == 1, " >= ", " > "), IIf(cQot == "NULL", " IS ", " LIKE "))
                      IF cQot != "NULL" .AND. !lSoft .AND. !("TO_DATE(" $ cQot)
                         cTemp := SubStr(cQot, 1, Len(cQot) - 1)
-                        SWITCH ::oSql:nSystemID
-                        ENDSWITCH
                         cQot := cTemp + "%'"
                      ENDIF
                   ENDIF
@@ -3757,22 +3715,14 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
    cJoin1 := " " + ::cQualifiedTableName + " A "
    cJoin3 := ::GetSelectList()
 
-   SWITCH ::oSql:nSystemID
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
-      IF ::aInfo[AINFO_REVERSE_INDEX]
-         cTemp := IIf(nDirection != ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
-      ELSE
-         cTemp := IIf(nDirection == ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
-      ENDIF
-      cSql := "SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + cTemp + ::OrderBy(NIL, nDirection == ORD_DIR_FWD) + Eval(::Optmizer_ne, ::nCurrentFetch) +;
-               IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */", "")
-      cSql := ::ParseIndexColInfo(cSQL)
-
-   ENDSWITCH
+   IF ::aInfo[AINFO_REVERSE_INDEX]
+      cTemp := IIf(nDirection != ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
+   ELSE
+      cTemp := IIf(nDirection == ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
+   ENDIF
+   cSql := "SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + cTemp + ::OrderBy(NIL, nDirection == ORD_DIR_FWD) + Eval(::Optmizer_ne, ::nCurrentFetch) +;
+            IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */", "")
+   cSql := ::ParseIndexColInfo(cSQL)
 
   ::oSql:Execute(cSql)
 
@@ -5283,15 +5233,8 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
          cPhysicalVIndexName := NIL
       ENDIF
 
-      SWITCH ::oSql:nSystemID
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
-         cSqlA := " ORDER BY "
-         cSqlD := " ORDER BY "
-      ENDSWITCH
+      cSqlA := " ORDER BY "
+      cSqlD := " ORDER BY "
 
       cXBase := ""
 
@@ -5357,15 +5300,8 @@ METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
 
       cXBase := Left(cXBase, Len(cXBase) - 2)
 
-      SWITCH ::oSql:nSystemID
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
-         cSqlA := Left(cSqlA, Len(cSqlA) - 1) + " "
-         cSqlD := Left(cSqlD, Len(cSqlD) - 1) + " "
-      ENDSWITCH
+      cSqlA := Left(cSqlA, Len(cSqlA) - 1) + " "
+      cSqlD := Left(cSqlD, Len(cSqlD) - 1) + " "
 
       ::aIndex[nLen, ORDER_ASCEND] := cSqlA
       ::aIndex[nLen, ORDER_DESEND] := cSqlD
@@ -7989,14 +7925,7 @@ METHOD SR_WORKAREA:DropConstraint(cTable, cConstraintName, lFKs, cConstrType)
 
       ELSE
 
-         SWITCH ::oSql:nSystemID
-#ifdef __XHARBOUR__
-         DEFAULT
-#else
-         OTHERWISE
-#endif
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
-         ENDSWITCH
+         cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
 
          lOk := ::oSql:Exec(cSql,.T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
          ::oSql:Commit()
