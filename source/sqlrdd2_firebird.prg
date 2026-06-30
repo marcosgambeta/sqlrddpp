@@ -3676,7 +3676,7 @@ METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
    LOCAL cJoin3
    LOCAL cTemp
    //LOCAL aTemp (variable not used)
-   LOCAL cSql := ""
+   LOCAL cSql //:= "" (value not used)
    LOCAL uRecord
    LOCAL nFecth
    LOCAL nBlockPos := 0
