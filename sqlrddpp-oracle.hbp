@@ -1,0 +1,108 @@
+-hblib
+
+-olib/${hb_plat}/${hb_comp}/${hb_name}
+
+-prgflag=-n -w3 -es2 -gc3
+
+-inc
+
+-Iinclude
+#-Iinclude/firebird
+#-Iinclude/mysql
+-Iinclude/oci
+#-Iinclude/pgsql
+
+-Isource
+-Isource/parser
+-Isource/oracle
+
+source/exprobjs.prg
+source/exprparser.prg
+source/exprrelation.prg
+source/exprsimpl.prg
+source/exprtransl.prg
+source/exprudf.prg
+source/sqlconnection.prg
+source/sqlgen1.prg
+#source/sqlnames.prg
+#source/sqlrdd0.prg
+source/sqlrdd0_oracle.prg
+#source/sqlrdd2.prg
+source/sqlrdd2_oracle.prg
+source/utils.prg
+source/utilslang.prg
+
+source/sqlact.c
+source/sqlex1.c
+source/sqlex2.c
+source/sqlex3.c
+source/sqllex.c
+source/sqlrdd1.c
+
+# Misc
+source/misc/tracelog.c
+source/misc/xhbenum.c
+source/misc/xthrow.c
+
+# parser
+#source/parser/sql.y
+source/parser/sqly.c
+
+# XML
+source/xml/txml.prg
+source/xml/srxml.c
+
+# Firebird
+#source/firebird/sr_firebird.prg
+#source/firebird/sr_firebird_bind.c (embedded in sr_firebird.prg via #include)
+#source/firebird/sr_firebird3.prg
+#source/firebird/sr_firebird3_bind.c (embedded in sr_firebird3.prg via #include)
+#source/firebird/sr_firebird4.prg
+#source/firebird/sr_firebird4_bind.c (embedded in sr_firebird4.prg via #include)
+#source/firebird/sr_firebird5.prg
+#source/firebird/sr_firebird5_bind.c (embedded in sr_firebird5.prg via #include)
+
+# MariaDB
+#source/mariadb/sr_mariadb.prg
+#source/mariadb/sr_mariadb_bind.c (embedded in sr_mariadb.prg via #include)
+
+# MySQL
+#source/mysql/sr_mysql.prg
+#source/mysql/sr_mysql_bind.c (embedded in sr_mysql.prg via #include)
+
+# ODBC
+source/odbc/sr_odbc.prg
+#source/odbc/sr_odbc_bind.c (embedded in sr_odbc.prg via #include)
+
+# Oracle
+source/oracle/sr_oracle.prg
+#source/oracle/sr_oracle_bind.c (embedded in sr_oracle.prg via #include)
+source/oracle/sr_oracle2.prg
+#source/oracle/sr_oracle2_bind.c (embedded in sr_oracle2.prg via #include)
+source/oracle/sqlora.c
+
+# PostgreSQL
+#source/postgresql/sr_pgs.prg
+#source/postgresql/sr_pgs_bind.c (embedded in sr_pgs.prg via #include)
+
+{!xhb}-hbx=sqlrddpp-oracle.hbx
+{!xhb}sqlrddpp-oracle.hbx
+
+# if necessary, add manually:
+# hbmk2 sqlrddpp.hbp -cflag=-fpermissive
+# harbour, gcc and c++ mode
+# harbour++
+#{allgcc}-cflag=-fpermissive
+
+{allmsvc}-cflag=/D_CRT_SECURE_NO_WARNINGS
+{allgcc}-cflag=-Wno-missing-field-initializers
+{allgcc}-cflag=-Wno-write-strings
+
+# activate the Harbour internal API
+-cflag=-D_HB_API_INTERNAL_
+
+# SQLRDD++ do not require contrib/xhb
+#xhb.hbc
+
+# disable this line to NOT INSTALL the library in addons
+$hb_pkg_install.hbm
