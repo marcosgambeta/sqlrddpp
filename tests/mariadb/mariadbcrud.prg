@@ -39,26 +39,12 @@ PROCEDURE Main()
 
    n := 1
    DO WHILE n <= PCount()
-      IF HB_PValue(n) == "--server"
-         ++n
-         s_MYSQL_SERVER := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--uid"
-         ++n
-         s_MYSQL_UID := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--pwd"
-         ++n
-         s_MYSQL_PWD := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--dtb"
-         ++n
-         s_MYSQL_DTB := HB_PValue(n)
-         LOOP
-      ENDIF
+      DO CASE
+      CASE HB_PValue(n) == "--server" ; s_MYSQL_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--uid"    ; s_MYSQL_UID := HB_PValue(++n)
+      CASE HB_PValue(n) == "--pwd"    ; s_MYSQL_PWD := HB_PValue(++n)
+      CASE HB_PValue(n) == "--dtb"    ; s_MYSQL_DTB := HB_PValue(++n)
+      ENDCASE
       ++n
    ENDDO
 
