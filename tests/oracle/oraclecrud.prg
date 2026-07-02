@@ -33,26 +33,12 @@ PROCEDURE Main()
 
    n := 1
    DO WHILE n <= PCount()
-      IF HB_PValue(n) == "--server"
-         ++n
-         s_ORACLE_SERVER := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--uid"
-         ++n
-         s_ORACLE_UID := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--pwd"
-         ++n
-         s_ORACLE_PWD := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--dtb"
-         ++n
-         s_ORACLE_DTB := HB_PValue(n)
-         LOOP
-      ENDIF
+      DO CASE
+      CASE HB_PValue(n) == "--server" ; s_ORACLE_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--uid"    ; s_ORACLE_UID := HB_PValue(++n)
+      CASE HB_PValue(n) == "--pwd"    ; s_ORACLE_PWD := HB_PValue(++n)
+      CASE HB_PValue(n) == "--dtb"    ; s_ORACLE_DTB := HB_PValue(++n)
+      ENDCASE
       ++n
    ENDDO
 
