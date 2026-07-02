@@ -424,7 +424,7 @@ ENDCLASS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-// PROCEDURE WA_ENDED CLASS SR_WORKAREA
+// PROCEDURE SR_WORKAREA:WA_ENDED
 //
 //    ? "Cleanup:", "WORKAREA", ::cFileName
 //
@@ -3661,7 +3661,7 @@ RETURN .F.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SetBOF() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:SetBOF()
 
    ::aInfo[AINFO_BOF] := .T.
 
@@ -3669,7 +3669,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD ReadPage(nDirection, lWasDel) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
 
    LOCAL i
    LOCAL cJoin1
@@ -3933,7 +3933,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlRecall() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlRecall()
 
    LOCAL nRecno := ::aInfo[AINFO_RECNO]
 
@@ -3972,7 +3972,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlPack() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlPack()
 
    LOCAL nRet
 
@@ -4008,7 +4008,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlDeleteRec() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlDeleteRec()
 
    LOCAL nRecno := ::aInfo[AINFO_RECNO]
 
@@ -4106,7 +4106,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlFlush() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlFlush()
    ::sqlGoCold()
    IF ::lCanICommitNow()
       ::oSql:Commit()
@@ -4115,7 +4115,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlClose() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlClose()
 
    IF ::oSql != NIL
       ::sqlFlush()      // commit when close WA
@@ -4141,7 +4141,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlCreate(aStruct, cFileName, cAlias, nArea) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
    LOCAL i
    LOCAL nConnection
@@ -4675,7 +4675,7 @@ RETURN Self
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection)
 
    LOCAL i
    LOCAL nConnection
@@ -5032,7 +5032,7 @@ RETURN Self
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD CreateOrclFunctions(cOwner, cFileName) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:CreateOrclFunctions(cOwner, cFileName)
 
    LOCAL lRet
    LOCAL cTblName
@@ -5059,7 +5059,7 @@ RETURN lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlZap() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlZap()
 
    LOCAL nRet
 
@@ -5097,7 +5097,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlOrderListAdd(cBagName, cTag) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
    LOCAL i
    LOCAL c
@@ -5349,7 +5349,7 @@ RETURN ::aInfo[AINFO_INDEXORD] // Len(::aIndex) Controlling order should not be 
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlOrderListClear() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlOrderListClear()
 
    ::aInfo[AINFO_FOUND] := .F.
    ASize(::aIndex, 0)
@@ -5362,7 +5362,7 @@ RETURN .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlOrderListFocus(uOrder, cBag) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlOrderListFocus(uOrder, cBag)
 
    LOCAL nOrder := 0
    LOCAL i
@@ -5441,7 +5441,7 @@ RETURN nOrder
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlOrderDestroy(uOrder, cBag) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlOrderDestroy(uOrder, cBag)
 
    LOCAL nOrder := 0
    //LOCAL i
@@ -5533,7 +5533,7 @@ RETURN nOrder
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlOrderListNum(uOrder) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlOrderListNum(uOrder)
 
    LOCAL nOrder := 0
 
@@ -5566,7 +5566,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable, aTargetColumns, lEnable) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable, aTargetColumns, lEnable)
 
    LOCAL i
    LOCAL c
@@ -6067,13 +6067,13 @@ RETURN ::sqlOrderListAdd(cIndexName, cTag)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlClearScope() CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlClearScope()
 
 RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD sqlSetScope(nType, uValue) CLASS SR_WORKAREA
+METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
    LOCAL uKey
    LOCAL nLenKey
