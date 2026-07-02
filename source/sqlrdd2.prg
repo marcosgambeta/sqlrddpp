@@ -7476,27 +7476,27 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
             lSyntheticIndex := .T.
             lSyntheticVirtual := .F.
          ELSE
-         lSyntheticVirtual := .T.
-         ::LoadRegisteredTags()
+            lSyntheticVirtual := .T.
+            ::LoadRegisteredTags()
 
-         nVI := 1
+            nVI := 1
 
-         DO WHILE nVI <= 999     // Determine an automatic name for SVI (SyntheticVirtualIndex)
-            lOk := .T.
-            FOR i := 1 TO Len(::aIndexMgmnt)
-               IF ::aIndexMgmnt[i, INDEXMAN_VIRTUAL_SYNTH] != NIL .AND. subStr(::aIndexMgmnt[i, INDEXMAN_VIRTUAL_SYNTH], 1, 3) == StrZero(nVI, 3)
-                  nVI++
-                  lOk := .F.
+            DO WHILE nVI <= 999     // Determine an automatic name for SVI (SyntheticVirtualIndex)
+               lOk := .T.
+               FOR i := 1 TO Len(::aIndexMgmnt)
+                  IF ::aIndexMgmnt[i, INDEXMAN_VIRTUAL_SYNTH] != NIL .AND. subStr(::aIndexMgmnt[i, INDEXMAN_VIRTUAL_SYNTH], 1, 3) == StrZero(nVI, 3)
+                     nVI++
+                     lOk := .F.
+                     EXIT
+                  ENDIF
+               NEXT i
+               IF lOK
+                  cPhysicalVIndexName := StrZero(nVI, 3) + SubStr(::cFileName, 1, 25)
                   EXIT
                ENDIF
-            NEXT i
-            IF lOK
-               cPhysicalVIndexName := StrZero(nVI, 3) + SubStr(::cFileName, 1, 25)
-               EXIT
-            ENDIF
-         ENDDO
+            ENDDO
+         ENDIF
       ENDIF
-   ENDIF
    ENDIF
 
    aRet := Eval(SR_GetIndexInfoBlock(), cIndexName)
