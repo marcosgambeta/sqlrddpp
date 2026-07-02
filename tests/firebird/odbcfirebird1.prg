@@ -38,52 +38,21 @@ PROCEDURE Main()
    hb_RandomSeed()
 
    SetMode(25, maxcol() + 1)
-   
+
    CLS
 
    n := 1
    DO WHILE n <= PCount()
-      IF HB_PValue(n) == "--driver"
-         ++n
-         s_ODBC_DRIVER := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--server"
-         ++n
-         s_ODBC_SERVER := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--port"
-         ++n
-         s_ODBC_PORT := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--uid"
-         ++n
-         s_ODBC_UID := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--pwd"
-         ++n
-         s_ODBC_PWD := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--database"
-         ++n
-         s_ODBC_DATABASE := HB_PValue(n)
-         LOOP
-      ENDIF
-      IF HB_PValue(n) == "--client"
-         ++n
-         s_ODBC_CLIENT := HB_PValue(n)
-         LOOP
-      ENDIF
-      ++n
-      IF HB_PValue(n) == "--charset"
-         ++n
-         s_ODBC_CHARSET := HB_PValue(n)
-         LOOP
-      ENDIF
+      DO CASE
+      CASE HB_PValue(n) == "--driver"   ; s_ODBC_DRIVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--server"   ; s_ODBC_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--port"     ; s_ODBC_PORT := HB_PValue(++n)
+      CASE HB_PValue(n) == "--uid"      ; s_ODBC_UID := HB_PValue(++n)
+      CASE HB_PValue(n) == "--pwd"      ; s_ODBC_PWD := HB_PValue(++n)
+      CASE HB_PValue(n) == "--database" ; s_ODBC_DATABASE := HB_PValue(++n)
+      CASE HB_PValue(n) == "--client"   ; s_ODBC_CLIENT := HB_PValue(++n)
+      CASE HB_PValue(n) == "--charset"  ; s_ODBC_CHARSET := HB_PValue(++n)
+      ENDCASE
       ++n
    ENDDO
 
