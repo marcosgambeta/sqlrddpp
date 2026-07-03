@@ -13,6 +13,7 @@ https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLR
 | SQLRDD_RDBMS_ADABAS    |         |                |
 | SQLRDD_RDBMS_AZURE     |         |                |
 | SQLRDD_RDBMS_CACHE     |         |                |
+| SQLRDD_RDBMS_CUBRID    |         |                |
 | SQLRDD_RDBMS_FIREBR    |         |                |
 | SQLRDD_RDBMS_FIREBR3   |         |                |
 | SQLRDD_RDBMS_FIREBR4   |         |                |
@@ -31,6 +32,8 @@ https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLR
 | SQLRDD_RDBMS_SQLANY    |         |                |
 | SQLRDD_RDBMS_SQLBAS    |         |                |
 | SQLRDD_RDBMS_SYBASE    |         |                |
+
+Note: CUBRID is a work in progress (not usable yet).
 
 ## C/C++ Compilers Compatibility
 
@@ -211,6 +214,9 @@ https://www.postgresql.org
 
 Firebird  
 https://firebirdsql.org  
+
+CUBRID  
+https://www.cubrid.org  
 
 Harbour++  
 https://github.com/marcosgambeta/harbourpp-v1  
