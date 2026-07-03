@@ -30,6 +30,7 @@ CC = cl
 
 CFLAGS = \
 	/c \
+	/O2 \
 	/nologo \
 	/I$(INC_DIR) \
 	/I$(INC_DIR)\firebird \
