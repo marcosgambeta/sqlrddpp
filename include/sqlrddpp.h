@@ -55,6 +55,7 @@
 #define SYSTEMID_FIREBR3              20
 #define SYSTEMID_FIREBR4              21
 #define SYSTEMID_FIREBR5              22
+#define SYSTEMID_CUBRID               23
 
 // NOTE: needs to be kept in sync with the sqlrddpp.ch file
 #define SQLRDD_RDBMS_UNKNOW                0
@@ -80,5 +81,6 @@
 #define SQLRDD_RDBMS_FIREBR3              20
 #define SQLRDD_RDBMS_FIREBR4              21
 #define SQLRDD_RDBMS_FIREBR5              22
+#define SQLRDD_RDBMS_CUBRID               23
 
 #endif // SQLRDDPP_H
