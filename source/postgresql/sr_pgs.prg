@@ -377,11 +377,7 @@ METHOD SR_PGS:Commit(lNoLog)
    CASE 3 // PQTRANS_INERROR
       ::nRetCode := ::Exec("ROLLBACK;BEGIN", .F.)
       EXIT
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       // PQTRANS_ACTIVE or PQTRANS_UNKNOWN: do not interfere
       ::nRetCode := SQL_SUCCESS
    ENDSWITCH

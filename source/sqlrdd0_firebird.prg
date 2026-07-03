@@ -527,11 +527,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       oConnect:lQueryOnly := .T.
 #endif
       EXIT
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + Str(nType))
 #ifndef __XHARBOUR__
       hb_mutexunlock(s_mutex)

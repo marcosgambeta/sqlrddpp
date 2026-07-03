@@ -199,11 +199,7 @@ FUNCTION SR_GetSyntheticIndexMinimun()
    CASE SQLRDD_RDBMS_POSTGR
    CASE SQLRDD_RDBMS_ORACLE
       EXIT
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       nRet := 10
    ENDSWITCH
 
@@ -537,11 +533,7 @@ FUNCTION SR_AddConnection(nType, cDSN, cUser, cPassword, cOwner, lCounter, lAuto
       oConnect:lQueryOnly := .T.
 #endif
       EXIT
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       SR_MsgLogFile("Invalid connection type in SR_AddConnection() :" + Str(nType))
 #ifndef __XHARBOUR__
       hb_mutexunlock(s_mutex)
@@ -982,11 +974,7 @@ STATIC FUNCTION SR_SetEnvSQLRDD(oConnect)
          oConnect:Exec("CREATE TABLE " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS (LOCK_ CHAR(250) NOT NULL UNIQUE, WSID_ CHAR(250) NOT NULL, SPID_ DECIMAL(8), LOGIN_TIME_ TIMESTAMP )", .F.)
          EXIT
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          oConnect:Exec("CREATE TABLE " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS (LOCK_ CHAR(250) NOT NULL UNIQUE, WSID_ CHAR(250) NOT NULL, SPID_ CHAR(10), LOGIN_TIME_ CHAR(50))", .F.)
       ENDSWITCH
@@ -1790,11 +1778,7 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
          ENDIF
          oCnn:Exec("DROP INDEX " + cPhisicalName + IIf(oCnn:lComments, " /* DROP Index */", ""), .F.)
          EXIT
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          oCnn:Exec("DROP INDEX " + cPhisicalName + IIf(oCnn:lComments, " /* DROP Index */", ""), .F.)
       ENDSWITCH
 

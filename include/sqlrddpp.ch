@@ -61,4 +61,10 @@
 #define SQLRDD_RDBMS_FIREBR4              21
 #define SQLRDD_RDBMS_FIREBR5              22
 
+#ifdef __XHARBOUR__
+#define SR_OTHERWISE DEFAULT
+#else
+#define SR_OTHERWISE OTHERWISE
+#endif
+
 #endif // SQLRDDPP_CH

@@ -171,11 +171,7 @@ METHOD SR_ODBC:DriverCatTables()
             CASE ARRAY_BLOCK4
                nAllocated := ARRAY_BLOCK5
                EXIT
-#ifdef __XHARBOUR__
-            DEFAULT
-#else
-            OTHERWISE
-#endif
+            SR_OTHERWISE
                nAllocated += ARRAY_BLOCK5
             ENDSWITCH
 

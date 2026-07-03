@@ -679,11 +679,7 @@ METHOD SR_WORKAREA:GetSyntheticVirtualExpr(aExpr, cAlias)
                "0" + IIf(::aFields[nPos, 4] > 0, "." + replicate("9", ::aFields[nPos, 4]), "") + "'),2," + ;
                Str(::aFields[nPos, 3]) + ")"
             EXIT
-#ifdef __XHARBOUR__
-         DEFAULT
-#else
-         OTHERWISE
-#endif
+         SR_OTHERWISE
             ::RunTimeErr("31", SR_Msg(31) + cColName + "(2) Table : " + ::cFileName)
          ENDSWITCH
       ENDIF
@@ -1633,11 +1629,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
       ENDIF
       EXIT
 
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       ::lNoData := .T.
       DEFAULT ::cLastComm TO ::oSql:cLastComm
       ::RunTimeErr("999", "[Fetch Failure/First][" + AllTrim(Str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
@@ -1871,11 +1863,7 @@ METHOD SR_WORKAREA:Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
    CASE "L"
       RETURN IIf(uData, "1", "0")
 
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
 
       IF HB_IsArray(uData) .AND. SR_SetSerializeArrayAsJson()
          cRet := hb_jsonencode(uData,.F.)
@@ -1971,11 +1959,7 @@ METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
       cRet := SR_STRTOHEX(HB_Serialize(uData))
       RETURN ::Quoted(SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, .F., , , nTargetDB)
 
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       IF HB_IsArray(uData) .AND. SR_SetSerializeArrayAsJson()
          cRet := hb_jsonencode(uData, .F.)
          RETURN ::Quoted(cRet, .F., , , nTargetDB)
@@ -2329,11 +2313,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                CASE SQL_VARBINARY
                   cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                   EXIT
-#ifdef __XHARBOUR__
-               DEFAULT
-#else
-               OTHERWISE
-#endif
+               SR_OTHERWISE
                   cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                ENDSWITCH
                lFirst := .F.
@@ -2671,11 +2651,7 @@ METHOD SR_WORKAREA:Refresh(lGoCold)
             CASE ARRAY_BLOCK4
                nAllocated := ARRAY_BLOCK5
                EXIT
-#ifdef __XHARBOUR__
-            DEFAULT
-#else
-            OTHERWISE
-#endif
+            SR_OTHERWISE
                nAllocated += ARRAY_BLOCK5
             ENDSWITCH
 
@@ -3911,11 +3887,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
          ENDIF
          EXIT  // Leave this exist HERE !!!!
       ENDIF
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       IF ::aInfo[AINFO_REVERSE_INDEX]
          cTemp := IIf(nDirection != ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
       ELSE
@@ -4118,11 +4090,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
       ENDIF
 
       EXIT
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       ::lNoData := .T.
       DEFAULT ::cLastComm TO ::oSql:cLastComm
       ::RunTimeErr("999", "[Fetch Failure/First][" + AllTrim(Str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
@@ -4629,11 +4597,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          EXIT
 
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
 
       ENDSWITCH
@@ -5005,11 +4969,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
             CASE ARRAY_BLOCK4
                nAllocated := ARRAY_BLOCK5
                EXIT
-#ifdef __XHARBOUR__
-            DEFAULT
-#else
-            OTHERWISE
-#endif
+            SR_OTHERWISE
                nAllocated += ARRAY_BLOCK5
             ENDSWITCH
 
@@ -6248,11 +6208,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
          ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] := uKey
          ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
          EXIT
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          RETURN -1         // Error
       ENDSWITCH
 
@@ -7919,11 +7875,7 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
       CASE "N"
          uVal := "0"
          EXIT
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          lOk := .F.
 //         ::RunTimeErr("", "Cannot change NULL constraint to datatype: " + ::aFields[nCol, 2])
       ENDSWITCH

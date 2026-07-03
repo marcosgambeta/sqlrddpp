@@ -551,11 +551,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN "'" + RTrim(StrTran(uData, "'", "'" + "'")) + "'"
       CASE SQLRDD_RDBMS_POSTGR
          RETURN "E'" + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
       ENDSWITCH
 
@@ -579,11 +575,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN "'" + Transform(DToS(uData), "@R 9999/99/99") + "'"
       CASE SQLRDD_RDBMS_CACHE
          RETURN "{d '" + Transform(DToS(IIf(Year(uData) < 1850, SToD("18500101"), uData)), "@R 9999-99-99") + "'}"
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          RETURN "'" + DToS(uData) + "'"
       ENDSWITCH
 
@@ -599,11 +591,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN IIf(uData, "true", "false")
       CASE SQLRDD_RDBMS_INFORM
          RETURN IIf(uData, "'t'", "'f'")
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          RETURN IIf(uData, "1", "0")
       ENDSWITCH
 
@@ -616,22 +604,14 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
          RETURN "'" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
       CASE SQLRDD_RDBMS_ORACLE
          RETURN " TIMESTAMP '" + Transform(hb_ttos(uData), "@R 9999-99-99 99:99:99") + "'"
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          Set(_SET_DATEFORMAT, "yyyy-mm-dd")
          cRet := hb_ttoc(uData)
          Set(_SET_DATEFORMAT, cOldSet)
          RETURN "'" + cRet + "'"
       ENDSWITCH
 
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       cRet := SR_STRTOHEX(HB_Serialize(uData))
       RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID)
 
@@ -862,11 +842,7 @@ FUNCTION SR_Val2CharQ(uData)
       RETURN "{Object}"
    CASE "B"
       RETURN "{||Block}"
-#ifdef __XHARBOUR__
-   DEFAULT
-#else
-   OTHERWISE
-#endif
+   SR_OTHERWISE
       RETURN "NIL"
    ENDSWITCH
 
@@ -909,11 +885,7 @@ FUNCTION SR_BlankVar(cType, nLen, nDec)
          CASE 6
             nVal := 0.000000
             EXIT
-#ifdef __XHARBOUR__
-         DEFAULT
-#else
-         OTHERWISE
-#endif
+         SR_OTHERWISE
             nVal := 0.00
          ENDSWITCH
          RETURN nVal
@@ -1684,11 +1656,7 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       CASE "B"
          xMessage := "{||...}"
          EXIT
-#ifdef __XHARBOUR__
-      DEFAULT
-#else
-      OTHERWISE
-#endif
+      SR_OTHERWISE
          xMessage := "NIL"
       ENDSWITCH
 
@@ -1940,11 +1908,7 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             nChoice := 0
             lWhile := .F.
             EXIT
-#ifdef __XHARBOUR__
-         DEFAULT
-#else
-         OTHERWISE
-#endif
+         SR_OTHERWISE
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := AScan(aHotkey, {|x|x == Upper(Chr(nKey))})
                lWhile := .F.
@@ -2052,11 +2016,7 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
                nDelay := 0
             ENDIF
             EXIT
-#ifdef __XHARBOUR__
-         DEFAULT
-#else
-         OTHERWISE
-#endif
+         SR_OTHERWISE
             IF Upper(Chr(nKey)) $ aHotkey
                nChoice := AScan(aHotkey, {|x|x == Upper(Chr(nKey))})
                lWhile := .F.
@@ -2113,11 +2073,7 @@ STATIC FUNCTION COLORLETTER(cColor)
   CASE 13 ; cColor := "RB+" ; EXIT
   CASE 14 ; cColor := "GR+" ; EXIT
   CASE 15 ; cColor := "W+"  ; EXIT
-#ifdef __XHARBOUR__
-  DEFAULT
-#else
-  OTHERWISE
-#endif
+  SR_OTHERWISE
      cColor := "W+" // 15 is the max.
   ENDSWITCH
 
