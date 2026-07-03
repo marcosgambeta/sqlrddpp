@@ -60,7 +60,8 @@ PROCEDURE Main()
    nConnection := sr_AddConnection(CONNECT_MARIADB, "MARIADB=" + s_SERVER + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
 
    IF nConnection < 0
-      alert("Connection error. See sqlerror.log for details.")
+      ? "Connection error. See sqlerror.log for details."
+      WAIT
       QUIT
    ENDIF
 

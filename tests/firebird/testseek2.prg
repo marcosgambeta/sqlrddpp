@@ -87,9 +87,10 @@ PROCEDURE Main()
 
    ? "Checking connection"
    IF nConnection < 0
-      alert("Connection error. See sqlerror.log for details.")
+      ? "Connection error. See sqlerror.log for details."
       ? "Uninstalling User DSN"
       SR_UninstallUserDSN("Firebird ODBC Driver", cDSN)
+      WAIT
       QUIT
    ENDIF
 

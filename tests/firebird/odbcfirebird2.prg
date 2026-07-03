@@ -72,7 +72,8 @@ PROCEDURE Main()
       "charset="  + s_ODBC_CHARSET  + ";")
 
    IF nConnection < 0
-      alert("Connection error. See sqlerror.log for details.")
+      ? "Connection error. See sqlerror.log for details."
+      WAIT
       QUIT
    ENDIF
 
