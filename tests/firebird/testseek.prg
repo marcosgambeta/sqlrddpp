@@ -9,16 +9,20 @@
 
 #include "sqlrdd.ch"
 
-// Make a copy of this file and change the values below (if necessary).
+// Make a copy of this file and change the values below (if necessary) or pass the parameters via command line:
+// testseek --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> --tablename <tablename> --newtable --droptable
 // NOTE: the database will be created automatically.
 
-STATIC s_SERVER := ""
-STATIC s_UID    := "SYSDBA"
-STATIC s_PWD    := "masterkey"
-STATIC s_DTB    := "testseek.fdb"
+STATIC s_SERVER     := ""
+STATIC s_PORT       := "3050"
+STATIC s_UID        := "SYSDBA"
+STATIC s_PWD        := "masterkey"
+STATIC s_DTB        := "testseek.fdb"
+STATIC s_TABLE_NAME := "testseek"
+STATIC s_NEW_TABLE  := .F.
+STATIC s_DROP_TABLE := .F.
 
 #define RDD_NAME "SQLRDD"
-#define TABLE_NAME "testseek"
 #define NUM_REC 1000
 #define NUM_TIMES 2
 
@@ -46,10 +50,14 @@ PROCEDURE Main()
    n := 1
    DO WHILE n <= PCount()
       DO CASE
-      CASE HB_PValue(n) == "--server" ; s_SERVER := HB_PValue(++n)
-      CASE HB_PValue(n) == "--uid"    ; s_UID := HB_PValue(++n)
-      CASE HB_PValue(n) == "--pwd"    ; s_PWD := HB_PValue(++n)
-      CASE HB_PValue(n) == "--dtb"    ; s_DTB := HB_PValue(++n)
+      CASE HB_PValue(n) == "--server"    ; s_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--port"      ; s_PORT := HB_PValue(++n)
+      CASE HB_PValue(n) == "--uid"       ; s_UID := HB_PValue(++n)
+      CASE HB_PValue(n) == "--pwd"       ; s_PWD := HB_PValue(++n)
+      CASE HB_PValue(n) == "--dtb"       ; s_DTB := HB_PValue(++n)
+      CASE HB_PValue(n) == "--tablename" ; s_TABLE_NAME := HB_PValue(++n)
+      CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
+      CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
       ENDCASE
       ++n
    ENDDO
@@ -70,20 +78,20 @@ PROCEDURE Main()
 
    sr_StartLog(nConnection)
 
-   IF sr_ExistTable(TABLE_NAME)
-      sr_DropTable(TABLE_NAME)
+   IF s_NEW_TABLE .AND. sr_ExistTable(s_TABLE_NAME)
+      sr_DropTable(s_TABLE_NAME)
    ENDIF
 
    // TODO: add more data types
-   IF !sr_ExistTable(TABLE_NAME)
+   IF !sr_ExistTable(s_TABLE_NAME)
       ? "Creating table"
-      dbCreate(TABLE_NAME, {{"ID        ", "N", 10, 0}, ;
-                            {"NAME      ", "C", 10, 0}, ;
-                            {"DATE      ", "D",  8, 0}}, RDD_NAME)
+      dbCreate(s_TABLE_NAME, {{"ID        ", "N", 10, 0}, ;
+                              {"NAME      ", "C", 10, 0}, ;
+                              {"DATE      ", "D",  8, 0}}, RDD_NAME)
    ENDIF
 
    ? "Opening table"
-   USE (TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
+   USE (s_TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
    ? "bof()", bof()
    ? "eof()", eof()
    ? "reccount()", reccount()
@@ -284,8 +292,10 @@ PROCEDURE Main()
    ? "Closing table"
    CLOSE DATABASE
 
-   ? "Removing table"
-   sr_DropTable(TABLE_NAME)
+   IF s_DROP_TABLE .AND. sr_ExistTable(s_TABLE_NAME)
+      ? "Removing table"
+      sr_DropTable(s_TABLE_NAME)
+   ENDIF
 
    sr_StopLog(nConnection)
 

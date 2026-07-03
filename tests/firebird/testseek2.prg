@@ -9,23 +9,25 @@
 
 #include "sqlrdd.ch"
 
-// Make a copy of this file and change the values below (if necessary) or
-// pass the parameters via command line:
-// testseek2 --dsn <dsn> --server <server> --uid <user> --pwd <password> --dtb <database>
+// Make a copy of this file and change the values below (if necessary) or pass the parameters via command line:
+// testseek2 --dsn <dsn> --server <server> --uid <user> --pwd <password> --dtb <database> --tablename <tablename> --newtable --droptable
 // Example:
-// testseek2 --dsn firebird-testseek2 --server localhost --uid SYSDBA --pwd masterkey --dtb C:\path\testseek2.fdb
+// testseek2 --dsn firebird-testseek2 --server localhost --uid SYSDBA --pwd masterkey --dtb C:\path\testseek2.fdb --tablename testseek2 --newtable --droptable
 // NOTES:
 // The database will be created automatically, if not exists.
 // A user DSN will be added automatically and removed at the end of the test.
 
-STATIC s_DSN    := "firebird-testseek2"
-STATIC s_SERVER := "localhost"
-STATIC s_UID    := "SYSDBA"
-STATIC s_PWD    := "masterkey"
-STATIC s_DTB    := "testseek2.fdb"
+STATIC s_DSN        := "firebird-testseek2"
+STATIC s_SERVER     := "localhost"
+STATIC s_PORT       := "3050"
+STATIC s_UID        := "SYSDBA"
+STATIC s_PWD        := "masterkey"
+STATIC s_DTB        := "testseek2.fdb"
+STATIC s_TABLE_NAME := "testseek2"
+STATIC s_NEW_TABLE  := .F.
+STATIC s_DROP_TABLE := .F.
 
 #define RDD_NAME "SQLRDD"
-#define TABLE_NAME "testseek2"
 #define NUM_REC 1000
 #define NUM_TIMES 2
 
@@ -55,11 +57,15 @@ PROCEDURE Main()
    n := 1
    DO WHILE n <= PCount()
       DO CASE
-      CASE HB_PValue(n) == "--dsn"    ; s_DSN := HB_PValue(++n)
-      CASE HB_PValue(n) == "--server" ; s_SERVER := HB_PValue(++n)
-      CASE HB_PValue(n) == "--uid"    ; s_UID := HB_PValue(++n)
-      CASE HB_PValue(n) == "--pwd"    ; s_PWD := HB_PValue(++n)
-      CASE HB_PValue(n) == "--dtb"    ; s_DTB := HB_PValue(++n)
+      CASE HB_PValue(n) == "--dsn"       ; s_DSN := HB_PValue(++n)
+      CASE HB_PValue(n) == "--server"    ; s_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--port"      ; s_PORT := HB_PValue(++n)
+      CASE HB_PValue(n) == "--uid"       ; s_UID := HB_PValue(++n)
+      CASE HB_PValue(n) == "--pwd"       ; s_PWD := HB_PValue(++n)
+      CASE HB_PValue(n) == "--dtb"       ; s_DTB := HB_PValue(++n)
+      CASE HB_PValue(n) == "--tablename" ; s_TABLE_NAME := HB_PValue(++n)
+      CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
+      CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
       ENDCASE
       ++n
    ENDDO
@@ -97,22 +103,24 @@ PROCEDURE Main()
    ? "Starting log"
    sr_StartLog(nConnection)
 
-   ? "Checking if table exist"
-   IF sr_ExistTable(TABLE_NAME)
-      ? "Deleting table"
-      sr_DropTable(TABLE_NAME)
+   IF s_NEW_TABLE
+      ? "Checking if table exist"
+      IF sr_ExistTable(s_TABLE_NAME)
+         ? "Deleting table"
+         sr_DropTable(s_TABLE_NAME)
+      ENDIF
    ENDIF
 
    // TODO: add more data types
-   IF !sr_ExistTable(TABLE_NAME)
+   IF !sr_ExistTable(s_TABLE_NAME)
       ? "Creating table"
-      dbCreate(TABLE_NAME, {{"ID        ", "N", 10, 0}, ;
-                            {"NAME      ", "C", 10, 0}, ;
-                            {"DATE      ", "D",  8, 0}}, RDD_NAME)
+      dbCreate(s_TABLE_NAME, {{"ID        ", "N", 10, 0}, ;
+                              {"NAME      ", "C", 10, 0}, ;
+                              {"DATE      ", "D",  8, 0}}, RDD_NAME)
    ENDIF
 
    ? "Opening table"
-   USE (TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
+   USE (s_TABLE_NAME) EXCLUSIVE VIA (RDD_NAME)
    ? "bof()", bof()
    ? "eof()", eof()
    ? "reccount()", reccount()
@@ -313,8 +321,10 @@ PROCEDURE Main()
    ? "Closing table"
    CLOSE DATABASE
 
-   ? "Removing table"
-   sr_DropTable(TABLE_NAME)
+   IF s_DROP_TABLE .AND. sr_ExistTable(s_TABLE_NAME)
+      ? "Removing table"
+      sr_DropTable(s_TABLE_NAME)
+   ENDIF
 
    ? "Stopping log"
    sr_StopLog(nConnection)
