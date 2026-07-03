@@ -815,6 +815,8 @@ METHOD SR_CONNECTION:DetectTargetDb()
    CASE "PERVASIVE.SQL" $ cTargetDb
       ::nSystemID := SQLRDD_RDBMS_PERVASIVE
       ::lComments := .F.
+   CASE "CUBRID" $ cTargetDB
+      ::nSystemID := SQLRDD_RDBMS_CUBRID
    OTHERWISE
       IF !::lQueryOnly
          ::RuntimeErr(, SR_Msg(22) + cTargetDB + " " + ::cSystemVers)
