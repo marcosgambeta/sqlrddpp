@@ -59,11 +59,6 @@
 #xtranslate HB_ADEL([<x,...>]) => ADEL(<x>)
 #endif
 
-// for xHarbour compatibility
-#ifndef HB_SYMBOL_UNUSED
-#define HB_SYMBOL_UNUSED(symbol) (symbol := (symbol))
-#endif
-
 #include <common.ch>
 #include <hbclass.ch>
 #include <error.ch>

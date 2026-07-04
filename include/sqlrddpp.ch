@@ -63,10 +63,18 @@
 #define SQLRDD_RDBMS_FIREBR5              22
 #define SQLRDD_RDBMS_CUBRID               23
 
+// for xHarbour compatibility
+
 #ifdef __XHARBOUR__
 #define SR_OTHERWISE DEFAULT
 #else
 #define SR_OTHERWISE OTHERWISE
 #endif
+
+#ifndef HB_SYMBOL_UNUSED
+#define HB_SYMBOL_UNUSED(symbol) (symbol := (symbol))
+#endif
+
+//
 
 #endif // SQLRDDPP_CH

@@ -12,11 +12,6 @@ REQUEST ADS
 #xtranslate HB_HEVAL([<x,...>]) => heval(<x>)
 #endif
 
-// for xHarbour compatibility
-#ifndef HB_SYMBOL_UNUSED
-#define HB_SYMBOL_UNUSED(symbol) (symbol := (symbol))
-#endif
-
 STATIC s_hHashData := hb_hash()
 
 STATIC s_TRACE_STRUCT := { ;
