@@ -109,7 +109,8 @@ char *SR_QualifyName(char *szName, SQLEXAREAP thiswa)
     case SQLRDD_RDBMS_MYSQL:
     case SQLRDD_RDBMS_MARIADB:
     case SQLRDD_RDBMS_OTERRO:
-    case SQLRDD_RDBMS_INFORM: {
+    case SQLRDD_RDBMS_INFORM:
+    case SQLRDD_RDBMS_CUBRID: {
       szName[i] = (char)tolower((HB_BYTE)szName[i]);
       break; // TODO: unnecessary break
     }
