@@ -1281,7 +1281,7 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
         hb_itemPutNLLen(pItem, val, (int)lLen);
       }
       if ((int)iLen == SQL_NULL_DATA) {
-        if (cType[0] == 'L' && ulSystemID == SQLRDD_RDBMS_ORACLE) {
+        if (cType[0] == 'L' && (ulSystemID == SQLRDD_RDBMS_ORACLE || ulSystemID == SQLRDD_RDBMS_CUBRID)) {
           hb_itemPutL(pItem, HB_FALSE);
         } else {
           hb_itemPutNLLen(pItem, 0, (int)lLen);
@@ -1293,7 +1293,7 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
         hb_itemPutNIntLen(pItem, val, (int)lLen);
       }
       if ((int)iLen == SQL_NULL_DATA) {
-        if (cType[0] == 'L' && ulSystemID == SQLRDD_RDBMS_ORACLE) {
+        if (cType[0] == 'L' && (ulSystemID == SQLRDD_RDBMS_ORACLE || ulSystemID == SQLRDD_RDBMS_CUBRID)) {
           hb_itemPutL(pItem, HB_FALSE);
         } else {
           hb_itemPutNIntLen(pItem, 0, (int)lLen);
