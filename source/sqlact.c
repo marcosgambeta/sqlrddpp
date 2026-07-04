@@ -932,7 +932,8 @@ HB_FUNC(SR_DBQUALIFY)
     }
     case SQLRDD_RDBMS_MYSQL:
     case SQLRDD_RDBMS_OTERRO:
-    case SQLRDD_RDBMS_MARIADB: {
+    case SQLRDD_RDBMS_MARIADB:
+    case SQLRDD_RDBMS_CUBRID: {
       szOut[0] = '`';
       for (i = 0; i < ulLen; i++) {
         szOut[i + 1] = (char)tolower((HB_BYTE)pszBuffer[i]);
