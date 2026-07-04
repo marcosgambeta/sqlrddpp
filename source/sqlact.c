@@ -578,7 +578,8 @@ HB_FUNC(SR_ESCAPESTRING)
       case SQLRDD_RDBMS_ADABAS:
       case SQLRDD_RDBMS_INFORM:
       case SQLRDD_RDBMS_OTERRO:
-      case SQLRDD_RDBMS_PERVASIVE: {
+      case SQLRDD_RDBMS_PERVASIVE:
+      case SQLRDD_RDBMS_CUBRID: {
         iSize = escape_single(ToBuffer, FromBuffer, iSize);
         break;
       }
@@ -632,7 +633,8 @@ char *SR_QuoteTrimEscapeString(const char *FromBuffer, HB_SIZE iSize, int idatab
   case SQLRDD_RDBMS_ADABAS:
   case SQLRDD_RDBMS_INFORM:
   case SQLRDD_RDBMS_OTERRO:
-  case SQLRDD_RDBMS_PERVASIVE: {
+  case SQLRDD_RDBMS_PERVASIVE:
+  case SQLRDD_RDBMS_CUBRID: {
     iSize = escape_single(ToBuffer, FromBuffer, iSize);
     break;
   }
