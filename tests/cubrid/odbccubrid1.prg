@@ -116,8 +116,8 @@ PROCEDURE Main()
          ? "Adding record", n
          APPEND BLANK
          REPLACE ID      WITH n
-         //REPLACE FIRST   WITH "FIRST" + hb_ntos(n) // TODO: not working
-         //REPLACE LAST    WITH "LAST" + hb_ntos(n) // TODO: not working
+         REPLACE FIRST   WITH "FIRST" + hb_ntos(n)
+         REPLACE LAST    WITH "LAST" + hb_ntos(n)
          REPLACE AGE     WITH hb_RandomInt(18, 90) // n + 18
          REPLACE DATE    WITH date() - n
          REPLACE MARRIED WITH iif(n / 2 == int(n / 2), .T., .F.) // TODO: browse dont show the field
@@ -137,7 +137,7 @@ PROCEDURE Main()
    CLS
 
    browse()
-   
+
    CLS
 
    ? "Closing database"
