@@ -233,7 +233,8 @@ void SR_setResultSetLimit(SQLEXAREAP thiswa, int iRows)
   }
   case SQLRDD_RDBMS_POSTGR:
   case SQLRDD_RDBMS_MYSQL:
-  case SQLRDD_RDBMS_MARIADB: {
+  case SQLRDD_RDBMS_MARIADB:
+  case SQLRDD_RDBMS_CUBRID: {
     fmt1 = "";
     fmt2 = "LIMIT %i";
     break;
