@@ -2994,6 +2994,18 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   ::dNextDt := NIL
                   RETURN .F.
                ENDIF
+               EXIT
+            CASE SQLRDD_RDBMS_CUBRID
+               ::oSql:FreeStatement()
+               aRet := {}
+               ::oSql:Exec("SELECT LAST_INSERT_ID()", .F., .T., @aRet)
+               IF Len(aRet) > 0
+                  aBuffer[::hnRecno] := aRet[1, 1]
+               ELSE
+                  ::RunTimeErr("11", SR_Msg(11) + ::cFileName)
+                  ::dNextDt := NIL
+                  RETURN .F.
+               ENDIF
             ENDSWITCH
          ENDIF
 
@@ -5415,7 +5427,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
       ::oSql:Commit()
    ENDIF
 
-   // Create the new table 
+   // Create the new table
 
    aPK := {}
    aCreate := {}
@@ -5578,6 +5590,13 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
                cSql += "CHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
             ENDIF
             EXIT
+         CASE SQLRDD_RDBMS_CUBRID
+            IF aCreate[i, FIELD_LEN] > 255
+               cSql += "VARCHAR(" + AllTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+            ELSE
+               cSql += "CHAR(" + AllTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+            ENDIF
+            EXIT
          SR_OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
@@ -5618,6 +5637,9 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             EXIT
          CASE SQLRDD_RDBMS_SQLANY
             cSql += "TIMESTAMP"
+            EXIT
+         CASE SQLRDD_RDBMS_CUBRID
+            cSql += "DATE"
             EXIT
          SR_OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
@@ -5661,6 +5683,9 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             EXIT
          CASE SQLRDD_RDBMS_INGRES
             cSql += "tinyint"
+            EXIT
+         CASE SQLRDD_RDBMS_CUBRID
+            cSql += "SMALLINT"
             EXIT
          SR_OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
@@ -5722,6 +5747,10 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          CASE SQLRDD_RDBMS_FIREBR4
          CASE SQLRDD_RDBMS_FIREBR5
             cSql += "BLOB SUB_TYPE 1" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")
+            EXIT
+         CASE SQLRDD_RDBMS_CUBRID
+            cSql += "CLOB"
+            cLobs += IIf(Empty(cLobs), "", ",") + SR_DBQUALIFY(cField, ::oSql:nSystemID)
             EXIT
          SR_OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
@@ -5861,6 +5890,13 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          CASE SQLRDD_RDBMS_ACCESS
             cSql += "NUMERIC"
             EXIT
+         CASE SQLRDD_RDBMS_CUBRID
+            IF cField == ::cRecnoName
+               cSql += "BIGINT NOT NULL UNIQUE AUTO_INCREMENT "
+            ELSE
+               cSql += "NUMERIC(" + AllTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + AllTrim(Str(aCreate[i, FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+            ENDIF
+            EXIT
          SR_OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
@@ -5895,6 +5931,9 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             EXIT
          CASE SQLRDD_RDBMS_MSSQL7 // .AND. ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
             cSql += "DATETIME NULL "
+            EXIT
+         CASE SQLRDD_RDBMS_CUBRID
+            cSql += "DATETIME "
             EXIT
          SR_OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
