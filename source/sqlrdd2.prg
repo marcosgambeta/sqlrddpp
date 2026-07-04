@@ -6578,6 +6578,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
       CASE SQLRDD_RDBMS_POSTGR
       CASE SQLRDD_RDBMS_MYSQL
       CASE SQLRDD_RDBMS_MARIADB
+      CASE SQLRDD_RDBMS_CUBRID
          ::Optmizer_1e := " LIMIT 1"
          ::Optmizer_ne := {|x|" LIMIT " + Str(x + 2, 5)}
          EXIT
