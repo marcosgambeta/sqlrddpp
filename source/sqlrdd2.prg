@@ -2220,6 +2220,8 @@ METHOD SR_WORKAREA:Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
          RETURN IIf(uData, "true", "false")
       CASE SQLRDD_RDBMS_INFORM
          RETURN IIf(uData, "'t'", "'f'")
+      CASE SQLRDD_RDBMS_CUBRID
+         RETURN IIf(uData, "B'1'", "B'0'")
       SR_OTHERWISE
          RETURN IIf(uData, "1", "0")
       ENDSWITCH
@@ -2364,6 +2366,8 @@ METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
          RETURN IIf(uData, "true", "false")
       ELSEIF nTargetDB == SQLRDD_RDBMS_INFORM
          RETURN IIf(uData, "'t'", "'f'")
+      ELSEIF nTargetDB == SQLRDD_RDBMS_CUBRID
+         RETURN IIf(uData, "B'1'", "B'0'")
       ELSEIF !lMemo
          RETURN IIf(uData, "1", "0")
       ENDIF
@@ -2570,6 +2574,8 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 #endif
                ELSEIF ::aFields[nthisField, FIELD_DOMAIN] == SQL_VARBINARY .AND. ::osql:nsystemID == SQLRDD_RDBMS_MSSQL7
                   cVal := '0x'+hb_StrtoHex(aBuffer[nThisField])
+               ELSEIF ::aFields[nthisField, FIELD_DOMAIN] == SQL_BINARY .AND. ::osql:nsystemID == SQLRDD_RDBMS_CUBRID
+                  cVal := iif(aBuffer[nThisField], "B'1'", "B'0'")
                ELSE
                   LOOP
                ENDIF
@@ -2765,6 +2771,13 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                CASE SQL_VARBINARY
                   IF ::osql:nsystemID == SQLRDD_RDBMS_MSSQL7
                      cVal += IIf(!lFirst, ", ", "( ") + "0x" + hb_StrtoHex(cmemo)
+                  ELSE
+                     cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
+                  ENDIF
+                  EXIT
+               CASE SQL_BINARY
+                  IF ::osql:nsystemID == SQLRDD_RDBMS_CUBRID
+                     cVal += IIf(!lFirst, ", ", "( ") + iif(cmemo, "B'1'", "B'0'")
                   ELSE
                      cVal += IIf(!lFirst, ", ", "( ") + ::QuotedNull(cMemo, .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo)
                   ENDIF
@@ -5680,7 +5693,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             cSql += "tinyint"
             EXIT
          CASE SQLRDD_RDBMS_CUBRID
-            cSql += "SMALLINT"
+            cSql += "BIT"
             EXIT
          SR_OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
