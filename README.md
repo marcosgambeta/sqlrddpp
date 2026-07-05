@@ -7,31 +7,31 @@ https://github.com/xHarbour-org/xharbour/tree/main/xHarbourBuilder/xHarbour-SQLR
 
 ## Supported database systems
 
-| RDBMS                  | Version | Status         |
-| -------------------    | ------- | -------------- |
-| SQLRDD_RDBMS_ACCESS    |         |                |
-| SQLRDD_RDBMS_ADABAS    |         |                |
-| SQLRDD_RDBMS_AZURE     |         |                |
-| SQLRDD_RDBMS_CACHE     |         |                |
-| SQLRDD_RDBMS_CUBRID    |         |                |
-| SQLRDD_RDBMS_FIREBR    |         |                |
-| SQLRDD_RDBMS_FIREBR3   |         |                |
-| SQLRDD_RDBMS_FIREBR4   |         |                |
-| SQLRDD_RDBMS_FIREBR5   |         |                |
-| SQLRDD_RDBMS_IBMDB2    |         |                |
-| SQLRDD_RDBMS_INFORM    |         |                |
-| SQLRDD_RDBMS_INGRES    |         |                |
-| SQLRDD_RDBMS_MARIADB   |         |                |
-| SQLRDD_RDBMS_MSSQL6    |         |                |
-| SQLRDD_RDBMS_MSSQL7    |         |                |
-| SQLRDD_RDBMS_MYSQL     |         |                |
-| SQLRDD_RDBMS_ORACLE    |         |                |
-| SQLRDD_RDBMS_OTERRO    |         |                |
-| SQLRDD_RDBMS_PERVASIVE |         |                |
-| SQLRDD_RDBMS_POSTGR    |         |                |
-| SQLRDD_RDBMS_SQLANY    |         |                |
-| SQLRDD_RDBMS_SQLBAS    |         |                |
-| SQLRDD_RDBMS_SYBASE    |         |                |
+| RDBMS                  | Version | Status                |
+| -------------------    | ------- | --------------------- |
+| SQLRDD_RDBMS_ACCESS    |         |                       |
+| SQLRDD_RDBMS_ADABAS    |         |                       |
+| SQLRDD_RDBMS_AZURE     |         |                       |
+| SQLRDD_RDBMS_CACHE     |         |                       | 
+| CUBRID                 | 11.4    | Work In Progress      |
+| SQLRDD_RDBMS_FIREBR    |         |                       |
+| SQLRDD_RDBMS_FIREBR3   |         |                       | 
+| SQLRDD_RDBMS_FIREBR4   |         |                       |
+| SQLRDD_RDBMS_FIREBR5   |         |                       |
+| SQLRDD_RDBMS_IBMDB2    |         |                       |
+| SQLRDD_RDBMS_INFORM    |         |                       |
+| SQLRDD_RDBMS_INGRES    |         |                       |
+| SQLRDD_RDBMS_MARIADB   |         |                       |
+| SQLRDD_RDBMS_MSSQL6    |         |                       |
+| SQLRDD_RDBMS_MSSQL7    |         |                       |
+| SQLRDD_RDBMS_MYSQL     |         |                       |
+| SQLRDD_RDBMS_ORACLE    |         |                       |
+| SQLRDD_RDBMS_OTERRO    |         |                       |
+| SQLRDD_RDBMS_PERVASIVE |         |                       |
+| SQLRDD_RDBMS_POSTGR    |         |                       |
+| SQLRDD_RDBMS_SQLANY    |         |                       |
+| SQLRDD_RDBMS_SQLBAS    |         |                       |
+| SQLRDD_RDBMS_SYBASE    |         |                       |
 
 Note: CUBRID is a work in progress (not usable yet).
 
