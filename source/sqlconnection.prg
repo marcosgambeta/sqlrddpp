@@ -1292,6 +1292,9 @@ METHOD SR_CONNECTION:SQLType(nType, cName, nLen)
    CASE SQL_BIT
       cType := "L"
       EXIT
+   CASE SQL_BINARY
+      cType := "L"
+      EXIT
    CASE SQL_NUMERIC
    CASE SQL_DECIMAL
    CASE SQL_INTEGER
