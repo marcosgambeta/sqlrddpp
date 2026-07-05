@@ -10,10 +10,8 @@
 #include "sqlrdd.ch"
 
 // To run the test:
-// odbccubrid1 --driver <drivername> --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> -rdd <rddname> --tablename <tablename> --newtable --droptable
+// odbccubrid1 --driver <drivername> --server <servername> --port <port> --uid <username> --pwd <userpassword> --database <databasename> -rdd <rddname> --tablename <tablename> --newtable --droptable --records <num_records>
 // NOTE: the database must exist before runnning the test.
-
-#define NUM_REC 100
 
 REQUEST SQLRDD
 REQUEST SQLEX
@@ -29,6 +27,7 @@ STATIC s_RDD_NAME   := "SQLRDD"
 STATIC s_TABLE_NAME := "test"
 STATIC s_NEW_TABLE  := .F.
 STATIC s_DROP_TABLE := .F.
+STATIC s_NUM_REC    := 100
 
 PROCEDURE Main()
 
@@ -53,6 +52,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--tablename" ; s_TABLE_NAME := HB_PValue(++n)
       CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
       CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
+      CASE HB_PValue(n) == "--records"   ; s_NUM_REC := val(HB_PValue(++n))
       ENDCASE
       ++n
    ENDDO
@@ -112,7 +112,7 @@ PROCEDURE Main()
 
    IF reccount() == 0
       ? "Adding records"
-      FOR n := 1 TO NUM_REC
+      FOR n := 1 TO s_NUM_REC
          ? "Adding record", n
          APPEND BLANK
          REPLACE ID      WITH n
@@ -120,7 +120,7 @@ PROCEDURE Main()
          REPLACE LAST    WITH "LAST" + hb_ntos(n)
          REPLACE AGE     WITH hb_RandomInt(18, 90) // n + 18
          REPLACE DATE    WITH date() - n
-         REPLACE MARRIED WITH iif(n / 2 == int(n / 2), .T., .F.) // TODO: browse dont show the field
+         REPLACE MARRIED WITH iif(n / 2 == int(n / 2), .T., .F.)
          REPLACE VALUE   WITH n * 1000 / 100 // TODO: browse dont show the decimals
          ? recno(), id, first, last, age, date, married, value
       NEXT n
