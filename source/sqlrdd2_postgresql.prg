@@ -223,6 +223,7 @@ CLASS SR_WORKAREA
    DATA aPosition
    DATA aQuoted
    DATA aDat
+   DATA aSeekXF   AS ARRAY INIT {}          // client side transforms for seek found() check (expression indexes)
    DATA nPartialDateSeek
 
    // For Self recno filter
@@ -264,6 +265,18 @@ CLASS SR_WORKAREA
    METHOD WherePgsMinor(aQuotedCols)    // Retrieves an SQL/WHERE Minor or equal the currente record
    // METHOD sqlKeyCompare(uKey)                       C level implemented - reads from ::aInfo
    METHOD ParseIndexColInfo(cSQL)
+
+   // Expression index support (PostgreSQL native expression indexes)
+
+   METHOD ParseIndexComponents(cExpr)   // xBase index key => array of components or NIL
+   METHOD BuildIndexComponent(cItem)    // one component => column name, component array or NIL
+   METHOD IndexFieldSQL(aFld)           // SQL expression (or qualified column) of a component
+   METHOD IndexFieldVal(aFld)           // current buffer value of a component (client side transform)
+   METHOD IndexFieldType(aFld)          // component type ("C" for expressions)
+   METHOD IndexFieldLen(aFld)           // component length
+   METHOD IndexFieldDec(aFld)           // component decimals
+   METHOD IndexFieldNul(aFld)           // component nullability (.F. for expressions)
+
    METHOD HasFilters()
    METHOD ParseForClause(cFor)
    METHOD OrdSetForClause(cFor, cForxBase)
@@ -690,6 +703,314 @@ METHOD SR_WORKAREA:GetSyntheticVirtualExpr(aExpr, cAlias)
    NEXT
 
 RETURN cRet
+
+//-------------------------------------------------------------------------------------------------------------------//
+//
+// Expression index support
+//
+// Index keys built with translatable Harbour functions (UPPER, SUBSTR, LEFT,
+// STRZERO) are mapped to native PostgreSQL expression indexes instead of the
+// classic synthetic INDKEY_ column. Only keys using non translatable (user
+// defined) functions still create the extra column.
+//
+// A translated component is stored in INDEX_FIELDS as:
+//    {cXBaseExpr, nFieldPos, cSqlExpr, cType, nLen, bClientTransform}
+// while plain column components keep the original {cName, nFieldPos} format.
+//
+// All SQL expressions produce TRIMMED text ("rtrim(...)") because ::Quoted()
+// always trims character values, so equality comparisons stay consistent.
+//
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:ParseIndexComponents(cExpr)
+
+   LOCAL aParts := {}
+   LOCAL aComps := {}
+   LOCAL nDepth := 0
+   LOCAL cPart := ""
+   LOCAL c
+   LOCAL i
+   LOCAL uComp
+
+   IF Empty(cExpr)
+      RETURN NIL
+   ENDIF
+
+   // Split the key expression on "+" at parenthesis level zero
+
+   FOR i := 1 TO Len(cExpr)
+      c := SubStr(cExpr, i, 1)
+      DO CASE
+      CASE c == "("
+         nDepth++
+         cPart += c
+      CASE c == ")"
+         nDepth--
+         cPart += c
+      CASE c == "+" .AND. nDepth == 0
+         AAdd(aParts, cPart)
+         cPart := ""
+      OTHERWISE
+         cPart += c
+      ENDCASE
+   NEXT i
+
+   IF !Empty(AllTrim(cPart))
+      AAdd(aParts, cPart)
+   ENDIF
+
+   IF nDepth != 0 .OR. Len(aParts) == 0
+      RETURN NIL
+   ENDIF
+
+   FOR i := 1 TO Len(aParts)
+
+      IF "->" $ aParts[i]   // relations are not supported in expression indexes
+         RETURN NIL
+      ENDIF
+
+      uComp := ::BuildIndexComponent(aParts[i])
+
+      IF uComp == NIL
+         RETURN NIL
+      ENDIF
+
+      IF HB_IsChar(uComp) .AND. AScan(::aNames, {|x|x == uComp}) == 0
+         RETURN NIL     // unknown identifier, let the synthetic index handle it
+      ENDIF
+
+      AAdd(aComps, uComp)
+
+   NEXT i
+
+   // At least one component must be a real expression, otherwise the
+   // regular column index path already handles the key
+
+   IF AScan(aComps, {|x|HB_IsArray(x)}) == 0
+      RETURN NIL
+   ENDIF
+
+RETURN aComps
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:BuildIndexComponent(cItem)
+
+   LOCAL cFunc
+   LOCAL cArgs
+   LOCAL aArgs
+   LOCAL cCol
+   LOCAL nPos
+   LOCAL nFldLen
+   LOCAL nStart
+   LOCAL nCount
+   LOCAL nZLen
+   LOCAL nParen
+   LOCAL cSql
+   LOCAL i
+
+   cItem := Upper(AllTrim(cItem))
+   nParen := At("(", cItem)
+
+   IF nParen == 0
+      RETURN cItem      // plain column name
+   ENDIF
+
+   IF Right(cItem, 1) != ")"
+      RETURN NIL
+   ENDIF
+
+   cFunc := AllTrim(Left(cItem, nParen - 1))
+   cArgs := SubStr(cItem, nParen + 1, Len(cItem) - nParen - 1)
+
+   IF "(" $ cArgs        // nested functions not supported
+      RETURN NIL
+   ENDIF
+
+   aArgs := HB_ATokens(cArgs, ",")
+   FOR i := 1 TO Len(aArgs)
+      aArgs[i] := AllTrim(aArgs[i])
+   NEXT i
+
+   // Functions that sort exactly like their column argument map to the
+   // plain column, keeping the regular multi column index behavior
+
+   DO CASE
+   CASE cFunc == "STR" .OR. cFunc == "DTOS" .OR. cFunc == "TTOS"
+      IF Len(aArgs) >= 1 .AND. !Empty(aArgs[1])
+         RETURN aArgs[1]
+      ENDIF
+      RETURN NIL
+   CASE cFunc == "RECNO"
+      RETURN ::cRecnoName
+   CASE cFunc == "DELETED"
+      IF ::hnDeleted > 0
+         RETURN ::cDeletedName
+      ENDIF
+      RETURN NIL
+   ENDCASE
+
+   IF Len(aArgs) < 1 .OR. Empty(aArgs[1])
+      RETURN NIL
+   ENDIF
+
+   cCol := aArgs[1]
+   nPos := AScan(::aNames, {|x|x == cCol})
+
+   IF nPos == 0
+      RETURN NIL
+   ENDIF
+
+   nFldLen := ::aFields[nPos, FIELD_LEN]
+
+   DO CASE
+   CASE cFunc == "UPPER"
+
+      IF ::aFields[nPos, FIELD_TYPE] != "C" .OR. Len(aArgs) != 1
+         RETURN NIL
+      ENDIF
+
+      cSql := "rtrim(upper(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",'')))"
+
+      RETURN {cItem, nPos, cSql, "C", nFldLen, IdxBlkUpper()}
+
+   CASE cFunc == "SUBSTR" .OR. cFunc == "LEFT"
+
+      IF ::aFields[nPos, FIELD_TYPE] != "C"
+         RETURN NIL
+      ENDIF
+
+      IF cFunc == "LEFT"
+         IF Len(aArgs) != 2
+            RETURN NIL
+         ENDIF
+         nStart := 1
+         nCount := Val(aArgs[2])
+      ELSE
+         IF Len(aArgs) < 2 .OR. Len(aArgs) > 3
+            RETURN NIL
+         ENDIF
+         nStart := Val(aArgs[2])
+         nCount := IIf(Len(aArgs) == 3, Val(aArgs[3]), nFldLen - Val(aArgs[2]) + 1)
+      ENDIF
+
+      IF nStart < 1 .OR. nCount < 1
+         RETURN NIL
+      ENDIF
+
+      cSql := "rtrim(substr(rpad(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",'')," + ;
+              LTrim(Str(nFldLen)) + ")," + LTrim(Str(nStart)) + "," + LTrim(Str(nCount)) + "))"
+
+      RETURN {cItem, nPos, cSql, "C", nCount, IdxBlkSubStr(nStart, nCount, nFldLen)}
+
+   CASE cFunc == "STRZERO"
+
+      IF ::aFields[nPos, FIELD_TYPE] != "N" .OR. Len(aArgs) < 2 .OR. Len(aArgs) > 3
+         RETURN NIL
+      ENDIF
+
+      IF Len(aArgs) == 3 .AND. Val(aArgs[3]) != 0
+         RETURN NIL     // decimal places not supported, fall back to synthetic
+      ENDIF
+
+      nZLen := Val(aArgs[2])
+
+      IF nZLen < 1
+         RETURN NIL
+      ENDIF
+
+      cSql := "lpad(round(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",0))::bigint::text," + ;
+              LTrim(Str(nZLen)) + ",'0')"
+
+      RETURN {cItem, nPos, cSql, "C", nZLen, IdxBlkStrZero(nZLen)}
+
+   ENDCASE
+
+RETURN NIL
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+STATIC FUNCTION IdxBlkUpper()
+
+RETURN {|u|RTrim(Upper(IIf(u == NIL, "", u)))}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+STATIC FUNCTION IdxBlkSubStr(nStart, nCount, nFldLen)
+
+RETURN {|u|RTrim(SubStr(PadR(IIf(u == NIL, "", u), nFldLen), nStart, nCount))}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+STATIC FUNCTION IdxBlkStrZero(nZLen)
+
+RETURN {|u|StrZero(Round(IIf(u == NIL, 0, u), 0), nZLen)}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+STATIC FUNCTION IdxBlkPad(bXForm, nLen)   // pads the transformed value back to the component width (seek found check)
+
+RETURN {|u|PadR(Eval(bXForm, u), nLen)}
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:IndexFieldSQL(aFld)
+
+   IF Len(aFld) >= IDXFLD_SQL .AND. aFld[IDXFLD_SQL] != NIL
+      RETURN aFld[IDXFLD_SQL]
+   ENDIF
+
+RETURN "A." + SR_DBQUALIFY(::aNames[aFld[IDXFLD_POS]], ::oSql:nSystemID)
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:IndexFieldVal(aFld)
+
+   IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
+      RETURN Eval(aFld[IDXFLD_XFORM], ::aLocalBuffer[aFld[IDXFLD_POS]])
+   ENDIF
+
+RETURN ::aLocalBuffer[aFld[IDXFLD_POS]]
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:IndexFieldType(aFld)
+
+   IF Len(aFld) >= IDXFLD_TYPE .AND. aFld[IDXFLD_TYPE] != NIL
+      RETURN aFld[IDXFLD_TYPE]
+   ENDIF
+
+RETURN ::aFields[aFld[IDXFLD_POS], FIELD_TYPE]
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:IndexFieldLen(aFld)
+
+   IF Len(aFld) >= IDXFLD_LEN .AND. aFld[IDXFLD_LEN] != NIL
+      RETURN aFld[IDXFLD_LEN]
+   ENDIF
+
+RETURN ::aFields[aFld[IDXFLD_POS], FIELD_LEN]
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:IndexFieldDec(aFld)
+
+   IF Len(aFld) >= IDXFLD_SQL .AND. aFld[IDXFLD_SQL] != NIL
+      RETURN 0
+   ENDIF
+
+RETURN ::aFields[aFld[IDXFLD_POS], FIELD_DEC]
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:IndexFieldNul(aFld)
+
+   IF Len(aFld) >= IDXFLD_SQL .AND. aFld[IDXFLD_SQL] != NIL
+      RETURN .F.
+   ENDIF
+
+RETURN ::aFields[aFld[IDXFLD_POS], FIELD_NULLABLE]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -1252,6 +1573,7 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
    LOCAL cColumns
    LOCAL lSyntheticVirtual := .F.
    LOCAL cPhysicalVIndexName
+   LOCAL uComp
 
    ASize(::aIndex, Len(::aIndexMgmnt))
 
@@ -1285,6 +1607,32 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
       ::aIndex[nInd, INDEX_FIELDS] := Array(Len(aCols))
 
       FOR i := 1 TO Len(aCols)
+
+         IF HB_IsChar(aCols[i]) .AND. "(" $ aCols[i]
+
+            // Expression index component (UPPER/SUBSTR/LEFT/STRZERO/...)
+
+            uComp := ::BuildIndexComponent(aCols[i])
+
+            IF HB_IsArray(uComp)
+               IF ::osql:lPostgresql8
+                  cSqlA += " " + uComp[IDXFLD_SQL] + " NULLS FIRST,"
+                  cSqlD += " " + uComp[IDXFLD_SQL] + " DESC NULLS LAST,"
+               ELSE
+                  cSqlA += " " + uComp[IDXFLD_SQL] + ","
+                  cSqlD += " " + uComp[IDXFLD_SQL] + " DESC,"
+               ENDIF
+               cXBase += uComp[IDXFLD_NAME] + " + "
+               ::aIndex[nInd, INDEX_FIELDS, i] := uComp
+               LOOP
+            ELSEIF HB_IsChar(uComp)
+               aCols[i] := uComp       // STR()/DTOS() map to the plain column
+            ELSE
+               ::RunTimeErr("18", SR_Msg(18) + aCols[i] + " Table : " + ::cFileName)
+               RETURN 0    // error exit
+            ENDIF
+
+         ENDIF
 
          nPosAt := At(aCols[i], " ")
 
@@ -1630,6 +1978,9 @@ METHOD SR_WORKAREA:Stabilize()
    LOCAL nRec
    LOCAL aPos
    LOCAL i
+   LOCAL aXF
+   LOCAL aFld
+   LOCAL lXF
    LOCAL nLast := 0
 
    HB_SYMBOL_UNUSED(nLast)
@@ -1643,7 +1994,23 @@ METHOD SR_WORKAREA:Stabilize()
    nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) // - 1      // This "-1" is to removes the NRECNO column
    nRec := ::aLocalBuffer[::hnRecno]
 
-   IF nLen == 1      // One field index is easy and fast !
+   aXF := Array(nLen)
+   lXF := .F.
+   FOR i := 1 TO nLen
+      aFld := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i]
+      IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
+         aXF[i] := aFld[IDXFLD_XFORM]
+         lXF := .T.
+      ENDIF
+   NEXT i
+
+   IF lXF              // Expression index: sort cache in the transformed domain
+      aPos := Array(nLen)
+      FOR i := 1 TO nLen
+         aPos[i] := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]
+      NEXT i
+      ASort(::aCache, , , {|x, y|aOrdX(x, y, aPos, aXF)})
+   ELSEIF nLen == 1      // One field index is easy and fast !
       nPos := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]
       ASort(::aCache, , , {|x, y|x[nPos] < y[nPos]})
    ELSE
@@ -3316,6 +3683,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL nfieldPos
    LOCAL lLikeSep := .F.
    LOCAL cKeyValue
+   LOCAL aFld
    //LOCAL lIsIndKey := .F. (variable not used)
 
    //HB_SYMBOL_UNUSED(cType)
@@ -3346,6 +3714,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    ::aQuoted := {}
    ::aDat := {}
    ::aPosition := {}
+   ::aSeekXF := {}
 
    IF ::lNoData .AND. (!::lISAM)
       RETURN NIL
@@ -3363,9 +3732,9 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
       IF ValType(uKey) $ "NDLT"       // One field seek, piece of cake!
 
-         lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-         nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
-         nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
+         lNull := ::IndexFieldNul(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
+         nFDec := ::IndexFieldDec(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
+         nFLen := ::IndexFieldLen(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
 
          cRet := " WHERE (( "
 
@@ -3393,10 +3762,11 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             cSep := IIf(cQot == "NULL", " IS ", IIf(lSoft, " >= ", IIf(lLikeSep, " Like ", " = ")))
          ENDIF
 
-         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+         cNam := ::IndexFieldSQL(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
 
          AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2])
          AAdd(::aQuoted, ::QuotedNull(uKey))
+         AAdd(::aSeekXF, NIL)
          IF lLikeSep
             AAdd(::aDat, Str(uKey, ::aFields[nFieldPos, FIELD_LEN]))
          ELSE
@@ -3437,7 +3807,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
       ELSEIF HB_IsChar(uKey)
 
-         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
+         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 ï¿½ para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
          nLenKey := Len(uKey)
          //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
@@ -3445,12 +3815,20 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
          FOR i := 1 TO nLen
 
-            nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+            aFld := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i]
+
+            nThis := ::IndexFieldLen(aFld)
             cPart := SubStr(uKey, nCons + 1, nThis)
 
-            AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+            AAdd(::aPosition, aFld[IDXFLD_POS])
 
-            cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
+            IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
+               AAdd(::aSeekXF, IdxBlkPad(aFld[IDXFLD_XFORM], nThis))
+            ELSE
+               AAdd(::aSeekXF, NIL)
+            ENDIF
+
+            cType := ::IndexFieldType(aFld)
             // unnecessary, the value is not used
             //lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
             //HB_SYMBOL_UNUSED(lNull)
@@ -3471,7 +3849,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
                ENDIF
             ENDIF
 
-            // Ajuste abaixo - pgs é tudo NOT NULL, nao deve dar trim se for indice sintetico
+            // Ajuste abaixo - pgs ï¿½ tudo NOT NULL, nao deve dar trim se for indice sintetico
 
             IF ::aIndex[::aInfo[AINFO_INDEXORD], SYNTH_INDEX_COL_POS] > 0
                AAdd(::aQuoted, ::Quoted(::ConvType(cPart, cType, @lPartialSeek, nThis), .F., , , , .T.))
@@ -3541,6 +3919,9 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          ELSE
             FOR i := 1 TO Len(::aQuoted)
                DO CASE
+               CASE Len(::aSeekXF) >= i .AND. ::aSeekXF[i] != NIL .AND. HB_IsChar(::aDat[i])
+                  // Expression index component: compare in the transformed domain
+                  ::aInfo[AINFO_FOUND] := (Left(Eval(::aSeekXF[i], ::aLocalBuffer[::aPosition[i]]), Len(::aDat[i])) == ::aDat[i])
                CASE HB_IsNumeric(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
                   ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
                CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsNumeric(::aDat[i])
@@ -5002,6 +5383,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
    LOCAL lSyntheticVirtual := .F.
    LOCAL cPhysicalVIndexName
    LOCAL cVInd
+   LOCAL uComp
 
    HB_SYMBOL_UNUSED(cList)
 
@@ -5126,6 +5508,32 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
       nLen := Len(::aIndex)
 
       FOR i := 1 TO Len(aCols)
+
+         IF HB_IsChar(aCols[i]) .AND. "(" $ aCols[i]
+
+            // Expression index component (UPPER/SUBSTR/LEFT/STRZERO/...)
+
+            uComp := ::BuildIndexComponent(aCols[i])
+
+            IF HB_IsArray(uComp)
+               IF ::osql:lPostgresql8
+                  cSqlA += " " + uComp[IDXFLD_SQL] + " NULLS FIRST,"
+                  cSqlD += " " + uComp[IDXFLD_SQL] + " DESC NULLS LAST,"
+               ELSE
+                  cSqlA += " " + uComp[IDXFLD_SQL] + ","
+                  cSqlD += " " + uComp[IDXFLD_SQL] + " DESC,"
+               ENDIF
+               cXBase += uComp[IDXFLD_NAME] + " + "
+               AAdd(::aIndex[nLen, INDEX_FIELDS], uComp)
+               LOOP
+            ELSEIF HB_IsChar(uComp)
+               aCols[i] := uComp       // STR()/DTOS() map to the plain column
+            ELSE
+               ::RunTimeErr("18", SR_Msg(18) + aCols[i] + " Table : " + ::cFileName)
+               RETURN 0    // error exit
+            ENDIF
+
+         ENDIF
 
          nPosAt := At(aCols[i], " ")
 
@@ -5484,6 +5892,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
    LOCAL cVInd
    LOCAL aOldPhisNames := {}
    LOCAL cName
+   LOCAL aExprCols
    LOCAL nKeySize := 0
 
    HB_SYMBOL_UNUSED(nKeySize)
@@ -5597,8 +6006,22 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
       ENDIF
    ENDIF
 
+   // Second chance: keys using translatable Harbour functions (UPPER, SUBSTR,
+   // LEFT, STRZERO, ...) become native PostgreSQL expression indexes instead
+   // of a synthetic INDKEY_ column. Only untranslatable (user defined)
+   // functions still fall back to the synthetic column.
+
+   IF lSyntheticIndex .AND. !SR_GetSyntheticIndex() .AND. SR_GetExpressionIndex()
+      aExprCols := ::ParseIndexComponents(cColumns)
+      IF aExprCols != NIL
+         lSyntheticIndex := .F.
+         aCols := aExprCols
+      ENDIF
+   ENDIF
+
    IF !Empty(AllTrim(cConstraintName))
-      aConstraintCols := AClone(aCols)
+      aConstraintCols := {}
+      AEval(aCols, {|x|AAdd(aConstraintCols, IIf(HB_IsArray(x), ::aNames[x[IDXFLD_POS]], x))})
    ENDIF
 
    IF !lSyntheticIndex
@@ -5608,7 +6031,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
       ENDIF
 
       IF ((!::lHistoric .AND. Len(aCols) == 1) .OR. (::lHistoric .AND. Len(aCols) == 2))
-         IF AllTrim(aCols[1]) != ::cRecnoName   //minor hack for indexes with only recno (or history) column....
+         IF HB_IsArray(aCols[1]) .OR. AllTrim(aCols[1]) != ::cRecnoName   //minor hack for indexes with only recno (or history) column....
             AAdd(aCols, ::cRecnoName)
          ENDIF
       ELSE
@@ -5834,16 +6257,27 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
       IF ::osql:lPostgresql8
          // PGS 8.3 will use it once released
          FOR i := 1 TO Len(aCols)
-            cList += SR_DBQUALIFY(aCols[i], ::oSql:nSystemID) + " NULLS FIRST"
+            IF HB_IsArray(aCols[i])
+               // Expression index component: index the SQL expression itself
+               cList += "(" + StrTran(aCols[i][IDXFLD_SQL], "A.", "") + ") NULLS FIRST"
+               cList2 += Chr(34) + aCols[i][IDXFLD_NAME] + Chr(34)
+            ELSE
+               cList += SR_DBQUALIFY(aCols[i], ::oSql:nSystemID) + " NULLS FIRST"
+               cList2 += Chr(34) + aCols[i] + Chr(34)
+            ENDIF
             cList += IIf(i == Len(aCols), "", ",")
-            cList2 += Chr(34) + aCols[i] + Chr(34)
             cList2 += IIf(i == Len(aCols), "", ",")
          NEXT i
       ELSE
          FOR i := 1 TO Len(aCols)
-            cList += SR_DBQUALIFY(aCols[i], ::oSql:nSystemID)
+            IF HB_IsArray(aCols[i])
+               cList += "(" + StrTran(aCols[i][IDXFLD_SQL], "A.", "") + ")"
+               cList2 += Chr(34) + aCols[i][IDXFLD_NAME] + Chr(34)
+            ELSE
+               cList += SR_DBQUALIFY(aCols[i], ::oSql:nSystemID)
+               cList2 += Chr(34) + aCols[i] + Chr(34)
+            ENDIF
             cList += IIf(i == Len(aCols), "", ",")
-            cList2 += Chr(34) + aCols[i] + Chr(34)
             cList2 += IIf(i == Len(aCols), "", ",")
          NEXT i
       ENDIF
@@ -5946,7 +6380,8 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
    LOCAL cNam
    LOCAL nFeitos
    LOCAL lNull
-   
+   LOCAL aFld
+
    HB_SYMBOL_UNUSED(cType)
 
    IF Len(::aIndex) > 0 .AND. ::aInfo[AINFO_INDEXORD] > 0
@@ -5996,13 +6431,13 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
          IF ValType(uKey) $ "NDL"       // One field, piece of cake!
 
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-            nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
-            nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
+            lNull := ::IndexFieldNul(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
+            nFDec := ::IndexFieldDec(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
+            nFLen := ::IndexFieldLen(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
 
             cQot := ::QuotedNull(::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE], , nFLen, nFDec, , lNull)
             cSep := IIf(cQot == "NULL", " IS ", " = ")
-            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+            cNam := ::IndexFieldSQL(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
 
             cRet := " " + cNam + cSep + cQot + " "
 
@@ -6023,6 +6458,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
             ::aQuoted := {}
             ::aDat := {}
             ::aPosition := {}
+            ::aSeekXF := {}
             nCons := 0
             nLenKey := Len(uKey)
             cPart := ""
@@ -6032,20 +6468,28 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
             FOR i := 1 TO nLen
 
-               nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+               aFld := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i]
+
+               nThis := ::IndexFieldLen(aFld)
                cPart := SubStr(uKey, nCons + 1, nThis)
 
                IF AllTrim(cPart) == "%"
                   EXIT
                ENDIF
 
-               AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+               AAdd(::aPosition, aFld[IDXFLD_POS])
 
-               cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
-               lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
-               nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
+               IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
+                  AAdd(::aSeekXF, IdxBlkPad(aFld[IDXFLD_XFORM], nThis))
+               ELSE
+                  AAdd(::aSeekXF, NIL)
+               ENDIF
+
+               cType := ::IndexFieldType(aFld)
+               lNull := ::IndexFieldNul(aFld)
+               nFDec := ::IndexFieldDec(aFld)
                HB_SYMBOL_UNUSED(nFDec)
-               nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+               nFLen := ::IndexFieldLen(aFld)
                HB_SYMBOL_UNUSED(nFLen)
 
                IF i == 1 .AND. nThis >= Len(uKey)
@@ -6075,7 +6519,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
             FOR i := 1 TO nLen
                cQot := ::aQuoted[i]
-               cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+               cNam := ::IndexFieldSQL(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i])
 
                IF lPartialSeek .AND. i == nLen
                   cSep := " >= "
@@ -6124,14 +6568,14 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
             IF ValType(uKey) $ "NDL"       // One field, piece of cake!
 
-               lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-               nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
-               nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
+               lNull := ::IndexFieldNul(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
+               nFDec := ::IndexFieldDec(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
+               nFLen := ::IndexFieldLen(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
 
                IF ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] != NIL
                   cQot := ::QuotedNull(::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE], , nFLen, nFDec, , lNull)
                   cSep := IIf(cQot == "NULL", " IS ", " >= ")
-                  cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+                  cNam := ::IndexFieldSQL(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
 
                   cRet := " " + cNam + cSep + cQot + " "
 
@@ -6147,7 +6591,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                IF ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] != NIL
                   cQot := ::QuotedNull(::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE], , nFLen, nFDec, , lNull)
                   cSep := IIf(cQot == "NULL", " IS ", " <= ")
-                  cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+                  cNam := ::IndexFieldSQL(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1])
 
                   cRet2 := " " + cNam + cSep + cQot + " "
 
@@ -6181,7 +6625,9 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                FOR i := 1 TO nLen
 
-                  nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+                  aFld := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i]
+
+                  nThis := ::IndexFieldLen(aFld)
                   cPart := SubStr(uKey, nCons + 1, nThis)
 
                   IF Len(AllTrim(cPart)) < nThis .AND. nScoping == BOTTOMSCOPE
@@ -6192,13 +6638,13 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                      ENDIF
                   ENDIF
 
-                  AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+                  AAdd(::aPosition, aFld[IDXFLD_POS])
 
-                  cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
-                  lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
-                  nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
+                  cType := ::IndexFieldType(aFld)
+                  lNull := ::IndexFieldNul(aFld)
+                  nFDec := ::IndexFieldDec(aFld)
                   HB_SYMBOL_UNUSED(nFDec)
-                  nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+                  nFLen := ::IndexFieldLen(aFld)
                   HB_SYMBOL_UNUSED(nFLen)
 
                   IF i == 1 .AND. nThis >= Len(uKey)
@@ -6236,7 +6682,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                   FOR i := 1 TO (nLen - j + 1)
 
                      cQot := ::aQuoted[i]
-                     cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+                     cNam := ::IndexFieldSQL(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i])
 
                      IF lPartialSeek .AND. i == nLen
                         cSep := IIf(j == 1, " " + cSep2 + "= ", " " + cSep2 + " ")
@@ -6442,6 +6888,30 @@ STATIC FUNCTION aOrd(x, y, aPos)
       ELSE
          cStr1 += HB_VALTOSTR(x[aPos[i]])
          cStr2 += HB_VALTOSTR(y[aPos[i]])
+      ENDIF
+   NEXT i
+
+RETURN cStr1 < cStr2
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+STATIC FUNCTION aOrdX(x, y, aPos, aXF)    // cache sort honoring expression index transforms
+
+   LOCAL i
+   LOCAL u1
+   LOCAL u2
+   LOCAL cStr1 := ""
+   LOCAL cStr2 := ""
+
+   FOR i := 1 TO Len(aPos)
+      u1 := IIf(aXF[i] == NIL, x[aPos[i]], Eval(aXF[i], x[aPos[i]]))
+      u2 := IIf(aXF[i] == NIL, y[aPos[i]], Eval(aXF[i], y[aPos[i]]))
+      IF HB_IsDate(u1)
+         cStr1 += DToS(u1)
+         cStr2 += DToS(u2)
+      ELSE
+         cStr1 += HB_VALTOSTR(u1)
+         cStr2 += HB_VALTOSTR(u2)
       ENDIF
    NEXT i
 
@@ -6703,7 +7173,7 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
       IF aQuotedCols == NIL
          nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS])
          FOR i := 1 TO nLen
-            AAdd(aQuot, ::Quoted(::aLocalBuffer[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], .T., , , , lNull))
+            AAdd(aQuot, ::Quoted(::IndexFieldVal(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i]), .T., , , , lNull))
          NEXT i
       ELSE
          nLen := Len(aQuotedCols)
@@ -6715,10 +7185,10 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
          c2 := ""
 
          FOR i := 1 TO j
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            lNull := ::IndexFieldNul(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i])
             HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
-            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+            cNam := ::IndexFieldSQL(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i])
 
             DO CASE
             CASE !lPartialSeek
@@ -6936,7 +7406,7 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
       IF aQuotedCols == NIL
          nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS])
          FOR i := 1 TO nLen
-            cQot := ::Quoted(::aLocalBuffer[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], .T., , , , lNull)
+            cQot := ::Quoted(::IndexFieldVal(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i]), .T., , , , lNull)
             AAdd(aQuot, cQot)
          NEXT i
       ELSE
@@ -6950,10 +7420,10 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
 
          FOR i := 1 TO j
 
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            lNull := ::IndexFieldNul(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i])
             HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
-            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+            cNam := ::IndexFieldSQL(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i])
 
             DO CASE
             CASE j == nLen .AND. cQot == "NULL"

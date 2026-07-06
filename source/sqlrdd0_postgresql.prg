@@ -104,6 +104,8 @@ STATIC s_lErrorOnGotoToInvalidRecord := .F.
 
 STATIC s_lUseNullsFirst := .T.
 
+STATIC s_lExpressionIndex := .T.
+
 //-------------------------------------------------------------------------------------------------------------------//
 
 PROCEDURE SR_Init()
@@ -203,6 +205,29 @@ FUNCTION SR_SetSyntheticIndexMinimun(nSet)
    ENDIF
 
 RETURN nOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// Enables/disables the use of native PostgreSQL expression indexes for
+// index keys built with translatable Harbour functions (UPPER, SUBSTR,
+// LEFT, STRZERO, ...). When disabled, such keys fall back to the classic
+// synthetic INDKEY_ column.
+
+FUNCTION SR_SetExpressionIndex(lSet)
+
+   LOCAL lOld := s_lExpressionIndex
+
+   IF HB_IsLogical(lSet)
+      s_lExpressionIndex := lSet
+   ENDIF
+
+RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetExpressionIndex()
+
+RETURN s_lExpressionIndex
 
 //-------------------------------------------------------------------------------------------------------------------//
 
