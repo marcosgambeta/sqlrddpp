@@ -721,12 +721,12 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
          aInd[INDEXMAN_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(aInd[INDEXMAN_IDXKEY]) + ") + Str(RecNo(),15) }")
          aInd[INDEXMAN_SYNTH_COLPOS] := AScan(::aNames, "INDKEY_" + aInd[INDEXMAN_COLUMNS])     // Make life easier in odbcrdd2.c
       ELSE
-         aInd[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + AllTrim(aInd[INDEXMAN_IDXKEY]) + " }")
+         aInd[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + AllTrim(aInd[INDEXMAN_IDXKEY]) + " }")
       ENDIF
       aInd[INDEXMAN_IDXNAME] := AllTrim(aInd[INDEXMAN_IDXNAME])
       aInd[INDEXMAN_TAG] := AllTrim(aInd[INDEXMAN_TAG])
       IF SubStr(aInd[INDEXMAN_FOR_EXPRESS], 1, 1) == "#"
-         aInd[INDEXMAN_FOR_CODEBLOCK] := &( "{|| if(" + AllTrim(SubStr(aInd[INDEXMAN_FOR_EXPRESS], 5)) + ",'T','F') }")     // FOR clause codeblock
+         aInd[INDEXMAN_FOR_CODEBLOCK] := &("{|| if(" + AllTrim(SubStr(aInd[INDEXMAN_FOR_EXPRESS], 5)) + ",'T','F') }")     // FOR clause codeblock
          aInd[INDEXMAN_FOR_COLPOS] := AScan(::aNames, "INDFOR_" + SubStr(aInd[INDEXMAN_FOR_EXPRESS], 2, 3))   // Make life easier in odbcrdd2.c
       ENDIF
       // If there is no more than one occourrence of same index bag name,
@@ -775,7 +775,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
 #else
             aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
 #endif
-            aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
+            aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
             aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
             aThisIndex[INDEXMAN_FOR_COLPOS] := 0
 
@@ -845,7 +845,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
 #else
                aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
 #endif
-               aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
+               aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                aThisIndex[INDEXMAN_FOR_COLPOS] := 0
                AAdd(::aIndexMgmnt, aThisIndex)
@@ -897,7 +897,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
 #else
                aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
 #endif
-               aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
+               aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                aThisIndex[INDEXMAN_FOR_COLPOS] := 0
                AAdd(::aIndexMgmnt, aThisIndex)
@@ -938,7 +938,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
 #else
                   aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
 #endif
-                  aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
+                  aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                   aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                   aThisIndex[INDEXMAN_FOR_COLPOS] := 0
                   AAdd(::aIndexMgmnt, aThisIndex)
@@ -970,7 +970,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
 #else
                aThisIndex[INDEXMAN_TAGNUM] := StrZero(_sr_EnumIndex(), 6) // TODO: _sr_ENUMINDEX outside of a FOR EACH
 #endif
-               aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
+               aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                aThisIndex[INDEXMAN_FOR_COLPOS] := 0
                AAdd(::aIndexMgmnt, aThisIndex)
@@ -1016,7 +1016,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
 #else
                aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
 #endif
-               aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
+               aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
                aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
                aThisIndex[INDEXMAN_FOR_COLPOS] := 0
                AAdd(::aIndexMgmnt, aThisIndex)
@@ -1557,8 +1557,8 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS]}
       ELSE
-         aCols := &( "{" + ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY] + "}")
-//         aCols := HB_ATokens(StrTran(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], Chr(34), ""), ",")
+         aCols := &("{" + ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY] + "}")
+         // aCols := HB_ATokens(StrTran(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], Chr(34), ""), ",")
       ENDIF
 
       cOrdName := ::aIndexMgmnt[nInd, INDEXMAN_TAG]
@@ -1664,13 +1664,13 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
       ::aIndex[nInd, ORDER_DESEND] := cSqlD
       ::aIndex[nInd, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
-         IF RDDNAME() =="SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+         IF RDDNAME() == "SQLEX"
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ELSE
             ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ENDIF
       ELSE
-         ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")
+         ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
       ENDIF
       IF SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
          ::aIndex[nInd, FOR_CLAUSE] := RTrim(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS])
@@ -1908,7 +1908,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
             ENDIF
 
             ::oSql:GetLine(::aFields, .F., @::aCache[nPos])
-            uRecord := ::aCache[nPos,::hnRecno]
+            uRecord := ::aCache[nPos, ::hnRecno]
             IF ::lFetchAll
                AAdd(::aFetch, uRecord)
             ENDIF
@@ -4992,7 +4992,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
             ENDIF
 
             ::oSql:GetLine(::aFields, .F., @::aCache[nPos])
-            uRecord := ::aCache[nPos,::hnRecno]
+            uRecord := ::aCache[nPos, ::hnRecno]
             IF ::lFetchAll
                AAdd(::aFetch, uRecord)
             ENDIF
@@ -6976,13 +6976,13 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
       ::aIndex[nLen, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
 
-         IF RDDNAME() =="SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+         IF RDDNAME() == "SQLEX"
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ELSE
             ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ENDIF
       ELSE
-         ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")
+         ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
       ENDIF
 
       IF SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
@@ -9703,7 +9703,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             IF ::oSql:nSystemID == SQLRDD_RDBMS_POSTGR .AND. ::aFields[nPos_, FIELD_TYPE] != aBack[1, 2]
                IF ::aFields[nPos_, FIELD_TYPE] == "N" .AND. aBack[1, 2] == "C"
                   ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, FIELD_NAME], ::oSql:nSystemID) + " = BACKUP_::text::numeric::integer", lDisplayErrorMessage)
-               //ELSEif ::aFields[nPos_, FIELD_TYPE] =="C" .AND. aBack[1, 2] == "N"
+               //ELSEIF ::aFields[nPos_, FIELD_TYPE] == "C" .AND. aBack[1, 2] == "N"
                   //::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, FIELD_NAME], ::oSql:nSystemID) + " = BACKUP_::numeric::integer::text", lDisplayErrorMessage)
                ELSE
                   ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, FIELD_NAME], ::oSql:nSystemID) + " = BACKUP_", lDisplayErrorMessage)
@@ -10511,21 +10511,21 @@ METHOD SR_WORKAREA:DropConstraint(cTable, cConstraintName, lFKs, cConstrType)
          CASE SQLRDD_RDBMS_MSSQL7
          CASE SQLRDD_RDBMS_SYBASE
          CASE SQLRDD_RDBMS_AZURE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable, ::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
             EXIT
          CASE SQLRDD_RDBMS_MYSQL
          CASE SQLRDD_RDBMS_MARIADB
             IF AllTrim(cConstrType) == "PK"
-               cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP PRIMARY KEY " + IIf(::oSql:lComments, " /* Create Constraint */", "")
+               cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable, ::oSql:nSystemID) + " DROP PRIMARY KEY " + IIf(::oSql:lComments, " /* Create Constraint */", "")
             ELSE
-               cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP FOREIGN KEY " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
+               cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable, ::oSql:nSystemID) + " DROP FOREIGN KEY " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
             ENDIF
             EXIT
          CASE SQLRDD_RDBMS_ORACLE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable, ::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
             EXIT
          SR_OTHERWISE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable,::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cTable, ::oSql:nSystemID) + " DROP CONSTRAINT " + cConstraintName + IIf(::oSql:lComments, " /* Create Constraint */", "")
          ENDSWITCH
 
          lOk := ::oSql:Exec(cSql,.T.) == SQL_SUCCESS .OR. ::oSql:nRetCode == SQL_SUCCESS_WITH_INFO
@@ -10633,16 +10633,16 @@ METHOD SR_WORKAREA:CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, 
       CASE SQLRDD_RDBMS_MARIADB
       CASE SQLRDD_RDBMS_AZURE
          IF lPk
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
          ELSE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable,::oSql:nSystemID) + " (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable, ::oSql:nSystemID) + " (" + cTargetColumns + ")"
          ENDIF
          EXIT
       CASE SQLRDD_RDBMS_ORACLE
          IF lPk
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
          ELSE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable,::oSql:nSystemID) + " (" + cTargetColumns + ") "
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable, ::oSql:nSystemID) + " (" + cTargetColumns + ") "
          ENDIF
          EXIT
       CASE SQLRDD_RDBMS_FIREBR
@@ -10650,25 +10650,25 @@ METHOD SR_WORKAREA:CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, 
       CASE SQLRDD_RDBMS_FIREBR4
       CASE SQLRDD_RDBMS_FIREBR5
          IF lPk
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
          ELSE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable,::oSql:nSystemID) + " (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable, ::oSql:nSystemID) + " (" + cTargetColumns + ")"
          ENDIF
          EXIT
       CASE SQLRDD_RDBMS_POSTGR
          cSourceColumns := StrTran(cSourceColumns, Chr(34), "")
          cTargetColumns := StrTran(cTargetColumns, Chr(34), "")
          IF lPk
-            cSql := "ALTER TABLE " + ::cOwner + StrTran(SR_DBQUALIFY(cSourceTable,::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + StrTran(SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
          ELSE
-            cSql := "ALTER TABLE " + ::cOwner + StrTran(SR_DBQUALIFY(cSourceTable,::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + StrTran(SR_DBQUALIFY(cTargetTable,::oSql:nSystemID), Chr(34), "") + " (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + StrTran(SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID), Chr(34), "") + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + StrTran(SR_DBQUALIFY(cTargetTable, ::oSql:nSystemID), Chr(34), "") + " (" + cTargetColumns + ")"
          ENDIF
          EXIT
       SR_OTHERWISE
          IF lPk
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
          ELSE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable,::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable,::oSql:nSystemID) + " (" + cTargetColumns + ")"
+            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable, ::oSql:nSystemID) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable, ::oSql:nSystemID) + " (" + cTargetColumns + ")"
          ENDIF
       ENDSWITCH
 
