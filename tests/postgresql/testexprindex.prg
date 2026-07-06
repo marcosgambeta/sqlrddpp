@@ -11,8 +11,9 @@
 // hbmk2 testexprindex -llibpq
 //
 // Para executar:
-// testexprindex --server <servidor> --uid <usuario> --pwd <senha> --dtb <banco>
+// testexprindex --server <servidor> --port <porta> --uid <usuario> --pwd <senha> --dtb <banco>
 // NOTA: o banco de dados deve existir antes de rodar o teste.
+// A porta e opcional (padrao 5432).
 
 #ifdef __XHARBOUR__
 #xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
@@ -35,6 +36,7 @@ REQUEST SUBSTR
 REQUEST DTOS
 
 STATIC s_SERVER := "localhost"
+STATIC s_PORT   := ""
 STATIC s_UID    := "postgres"
 STATIC s_PWD    := "password"
 STATIC s_DTB    := "dbtest"
@@ -49,6 +51,7 @@ PROCEDURE Main()
    DO WHILE n <= PCount()
       DO CASE
       CASE HB_PValue(n) == "--server" ; s_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--port"   ; s_PORT := HB_PValue(++n)
       CASE HB_PValue(n) == "--uid"    ; s_UID := HB_PValue(++n)
       CASE HB_PValue(n) == "--pwd"    ; s_PWD := HB_PValue(++n)
       CASE HB_PValue(n) == "--dtb"    ; s_DTB := HB_PValue(++n)
@@ -63,7 +66,7 @@ PROCEDURE Main()
 
    ? "Conectando em " + s_SERVER + "/" + s_DTB + " ..."
 
-   nConnection := sr_AddConnection(CONNECT_POSTGRES, "PGS=" + s_SERVER + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
+   nConnection := sr_AddConnection(CONNECT_POSTGRES, "PGS=" + s_SERVER + IIf(Empty(s_PORT), "", ";PORT=" + s_PORT) + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
 
    IF nConnection < 0
       ? "Erro de conexao. Veja sqlerror.log para detalhes."
