@@ -7193,7 +7193,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
       ELSE
          AAdd(::aFields, AClone(aCreate[i]))
          AAdd(::aNames, aCreate[i, 1])
-         AAdd(::aEmptyBuffer, SR_BlankVar(::aFields[Len(::aFields), FIELD_TYPE], ::aFields[Len(::aFields), FIELD_LEN], ::aFields[Len(::aFields), FIELD_DEC4]))
+         AAdd(::aEmptyBuffer, SR_BlankVar(::aFields[Len(::aFields), FIELD_TYPE], ::aFields[Len(::aFields), FIELD_LEN], ::aFields[Len(::aFields), FIELD_DEC]))
          nPos_ := Len(::aFields)
       ENDIF
 
