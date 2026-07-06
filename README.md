@@ -169,6 +169,53 @@ When using xHarbour, add the parameter -xhb:
 hbmk2 <filename> sqlrddpp.hbc -xhb ...
 ```
 
+## Dedicated libraries
+
+In addition to the main library, there are dedicated libraries for Firebird, MySQL/MariaDB,
+Oracle, and PostgreSQL. Follow these steps to compile these libraries:
+
+1. To compile all the libraries (main and dedicated):
+
+```Batch
+hbmk2 sqlrddpp-alllibs.hbp
+```
+
+2. To compile the Firebird library:
+
+```Batch
+hbmk2 sqlrddpp-firebird.hbp
+```
+
+3. To compile the MySQL/MariaDB library:
+
+```Batch
+hbmk2 sqlrddpp-mysql.hbp
+```
+
+4. To compile the Oracle library:
+
+```Batch
+hbmk2 sqlrddpp-oracle.hbp
+```
+
+5. To compile the PostgreSQL library:
+
+```Batch
+hbmk2 sqlrddpp-postgresql.hbp
+```
+
+6. Use the equivalent .hbc file to compile your programs:
+
+```Batch
+hbmk2 <filename> sqlrddpp-firebird.hbc ...
+hbmk2 <filename> sqlrddpp-mysql.hbc ...
+hbmk2 <filename> sqlrddpp-oracle.hbc ...
+hbmk2 <filename> sqlrddpp-postgresql.hbc ...
+```
+
+The dedicated libraries have the same behaviour of the main library, but the code
+is reduced and do not need to check which RDBMS is being used all the time.
+
 ## Problems using this project
 
 If you have any problems using this project, please report them in the 'Issues' section:

@@ -170,6 +170,53 @@ Quando estiver usando xHarbour, adicione o parâmetro -xhb:
 hbmk2 <filename> sqlrddpp.hbc -xhb ...
 ```
 
+## Bibliotecas dedicadas
+
+Além da biblioteca principal, existem bibliotecas dedicadas para Firebird, MySQL/MariaDB,
+Oracle e PostgreSQL. Siga estas etapas para compilar essas bibliotecas:
+
+1. Para compilar todas as bibliotecas (principal e dedicadas):
+
+```Batch
+hbmk2 sqlrddpp-alllibs.hbp
+```
+
+2. Para compilar a biblioteca para Firebird:
+
+```Batch
+hbmk2 sqlrddpp-firebird.hbp
+```
+
+3. Para compilar a biblioteca para MySQL/MariaDB:
+
+```Batch
+hbmk2 sqlrddpp-mysql.hbp
+```
+
+4. Para compilar a biblioteca para Oracle:
+
+```Batch
+hbmk2 sqlrddpp-oracle.hbp
+```
+
+5. Para compilar a biblioteca para PostgreSQL:
+
+```Batch
+hbmk2 sqlrddpp-postgresql.hbp
+```
+
+6. Use o arquivo .hbc equivalente para compilar seus programas:
+
+```Batch
+hbmk2 <filename> sqlrddpp-firebird.hbc ...
+hbmk2 <filename> sqlrddpp-mysql.hbc ...
+hbmk2 <filename> sqlrddpp-oracle.hbc ...
+hbmk2 <filename> sqlrddpp-postgresql.hbc ...
+```
+
+As bibliotecas dedicadas apresentam o mesmo comportamento da biblioteca principal, mas
+o código é mais enxuto e não precisa verificar constantemente qual SGBD está sendo utilizado.
+
 ## Problemas na utilização deste projeto
 
 Caso tenha problemas na utilização deste projeto, informe na seção 'Issues':
