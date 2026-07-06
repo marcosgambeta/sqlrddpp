@@ -80,6 +80,8 @@
 #define DUPL_IND_DETECT                .F.
 #define SQLRDD_LEARNING_REPETITIONS     5
 
+#define SR_DBQUALIFY(arg1, arg2) "`" + lower(arg1) + "`"
+
 STATIC s_aFather := {}
 STATIC s_nStartId :=0
 STATIC s_aPos := {}
