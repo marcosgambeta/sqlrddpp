@@ -276,6 +276,7 @@ CLASS SR_WORKAREA
    METHOD IndexFieldLen(aFld)           // component length
    METHOD IndexFieldDec(aFld)           // component decimals
    METHOD IndexFieldNul(aFld)           // component nullability (.F. for expressions)
+   METHOD HasExpressionOrder()          // .T. when the active order has expression components
 
    METHOD HasFilters()
    METHOD ParseForClause(cFor)
@@ -1011,6 +1012,22 @@ METHOD SR_WORKAREA:IndexFieldNul(aFld)
    ENDIF
 
 RETURN ::aFields[aFld[IDXFLD_POS], FIELD_NULLABLE]
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:HasExpressionOrder()
+
+   LOCAL aFld
+
+   IF ::aInfo[AINFO_INDEXORD] > 0 .AND. ::aInfo[AINFO_INDEXORD] <= Len(::aIndex)
+      FOR EACH aFld IN ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]
+         IF Len(aFld) >= IDXFLD_SQL .AND. aFld[IDXFLD_SQL] != NIL
+            RETURN .T.
+         ENDIF
+      NEXT
+   ENDIF
+
+RETURN .F.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -3890,7 +3907,13 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             NEXT i
             //cSql += StrTran(::OrderBy(NIL, .T. ), "A.", "" ) + Eval(::Optmizer_ne, ::nCurrentFetch)
             //test fix for seek last
-            cSql += StrTran(::OrderBy(NIL, IIf(lLast, .F., .T.)), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch)
+            IF Len(aTemp) > 1 .AND. ::HasExpressionOrder()
+               // PostgreSQL only accepts result column names (not expressions) in
+               // the ORDER BY of a UNION, so wrap the UNION in a subselect
+               cSql := "SELECT * FROM (" + SR_CRLF + cSql + SR_CRLF + ") TMPALL " + StrTran(::OrderBy(NIL, IIf(lLast, .F., .T.)), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch)
+            ELSE
+               cSql += StrTran(::OrderBy(NIL, IIf(lLast, .F., .T.)), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch)
+            ENDIF
          ELSE
             //test fix for seek last
             //cSql := "SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + ::OrderBy(NIL, .T. ) + Eval(::Optmizer_ne, ::nCurrentFetch)
@@ -4113,8 +4136,16 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
          cSql += SR_CRLF + "UNION" + SR_CRLF
       ENDIF
    NEXT i
-   cSql += StrTran(::OrderBy(NIL, nDirection == ORD_DIR_FWD), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch) +;
-           IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */","")
+
+   IF Len(aTemp) > 1 .AND. ::HasExpressionOrder()
+      // PostgreSQL only accepts result column names (not expressions) in
+      // the ORDER BY of a UNION, so wrap the UNION in a subselect
+      cSql := "SELECT * FROM (" + SR_CRLF + cSql + SR_CRLF + ") TMPALL " + StrTran(::OrderBy(NIL, nDirection == ORD_DIR_FWD), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch) +;
+              IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */","")
+   ELSE
+      cSql += StrTran(::OrderBy(NIL, nDirection == ORD_DIR_FWD), "A.", "") + Eval(::Optmizer_ne, ::nCurrentFetch) +;
+              IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */","")
+   ENDIF
 
   ::oSql:Execute(cSql)
 
