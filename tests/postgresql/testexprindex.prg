@@ -46,6 +46,7 @@ PROCEDURE Main()
    LOCAL nConnection
    LOCAL n
    LOCAL cOpt
+   LOCAL stringConect
 
    n := 1
    DO WHILE n <= PCount()
@@ -65,8 +66,10 @@ PROCEDURE Main()
    rddSetDefault(RDD_NAME)
 
    ? "Conectando em " + s_SERVER + "/" + s_DTB + " ..."
+   stringConect := "pgs=" + s_SERVER + IIf(Empty(s_PORT), "", ";prt=" + s_PORT) + ";uid=" + s_UID + ";pwd=" + s_PWD + ";dtb=" + s_DTB
+   ? "String de conexao: " + stringConect
 
-   nConnection := sr_AddConnection(CONNECT_POSTGRES, "PGS=" + s_SERVER + IIf(Empty(s_PORT), "", ";PORT=" + s_PORT) + ";UID=" + s_UID + ";PWD=" + s_PWD + ";DTB=" + s_DTB)
+   nConnection := sr_AddConnection(CONNECT_POSTGRES, stringConect)
 
    IF nConnection < 0
       ? "Erro de conexao. Veja sqlerror.log para detalhes."
@@ -194,23 +197,23 @@ RETURN
 STATIC PROCEDURE CriaIndices()
 
    ? ""
-   ? "Criando indices..."
+   ? "Criando indices (INDEX ON ... TAG <tabela+seq> TO <tabela>)..."
    ? ""
 
-   ? "  INDEX ON UPPER(NOME)                  => indice de expressao (sem coluna extra)"
-   INDEX ON UPPER(NOME) TO exp_nome
+   ? "  TAG testexpr1: UPPER(NOME)                   => expressao (sem coluna extra)"
+   INDEX ON UPPER(NOME) TAG testexpr1 TO testexpr
 
-   ? "  INDEX ON SUBSTR(CIDADE,1,10)          => indice de expressao (sem coluna extra)"
-   INDEX ON SUBSTR(CIDADE, 1, 10) TO exp_cid
+   ? "  TAG testexpr2: SUBSTR(CIDADE,1,10)           => expressao (sem coluna extra)"
+   INDEX ON SUBSTR(CIDADE, 1, 10) TAG testexpr2 TO testexpr
 
-   ? "  INDEX ON STRZERO(ID,10)               => indice de expressao (sem coluna extra)"
-   INDEX ON STRZERO(ID, 10) TO exp_id
+   ? "  TAG testexpr3: STRZERO(ID,10)                => expressao (sem coluna extra)"
+   INDEX ON STRZERO(ID, 10) TAG testexpr3 TO testexpr
 
-   ? "  INDEX ON DTOS(ADMISSAO)+STRZERO(ID,10) => data crua + expressao (sem coluna extra)"
-   INDEX ON DTOS(ADMISSAO) + STRZERO(ID, 10) TO exp_dtid
+   ? "  TAG testexpr4: DTOS(ADMISSAO)+STRZERO(ID,10) => data crua + expressao (sem coluna extra)"
+   INDEX ON DTOS(ADMISSAO) + STRZERO(ID, 10) TAG testexpr4 TO testexpr
 
-   ? "  INDEX ON MYUDF(NOME)                  => UDF: indice sintetico (CRIA coluna INDKEY_)"
-   INDEX ON MYUDF(NOME) TO exp_udf
+   ? "  TAG testexpr5: MYUDF(NOME)                   => UDF: sintetico (CRIA coluna INDKEY_)"
+   INDEX ON MYUDF(NOME) TAG testexpr5 TO testexpr
 
 RETURN
 
@@ -296,9 +299,12 @@ STATIC PROCEDURE TestaSeeks()
 
    // ------------------------------------------------ UPPER(NOME)
 
-   SetOrderByTag("EXP_NOME")
+   IF !SetOrderByTag("TESTEXPR1")
+      ? "AVISO: ordem TESTEXPR1 nao encontrada - testes de SEEK cancelados"
+      RETURN
+   ENDIF
    ? ""
-   ? "SEEK em UPPER(NOME) - ordem: " + ordKey()
+   ? "SEEK em UPPER(NOME) - ordem: " + ordName() + " => " + ordKey()
    nOk := nErro := 0
    FOR n := 1 TO NUM_REC
       DBGoTo(n)
@@ -324,7 +330,10 @@ STATIC PROCEDURE TestaSeeks()
 
    // ------------------------------------------------ SUBSTR(CIDADE,1,10)
 
-   SetOrderByTag("EXP_CID")
+   IF !SetOrderByTag("TESTEXPR2")
+      ? "AVISO: ordem TESTEXPR2 nao encontrada"
+      RETURN
+   ENDIF
    ? ""
    ? "SEEK em SUBSTR(CIDADE,1,10) - ordem: " + ordKey()
    nOk := nErro := 0
@@ -342,7 +351,10 @@ STATIC PROCEDURE TestaSeeks()
 
    // ------------------------------------------------ STRZERO(ID,10)
 
-   SetOrderByTag("EXP_ID")
+   IF !SetOrderByTag("TESTEXPR3")
+      ? "AVISO: ordem TESTEXPR3 nao encontrada"
+      RETURN
+   ENDIF
    ? ""
    ? "SEEK em STRZERO(ID,10) - ordem: " + ordKey()
    nOk := nErro := 0
@@ -364,7 +376,10 @@ STATIC PROCEDURE TestaSeeks()
 
    // ------------------------------------------------ DTOS(ADMISSAO)+STRZERO(ID,10)
 
-   SetOrderByTag("EXP_DTID")
+   IF !SetOrderByTag("TESTEXPR4")
+      ? "AVISO: ordem TESTEXPR4 nao encontrada"
+      RETURN
+   ENDIF
    ? ""
    ? "SEEK em DTOS(ADMISSAO)+STRZERO(ID,10) - ordem: " + ordKey()
    nOk := nErro := 0
@@ -381,7 +396,10 @@ STATIC PROCEDURE TestaSeeks()
 
    // ------------------------------------------------ MYUDF(NOME)  (sintetico)
 
-   SetOrderByTag("EXP_UDF")
+   IF !SetOrderByTag("TESTEXPR5")
+      ? "AVISO: ordem TESTEXPR5 nao encontrada"
+      RETURN
+   ENDIF
    ? ""
    ? "SEEK em MYUDF(NOME) (indice sintetico com INDKEY_) - ordem: " + ordKey()
    nOk := nErro := 0
