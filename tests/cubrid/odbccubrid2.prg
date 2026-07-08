@@ -51,7 +51,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--database"  ; s_DATABASE := HB_PValue(++n)
       CASE HB_PValue(n) == "--uid"       ; s_UID := HB_PValue(++n)
       CASE HB_PValue(n) == "--pwd"       ; s_PWD := HB_PValue(++n)
-      CASE HB_PValue(n) == "--rdd"       ; s_RDD_NAME := HB_PValue(++n)
+      CASE HB_PValue(n) == "--rdd"       ; s_RDD_NAME := upper(HB_PValue(++n))
       CASE HB_PValue(n) == "--tablename" ; s_TABLE_NAME := HB_PValue(++n)
       CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
       CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
@@ -107,6 +107,7 @@ PROCEDURE Main()
    ? "Opening table"
    USE (s_TABLE_NAME) EXCLUSIVE VIA (s_RDD_NAME)
 
+   ? "rddname()=", rddname()
    ? "bof()=", bof()
    ? "eof()=", eof()
    ? "reccount()=", reccount()
