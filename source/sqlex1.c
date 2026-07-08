@@ -637,6 +637,10 @@ HB_ERRCODE SR_SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT
     }
     break;
   }
+  case SQL_C_SHORT: {
+    BindStructure->asLogical = (SQLCHAR)hb_itemGetL(pFieldData);
+    break;
+  }
   case SQL_C_BIT: {
     BindStructure->asLogical = (SQLCHAR)hb_itemGetL(pFieldData);
     break; // TODO: unnecessary break
@@ -677,6 +681,10 @@ HB_ERRCODE SR_SetBindEmptylValue(COLUMNBINDP BindStructure)
       BindStructure->lIndPtr = SQL_NULL_DATA;
       BindStructure->isBoundNULL = HB_TRUE;
     }
+    break;
+  }
+  case SQL_C_SHORT: {
+    BindStructure->asLogical = HB_FALSE;
     break;
   }
   case SQL_C_BIT: {
@@ -890,6 +898,13 @@ static void BindAllIndexStmts(SQLEXAREAP thiswa)
             res = SQLBindParameter(hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, SQL_C_TYPE_DATE,
                                    SQL_TYPE_DATE, SQL_DATE_LEN, 0, &(BindStructure->asDate), 0,
                                    0);
+            break;
+          }
+          case SQL_C_SHORT: {
+            res = SQLBindParameter(
+                hStmt, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT, (SQLSMALLINT)BindStructure->iCType,
+                (SQLSMALLINT)BindStructure->iSQLType, BindStructure->ColumnSize,
+                BindStructure->DecimalDigits, &(BindStructure->asLogical), 0, SR_NULLPTR);
             break;
           }
           case SQL_C_BIT: {
@@ -1235,7 +1250,11 @@ void SR_SetCurrRecordStructure(SQLEXAREAP thiswa)
       break;
     }
     case 'L': {
-      BindStructure->iCType = SQL_C_BIT;
+      if (thiswa->nSystemID == SQLRDD_RDBMS_CUBRID) {
+        BindStructure->iCType = SQL_C_SHORT;
+      } else {
+         BindStructure->iCType = SQL_C_BIT;
+      }
       break; // TODO: unnecessary break
     }
     }

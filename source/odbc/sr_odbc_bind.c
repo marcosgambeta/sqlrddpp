@@ -1330,6 +1330,17 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
     }
     break;
   }
+  case SQL_SMALLINT: {
+    unsigned short val = 0;
+    if (SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_SHORT, &val, sizeof(val), &iLen))) {
+      pItem = hb_itemPutL(pItem, val != 0);
+    }
+    if ((int)iLen == SQL_NULL_DATA) {
+      hb_itemPutL(pItem, HB_FALSE);
+    }
+    break;
+  }
+#if 0
   case SQL_BINARY: {
     unsigned char val = 0;
     if (SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_BINARY, &val, sizeof(val), &iLen))) {
@@ -1340,6 +1351,7 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
     }
     break;
   }
+#endif
   case SQL_DATE:
   case SQL_TYPE_DATE: {
     DATE_STRUCT val = {0, 0, 0};
