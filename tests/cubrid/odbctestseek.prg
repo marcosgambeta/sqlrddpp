@@ -58,7 +58,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--uid"       ; s_UID := HB_PValue(++n)
       CASE HB_PValue(n) == "--pwd"       ; s_PWD := HB_PValue(++n)
       CASE HB_PValue(n) == "--database"  ; s_DATABASE := HB_PValue(++n)
-      CASE HB_PValue(n) == "--rdd"       ; s_RDD_NAME := HB_PValue(++n)
+      CASE HB_PValue(n) == "--rdd"       ; s_RDD_NAME := upper(HB_PValue(++n))
       CASE HB_PValue(n) == "--tablename" ; s_TABLE_NAME := HB_PValue(++n)
       CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
       CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
@@ -87,6 +87,12 @@ PROCEDURE Main()
    sr_StartLog(nConnection)
 
    IF s_NEW_TABLE .AND. sr_ExistTable(s_TABLE_NAME)
+      ? "Removing indexes"
+      sr_DropIndex("index1")
+      sr_DropIndex("index2")
+      sr_DropIndex("index3")
+      sr_DropIndex("index4")
+      ? "Removing table"
       sr_DropTable(s_TABLE_NAME)
    ENDIF
 
@@ -96,10 +102,22 @@ PROCEDURE Main()
       dbCreate(s_TABLE_NAME, {{"ID        ", "N", 10, 0}, ;
                               {"NAME      ", "C", 10, 0}, ;
                               {"DATE      ", "D",  8, 0}}, s_RDD_NAME)
+      ? "Opening table"
+      USE (s_TABLE_NAME) EXCLUSIVE VIA (s_RDD_NAME)
+      ? "Creating indexes"
+      INDEX ON ID TO index1
+      INDEX ON NAME TO index2
+      INDEX ON DATE TO index3
+      INDEX ON NAME + dtos(DATE) TO index4
+      ? "Closing table"
+      USE
    ENDIF
 
    ? "Opening table"
    USE (s_TABLE_NAME) EXCLUSIVE VIA (s_RDD_NAME)
+   ? "Opening indexes"
+   SET INDEX TO index1, index2, index3, index4
+   ? "rddname()", rddname()
    ? "bof()", bof()
    ? "eof()", eof()
    ? "reccount()", reccount()
@@ -114,14 +132,8 @@ PROCEDURE Main()
       NEXT n
    ENDIF
 
-   ? "Creating indexes"
-   INDEX ON ID TO index1
-   INDEX ON NAME TO index2
-   INDEX ON DATE TO index3
-   INDEX ON NAME + dtos(DATE) TO index4
-
    ? "Testing index 1 (ID)"
-   SET INDEX TO index1
+   SET ORDER TO 1
    nSeekFound := 0
    nSeekNotFound := 0
    nSeekFailed := 0
@@ -153,7 +165,7 @@ PROCEDURE Main()
    ? "nSeekFailed", nSeekFailed, iif(nSeekFailed == 0, "OK", "ERROR")
 
    ? "Testing index 1 (ID) with scope"
-   SET INDEX TO index1
+   SET ORDER TO 1
    SET SCOPE TO 101, (s_NUM_REC - 100)
    nSeekFound := 0
    nSeekNotFound := 0
@@ -191,7 +203,7 @@ PROCEDURE Main()
    SET SCOPE TO
 
    ? "Testing index 2 (NAME)"
-   SET INDEX TO index2
+   SET ORDER TO 2
    nSeekFound := 0
    nSeekNotFound := 0
    nSeekFailed := 0
@@ -222,8 +234,8 @@ PROCEDURE Main()
    // must be 0
    ? "nSeekFailed", nSeekFailed, iif(nSeekFailed == 0, "OK", "ERROR")
 
-   ? "Testing index 3 (DATE"
-   SET INDEX TO index3
+   ? "Testing index 3 (DATE)"
+   SET ORDER TO 3
    nSeekFound := 0
    nSeekNotFound := 0
    nSeekFailed := 0
@@ -255,7 +267,7 @@ PROCEDURE Main()
    ? "nSeekFailed", nSeekFailed, iif(nSeekFailed == 0, "OK", "ERROR")
 
    ? "Testing index 4 (NAME+DTOS(DATE))"
-   SET INDEX TO index4
+   SET ORDER TO 4
    nSeekFound := 0
    nSeekNotFound := 0
    nSeekFailed := 0
@@ -291,11 +303,13 @@ PROCEDURE Main()
    // must be 0
    ? "nSeekFailed", nSeekFailed, iif(nSeekFailed == 0, "OK", "ERROR")
 
-   ? "Removing indexes"
-   sr_DropIndex("index1")
-   sr_DropIndex("index2")
-   sr_DropIndex("index3")
-   sr_DropIndex("index4")
+   IF s_DROP_TABLE
+      ? "Removing indexes"
+      sr_DropIndex("index1")
+      sr_DropIndex("index2")
+      sr_DropIndex("index3")
+      sr_DropIndex("index4")
+   ENDIF
 
    ? "Closing table"
    CLOSE DATABASE
