@@ -806,6 +806,7 @@ METHOD SR_WORKAREA:BuildIndexComponent(cItem)
    LOCAL nStart
    LOCAL nCount
    LOCAL nZLen
+   LOCAL nZDec
    LOCAL nParen
    LOCAL cSql
    LOCAL i
@@ -910,20 +911,20 @@ METHOD SR_WORKAREA:BuildIndexComponent(cItem)
          RETURN NIL
       ENDIF
 
-      IF Len(aArgs) == 3 .AND. Val(aArgs[3]) != 0
-         RETURN NIL     // decimal places not supported, fall back to synthetic
-      ENDIF
-
       nZLen := Val(aArgs[2])
+      nZDec := IIf(Len(aArgs) == 3, Val(aArgs[3]), 0)
 
-      IF nZLen < 1
+      IF nZLen < 1 .OR. nZDec < 0 .OR. (nZDec > 0 .AND. nZLen < nZDec + 2)
          RETURN NIL
       ENDIF
 
-      cSql := "lpad(round(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",0))::bigint::text," + ;
-              LTrim(Str(nZLen)) + ",'0')"
+      // round(numeric, d)::text keeps d decimal places, so lpad() zero fills
+      // exactly like StrZero() (negative values are not supported)
 
-      RETURN {cItem, nPos, cSql, "C", nZLen, IdxBlkStrZero(nZLen)}
+      cSql := "lpad(round(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",0)," + ;
+              LTrim(Str(nZDec)) + ")::text," + LTrim(Str(nZLen)) + ",'0')"
+
+      RETURN {cItem, nPos, cSql, "C", nZLen, IdxBlkStrZero(nZLen, nZDec)}
 
    ENDCASE
 
@@ -943,9 +944,9 @@ RETURN {|u|RTrim(SubStr(PadR(IIf(u == NIL, "", u), nFldLen), nStart, nCount))}
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-STATIC FUNCTION IdxBlkStrZero(nZLen)
+STATIC FUNCTION IdxBlkStrZero(nZLen, nZDec)
 
-RETURN {|u|StrZero(Round(IIf(u == NIL, 0, u), 0), nZLen)}
+RETURN {|u|StrZero(Round(IIf(u == NIL, 0, u), nZDec), nZLen, nZDec)}
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -6071,8 +6072,14 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
    ENDIF
 
    IF !lSyntheticIndex .AND. Len(aCols) > SR_GetSyntheticIndexMinimun()
-      lSyntheticIndex := .T.
-      lSyntheticVirtual := .F.
+      // Legacy rule: keys with many columns used to become synthetic. When
+      // expression indexes are enabled PostgreSQL handles multi column and
+      // expression indexes natively, so keep the regular index instead of
+      // creating an INDKEY_ column.
+      IF !SR_GetExpressionIndex()
+         lSyntheticIndex := .T.
+         lSyntheticVirtual := .F.
+      ENDIF
    ENDIF
 
    aRet := Eval(SR_GetIndexInfoBlock(), cIndexName)
