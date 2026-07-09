@@ -66,7 +66,7 @@ static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 #define LOGFILE "pgs.log"
 
 #define GET_PGSQL_SESSION(session, numpar)                                                     \
-  PPSQL_SESSION session = (PPSQL_SESSION)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
+  PSQL_SESSION *session = (PSQL_SESSION *)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
 
 typedef struct _PSQL_SESSION
 {
@@ -79,8 +79,6 @@ typedef struct _PSQL_SESSION
 } PSQL_SESSION;
 
 // culik 11/9/2010 variavel para setar o comportamento do postgresql
-
-typedef PSQL_SESSION *PPSQL_SESSION;
 
 //----------------------------------------------------------------------------//
 
@@ -96,10 +94,10 @@ static void myNoticeProcessor(void *arg, const char *message)
 // SR_PGSConnect(ConnectionString) => ConnHandle
 HB_FUNC_STATIC(SR_PGSCONNECT)
 {
-  // PPSQL_SESSION session = (PPSQL_SESSION) hb_xgrab(sizeof(PSQL_SESSION));
-  PPSQL_SESSION session = (PPSQL_SESSION)hb_xgrabz(sizeof(PSQL_SESSION));
+  // PSQL_SESSION *session = (PSQL_SESSION *)hb_xgrab(sizeof(PSQL_SESSION));
+  PSQL_SESSION *session = (PSQL_SESSION *)hb_xgrabz(sizeof(PSQL_SESSION));
 
-  //    memset(session, 0, sizeof(PSQL_SESSION));
+  // memset(session, 0, sizeof(PSQL_SESSION));
   session->iAffectedRows = 0;
   session->dbh = PQconnectdb(hb_parc(1));
 
