@@ -1708,7 +1708,8 @@ RETURN aRet
 
 //------------------------------------------------------------------------
 
-STATIC FUNCTION SR_IsComparOp(nOp)
+#if 0
+STATIC FUNCTION SR_IsComparOp(nOp) // changed to C code
 
    SWITCH nOp
    CASE SQL_PCODE_OPERATOR_EQ
@@ -1725,10 +1726,12 @@ STATIC FUNCTION SR_IsComparOp(nOp)
    ENDSWITCH
 
 RETURN .F.
+#endif
 
 //------------------------------------------------------------------------
 
-STATIC FUNCTION SR_IsComparNullOp(nOp)
+#if 0
+STATIC FUNCTION SR_IsComparNullOp(nOp) // changed to C code
 
    SWITCH nOp
    CASE SQL_PCODE_OPERATOR_IS_NULL
@@ -1737,10 +1740,12 @@ STATIC FUNCTION SR_IsComparNullOp(nOp)
    ENDSWITCH
 
 RETURN .F.
+#endif
 
 //------------------------------------------------------------------------
 
-STATIC FUNCTION SR_ComparOpText(nOp)
+#if 0
+STATIC FUNCTION SR_ComparOpText(nOp) // changed to C code
 
    LOCAL cSql := ""
 
@@ -1777,5 +1782,83 @@ STATIC FUNCTION SR_ComparOpText(nOp)
    ENDSWITCH
 
 RETURN cSql
+#endif
+
+//------------------------------------------------------------------------
+
+#pragma BEGINDUMP
+
+#include <hbapi.h>
+#include "hbsql.ch"
+
+HB_FUNC_STATIC(SR_ISCOMPAROP)
+{
+  switch (hb_parni(1)) {
+  case SQL_PCODE_OPERATOR_EQ:
+  case SQL_PCODE_OPERATOR_NE:
+  case SQL_PCODE_OPERATOR_GT:
+  case SQL_PCODE_OPERATOR_GE:
+  case SQL_PCODE_OPERATOR_LT:
+  case SQL_PCODE_OPERATOR_LE:
+  case SQL_PCODE_OPERATOR_LIKE:
+  case SQL_PCODE_OPERATOR_NOT_LIKE:
+  case SQL_PCODE_OPERATOR_IS_NULL:
+  case SQL_PCODE_OPERATOR_IS_NOT_NULL:
+    hb_retl(HB_TRUE);
+  default:
+    hb_retl(HB_FALSE);
+  }
+}
+
+HB_FUNC_STATIC(SR_ISCOMPARNULLOP)
+{
+  switch (hb_parni(1)) {
+  case SQL_PCODE_OPERATOR_IS_NULL:
+  case SQL_PCODE_OPERATOR_IS_NOT_NULL:
+    hb_retl(HB_TRUE);
+  default:
+    hb_retl(HB_FALSE);
+  }
+}
+
+HB_FUNC_STATIC(SR_COMPAROPTEXT)
+{
+  switch (hb_parni(1)) {
+  case SQL_PCODE_OPERATOR_EQ:
+    hb_retc(" = ");
+    break;
+  case SQL_PCODE_OPERATOR_NE:
+    hb_retc(" != ");
+    break;
+  case SQL_PCODE_OPERATOR_GT:
+    hb_retc(" > ");
+    break;
+  case SQL_PCODE_OPERATOR_GE:
+    hb_retc(" >= ");
+    break;
+  case SQL_PCODE_OPERATOR_LT:
+    hb_retc(" < ");
+    break;
+  case SQL_PCODE_OPERATOR_LE:
+    hb_retc(" <= ");
+    break;
+  case SQL_PCODE_OPERATOR_LIKE:
+    hb_retc(" LIKE ");
+    break;
+  case SQL_PCODE_OPERATOR_NOT_LIKE:
+    hb_retc(" NOT LIKE ");
+    break;
+  case SQL_PCODE_OPERATOR_IS_NULL:
+    hb_retc(" IS NULL ");
+    break;
+  case SQL_PCODE_OPERATOR_IS_NOT_NULL:
+    hb_retc(" IS NOT NULL ");
+    break;
+  default:
+    hb_retc("");
+  }
+}
+
+#pragma ENDDUMP
 
 //------------------------------------------------------------------------
