@@ -252,6 +252,122 @@ HB_FUNC(SR_UNINSTALLUSERDSN)
   }
 }
 
+HB_FUNC(SR_LISTODBCDRIVERS)
+{
+  SQLHENV henv = SQL_NULL_HENV;
+
+  if (SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv) != SQL_SUCCESS) {
+    hb_reta(0);
+    return;
+  }
+
+  if (SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0) != SQL_SUCCESS) {
+    SQLFreeHandle(SQL_HANDLE_ENV, henv);
+    hb_reta(0);
+    return;
+  }
+
+  SQLCHAR driverDesc[256];
+  SQLSMALLINT descLen;
+  SQLCHAR driverAttr[256];
+  SQLSMALLINT attrLen;
+
+  // first entry
+  SQLRETURN retcode = SQLDrivers(henv, SQL_FETCH_FIRST,
+                                 driverDesc, sizeof(driverDesc), &descLen,
+                                 driverAttr, sizeof(driverAttr), &attrLen);
+
+  PHB_ITEM pArray = hb_itemNew(SR_NULLPTR);
+  hb_arrayNew(pArray, 0);
+
+  while (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+    // change '\0' to ';'
+    for (int i = attrLen - 1; i > 0; i--) {
+      if (driverAttr[i] == '\0') {
+        driverAttr[i] = ';';
+      }
+    }
+    // add description and attributes to array
+    PHB_ITEM pTempArray = hb_itemNew(SR_NULLPTR);
+    hb_arrayNew(pTempArray, 2);
+    hb_arraySetC(pTempArray, 1, (const char *)driverDesc);
+    hb_arraySetC(pTempArray, 2, (const char *)driverAttr);
+    hb_arrayAddForward(pArray, pTempArray);
+    hb_itemRelease(pTempArray);
+    // next entry
+    retcode = SQLDrivers(henv, SQL_FETCH_NEXT,
+                         driverDesc, sizeof(driverDesc), &descLen,
+                         driverAttr, sizeof(driverAttr), &attrLen);
+  }
+
+  SQLFreeHandle(SQL_HANDLE_ENV, henv);
+
+  hb_itemReturnRelease(pArray);
+}
+
+static HB_BOOL sr_listodbcdatasources(SQLUSMALLINT direction)
+{
+  SQLHENV henv = SQL_NULL_HENV;
+
+  if (SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv) != SQL_SUCCESS) {
+    hb_reta(0);
+    return HB_FALSE;
+  }
+
+  if (SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0) != SQL_SUCCESS) {
+    SQLFreeHandle(SQL_HANDLE_ENV, henv);
+    hb_reta(0);
+    return HB_FALSE;
+  }
+
+  SQLCHAR dsn_name[SQL_MAX_DSN_LENGTH + 1];
+  SQLSMALLINT dsn_name_len;
+  SQLCHAR driver_desc[256];
+  SQLSMALLINT driver_desc_len;
+
+  // first entry
+  SQLRETURN retcode = SQLDataSources(henv, direction,
+                                     dsn_name, sizeof(dsn_name), &dsn_name_len,
+                                     driver_desc, sizeof(driver_desc), &driver_desc_len);
+
+
+  PHB_ITEM pArray = hb_itemNew(SR_NULLPTR);
+  hb_arrayNew(pArray, 0);
+
+  while (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+    // add DSN name and driver description to array
+    PHB_ITEM pTempArray = hb_itemNew(SR_NULLPTR);
+    hb_arrayNew(pTempArray, 2);
+    hb_arraySetC(pTempArray, 1, (const char *)dsn_name);
+    hb_arraySetC(pTempArray, 2, (const char *)driver_desc);
+    hb_arrayAddForward(pArray, pTempArray);
+    hb_itemRelease(pTempArray);
+    // next entry
+    retcode = SQLDataSources(henv, SQL_FETCH_NEXT,
+                             dsn_name, sizeof(dsn_name), &dsn_name_len,
+                             driver_desc, sizeof(driver_desc), &driver_desc_len);
+  }
+
+  SQLFreeHandle(SQL_HANDLE_ENV, henv);
+  hb_itemReturnRelease(pArray);
+  return HB_TRUE;
+}
+
+HB_FUNC(SR_LISTODBCDATASOURCES)
+{
+  sr_listodbcdatasources(HB_ISNUM(1) ? (SQLUSMALLINT)hb_parni(1) : SQL_FETCH_FIRST);
+}
+
+HB_FUNC(SR_LISTODBCUSERDATASOURCES)
+{
+  sr_listodbcdatasources(SQL_FETCH_FIRST_USER);
+}
+
+HB_FUNC(SR_LISTODBCSYSTEMDATASOURCES)
+{
+  sr_listodbcdatasources(SQL_FETCH_FIRST_SYSTEM);
+}
+
 #endif
 
 //----------------------------------------------------------------------------//
@@ -1330,6 +1446,17 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
     }
     break;
   }
+  case SQL_SMALLINT: {
+    unsigned short val = 0;
+    if (SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_SHORT, &val, sizeof(val), &iLen))) {
+      pItem = hb_itemPutL(pItem, val != 0);
+    }
+    if ((int)iLen == SQL_NULL_DATA) {
+      hb_itemPutL(pItem, HB_FALSE);
+    }
+    break;
+  }
+#if 0
   case SQL_BINARY: {
     unsigned char val = 0;
     if (SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_BINARY, &val, sizeof(val), &iLen))) {
@@ -1340,6 +1467,7 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
     }
     break;
   }
+#endif
   case SQL_DATE:
   case SQL_TYPE_DATE: {
     DATE_STRUCT val = {0, 0, 0};

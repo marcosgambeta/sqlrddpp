@@ -140,8 +140,6 @@ typedef struct _OCI_SESSION
   unsigned int uRows;
 } OCI_SESSION;
 
-typedef OCI_SESSION *POCI_SESSION;
-
 static HB_USHORT OCI_initilized = 0;
 
 #ifdef HAVE_USLEEP
@@ -154,7 +152,7 @@ static HB_USHORT OCI_initilized = 0;
 
 HB_FUNC_STATIC(SR_SQLO_CONNECT)
 {
-  POCI_SESSION session = (POCI_SESSION)hb_xgrab(sizeof(OCI_SESSION));
+  OCI_SESSION *session = (OCI_SESSION *)hb_xgrab(sizeof(OCI_SESSION));
 
   if (!OCI_initilized) {
 #if defined(ENABLE_PTHREADS) && defined(HAVE_PTHREAD_H)
@@ -803,7 +801,7 @@ HB_FUNC_STATIC(SR_ORACLEWRITEMEMO)
 }
 
 // Oracle Bind utility functions for usage with stored procedures with out parameters
-static void OracleFreeLink(int num_recs, POCI_SESSION p)
+static void OracleFreeLink(int num_recs, OCI_SESSION *p)
 {
   int i;
 

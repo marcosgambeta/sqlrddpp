@@ -711,12 +711,12 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
          aInd[INDEXMAN_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(aInd[INDEXMAN_IDXKEY]) + ") + Str(RecNo(),15) }")
          aInd[INDEXMAN_SYNTH_COLPOS] := AScan(::aNames, "INDKEY_" + aInd[INDEXMAN_COLUMNS])     // Make life easier in odbcrdd2.c
       ELSE
-         aInd[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + AllTrim(aInd[INDEXMAN_IDXKEY]) + " }")
+         aInd[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + AllTrim(aInd[INDEXMAN_IDXKEY]) + " }")
       ENDIF
       aInd[INDEXMAN_IDXNAME] := AllTrim(aInd[INDEXMAN_IDXNAME])
       aInd[INDEXMAN_TAG] := AllTrim(aInd[INDEXMAN_TAG])
       IF SubStr(aInd[INDEXMAN_FOR_EXPRESS], 1, 1) == "#"
-         aInd[INDEXMAN_FOR_CODEBLOCK] := &( "{|| if(" + AllTrim(SubStr(aInd[INDEXMAN_FOR_EXPRESS], 5)) + ",'T','F') }")     // FOR clause codeblock
+         aInd[INDEXMAN_FOR_CODEBLOCK] := &("{|| if(" + AllTrim(SubStr(aInd[INDEXMAN_FOR_EXPRESS], 5)) + ",'T','F') }")     // FOR clause codeblock
          aInd[INDEXMAN_FOR_COLPOS] := AScan(::aNames, "INDFOR_" + SubStr(aInd[INDEXMAN_FOR_EXPRESS], 2, 3))   // Make life easier in odbcrdd2.c
       ENDIF
       // If there is no more than one occourrence of same index bag name,
@@ -784,12 +784,8 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
             aThisIndex[INDEXMAN_FOR_EXPRESS] := ""
             aThisIndex[INDEXMAN_COLUMNS] := ""
             aThisIndex[INDEXMAN_TAG] := RTrim(aInd[1])
-#ifdef __XHARBOUR__
-            aThisIndex[INDEXMAN_TAGNUM] := StrZero(hb_EnumIndex(), 6)
-#else
-            aThisIndex[INDEXMAN_TAGNUM] := StrZero(aInd:__EnumIndex(), 6)
-#endif
-            aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &( "{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
+            aThisIndex[INDEXMAN_TAGNUM] := StrZero(SR_ENUMINDEX(aInd), 6)
+            aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
             aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
             aThisIndex[INDEXMAN_FOR_COLPOS] := 0
             AAdd(::aIndexMgmnt, aThisIndex)
@@ -1233,8 +1229,8 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS]}
       ELSE
-         aCols := &( "{" + ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY] + "}")
-//         aCols := HB_ATokens(StrTran(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], Chr(34), ""), ",")
+         aCols := &("{" + ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY] + "}")
+         // aCols := HB_ATokens(StrTran(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], Chr(34), ""), ",")
       ENDIF
 
       cOrdName := ::aIndexMgmnt[nInd, INDEXMAN_TAG]
@@ -1311,13 +1307,13 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
       ::aIndex[nInd, ORDER_DESEND] := cSqlD
       ::aIndex[nInd, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
-         IF RDDNAME() =="SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+         IF RDDNAME() == "SQLEX"
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ELSE
             ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ENDIF
       ELSE
-         ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")
+         ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
       ENDIF
       IF SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
          ::aIndex[nInd, FOR_CLAUSE] := RTrim(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS])
@@ -1555,7 +1551,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
             ENDIF
 
             ::oSql:GetLine(::aFields, .F., @::aCache[nPos])
-            uRecord := ::aCache[nPos,::hnRecno]
+            uRecord := ::aCache[nPos, ::hnRecno]
             IF ::lFetchAll
                AAdd(::aFetch, uRecord)
             ENDIF
@@ -2100,7 +2096,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 #endif
                ELSEIF ::aFields[nThisField, FIELD_DOMAIN] != SQL_GUID
                   cRet += IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField]) + " = " + ::QuotedNull(aBuffer[nThisField], .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo) + " "
-               ELSEIF ::aFields[nThisField, FIELD_DOMAIN] ==SQL_LONGVARCHARXML
+               ELSEIF ::aFields[nThisField, FIELD_DOMAIN] == SQL_LONGVARCHARXML
                   oXml := sr_arraytoXml(aBuffer[nThisField])
 #ifdef __XHARBOUR__
                   nlen := Len(oxml:tostring(HBXML_STYLE_NONEWLINE))
@@ -2191,7 +2187,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
             lNull := ::aFields[i, FIELD_NULLABLE]
             lMemo := ::aFields[i, FIELD_TYPE] == "M"
             lML := ::aFields[i, FIELD_MULTILANG]
-            IF lMemo .AND. ::aFields[i, FIELD_DOMAIN] ==SQL_LONGVARCHARXML
+            IF lMemo .AND. ::aFields[i, FIELD_DOMAIN] == SQL_LONGVARCHARXML
                lMemo := .F.
             ENDIF
 
@@ -2403,43 +2399,24 @@ METHOD SR_WORKAREA:UpdateCache(aResultSet)
    IF SR_SetMultiLang()
       IF ::aInfo[AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
-#ifdef __XHARBOUR__
-            IF HB_IsHash(::aLocalBuffer[hb_enumIndex()])
-               IF ::aFields[hb_enumIndex(), FIELD_TYPE] $ "CM"
-                  (::aLocalBuffer[hb_enumIndex()])[SR_SetBaseLang()] := PadR(uVal, ::aFields[hb_enumIndex(), FIELD_LEN])
+            IF HB_IsHash(::aLocalBuffer[SR_ENUMINDEX(uVal)])
+               IF ::aFields[SR_ENUMINDEX(uVal), FIELD_TYPE] $ "CM"
+                  (::aLocalBuffer[SR_ENUMINDEX(uVal)])[SR_SetBaseLang()] := PadR(uVal, ::aFields[SR_ENUMINDEX(uVal), FIELD_LEN])
                ELSE
-                  (::aLocalBuffer[hb_enumIndex()])[SR_SetBaseLang()] := uVal
+                  (::aLocalBuffer[SR_ENUMINDEX(uVal)])[SR_SetBaseLang()] := uVal
                ENDIF
-               ::aOldBuffer[hb_enumIndex()] := ::aLocalBuffer[hb_enumIndex()]
+               ::aOldBuffer[SR_ENUMINDEX(uVal)] := ::aLocalBuffer[SR_ENUMINDEX(uVal)]
             ELSE
-               ::aLocalBuffer[hb_enumIndex()] := uVal
-               ::aOldBuffer[hb_enumIndex()] := uVal
+               ::aLocalBuffer[SR_ENUMINDEX(uVal)] := uVal
+               ::aOldBuffer[SR_ENUMINDEX(uVal)] := uVal
             ENDIF
-#else
-            IF HB_IsHash(::aLocalBuffer[uVal:__enumIndex()])
-               IF ::aFields[uVal:__enumIndex(), FIELD_TYPE] $ "CM"
-                  (::aLocalBuffer[uVal:__enumIndex()])[SR_SetBaseLang()] := PadR(uVal, ::aFields[uVal:__enumIndex(), FIELD_LEN])
-               ELSE
-                  (::aLocalBuffer[uVal:__enumIndex()])[SR_SetBaseLang()] := uVal
-               ENDIF
-               ::aOldBuffer[uVal:__enumIndex()] := ::aLocalBuffer[uVal:__enumIndex()]
-            ELSE
-               ::aLocalBuffer[uVal:__enumIndex()] := uVal
-               ::aOldBuffer[uVal:__enumIndex()] := uVal
-            ENDIF
-#endif
          NEXT
       ENDIF
    ELSE
       IF ::aInfo[AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
-#ifdef __XHARBOUR__
-            ::aLocalBuffer[hb_enumIndex()] := uVal
-            ::aOldBuffer[hb_enumIndex()] := uVal
-#else
-            ::aLocalBuffer[uVal:__enumIndex()] := uVal
-            ::aOldBuffer[uVal:__enumIndex()] := uVal
-#endif
+            ::aLocalBuffer[SR_ENUMINDEX(uVal)] := uVal
+            ::aOldBuffer[SR_ENUMINDEX(uVal)] := uVal
          NEXT
       ENDIF
    ENDIF
@@ -3862,7 +3839,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
             ENDIF
 
             ::oSql:GetLine(::aFields, .F., @::aCache[nPos])
-            uRecord := ::aCache[nPos,::hnRecno]
+            uRecord := ::aCache[nPos, ::hnRecno]
             IF ::lFetchAll
                AAdd(::aFetch, uRecord)
             ENDIF
@@ -5119,7 +5096,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
                ::aIndex[nLen, SYNTH_INDEX_COL_POS] := nPos
                SWITCH ::aFields[nPos, FIELD_TYPE]
                CASE "C"
-                  IF ::aFields[nPos, 2] == ::cDeletedName // TODO: check this line
+                  IF ::aNames[nPos] == ::cDeletedName
                      cXBase += "Deleted() + "
                   ELSE
                      cXBase += ::aNames[nPos] + " + "
@@ -5157,12 +5134,12 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
       ::aIndex[nLen, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ELSE
             ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ENDIF
       ELSE
-         ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := &( "{|| " + cXBase + " }")
+         ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
       ENDIF
 
       IF SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 1, 1) != "#"

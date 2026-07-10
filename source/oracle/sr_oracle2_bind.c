@@ -131,7 +131,6 @@ static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 //    ORA_BIND_COLS *  pLink;
 //    unsigned int   ubBindNum;
 // } OCI_ORASESSION;
-// typedef OCI_ORASESSION * POCI_ORASESSION;
 
 static HB_USHORT OCI_initilized = 0;
 
@@ -159,8 +158,8 @@ static void err_handler(OCI_Error *err)
 
 HB_FUNC_STATIC(SR_SQLO2_CONNECT)
 {
-  // POCI_ORASESSION session = (POCI_ORASESSION) hb_xgrab(sizeof(OCI_ORASESSION));
-  POCI_ORASESSION session = (POCI_ORASESSION)hb_xgrabz(sizeof(OCI_ORASESSION));
+  // OCI_ORASESSION *session = (OCI_ORASESSION *)hb_xgrab(sizeof(OCI_ORASESSION));
+  OCI_ORASESSION *session = (OCI_ORASESSION *)hb_xgrabz(sizeof(OCI_ORASESSION));
   //    int lPool = 0; //  HB_ISLOG(5) ? hb_parl(5) : 0;
   //    char sPool[30] = {0};
 
@@ -638,7 +637,7 @@ HB_FUNC_STATIC(SR_ORACLEBINDALLOC2)
   }
   hb_retni(1);
 }
-static void OracleFreeLink2(int num_recs, POCI_ORASESSION p)
+static void OracleFreeLink2(int num_recs, OCI_ORASESSION *p)
 {
   int i;
 

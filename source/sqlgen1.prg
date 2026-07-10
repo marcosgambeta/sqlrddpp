@@ -613,20 +613,12 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                ASort(aOuters,,, {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
                FOR EACH outer IN aOuters
-#ifdef __XHARBOUR__
-                  IF outer[1] != cAtual .AND. hb_enumIndex() > 1
-#else
-                  IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
-#endif
+                  IF outer[1] != cAtual .AND. SR_ENUMINDEX(outer) > 1
                      cSql += ", "
                      cSql += SR_CRLF
                   ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                      cSql += " AND "
-#ifdef __XHARBOUR__
-                  ELSEIF hb_enumIndex() > 1
-#else
-                  ELSEIF outer:__enumIndex() > 1
-#endif
+                  ELSEIF SR_ENUMINDEX(outer) > 1
                      cSql += SR_CRLF
                   ENDIF
 
@@ -692,11 +684,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                ENDIF
 
                FOR EACH cTbl IN aQualifiedTables
-#ifdef __XHARBOUR__
-                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(hb_enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-#else
-                  cSql += cTbl + " " + aAlias[cTbl:__enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(cTbl:__enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-#endif
+                  cSql += cTbl + " " + aAlias[SR_ENUMINDEX(cTbl)] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(SR_ENUMINDEX(cTbl) < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
                NEXT
 
                cSql += cTmp + cTrailler
@@ -732,25 +720,17 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   //ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
                   FOR EACH outer IN aOuters
-                     //IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
+                     //IF outer[1] != cAtual .AND. SR_ENUMINDEX(outer) > 1
                      //   cSql += ", "
                      //   cSql += SR_CRLF
                      //ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                      IF outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += " AND "
-#ifdef __XHARBOUR__
-                     ELSEIF hb_enumIndex() > 1
-#else
-                     ELSEIF outer:__enumIndex() > 1
-#endif
+                     ELSEIF SR_ENUMINDEX(outer) > 1
                         cSql += SR_CRLF
                      ENDIF
 
-#ifdef __XHARBOUR__
-                     IF hb_enumIndex() = 1
-#else
-                     IF outer:__enumIndex() = 1
-#endif
+                     IF SR_ENUMINDEX(outer) = 1
                         //IF outer[1] != cAtual
                         nPos := AScan(aAlias, SR_DBQUALIFY(outer[1], nSystemID))
                         IF nPos == 0
@@ -764,7 +744,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                         cSql += cJoinWords(outer[4], nSystemID) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                      ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += outer[3]
-                     Else
+                     ELSE
                         nPos := AScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
                         IF nPos == 0
                            nPos := AScan(aTables, outer[2])
@@ -775,7 +755,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                      cAtual2 := outer[2]
                   NEXT
 
-               Else
+               ELSE
 
                   cTmp := cSql
                   cSql := cSqlCols
@@ -786,20 +766,12 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
                   FOR EACH outer IN aOuters
-#ifdef __XHARBOUR__
-                     IF outer[1] != cAtual .AND. hb_enumIndex() > 1
-#else
-                     IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
-#endif
+                     IF outer[1] != cAtual .AND. SR_ENUMINDEX(outer) > 1
                         cSql += ", "
                         cSql += SR_CRLF
                      ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += " AND "
-#ifdef __XHARBOUR__
-                     ELSEIF hb_enumIndex() > 1
-#else
-                     ELSEIF outer:__enumIndex() > 1
-#endif
+                     ELSEIF SR_ENUMINDEX(outer) > 1
                         cSql += SR_CRLF
                      ENDIF
 
@@ -816,7 +788,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                         cSql += cJoinWords(outer[4], nSystemID) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                      ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += outer[3]
-                     Else
+                     ELSE
                         nPos := AScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
                         IF nPos == 0
                            nPos := AScan(aTables, outer[2])
@@ -867,11 +839,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                ENDIF
 
                FOR EACH cTbl IN aQualifiedTables
-#ifdef __XHARBOUR__
-                  cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(hb_enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-#else
-                  cSql += cTbl + " " + aAlias[cTbl:__enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(cTbl:__enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-#endif
+                  cSql += cTbl + " " + aAlias[SR_ENUMINDEX(cTbl)] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(SR_ENUMINDEX(cTbl) < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
                NEXT
 
                cSql += cTmp + cTrailler
@@ -1093,25 +1061,17 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             //ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
             FOR EACH outer IN aOuters
-               //IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
+               //IF outer[1] != cAtual .AND. SR_ENUMINDEX(outer) > 1
                //   cSql += ", "
                //   cSql += SR_CRLF
                //ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                IF outer[1] = cAtual .AND. outer[2] = cAtual2
                   cSql += " AND "
-#ifdef __XHARBOUR__
-               ELSEIF hb_enumIndex() > 1
-#else
-               ELSEIF outer:__enumIndex() > 1
-#endif
+               ELSEIF SR_ENUMINDEX(outer) > 1
                   cSql += SR_CRLF
                ENDIF
 
-#ifdef __XHARBOUR__
-               IF hb_enumIndex() = 1
-#else
-               IF outer:__enumIndex() = 1
-#endif
+               IF SR_ENUMINDEX(outer) = 1
                   //IF outer[1] != cAtual
                   nPos := AScan(aAlias, SR_DBQUALIFY(outer[1], nSystemID))
                   IF nPos == 0
@@ -1125,7 +1085,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql += cJoinWords(outer[4], nSystemID) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                   cSql += outer[3]
-               Else
+               ELSE
                   nPos := AScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
                   IF nPos == 0
                      nPos := AScan(aTables, outer[2])
@@ -1136,7 +1096,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                cAtual2 := outer[2]
             NEXT
 
-         Else
+         ELSE
 
             cTmp := cSql
             cSql := cSqlCols
@@ -1147,20 +1107,12 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             ASort(aOuters, , , {|x, y|x[1] > y[1] .AND. x[2] > y[2]})
 
             FOR EACH outer IN aOuters
-#ifdef __XHARBOUR__
-               IF outer[1] != cAtual .AND. hb_enumIndex() > 1
-#else
-               IF outer[1] != cAtual .AND. outer:__enumIndex() > 1
-#endif
+               IF outer[1] != cAtual .AND. SR_ENUMINDEX(outer) > 1
                   cSql += ", "
                   cSql += SR_CRLF
                ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                   cSql += " AND "
-#ifdef __XHARBOUR__
-               ELSEIF hb_enumIndex() > 1
-#else
-               ELSEIF outer:__enumIndex() > 1
-#endif
+               ELSEIF SR_ENUMINDEX(outer) > 1
                   cSql += SR_CRLF
                ENDIF
 
@@ -1228,11 +1180,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
          ENDIF
 
          FOR EACH cTbl IN aQualifiedTables
-#ifdef __XHARBOUR__
-            cSql += cTbl + " " + aAlias[hb_enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(hb_enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-#else
-            cSql += cTbl + " " + aAlias[cTbl:__enumIndex()] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(cTbl:__enumIndex() < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
-#endif
+            cSql += cTbl + " " + aAlias[SR_ENUMINDEX(cTbl)] + " " + IIf(Left(cTbl, 1) != "(", TABLE_OPTIMIZER, "") + IIf(SR_ENUMINDEX(cTbl) < Len(aTables), "," + NEWLINE + IDENTSPACE + "  ", "")
          NEXT
 
          cSql += cTmp + cTrailler
@@ -1708,7 +1656,8 @@ RETURN aRet
 
 //------------------------------------------------------------------------
 
-STATIC FUNCTION SR_IsComparOp(nOp)
+#if 0
+STATIC FUNCTION SR_IsComparOp(nOp) // changed to C code
 
    SWITCH nOp
    CASE SQL_PCODE_OPERATOR_EQ
@@ -1725,10 +1674,12 @@ STATIC FUNCTION SR_IsComparOp(nOp)
    ENDSWITCH
 
 RETURN .F.
+#endif
 
 //------------------------------------------------------------------------
 
-STATIC FUNCTION SR_IsComparNullOp(nOp)
+#if 0
+STATIC FUNCTION SR_IsComparNullOp(nOp) // changed to C code
 
    SWITCH nOp
    CASE SQL_PCODE_OPERATOR_IS_NULL
@@ -1737,10 +1688,12 @@ STATIC FUNCTION SR_IsComparNullOp(nOp)
    ENDSWITCH
 
 RETURN .F.
+#endif
 
 //------------------------------------------------------------------------
 
-STATIC FUNCTION SR_ComparOpText(nOp)
+#if 0
+STATIC FUNCTION SR_ComparOpText(nOp) // changed to C code
 
    LOCAL cSql := ""
 
@@ -1777,5 +1730,83 @@ STATIC FUNCTION SR_ComparOpText(nOp)
    ENDSWITCH
 
 RETURN cSql
+#endif
+
+//------------------------------------------------------------------------
+
+#pragma BEGINDUMP
+
+#include <hbapi.h>
+#include "hbsql.ch"
+
+HB_FUNC_STATIC(SR_ISCOMPAROP)
+{
+  switch (hb_parni(1)) {
+  case SQL_PCODE_OPERATOR_EQ:
+  case SQL_PCODE_OPERATOR_NE:
+  case SQL_PCODE_OPERATOR_GT:
+  case SQL_PCODE_OPERATOR_GE:
+  case SQL_PCODE_OPERATOR_LT:
+  case SQL_PCODE_OPERATOR_LE:
+  case SQL_PCODE_OPERATOR_LIKE:
+  case SQL_PCODE_OPERATOR_NOT_LIKE:
+  case SQL_PCODE_OPERATOR_IS_NULL:
+  case SQL_PCODE_OPERATOR_IS_NOT_NULL:
+    hb_retl(HB_TRUE);
+  default:
+    hb_retl(HB_FALSE);
+  }
+}
+
+HB_FUNC_STATIC(SR_ISCOMPARNULLOP)
+{
+  switch (hb_parni(1)) {
+  case SQL_PCODE_OPERATOR_IS_NULL:
+  case SQL_PCODE_OPERATOR_IS_NOT_NULL:
+    hb_retl(HB_TRUE);
+  default:
+    hb_retl(HB_FALSE);
+  }
+}
+
+HB_FUNC_STATIC(SR_COMPAROPTEXT)
+{
+  switch (hb_parni(1)) {
+  case SQL_PCODE_OPERATOR_EQ:
+    hb_retc(" = ");
+    break;
+  case SQL_PCODE_OPERATOR_NE:
+    hb_retc(" != ");
+    break;
+  case SQL_PCODE_OPERATOR_GT:
+    hb_retc(" > ");
+    break;
+  case SQL_PCODE_OPERATOR_GE:
+    hb_retc(" >= ");
+    break;
+  case SQL_PCODE_OPERATOR_LT:
+    hb_retc(" < ");
+    break;
+  case SQL_PCODE_OPERATOR_LE:
+    hb_retc(" <= ");
+    break;
+  case SQL_PCODE_OPERATOR_LIKE:
+    hb_retc(" LIKE ");
+    break;
+  case SQL_PCODE_OPERATOR_NOT_LIKE:
+    hb_retc(" NOT LIKE ");
+    break;
+  case SQL_PCODE_OPERATOR_IS_NULL:
+    hb_retc(" IS NULL ");
+    break;
+  case SQL_PCODE_OPERATOR_IS_NOT_NULL:
+    hb_retc(" IS NOT NULL ");
+    break;
+  default:
+    hb_retc("");
+  }
+}
+
+#pragma ENDDUMP
 
 //------------------------------------------------------------------------

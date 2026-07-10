@@ -329,7 +329,11 @@ void SR_CreateInsertStmt(SQLEXAREAP thiswa)
       break;
     }
     case 'L': {
-      InsertRecord->iCType = SQL_C_BIT;
+      if (thiswa->nSystemID == SQLRDD_RDBMS_CUBRID) {
+        InsertRecord->iCType = SQL_C_SHORT;
+      } else {
+        InsertRecord->iCType = SQL_C_BIT;
+      }
       break; // TODO: unnecessary break
     }
     }
@@ -486,6 +490,14 @@ HB_ERRCODE SR_BindInsertColumns(SQLEXAREAP thiswa)
         res = SQLBindParameter(thiswa->hStmtInsert, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT,
                                SQL_C_TYPE_DATE, SQL_TYPE_DATE, SQL_DATE_LEN, 0,
                                &(InsertRecord->asDate), 0, &(InsertRecord->lIndPtr));
+        break;
+      }
+      case SQL_C_SHORT: {
+        res = SQLBindParameter(thiswa->hStmtInsert, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT,
+                               (SQLSMALLINT)InsertRecord->iCType,
+                               (SQLSMALLINT)InsertRecord->iSQLType, InsertRecord->ColumnSize,
+                               InsertRecord->DecimalDigits, &(InsertRecord->asLogical), 0,
+                               SR_NULLPTR);
         break;
       }
       case SQL_C_BIT: {
@@ -809,6 +821,14 @@ HB_ERRCODE SR_CreateUpdateStmt(SQLEXAREAP thiswa)
         res = SQLBindParameter(thiswa->hStmtUpdate, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT,
                                SQL_C_TYPE_DATE, SQL_TYPE_DATE, SQL_DATE_LEN, 0,
                                &(CurrRecord->asDate), 0, &(CurrRecord->lIndPtr));
+        break;
+      }
+      case SQL_C_SHORT: {
+        res =
+            SQLBindParameter(thiswa->hStmtUpdate, (SQLUSMALLINT)iBind, SQL_PARAM_INPUT,
+                             (SQLSMALLINT)CurrRecord->iCType, (SQLSMALLINT)CurrRecord->iSQLType,
+                             CurrRecord->ColumnSize, CurrRecord->DecimalDigits,
+                             &(CurrRecord->asLogical), 0, SR_NULLPTR);
         break;
       }
       case SQL_C_BIT: {

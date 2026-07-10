@@ -1676,20 +1676,12 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             ENDIF
 
             sCopy := xMessage
-#ifdef __XHARBOUR__
-            aSay[hb_EnumIndex()] := RTrim(Left(xMessage, nPos))
-#else
-            aSay[xMessage:__EnumIndex()] := RTrim(Left(xMessage, nPos))
-#endif
+            aSay[SR_ENUMINDEX(xMessage)] := RTrim(Left(xMessage, nPos))
 
-            IF Len(aSay) == xMessage:__EnumIndex()
+            IF Len(aSay) == SR_ENUMINDEX(xMessage)
                AAdd(aSay, SubStr(sCopy, nPos + 1))
             ELSE
-#ifdef __XHARBOUR__
-               aIns(aSay, hb_EnumIndex() + 1, SubStr(sCopy, nPos + 1), .T.)
-#else
-               aIns(aSay, xMessage:__EnumIndex() + 1, SubStr(sCopy, nPos + 1), .T.)
-#endif
+               aIns(aSay, SR_ENUMINDEX(xMessage) + 1, SubStr(sCopy, nPos + 1), .T.)
             ENDIF
         ENDIF
       NEXT
@@ -1866,11 +1858,7 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       nCount := Len(aSay)
       FOR EACH cEval IN aSay
          OutStd(cEval)
-#ifdef __XHARBOUR__
-         IF hb_EnumIndex() < nCount
-#else
-         IF cEval:__EnumIndex() < nCount
-#endif
+         IF SR_ENUMINDEX(cEval) < nCount
             OutStd(hb_OSNewLine())
          ENDIF
       NEXT
@@ -1879,11 +1867,7 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       nCount := Len(aOptionsOK)
       FOR EACH cEval IN aOptionsOK
          OutStd(cEval)
-#ifdef __XHARBOUR__
-         IF hb_EnumIndex() < nCount
-#else
-         IF cEval:__EnumIndex() < nCount
-#endif
+         IF SR_ENUMINDEX(cEval) < nCount
             OutStd(", ")
          ENDIF
       NEXT
@@ -1933,11 +1917,7 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
       DispBox(nInitRow, nInitCol, nInitRow + Len(aSay) + 3, nInitCol + nWidth + 1, B_SINGLE + " ", cColorNorm)
 
       FOR EACH cEval IN aSay
-#ifdef __XHARBOUR__
-         DispOutAt(nInitRow + hb_EnumIndex(), nInitCol + 1 + Int(((nWidth - Len(cEval)) / 2) + .5), cEval, cColorNorm)
-#else
-         DispOutAt(nInitRow + cEval:__EnumIndex(), nInitCol + 1 + Int(((nWidth - Len(cEval)) / 2) + .5), cEval, cColorNorm)
-#endif
+         DispOutAt(nInitRow + SR_ENUMINDEX(cEval), nInitCol + 1 + Int(((nWidth - Len(cEval)) / 2) + .5), cEval, cColorNorm)
       NEXT
 
       // choice loop
@@ -1946,11 +1926,7 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
 
          nCount := Len(aSay)
          FOR EACH cEval IN aOptionsOK
-#ifdef __XHARBOUR__
-            DispOutAt(nInitRow + nCount + 2, aPos[hb_EnumIndex()], " " + cEval + " ", cColorNorm)
-#else
-            DispOutAt(nInitRow + nCount + 2, aPos[cEval:__EnumIndex()], " " + cEval + " ", cColorNorm)
-#endif
+            DispOutAt(nInitRow + nCount + 2, aPos[SR_ENUMINDEX(cEval)], " " + cEval + " ", cColorNorm)
          NEXT
          DispOutAt(nInitRow + nCount + 2, aPos[nChoice], " " + aOptionsOK[nChoice] + " ", cColorHigh)
 
@@ -1973,15 +1949,9 @@ FUNCTION SR_SQLBINDBYVAL(xMessage, aOptions, cColorNorm, nDelay)
             nPos := 0
             nCount := Len(aSay)
             FOR EACH cEval IN aOptionsOK
-#ifdef __XHARBOUR__
                IF nMRow == nInitRow + nCount + 2 .AND. ;
-                  INRANGE(aPos[hb_EnumIndex()], nMCol, aPos[hb_EnumIndex()] + Len(cEval) + 2 - 1)
-                  nPos := hb_EnumIndex()
-#else
-               IF nMRow == nInitRow + nCount + 2 .AND. ;
-                  INRANGE(aPos[cEval:__EnumIndex()], nMCol, aPos[cEval:__EnumIndex()] + Len(cEval) + 2 - 1)
-                  nPos := cEval:__EnumIndex()
-#endif
+                  INRANGE(aPos[SR_ENUMINDEX(cEval)], nMCol, aPos[SR_ENUMINDEX(cEval)] + Len(cEval) + 2 - 1)
+                  nPos := SR_ENUMINDEX(cEval)
                   EXIT
                ENDIF
             NEXT

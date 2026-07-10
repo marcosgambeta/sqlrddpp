@@ -312,11 +312,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
       axColumns := Array(FCount())
 
       FOR EACH i IN axColumns
-#ifdef __XHARBOUR__
-         i := FieldName(hb_EnumIndex())
-#else
-         i := FieldName(i:__EnumIndex())
-#endif
+         i := FieldName(SR_ENUMINDEX(i))
       NEXT
 
    ENDIF
@@ -448,7 +444,7 @@ FUNCTION OraEdit(nCursors, cTable, cWhere, aVarSust, nTop, nLeft, nBottom, ;
 
       IF !Empty(i)
 
-         nIndex := i:__EnumIndex()
+         nIndex := SR_ENUMINDEX(i)
          cTmp := ""
          IF "||" $ i
             n := AScan(atempcols, {|x|x[3] == i})

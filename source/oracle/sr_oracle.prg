@@ -405,11 +405,7 @@ STATIC FUNCTION ProcessParams(cSql, nBound)
    aItens := hb_aTokens("?", ",")
 
    FOR EACH xParam IN aItens
-#ifdef __XHARBOUR__
-      nPos := hb_enumIndex()
-#else
-      nPos := xParam:__enumIndex()
-#endif
+      nPos := SR_ENUMINDEX(xParam)
       cOriginal += AllTrim(":P" + StrZero(nPos, 3)) + " "
       nParamBound ++
    NEXT

@@ -86,7 +86,7 @@
 #endif
 
 #define GET_FB_SESSION(session, numpar)                                                        \
-  PFB_SESSION session = (PFB_SESSION)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
+  FB_SESSION *session = (FB_SESSION *)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
 
 #ifdef __XHARBOUR__
 #define HB_LONG LONG
@@ -111,8 +111,6 @@ typedef struct _FB_SESSION
   int transactionPending;
 } FB_SESSION;
 
-typedef FB_SESSION *PFB_SESSION;
-
 typedef struct vary1
 {
   short vary_length;
@@ -128,7 +126,7 @@ const double divider[19] = {1,    1E1,  1E2,  1E3,  1E4,  1E5,  1E6,  1E7,  1E8,
 
 //----------------------------------------------------------------------------//
 
-static void fb_log_status(PFB_SESSION session, const char *from)
+static void fb_log_status(FB_SESSION *session, const char *from)
 {
   const ISC_STATUS *pVect = session->status;
   HB_SCHAR s[1024] = {0};
@@ -174,10 +172,9 @@ HB_FUNC_STATIC(SR_FBCONNECT)
   char dpb[256];
   int i, len;
 
-  // PFB_SESSION session = (PFB_SESSION) hb_xgrab(sizeof(FB_SESSION));
-  //
-  //    memset(session, 0, sizeof(FB_SESSION));
-  PFB_SESSION session = (PFB_SESSION)hb_xgrabz(sizeof(FB_SESSION));
+  // FB_SESSION *session = (FB_SESSION *)hb_xgrab(sizeof(FB_SESSION));
+  // memset(session, 0, sizeof(FB_SESSION));
+  FB_SESSION *session = (FB_SESSION *)hb_xgrabz(sizeof(FB_SESSION));
   session->db = 0;
   session->transac = 0;
   session->sqlda = (XSQLDA ISC_FAR *)hb_xgrab(XSQLDA_LENGTH(MAX_COLUMNS_IN_QUERY));

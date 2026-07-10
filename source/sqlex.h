@@ -71,12 +71,61 @@
 #define DEFAULT_INDEX_COLUMN_MAX_LEN 200
 #define INITIAL_MEMO_ALLOC 256
 
-//                                                  1 1 11 1 1 11 1 12 2 2 3
-//                               0 1 2 34 5 6 7 8 9 0 1 23 4 5 67 8 90 1 2 2
-static const char *openQuotes = "\"\"\"[\"\"\"\"\"\"\"\"`\"\"\"`\"\"`\"\"\"`";
-//                                                   1 1 11 1 1 11 1 12 2 2 3
-//                                0 1 2 34 5 6 7 8 9 0 1 23 4 5 67 8 90 1 2 2
-static const char *closeQuotes = "\"\"\"]\"\"\"\"\"\"\"\"`\"\"\"`\"\"`\"\"\"`";
+static unsigned int openQuotes[24] =
+  {
+    '"', // SQLRDD_RDBMS_UNKNOW    0
+    '"', // SQLRDD_RDBMS_ORACLE    1
+    '"', // SQLRDD_RDBMS_MSSQL6    2
+    '[', // SQLRDD_RDBMS_MSSQL7    3
+    '"', // SQLRDD_RDBMS_SQLANY    4
+    '"', // SQLRDD_RDBMS_SYBASE    5
+    '"', // SQLRDD_RDBMS_ACCESS    6
+    '"', // SQLRDD_RDBMS_INGRES    7
+    '"', // SQLRDD_RDBMS_SQLBAS    8
+    '"', // SQLRDD_RDBMS_ADABAS    9
+    '"', // SQLRDD_RDBMS_INFORM    10
+    '"', // SQLRDD_RDBMS_IBMDB2    11
+    '`', // SQLRDD_RDBMS_MYSQL     12
+    '"', // SQLRDD_RDBMS_POSTGR    13
+    '"', // SQLRDD_RDBMS_FIREBR    14
+    '"', // SQLRDD_RDBMS_CACHE     15
+    '`', // SQLRDD_RDBMS_OTERRO    16
+    '"', // SQLRDD_RDBMS_PERVASIVE 17
+    '"', // SQLRDD_RDBMS_AZURE     18
+    '`', // SQLRDD_RDBMS_MARIADB   19
+    '"', // SQLRDD_RDBMS_FIREBR3   20
+    '"', // SQLRDD_RDBMS_FIREBR4   21
+    '"', // SQLRDD_RDBMS_FIREBR5   22
+    '`'  // SQLRDD_RDBMS_CUBRID    23
+  };
+
+static unsigned int closeQuotes[24] =
+  {
+    '"', // SQLRDD_RDBMS_UNKNOW    0
+    '"', // SQLRDD_RDBMS_ORACLE    1
+    '"', // SQLRDD_RDBMS_MSSQL6    2
+    ']', // SQLRDD_RDBMS_MSSQL7    3
+    '"', // SQLRDD_RDBMS_SQLANY    4
+    '"', // SQLRDD_RDBMS_SYBASE    5
+    '"', // SQLRDD_RDBMS_ACCESS    6
+    '"', // SQLRDD_RDBMS_INGRES    7
+    '"', // SQLRDD_RDBMS_SQLBAS    8
+    '"', // SQLRDD_RDBMS_ADABAS    9
+    '"', // SQLRDD_RDBMS_INFORM    10
+    '"', // SQLRDD_RDBMS_IBMDB2    11
+    '`', // SQLRDD_RDBMS_MYSQL     12
+    '"', // SQLRDD_RDBMS_POSTGR    13
+    '"', // SQLRDD_RDBMS_FIREBR    14
+    '"', // SQLRDD_RDBMS_CACHE     15
+    '`', // SQLRDD_RDBMS_OTERRO    16
+    '"', // SQLRDD_RDBMS_PERVASIVE 17
+    '"', // SQLRDD_RDBMS_AZURE     18
+    '`', // SQLRDD_RDBMS_MARIADB   19
+    '"', // SQLRDD_RDBMS_FIREBR3   20
+    '"', // SQLRDD_RDBMS_FIREBR4   21
+    '"', // SQLRDD_RDBMS_FIREBR5   22
+    '`'  // SQLRDD_RDBMS_CUBRID    23
+  };
 
 #define CHECK_SQL_N_OK(res) ((res != SQL_SUCCESS) && (res != SQL_SUCCESS_WITH_INFO))
 #define OPEN_QUALIFIER(thiswa) (openQuotes[thiswa->nSystemID])

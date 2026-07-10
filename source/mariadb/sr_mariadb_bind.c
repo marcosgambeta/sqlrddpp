@@ -82,7 +82,7 @@ static int s_iConnectionCount = 0;
 #define LOGFILE "mariadb.log"
 
 #define GET_MARIADB_SESSION(session, numpar)                                                   \
-  PMARIADB_SESSION session = (PMARIADB_SESSION)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
+  MARIADB_SESSION *session = (MARIADB_SESSION *)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
 
 typedef struct _MARIADB_SESSION
 {
@@ -94,16 +94,14 @@ typedef struct _MARIADB_SESSION
   HB_ULONGLONG ulAffected_rows; // Number of affected rows
 } MARIADB_SESSION;
 
-typedef MARIADB_SESSION *PMARIADB_SESSION;
-
 //----------------------------------------------------------------------------//
 
 // SR_MARIADBCONNECT(cHost, cUser, cPasssword, cDatabase, nPort, , nTimeout, lCompress) ->
 // pSession
 HB_FUNC_STATIC(SR_MARIADBCONNECT)
 {
-  // PMARIADB_SESSION session = (PMARIADB_SESSION) hb_xgrab(sizeof(MARIADB_SESSION));
-  PMARIADB_SESSION session = (PMARIADB_SESSION)hb_xgrabz(sizeof(MARIADB_SESSION));
+  // MARIADB_SESSION *session = (MARIADB_SESSION *)hb_xgrab(sizeof(MARIADB_SESSION));
+  MARIADB_SESSION *session = (MARIADB_SESSION *)hb_xgrabz(sizeof(MARIADB_SESSION));
   const char *szHost = hb_parc(1);
   const char *szUser = hb_parc(2);
   const char *szPass = hb_parc(3);
@@ -821,7 +819,7 @@ HB_FUNC_STATIC(SR_MARIADBTABLEATTR)
   char attcmm[256] = {0};
   int row, rows, type;
   PHB_ITEM ret, atemp, temp;
-  PMARIADB_SESSION session;
+  MARIADB_SESSION *session;
 
   MYSQL_FIELD *field;
 
@@ -829,7 +827,7 @@ HB_FUNC_STATIC(SR_MARIADBTABLEATTR)
     hb_retnl(-2);
   }
 
-  session = (PMARIADB_SESSION)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
+  session = (MARIADB_SESSION *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
   assert(session->dbh != SR_NULLPTR);
 
   sprintf(attcmm, "select * from %s where 0 = 1", hb_parc(2));
