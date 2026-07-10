@@ -2395,43 +2395,24 @@ METHOD SR_WORKAREA:UpdateCache(aResultSet)
    IF SR_SetMultiLang()
       IF ::aInfo[AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
-#ifdef __XHARBOUR__
-            IF HB_IsHash(::aLocalBuffer[hb_enumIndex()])
-               IF ::aFields[hb_enumIndex(), FIELD_TYPE] $ "CM"
-                  (::aLocalBuffer[hb_enumIndex()])[SR_SetBaseLang()] := PadR(uVal, ::aFields[hb_enumIndex(), FIELD_LEN])
+            IF HB_IsHash(::aLocalBuffer[SR_ENUMINDEX(uVal)])
+               IF ::aFields[SR_ENUMINDEX(uVal), FIELD_TYPE] $ "CM"
+                  (::aLocalBuffer[SR_ENUMINDEX(uVal)])[SR_SetBaseLang()] := PadR(uVal, ::aFields[SR_ENUMINDEX(uVal), FIELD_LEN])
                ELSE
-                  (::aLocalBuffer[hb_enumIndex()])[SR_SetBaseLang()] := uVal
+                  (::aLocalBuffer[SR_ENUMINDEX(uVal)])[SR_SetBaseLang()] := uVal
                ENDIF
-               ::aOldBuffer[hb_enumIndex()] := ::aLocalBuffer[hb_enumIndex()]
+               ::aOldBuffer[SR_ENUMINDEX(uVal)] := ::aLocalBuffer[SR_ENUMINDEX(uVal)]
             ELSE
-               ::aLocalBuffer[hb_enumIndex()] := uVal
-               ::aOldBuffer[hb_enumIndex()] := uVal
+               ::aLocalBuffer[SR_ENUMINDEX(uVal)] := uVal
+               ::aOldBuffer[SR_ENUMINDEX(uVal)] := uVal
             ENDIF
-#else
-            IF HB_IsHash(::aLocalBuffer[uVal:__enumIndex()])
-               IF ::aFields[uVal:__enumIndex(), FIELD_TYPE] $ "CM"
-                  (::aLocalBuffer[uVal:__enumIndex()])[SR_SetBaseLang()] := PadR(uVal, ::aFields[uVal:__enumIndex(), FIELD_LEN])
-               ELSE
-                  (::aLocalBuffer[uVal:__enumIndex()])[SR_SetBaseLang()] := uVal
-               ENDIF
-               ::aOldBuffer[uVal:__enumIndex()] := ::aLocalBuffer[uVal:__enumIndex()]
-            ELSE
-               ::aLocalBuffer[uVal:__enumIndex()] := uVal
-               ::aOldBuffer[uVal:__enumIndex()] := uVal
-            ENDIF
-#endif
          NEXT
       ENDIF
    ELSE
       IF ::aInfo[AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
-#ifdef __XHARBOUR__
-            ::aLocalBuffer[hb_enumIndex()] := uVal
-            ::aOldBuffer[hb_enumIndex()] := uVal
-#else
-            ::aLocalBuffer[uVal:__enumIndex()] := uVal
-            ::aOldBuffer[uVal:__enumIndex()] := uVal
-#endif
+            ::aLocalBuffer[SR_ENUMINDEX(uVal)] := uVal
+            ::aOldBuffer[SR_ENUMINDEX(uVal)] := uVal
          NEXT
       ENDIF
    ENDIF

@@ -1028,7 +1028,7 @@ FUNCTION OraSelect(n, aret, csql, adata, nRows)
          //   IF nRows > -1
          //      FOR EACH aTemp IN aRet
          //         AAdd(aDataRet, aTemp)
-         //         IF aTemp:__enumindex() == nRows
+         //         IF SR_ENUMINDEX(aTemp) == nRows
          //            EXIT
          //         ENDIF
          //      NEXT
@@ -1094,7 +1094,7 @@ FUNCTION OraSelect(n, aret, csql, adata, nRows)
 //       IF nRows > -1
 //          FOR EACH aTemp IN aRet
 //             AAdd(aDataRet, aTemp)
-//             IF aTemp:__enumindex() == nRows
+//             IF SR_ENUMINDEX(aTemp) == nRows
 //                EXIT
 //             ENDIF
 //          NEXT

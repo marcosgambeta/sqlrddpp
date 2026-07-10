@@ -75,6 +75,12 @@
 #define HB_SYMBOL_UNUSED(symbol) (symbol := (symbol))
 #endif
 
+#ifdef __XHARBOUR__
+#define SR_ENUMINDEX(var) hb_enumIndex()
+#else
+#define SR_ENUMINDEX(var) var:__enumIndex()
+#endif
+
 //
 
 #endif // SQLRDDPP_CH
