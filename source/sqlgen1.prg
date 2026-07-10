@@ -744,7 +744,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                         cSql += cJoinWords(outer[4], nSystemID) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                      ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += outer[3]
-                     Else
+                     ELSE
                         nPos := AScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
                         IF nPos == 0
                            nPos := AScan(aTables, outer[2])
@@ -755,7 +755,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                      cAtual2 := outer[2]
                   NEXT
 
-               Else
+               ELSE
 
                   cTmp := cSql
                   cSql := cSqlCols
@@ -788,7 +788,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                         cSql += cJoinWords(outer[4], nSystemID) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                      ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                         cSql += outer[3]
-                     Else
+                     ELSE
                         nPos := AScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
                         IF nPos == 0
                            nPos := AScan(aTables, outer[2])
@@ -1085,7 +1085,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                   cSql += cJoinWords(outer[4], nSystemID) + aQualifiedTables[nPos] + " " + aAlias[nPos] + " ON " + outer[3]
                ELSEIF outer[1] = cAtual .AND. outer[2] = cAtual2
                   cSql += outer[3]
-               Else
+               ELSE
                   nPos := AScan(aAlias, SR_DBQUALIFY(outer[2], nSystemID))
                   IF nPos == 0
                      nPos := AScan(aTables, outer[2])
@@ -1096,7 +1096,7 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
                cAtual2 := outer[2]
             NEXT
 
-         Else
+         ELSE
 
             cTmp := cSql
             cSql := cSqlCols
