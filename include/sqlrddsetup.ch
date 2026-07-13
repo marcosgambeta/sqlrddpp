@@ -130,6 +130,18 @@
 #define INDEX_KEY_CODEBLOCK           20
 #define INDEX_PHISICAL_NAME           21
 
+// INDEX_FIELDS component structure
+// Plain column components have only NAME and POS.
+// Expression index components (PostgreSQL) carry the SQL expression,
+// the component type/len and a client-side transform codeblock.
+
+#define IDXFLD_NAME                    1
+#define IDXFLD_POS                     2
+#define IDXFLD_SQL                     3
+#define IDXFLD_TYPE                    4
+#define IDXFLD_LEN                     5
+#define IDXFLD_XFORM                   6
+
 #define AORDER_NAME                    1
 #define AORDER_FOR                     2
 #define AORDER_TYPE                    3
