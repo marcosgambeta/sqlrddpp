@@ -1839,15 +1839,7 @@ METHOD SR_WORKAREA:QuotedNull(uData, trim, nLen, nDec, nTargetDB, lNull, lMemo)
 
    CASE "D"
       IF !lMemo
-         SWITCH nTargetDB
-         CASE SQLRDD_RDBMS_FIREBR
-         CASE SQLRDD_RDBMS_FIREBR3
-         CASE SQLRDD_RDBMS_FIREBR4
-         CASE SQLRDD_RDBMS_FIREBR5
-            RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
-         SR_OTHERWISE
-            RETURN "'" + DToS(uData) + "'"
-         ENDSWITCH
+         RETURN "'" + Transform(DToS(uData), "@R 9999-99-99") + "'"
       ENDIF
       cRet := SR_STRTOHEX(HB_Serialize(uData))
       RETURN ::Quoted(SR_SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, .F., , , nTargetDB)
@@ -4324,33 +4316,15 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
       SWITCH aCreate[i, FIELD_TYPE]
 
       CASE "C"
-         SWITCH ::oSql:nSystemID
-         CASE SQLRDD_RDBMS_FIREBR
-         CASE SQLRDD_RDBMS_FIREBR3
-         CASE SQLRDD_RDBMS_FIREBR4
-         CASE SQLRDD_RDBMS_FIREBR5
-            IF aCreate[i, FIELD_LEN] > 254
-               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
-            ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-            EXIT
-         SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
-         ENDSWITCH
+         IF aCreate[i, FIELD_LEN] > 254
+            cSql += "VARCHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
+         ELSE
+            cSql += "CHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
+         ENDIF
          EXIT
 
       CASE "D"
-         SWITCH ::oSql:nSystemID
-         CASE SQLRDD_RDBMS_FIREBR
-         CASE SQLRDD_RDBMS_FIREBR3
-         CASE SQLRDD_RDBMS_FIREBR4
-         CASE SQLRDD_RDBMS_FIREBR5
-            cSql += "DATE"
-            EXIT
-         SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
-         ENDSWITCH
+         cSql += "DATE"
          EXIT
 
       CASE "L"
@@ -4369,16 +4343,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          EXIT
 
       CASE "M"
-         SWITCH ::oSql:nSystemID
-         CASE SQLRDD_RDBMS_FIREBR
-         CASE SQLRDD_RDBMS_FIREBR3
-         CASE SQLRDD_RDBMS_FIREBR4
-         CASE SQLRDD_RDBMS_FIREBR5
-            cSql += "BLOB SUB_TYPE 1" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")
-            EXIT
-         SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
-         ENDSWITCH
+         cSql += "BLOB SUB_TYPE 1" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")
          EXIT
 
       CASE "N"
@@ -4407,22 +4372,11 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
                ENDIF
             ENDIF
             EXIT
-         SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
          ENDSWITCH
          EXIT
 
       CASE "T"
-         SWITCH ::oSql:nSystemID
-         CASE SQLRDD_RDBMS_FIREBR
-         CASE SQLRDD_RDBMS_FIREBR3
-         CASE SQLRDD_RDBMS_FIREBR4
-         CASE SQLRDD_RDBMS_FIREBR5
-            cSql += "TIMESTAMP "
-            EXIT
-         SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
-         ENDSWITCH
+         cSql += "TIMESTAMP "
          EXIT
 
       CASE "V"
@@ -7895,24 +7849,11 @@ METHOD SR_WORKAREA:CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, 
 
       ENDIF
 
-      SWITCH ::oSql:nSystemID
-      CASE SQLRDD_RDBMS_FIREBR
-      CASE SQLRDD_RDBMS_FIREBR3
-      CASE SQLRDD_RDBMS_FIREBR4
-      CASE SQLRDD_RDBMS_FIREBR5
-         IF lPk
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
-         ELSE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable) + " (" + cTargetColumns + ")"
-         ENDIF
-         EXIT
-      SR_OTHERWISE
-         IF lPk
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
-         ELSE
-            cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable) + " (" + cTargetColumns + ")"
-         ENDIF
-      ENDSWITCH
+      IF lPk
+         cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable) + " ADD CONSTRAINT " + cConstraintName + " PRIMARY KEY (" + cTargetColumns + ")"
+      ELSE
+         cSql := "ALTER TABLE " + ::cOwner + SR_DBQUALIFY(cSourceTable) + " ADD CONSTRAINT " + cConstraintName + " FOREIGN KEY (" + cSourceColumns + ") REFERENCES " + ::cOwner + SR_DBQUALIFY(cTargetTable) + " (" + cTargetColumns + ")"
+      ENDIF
 
       cSql +=  + IIf(::oSql:lComments, " /* Create constraint */", "")
 
