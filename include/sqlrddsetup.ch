@@ -45,13 +45,13 @@
 #ifndef SQLRDDSETUP_CH
 #define SQLRDDSETUP_CH
 
-#define LOCK_TIMEOUT             3
-#define LOCKTABLE_TRIES          2
-#define MAXIMUN_LOCKS          100
-#define MAX_TABLE_NAME_LENGHT   30
+#define SR_LOCK_TIMEOUT             3
+#define SR_LOCKTABLE_TRIES          2
+#define SR_MAXIMUN_LOCKS          100
+#define SR_MAX_TABLE_NAME_LENGHT   30
 #define SR_CACHE_PAGE_SIZE        200
-#define SQL_SERIALIZED_SIGNATURE     "!#SERIAL#!"
-#define HB_RETRY                       HB_FAILURE + 100
+#define SR_SQL_SERIALIZED_SIGNATURE     "!#SERIAL#!"
+#define SR_HB_RETRY                       HB_FAILURE + 100
 
 #define AINFO_BOF                      1
 #define AINFO_EOF                      2

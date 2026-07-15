@@ -602,8 +602,8 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
       switch (thiswa->nSystemID) {
       case SQLRDD_RDBMS_ORACLE: {
         sprintf(tablename, "%s", thiswa->sqlarea.szDataFileName);
-        if (strlen(tablename) > (MAX_TABLE_NAME_LENGHT - 3)) {
-          tablename[MAX_TABLE_NAME_LENGHT - 4] = '\0';
+        if (strlen(tablename) > (SR_MAX_TABLE_NAME_LENGHT - 3)) {
+          tablename[SR_MAX_TABLE_NAME_LENGHT - 4] = '\0';
         }
         sprintf(ident, "SELECT %s%s_SQ.CURRVAL FROM DUAL", thiswa->sOwner, tablename);
         break; // TODO: unnecessary break

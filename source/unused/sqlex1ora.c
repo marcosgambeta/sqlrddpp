@@ -1481,13 +1481,13 @@ static HB_ERRCODE getPreparedRecordList(SQLEXORAAREAP thiswa,
       // set since it can be deleted by other user - MISSING!!!
       // OCI_StatementFree(thiswa->hStmtSkip);
       // thiswa->hStmtSkip = NULL;
-      return HB_RETRY;
+      return SR_HB_RETRY;
     }
 
     if (!OCI_FetchNext(rs)) {
       // OCI_StatementFree(thiswa->hStmtSkip);
       // thiswa->hStmtSkip = NULL;
-      return HB_RETRY;
+      return SR_HB_RETRY;
     }
 
     // res = SQLGetData(hStmt, 1, SQL_C_ULONG, &lRecord, sizeof(SQL_C_ULONG), NULL);
@@ -2917,7 +2917,7 @@ static HB_ERRCODE sqlExOraSkipRaw(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
       } else if (res == HB_FAILURE) {
         SR_commonError(&thiswa->sqlarea.area, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
-      } else if (res == HB_RETRY) {
+      } else if (res == SR_HB_RETRY) {
         if (lToSkip > 0) {
           sqlGetCleanBufferOra(thiswa);
           break;
@@ -4430,7 +4430,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOn
           hb_itemMove(pItem, pTemp);
           hb_itemRelease(pTemp);
 
-        } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString())) {
+        } else if (lLenBuff > 10 && strncmp(bBuffer, SR_SQL_SERIALIZED_SIGNATURE, 10) == 0 && (!sr_lSerializedAsString())) {
           if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
             s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
             if (s_pSym_SR_DESERIALIZE  == SR_NULLPTR) {

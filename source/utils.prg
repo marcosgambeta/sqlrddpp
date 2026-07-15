@@ -608,7 +608,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
 
    SR_OTHERWISE
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SubQuoted("C", SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID)
+      RETURN SR_SubQuoted("C", SR_SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID)
 
    ENDSWITCH
 
