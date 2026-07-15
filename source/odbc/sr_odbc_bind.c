@@ -892,13 +892,13 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
 
     if (ulDirect == (HB_ULONG)ORD_DIR_FWD) {
       lPos++;
-      if (lPos > (CAHCE_PAGE_SIZE * 3)) {
-        lPos -= (CAHCE_PAGE_SIZE * 3);
+      if (lPos > (SR_CACHE_PAGE_SIZE * 3)) {
+        lPos -= (SR_CACHE_PAGE_SIZE * 3);
       }
     } else {
       lPos--;
       if (lPos < 1) {
-        lPos += (CAHCE_PAGE_SIZE * 3);
+        lPos += (SR_CACHE_PAGE_SIZE * 3);
       }
     }
     pLine = (PHB_ITEM)hb_arrayGetItemPtr(pCache, lPos);

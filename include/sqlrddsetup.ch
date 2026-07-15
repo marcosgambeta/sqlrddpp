@@ -49,7 +49,7 @@
 #define LOCKTABLE_TRIES          2
 #define MAXIMUN_LOCKS          100
 #define MAX_TABLE_NAME_LENGHT   30
-#define CAHCE_PAGE_SIZE        200
+#define SR_CACHE_PAGE_SIZE        200
 #define SQL_SERIALIZED_SIGNATURE     "!#SERIAL#!"
 #define HB_RETRY                       HB_FAILURE + 100
 

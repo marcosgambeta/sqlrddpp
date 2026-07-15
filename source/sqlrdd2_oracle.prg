@@ -126,7 +126,7 @@ CLASS SR_WORKAREA
    DATA aIndex        AS ARRAY INIT {}
    DATA aIndexMgmnt   AS ARRAY INIT {}
    DATA aConstrMgmnt  AS ARRAY INIT {}
-   DATA aCache        AS ARRAY INIT Array(CAHCE_PAGE_SIZE * 3)
+   DATA aCache        AS ARRAY INIT Array(SR_CACHE_PAGE_SIZE * 3)
    DATA aLocalBuffer  AS ARRAY INIT {}
    DATA aOldBuffer    AS ARRAY INIT {}
    DATA aEmptyBuffer  AS ARRAY INIT {}
@@ -1442,20 +1442,20 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
       lCacheIsEmpty := (nOldBg == nOldEnd) .AND. nOldEnd == 0
 
       IF nDirection == ORD_DIR_FWD
-         IF (::aInfo[AINFO_NPOSCACHE] + 1) > (CAHCE_PAGE_SIZE * 3)
+         IF (::aInfo[AINFO_NPOSCACHE] + 1) > (SR_CACHE_PAGE_SIZE * 3)
             nBlockPos := 1
          ELSE
             nBlockPos := ::aInfo[AINFO_NPOSCACHE] + 1
          ENDIF
          ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NPOSCACHE] + ::nCurrentFetch
          IF nOldBg == nOldEnd
-            IF ::aInfo[AINFO_NCACHEEND] > CAHCE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (CAHCE_PAGE_SIZE * 3)
+            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
             ENDIF
             ::aInfo[AINFO_EOF_AT] := 0
          ELSEIF nOldBg < nOldEnd
-            IF ::aInfo[AINFO_NCACHEEND] > CAHCE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (CAHCE_PAGE_SIZE * 3)
+            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
                IF ::aInfo[AINFO_NCACHEEND] >= (::aInfo[AINFO_NCACHEBEGIN] - 2)
                   ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NCACHEEND] + 2
                ENDIF
@@ -1468,13 +1468,13 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEEND] > CAHCE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (CAHCE_PAGE_SIZE * 3)
+            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEBEGIN] > CAHCE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEBEGIN] -= (CAHCE_PAGE_SIZE * 3)
+            IF ::aInfo[AINFO_NCACHEBEGIN] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[AINFO_NCACHEBEGIN] -= (SR_CACHE_PAGE_SIZE * 3)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
@@ -1495,7 +1495,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
             ::aInfo[AINFO_NPOSCACHE] := 1
          ENDIF
          nPos := ::aInfo[AINFO_NPOSCACHE] + IIf(lCacheIsEmpty, 0, 1)
-         IF nPos > (CAHCE_PAGE_SIZE * 3)
+         IF nPos > (SR_CACHE_PAGE_SIZE * 3)
             nPos := 1
          ENDIF
 
@@ -1506,20 +1506,20 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
       ELSEIF nDirection == ORD_DIR_BWD
 
          IF (::aInfo[AINFO_NPOSCACHE] - 1) < 1
-            nBlockPos := CAHCE_PAGE_SIZE * 3
+            nBlockPos := SR_CACHE_PAGE_SIZE * 3
          ELSE
             nBlockPos := ::aInfo[AINFO_NPOSCACHE] - 1
          ENDIF
          ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NPOSCACHE] - ::nCurrentFetch
          IF nOldBg == nOldEnd
             IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (CAHCE_PAGE_SIZE * 3)
+               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
             ENDIF
             ::aInfo[AINFO_EOF_AT] := 0
 
          ELSEIF nOldBg < nOldEnd
             IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (CAHCE_PAGE_SIZE * 3)
+               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
                IF (::aInfo[AINFO_NCACHEEND] + 2) >= ::aInfo[AINFO_NCACHEBEGIN]
                   ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] - 2
                ENDIF
@@ -1533,22 +1533,22 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
             IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (CAHCE_PAGE_SIZE * 3)
+               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
             IF ::aInfo[AINFO_NCACHEEND] < 1
-               ::aInfo[AINFO_NCACHEEND] += (CAHCE_PAGE_SIZE * 3)
+               ::aInfo[AINFO_NCACHEEND] += (SR_CACHE_PAGE_SIZE * 3)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
          ENDIF
 
          IF ::aInfo[AINFO_NCACHEEND] == 0
-            ::aInfo[AINFO_NCACHEEND] := (CAHCE_PAGE_SIZE * 3)
+            ::aInfo[AINFO_NCACHEEND] := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
          IF ::aInfo[AINFO_NPOSCACHE] == 0
-            ::aInfo[AINFO_NPOSCACHE] := (CAHCE_PAGE_SIZE * 3)
+            ::aInfo[AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
          IF ::aCache[nBlockPos] == NIL
             ::aCache[nBlockPos] := Array(Len(::aLocalBuffer))
@@ -1557,7 +1557,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
          uRecord := ::aCache[nBlockPos, ::hnRecno]
          nPos := ::aInfo[AINFO_NPOSCACHE] - IIf(lCacheIsEmpty, 0, 1)
          IF nPos < 1
-            nPos := (CAHCE_PAGE_SIZE * 3)
+            nPos := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
 
       ELSE
@@ -1587,13 +1587,13 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
             ENDIF
             IF nDirection == ORD_DIR_FWD
                nPos ++
-               IF nPos > (CAHCE_PAGE_SIZE * 3)
-                  nPos -= (CAHCE_PAGE_SIZE * 3)
+               IF nPos > (SR_CACHE_PAGE_SIZE * 3)
+                  nPos -= (SR_CACHE_PAGE_SIZE * 3)
                ENDIF
             ELSE
                nPos--
                IF nPos < 1
-                  nPos += (CAHCE_PAGE_SIZE * 3)
+                  nPos += (SR_CACHE_PAGE_SIZE * 3)
                ENDIF
             ENDIF
 
@@ -3035,7 +3035,7 @@ METHOD SR_WORKAREA:sqlGoBottom()
       ELSE
          ::aInfo[AINFO_BOF] := .F.
          ::aInfo[AINFO_EOF] := .F.
-         ::aInfo[AINFO_NPOSCACHE] := (CAHCE_PAGE_SIZE * 3)
+         ::aInfo[AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
       ENDIF
 
    ELSE
@@ -3897,13 +3897,13 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
          ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NPOSCACHE] + ::nCurrentFetch
 
          IF nOldBg == nOldEnd
-            IF ::aInfo[AINFO_NCACHEEND] > CAHCE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (CAHCE_PAGE_SIZE * 3)
+            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
             ENDIF
             ::aInfo[AINFO_EOF_AT] := 0
          ELSEIF nOldBg < nOldEnd
-            IF ::aInfo[AINFO_NCACHEEND] > CAHCE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (CAHCE_PAGE_SIZE * 3)
+            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
                IF ::aInfo[AINFO_NCACHEEND] >= (::aInfo[AINFO_NCACHEBEGIN] - 2)
                   ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NCACHEEND] + 2
                ENDIF
@@ -3916,13 +3916,13 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEEND] > CAHCE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (CAHCE_PAGE_SIZE * 3)
+            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEBEGIN] > CAHCE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEBEGIN] -= (CAHCE_PAGE_SIZE * 3)
+            IF ::aInfo[AINFO_NCACHEBEGIN] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[AINFO_NCACHEBEGIN] -= (SR_CACHE_PAGE_SIZE * 3)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
@@ -3943,7 +3943,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
             ::aInfo[AINFO_NPOSCACHE] := 1
          ENDIF
          nPos := ::aInfo[AINFO_NPOSCACHE] + IIf(lCacheIsEmpty, 0, 1)
-         IF nPos > (CAHCE_PAGE_SIZE * 3)
+         IF nPos > (SR_CACHE_PAGE_SIZE * 3)
             nPos := 1
          ENDIF
 
@@ -3954,13 +3954,13 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
          ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NPOSCACHE] - ::nCurrentFetch
          IF nOldBg == nOldEnd
             IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (CAHCE_PAGE_SIZE * 3)
+               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
             ENDIF
             ::aInfo[AINFO_EOF_AT] := 0
 
          ELSEIF nOldBg < nOldEnd
             IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (CAHCE_PAGE_SIZE * 3)
+               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
                IF ::aInfo[AINFO_NCACHEEND] + 2 >= ::aInfo[AINFO_NCACHEBEGIN]
                   ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] - 2
                ENDIF
@@ -3974,22 +3974,22 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
             IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (CAHCE_PAGE_SIZE * 3)
+               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
             IF ::aInfo[AINFO_NCACHEEND] < 1
-               ::aInfo[AINFO_NCACHEEND] += (CAHCE_PAGE_SIZE * 3)
+               ::aInfo[AINFO_NCACHEEND] += (SR_CACHE_PAGE_SIZE * 3)
                ::aInfo[AINFO_EOF_AT] := 0
                ::aInfo[AINFO_BOF_AT] := 0
             ENDIF
          ENDIF
 
          IF ::aInfo[AINFO_NCACHEEND] == 0
-            ::aInfo[AINFO_NCACHEEND] := (CAHCE_PAGE_SIZE * 3)
+            ::aInfo[AINFO_NCACHEEND] := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
          IF ::aInfo[AINFO_NPOSCACHE] == 0
-            ::aInfo[AINFO_NPOSCACHE] := (CAHCE_PAGE_SIZE * 3)
+            ::aInfo[AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
          IF ::aCache[nBlockPos] == NIL
             ::aCache[nBlockPos] := Array(Len(::aLocalBuffer))
@@ -3998,7 +3998,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
          uRecord := ::aCache[nBlockPos, ::hnRecno]
          nPos := ::aInfo[AINFO_NPOSCACHE] - IIf(lCacheIsEmpty, 0, 1)
          IF nPos < 1
-            nPos := (CAHCE_PAGE_SIZE * 3)
+            nPos := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
 
       ELSE
@@ -4028,13 +4028,13 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
             ENDIF
             IF nDirection == ORD_DIR_FWD
                nPos ++
-               IF nPos > (CAHCE_PAGE_SIZE * 3)
-                  nPos -= (CAHCE_PAGE_SIZE * 3)
+               IF nPos > (SR_CACHE_PAGE_SIZE * 3)
+                  nPos -= (SR_CACHE_PAGE_SIZE * 3)
                ENDIF
             ELSE
                nPos--
                IF nPos < 1
-                  nPos += (CAHCE_PAGE_SIZE * 3)
+                  nPos += (SR_CACHE_PAGE_SIZE * 3)
                ENDIF
             ENDIF
 
@@ -4204,7 +4204,7 @@ METHOD SR_WORKAREA:sqlDeleteRec()
             IF nRecno == ::aInfo[AINFO_EOF_AT]
 #if 0
                nPos := ::aInfo[AINFO_NPOSCACHE] - 1
-               IF nPos > CAHCE_PAGE_SIZE
+               IF nPos > SR_CACHE_PAGE_SIZE
                   nPos := 1
                ENDIF
                IF (::aInfo[AINFO_NCACHEBEGIN] < ::aInfo[AINFO_NCACHEEND] .AND. (nPos < ::aInfo[AINFO_NCACHEEND] .AND. nPos >= ::aInfo[AINFO_NCACHEBEGIN])) .OR.;
@@ -4218,7 +4218,7 @@ METHOD SR_WORKAREA:sqlDeleteRec()
             IF nRecno == ::aInfo[AINFO_BOF_AT]
 #if 0
                nPos := ::aInfo[AINFO_NPOSCACHE] + 1
-               IF nPos > CAHCE_PAGE_SIZE
+               IF nPos > SR_CACHE_PAGE_SIZE
                   nPos := 1
                ENDIF
                IF (::aInfo[AINFO_NCACHEBEGIN] < ::aInfo[AINFO_NCACHEEND] .AND. (nPos <= ::aInfo[AINFO_NCACHEEND] .AND. nPos > ::aInfo[AINFO_NCACHEBEGIN])) .OR.;

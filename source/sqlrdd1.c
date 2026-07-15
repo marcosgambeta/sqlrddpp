@@ -137,9 +137,9 @@ static PHB_DYNS s_pSym_WORKAREA = SR_NULLPTR;
 static void fixCachePointer(HB_LONG *lPosCache)
 {
   if (*lPosCache < 1) {
-    *lPosCache += (CAHCE_PAGE_SIZE * 3);
-  } else if (*lPosCache > (CAHCE_PAGE_SIZE * 3)) {
-    *lPosCache -= (CAHCE_PAGE_SIZE * 3);
+    *lPosCache += (SR_CACHE_PAGE_SIZE * 3);
+  } else if (*lPosCache > (SR_CACHE_PAGE_SIZE * 3)) {
+    *lPosCache -= (SR_CACHE_PAGE_SIZE * 3);
   }
 }
 
