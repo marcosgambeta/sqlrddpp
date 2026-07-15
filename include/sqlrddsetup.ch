@@ -80,10 +80,10 @@
 
 // cache flags
 
-#define ORD_INVALID                    0
-#define ORD_DIR_FWD                    1
-#define ORD_DIR_BWD                    2
-#define ORD_NATURAL                    3
+#define SR_ORD_INVALID                    0
+#define SR_ORD_DIR_FWD                    1
+#define SR_ORD_DIR_BWD                    2
+#define SR_ORD_NATURAL                    3 // not used in sqlrdd code
 
 #define SQL_NULL_HSTMT                 0
 

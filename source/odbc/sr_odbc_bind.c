@@ -880,7 +880,7 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
       if (wReturn == SQL_ERROR) {
         break;
       }
-      if (ulDirect == (HB_ULONG)ORD_DIR_FWD) {
+      if (ulDirect == (HB_ULONG)SR_ORD_DIR_FWD) {
         hb_arraySet(pInfo, SR_AINFO_EOF_AT, pRec);
         hb_arraySetNL(pInfo, SR_AINFO_NCACHEEND, lPos);
       } else {
@@ -890,7 +890,7 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
       break;
     }
 
-    if (ulDirect == (HB_ULONG)ORD_DIR_FWD) {
+    if (ulDirect == (HB_ULONG)SR_ORD_DIR_FWD) {
       lPos++;
       if (lPos > (SR_CACHE_PAGE_SIZE * 3)) {
         lPos -= (SR_CACHE_PAGE_SIZE * 3);

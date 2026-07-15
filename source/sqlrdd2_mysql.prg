@@ -1374,12 +1374,12 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
 
    HB_SYMBOL_UNUSED(nBlockPos)
 
-   DEFAULT nDirection TO ORD_INVALID
+   DEFAULT nDirection TO SR_ORD_INVALID
 
    ::oSql:nRetCode := ::oSql:Fetch(, .F., ::aFields)
 
    IF ::lFetchAll
-      nDirection := ORD_DIR_FWD
+      nDirection := SR_ORD_DIR_FWD
       ::nCurrentFetch := Max(::nCurrentFetch, 50)
    ENDIF
 
@@ -1394,7 +1394,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
       nOldEnd := ::aInfo[SR_AINFO_NCACHEEND]
       lCacheIsEmpty := (nOldBg == nOldEnd) .AND. nOldEnd == 0
 
-      IF nDirection == ORD_DIR_FWD
+      IF nDirection == SR_ORD_DIR_FWD
          IF (::aInfo[SR_AINFO_NPOSCACHE] + 1) > (SR_CACHE_PAGE_SIZE * 3)
             nBlockPos := 1
          ELSE
@@ -1456,7 +1456,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
             AAdd(::aFetch, uRecord)
          ENDIF
 
-      ELSEIF nDirection == ORD_DIR_BWD
+      ELSEIF nDirection == SR_ORD_DIR_BWD
 
          IF (::aInfo[SR_AINFO_NPOSCACHE] - 1) < 1
             nBlockPos := SR_CACHE_PAGE_SIZE * 3
@@ -1519,7 +1519,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
          uRecord := ::aCache[nBlockPos, ::hnRecno]
       ENDIF
 
-      IF nDirection == ORD_DIR_FWD .OR. nDirection == ORD_DIR_BWD
+      IF nDirection == SR_ORD_DIR_FWD .OR. nDirection == SR_ORD_DIR_BWD
          FOR nFecth := 1 to ::nCurrentFetch // TODO: nFecth -> nFetch
             ::oSql:nRetCode := ::oSql:Fetch(NIL, .F., ::aFields)
             IF ::oSql:nRetCode != SQL_SUCCESS
@@ -1528,7 +1528,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
                   ::RunTimeErr("999", "[FetchLine Failure][" + AllTrim(Str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
                      "Last command sent to database : " + SR_CRLF + ::cLastComm)
                ENDIF
-               IF nDirection == ORD_DIR_FWD
+               IF nDirection == SR_ORD_DIR_FWD
                   ::aInfo[SR_AINFO_EOF_AT] := uRecord
                   ::aInfo[SR_AINFO_NCACHEEND] := nPos
                ELSE
@@ -1538,7 +1538,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
 
                EXIT
             ENDIF
-            IF nDirection == ORD_DIR_FWD
+            IF nDirection == SR_ORD_DIR_FWD
                nPos ++
                IF nPos > (SR_CACHE_PAGE_SIZE * 3)
                   nPos -= (SR_CACHE_PAGE_SIZE * 3)
@@ -1564,10 +1564,10 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
 
    CASE SQL_NO_DATA_FOUND
       ::lNoData := .T.
-      IF nDirection == ORD_DIR_BWD
+      IF nDirection == SR_ORD_DIR_BWD
          ::aInfo[SR_AINFO_BOF] := .T.
          ::aInfo[SR_AINFO_BOF_AT] := ::aInfo[SR_AINFO_RECNO]
-      ELSEIF nDirection == ORD_DIR_FWD
+      ELSEIF nDirection == SR_ORD_DIR_FWD
          ::aInfo[SR_AINFO_EOF_AT] := ::aInfo[SR_AINFO_RECNO]
          ::GetBuffer(.T.)         // Clean Buffer
       ELSE
@@ -2953,7 +2953,7 @@ METHOD SR_WORKAREA:sqlGoBottom()
       ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
       ::aInfo[SR_AINFO_NPOSCACHE] := 0
 
-      ::FirstFetch(ORD_DIR_BWD)
+      ::FirstFetch(SR_ORD_DIR_BWD)
       ::oSql:FreeStatement()
 
       IF !::lNoData
@@ -3138,7 +3138,7 @@ METHOD SR_WORKAREA:sqlGoTop()
 
       ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
       ::aInfo[SR_AINFO_NPOSCACHE] := 0
-      ::FirstFetch(ORD_DIR_FWD)
+      ::FirstFetch(SR_ORD_DIR_FWD)
 
       ::oSql:FreeStatement()
 
@@ -3664,12 +3664,12 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
    cJoin3 := ::GetSelectList()
 
    IF ::aInfo[SR_AINFO_REVERSE_INDEX]
-      cTemp := IIf(nDirection != ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
+      cTemp := IIf(nDirection != SR_ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
    ELSE
-      cTemp := IIf(nDirection == ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
+      cTemp := IIf(nDirection == SR_ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
    ENDIF
-   cSql := "SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + cTemp + ::OrderBy(NIL, nDirection == ORD_DIR_FWD) + Eval(::Optmizer_ne, ::nCurrentFetch) +;
-            IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */", "")
+   cSql := "SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + cTemp + ::OrderBy(NIL, nDirection == SR_ORD_DIR_FWD) + Eval(::Optmizer_ne, ::nCurrentFetch) +;
+            IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == SR_ORD_DIR_FWD, "FWD", "BWD") + " */", "")
    cSql := ::ParseIndexColInfo(cSQL)
 
    ::oSql:Execute(cSql)
@@ -3690,7 +3690,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
       nOldEnd := ::aInfo[SR_AINFO_NCACHEEND]
       lCacheIsEmpty := (nOldBg == nOldEnd) .AND. nOldEnd == 0
 
-      IF nDirection == ORD_DIR_FWD
+      IF nDirection == SR_ORD_DIR_FWD
 
          nBlockPos := SR_FIXCACHEPOINTER(::aInfo[SR_AINFO_NPOSCACHE] + 1)
 
@@ -3747,7 +3747,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
             nPos := 1
          ENDIF
 
-      ELSEIF nDirection == ORD_DIR_BWD
+      ELSEIF nDirection == SR_ORD_DIR_BWD
 
          nBlockPos := SR_FIXCACHEPOINTER(::aInfo[SR_AINFO_NPOSCACHE] - 1)
 
@@ -3807,7 +3807,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
          uRecord := ::aCache[nBlockPos, ::hnRecno]
       ENDIF
 
-      IF nDirection == ORD_DIR_FWD .OR. nDirection == ORD_DIR_BWD
+      IF nDirection == SR_ORD_DIR_FWD .OR. nDirection == SR_ORD_DIR_BWD
          FOR nFecth := 1 TO ::nCurrentFetch // TODO: nFecth -> nFetch
             ::oSql:nRetCode := ::oSql:Fetch(NIL, .F., ::aFields)
             IF ::oSql:nRetCode != SQL_SUCCESS
@@ -3816,7 +3816,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
                   ::RunTimeErr("999", "[FetchLine Failure][" + AllTrim(Str(::oSql:nRetCode)) + "] " + ::oSql:LastError() + SR_CRLF + SR_CRLF + ;
                      "Last command sent to database : " + SR_CRLF + ::cLastComm)
                ENDIF
-               IF nDirection == ORD_DIR_FWD
+               IF nDirection == SR_ORD_DIR_FWD
                   ::aInfo[SR_AINFO_EOF_AT] := uRecord
                   ::aInfo[SR_AINFO_NCACHEEND] := nPos
                ELSE
@@ -3826,7 +3826,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
 
                EXIT
             ENDIF
-            IF nDirection == ORD_DIR_FWD
+            IF nDirection == SR_ORD_DIR_FWD
                nPos ++
                IF nPos > (SR_CACHE_PAGE_SIZE * 3)
                   nPos -= (SR_CACHE_PAGE_SIZE * 3)
@@ -3854,9 +3854,9 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
 
       ::lNoData := .T.
 
-      IF nDirection == ORD_DIR_BWD
+      IF nDirection == SR_ORD_DIR_BWD
          ::aInfo[SR_AINFO_BOF_AT] := ::aInfo[SR_AINFO_RECNO]
-      ELSEIF nDirection == ORD_DIR_FWD
+      ELSEIF nDirection == SR_ORD_DIR_FWD
          ::aInfo[SR_AINFO_EOF_AT] := ::aInfo[SR_AINFO_RECNO]
          ::GetBuffer(.T.)         // Clean Buffer
       ELSE
