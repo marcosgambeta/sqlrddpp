@@ -80,14 +80,14 @@ typedef unsigned char SQLTCHAR;
 #define SQL_FAKE_DATE -101
 #define SQL_FAKE_NUM -102
 
-#define AINFO_BOF 1
-#define AINFO_EOF 2
-#define AINFO_BOF_AT 13
-#define AINFO_EOF_AT 14
+// #define AINFO_BOF 1 (unnecessary)
+// #define AINFO_EOF 2 (unnecessary)
+// #define AINFO_BOF_AT 13 (unnecessary)
+// #define AINFO_EOF_AT 14 (unnecessary)
 #define ORD_DIR_FWD 1
 #define ORD_DIR_BWD 2
 
-#define AINFO_NPOSCACHE 20
+// #define AINFO_NPOSCACHE 20 (unnecessary)
 
 #ifndef HB_OS_WIN_32
 #ifndef SQL_GUID
