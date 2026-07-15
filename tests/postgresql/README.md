@@ -4,13 +4,13 @@ If the test use native connection with PostgreSQL, the client library will be
 necessary in the compilation:
 
 ```
-hbmk2 <filename> -lfbclient
+hbmk2 <filename> -llibpq
 ```
 
 If you are using MS-Windows, you can put the DLL inside this folder and compile with:
 
 ```
-hbmk2 <filename> -L. -lfbclient.dll
+hbmk2 <filename> -L. -llibpq.dll
 ```
 
 The client library is not necessary if the test use a ODBC connection:
