@@ -104,6 +104,8 @@ STATIC s_lErrorOnGotoToInvalidRecord := .F.
 
 STATIC s_lUseNullsFirst := .T.
 
+STATIC s_lExpressionIndex := .T.
+
 //-------------------------------------------------------------------------------------------------------------------//
 
 PROCEDURE SR_Init()
@@ -235,6 +237,30 @@ FUNCTION SR_SetSyntheticIndex(lSet)
    ENDIF
 
 RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// Enables/disables the use of native PostgreSQL expression indexes for
+// index keys built with translatable Harbour functions (UPPER, SUBSTR,
+// LEFT, STRZERO, ...). When disabled, such keys fall back to the classic
+// synthetic INDKEY_ column. Only used on PostgreSQL connections with the
+// SQLRDD RDD (the SQLEX RDD does not support expression indexes).
+
+FUNCTION SR_SetExpressionIndex(lSet)
+
+   LOCAL lOld := s_lExpressionIndex
+
+   IF HB_IsLogical(lSet)
+      s_lExpressionIndex := lSet
+   ENDIF
+
+RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetExpressionIndex()
+
+RETURN s_lExpressionIndex
 
 //-------------------------------------------------------------------------------------------------------------------//
 
