@@ -45,45 +45,45 @@
 #ifndef SQLRDDSETUP_CH
 #define SQLRDDSETUP_CH
 
-#define LOCK_TIMEOUT             3
-#define LOCKTABLE_TRIES          2
-#define MAXIMUN_LOCKS          100
-#define MAX_TABLE_NAME_LENGHT   30
-#define CAHCE_PAGE_SIZE        200
-#define SQL_SERIALIZED_SIGNATURE     "!#SERIAL#!"
-#define HB_RETRY                       HB_FAILURE + 100
+#define SR_LOCK_TIMEOUT             3
+#define SR_LOCKTABLE_TRIES          2
+#define SR_MAXIMUN_LOCKS          100
+#define SR_MAX_TABLE_NAME_LENGHT   30
+#define SR_CACHE_PAGE_SIZE        200
+#define SR_SQL_SERIALIZED_SIGNATURE     "!#SERIAL#!"
+#define SR_HB_RETRY                       HB_FAILURE + 100
 
-#define AINFO_BOF                      1
-#define AINFO_EOF                      2
-#define AINFO_FOUND                    3
-#define AINFO_RECNO                    4
-#define AINFO_FCOUNT                   5
-#define AINFO_RCOUNT                   6
-#define AINFO_HOT                      7
-#define AINFO_DELETED                  8
-#define AINFO_HNRECNO                  9
-#define AINFO_HNDELETED               10
-#define AINFO_SHARED                  11
-#define AINFO_ISINSERT                12
-#define AINFO_BOF_AT                  13
-#define AINFO_EOF_AT                  14
-#define AINFO_BUFFER_VALID            15
-#define AINFO_INDEXORD                16
-#define AINFO_REVERSE_INDEX           17
-#define AINFO_SKIPCOUNT               18
-#define AINFO_WASDEL                  19
-#define AINFO_NPOSCACHE               20
-#define AINFO_NCACHEBEGIN             21
-#define AINFO_NCACHEEND               22
-#define AINFO_DETECT1_LASTRECNO       23
-#define AINFO_DETECT1_COUNT           24
+#define SR_AINFO_BOF                      1
+#define SR_AINFO_EOF                      2
+#define SR_AINFO_FOUND                    3
+#define SR_AINFO_RECNO                    4
+#define SR_AINFO_FCOUNT                   5
+#define SR_AINFO_RCOUNT                   6
+#define SR_AINFO_HOT                      7
+#define SR_AINFO_DELETED                  8
+#define SR_AINFO_HNRECNO                  9
+#define SR_AINFO_HNDELETED               10
+#define SR_AINFO_SHARED                  11
+#define SR_AINFO_ISINSERT                12
+#define SR_AINFO_BOF_AT                  13
+#define SR_AINFO_EOF_AT                  14
+#define SR_AINFO_BUFFER_VALID            15
+#define SR_AINFO_INDEXORD                16
+#define SR_AINFO_REVERSE_INDEX           17
+#define SR_AINFO_SKIPCOUNT               18
+#define SR_AINFO_WASDEL                  19
+#define SR_AINFO_NPOSCACHE               20
+#define SR_AINFO_NCACHEBEGIN             21
+#define SR_AINFO_NCACHEEND               22
+#define SR_AINFO_DETECT1_LASTRECNO       23
+#define SR_AINFO_DETECT1_COUNT           24
 
 // cache flags
 
-#define ORD_INVALID                    0
-#define ORD_DIR_FWD                    1
-#define ORD_DIR_BWD                    2
-#define ORD_NATURAL                    3
+#define SR_ORD_INVALID                    0
+#define SR_ORD_DIR_FWD                    1
+#define SR_ORD_DIR_BWD                    2
+#define SR_ORD_NATURAL                    3 // not used in sqlrdd code
 
 #define SQL_NULL_HSTMT                 0
 

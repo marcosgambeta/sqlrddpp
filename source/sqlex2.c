@@ -363,8 +363,8 @@ void SR_CreateInsertStmt(SQLEXAREAP thiswa)
   }
   case SQLRDD_RDBMS_POSTGR: {
     sprintf(tablename, "%s", thiswa->szDataFileName);
-    if (strlen(tablename) > (MAX_TABLE_NAME_LENGHT - 3)) {
-      tablename[MAX_TABLE_NAME_LENGHT - 4] = '\0';
+    if (strlen(tablename) > (SR_MAX_TABLE_NAME_LENGHT - 3)) {
+      tablename[SR_MAX_TABLE_NAME_LENGHT - 4] = '\0';
     }
     sprintf(ident, "; SELECT currval('%s_SQ');", tablename);
     break;
@@ -541,7 +541,7 @@ HB_ERRCODE SR_FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
   }
 
   if (!bUpdate) {
-    hb_arraySetNL(thiswa->aInfo, AINFO_RECNO, SR_GetCurrentRecordNum(thiswa) - 1);
+    hb_arraySetNL(thiswa->aInfo, SR_AINFO_RECNO, SR_GetCurrentRecordNum(thiswa) - 1);
   }
 
   ResolveSpecialCols(thiswa); // Fix INDKEY and FOR CLAUSE columns
@@ -660,8 +660,8 @@ HB_ERRCODE SR_ExecuteInsertStmt(SQLEXAREAP thiswa)
       switch (thiswa->nSystemID) {
       case SQLRDD_RDBMS_ORACLE: {
         sprintf(tablename, "%s", thiswa->szDataFileName);
-        if (strlen(tablename) > (MAX_TABLE_NAME_LENGHT - 3)) {
-          tablename[MAX_TABLE_NAME_LENGHT - 4] = '\0';
+        if (strlen(tablename) > (SR_MAX_TABLE_NAME_LENGHT - 3)) {
+          tablename[SR_MAX_TABLE_NAME_LENGHT - 4] = '\0';
         }
         sprintf(ident, "SELECT %s%s_SQ.CURRVAL FROM DUAL", thiswa->sOwner, tablename);
         break;
@@ -722,7 +722,7 @@ HB_ERRCODE SR_ExecuteInsertStmt(SQLEXAREAP thiswa)
   thiswa->deletedList[0] = ' ';
   thiswa->recordListPos = 0;
   thiswa->recordListSize = 1;
-  hb_arraySetNL(thiswa->aInfo, AINFO_RCOUNT, thiswa->recordList[0]);
+  hb_arraySetNL(thiswa->aInfo, SR_AINFO_RCOUNT, thiswa->recordList[0]);
   thiswa->lLastRec = thiswa->recordList[0] + 1;
 
   SQLCloseCursor(thiswa->hStmtInsert);

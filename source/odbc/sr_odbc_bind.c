@@ -80,14 +80,14 @@ typedef unsigned char SQLTCHAR;
 #define SQL_FAKE_DATE -101
 #define SQL_FAKE_NUM -102
 
-#define AINFO_BOF 1
-#define AINFO_EOF 2
-#define AINFO_BOF_AT 13
-#define AINFO_EOF_AT 14
-#define ORD_DIR_FWD 1
-#define ORD_DIR_BWD 2
+// #define AINFO_BOF 1 (unnecessary)
+// #define AINFO_EOF 2 (unnecessary)
+// #define AINFO_BOF_AT 13 (unnecessary)
+// #define AINFO_EOF_AT 14 (unnecessary)
+// #define ORD_DIR_FWD 1 (unnecessary)
+// #define ORD_DIR_BWD 2 (unnecessary)
 
-#define AINFO_NPOSCACHE 20
+// #define AINFO_NPOSCACHE 20 (unnecessary)
 
 #ifndef HB_OS_WIN_32
 #ifndef SQL_GUID
@@ -703,7 +703,7 @@ static void sr_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer,
         // TOFIX:
         hb_itemMove(pItem, pTemp);
         hb_itemRelease(pTemp);
-      } else if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 &&
+      } else if (lLenBuff > 10 && strncmp(bBuffer, SR_SQL_SERIALIZED_SIGNATURE, 10) == 0 &&
                  (!sr_lSerializedAsString())) {
         if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
           s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
@@ -849,7 +849,7 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
   PHB_ITEM pRec = hb_param(13, HB_IT_ANY);
   HB_LONG lPos = hb_parnl(14);
 
-  HB_ULONG ulPosCache = hb_arrayGetNL(pInfo, AINFO_NPOSCACHE);
+  HB_ULONG ulPosCache = hb_arrayGetNL(pInfo, SR_AINFO_NPOSCACHE);
 
   if (!pFields) {
     hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCGETLINES", 3, hb_paramError(1),
@@ -880,25 +880,25 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
       if (wReturn == SQL_ERROR) {
         break;
       }
-      if (ulDirect == (HB_ULONG)ORD_DIR_FWD) {
-        hb_arraySet(pInfo, AINFO_EOF_AT, pRec);
-        hb_arraySetNL(pInfo, AINFO_NCACHEEND, lPos);
+      if (ulDirect == (HB_ULONG)SR_ORD_DIR_FWD) {
+        hb_arraySet(pInfo, SR_AINFO_EOF_AT, pRec);
+        hb_arraySetNL(pInfo, SR_AINFO_NCACHEEND, lPos);
       } else {
-        hb_arraySet(pInfo, AINFO_BOF_AT, pRec);
-        hb_arraySetNL(pInfo, AINFO_NCACHEBEGIN, lPos);
+        hb_arraySet(pInfo, SR_AINFO_BOF_AT, pRec);
+        hb_arraySetNL(pInfo, SR_AINFO_NCACHEBEGIN, lPos);
       }
       break;
     }
 
-    if (ulDirect == (HB_ULONG)ORD_DIR_FWD) {
+    if (ulDirect == (HB_ULONG)SR_ORD_DIR_FWD) {
       lPos++;
-      if (lPos > (CAHCE_PAGE_SIZE * 3)) {
-        lPos -= (CAHCE_PAGE_SIZE * 3);
+      if (lPos > (SR_CACHE_PAGE_SIZE * 3)) {
+        lPos -= (SR_CACHE_PAGE_SIZE * 3);
       }
     } else {
       lPos--;
       if (lPos < 1) {
-        lPos += (CAHCE_PAGE_SIZE * 3);
+        lPos += (SR_CACHE_PAGE_SIZE * 3);
       }
     }
     pLine = (PHB_ITEM)hb_arrayGetItemPtr(pCache, lPos);
@@ -965,7 +965,7 @@ HB_FUNC_STATIC(SR_ODBCGETLINES)
       hb_arrayAdd(pFetch, pRec);
     }
   }
-  hb_arraySetNL(pInfo, AINFO_NPOSCACHE, ulPosCache);
+  hb_arraySetNL(pInfo, SR_AINFO_NPOSCACHE, ulPosCache);
   hb_xfree((PTR)bBuffer);
   hb_retnl(wReturn);
 }

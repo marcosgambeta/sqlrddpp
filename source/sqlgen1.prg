@@ -1284,7 +1284,7 @@ FUNCTION SR_SQLQuotedString(uData, nSystemID, lNotNull)
 
    CASE "O"
       cRet := SR_STRTOHEX(HB_Serialize(uData))
-      RETURN SR_SQLQuotedString(SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID, lNotNull)
+      RETURN SR_SQLQuotedString(SR_SQL_SERIALIZED_SIGNATURE + Str(Len(cRet), 10) + cRet, nSystemID, lNotNull)
 
    ENDSWITCH
 

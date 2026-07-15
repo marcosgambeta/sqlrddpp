@@ -195,7 +195,7 @@ static void sqlGetCleanBuffer(SQLEXAREAP thiswa)
   // hb_itemRelease(pCol);
 
   // fix lastrec() + 1
-  thiswa->lLastRec = hb_itemGetNL(hb_arrayGetItemPtr(thiswa->aInfo, AINFO_RCOUNT)) + 1;
+  thiswa->lLastRec = hb_itemGetNL(hb_arrayGetItemPtr(thiswa->aInfo, SR_AINFO_RCOUNT)) + 1;
   thiswa->area.fEof = HB_TRUE;
 }
 
@@ -1479,7 +1479,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXAREAP thiswa,
       // Run query again and try to find it in result
       // set since it can be deleted by other user - MISSING!!!
       SQLFreeStmt(hStmt, SQL_CLOSE);
-      return HB_RETRY;
+      return SR_HB_RETRY;
     }
 
     if (CHECK_SQL_N_OK(res)) {
@@ -2833,7 +2833,7 @@ static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
       } else if (res == HB_FAILURE) {
         SR_commonError((AREAP)thiswa, EG_ARG, ESQLRDD_READ, thiswa->sTable);
         return HB_FAILURE;
-      } else if (res == HB_RETRY) {
+      } else if (res == SR_HB_RETRY) {
         if (lToSkip > 0) {
           sqlGetCleanBuffer(thiswa);
           break;
@@ -3040,7 +3040,7 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
     char *bBuffer = (char *)hb_itemGetCPtr(itemTemp); // const char * to char *
     HB_LONG lLenBuff = (HB_LONG)hb_itemGetCLen(itemTemp);
     PHB_ITEM pTemp;
-    if (lLenBuff > 10 && strncmp(bBuffer, SQL_SERIALIZED_SIGNATURE, 10) == 0 &&
+    if (lLenBuff > 10 && strncmp(bBuffer, SR_SQL_SERIALIZED_SIGNATURE, 10) == 0 &&
         (!sr_lSerializedAsString())) {
       if (s_pSym_SR_DESERIALIZE == SR_NULLPTR) {
         s_pSym_SR_DESERIALIZE = hb_dynsymFindName("SR_DESERIALIZE");
@@ -3149,10 +3149,10 @@ static HB_ERRCODE sqlExGoCold(SQLEXAREAP thiswa)
                            // thiswa->deletedList[thiswa->recordListPos] == '
                            // ') )
     if (thiswa->bHistoric) {
-      hb_arraySetL(thiswa->aInfo, AINFO_ISINSERT, thiswa->bIsInsert);
-      hb_arraySetL(thiswa->aInfo, AINFO_HOT, thiswa->bufferHot);
+      hb_arraySetL(thiswa->aInfo, SR_AINFO_ISINSERT, thiswa->bIsInsert);
+      hb_arraySetL(thiswa->aInfo, SR_AINFO_HOT, thiswa->bufferHot);
       if (!thiswa->bIsInsert) {
-        hb_arraySetNL(thiswa->aInfo, AINFO_RECNO, SR_GetCurrentRecordNum(thiswa));
+        hb_arraySetNL(thiswa->aInfo, SR_AINFO_RECNO, SR_GetCurrentRecordNum(thiswa));
       }
       return SUPER_GOCOLD(
           (AREAP)
@@ -3372,9 +3372,9 @@ static HB_ERRCODE sqlExRecCount(SQLEXAREAP thiswa, HB_ULONG *recCount)
   }
 
   if (thiswa->bIsInsert && thiswa->bufferHot) {
-    *recCount = (HB_ULONG)(hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT) + 1);
+    *recCount = (HB_ULONG)(hb_arrayGetNL(thiswa->aInfo, SR_AINFO_RCOUNT) + 1);
   } else {
-    *recCount = (HB_ULONG)(hb_arrayGetNL(thiswa->aInfo, AINFO_RCOUNT));
+    *recCount = (HB_ULONG)(hb_arrayGetNL(thiswa->aInfo, SR_AINFO_RCOUNT));
   }
 
   thiswa->lLastRec = (*recCount) + 1;
@@ -3703,7 +3703,7 @@ static HB_ERRCODE sqlExOrderListAdd(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInfo)
     thiswa->lEofAt = 0;
     thiswa->indexLevel = -1;
     s_bOldReverseIndex = thiswa->bReverseIndex;
-    thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, AINFO_REVERSE_INDEX);
+    thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, SR_AINFO_REVERSE_INDEX);
   }
 
   return err;
@@ -3751,7 +3751,7 @@ static HB_ERRCODE sqlExOrderListFocus(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInf
     thiswa->indexColumns = (int)hb_arrayLen(hb_arrayGetItemPtr(
         hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent), INDEX_FIELDS));
     s_bOldReverseIndex = thiswa->bReverseIndex;
-    thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, AINFO_REVERSE_INDEX);
+    thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, SR_AINFO_REVERSE_INDEX);
     if (thiswa->IndexBindings[thiswa->hOrdCurrent]) {
       hb_xfree(thiswa->IndexBindings[thiswa->hOrdCurrent]);
       thiswa->IndexBindings[thiswa->hOrdCurrent] = SR_NULLPTR;
@@ -3800,7 +3800,7 @@ static HB_ERRCODE sqlExOrderCreate(SQLEXAREAP thiswa, LPDBORDERCREATEINFO pOrder
 
   if (err == HB_SUCCESS) {
     s_bOldReverseIndex = thiswa->bReverseIndex;
-    thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, AINFO_REVERSE_INDEX);
+    thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, SR_AINFO_REVERSE_INDEX);
   }
 
   return err;
@@ -3871,7 +3871,7 @@ static HB_ERRCODE sqlExOrderInfo(SQLEXAREAP thiswa, HB_USHORT uiIndex, LPDBORDER
       uiError = SUPER_ORDINFO((AREAP)thiswa, uiIndex, pInfo);
       s_bOldReverseIndex = thiswa->bReverseIndex;
       thiswa->bReverseIndex =
-          hb_arrayGetL(thiswa->aInfo, AINFO_REVERSE_INDEX); // OrderInfo() may change this flag
+          hb_arrayGetL(thiswa->aInfo, SR_AINFO_REVERSE_INDEX); // OrderInfo() may change this flag
     }
     }
   } else {
@@ -3983,9 +3983,9 @@ static HB_ERRCODE sqlExLock(SQLEXAREAP thiswa, LPDBLOCKINFO pLockInfo)
     thiswa->firstinteract = HB_FALSE;
   }
 
-  hb_arraySetL(thiswa->aInfo, AINFO_BOF, thiswa->area.fBof);
-  hb_arraySetL(thiswa->aInfo, AINFO_EOF, thiswa->area.fEof);
-  hb_arraySetNL(thiswa->aInfo, AINFO_RECNO, SR_GetCurrentRecordNum(thiswa));
+  hb_arraySetL(thiswa->aInfo, SR_AINFO_BOF, thiswa->area.fBof);
+  hb_arraySetL(thiswa->aInfo, SR_AINFO_EOF, thiswa->area.fEof);
+  hb_arraySetNL(thiswa->aInfo, SR_AINFO_RECNO, SR_GetCurrentRecordNum(thiswa));
 
   return SUPER_LOCK((AREAP)thiswa, pLockInfo);
 }
@@ -4004,9 +4004,9 @@ static HB_ERRCODE sqlExUnLock(SQLEXAREAP thiswa, PHB_ITEM pRecNo)
     thiswa->firstinteract = HB_FALSE;
   }
 
-  hb_arraySetL(thiswa->aInfo, AINFO_BOF, thiswa->area.fBof);
-  hb_arraySetL(thiswa->aInfo, AINFO_EOF, thiswa->area.fEof);
-  hb_arraySetNL(thiswa->aInfo, AINFO_RECNO, SR_GetCurrentRecordNum(thiswa));
+  hb_arraySetL(thiswa->aInfo, SR_AINFO_BOF, thiswa->area.fBof);
+  hb_arraySetL(thiswa->aInfo, SR_AINFO_EOF, thiswa->area.fEof);
+  hb_arraySetNL(thiswa->aInfo, SR_AINFO_RECNO, SR_GetCurrentRecordNum(thiswa));
 
   return SUPER_UNLOCK((AREAP)thiswa, pRecNo);
 }
