@@ -84,8 +84,8 @@ typedef unsigned char SQLTCHAR;
 // #define AINFO_EOF 2 (unnecessary)
 // #define AINFO_BOF_AT 13 (unnecessary)
 // #define AINFO_EOF_AT 14 (unnecessary)
-#define ORD_DIR_FWD 1
-#define ORD_DIR_BWD 2
+// #define ORD_DIR_FWD 1 (unnecessary)
+// #define ORD_DIR_BWD 2 (unnecessary)
 
 // #define AINFO_NPOSCACHE 20 (unnecessary)
 
