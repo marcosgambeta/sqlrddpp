@@ -119,7 +119,7 @@ CLASS SR_WORKAREA
    CLASSDATA cWSID
    CLASSDATA aExclusive       AS ARRAY    INIT {}
 
-   DATA aInfo         AS ARRAY INIT {.T., .T., .F., 0, 0, 0, .F., .F., 0, 0, .F., .F., 0, 0, .T., 0, .F., 0, .F., 0, 0, 0, 0, 0}  // See sqlrdd.ch, AINFO_*
+   DATA aInfo         AS ARRAY INIT {.T., .T., .F., 0, 0, 0, .F., .F., 0, 0, .F., .F., 0, 0, .T., 0, .F., 0, .F., 0, 0, 0, 0, 0}  // See sqlrdd.ch, SR_AINFO_*
    DATA aLocked       AS ARRAY INIT {}
    DATA aIndex        AS ARRAY INIT {}
    DATA aIndexMgmnt   AS ARRAY INIT {}
@@ -230,7 +230,7 @@ CLASS SR_WORKAREA
 
    // SQL Methods
 
-   METHOD ResetStatistics() INLINE (::nCurrentFetch := SR_FetchSize(), ::aInfo[AINFO_SKIPCOUNT] := 0, ::cLastMove := "OPEN")
+   METHOD ResetStatistics() INLINE (::nCurrentFetch := SR_FetchSize(), ::aInfo[SR_AINFO_SKIPCOUNT] := 0, ::cLastMove := "OPEN")
    METHOD GetNextRecordNumber()
 
    METHOD IniFields(lReSelect, lLoadCache, aInfo)
@@ -508,8 +508,8 @@ METHOD SR_WORKAREA:GetSelectList()
 
    // Current order fields should be added to select list
 
-   IF ::aInfo[AINFO_INDEXORD] > 0
-      aInd := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]
+   IF ::aInfo[SR_AINFO_INDEXORD] > 0
+      aInd := ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]
       FOR i := 1 TO Len(aInd)
          ::aSelectList[aInd[i, 2]] := 1
       NEXT i
@@ -546,9 +546,9 @@ METHOD SR_WORKAREA:sqlGetValue(nField)
    LOCAL aRet := {NIL}
    LOCAL lOldIndex
 
-   IF ::aInfo[AINFO_DETECT1_COUNT] > SQLRDD_LEARNING_REPETITIONS
+   IF ::aInfo[SR_AINFO_DETECT1_COUNT] > SQLRDD_LEARNING_REPETITIONS
       ::lAllColumnsSelected := .T.
-      ::sqlGoTo(::aInfo[AINFO_RECNO], .T.)
+      ::sqlGoTo(::aInfo[SR_AINFO_RECNO], .T.)
       RETURN ::aLocalBuffer[nField]
    ENDIF
 
@@ -562,11 +562,11 @@ METHOD SR_WORKAREA:sqlGetValue(nField)
          ::oSql:GetLine({::aFields[nField]}, .F., @aRet)
          IF aRet[1] != NIL
             ::aLocalBuffer[nField] := aRet[1]
-            IF ::aInfo[AINFO_NPOSCACHE] > 0 .AND. ::aCache[::aInfo[AINFO_NPOSCACHE]] != NIL .AND. Len(::aCache[::aInfo[AINFO_NPOSCACHE]]) > 0
-               ::aCache[::aInfo[AINFO_NPOSCACHE], nField] := aRet[1]
-               IF ::aInfo[AINFO_DETECT1_LASTRECNO] != ::aInfo[AINFO_RECNO]
-                  ::aInfo[AINFO_DETECT1_COUNT] ++
-                  ::aInfo[AINFO_DETECT1_LASTRECNO] := ::aInfo[AINFO_RECNO]
+            IF ::aInfo[SR_AINFO_NPOSCACHE] > 0 .AND. ::aCache[::aInfo[SR_AINFO_NPOSCACHE]] != NIL .AND. Len(::aCache[::aInfo[SR_AINFO_NPOSCACHE]]) > 0
+               ::aCache[::aInfo[SR_AINFO_NPOSCACHE], nField] := aRet[1]
+               IF ::aInfo[SR_AINFO_DETECT1_LASTRECNO] != ::aInfo[SR_AINFO_RECNO]
+                  ::aInfo[SR_AINFO_DETECT1_COUNT] ++
+                  ::aInfo[SR_AINFO_DETECT1_LASTRECNO] := ::aInfo[SR_AINFO_RECNO]
                ENDIF
             ENDIF
          ENDIF
@@ -617,11 +617,11 @@ METHOD SR_WORKAREA:SolveRestrictors()
          ENDIF
          cRet += "(" + ::cFltUsr + ")"
       ENDIF
-      IF ::aInfo[AINFO_INDEXORD] > 0 .AND. (!Empty(::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR]))
+      IF ::aInfo[SR_AINFO_INDEXORD] > 0 .AND. (!Empty(::aIndex[::aInfo[SR_AINFO_INDEXORD], SCOPE_SQLEXPR]))
          IF !Empty(cRet)
             cRet += " AND "
          ENDIF
-         cRet += "(" + ::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR] + ") "
+         cRet += "(" + ::aIndex[::aInfo[SR_AINFO_INDEXORD], SCOPE_SQLEXPR] + ") "
       ENDIF
       IF ::lHistoric .AND. ::lHistEnable
          IF !Empty(cRet)
@@ -1064,7 +1064,7 @@ METHOD SR_WORKAREA:GetNextRecordNumber()
    LOCAL aRet
 
    IF ::lQuickAppend
-      RETURN ::aInfo[AINFO_RCOUNT] + 1
+      RETURN ::aInfo[SR_AINFO_RCOUNT] + 1
    ENDIF
 
    IF !::oSql:lUseSequences .OR. !::lUseSequences
@@ -1086,7 +1086,7 @@ METHOD SR_WORKAREA:GetNextRecordNumber()
          ENDIF
          EXIT
       SR_OTHERWISE
-         nRet := ::aInfo[AINFO_RCOUNT] + 1
+         nRet := ::aInfo[SR_AINFO_RCOUNT] + 1
       ENDSWITCH
    ENDIF
 
@@ -1105,15 +1105,15 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
    LOCAL cType
    LOCAL lNull
 
-   IF ::aInfo[AINFO_INDEXORD] == 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0
       RETURN cSQL
    ENDIF
 
-   nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS])
+   nLen := Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS])
    aQuot := Array(nLen)
 
    FOR i := 1 TO nLen
-      aQuot[i] := ::QuotedNull(::aLocalBuffer[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], .T., , , , ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE])
+      aQuot[i] := ::QuotedNull(::aLocalBuffer[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], .T., , , , ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE])
    NEXT i
 
    nLen := Len(cSql)
@@ -1126,11 +1126,11 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
 
          IF aQuot[nIndexCol] == "NULL"  // This 90% of the problem from 1% of the cases
 
-            cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2], FIELD_TYPE]
+            cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2], FIELD_TYPE]
 
             IF cType == "N"
 
-               cFieldName := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2]], ::oSql:nSystemID)
+               cFieldName := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2]], ::oSql:nSystemID)
 
                SWITCH SubStr(cSql, i + 1, 1)
                CASE "1"  // >
@@ -1167,7 +1167,7 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
                ENDSWITCH
             ENDIF
          ELSE
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2], FIELD_NULLABLE]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2], FIELD_NULLABLE]
 
             SWITCH SubStr(cSql, i + 1, 1)
             CASE "1"  // >
@@ -1181,7 +1181,7 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
                EXIT
             CASE "4"  // <
                IF lNull
-                  cFieldName := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2]], ::oSql:nSystemID)
+                  cFieldName := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2]], ::oSql:nSystemID)
                   cOut := ShiftLeftAddParentesis(cOut) + " < " + aQuot[nIndexCol] + " OR " + cFieldName + " IS NULL )"
                ELSE
                   cOut += " < " + aQuot[nIndexCol]
@@ -1189,7 +1189,7 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
                EXIT
             CASE "6"  // <=
                IF lNull
-                  cFieldName := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2]], ::oSql:nSystemID)
+                  cFieldName := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, nIndexCol, 2]], ::oSql:nSystemID)
                   cOut := ShiftLeftAddParentesis(cOut) + " <= " + aQuot[nIndexCol] + " OR " + cFieldName + " IS NULL )"
                ELSE
                   cOut += " <= " + aQuot[nIndexCol]
@@ -1431,7 +1431,7 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
 
    DEFAULT lClosing TO .F.
 
-   IF !lClosing .AND. !::aInfo[AINFO_SHARED]
+   IF !lClosing .AND. !::aInfo[SR_AINFO_SHARED]
       RETURN .F. // USE EXCLUSIVE cannot be released until file is closed
    ENDIF
 
@@ -1489,14 +1489,14 @@ METHOD SR_WORKAREA:LineCount(lMsg)
          ENDIF
 
          IF Len(aRet) > 0
-            ::aInfo[AINFO_RCOUNT] := aRet[1, 1]
+            ::aInfo[SR_AINFO_RCOUNT] := aRet[1, 1]
             nRet := aRet[1, 1]
          ELSEIF ::oSql:nRetCode != SQL_SUCCESS .AND. ::oSql:nRetCode != SQL_NO_DATA_FOUND
             nRet := -1     // Error
          ENDIF
       ELSE
          nRet := s_nLineCountResult
-         ::aInfo[AINFO_RCOUNT] := nRet
+         ::aInfo[SR_AINFO_RCOUNT] := nRet
       ENDIF
    ELSE
       nRet := Len(::aCache)
@@ -1504,10 +1504,10 @@ METHOD SR_WORKAREA:LineCount(lMsg)
 
    IF Empty(nRet)
       ::lEmptyTable := .T.
-      ::aInfo[AINFO_RECNO] := 1
-      ::aInfo[AINFO_RCOUNT] := 0
-      ::aInfo[AINFO_BOF] := .T.
-      ::aInfo[AINFO_EOF] := .T.
+      ::aInfo[SR_AINFO_RECNO] := 1
+      ::aInfo[SR_AINFO_RCOUNT] := 0
+      ::aInfo[SR_AINFO_BOF] := .T.
+      ::aInfo[SR_AINFO_EOF] := .T.
    ENDIF
 
 RETURN nRet
@@ -1678,10 +1678,10 @@ RETURN 0
 
 METHOD SR_WORKAREA:OrderBy(nOrder, lAscend, lRec)
 
-   DEFAULT nOrder TO ::aInfo[AINFO_INDEXORD]
+   DEFAULT nOrder TO ::aInfo[SR_AINFO_INDEXORD]
    DEFAULT lRec TO .T.
 
-   lAscend := IIf(::aInfo[AINFO_REVERSE_INDEX], !lAscend, lAscend)
+   lAscend := IIf(::aInfo[SR_AINFO_REVERSE_INDEX], !lAscend, lAscend)
 
    IF lRec
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
@@ -1724,67 +1724,67 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
 
    CASE SQL_SUCCESS
       ::lNoData := .F.
-      ::aInfo[AINFO_EOF] := .F.
-      ::aInfo[AINFO_BOF] := .F.
+      ::aInfo[SR_AINFO_EOF] := .F.
+      ::aInfo[SR_AINFO_BOF] := .F.
       ::lEmptyTable := .F.
-      nOldBg := ::aInfo[AINFO_NCACHEBEGIN]
-      nOldEnd := ::aInfo[AINFO_NCACHEEND]
+      nOldBg := ::aInfo[SR_AINFO_NCACHEBEGIN]
+      nOldEnd := ::aInfo[SR_AINFO_NCACHEEND]
       lCacheIsEmpty := (nOldBg == nOldEnd) .AND. nOldEnd == 0
 
       IF nDirection == ORD_DIR_FWD
-         IF (::aInfo[AINFO_NPOSCACHE] + 1) > (SR_CACHE_PAGE_SIZE * 3)
+         IF (::aInfo[SR_AINFO_NPOSCACHE] + 1) > (SR_CACHE_PAGE_SIZE * 3)
             nBlockPos := 1
          ELSE
-            nBlockPos := ::aInfo[AINFO_NPOSCACHE] + 1
+            nBlockPos := ::aInfo[SR_AINFO_NPOSCACHE] + 1
          ENDIF
-         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NPOSCACHE] + ::nCurrentFetch
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NPOSCACHE] + ::nCurrentFetch
          IF nOldBg == nOldEnd
-            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
+            IF ::aInfo[SR_AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[SR_AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
             ENDIF
-            ::aInfo[AINFO_EOF_AT] := 0
+            ::aInfo[SR_AINFO_EOF_AT] := 0
          ELSEIF nOldBg < nOldEnd
-            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
-               IF ::aInfo[AINFO_NCACHEEND] >= (::aInfo[AINFO_NCACHEBEGIN] - 2)
-                  ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NCACHEEND] + 2
+            IF ::aInfo[SR_AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[SR_AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
+               IF ::aInfo[SR_AINFO_NCACHEEND] >= (::aInfo[SR_AINFO_NCACHEBEGIN] - 2)
+                  ::aInfo[SR_AINFO_NCACHEBEGIN] := ::aInfo[SR_AINFO_NCACHEEND] + 2
                ENDIF
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
          ELSE
-            IF ::aInfo[AINFO_NCACHEEND] >= (::aInfo[AINFO_NCACHEBEGIN] - 2)
-               ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NCACHEEND] + 2
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEEND] >= (::aInfo[SR_AINFO_NCACHEBEGIN] - 2)
+               ::aInfo[SR_AINFO_NCACHEBEGIN] := ::aInfo[SR_AINFO_NCACHEEND] + 2
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[SR_AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEBEGIN] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEBEGIN] -= (SR_CACHE_PAGE_SIZE * 3)
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEBEGIN] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[SR_AINFO_NCACHEBEGIN] -= (SR_CACHE_PAGE_SIZE * 3)
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
 
          ENDIF
-         IF ::aInfo[AINFO_NCACHEBEGIN] == 0
-            ::aInfo[AINFO_NCACHEBEGIN] := 1
+         IF ::aInfo[SR_AINFO_NCACHEBEGIN] == 0
+            ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
          ENDIF
-         IF ::aInfo[AINFO_NPOSCACHE] == 0
-            ::aInfo[AINFO_NPOSCACHE] := 1
+         IF ::aInfo[SR_AINFO_NPOSCACHE] == 0
+            ::aInfo[SR_AINFO_NPOSCACHE] := 1
          ENDIF
          IF ::aCache[nBlockPos] == NIL
             ::aCache[nBlockPos] := Array(Len(::aLocalBuffer))
          ENDIF
          ::oSql:GetLine(::aFields, .F., @::aCache[nBlockPos])
          uRecord := ::aCache[nBlockPos, ::hnRecno]
-         IF ::aInfo[AINFO_NPOSCACHE] == 0
-            ::aInfo[AINFO_NPOSCACHE] := 1
+         IF ::aInfo[SR_AINFO_NPOSCACHE] == 0
+            ::aInfo[SR_AINFO_NPOSCACHE] := 1
          ENDIF
-         nPos := ::aInfo[AINFO_NPOSCACHE] + IIf(lCacheIsEmpty, 0, 1)
+         nPos := ::aInfo[SR_AINFO_NPOSCACHE] + IIf(lCacheIsEmpty, 0, 1)
          IF nPos > (SR_CACHE_PAGE_SIZE * 3)
             nPos := 1
          ENDIF
@@ -1795,63 +1795,63 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
 
       ELSEIF nDirection == ORD_DIR_BWD
 
-         IF (::aInfo[AINFO_NPOSCACHE] - 1) < 1
+         IF (::aInfo[SR_AINFO_NPOSCACHE] - 1) < 1
             nBlockPos := SR_CACHE_PAGE_SIZE * 3
          ELSE
-            nBlockPos := ::aInfo[AINFO_NPOSCACHE] - 1
+            nBlockPos := ::aInfo[SR_AINFO_NPOSCACHE] - 1
          ENDIF
-         ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NPOSCACHE] - ::nCurrentFetch
+         ::aInfo[SR_AINFO_NCACHEBEGIN] := ::aInfo[SR_AINFO_NPOSCACHE] - ::nCurrentFetch
          IF nOldBg == nOldEnd
-            IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
+            IF ::aInfo[SR_AINFO_NCACHEBEGIN] < 1
+               ::aInfo[SR_AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
             ENDIF
-            ::aInfo[AINFO_EOF_AT] := 0
+            ::aInfo[SR_AINFO_EOF_AT] := 0
 
          ELSEIF nOldBg < nOldEnd
-            IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
-               IF (::aInfo[AINFO_NCACHEEND] + 2) >= ::aInfo[AINFO_NCACHEBEGIN]
-                  ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] - 2
+            IF ::aInfo[SR_AINFO_NCACHEBEGIN] < 1
+               ::aInfo[SR_AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
+               IF (::aInfo[SR_AINFO_NCACHEEND] + 2) >= ::aInfo[SR_AINFO_NCACHEBEGIN]
+                  ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] - 2
                ENDIF
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
          ELSE
-            IF (::aInfo[AINFO_NCACHEEND] + 2) >= ::aInfo[AINFO_NCACHEBEGIN]
-               ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] - 2
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF (::aInfo[SR_AINFO_NCACHEEND] + 2) >= ::aInfo[SR_AINFO_NCACHEBEGIN]
+               ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] - 2
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEBEGIN] < 1
+               ::aInfo[SR_AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEEND] < 1
-               ::aInfo[AINFO_NCACHEEND] += (SR_CACHE_PAGE_SIZE * 3)
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEEND] < 1
+               ::aInfo[SR_AINFO_NCACHEEND] += (SR_CACHE_PAGE_SIZE * 3)
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
          ENDIF
 
-         IF ::aInfo[AINFO_NCACHEEND] == 0
-            ::aInfo[AINFO_NCACHEEND] := (SR_CACHE_PAGE_SIZE * 3)
+         IF ::aInfo[SR_AINFO_NCACHEEND] == 0
+            ::aInfo[SR_AINFO_NCACHEEND] := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
-         IF ::aInfo[AINFO_NPOSCACHE] == 0
-            ::aInfo[AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
+         IF ::aInfo[SR_AINFO_NPOSCACHE] == 0
+            ::aInfo[SR_AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
          IF ::aCache[nBlockPos] == NIL
             ::aCache[nBlockPos] := Array(Len(::aLocalBuffer))
          ENDIF
          ::oSql:GetLine(::aFields, .F., @::aCache[nBlockPos])
          uRecord := ::aCache[nBlockPos, ::hnRecno]
-         nPos := ::aInfo[AINFO_NPOSCACHE] - IIf(lCacheIsEmpty, 0, 1)
+         nPos := ::aInfo[SR_AINFO_NPOSCACHE] - IIf(lCacheIsEmpty, 0, 1)
          IF nPos < 1
             nPos := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
 
       ELSE
-         ::aInfo[AINFO_NPOSCACHE] := ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NCACHEEND] := nBlockPos := 1
+         ::aInfo[SR_AINFO_NPOSCACHE] := ::aInfo[SR_AINFO_NCACHEBEGIN] := ::aInfo[SR_AINFO_NCACHEEND] := nBlockPos := 1
          ::oSql:GetLine(::aFields, .F., @::aCache[1])
          uRecord := ::aCache[nBlockPos, ::hnRecno]
       ENDIF
@@ -1866,11 +1866,11 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
                      "Last command sent to database : " + SR_CRLF + ::cLastComm)
                ENDIF
                IF nDirection == ORD_DIR_FWD
-                  ::aInfo[AINFO_EOF_AT] := uRecord
-                  ::aInfo[AINFO_NCACHEEND] := nPos
+                  ::aInfo[SR_AINFO_EOF_AT] := uRecord
+                  ::aInfo[SR_AINFO_NCACHEEND] := nPos
                ELSE
-                  ::aInfo[AINFO_BOF_AT] := uRecord
-                  ::aInfo[AINFO_NCACHEBEGIN] := nPos
+                  ::aInfo[SR_AINFO_BOF_AT] := uRecord
+                  ::aInfo[SR_AINFO_NCACHEBEGIN] := nPos
                ENDIF
 
                EXIT
@@ -1894,7 +1894,7 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
             ENDIF
          NEXT nFecth
       ENDIF
-      IF ::aCache[::aInfo[AINFO_NPOSCACHE]] != NIL
+      IF ::aCache[::aInfo[SR_AINFO_NPOSCACHE]] != NIL
          ::GetBuffer()     // Loads current cache position to record buffer
       ENDIF
       EXIT
@@ -1902,10 +1902,10 @@ METHOD SR_WORKAREA:FirstFetch(nDirection)
    CASE SQL_NO_DATA_FOUND
       ::lNoData := .T.
       IF nDirection == ORD_DIR_BWD
-         ::aInfo[AINFO_BOF] := .T.
-         ::aInfo[AINFO_BOF_AT] := ::aInfo[AINFO_RECNO]
+         ::aInfo[SR_AINFO_BOF] := .T.
+         ::aInfo[SR_AINFO_BOF_AT] := ::aInfo[SR_AINFO_RECNO]
       ELSEIF nDirection == ORD_DIR_FWD
-         ::aInfo[AINFO_EOF_AT] := ::aInfo[AINFO_RECNO]
+         ::aInfo[SR_AINFO_EOF_AT] := ::aInfo[SR_AINFO_RECNO]
          ::GetBuffer(.T.)         // Clean Buffer
       ELSE
          ::GetBuffer(.T.)         // Clean Buffer
@@ -1935,38 +1935,38 @@ METHOD SR_WORKAREA:Stabilize()
 
    HB_SYMBOL_UNUSED(nLast)
 
-   IF ::lStable .OR. ::aInfo[AINFO_INDEXORD] == 0 .OR. Len(::aIndex) == 0 .AND. Len(::aCache) > 0
+   IF ::lStable .OR. ::aInfo[SR_AINFO_INDEXORD] == 0 .OR. Len(::aIndex) == 0 .AND. Len(::aCache) > 0
       RETURN NIL
    ENDIF
 
    // Stabilize means re-order the workarea cache
 
-   nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) // - 1      // This "-1" is to removes the NRECNO column
+   nLen := Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]) // - 1      // This "-1" is to removes the NRECNO column
    nRec := ::aLocalBuffer[::hnRecno]
 
    IF nLen == 1      // One field index is easy and fast !
-      nPos := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]
+      nPos := ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2]
       ASort(::aCache, , , {|x, y|x[nPos] < y[nPos]})
    ELSE
       aPos := Array(nLen)
       FOR i := 1 TO nLen
-         aPos[i] := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]
+         aPos[i] := ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]
       NEXT i
       ASort(::aCache, , , {|x, y|aOrd(x, y, aPos)})
    ENDIF
 
-   ::aInfo[AINFO_NPOSCACHE] := AScan(::aCache, {|x|x[::hnRecno] == nRec})
+   ::aInfo[SR_AINFO_NPOSCACHE] := AScan(::aCache, {|x|x[::hnRecno] == nRec})
 
-   IF ::aInfo[AINFO_NPOSCACHE] == 0
-      ::aInfo[AINFO_NPOSCACHE] := Len(::aCache)
+   IF ::aInfo[SR_AINFO_NPOSCACHE] == 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := Len(::aCache)
    ENDIF
 
-   ::GetBuffer(.F., ::aInfo[AINFO_NPOSCACHE])
+   ::GetBuffer(.F., ::aInfo[SR_AINFO_NPOSCACHE])
    ::lStable := .T.
-   ::aInfo[AINFO_FOUND] := .F.
+   ::aInfo[SR_AINFO_FOUND] := .F.
 
-   ::aInfo[AINFO_BOF] := Len(::aCache) == 0
-   ::aInfo[AINFO_EOF] := Len(::aCache) == 0
+   ::aInfo[SR_AINFO_BOF] := Len(::aCache) == 0
+   ::aInfo[SR_AINFO_EOF] := Len(::aCache) == 0
 
    ::lNoData := .F.
 
@@ -2002,7 +2002,7 @@ METHOD SR_WORKAREA:Normalize(nDirection)
             EXIT
          ENDIF
       ENDDO
-      ::aInfo[AINFO_BOF] := .T.
+      ::aInfo[SR_AINFO_BOF] := .T.
    ENDCASE
 
 RETURN nRet
@@ -2018,14 +2018,14 @@ METHOD SR_WORKAREA:SkipRawCache(nToSkip)
    DEFAULT nToSkip TO 1
 
    DO CASE
-   CASE ::aInfo[AINFO_NPOSCACHE] + nToSkip > 0 .AND. ::aInfo[AINFO_NPOSCACHE] + nToSkip <= Len(::aCache) .AND. nToSkip != 0
-      ::GetBuffer(.F., ::aInfo[AINFO_NPOSCACHE] + nToSkip)
+   CASE ::aInfo[SR_AINFO_NPOSCACHE] + nToSkip > 0 .AND. ::aInfo[SR_AINFO_NPOSCACHE] + nToSkip <= Len(::aCache) .AND. nToSkip != 0
+      ::GetBuffer(.F., ::aInfo[SR_AINFO_NPOSCACHE] + nToSkip)
       RETURN 1
-   CASE ::aInfo[AINFO_NPOSCACHE] + nToSkip < 1
+   CASE ::aInfo[SR_AINFO_NPOSCACHE] + nToSkip < 1
       ::GetBuffer(.F., 1)
       RETURN 0
-   CASE ::aInfo[AINFO_NPOSCACHE] + nToSkip > Len(::aCache)
-      ::aInfo[AINFO_BOF] := .F.
+   CASE ::aInfo[SR_AINFO_NPOSCACHE] + nToSkip > Len(::aCache)
+      ::aInfo[SR_AINFO_BOF] := .F.
       ::GetBuffer(.T.)
    ENDCASE
 
@@ -2079,18 +2079,18 @@ METHOD SR_WORKAREA:CheckCache(oWorkArea)
 
    HB_SYMBOL_UNUSED(nRecno)
 
-   IF oWorkArea:aInfo[AINFO_EOF]
-      oWorkArea:aInfo[AINFO_NCACHEEND] := oWorkArea:aInfo[AINFO_NCACHEBEGIN] := 0
-      oWorkArea:aInfo[AINFO_NPOSCACHE] := 0
+   IF oWorkArea:aInfo[SR_AINFO_EOF]
+      oWorkArea:aInfo[SR_AINFO_NCACHEEND] := oWorkArea:aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      oWorkArea:aInfo[SR_AINFO_NPOSCACHE] := 0
    ELSE
       IF oWorkArea:aLocalBuffer[::hnRecno] == ::aLocalBuffer[::hnRecno]
          ACopy(::aLocalBuffer, oWorkArea:aLocalBuffer)
       ENDIF
-      oWorkArea:aInfo[AINFO_NCACHEEND] := oWorkArea:aInfo[AINFO_NCACHEBEGIN] := 0
-      oWorkArea:aInfo[AINFO_NPOSCACHE] := 0
+      oWorkArea:aInfo[SR_AINFO_NCACHEEND] := oWorkArea:aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      oWorkArea:aInfo[SR_AINFO_NPOSCACHE] := 0
    ENDIF
-   oWorkArea:aInfo[AINFO_EOF_AT] := 0
-   oWorkArea:aInfo[AINFO_BOF_AT] := 0
+   oWorkArea:aInfo[SR_AINFO_EOF_AT] := 0
+   oWorkArea:aInfo[SR_AINFO_BOF_AT] := 0
 
 RETURN NIL
 
@@ -2098,7 +2098,7 @@ RETURN NIL
 
 METHOD SR_WORKAREA:WhereEqual()
 
-RETURN " WHERE " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " = " + ::Quoted(::aInfo[AINFO_RECNO])
+RETURN " WHERE " + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " = " + ::Quoted(::aInfo[SR_AINFO_RECNO])
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -2441,12 +2441,12 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
    LOCAL cMemo
    LOCAL oXml
 
-   DEFAULT lInsert TO ::aInfo[AINFO_ISINSERT]
+   DEFAULT lInsert TO ::aInfo[SR_AINFO_ISINSERT]
    DEFAULT aBuffer TO ::aLocalBuffer
 
    ASize(::aLocalBuffer, ::nFields)
 
-   IF !lInsert .AND. ::aInfo[AINFO_EOF] .AND. ::aInfo[AINFO_BOF]
+   IF !lInsert .AND. ::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF]
       ::RunTimeErr("1")
       RETURN .F.
    ENDIF
@@ -2455,10 +2455,10 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
       RETURN .F.
    ENDIF
 
-   ::aInfo[AINFO_ISINSERT] := .F.
-   ::aInfo[AINFO_HOT] := .F.
-   ::aInfo[AINFO_EOF_AT] := 0
-   ::aInfo[AINFO_BOF_AT] := 0
+   ::aInfo[SR_AINFO_ISINSERT] := .F.
+   ::aInfo[SR_AINFO_HOT] := .F.
+   ::aInfo[SR_AINFO_EOF_AT] := 0
+   ::aInfo[SR_AINFO_BOF_AT] := 0
 
    IF ::lHistoric .AND. (!Empty(aBuffer[::nPosDtHist])) .AND. (!Empty(aBuffer[::hnRecno]))
       aRet := {}
@@ -2488,7 +2488,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
          IF ::lVers
             lInsert := .T.
             IF (!::oSql:lUseSequences .OR. !::lUseSequences) .OR. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_INGRES)
-               ::aInfo[AINFO_RECNO] := 0
+               ::aInfo[SR_AINFO_RECNO] := 0
                aBuffer[::hnRecno] := 0               // This forces NEW recno number
             ENDIF
             IF ::dNextDt == NIL
@@ -2616,13 +2616,13 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
             ::oSql:WriteMemo(::cQualifiedTableName, aBuffer[::hnRecno], SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID), aMemos)
          ENDIF
 
-         IF ::aInfo[AINFO_NCACHEBEGIN] == 0 .AND. ::aInfo[AINFO_NCACHEEND] == 0
-            ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 1
-            ::aInfo[AINFO_NPOSCACHE] := 1
+         IF ::aInfo[SR_AINFO_NCACHEBEGIN] == 0 .AND. ::aInfo[SR_AINFO_NCACHEEND] == 0
+            ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+            ::aInfo[SR_AINFO_NPOSCACHE] := 1
          ENDIF
 
-         ASize(::aCache[::aInfo[AINFO_NPOSCACHE]], ::nFields)
-         ACopy(::aLocalBuffer, ::aCache[::aInfo[AINFO_NPOSCACHE]])
+         ASize(::aCache[::aInfo[SR_AINFO_NPOSCACHE]], ::nFields)
+         ACopy(::aLocalBuffer, ::aCache[::aInfo[SR_AINFO_NPOSCACHE]])
 
          // Sync with other workareas opening the same table
 
@@ -2660,11 +2660,11 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 
             IF i == ::hnRecno
                IF !::oSql:lUseSequences .OR. !::lUseSequences
-                  IF Empty(::aInfo[AINFO_RECNO])
+                  IF Empty(::aInfo[SR_AINFO_RECNO])
                      aBuffer[::hnRecno] := ::GetNextRecordNumber()
-                     ::aInfo[AINFO_RECNO] := aBuffer[::hnRecno]
+                     ::aInfo[SR_AINFO_RECNO] := aBuffer[::hnRecno]
                   ELSE
-                     aBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+                     aBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
                   ENDIF
                   IF ::cIns == NIL
                      cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY(::aNames[i], ::oSql:nSystemID)
@@ -2675,11 +2675,11 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   SWITCH ::oSql:nSystemID
                   CASE SQLRDD_RDBMS_INGRES
                   CASE SQLRDD_RDBMS_FIREBR
-                     IF Empty(::aInfo[AINFO_RECNO])
+                     IF Empty(::aInfo[SR_AINFO_RECNO])
                         aBuffer[::hnRecno] := ::GetNextRecordNumber()
-                        ::aInfo[AINFO_RECNO] := aBuffer[::hnRecno]
+                        ::aInfo[SR_AINFO_RECNO] := aBuffer[::hnRecno]
                      ELSE
-                        aBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+                        aBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
                      ENDIF
                      IF ::cIns == NIL
                         cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID)
@@ -3006,26 +3006,26 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 
          // Record should remain Locked
 
-         IF ::aInfo[AINFO_SHARED] .AND. Len(::aLocked) < SR_MAXIMUN_LOCKS
+         IF ::aInfo[SR_AINFO_SHARED] .AND. Len(::aLocked) < SR_MAXIMUN_LOCKS
             AAdd(::aLocked, aBuffer[::hnRecno])
          ENDIF
 
          // Sets info array
 
          ::lEmptyTable := .F.
-         ::aInfo[AINFO_RCOUNT] := aBuffer[::hnRecno]
+         ::aInfo[SR_AINFO_RCOUNT] := aBuffer[::hnRecno]
          ::nLastRecordAded := aBuffer[::hnRecno]
 
          // Cache insertion is disabled because INSERTED lines usually
          // are discarded by cache engine
 
-         ::aInfo[AINFO_BOF] := .F.
-         ::aInfo[AINFO_EOF] := .F.
-         ::aInfo[AINFO_BOF_AT] := 0
-         ::aInfo[AINFO_EOF_AT] := 0
+         ::aInfo[SR_AINFO_BOF] := .F.
+         ::aInfo[SR_AINFO_EOF] := .F.
+         ::aInfo[SR_AINFO_BOF_AT] := 0
+         ::aInfo[SR_AINFO_EOF_AT] := 0
 
-         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 1
-         ::aInfo[AINFO_NPOSCACHE] := 1
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+         ::aInfo[SR_AINFO_NPOSCACHE] := 1
          IF ::aCache[1] == NIL
             ::aCache[1] := Array(Len(::aLocalBuffer))
          ENDIF
@@ -3041,9 +3041,9 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 
    ENDCASE
 
-   ::aInfo[AINFO_RECNO] := aBuffer[::hnRecno]
-   ::aInfo[AINFO_BOF] := .F.
-   ::aInfo[AINFO_EOF] := .F.
+   ::aInfo[SR_AINFO_RECNO] := aBuffer[::hnRecno]
+   ::aInfo[SR_AINFO_BOF] := .F.
+   ::aInfo[SR_AINFO_EOF] := .F.
    ::lNoData := .F.
    ::dNextDt := NIL
 
@@ -3062,7 +3062,7 @@ RETURN .T.
 
 METHOD SR_WORKAREA:lCanICommitNow()
 
-RETURN ::oSql:nTransacCount == 0 .AND. ::aInfo[AINFO_SHARED] .AND. Empty(::aLocked)
+RETURN ::oSql:nTransacCount == 0 .AND. ::aInfo[SR_AINFO_SHARED] .AND. Empty(::aLocked)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -3078,7 +3078,7 @@ METHOD SR_WORKAREA:UpdateCache(aResultSet)
    uRecord := aResultSet[1, ::hnRecno]
 
    IF SR_SetMultiLang()
-      IF ::aInfo[AINFO_RECNO] == uRecord
+      IF ::aInfo[SR_AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
             IF HB_IsHash(::aLocalBuffer[SR_ENUMINDEX(uVal)])
                IF ::aFields[SR_ENUMINDEX(uVal), FIELD_TYPE] $ "CM"
@@ -3094,7 +3094,7 @@ METHOD SR_WORKAREA:UpdateCache(aResultSet)
          NEXT
       ENDIF
    ELSE
-      IF ::aInfo[AINFO_RECNO] == uRecord
+      IF ::aInfo[SR_AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
             ::aLocalBuffer[SR_ENUMINDEX(uVal)] := uVal
             ::aOldBuffer[SR_ENUMINDEX(uVal)] := uVal
@@ -3109,22 +3109,22 @@ RETURN NIL
 METHOD SR_WORKAREA:Default()
 
    IF Len(::aCache) == 0
-      ::aInfo[AINFO_BOF] := .T.
-      ::aInfo[AINFO_RCOUNT] := 0
-      ::aInfo[AINFO_RECNO] := 1
+      ::aInfo[SR_AINFO_BOF] := .T.
+      ::aInfo[SR_AINFO_RCOUNT] := 0
+      ::aInfo[SR_AINFO_RECNO] := 1
       ::lNoData := .T.
       ::GetBuffer(.T.)
-      ::aInfo[AINFO_NPOSCACHE] := 1
+      ::aInfo[SR_AINFO_NPOSCACHE] := 1
    ELSE
-      ::aInfo[AINFO_BOF] := .F.
-      ::aInfo[AINFO_EOF] := .F.
-      ::aInfo[AINFO_RCOUNT] := ::nLastRec
+      ::aInfo[SR_AINFO_BOF] := .F.
+      ::aInfo[SR_AINFO_EOF] := .F.
+      ::aInfo[SR_AINFO_RCOUNT] := ::nLastRec
       ::lNoData := .F.
       ::GetBuffer(.F.)                        // Use the first record
       IF ::hnRecno != NIL .AND. ::hnRecno != 0
-         ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
+         ::aInfo[SR_AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
       ELSE
-         ::aInfo[AINFO_RECNO] :=  ::aInfo[AINFO_NPOSCACHE]
+         ::aInfo[SR_AINFO_RECNO] :=  ::aInfo[SR_AINFO_NPOSCACHE]
       ENDIF
    ENDIF
 
@@ -3179,22 +3179,22 @@ METHOD SR_WORKAREA:Refresh(lGoCold)
    IF lGoCold
       ::sqlGoCold()     // writes any change in the buffer to the database
    ELSE
-      ::aInfo[AINFO_HOT] := .F.
+      ::aInfo[SR_AINFO_HOT] := .F.
       ::GetBuffer(.T.)         // Clean Buffer
    ENDIF
 
    IF ::lISAM
 
-      ::aInfo[AINFO_BOF_AT] := 0
-      ::aInfo[AINFO_EOF_AT] := 0
+      ::aInfo[SR_AINFO_BOF_AT] := 0
+      ::aInfo[SR_AINFO_EOF_AT] := 0
 
-      IF !( ::aInfo[AINFO_EOF] .AND. ::aInfo[AINFO_BOF])
-         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 1
-         ::aInfo[AINFO_NPOSCACHE] := 1
+      IF !( ::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+         ::aInfo[SR_AINFO_NPOSCACHE] := 1
          ACopy(::aLocalBuffer, ::aCache[1])
       ELSE
-         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-         ::aInfo[AINFO_NPOSCACHE] := 0
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+         ::aInfo[SR_AINFO_NPOSCACHE] := 0
       ENDIF
 
       FOR i := 1 TO Len(::aIndex)
@@ -3261,10 +3261,10 @@ METHOD SR_WORKAREA:Refresh(lGoCold)
 
       ASize(::aCache, n)
       ::nLastRec := nMax
-      ::aInfo[AINFO_NPOSCACHE] := Min(::aInfo[AINFO_NPOSCACHE], Len(::aCache))
-      ::aInfo[AINFO_FCOUNT] := ::nFields
-      ::aInfo[AINFO_FOUND] := .F.
-      ::aInfo[AINFO_RCOUNT] := nMax
+      ::aInfo[SR_AINFO_NPOSCACHE] := Min(::aInfo[SR_AINFO_NPOSCACHE], Len(::aCache))
+      ::aInfo[SR_AINFO_FCOUNT] := ::nFields
+      ::aInfo[SR_AINFO_FOUND] := .F.
+      ::aInfo[SR_AINFO_RCOUNT] := nMax
 
       ::Default()
 
@@ -3280,7 +3280,7 @@ RETURN NIL
 METHOD SR_WORKAREA:GetBuffer(lClean, nCache)
 
    DEFAULT lClean TO .F.
-   DEFAULT nCache TO ::aInfo[AINFO_NPOSCACHE]
+   DEFAULT nCache TO ::aInfo[SR_AINFO_NPOSCACHE]
 
    IF Len(::aLocalBuffer) < ::nFields
       ASize(::aLocalBuffer, ::nFields)
@@ -3293,29 +3293,29 @@ METHOD SR_WORKAREA:GetBuffer(lClean, nCache)
    IF !lClean
       IF ::lISAM
          ACopy(::aCache[nCache], ::aLocalBuffer)
-         ::aInfo[AINFO_RECNO] := ::aCache[nCache, ::hnRecno]
+         ::aInfo[SR_AINFO_RECNO] := ::aCache[nCache, ::hnRecno]
       ELSE
          ACopy(::aCache[nCache], ::aLocalBuffer)
          IF ::hnRecno != NIL .AND. ::hnRecno != 0
-            ::aInfo[AINFO_RECNO] := ::aCache[nCache, ::hnRecno]
+            ::aInfo[SR_AINFO_RECNO] := ::aCache[nCache, ::hnRecno]
          ELSE
-            ::aInfo[AINFO_RECNO] := nCache
+            ::aInfo[SR_AINFO_RECNO] := nCache
          ENDIF
-         ::aInfo[AINFO_NPOSCACHE] := nCache
+         ::aInfo[SR_AINFO_NPOSCACHE] := nCache
       ENDIF
       IF ::hnDeleted > 0 .AND. ::aLocalBuffer[::hnDeleted] != NIL
-         ::aInfo[AINFO_DELETED] := ::aLocalBuffer[::hnDeleted] $ "T*"
+         ::aInfo[SR_AINFO_DELETED] := ::aLocalBuffer[::hnDeleted] $ "T*"
       ELSE
-         ::aInfo[AINFO_DELETED] := .F.
+         ::aInfo[SR_AINFO_DELETED] := .F.
       ENDIF
    ELSE
       AEval(::aLocalBuffer, {|x, i|HB_SYMBOL_UNUSED(x), ::aLocalBuffer[i] := ::aEmptyBuffer[i]})
       IF !::lISAM
-         ::aInfo[AINFO_NPOSCACHE] := Len(::aCache) + 1
+         ::aInfo[SR_AINFO_NPOSCACHE] := Len(::aCache) + 1
       ENDIF
-      ::aInfo[AINFO_DELETED] := .F.
-      ::aInfo[AINFO_RECNO] := ::aInfo[AINFO_RCOUNT] + 1
-      ::aInfo[AINFO_EOF] := .T.
+      ::aInfo[SR_AINFO_DELETED] := .F.
+      ::aInfo[SR_AINFO_RECNO] := ::aInfo[SR_AINFO_RCOUNT] + 1
+      ::aInfo[SR_AINFO_EOF] := .T.
    ENDIF
 
    // Take a picture of the buffer
@@ -3372,7 +3372,7 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
    ENDIF
 
    ::nFields := Len(::aFields)
-   ::aInfo[AINFO_FCOUNT] := ::nFields
+   ::aInfo[SR_AINFO_FCOUNT] := ::nFields
    ::aNames := Array(::nFields)
    ::aNamesLower := Array(::nFields)
 
@@ -3625,13 +3625,13 @@ METHOD SR_WORKAREA:sqlGoBottom()
       NEXT
    ENDIF
 
-   ::aInfo[AINFO_DETECT1_COUNT] := 0
+   ::aInfo[SR_AINFO_DETECT1_COUNT] := 0
 
    IF ::lISAM
 
       cJoin1 := " " + ::cQualifiedTableName + " A "
       cJoin3 := ::GetSelectList()
-      ::aInfo[AINFO_SKIPCOUNT] := 0
+      ::aInfo[SR_AINFO_SKIPCOUNT] := 0
 
       IF !Empty(cTemp := ::SolveRestrictors())
          cTemp := " WHERE " + cTemp
@@ -3639,30 +3639,30 @@ METHOD SR_WORKAREA:sqlGoBottom()
 
       ::ResetStatistics()
 
-      IF ::aInfo[AINFO_INDEXORD] > 0 .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL
-         cTemp += IIf(" WHERE " $ cTemp, " AND ", " WHERE ") + "(" + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " <= 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz' AND ROWNUM <= " + Str(::nCurrentFetch+1) + ") "
-         ::oSql:Execute('SELECT /*+ INDEX( A D$' + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + IIf(::oSql:lComments, " /* GoBottom */", ""))
+      IF ::aInfo[SR_AINFO_INDEXORD] > 0 .AND. ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL
+         cTemp += IIf(" WHERE " $ cTemp, " AND ", " WHERE ") + "(" + ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " <= 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz' AND ROWNUM <= " + Str(::nCurrentFetch+1) + ") "
+         ::oSql:Execute('SELECT /*+ INDEX( A D$' + ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + IIf(::oSql:lComments, " /* GoBottom */", ""))
       ELSE
          ::oSql:Execute("SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + cTemp + ::OrderBy(NIL, .F.) + Eval(::Optmizer_ne, ::nCurrentFetch) + IIf(::oSql:lComments, " /* GoBottom */", ""))
       ENDIF
 
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-      ::aInfo[AINFO_NPOSCACHE] := 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
 
       ::FirstFetch(ORD_DIR_BWD)
       ::oSql:FreeStatement()
 
       IF !::lNoData
-         ::aInfo[AINFO_EOF_AT] := ::aLocalBuffer[::hnRecno]
+         ::aInfo[SR_AINFO_EOF_AT] := ::aLocalBuffer[::hnRecno]
       ENDIF
 
       IF ::lEmptyTable .OR. ::lNoData
-         ::aInfo[AINFO_BOF] := .T.
-         ::aInfo[AINFO_EOF] := .T.
+         ::aInfo[SR_AINFO_BOF] := .T.
+         ::aInfo[SR_AINFO_EOF] := .T.
       ELSE
-         ::aInfo[AINFO_BOF] := .F.
-         ::aInfo[AINFO_EOF] := .F.
-         ::aInfo[AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
+         ::aInfo[SR_AINFO_BOF] := .F.
+         ::aInfo[SR_AINFO_EOF] := .F.
+         ::aInfo[SR_AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
       ENDIF
 
    ELSE
@@ -3671,11 +3671,11 @@ METHOD SR_WORKAREA:sqlGoBottom()
          RETURN NIL
       ELSE
          ::Stabilize()
-         ::aInfo[AINFO_BOF] := .F.
-         ::aInfo[AINFO_EOF] := .F.
+         ::aInfo[SR_AINFO_BOF] := .F.
+         ::aInfo[SR_AINFO_EOF] := .F.
       ENDIF
 
-      IF !::aInfo[AINFO_REVERSE_INDEX]
+      IF !::aInfo[SR_AINFO_REVERSE_INDEX]
          ::GetBuffer(.F., Len(::aCache))
          ::Normalize(-1)
       ELSE
@@ -3686,7 +3686,7 @@ METHOD SR_WORKAREA:sqlGoBottom()
    ENDIF
 
    IF ::hnDeleted > 0 .AND. ::aLocalBuffer[::hnDeleted] != NIL
-     ::aInfo[AINFO_DELETED] := ::aLocalBuffer[::hnDeleted] $ "T*"
+     ::aInfo[SR_AINFO_DELETED] := ::aLocalBuffer[::hnDeleted] $ "T*"
    ENDIF
 
 RETURN NIL
@@ -3695,8 +3695,8 @@ RETURN NIL
 
 METHOD SR_WORKAREA:sqlGoCold()
 
-   IF ::aInfo[AINFO_HOT] .AND. IIf(::hnDeleted > 0, .T.,  !::aInfo[AINFO_DELETED])
-      ::WriteBuffer(::aInfo[AINFO_ISINSERT], ::aLocalBuffer)
+   IF ::aInfo[SR_AINFO_HOT] .AND. IIf(::hnDeleted > 0, .T.,  !::aInfo[SR_AINFO_DELETED])
+      ::WriteBuffer(::aInfo[SR_AINFO_ISINSERT], ::aLocalBuffer)
    ENDIF
 
 RETURN .F.
@@ -3713,7 +3713,7 @@ METHOD SR_WORKAREA:sqlGoTo(uRecord, lNoOptimize)
 
    DEFAULT lNoOptimize TO .F.
 
-   ::aInfo[AINFO_FOUND] := .F.
+   ::aInfo[SR_AINFO_FOUND] := .F.
 
    IF ::lCollectingBehavior
       FOR EACH i IN ::aSelectList
@@ -3726,33 +3726,33 @@ METHOD SR_WORKAREA:sqlGoTo(uRecord, lNoOptimize)
 
    // Optimizing DBGoTo(RecNo())
 
-   IF !lNoOptimize .AND. (uRecord == ::aInfo[AINFO_RECNO] .AND. !::aInfo[AINFO_ISINSERT] .AND. !( ::aInfo[AINFO_BOF] .AND. ::aInfo[AINFO_EOF]))
-      // ::aInfo[AINFO_EOF] := .F.
-      ::aInfo[AINFO_BOF] := .F.
+   IF !lNoOptimize .AND. (uRecord == ::aInfo[SR_AINFO_RECNO] .AND. !::aInfo[SR_AINFO_ISINSERT] .AND. !( ::aInfo[SR_AINFO_BOF] .AND. ::aInfo[SR_AINFO_EOF]))
+      // ::aInfo[SR_AINFO_EOF] := .F.
+      ::aInfo[SR_AINFO_BOF] := .F.
       RETURN NIL
    ENDIF
 
-   ::aInfo[AINFO_SKIPCOUNT] := 0
-   ::aInfo[AINFO_DETECT1_COUNT] := 0
+   ::aInfo[SR_AINFO_SKIPCOUNT] := 0
+   ::aInfo[SR_AINFO_DETECT1_COUNT] := 0
 
    IF Empty(uRecord) .OR. ( HB_IsNumeric(uRecord) .AND. uRecord == LASTREC_POS + 1)
       ::GetBuffer(.T.)
-      IF ::aInfo[AINFO_ISINSERT]
-         ::aInfo[AINFO_RECNO] := ::GetNextRecordNumber()
-         ::aLocalBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+      IF ::aInfo[SR_AINFO_ISINSERT]
+         ::aInfo[SR_AINFO_RECNO] := ::GetNextRecordNumber()
+         ::aLocalBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
       ENDIF
-      ::aInfo[AINFO_BOF] := .T. // Bug fixed in feb 2009, BOF should be TRUE as well as EOF
+      ::aInfo[SR_AINFO_BOF] := .T. // Bug fixed in feb 2009, BOF should be TRUE as well as EOF
                                 // if DBGoTo(invalidRecord)
       RETURN NIL
    ELSE
       IF ::lISAM
 
-         IF ::aInfo[AINFO_NCACHEBEGIN] > 0 .AND. ::aInfo[AINFO_BOF_AT] > 0 .AND. ::aCache[::aInfo[AINFO_NCACHEBEGIN]] != NIL .AND. Len(::aCache[::aInfo[AINFO_NCACHEBEGIN]]) > 0
-            IF ::aCache[::aInfo[AINFO_NCACHEBEGIN], ::hnRecno] == uRecord
-               ::aInfo[AINFO_NPOSCACHE] := ::aInfo[AINFO_NCACHEBEGIN]
+         IF ::aInfo[SR_AINFO_NCACHEBEGIN] > 0 .AND. ::aInfo[SR_AINFO_BOF_AT] > 0 .AND. ::aCache[::aInfo[SR_AINFO_NCACHEBEGIN]] != NIL .AND. Len(::aCache[::aInfo[SR_AINFO_NCACHEBEGIN]]) > 0
+            IF ::aCache[::aInfo[SR_AINFO_NCACHEBEGIN], ::hnRecno] == uRecord
+               ::aInfo[SR_AINFO_NPOSCACHE] := ::aInfo[SR_AINFO_NCACHEBEGIN]
                ::GetBuffer()
-               ::aInfo[AINFO_EOF] := .F.
-               ::aInfo[AINFO_BOF] := .F.
+               ::aInfo[SR_AINFO_EOF] := .F.
+               ::aInfo[SR_AINFO_BOF] := .F.
                RETURN NIL
             ENDIF
          ENDIF
@@ -3762,8 +3762,8 @@ METHOD SR_WORKAREA:sqlGoTo(uRecord, lNoOptimize)
          cGoTo := "SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + " WHERE A." + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " = "
 
          ::oSql:Execute(cGoTo + ::Quoted(uRecord, , 18, 0) + " " + IIf(::oSql:lComments, " /* GoTo */", ""))
-         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-         ::aInfo[AINFO_NPOSCACHE] := 0
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+         ::aInfo[SR_AINFO_NPOSCACHE] := 0
 
          ::FirstFetch()
          ::oSql:FreeStatement()
@@ -3773,12 +3773,12 @@ METHOD SR_WORKAREA:sqlGoTo(uRecord, lNoOptimize)
                ::RuntimeErr("6", SR_Msg(6) + ::Quoted(uRecord, , 15, 0))
             ELSE
                ::GetBuffer(.T.)
-               ::aInfo[AINFO_BOF] := .T. // Bug fixed in feb 2009, BOF should be TRUE as well as EOF
+               ::aInfo[SR_AINFO_BOF] := .T. // Bug fixed in feb 2009, BOF should be TRUE as well as EOF
                                          // if DBGoTo(invalidRecord)
             ENDIF
          ELSE
-            ::aInfo[AINFO_EOF] := .F.
-            ::aInfo[AINFO_BOF] := .F.
+            ::aInfo[SR_AINFO_EOF] := .F.
+            ::aInfo[SR_AINFO_BOF] := .F.
          ENDIF
       ELSE
          nCache := AScan(::aCache, {|x|x[::hnRecno] == uRecord})
@@ -3786,8 +3786,8 @@ METHOD SR_WORKAREA:sqlGoTo(uRecord, lNoOptimize)
             ::RuntimeErr("6", SR_Msg(6) + ::Quoted(uRecord, , 15, 0))
          ELSE
             ::GetBuffer(.F., nCache)
-            ::aInfo[AINFO_EOF] := .F.
-            ::aInfo[AINFO_BOF] := .F.
+            ::aInfo[SR_AINFO_EOF] := .F.
+            ::aInfo[SR_AINFO_BOF] := .F.
          ENDIF
       ENDIF
    ENDIF
@@ -3812,12 +3812,12 @@ METHOD SR_WORKAREA:sqlGoTop()
       NEXT
    ENDIF
 
-   ::aInfo[AINFO_DETECT1_COUNT] := 0
+   ::aInfo[SR_AINFO_DETECT1_COUNT] := 0
 
    IF ::lISAM
       cJoin1 := " " + ::cQualifiedTableName + " A "
       cJoin3 := ::GetSelectList()
-      ::aInfo[AINFO_SKIPCOUNT] := 0
+      ::aInfo[SR_AINFO_SKIPCOUNT] := 0
 
       IF !Empty(cTemp := ::SolveRestrictors())
          cTemp := " WHERE " + cTemp
@@ -3825,30 +3825,30 @@ METHOD SR_WORKAREA:sqlGoTop()
 
       ::ResetStatistics()
 
-      IF ::aInfo[AINFO_INDEXORD] > 0 .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL
-         cTemp += IIf(" WHERE " $ cTemp, " AND ", " WHERE ") + "(" + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " >= ' ' AND ROWNUM <= " + Str(::nCurrentFetch+1) + ") "
-         ::oSql:Execute('SELECT /*+ INDEX( A A$' + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + IIf(::oSql:lComments, " /* GoTop */", ""))
+      IF ::aInfo[SR_AINFO_INDEXORD] > 0 .AND. ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL
+         cTemp += IIf(" WHERE " $ cTemp, " AND ", " WHERE ") + "(" + ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " >= ' ' AND ROWNUM <= " + Str(::nCurrentFetch+1) + ") "
+         ::oSql:Execute('SELECT /*+ INDEX( A A$' + ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + IIf(::oSql:lComments, " /* GoTop */", ""))
       ELSE
          ::oSql:Execute("SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + cTemp + ::OrderBy(NIL, .T.) + Eval(::Optmizer_ne, ::nCurrentFetch) + IIf(::oSql:lComments, " /* GoTop */", ""))
       ENDIF
 
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-      ::aInfo[AINFO_NPOSCACHE] := 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
       ::FirstFetch(ORD_DIR_FWD)
 
       ::oSql:FreeStatement()
 
       IF !::lNoData
-         ::aInfo[AINFO_BOF_AT] := ::aLocalBuffer[::hnRecno]
+         ::aInfo[SR_AINFO_BOF_AT] := ::aLocalBuffer[::hnRecno]
       ENDIF
 
      IF ::lEmptyTable .OR. ::lNoData
-         ::aInfo[AINFO_BOF] := .T.
-         ::aInfo[AINFO_EOF] := .T.
+         ::aInfo[SR_AINFO_BOF] := .T.
+         ::aInfo[SR_AINFO_EOF] := .T.
       ELSE
-         ::aInfo[AINFO_BOF] := .F.
-         ::aInfo[AINFO_EOF] := .F.
-         ::aInfo[AINFO_NPOSCACHE] := 1
+         ::aInfo[SR_AINFO_BOF] := .F.
+         ::aInfo[SR_AINFO_EOF] := .F.
+         ::aInfo[SR_AINFO_NPOSCACHE] := 1
       ENDIF
 
    ELSE
@@ -3859,11 +3859,11 @@ METHOD SR_WORKAREA:sqlGoTop()
          RETURN NIL
       ELSE
          ::Stabilize()
-         ::aInfo[AINFO_BOF] := .F.
-         ::aInfo[AINFO_EOF] := .F.
+         ::aInfo[SR_AINFO_BOF] := .F.
+         ::aInfo[SR_AINFO_EOF] := .F.
       ENDIF
 
-      IF !::aInfo[AINFO_REVERSE_INDEX]
+      IF !::aInfo[SR_AINFO_REVERSE_INDEX]
          ::GetBuffer(.F., 1)
          ::Normalize(1)
       ELSE
@@ -3874,7 +3874,7 @@ METHOD SR_WORKAREA:sqlGoTop()
    ENDIF
 
    IF ::hnDeleted > 0 .AND. ::aLocalBuffer[::hnDeleted] != NIL
-      ::aInfo[AINFO_DELETED] := ::aLocalBuffer[::hnDeleted] $ "T*"
+      ::aInfo[SR_AINFO_DELETED] := ::aLocalBuffer[::hnDeleted] $ "T*"
    ENDIF
 
 RETURN NIL
@@ -3885,7 +3885,7 @@ METHOD SR_WORKAREA:sqlGoPhantom()
 
    ::sqlGoCold()
    ::GetBuffer(.T.)
-   ::aInfo[AINFO_FOUND] := .F.
+   ::aInfo[SR_AINFO_FOUND] := .F.
 
 RETURN NIL
 
@@ -3945,8 +3945,8 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
    DEFAULT lSoft TO .F.
 
-   ::aInfo[AINFO_FOUND] := .F.
-   ::aInfo[AINFO_DETECT1_COUNT] := 0
+   ::aInfo[SR_AINFO_FOUND] := .F.
+   ::aInfo[SR_AINFO_DETECT1_COUNT] := 0
 
    // reset static data
 
@@ -3958,17 +3958,17 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
       RETURN NIL
    ENDIF
 
-   IF ::aInfo[AINFO_INDEXORD] == 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0
       ::RuntimeErr("20")
       RETURN NIL
    ENDIF
 
-   ::aInfo[AINFO_SKIPCOUNT] := 0
+   ::aInfo[SR_AINFO_SKIPCOUNT] := 0
    uSet := Set(_SET_EXACT, .F.)
 
-   IF lSoft .AND. ::lISAM .AND. ::oSql:nSystemID == SQLRDD_RDBMS_ORACLE .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL .AND. HB_IsChar(uKey)
+   IF lSoft .AND. ::lISAM .AND. ::oSql:nSystemID == SQLRDD_RDBMS_ORACLE .AND. ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL .AND. HB_IsChar(uKey)
 
-      nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
+      nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
       nCons := 0
       nLenKey := Len(uKey)
       //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
@@ -3976,18 +3976,18 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
       FOR i := 1 TO nLen
 
-         nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+         nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
          cPart := SubStr(uKey, nCons + 1, nThis)
 
-         AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+         AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2])
 
-         cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
-         lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+         cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
+         lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
          // unnecessary, the value is not used
-         //nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
+         //nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
          //HB_SYMBOL_UNUSED(nFDec)
          // unnecessary, the value is not used
-         //nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+         //nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
          //HB_SYMBOL_UNUSED(nFLen)
 
          IF i == 1 .AND. nThis >= Len(uKey)
@@ -4000,7 +4000,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             ENDIF
          ENDIF
 
-         AAdd(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis, ::aInfo[AINFO_REVERSE_INDEX]), !lSoft, , , , lNull)) // Reverse Index should add % to end of string or seek will never find current record if partial
+         AAdd(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis, ::aInfo[SR_AINFO_REVERSE_INDEX]), !lSoft, , , , lNull)) // Reverse Index should add % to end of string or seek will never find current record if partial
          AAdd(::aDat,    ::ConvType(IIf(lSoft, cPart, RTrim(cPart)), cType, , nThis))
 
          nCons += nThis
@@ -4014,76 +4014,76 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
       cJoin1 := " " + ::cQualifiedTableName + " A "
       cJoin3 := ::GetSelectList()
 
-      IF ::aInfo[AINFO_REVERSE_INDEX] .OR. lLast
-         cSql := 'SELECT /*+ INDEX( A ' + 'D$' + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + ::WhereVMinor( uKey ) + " AND ROWNUM <= 1"
+      IF ::aInfo[SR_AINFO_REVERSE_INDEX] .OR. lLast
+         cSql := 'SELECT /*+ INDEX( A ' + 'D$' + ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + ::WhereVMinor( uKey ) + " AND ROWNUM <= 1"
       ELSE
-         cSql := 'SELECT /*+ INDEX( A ' + 'A$' + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + ::WhereVMajor( uKey ) + " AND ROWNUM <= 1"
+         cSql := 'SELECT /*+ INDEX( A ' + 'A$' + ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + ::WhereVMajor( uKey ) + " AND ROWNUM <= 1"
       ENDIF
 
-      ::oSql:Execute(cSql + IIf(::oSql:lComments, " /* SoftSeek " + Str(::aInfo[AINFO_INDEXORD]) + " */", ""))
+      ::oSql:Execute(cSql + IIf(::oSql:lComments, " /* SoftSeek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */", ""))
 
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-      ::aInfo[AINFO_NPOSCACHE] := 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
       ::FirstFetch()
 
-      IF ::lNoData .OR. ::aInfo[AINFO_EOF]
-         ::aInfo[AINFO_EOF] := .T.
-         ::aInfo[AINFO_FOUND] := .F.
+      IF ::lNoData .OR. ::aInfo[SR_AINFO_EOF]
+         ::aInfo[SR_AINFO_EOF] := .T.
+         ::aInfo[SR_AINFO_FOUND] := .F.
       ELSE
 
          IF HB_IsChar(uKey) .AND. uKey == ""
-            ::aInfo[AINFO_FOUND] := .T.
+            ::aInfo[SR_AINFO_FOUND] := .T.
          ELSE
             FOR i := 1 TO Len(::aQuoted)
                DO CASE
                CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i]) .AND. (::oSql:nSystemID == SQLRDD_RDBMS_MSSQL7 .OR. ( ::oSql:nSystemID == SQLRDD_RDBMS_MYSQL .OR. ::oSql:nSystemID == SQLRDD_RDBMS_MARIADB) .OR. ::oSql:nSystemID == SQLRDD_RDBMS_AZURE)
-                  ::aInfo[AINFO_FOUND] := (Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]))
                CASE HB_IsNumeric(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
                CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsNumeric(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[SR_AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
                CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[SR_AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
                CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >=  hb_ttos(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >=  hb_ttos(::aDat[i]))
                CASE ValType(::aLocalBuffer[::aPosition[i]]) != ValType(::aDat[i])
                   ::RuntimeErr("28")
                   Set(_SET_EXACT, uSet)
                   RETURN NIL
                OTHERWISE
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = ::aDat[i])
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = ::aDat[i])
                ENDCASE
 
-               IF !::aInfo[AINFO_FOUND]
+               IF !::aInfo[SR_AINFO_FOUND]
                   EXIT
                ENDIF
             NEXT i
          ENDIF
       ENDIF
 
-      IF ::aInfo[AINFO_FOUND]
-         ::aInfo[AINFO_EOF] := .F.
-         ::aInfo[AINFO_BOF] := .F.
-         ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
+      IF ::aInfo[SR_AINFO_FOUND]
+         ::aInfo[SR_AINFO_EOF] := .F.
+         ::aInfo[SR_AINFO_BOF] := .F.
+         ::aInfo[SR_AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
       ELSE
-         ::aInfo[AINFO_FOUND] := .F.
+         ::aInfo[SR_AINFO_FOUND] := .F.
          IF lSoft .AND. ::lNoData
             ::GetBuffer(.T.)
-            ::aInfo[AINFO_RECNO] := ::aInfo[AINFO_RCOUNT] + 1
-            ::aLocalBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+            ::aInfo[SR_AINFO_RECNO] := ::aInfo[SR_AINFO_RCOUNT] + 1
+            ::aLocalBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
          ELSEIF lSoft
-            ::aInfo[AINFO_EOF] := .F.
-            ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
+            ::aInfo[SR_AINFO_EOF] := .F.
+            ::aInfo[SR_AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
          ELSE
             ::GetBuffer(.T.)
-            ::aInfo[AINFO_RECNO] := ::aInfo[AINFO_RCOUNT] + 1
-            ::aLocalBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+            ::aInfo[SR_AINFO_RECNO] := ::aInfo[SR_AINFO_RCOUNT] + 1
+            ::aLocalBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
          ENDIF
       ENDIF
 
@@ -4093,13 +4093,13 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
       IF ValType(uKey) $ "NDLT"       // One field seek, piece of cake!
 
-         lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-         nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
-         nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
+         lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
+         nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
+         nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
 
          cRet := " WHERE (( "
 
-         IF ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2] == ::hnDeleted .AND. HB_IsLogical(uKey)
+         IF ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2] == ::hnDeleted .AND. HB_IsLogical(uKey)
             IF ::nTCCompat > 0
                cQot := IIf(uKey, "'*'", "' '")
                AAdd(::aDat, IIf(uKey, "*", " "))
@@ -4108,8 +4108,8 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
                AAdd(::aDat, IIf(uKey, "T", " "))
             ENDIF
          ELSE
-            IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_IsNumeric(uKey)
-               cField :=  Upper(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])
+            IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_IsNumeric(uKey)
+               cField :=  Upper(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_KEY])
                IF "VAL(" $ CFIELD
                   CfIELD := StrTran(CfIELD, "VAL(", "")
                   CfIELD := StrTran(CfIELD, ")", "")
@@ -4132,14 +4132,14 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             ENDIF
          ENDIF
 
-         IF ::aInfo[AINFO_REVERSE_INDEX] .OR. lLast
+         IF ::aInfo[SR_AINFO_REVERSE_INDEX] .OR. lLast
             cSep := IIf(cQot == "NULL", " IS ", IIf(lSoft, " <= ", IIf(lLikeSep, " Like ", " = ")))
          ELSE
             cSep := IIf(cQot == "NULL", " IS ", IIf(lSoft, " >= ", IIf(lLikeSep, " Like ", " = ")))
          ENDIF
-         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
 
-         AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2])
+         AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2])
          AAdd(::aQuoted, ::Quoted(uKey))
 
          // If Null, we don't need WHERE clause on Soft Seeks
@@ -4149,7 +4149,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
       ELSEIF HB_IsChar(uKey)
 
-         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
+         nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
          nLenKey := Len(uKey)
          //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
@@ -4157,18 +4157,18 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
          FOR i := 1 TO nLen
 
-            nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+            nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
             cPart := SubStr(uKey, nCons + 1, nThis)
 
-            AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+            AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2])
 
-            cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
             // unnecessary, the value is not used
-            //nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
+            //nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
             //HB_SYMBOL_UNUSED(nFDec)
             // unnecessary, the value is not used
-            //nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+            //nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
             //HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= Len(uKey)
@@ -4181,7 +4181,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
                ENDIF
             ENDIF
 
-            AAdd(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis, ::aInfo[AINFO_REVERSE_INDEX]), !lSoft, , , , lNull)) // Reverse Index should add % to end of string or seek will never find current record if partial
+            AAdd(::aQuoted, ::QuotedNull(::ConvType(cPart, cType, @lPartialSeek, nThis, ::aInfo[SR_AINFO_REVERSE_INDEX]), !lSoft, , , , lNull)) // Reverse Index should add % to end of string or seek will never find current record if partial
             AAdd(::aDat,    ::ConvType(IIf(lSoft, cPart, RTrim(cPart)), cType, , nThis))
 
             nCons += nThis
@@ -4212,10 +4212,10 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             FOR i := 1 TO (nLen - j + 1)
 
                cQot := ::aQuoted[i]
-               cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+               cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
 
                IF lPartialSeek .AND. i == nLen
-                  IF ::aInfo[AINFO_REVERSE_INDEX]
+                  IF ::aInfo[SR_AINFO_REVERSE_INDEX]
                      cSep := IIf(lSoft, IIf(j == 1, " <= ", " < "), IIf(cQot == "NULL", " IS ", " LIKE "))
                   ELSEIF ::nPartialDateSeek > 0  // Partial date seek
                      cSep := IIf(j == 1, " >= ", " > ")
@@ -4237,7 +4237,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
                      ENDIF
                   ENDIF
                ELSE
-                  IF ::aInfo[AINFO_REVERSE_INDEX] .OR. lLast
+                  IF ::aInfo[SR_AINFO_REVERSE_INDEX] .OR. lLast
                      cSep := IIf(lSoft, IIf(i != nLen - j + 1 .OR. j == 1, " <= ", " < "), IIf(cQot == "NULL", " IS ", " = "))
                   ELSE
                      cSep := IIf(lSoft, IIf(i != nLen - j + 1 .OR. j == 1, " >= ", " > "), IIf(cQot == "NULL", " IS ", " = "))
@@ -4294,75 +4294,75 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
       cJoin3 := ::GetSelectList()
 
       IF ::lFetchAll
-         //::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL,.T.) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
-         ::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
+         //::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL,.T.) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */",""))
+         ::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */",""))
       ELSE
-         //::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL,.T.) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
-         ::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
+         //::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL,.T.) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */",""))
+         ::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */",""))
       ENDIF
 
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-      ::aInfo[AINFO_NPOSCACHE] := 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
       ::FirstFetch()
 
-      IF ::lNoData .OR. ::aInfo[AINFO_EOF]
-         ::aInfo[AINFO_EOF] := .T.
-         ::aInfo[AINFO_FOUND] := .F.
+      IF ::lNoData .OR. ::aInfo[SR_AINFO_EOF]
+         ::aInfo[SR_AINFO_EOF] := .T.
+         ::aInfo[SR_AINFO_FOUND] := .F.
       ELSE
 
          IF HB_IsChar(uKey) .AND. uKey == ""
-            ::aInfo[AINFO_FOUND] := .T.
+            ::aInfo[SR_AINFO_FOUND] := .T.
          ELSE
             FOR i := 1 TO Len(::aQuoted)
                DO CASE
                CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i]) .AND. (::oSql:nSystemID == SQLRDD_RDBMS_MSSQL7 .OR. (::oSql:nSystemID == SQLRDD_RDBMS_MYSQL .OR. ::oSql:nSystemID == SQLRDD_RDBMS_MARIADB) .OR. ::oSql:nSystemID == SQLRDD_RDBMS_AZURE)
-                  ::aInfo[AINFO_FOUND] := (Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (Upper(::aLocalBuffer[::aPosition[i]]) = Upper(::aDat[i]))
                CASE HB_IsNumeric(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
                CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsNumeric(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[SR_AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
                CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[SR_AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
                CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >= hb_ttos(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >= hb_ttos(::aDat[i]))
                CASE ValType(::aLocalBuffer[::aPosition[i]]) != ValType(::aDat[i])
                   ::RuntimeErr("28")
                   Set(_SET_EXACT, uSet)
                   RETURN NIL
                OTHERWISE
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = ::aDat[i])
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = ::aDat[i])
                ENDCASE
 
-               IF !::aInfo[AINFO_FOUND]
+               IF !::aInfo[SR_AINFO_FOUND]
                   EXIT
                ENDIF
             NEXT i
          ENDIF
       ENDIF
 
-      IF ::aInfo[AINFO_FOUND]
-         ::aInfo[AINFO_EOF] := .F. // 06/01/2004 - fixing skip after dbseek
-         ::aInfo[AINFO_BOF] := .F.
-         ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
+      IF ::aInfo[SR_AINFO_FOUND]
+         ::aInfo[SR_AINFO_EOF] := .F. // 06/01/2004 - fixing skip after dbseek
+         ::aInfo[SR_AINFO_BOF] := .F.
+         ::aInfo[SR_AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
       ELSE
-         ::aInfo[AINFO_FOUND] := .F.
+         ::aInfo[SR_AINFO_FOUND] := .F.
          IF lSoft .AND. ::lNoData
             ::GetBuffer(.T.)
-            ::aInfo[AINFO_RECNO] := ::aInfo[AINFO_RCOUNT] + 1
-            ::aLocalBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+            ::aInfo[SR_AINFO_RECNO] := ::aInfo[SR_AINFO_RCOUNT] + 1
+            ::aLocalBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
          ELSEIF lSoft
-            ::aInfo[AINFO_EOF] := .F.
-            ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
+            ::aInfo[SR_AINFO_EOF] := .F.
+            ::aInfo[SR_AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
          ELSE
             ::GetBuffer(.T.)
-            ::aInfo[AINFO_RECNO] := ::aInfo[AINFO_RCOUNT] + 1
-            ::aLocalBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+            ::aInfo[SR_AINFO_RECNO] := ::aInfo[SR_AINFO_RCOUNT] + 1
+            ::aLocalBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
          ENDIF
       ENDIF
 
@@ -4372,14 +4372,14 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
       IF ValType(uKey) $ "NDLT"       // One field seek, piece of cake!
 
-         lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-         nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
-         nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
+         lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
+         nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
+         nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
 
          cRet := " WHERE (( "
 
-         IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_IsNumeric(uKey)
-            cField :=  Upper(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])
+         IF "INDKEY_" $ ::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2]] .AND. HB_IsNumeric(uKey)
+            cField :=  Upper(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_KEY])
             IF "VAL(" $ CFIELD
                CfIELD := StrTran(CfIELD, "VAL(", "")
                CfIELD := StrTran(CfIELD, ")", "")
@@ -4396,15 +4396,15 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             cQot := ::QuotedNull(uKey, , nFLen, nFDec, , lNull)
          ENDIF
 
-         IF ::aInfo[AINFO_REVERSE_INDEX] .OR. lLast
+         IF ::aInfo[SR_AINFO_REVERSE_INDEX] .OR. lLast
             cSep := IIf(cQot == "NULL", " IS ", IIf(lSoft, " <= ", IIf(lLikeSep, " Like ", " = ")))
          ELSE
             cSep := IIf(cQot == "NULL", " IS ", IIf(lSoft, " >= ", IIf(lLikeSep, " Like ", " = ")))
          ENDIF
 
-         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
 
-         AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2])
+         AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2])
          AAdd(::aQuoted, ::QuotedNull(uKey))
          IF lLikeSep
             AAdd(::aDat, Str(uKey, ::aFields[nFieldPos, FIELD_LEN]))
@@ -4437,16 +4437,16 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          cJoin3 := ::GetSelectList()
 
          IF ::lFetchAll
-            //::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, .T.) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */", ""))
-            ::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */", ""))
+            //::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, .T.) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */", ""))
+            ::oSql:Execute("SELECT" + Eval(::Optmizer_ns, Max(::nCurrentFetch, 50)) + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + Eval(::Optmizer_ne, Max(::nCurrentFetch, 50)) + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */", ""))
          ELSE
-            //::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, .T.) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */", ""))
-            ::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
+            //::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, .T.) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */", ""))
+            ::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */",""))
          ENDIF
 
       ELSEIF HB_IsChar(uKey)
 
-         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
+         nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
          nLenKey := Len(uKey)
          //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
@@ -4454,20 +4454,20 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
          FOR i := 1 TO nLen
 
-            nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+            nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
             cPart := SubStr(uKey, nCons + 1, nThis)
 
-            AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+            AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2])
 
-            cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
+            cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
             // unnecessary, the value is not used
-            //lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            //lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
             //HB_SYMBOL_UNUSED(lNull)
             // unnecessary, the value is not used
-            //nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
+            //nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
             //HB_SYMBOL_UNUSED(nFDec)
             // unnecessary, the value is not used
-            //nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+            //nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
             //HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= Len(uKey)
@@ -4482,7 +4482,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
             // Ajuste abaixo - pgs é tudo NOT NULL, nao deve dar trim se for indice sintetico
 
-            IF ::aIndex[::aInfo[AINFO_INDEXORD], SYNTH_INDEX_COL_POS] > 0
+            IF ::aIndex[::aInfo[SR_AINFO_INDEXORD], SYNTH_INDEX_COL_POS] > 0
                AAdd(::aQuoted, ::Quoted(::ConvType(cPart, cType, @lPartialSeek, nThis), .F., , , , .T.))
             ELSE
 
@@ -4501,7 +4501,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          cJoin1 := " " + ::cQualifiedTableName + " A "
          cJoin3 := ::GetSelectList()
 
-         IF ::aInfo[AINFO_REVERSE_INDEX] .OR. lLast
+         IF ::aInfo[SR_AINFO_REVERSE_INDEX] .OR. lLast
             aTemp := ::WherePgsMinor(::aQuoted, lPartialSeek .OR. lSoft)
          ELSE
             aTemp := ::WherePgsMajor(::aQuoted, lPartialSeek .OR. lSoft)
@@ -4528,7 +4528,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             cSql := "SELECT" + Eval(::Optmizer_ns, ::nCurrentFetch) + cJoin3 + "FROM" + cJoin1 + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + Eval(::Optmizer_ne, ::nCurrentFetch)
          ENDIF
 
-         ::oSql:Execute(cSql + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[AINFO_INDEXORD]) + " */",""))
+         ::oSql:Execute(cSql + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */",""))
 
       ELSE
          ::RuntimeErr("26")
@@ -4536,72 +4536,72 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          RETURN NIL
       ENDIF
 
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-      ::aInfo[AINFO_NPOSCACHE] := 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
       ::FirstFetch()
 
-      IF ::lNoData .OR. ::aInfo[AINFO_EOF]
-         ::aInfo[AINFO_EOF] := .T.
-         ::aInfo[AINFO_FOUND] := .F.
+      IF ::lNoData .OR. ::aInfo[SR_AINFO_EOF]
+         ::aInfo[SR_AINFO_EOF] := .T.
+         ::aInfo[SR_AINFO_FOUND] := .F.
       ELSE
 
          IF HB_IsChar(uKey) .AND. uKey == ""
-            ::aInfo[AINFO_FOUND] := .T.
+            ::aInfo[SR_AINFO_FOUND] := .T.
          ELSE
             FOR i := 1 TO Len(::aQuoted)
                DO CASE
                CASE HB_IsNumeric(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Val(::aDat[i]))
                CASE HB_IsChar(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsNumeric(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = Str(::aDat[i]))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = SToD(::aDat[i]))
                CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsChar(::aDat[i])
-                  ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = hb_stot(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = hb_stot(::aDat[i]))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[SR_AINFO_FOUND] := (Left(DToS(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(DToS(::aDat[i]), ::nPartialDateSeek))
                CASE HB_IsDate(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDate(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (DToS(::aLocalBuffer[::aPosition[i]]) >= DToS(::aDat[i]))
                CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek > 0 .AND. i == Len(::aQuoted)
-                  ::aInfo[AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
+                  ::aInfo[SR_AINFO_FOUND] := (Left(hb_ttos(::aLocalBuffer[::aPosition[i]]), ::nPartialDateSeek) == Left(hb_ttos(::aDat[i]), ::nPartialDateSeek))
                CASE HB_IsDateTime(::aLocalBuffer[::aPosition[i]]) .AND. HB_IsDateTime(::aDat[i]) .AND. ::nPartialDateSeek == 0 .AND. i == Len(::aQuoted) .AND. lsoft
-                  ::aInfo[AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >= hb_ttos(::aDat[i]))
+                  ::aInfo[SR_AINFO_FOUND] := (hb_ttos(::aLocalBuffer[::aPosition[i]]) >= hb_ttos(::aDat[i]))
                CASE ValType(::aLocalBuffer[::aPosition[i]]) != ValType(::aDat[i])
                   ::RuntimeErr("28")
                   Set(_SET_EXACT, uSet)
                   RETURN NIL
                OTHERWISE
                   IF HB_IsChar(::aLocalBuffer[::aPosition[i]])
-                     ::aInfo[AINFO_FOUND] := (Left(::aLocalBuffer[::aPosition[i]], Len(::aDat[i])) == ::aDat[i])
+                     ::aInfo[SR_AINFO_FOUND] := (Left(::aLocalBuffer[::aPosition[i]], Len(::aDat[i])) == ::aDat[i])
                   ELSE
-                     ::aInfo[AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = ::aDat[i])
+                     ::aInfo[SR_AINFO_FOUND] := (::aLocalBuffer[::aPosition[i]] = ::aDat[i])
                   ENDIF
                ENDCASE
 
-               IF !::aInfo[AINFO_FOUND]
+               IF !::aInfo[SR_AINFO_FOUND]
                   EXIT
                ENDIF
             NEXT i
          ENDIF
       ENDIF
 
-      IF ::aInfo[AINFO_FOUND]
-         ::aInfo[AINFO_EOF] := .F.
-         ::aInfo[AINFO_BOF] := .F.
-         ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
+      IF ::aInfo[SR_AINFO_FOUND]
+         ::aInfo[SR_AINFO_EOF] := .F.
+         ::aInfo[SR_AINFO_BOF] := .F.
+         ::aInfo[SR_AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
       ELSE
-         ::aInfo[AINFO_FOUND] := .F.
+         ::aInfo[SR_AINFO_FOUND] := .F.
          IF lSoft .AND. ::lNoData
             ::GetBuffer(.T.)
-            ::aInfo[AINFO_RECNO] := ::aInfo[AINFO_RCOUNT] + 1
-            ::aLocalBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+            ::aInfo[SR_AINFO_RECNO] := ::aInfo[SR_AINFO_RCOUNT] + 1
+            ::aLocalBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
          ELSEIF lSoft
-            ::aInfo[AINFO_EOF] := .F.
-            ::aInfo[AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
+            ::aInfo[SR_AINFO_EOF] := .F.
+            ::aInfo[SR_AINFO_RECNO] := ::aLocalBuffer[::hnRecno]
          ELSE
             ::GetBuffer(.T.)
-            ::aInfo[AINFO_RECNO] := ::aInfo[AINFO_RCOUNT] + 1
-            ::aLocalBuffer[::hnRecno] := ::aInfo[AINFO_RECNO]
+            ::aInfo[SR_AINFO_RECNO] := ::aInfo[SR_AINFO_RCOUNT] + 1
+            ::aLocalBuffer[::hnRecno] := ::aInfo[SR_AINFO_RECNO]
          ENDIF
       ENDIF
 
@@ -4675,7 +4675,7 @@ RETURN .F.
 
 METHOD SR_WORKAREA:SetBOF()
 
-   ::aInfo[AINFO_BOF] := .T.
+   ::aInfo[SR_AINFO_BOF] := .T.
 
 RETURN NIL
 
@@ -4710,16 +4710,16 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
       NEXT
    ENDIF
 
-   IF Abs(::aInfo[AINFO_SKIPCOUNT]) >= (::nCurrentFetch)
+   IF Abs(::aInfo[SR_AINFO_SKIPCOUNT]) >= (::nCurrentFetch)
       IF ::nCurrentFetch <= 16
          ::nCurrentFetch := Max(60, ::nCurrentFetch * ::nCurrentFetch)
       ELSE
-         ::nCurrentFetch += Abs(::aInfo[AINFO_SKIPCOUNT]) * 3
+         ::nCurrentFetch += Abs(::aInfo[SR_AINFO_SKIPCOUNT]) * 3
       ENDIF
       ::nCurrentFetch := Min(::nCurrentFetch, 500)
    ELSE
       ::lCollectingBehavior := .F.
-      ::nCurrentFetch := Max(Abs(::aInfo[AINFO_SKIPCOUNT]), 30)
+      ::nCurrentFetch := Max(Abs(::aInfo[SR_AINFO_SKIPCOUNT]), 30)
    ENDIF
 
    //-------- Paging cache
@@ -4731,7 +4731,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
    CASE SQLRDD_RDBMS_INGRES
    CASE SQLRDD_RDBMS_INFORM
    CASE SQLRDD_RDBMS_IBMDB2
-      IF ::aInfo[AINFO_REVERSE_INDEX]
+      IF ::aInfo[SR_AINFO_REVERSE_INDEX]
          cTemp := IIf(nDirection != ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
       ELSE
          cTemp := IIf(nDirection == ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
@@ -4742,7 +4742,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
       EXIT
 
    CASE SQLRDD_RDBMS_POSTGR
-      IF ::aInfo[AINFO_REVERSE_INDEX]
+      IF ::aInfo[SR_AINFO_REVERSE_INDEX]
          aTemp := IIf(nDirection != ORD_DIR_FWD, ::WherePgsMajor(), ::WherePgsMinor())
       ELSE
          aTemp := IIf(nDirection == ORD_DIR_FWD, ::WherePgsMajor(), ::WherePgsMinor())
@@ -4761,21 +4761,21 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
       EXIT
 
    CASE SQLRDD_RDBMS_ORACLE
-      IF Len(::aIndex) > 0 .AND. ::aInfo[AINFO_INDEXORD] > 0 .AND. ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL
-         IF ::aInfo[AINFO_REVERSE_INDEX]
+      IF Len(::aIndex) > 0 .AND. ::aInfo[SR_AINFO_INDEXORD] > 0 .AND. ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] != NIL
+         IF ::aInfo[SR_AINFO_REVERSE_INDEX]
             cTemp := IIf(nDirection != ORD_DIR_FWD, ::WhereVMajor(), ::WhereVMinor())
-            cSql := "SELECT /*+ INDEX( A " + IIf(nDirection != ORD_DIR_FWD, "A$", "D$") + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + " AND ROWNUM <= " + Str(::nCurrentFetch+2) + " " + ;
+            cSql := "SELECT /*+ INDEX( A " + IIf(nDirection != ORD_DIR_FWD, "A$", "D$") + ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + " AND ROWNUM <= " + Str(::nCurrentFetch+2) + " " + ;
                ::OrderBy(NIL, nDirection == ORD_DIR_FWD) + IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */", "")
          ELSE
             cTemp := IIf(nDirection == ORD_DIR_FWD, ::WhereVMajor(), ::WhereVMinor())
-            cSql := "SELECT /*+ INDEX( A " + IIf(nDirection == ORD_DIR_FWD, "A$", "D$") + ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + " AND ROWNUM <= " + Str(::nCurrentFetch+2)+ " " + ;
+            cSql := "SELECT /*+ INDEX( A " + IIf(nDirection == ORD_DIR_FWD, "A$", "D$") + ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_NAME] + ") */ " + cJoin3 + "FROM" + cJoin1 + cTemp + " AND ROWNUM <= " + Str(::nCurrentFetch+2)+ " " + ;
                ::OrderBy(NIL, nDirection == ORD_DIR_FWD) + IIf(::oSql:lComments, " /* Skip " + IIf(nDirection == ORD_DIR_FWD, "FWD", "BWD") + " */", "")
          ENDIF
          EXIT  // Leave this exist HERE !!!!
       ENDIF
 
    SR_OTHERWISE
-      IF ::aInfo[AINFO_REVERSE_INDEX]
+      IF ::aInfo[SR_AINFO_REVERSE_INDEX]
          cTemp := IIf(nDirection != ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
       ELSE
          cTemp := IIf(nDirection == ORD_DIR_FWD, ::WhereMajor(), ::WhereMinor())
@@ -4800,123 +4800,123 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
    SWITCH ::oSql:nRetCode
    CASE SQL_SUCCESS
 
-      nOldBg := ::aInfo[AINFO_NCACHEBEGIN]
-      nOldEnd := ::aInfo[AINFO_NCACHEEND]
+      nOldBg := ::aInfo[SR_AINFO_NCACHEBEGIN]
+      nOldEnd := ::aInfo[SR_AINFO_NCACHEEND]
       lCacheIsEmpty := (nOldBg == nOldEnd) .AND. nOldEnd == 0
 
       IF nDirection == ORD_DIR_FWD
 
-         nBlockPos := SR_FIXCACHEPOINTER(::aInfo[AINFO_NPOSCACHE] + 1)
+         nBlockPos := SR_FIXCACHEPOINTER(::aInfo[SR_AINFO_NPOSCACHE] + 1)
 
-         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NPOSCACHE] + ::nCurrentFetch
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NPOSCACHE] + ::nCurrentFetch
 
          IF nOldBg == nOldEnd
-            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
+            IF ::aInfo[SR_AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[SR_AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
             ENDIF
-            ::aInfo[AINFO_EOF_AT] := 0
+            ::aInfo[SR_AINFO_EOF_AT] := 0
          ELSEIF nOldBg < nOldEnd
-            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
-               IF ::aInfo[AINFO_NCACHEEND] >= (::aInfo[AINFO_NCACHEBEGIN] - 2)
-                  ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NCACHEEND] + 2
+            IF ::aInfo[SR_AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[SR_AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
+               IF ::aInfo[SR_AINFO_NCACHEEND] >= (::aInfo[SR_AINFO_NCACHEBEGIN] - 2)
+                  ::aInfo[SR_AINFO_NCACHEBEGIN] := ::aInfo[SR_AINFO_NCACHEEND] + 2
                ENDIF
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
          ELSE
-            IF ::aInfo[AINFO_NCACHEEND] >= (::aInfo[AINFO_NCACHEBEGIN] - 2)
-               ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NCACHEEND] + 2
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEEND] >= (::aInfo[SR_AINFO_NCACHEBEGIN] - 2)
+               ::aInfo[SR_AINFO_NCACHEBEGIN] := ::aInfo[SR_AINFO_NCACHEEND] + 2
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEEND] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[SR_AINFO_NCACHEEND] -= (SR_CACHE_PAGE_SIZE * 3)
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEBEGIN] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
-               ::aInfo[AINFO_NCACHEBEGIN] -= (SR_CACHE_PAGE_SIZE * 3)
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEBEGIN] > SR_CACHE_PAGE_SIZE * 3   // 3 pages...
+               ::aInfo[SR_AINFO_NCACHEBEGIN] -= (SR_CACHE_PAGE_SIZE * 3)
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
 
          ENDIF
-         IF ::aInfo[AINFO_NCACHEBEGIN] == 0
-            ::aInfo[AINFO_NCACHEBEGIN] := 1
+         IF ::aInfo[SR_AINFO_NCACHEBEGIN] == 0
+            ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
          ENDIF
-         IF ::aInfo[AINFO_NPOSCACHE] == 0
-            ::aInfo[AINFO_NPOSCACHE] := 1
+         IF ::aInfo[SR_AINFO_NPOSCACHE] == 0
+            ::aInfo[SR_AINFO_NPOSCACHE] := 1
          ENDIF
          IF ::aCache[nBlockPos] == NIL
             ::aCache[nBlockPos] := Array(Len(::aLocalBuffer))
          ENDIF
          ::oSql:GetLine(::aFields, .F., @::aCache[nBlockPos])
          uRecord := ::aCache[nBlockPos, ::hnRecno]
-         IF ::aInfo[AINFO_NPOSCACHE] == 0
-            ::aInfo[AINFO_NPOSCACHE] := 1
+         IF ::aInfo[SR_AINFO_NPOSCACHE] == 0
+            ::aInfo[SR_AINFO_NPOSCACHE] := 1
          ENDIF
-         nPos := ::aInfo[AINFO_NPOSCACHE] + IIf(lCacheIsEmpty, 0, 1)
+         nPos := ::aInfo[SR_AINFO_NPOSCACHE] + IIf(lCacheIsEmpty, 0, 1)
          IF nPos > (SR_CACHE_PAGE_SIZE * 3)
             nPos := 1
          ENDIF
 
       ELSEIF nDirection == ORD_DIR_BWD
 
-         nBlockPos := SR_FIXCACHEPOINTER(::aInfo[AINFO_NPOSCACHE] - 1)
+         nBlockPos := SR_FIXCACHEPOINTER(::aInfo[SR_AINFO_NPOSCACHE] - 1)
 
-         ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NPOSCACHE] - ::nCurrentFetch
+         ::aInfo[SR_AINFO_NCACHEBEGIN] := ::aInfo[SR_AINFO_NPOSCACHE] - ::nCurrentFetch
          IF nOldBg == nOldEnd
-            IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
+            IF ::aInfo[SR_AINFO_NCACHEBEGIN] < 1
+               ::aInfo[SR_AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
             ENDIF
-            ::aInfo[AINFO_EOF_AT] := 0
+            ::aInfo[SR_AINFO_EOF_AT] := 0
 
          ELSEIF nOldBg < nOldEnd
-            IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
-               IF ::aInfo[AINFO_NCACHEEND] + 2 >= ::aInfo[AINFO_NCACHEBEGIN]
-                  ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] - 2
+            IF ::aInfo[SR_AINFO_NCACHEBEGIN] < 1
+               ::aInfo[SR_AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
+               IF ::aInfo[SR_AINFO_NCACHEEND] + 2 >= ::aInfo[SR_AINFO_NCACHEBEGIN]
+                  ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] - 2
                ENDIF
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
          ELSE
-            IF ::aInfo[AINFO_NCACHEEND] + 2 >= ::aInfo[AINFO_NCACHEBEGIN]
-               ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] - 2
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEEND] + 2 >= ::aInfo[SR_AINFO_NCACHEBEGIN]
+               ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] - 2
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEBEGIN] < 1
-               ::aInfo[AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEBEGIN] < 1
+               ::aInfo[SR_AINFO_NCACHEBEGIN] += (SR_CACHE_PAGE_SIZE * 3)
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
-            IF ::aInfo[AINFO_NCACHEEND] < 1
-               ::aInfo[AINFO_NCACHEEND] += (SR_CACHE_PAGE_SIZE * 3)
-               ::aInfo[AINFO_EOF_AT] := 0
-               ::aInfo[AINFO_BOF_AT] := 0
+            IF ::aInfo[SR_AINFO_NCACHEEND] < 1
+               ::aInfo[SR_AINFO_NCACHEEND] += (SR_CACHE_PAGE_SIZE * 3)
+               ::aInfo[SR_AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_BOF_AT] := 0
             ENDIF
          ENDIF
 
-         IF ::aInfo[AINFO_NCACHEEND] == 0
-            ::aInfo[AINFO_NCACHEEND] := (SR_CACHE_PAGE_SIZE * 3)
+         IF ::aInfo[SR_AINFO_NCACHEEND] == 0
+            ::aInfo[SR_AINFO_NCACHEEND] := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
-         IF ::aInfo[AINFO_NPOSCACHE] == 0
-            ::aInfo[AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
+         IF ::aInfo[SR_AINFO_NPOSCACHE] == 0
+            ::aInfo[SR_AINFO_NPOSCACHE] := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
          IF ::aCache[nBlockPos] == NIL
             ::aCache[nBlockPos] := Array(Len(::aLocalBuffer))
          ENDIF
          ::oSql:GetLine(::aFields, .F., @::aCache[nBlockPos])
          uRecord := ::aCache[nBlockPos, ::hnRecno]
-         nPos := ::aInfo[AINFO_NPOSCACHE] - IIf(lCacheIsEmpty, 0, 1)
+         nPos := ::aInfo[SR_AINFO_NPOSCACHE] - IIf(lCacheIsEmpty, 0, 1)
          IF nPos < 1
             nPos := (SR_CACHE_PAGE_SIZE * 3)
          ENDIF
 
       ELSE
-         ::aInfo[AINFO_NPOSCACHE] := ::aInfo[AINFO_NCACHEBEGIN] := ::aInfo[AINFO_NCACHEEND] := nBlockPos := 1
+         ::aInfo[SR_AINFO_NPOSCACHE] := ::aInfo[SR_AINFO_NCACHEBEGIN] := ::aInfo[SR_AINFO_NCACHEEND] := nBlockPos := 1
          ::oSql:GetLine(::aFields, .F., @::aCache[1])
          uRecord := ::aCache[nBlockPos, ::hnRecno]
       ENDIF
@@ -4931,11 +4931,11 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
                      "Last command sent to database : " + SR_CRLF + ::cLastComm)
                ENDIF
                IF nDirection == ORD_DIR_FWD
-                  ::aInfo[AINFO_EOF_AT] := uRecord
-                  ::aInfo[AINFO_NCACHEEND] := nPos
+                  ::aInfo[SR_AINFO_EOF_AT] := uRecord
+                  ::aInfo[SR_AINFO_NCACHEEND] := nPos
                ELSE
-                  ::aInfo[AINFO_BOF_AT] := uRecord
-                  ::aInfo[AINFO_NCACHEBEGIN] := nPos
+                  ::aInfo[SR_AINFO_BOF_AT] := uRecord
+                  ::aInfo[SR_AINFO_NCACHEBEGIN] := nPos
                ENDIF
 
                EXIT
@@ -4959,7 +4959,7 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
             ENDIF
          NEXT nFecth
       ENDIF
-      IF ::aCache[::aInfo[AINFO_NPOSCACHE]] != NIL
+      IF ::aCache[::aInfo[SR_AINFO_NPOSCACHE]] != NIL
          ::GetBuffer()     // Loads current cache position to record buffer
       ENDIF
       EXIT
@@ -4969,9 +4969,9 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
       ::lNoData := .T.
 
       IF nDirection == ORD_DIR_BWD
-         ::aInfo[AINFO_BOF_AT] := ::aInfo[AINFO_RECNO]
+         ::aInfo[SR_AINFO_BOF_AT] := ::aInfo[SR_AINFO_RECNO]
       ELSEIF nDirection == ORD_DIR_FWD
-         ::aInfo[AINFO_EOF_AT] := ::aInfo[AINFO_RECNO]
+         ::aInfo[SR_AINFO_EOF_AT] := ::aInfo[SR_AINFO_RECNO]
          ::GetBuffer(.T.)         // Clean Buffer
       ELSE
          ::GetBuffer(.T.)         // Clean Buffer
@@ -4993,7 +4993,7 @@ RETURN NIL
 
 METHOD SR_WORKAREA:sqlRecall()
 
-   LOCAL nRecno := ::aInfo[AINFO_RECNO]
+   LOCAL nRecno := ::aInfo[SR_AINFO_RECNO]
 
    HB_SYMBOL_UNUSED(nRecno)
 
@@ -5016,10 +5016,10 @@ METHOD SR_WORKAREA:sqlRecall()
          ENDIF
 
          ::oSql:FreeStatement()
-         ::aInfo[AINFO_DELETED] := .F.
+         ::aInfo[SR_AINFO_DELETED] := .F.
          ::aLocalBuffer[::hnDeleted] := " "
 
-         ::aCache[::aInfo[AINFO_NPOSCACHE], ::hnDeleted] := " "
+         ::aCache[::aInfo[SR_AINFO_NPOSCACHE], ::hnDeleted] := " "
          _SR_ScanExec(Self, {|x|IIf(x:nThisArea != ::nThisArea, ::CheckCache(x), NIL)})
       ENDIF
    ELSE
@@ -5068,12 +5068,12 @@ RETURN NIL
 
 METHOD SR_WORKAREA:sqlDeleteRec()
 
-   LOCAL nRecno := ::aInfo[AINFO_RECNO]
+   LOCAL nRecno := ::aInfo[SR_AINFO_RECNO]
 
    ::sqlGoCold()
 
    IF ::lCanDel
-      IF !::aInfo[AINFO_DELETED]
+      IF !::aInfo[SR_AINFO_DELETED]
          IF ::hnDeleted > 0 .AND. SR_UseDeleteds()
             IF ::nTCCompat >= 2
                IF ::nTCCompat >= 4
@@ -5098,11 +5098,11 @@ METHOD SR_WORKAREA:sqlDeleteRec()
             ENDIF
 
             ::oSql:FreeStatement()
-            ::aInfo[AINFO_DELETED] := .T.
+            ::aInfo[SR_AINFO_DELETED] := .T.
             ::aLocalBuffer[::hnDeleted] := IIf(::nTCCompat > 0, "*", "T")
 
-            IF ::aInfo[AINFO_NPOSCACHE] > 0
-               ::aCache[::aInfo[AINFO_NPOSCACHE], ::hnDeleted] :=  ::aLocalBuffer[::hnDeleted]
+            IF ::aInfo[SR_AINFO_NPOSCACHE] > 0
+               ::aCache[::aInfo[SR_AINFO_NPOSCACHE], ::hnDeleted] :=  ::aLocalBuffer[::hnDeleted]
                _SR_ScanExec(Self, {|x|IIf(x:nThisArea != ::nThisArea, ::CheckCache(x), NIL)})
             ENDIF
 
@@ -5115,32 +5115,32 @@ METHOD SR_WORKAREA:sqlDeleteRec()
 
             ::oSql:FreeStatement()
 
-            IF nRecno == ::aInfo[AINFO_EOF_AT]
+            IF nRecno == ::aInfo[SR_AINFO_EOF_AT]
 #if 0
-               nPos := ::aInfo[AINFO_NPOSCACHE] - 1
+               nPos := ::aInfo[SR_AINFO_NPOSCACHE] - 1
                IF nPos > SR_CACHE_PAGE_SIZE
                   nPos := 1
                ENDIF
-               IF (::aInfo[AINFO_NCACHEBEGIN] < ::aInfo[AINFO_NCACHEEND] .AND. (nPos < ::aInfo[AINFO_NCACHEEND] .AND. nPos >= ::aInfo[AINFO_NCACHEBEGIN])) .OR.;
-                  (::aInfo[AINFO_NCACHEBEGIN] > ::aInfo[AINFO_NCACHEEND] .AND. (nPos >= ::aInfo[AINFO_NCACHEBEGIN] .OR. nPos < ::aInfo[AINFO_NCACHEEND]))
-                  ::aInfo[AINFO_EOF_AT] := ::aCache[nPos, ::hnRecno]
+               IF (::aInfo[SR_AINFO_NCACHEBEGIN] < ::aInfo[SR_AINFO_NCACHEEND] .AND. (nPos < ::aInfo[SR_AINFO_NCACHEEND] .AND. nPos >= ::aInfo[SR_AINFO_NCACHEBEGIN])) .OR.;
+                  (::aInfo[SR_AINFO_NCACHEBEGIN] > ::aInfo[SR_AINFO_NCACHEEND] .AND. (nPos >= ::aInfo[SR_AINFO_NCACHEBEGIN] .OR. nPos < ::aInfo[SR_AINFO_NCACHEEND]))
+                  ::aInfo[SR_AINFO_EOF_AT] := ::aCache[nPos, ::hnRecno]
                ENDIF
 #endif
-               ::aInfo[AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_EOF_AT] := 0
             ENDIF
 
-            IF nRecno == ::aInfo[AINFO_BOF_AT]
+            IF nRecno == ::aInfo[SR_AINFO_BOF_AT]
 #if 0
-               nPos := ::aInfo[AINFO_NPOSCACHE] + 1
+               nPos := ::aInfo[SR_AINFO_NPOSCACHE] + 1
                IF nPos > SR_CACHE_PAGE_SIZE
                   nPos := 1
                ENDIF
-               IF (::aInfo[AINFO_NCACHEBEGIN] < ::aInfo[AINFO_NCACHEEND] .AND. (nPos <= ::aInfo[AINFO_NCACHEEND] .AND. nPos > ::aInfo[AINFO_NCACHEBEGIN])) .OR.;
-                  (::aInfo[AINFO_NCACHEBEGIN] > ::aInfo[AINFO_NCACHEEND] .AND. (nPos > ::aInfo[AINFO_NCACHEBEGIN] .OR. nPos <= ::aInfo[AINFO_NCACHEEND]))
-                  ::aInfo[AINFO_BOF_AT] := ::aCache[nPos, ::hnRecno]
+               IF (::aInfo[SR_AINFO_NCACHEBEGIN] < ::aInfo[SR_AINFO_NCACHEEND] .AND. (nPos <= ::aInfo[SR_AINFO_NCACHEEND] .AND. nPos > ::aInfo[SR_AINFO_NCACHEBEGIN])) .OR.;
+                  (::aInfo[SR_AINFO_NCACHEBEGIN] > ::aInfo[SR_AINFO_NCACHEEND] .AND. (nPos > ::aInfo[SR_AINFO_NCACHEBEGIN] .OR. nPos <= ::aInfo[SR_AINFO_NCACHEEND]))
+                  ::aInfo[SR_AINFO_BOF_AT] := ::aCache[nPos, ::hnRecno]
                ENDIF
 #endif
-               ::aInfo[AINFO_EOF_AT] := 0
+               ::aInfo[SR_AINFO_EOF_AT] := 0
 
             ENDIF
 
@@ -5148,11 +5148,11 @@ METHOD SR_WORKAREA:sqlDeleteRec()
                ::aLocalBuffer[::hnDeleted] := IIf(::nTCCompat > 0, "*", "T")
             ENDIF
 
-            IF ::aInfo[AINFO_NPOSCACHE] != 0
-               ::aCache[::aInfo[AINFO_NPOSCACHE]] := NIL
+            IF ::aInfo[SR_AINFO_NPOSCACHE] != 0
+               ::aCache[::aInfo[SR_AINFO_NPOSCACHE]] := NIL
             ENDIF
 
-            ::aInfo[AINFO_DELETED] := .T.
+            ::aInfo[SR_AINFO_DELETED] := .T.
 
          ENDIF
       ENDIF
@@ -5261,16 +5261,16 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
    ::nThisArea := nArea
    ::cAlias := cAlias
-   ::aInfo[AINFO_SHARED] := .F.
+   ::aInfo[SR_AINFO_SHARED] := .F.
    ::cOriginalFN := Upper(AllTrim(cFileName))
    ::lGoTopOnFirstInteract := s_lGoTopOnFirstInteract
 
-   IF !::aInfo[AINFO_SHARED]
+   IF !::aInfo[SR_AINFO_SHARED]
       ::lQuickAppend := .T.
    ENDIF
 
    IF SR_GetFastOpen()
-      ::aInfo[AINFO_SHARED] := .T.
+      ::aInfo[SR_AINFO_SHARED] := .T.
    ENDIF
 
    ::cFileName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
@@ -6127,10 +6127,10 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    AEval(::aCache, {|x, i|HB_SYMBOL_UNUSED(x), ::aCache[i] := array(Len(::aLocalBuffer))})
 
    ::GetBuffer(.T.)         // Clean Buffer
-   ::aInfo[AINFO_BOF] := .T.
+   ::aInfo[SR_AINFO_BOF] := .T.
 
    ::nCurrentFetch := ::nFetchSize
-   ::aInfo[AINFO_SKIPCOUNT] := 0
+   ::aInfo[SR_AINFO_SKIPCOUNT] := 0
    ::cLastMove := "OPEN"
    ::Optmizer_1e := ""
    ::Optmizer_1s := ""
@@ -6187,8 +6187,8 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
       ENDIF
    ENDSWITCH
 
-   ::aInfo[AINFO_HNRECNO] := ::hnRecno
-   ::aInfo[AINFO_HNDELETED] := ::hnDeleted
+   ::aInfo[SR_AINFO_HNRECNO] := ::hnRecno
+   ::aInfo[SR_AINFO_HNDELETED] := ::hnDeleted
 
    ASize(::aIndexMgmnt, 0)
    IF SR_CheckMgmntInd()
@@ -6242,7 +6242,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
 
    ::nThisArea := nArea
    ::cAlias := cAlias
-   ::aInfo[AINFO_SHARED] := lShared
+   ::aInfo[SR_AINFO_SHARED] := lShared
    ::cOriginalFN := Upper(AllTrim(cFileName))
    ::lGoTopOnFirstInteract := s_lGoTopOnFirstInteract
 
@@ -6250,12 +6250,12 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
    ::cDeletedName := SR_DeletedName()
    ::nFetchSize := SR_FetchSize()
 
-   IF !::aInfo[AINFO_SHARED]
+   IF !::aInfo[SR_AINFO_SHARED]
       ::lQuickAppend := .T.
    ENDIF
 
    IF SR_GetFastOpen()
-      ::aInfo[AINFO_SHARED] := .T.
+      ::aInfo[SR_AINFO_SHARED] := .T.
    ENDIF
 
    IF nDBConnection == 0
@@ -6387,7 +6387,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
          ::nPosDtHist := aCacheInfo[CACHEINFO_HNPOSDTHIST]
          ::nPosColPK := aCacheInfo[CACHEINFO_HNCOLPK]
          ::nFields := Len(::aFields)
-         ::aInfo[AINFO_FCOUNT] := ::nFields
+         ::aInfo[SR_AINFO_FCOUNT] := ::nFields
          IF ::hnRecno != NIL
             ::cRecnoName := ::aFields[::hnRecno, FIELD_NAME]
          ENDIF
@@ -6473,10 +6473,10 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
 
       ASize(::aCache, n)
       ::nLastRec := nMax
-      ::aInfo[AINFO_RCOUNT] := nMax
-      ::aInfo[AINFO_FCOUNT] := ::nFields
-      ::aInfo[AINFO_FOUND] := .F.
-      ::aInfo[AINFO_NPOSCACHE] := 1
+      ::aInfo[SR_AINFO_RCOUNT] := nMax
+      ::aInfo[SR_AINFO_FCOUNT] := ::nFields
+      ::aInfo[SR_AINFO_FOUND] := .F.
+      ::aInfo[SR_AINFO_NPOSCACHE] := 1
 
       ::Default()
 
@@ -6509,10 +6509,10 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
       AEval(::aCache, {|x, i|HB_SYMBOL_UNUSED(x), ::aCache[i] := Array(Len(::aLocalBuffer))})
 
       ::GetBuffer(.T.)         // Clean Buffer
-      ::aInfo[AINFO_BOF] := .T.
+      ::aInfo[SR_AINFO_BOF] := .T.
 
       ::nCurrentFetch := ::nFetchSize
-      ::aInfo[AINFO_SKIPCOUNT] := 0
+      ::aInfo[SR_AINFO_SKIPCOUNT] := 0
       ::cLastMove := "OPEN"
       ::Optmizer_1e := ""
       ::Optmizer_1s := ""
@@ -6571,8 +6571,8 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
       ENDSWITCH
    ENDIF
 
-   ::aInfo[AINFO_HNRECNO] := ::hnRecno
-   ::aInfo[AINFO_HNDELETED] := ::hnDeleted
+   ::aInfo[SR_AINFO_HNRECNO] := ::hnRecno
+   ::aInfo[SR_AINFO_HNDELETED] := ::hnDeleted
 
    ::nLogMode := ::oSql:nLogMode
 
@@ -6679,12 +6679,12 @@ METHOD SR_WORKAREA:sqlZap()
 #endif
       ::sqlFlush()
 
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-      ::aInfo[AINFO_NPOSCACHE] := 0
-      ::aInfo[AINFO_EOF_AT] := 0
-      ::aInfo[AINFO_BOF_AT] := 0
-      ::aInfo[AINFO_EOF] := .T.
-      ::aInfo[AINFO_BOF] := .T.
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
+      ::aInfo[SR_AINFO_EOF_AT] := 0
+      ::aInfo[SR_AINFO_BOF_AT] := 0
+      ::aInfo[SR_AINFO_EOF] := .T.
+      ::aInfo[SR_AINFO_BOF] := .T.
    ELSE
       SR_MsgLogFile(SR_Msg(12) + ::cFileName)
    ENDIF
@@ -6970,26 +6970,26 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
    ::lStable := .F.
    ::lOrderValid := .T.
 
-   IF ::aInfo[AINFO_INDEXORD] == 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0
       IF cTag == NIL
-         ::aInfo[AINFO_INDEXORD] := 1
-         ::aInfo[AINFO_REVERSE_INDEX] := ::aIndex[1, DESCEND_INDEX_ORDER]
+         ::aInfo[SR_AINFO_INDEXORD] := 1
+         ::aInfo[SR_AINFO_REVERSE_INDEX] := ::aIndex[1, DESCEND_INDEX_ORDER]
       ELSE
-         ::aInfo[AINFO_INDEXORD] := Len(::aIndex)
-         ::aInfo[AINFO_REVERSE_INDEX] := ::aIndex[Len(::aIndex), DESCEND_INDEX_ORDER]
+         ::aInfo[SR_AINFO_INDEXORD] := Len(::aIndex)
+         ::aInfo[SR_AINFO_REVERSE_INDEX] := ::aIndex[Len(::aIndex), DESCEND_INDEX_ORDER]
       ENDIF
    ENDIF
 
-RETURN ::aInfo[AINFO_INDEXORD] // Len(::aIndex) Controlling order should not be changed.
+RETURN ::aInfo[SR_AINFO_INDEXORD] // Len(::aIndex) Controlling order should not be changed.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:sqlOrderListClear()
 
-   ::aInfo[AINFO_FOUND] := .F.
+   ::aInfo[SR_AINFO_FOUND] := .F.
    ASize(::aIndex, 0)
    ::cFor := ""
-   ::aInfo[AINFO_INDEXORD] := 0
+   ::aInfo[SR_AINFO_INDEXORD] := 0
    ::lStable := .T.
    ::lOrderValid := .F.
 
@@ -7009,7 +7009,7 @@ METHOD SR_WORKAREA:sqlOrderListFocus(uOrder, cBag)
       nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[ORDER_TAG])) == Upper(AllTrim(uOrder))})
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          ::cFor := ""
-         ::aInfo[AINFO_INDEXORD] := 0
+         ::aInfo[SR_AINFO_INDEXORD] := 0
          ::RuntimeErr("19", SR_Msg(19) + SR_Val2Char(uOrder))
          RETURN 0 // error exit
       ENDIF
@@ -7017,29 +7017,29 @@ METHOD SR_WORKAREA:sqlOrderListFocus(uOrder, cBag)
       nOrder := uOrder
    ENDIF
 
-   IF nOrder == ::aInfo[AINFO_INDEXORD]
+   IF nOrder == ::aInfo[SR_AINFO_INDEXORD]
       RETURN nOrder
    ENDIF
 
    IF nOrder == 0 .OR. nOrder > Len(::aIndex)
 
       ::cFor := ""
-      ::aInfo[AINFO_INDEXORD] := 0
+      ::aInfo[SR_AINFO_INDEXORD] := 0
 
       IF nOrder > Len(::aIndex)
          ::RuntimeErr("19", SR_Msg(19) + AllTrim(SR_Val2Char(uOrder)) + ", " + ::cAlias)
       ENDIF
 
-      ::aInfo[AINFO_EOF_AT] := 0
-      ::aInfo[AINFO_BOF_AT] := 0
+      ::aInfo[SR_AINFO_EOF_AT] := 0
+      ::aInfo[SR_AINFO_BOF_AT] := 0
 
-//      IF (!(::aInfo[AINFO_EOF] .AND. ::aInfo[AINFO_BOF])) .AND. !::aInfo[AINFO_DELETED]
-//         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 1
-//         ::aInfo[AINFO_NPOSCACHE] := 1
+//      IF (!(::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])) .AND. !::aInfo[SR_AINFO_DELETED]
+//         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+//         ::aInfo[SR_AINFO_NPOSCACHE] := 1
 //         ACopy(::aLocalBuffer, ::aCache[1])
 //      ELSE
-         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-         ::aInfo[AINFO_NPOSCACHE] := 0
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+         ::aInfo[SR_AINFO_NPOSCACHE] := 0
 //      ENDIF
 
       RETURN 0
@@ -7048,26 +7048,26 @@ METHOD SR_WORKAREA:sqlOrderListFocus(uOrder, cBag)
 
    ::cFor := ::aIndex[nOrder, FOR_CLAUSE]
 
-   IF !(nOrder == ::aInfo[AINFO_INDEXORD] .AND. ::lStable)
+   IF !(nOrder == ::aInfo[SR_AINFO_INDEXORD] .AND. ::lStable)
       ::lStable := .F.
    ENDIF
 
-   ::aInfo[AINFO_INDEXORD] := nOrder
-   ::aInfo[AINFO_REVERSE_INDEX] := ::aIndex[nOrder, DESCEND_INDEX_ORDER]
+   ::aInfo[SR_AINFO_INDEXORD] := nOrder
+   ::aInfo[SR_AINFO_REVERSE_INDEX] := ::aIndex[nOrder, DESCEND_INDEX_ORDER]
    ::lOrderValid := .T.
-   ::aInfo[AINFO_EOF_AT] := 0
-   ::aInfo[AINFO_BOF_AT] := 0
+   ::aInfo[SR_AINFO_EOF_AT] := 0
+   ::aInfo[SR_AINFO_BOF_AT] := 0
 
-   IF (!(::aInfo[AINFO_EOF] .AND. ::aInfo[AINFO_BOF])) .AND. (!::aInfo[AINFO_DELETED]) .AND. ::aInfo[AINFO_NPOSCACHE] > 0
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 1
-      ::aInfo[AINFO_NPOSCACHE] := 1
+   IF (!(::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])) .AND. (!::aInfo[SR_AINFO_DELETED]) .AND. ::aInfo[SR_AINFO_NPOSCACHE] > 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+      ::aInfo[SR_AINFO_NPOSCACHE] := 1
       ACopy(::aLocalBuffer, ::aCache[1])
    ELSE
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-      ::aInfo[AINFO_NPOSCACHE] := 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
    ENDIF
 
-   aInd := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]
+   aInd := ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]
    FOR i := 1 TO Len(aInd)
       ::aSelectList[aInd[i, 2]] := 1
    NEXT i
@@ -7088,7 +7088,7 @@ METHOD SR_WORKAREA:sqlOrderDestroy(uOrder, cBag)
       nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[ORDER_TAG])) == Upper(AllTrim(uOrder))})
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          ::cFor := ""
-         ::aInfo[AINFO_INDEXORD] := 0
+         ::aInfo[SR_AINFO_INDEXORD] := 0
          ::RuntimeErr("19", SR_Msg(19) + SR_Val2Char(uOrder))
          RETURN 0
       ELSE
@@ -7100,7 +7100,7 @@ METHOD SR_WORKAREA:sqlOrderDestroy(uOrder, cBag)
       nOrder := uOrder
       IF nOrder == 0 .OR. nOrder > Len(::aIndex)
          ::cFor := ""
-         ::aInfo[AINFO_INDEXORD] := 0
+         ::aInfo[SR_AINFO_INDEXORD] := 0
          ::RuntimeErr("19", SR_Msg(19) + SR_Val2Char(uOrder))
          RETURN 0
       ELSE
@@ -7115,22 +7115,22 @@ METHOD SR_WORKAREA:sqlOrderDestroy(uOrder, cBag)
    IF nOrder == 0 .OR. nOrder > Len(::aIndex)
 
       ::cFor := ""
-      ::aInfo[AINFO_INDEXORD] := 0
+      ::aInfo[SR_AINFO_INDEXORD] := 0
 
       IF nOrder > Len(::aIndex)
          ::RuntimeErr("19", SR_Msg(19) + AllTrim(SR_Val2Char(uOrder)) + ", " + ::cAlias)
       ENDIF
 
-      ::aInfo[AINFO_EOF_AT] := 0
-      ::aInfo[AINFO_BOF_AT] := 0
+      ::aInfo[SR_AINFO_EOF_AT] := 0
+      ::aInfo[SR_AINFO_BOF_AT] := 0
 
-      // IF (!(::aInfo[AINFO_EOF] .AND. ::aInfo[AINFO_BOF])) .AND. !::aInfo[AINFO_DELETED]
-      //    ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 1
-      //    ::aInfo[AINFO_NPOSCACHE] := 1
+      // IF (!(::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])) .AND. !::aInfo[SR_AINFO_DELETED]
+      //    ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+      //    ::aInfo[SR_AINFO_NPOSCACHE] := 1
       //    ACopy(::aLocalBuffer, ::aCache[1])
       // ELSE
-         ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-         ::aInfo[AINFO_NPOSCACHE] := 0
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+         ::aInfo[SR_AINFO_NPOSCACHE] := 0
       // ENDIF
 
       RETURN 0
@@ -7139,26 +7139,26 @@ METHOD SR_WORKAREA:sqlOrderDestroy(uOrder, cBag)
 
    ::cFor := ::aIndex[nOrder, FOR_CLAUSE]
 
-   IF !(nOrder == ::aInfo[AINFO_INDEXORD] .AND. ::lStable)
+   IF !(nOrder == ::aInfo[SR_AINFO_INDEXORD] .AND. ::lStable)
       ::lStable := .F.
    ENDIF
 
-   ::aInfo[AINFO_INDEXORD] := nOrder
-   ::aInfo[AINFO_REVERSE_INDEX] := ::aIndex[nOrder, DESCEND_INDEX_ORDER]
+   ::aInfo[SR_AINFO_INDEXORD] := nOrder
+   ::aInfo[SR_AINFO_REVERSE_INDEX] := ::aIndex[nOrder, DESCEND_INDEX_ORDER]
    ::lOrderValid := .T.
-   ::aInfo[AINFO_EOF_AT] := 0
-   ::aInfo[AINFO_BOF_AT] := 0
+   ::aInfo[SR_AINFO_EOF_AT] := 0
+   ::aInfo[SR_AINFO_BOF_AT] := 0
 
-   IF (!(::aInfo[AINFO_EOF] .AND. ::aInfo[AINFO_BOF])) .AND. (!::aInfo[AINFO_DELETED]) .AND. ::aInfo[AINFO_NPOSCACHE] > 0
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 1
-      ::aInfo[AINFO_NPOSCACHE] := 1
+   IF (!(::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])) .AND. (!::aInfo[SR_AINFO_DELETED]) .AND. ::aInfo[SR_AINFO_NPOSCACHE] > 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+      ::aInfo[SR_AINFO_NPOSCACHE] := 1
       ACopy(::aLocalBuffer, ::aCache[1])
    ELSE
-      ::aInfo[AINFO_NCACHEEND] := ::aInfo[AINFO_NCACHEBEGIN] := 0
-      ::aInfo[AINFO_NPOSCACHE] := 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
    ENDIF
 
-   aInd := ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]
+   aInd := ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]
    FOR i := 1 TO Len(aInd)
       ::aSelectList[aInd[i, 2]] := 1
    NEXT i
@@ -7182,7 +7182,7 @@ METHOD SR_WORKAREA:sqlOrderListNum(uOrder)
    ELSEIF HB_IsNumeric(uOrder)
       nOrder := uOrder
    ELSE
-      nOrder := ::aInfo[AINFO_INDEXORD]
+      nOrder := ::aInfo[SR_AINFO_INDEXORD]
    ENDIF
 
    IF nOrder == 0 .OR. nOrder > Len(::aIndex)
@@ -7931,7 +7931,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
    
    HB_SYMBOL_UNUSED(cType)
 
-   IF Len(::aIndex) > 0 .AND. ::aInfo[AINFO_INDEXORD] > 0
+   IF Len(::aIndex) > 0 .AND. ::aInfo[SR_AINFO_INDEXORD] > 0
 
       IF HB_IsBlock(uValue)
          uKey := Eval(uValue)
@@ -7946,20 +7946,20 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
       SWITCH nType
       CASE TOPSCOPE
-         ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] := uKey
+         ::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE] := uKey
          EXIT
       CASE BOTTOMSCOPE
-         ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
+         ::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
 
-         IF ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] == ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE]
+         IF ::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE] == ::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE]
             IF HB_IsChar(uKey)
-               ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey + "|"
+               ::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE] := uKey + "|"
             ENDIF
          ENDIF
          EXIT
       CASE TOP_BOTTOM_SCOPE
-         ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] := uKey
-         ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
+         ::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE] := uKey
+         ::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE] := uKey
          EXIT
       SR_OTHERWISE
          RETURN -1         // Error
@@ -7967,24 +7967,24 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
       // Create the SQL expression based on the scope data
 
-      ::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR] := NIL
-      ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_UP] := NIL
-      ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_DOWN] := NIL
+      ::aIndex[::aInfo[SR_AINFO_INDEXORD], SCOPE_SQLEXPR] := NIL
+      ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_UP] := NIL
+      ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_DOWN] := NIL
 
-      IF nType == TOP_BOTTOM_SCOPE .OR. (::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] != NIL .AND. ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] != NIL .AND.;
-         ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] == ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE])
+      IF nType == TOP_BOTTOM_SCOPE .OR. (::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE] != NIL .AND. ::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE] != NIL .AND.;
+         ::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE] == ::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE])
 
-         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // -1 to remove RECNO from index key
+         nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // -1 to remove RECNO from index key
 
          IF ValType(uKey) $ "NDL"       // One field, piece of cake!
 
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-            nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
-            nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
+            nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
+            nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
 
-            cQot := ::QuotedNull(::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE], , nFLen, nFDec, , lNull)
+            cQot := ::QuotedNull(::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE], , nFLen, nFDec, , lNull)
             cSep := IIf(cQot == "NULL", " IS ", " = ")
-            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
 
             cRet := " " + cNam + cSep + cQot + " "
 
@@ -7997,7 +7997,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
             ENDIF
 
             IF !Empty(cRet)
-               ::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR] := " ( " + cRet + " ) "
+               ::aIndex[::aInfo[SR_AINFO_INDEXORD], SCOPE_SQLEXPR] := " ( " + cRet + " ) "
             ENDIF
 
          ELSEIF HB_IsChar(uKey)
@@ -8014,20 +8014,20 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
             FOR i := 1 TO nLen
 
-               nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+               nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
                cPart := SubStr(uKey, nCons + 1, nThis)
 
                IF AllTrim(cPart) == "%"
                   EXIT
                ENDIF
 
-               AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+               AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2])
 
-               cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
-               lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
-               nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
+               cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
+               lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+               nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
                HB_SYMBOL_UNUSED(nFDec)
-               nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+               nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
                HB_SYMBOL_UNUSED(nFLen)
 
                IF i == 1 .AND. nThis >= Len(uKey)
@@ -8057,7 +8057,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
             FOR i := 1 TO nLen
                cQot := ::aQuoted[i]
-               cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+               cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
 
                IF lPartialSeek .AND. i == nLen
                   cSep := " >= "
@@ -8078,7 +8078,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
             NEXT i
 
             IF !Empty(cRet)
-               ::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR] := " ( " + cRet + " ) "
+               ::aIndex[::aInfo[SR_AINFO_INDEXORD], SCOPE_SQLEXPR] := " ( " + cRet + " ) "
             ENDIF
 
          ELSEIF ValType(uKey) == "U"
@@ -8089,15 +8089,15 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
             RETURN -1
          ENDIF
 
-      ELSEIF ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] != NIL .OR. ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] != NIL
+      ELSEIF ::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE] != NIL .OR. ::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE] != NIL
 
-         nLen := Max(Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // -1 to remove RECNO from index key
+         nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // -1 to remove RECNO from index key
          aNulls := {}
          aNotNulls := {}
 
          FOR nScoping := TOPSCOPE TO BOTTOMSCOPE
 
-            uKey := ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE + nScoping]
+            uKey := ::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE + nScoping]
             IF HB_IsString(uKey) //ValType(uKey) == "C"
                IF Right(uKey, 1) == "|" // TODO:
                   uKey := Left(uKey, Len(uKey) - 1)
@@ -8106,14 +8106,14 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
             IF ValType(uKey) $ "NDL"       // One field, piece of cake!
 
-               lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-               nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
-               nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
+               lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
+               nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
+               nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_LEN]
 
-               IF ::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE] != NIL
-                  cQot := ::QuotedNull(::aIndex[::aInfo[AINFO_INDEXORD], TOP_SCOPE], , nFLen, nFDec, , lNull)
+               IF ::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE] != NIL
+                  cQot := ::QuotedNull(::aIndex[::aInfo[SR_AINFO_INDEXORD], TOP_SCOPE], , nFLen, nFDec, , lNull)
                   cSep := IIf(cQot == "NULL", " IS ", " >= ")
-                  cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+                  cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
 
                   cRet := " " + cNam + cSep + cQot + " "
 
@@ -8126,10 +8126,10 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                   ENDIF
                ENDIF
 
-               IF ::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE] != NIL
-                  cQot := ::QuotedNull(::aIndex[::aInfo[AINFO_INDEXORD], BOTTOM_SCOPE], , nFLen, nFDec, , lNull)
+               IF ::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE] != NIL
+                  cQot := ::QuotedNull(::aIndex[::aInfo[SR_AINFO_INDEXORD], BOTTOM_SCOPE], , nFLen, nFDec, , lNull)
                   cSep := IIf(cQot == "NULL", " IS ", " <= ")
-                  cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
+                  cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2]], ::oSql:nSystemID)
 
                   cRet2 := " " + cNam + cSep + cQot + " "
 
@@ -8163,7 +8163,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                FOR i := 1 TO nLen
 
-                  nThis := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+                  nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
                   cPart := SubStr(uKey, nCons + 1, nThis)
 
                   IF Len(AllTrim(cPart)) < nThis .AND. nScoping == BOTTOMSCOPE
@@ -8174,13 +8174,13 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                      ENDIF
                   ENDIF
 
-                  AAdd(::aPosition, ::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2])
+                  AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2])
 
-                  cType := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
-                  lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
-                  nFDec := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
+                  cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_TYPE]
+                  lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+                  nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_DEC]
                   HB_SYMBOL_UNUSED(nFDec)
-                  nFLen := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
+                  nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_LEN]
                   HB_SYMBOL_UNUSED(nFLen)
 
                   IF i == 1 .AND. nThis >= Len(uKey)
@@ -8218,7 +8218,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                   FOR i := 1 TO (nLen - j + 1)
 
                      cQot := ::aQuoted[i]
-                     cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+                     cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
 
                      IF lPartialSeek .AND. i == nLen
                         cSep := IIf(j == 1, " " + cSep2 + "= ", " " + cSep2 + " ")
@@ -8283,7 +8283,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
          ENDIF
 
          IF !Empty(cRet)
-            ::aIndex[::aInfo[AINFO_INDEXORD], SCOPE_SQLEXPR] := cRet
+            ::aIndex[::aInfo[SR_AINFO_INDEXORD], SCOPE_SQLEXPR] := cRet
          ENDIF
 
       ENDIF
@@ -8308,8 +8308,8 @@ METHOD SR_WORKAREA:sqlLock(nType, uRecord)
 
    ::sqlGoCold()
 
-   IF nType < 3 .AND. ::aInfo[AINFO_SHARED]
-      IF uRecord == NIL .OR. Empty(uRecord) .OR. AScan(::aLocked, uRecord) > 0 .OR. ::aInfo[AINFO_ISINSERT]
+   IF nType < 3 .AND. ::aInfo[SR_AINFO_SHARED]
+      IF uRecord == NIL .OR. Empty(uRecord) .OR. AScan(::aLocked, uRecord) > 0 .OR. ::aInfo[SR_AINFO_ISINSERT]
          RETURN .T.
       ENDIF
       IF nType != 2 .AND. Len(::aLocked) > 0
@@ -8472,7 +8472,7 @@ Quit 1
 
    ENDSWITCH
 
-   IF ::aInfo[AINFO_SHARED] .AND. lRet .AND. nType < 3
+   IF ::aInfo[SR_AINFO_SHARED] .AND. lRet .AND. nType < 3
       AAdd(::aLocked, uRecord)
    ENDIF
 
@@ -8493,7 +8493,7 @@ METHOD SR_WORKAREA:sqlUnLock(uRecord)
 
    ::sqlGoCold()
 
-   IF ::aInfo[AINFO_SHARED]
+   IF ::aInfo[SR_AINFO_SHARED]
       IF Len(::aLocked) > 0 .OR. ::lTableLocked
          ASize(::aLocked, 0)
          IF ::lCanICommitNow()
@@ -8657,7 +8657,7 @@ METHOD SR_WORKAREA:WhereMajor()
    HB_SYMBOL_UNUSED(cRet2)
    HB_SYMBOL_UNUSED(aQuot)
 
-   IF ::aInfo[AINFO_INDEXORD] == 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
          cRet2 := " AND " + cRet2
@@ -8669,14 +8669,14 @@ METHOD SR_WORKAREA:WhereMajor()
       RETURN ""
    ENDIF
 
-   IF ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_UP] != NIL
-      RETURN ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_UP]
+   IF ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_UP] != NIL
+      RETURN ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_UP]
    ENDIF
 
-   nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS])
+   nLen := Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS])
 
    FOR i := 1 TO nLen
-      c1 += IIf(!Empty(c1), " AND ", "") + "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID) + " @3" + Str(i - 1, 1)
+      c1 += IIf(!Empty(c1), " AND ", "") + "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID) + " @3" + Str(i - 1, 1)
    NEXT i
 
    cRet := "( " + c1 + ") "
@@ -8684,7 +8684,7 @@ METHOD SR_WORKAREA:WhereMajor()
    FOR j := (nLen-1) TO 1 STEP -1
       c2 := ""
       FOR i := 1 TO j
-         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
          DO CASE
          CASE i == j
             cSep := " @1"  // " > "
@@ -8708,7 +8708,7 @@ METHOD SR_WORKAREA:WhereMajor()
    ENDIF
 
    cRet := " WHERE ( " + cRet + " )" + cRet2
-   ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_UP] := cRet
+   ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_UP] := cRet
 
 RETURN cRet
 
@@ -8733,7 +8733,7 @@ METHOD SR_WORKAREA:WhereVMajor(cQot)
    HB_SYMBOL_UNUSED(cRet2)
    HB_SYMBOL_UNUSED(aQuot)
 
-   IF ::aInfo[AINFO_INDEXORD] == 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
          cRet2 := " AND " + cRet2
@@ -8745,9 +8745,9 @@ METHOD SR_WORKAREA:WhereVMajor(cQot)
       RETURN ""
    ENDIF
 
-   DEFAULT cQot TO (::cAlias)->(&(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])) + Str(::aInfo[AINFO_RECNO], 15)
+   DEFAULT cQot TO (::cAlias)->(&(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_KEY])) + Str(::aInfo[SR_AINFO_RECNO], 15)
 
-   cRet := ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " >= '" + SR_ESCAPESTRING(cQot, ::oSql:nSystemID) + "'"
+   cRet := ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " >= '" + SR_ESCAPESTRING(cQot, ::oSql:nSystemID) + "'"
    cRet2 := ::SolveRestrictors()
 
    IF !Empty(cRet2)
@@ -8785,7 +8785,7 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
 
    DEFAULT lPartialSeek TO .T.
 
-   IF ::aInfo[AINFO_INDEXORD] == 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
          cRet2 := " AND " + cRet2
@@ -8793,7 +8793,7 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
       aRet := {"A." + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " >= " + ::Quoted(::aLocalBuffer[::hnRecno], .T., , , , .F.) + cRet2}
    ELSE
 
-      IF Empty(::aInfo[AINFO_INDEXORD])
+      IF Empty(::aInfo[SR_AINFO_INDEXORD])
          RETURN {}
       ENDIF
 
@@ -8802,9 +8802,9 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
       ENDIF
 
       IF aQuotedCols == NIL
-         nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS])
+         nLen := Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS])
          FOR i := 1 TO nLen
-            AAdd(aQuot, ::Quoted(::aLocalBuffer[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], .T., , , , lNull))
+            AAdd(aQuot, ::Quoted(::aLocalBuffer[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], .T., , , , lNull))
          NEXT i
       ELSE
          nLen := Len(aQuotedCols)
@@ -8816,10 +8816,10 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
          c2 := ""
 
          FOR i := 1 TO j
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
             HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
-            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
 
             DO CASE
             CASE !lPartialSeek
@@ -8890,7 +8890,7 @@ METHOD SR_WORKAREA:WhereMinor()
    HB_SYMBOL_UNUSED(cRet2)
    HB_SYMBOL_UNUSED(aQuot)
 
-   IF ::aInfo[AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
          cRet2 := " AND " + cRet2
@@ -8902,14 +8902,14 @@ METHOD SR_WORKAREA:WhereMinor()
       RETURN ""
    ENDIF
 
-   IF ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_DOWN] != NIL
-      RETURN ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_DOWN]
+   IF ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_DOWN] != NIL
+      RETURN ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_DOWN]
    ENDIF
 
-   nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS])
+   nLen := Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS])
 
    FOR i := 1 TO nLen
-      c1 += IIf(!Empty(c1), " AND ", "") + "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID) + " @6" + Str(i - 1, 1)
+      c1 += IIf(!Empty(c1), " AND ", "") + "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID) + " @6" + Str(i - 1, 1)
    NEXT i
 
    cRet += "( " + c1 + ") "
@@ -8917,7 +8917,7 @@ METHOD SR_WORKAREA:WhereMinor()
    FOR j := (nLen-1) TO 1 STEP -1
       c2 := ""
       FOR i := 1 TO j
-         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+         cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
          DO CASE
          CASE i == j
             cSep := " @4"  // " < "
@@ -8941,7 +8941,7 @@ METHOD SR_WORKAREA:WhereMinor()
    ENDIF
 
    cRet := " WHERE ( " + cRet + " )" + cRet2
-   ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_DOWN] := cRet
+   ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_DOWN] := cRet
 
 RETURN cRet
 
@@ -8965,7 +8965,7 @@ METHOD SR_WORKAREA:WhereVMinor(cQot)
    HB_SYMBOL_UNUSED(cRet2)
    HB_SYMBOL_UNUSED(aQuot)
 
-   IF ::aInfo[AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
          cRet2 := " AND " + cRet2
@@ -8977,9 +8977,9 @@ METHOD SR_WORKAREA:WhereVMinor(cQot)
       RETURN ""
    ENDIF
 
-   DEFAULT cQot TO (::cAlias)->(&(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_KEY])) + Str(::aInfo[AINFO_RECNO], 15)
+   DEFAULT cQot TO (::cAlias)->(&(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_KEY])) + Str(::aInfo[SR_AINFO_RECNO], 15)
 
-   cRet := ::aIndex[::aInfo[AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " <= '" + SR_ESCAPESTRING(cQot, ::oSql:nSystemID) + "'"
+   cRet := ::aIndex[::aInfo[SR_AINFO_INDEXORD], VIRTUAL_INDEX_EXPR] + " <= '" + SR_ESCAPESTRING(cQot, ::oSql:nSystemID) + "'"
 
    cRet2 := ::SolveRestrictors()
 
@@ -8989,7 +8989,7 @@ METHOD SR_WORKAREA:WhereVMinor(cQot)
 
    cRet := " WHERE ( " + cRet + " )" + cRet2
 
-   ::aIndex[::aInfo[AINFO_INDEXORD], ORDER_SKIP_DOWN] := cRet
+   ::aIndex[::aInfo[SR_AINFO_INDEXORD], ORDER_SKIP_DOWN] := cRet
 
 RETURN cRet
 
@@ -9018,7 +9018,7 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
    HB_SYMBOL_UNUSED(c4)
    HB_SYMBOL_UNUSED(cRet2)
 
-   IF ::aInfo[AINFO_INDEXORD] == 0
+   IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
          cRet2 := " AND " + cRet2
@@ -9026,7 +9026,7 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
       aRet := {"A." + SR_DBQUALIFY(::cRecnoName, ::oSql:nSystemID) + " <= " + ::QuotedNull(::aLocalBuffer[::hnRecno], .T., , , , .F.) + cRet2}
    ELSE
 
-      IF Empty(::aInfo[AINFO_INDEXORD])
+      IF Empty(::aInfo[SR_AINFO_INDEXORD])
          RETURN {}
       ENDIF
 
@@ -9035,9 +9035,9 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
       ENDIF
 
       IF aQuotedCols == NIL
-         nLen := Len(::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS])
+         nLen := Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS])
          FOR i := 1 TO nLen
-            cQot := ::Quoted(::aLocalBuffer[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], .T., , , , lNull)
+            cQot := ::Quoted(::aLocalBuffer[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], .T., , , , lNull)
             AAdd(aQuot, cQot)
          NEXT i
       ELSE
@@ -9051,10 +9051,10 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
 
          FOR i := 1 TO j
 
-            lNull := ::aFields[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2], FIELD_NULLABLE]
             HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
-            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
+            cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, i, 2]], ::oSql:nSystemID)
 
             DO CASE
             CASE j == nLen .AND. cQot == "NULL"
@@ -10097,7 +10097,7 @@ METHOD SR_WORKAREA:OrdSetForClause(cFor, cForxBase)
 
    cFor := AllTrim(cFor)
 
-   IF ::aInfo[AINFO_INDEXORD] > 0
+   IF ::aInfo[SR_AINFO_INDEXORD] > 0
 
       FOR i := 1 TO Len(cFor)
          IF !IsDigit(SubStr(cFor, i, 1)) .AND. !IsAlpha(SubStr(cFor, i, 1)) .AND. SubStr(cFor, i, 1) != "_"
@@ -10125,7 +10125,7 @@ METHOD SR_WORKAREA:OrdSetForClause(cFor, cForxBase)
       ENDIF
 
       ::cFor := cOut
-      ::aIndex[::aInfo[AINFO_INDEXORD], FOR_CLAUSE] := cOut
+      ::aIndex[::aInfo[SR_AINFO_INDEXORD], FOR_CLAUSE] := cOut
    ENDIF
 
 RETURN NIL

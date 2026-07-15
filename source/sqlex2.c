@@ -541,7 +541,7 @@ HB_ERRCODE SR_FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
   }
 
   if (!bUpdate) {
-    hb_arraySetNL(thiswa->aInfo, AINFO_RECNO, SR_GetCurrentRecordNum(thiswa) - 1);
+    hb_arraySetNL(thiswa->aInfo, SR_AINFO_RECNO, SR_GetCurrentRecordNum(thiswa) - 1);
   }
 
   ResolveSpecialCols(thiswa); // Fix INDKEY and FOR CLAUSE columns
@@ -722,7 +722,7 @@ HB_ERRCODE SR_ExecuteInsertStmt(SQLEXAREAP thiswa)
   thiswa->deletedList[0] = ' ';
   thiswa->recordListPos = 0;
   thiswa->recordListSize = 1;
-  hb_arraySetNL(thiswa->aInfo, AINFO_RCOUNT, thiswa->recordList[0]);
+  hb_arraySetNL(thiswa->aInfo, SR_AINFO_RCOUNT, thiswa->recordList[0]);
   thiswa->lLastRec = thiswa->recordList[0] + 1;
 
   SQLCloseCursor(thiswa->hStmtInsert);

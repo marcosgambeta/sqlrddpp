@@ -1136,8 +1136,8 @@ FUNCTION SR_dbRefresh()
    IF IS_SQLRDD
       oWA := (Select())->(dbInfo(DBI_INTERNAL_OBJECT))
       oWA:Refresh()
-      IF !oWA:aInfo[AINFO_EOF]
-         oWA:sqlGoTo(oWA:aInfo[AINFO_RECNO])
+      IF !oWA:aInfo[SR_AINFO_EOF]
+         oWA:sqlGoTo(oWA:aInfo[SR_AINFO_RECNO])
       ELSE
          oWA:sqlGoPhantom()
       ENDIF
