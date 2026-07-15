@@ -4310,6 +4310,9 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    LOCAL aCacheInfo := Array(CACHEINFO_LEN)
    LOCAL nPos
    LOCAL nMax := 0
+   LOCAL cTemp1
+   LOCAL cTemp2
+   LOCAL cTemp3
 
    HB_SYMBOL_UNUSED(lRecnoAdded)
    HB_SYMBOL_UNUSED(lShared)
@@ -4433,27 +4436,30 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    ::oSql:Commit()
 
    // Catalogs cleanup
+   cTemp1 := SR_GetToolsOwner() // calls SR_GetToolsOwner only once
+   cTemp2 := "'" + Upper(::cFileName) + "'" // calls Upper only once
+   cTemp3 := IIf(::oSql:lComments, " /* Wipe table info */", "") // create the string only once
+   ::oSql:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTINDEXES WHERE TABLE_ = " + cTemp2 + IIf(::oSql:lComments, " /* Wipe index info */", ""), .F.)
+   ::oSql:Commit()
+   ::oSql:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTTABLES WHERE TABLE_ = " + cTemp2 + cTemp3, .F.)
+   ::oSql:Commit()
+   ::oSql:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTLANG WHERE TABLE_ = " + cTemp2 + cTemp3, .F.)
+   ::oSql:Commit()
+   ::oSql:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTCONSTRAINTS WHERE TABLE_ = " + cTemp2 + cTemp3, .F.)
+   ::oSql:Commit()
+   ::oSql:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTCONSTRAINTS WHERE SOURCETABLE_ = " + cTemp2 + cTemp3, .F.)
+   ::oSql:Commit()
+   ::oSql:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTCONSTRTGTCOLS WHERE SOURCETABLE_ = " + cTemp2 + cTemp3, .F.)
+   ::oSql:Commit()
+   ::oSql:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTCONSTRSRCCOLS WHERE SOURCETABLE_ = " + cTemp2 + cTemp3, .F.)
+   ::oSql:Commit()
 
-   ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(::cFileName) + "'" + IIf(::oSql:lComments, " /* Wipe index info */", ""), .F.)
-   ::oSql:Commit()
-   ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES WHERE TABLE_ = '" + Upper(::cFileName) + "'" + IIf(::oSql:lComments, " /* Wipe table info */", ""), .F.)
-   ::oSql:Commit()
-   ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLANG WHERE TABLE_ = '" + Upper(::cFileName) + "'" + IIf(::oSql:lComments, " /* Wipe table info */", ""), .F.)
-   ::oSql:Commit()
-   ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRAINTS WHERE TABLE_ = '" + Upper(::cFileName) + "'" + IIf(::oSql:lComments, " /* Wipe table info */", ""), .F.)
-   ::oSql:Commit()
-   ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRAINTS WHERE SOURCETABLE_ = '" + Upper(::cFileName) + "'" + IIf(::oSql:lComments, " /* Wipe table info */", ""), .F.)
-   ::oSql:Commit()
-   ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRTGTCOLS WHERE SOURCETABLE_ = '" + Upper(::cFileName) + "'" + IIf(::oSql:lComments, " /* Wipe table info */", ""), .F.)
-   ::oSql:Commit()
-   ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRSRCCOLS WHERE SOURCETABLE_ = '" + Upper(::cFileName) + "'" + IIf(::oSql:lComments, " /* Wipe table info */", ""), .F.)
-   ::oSql:Commit()
-
-   IF ::oSql:Exec("SELECT * FROM " + ::cOwner + SR_DBQUALIFY(cTblName) + IIf(::oSql:lComments, " /* check dropped table */", ""), .F.) == SQL_SUCCESS
+   cTemp1 := ::cOwner + SR_DBQUALIFY(cTblName) // create the string only once
+   IF ::oSql:Exec("SELECT * FROM " + cTemp1 + IIf(::oSql:lComments, " /* check dropped table */", ""), .F.) == SQL_SUCCESS
       ::oSql:Commit()
-      ::oSql:Exec("DROP TABLE " + ::cOwner + SR_DBQUALIFY(cTblName) + " CASCADE CONSTRAINTS" + IIf(::oSql:lComments, " /* create table */", ""), .T.)
+      ::oSql:Exec("DROP TABLE " + cTemp1 + " CASCADE CONSTRAINTS" + IIf(::oSql:lComments, " /* create table */", ""), .T.)
       ::oSql:Commit()
-      IF ::oSql:Exec("SELECT * FROM " + ::cOwner + SR_DBQUALIFY(cTblName) + IIf(::oSql:lComments, " /* check dropped table */", ""), .F.) == SQL_SUCCESS
+      IF ::oSql:Exec("SELECT * FROM " + cTemp1 + IIf(::oSql:lComments, " /* check dropped table */", ""), .F.) == SQL_SUCCESS
          SR_MsgLogFile("Could not drop existing table " + cTblName + " in dbCreate()")
          ::lOpened := .F.
          RETURN Self
