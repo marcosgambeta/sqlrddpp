@@ -2183,7 +2183,6 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                      ENDIF
                      cVal += IIf(!lFirst, ", ", "( ") + LTrim(Str(aBuffer[::hnRecno], 15))
                      lFirst := .F.
-                     EXIT
                   ENDSWITCH
                ENDIF
             ELSE
@@ -2300,7 +2299,6 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   ::dNextDt := NIL
                   RETURN .F.
                ENDIF
-               EXIT
             ENDSWITCH
          ENDIF
 
@@ -4371,7 +4369,6 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
                   cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
                ENDIF
             ENDIF
-            EXIT
          ENDSWITCH
          EXIT
 
@@ -4443,7 +4440,6 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             cSql += aPk[i, 2]
          NEXT i
          cSql += ")"
-         EXIT
       ENDSWITCH
 
       IF Len(cSql) > 0
@@ -4503,7 +4499,6 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          ::Optmizer_1s := " FIRST 1"
          ::Optmizer_ns := {|x|" FIRST " + Str(x + 2, 5)}
       ENDIF
-      EXIT
    ENDSWITCH
 
    ::aInfo[AINFO_HNRECNO] := ::hnRecno
@@ -4847,7 +4842,6 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
             ::Optmizer_1s := " FIRST 1"
             ::Optmizer_ns := {|x|" FIRST " + Str(x + 2, 5)}
          ENDIF
-         EXIT
       ENDSWITCH
    ENDIF
 
@@ -6354,7 +6348,6 @@ METHOD SR_WORKAREA:sqlLock(nType, uRecord)
             lRet := .F.
          ENDIF
       ENDIF
-      EXIT
    ENDSWITCH
 
    IF ::aInfo[AINFO_SHARED] .AND. lRet .AND. nType < 3
