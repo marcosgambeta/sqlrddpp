@@ -277,7 +277,8 @@ CLASS SR_WORKAREA
    METHOD IndexFieldDec(aFld)           // component decimals
    METHOD IndexFieldNul(aFld)           // component nullability (.F. for expressions)
    METHOD HasExpressionOrder()          // .T. when the active order has expression components
-   METHOD CanUseExpressionIndex()       // .T. when expression indexes apply to this workarea
+   METHOD CanOpenExpressionIndex()      // .T. when this workarea can OPEN expression indexes
+   METHOD CanUseExpressionIndex()       // .T. when this workarea can CREATE expression indexes
 
    METHOD HasFilters()
    METHOD ParseForClause(cFor)
@@ -729,9 +730,15 @@ RETURN cRet
 //
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:CanUseExpressionIndex()
+METHOD SR_WORKAREA:CanOpenExpressionIndex()   // opening never depends on SR_GetExpressionIndex()
 
-RETURN ::oSql:nSystemID == SQLRDD_RDBMS_POSTGR .AND. !(RDDNAME() == "SQLEX") .AND. SR_GetExpressionIndex()
+RETURN ::oSql:nSystemID == SQLRDD_RDBMS_POSTGR .AND. !(RDDNAME() == "SQLEX")
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:CanUseExpressionIndex()    // creating new expression indexes
+
+RETURN ::CanOpenExpressionIndex() .AND. SR_GetExpressionIndex()
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -1915,9 +1922,17 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
 
       FOR i := 1 TO Len(aCols)
 
-         IF HB_IsChar(aCols[i]) .AND. "(" $ aCols[i] .AND. ::CanUseExpressionIndex()
+         IF HB_IsChar(aCols[i]) .AND. "(" $ aCols[i]
 
             // Expression index component (UPPER/SUBSTR/LEFT/STRZERO/...)
+
+            IF !::CanOpenExpressionIndex()
+               ::RunTimeErr("18", SR_Msg(18) + aCols[i] + " Table : " + ::cFileName + ;
+                  " (index uses a PostgreSQL expression key created by the SQLRDD RDD;" + ;
+                  " it cannot be opened by the " + RDDNAME() + " RDD - recreate the index" + ;
+                  " with this RDD or open the table with SQLRDD)")
+               RETURN 0    // error exit
+            ENDIF
 
             uComp := ::BuildIndexComponent(aCols[i])
 
@@ -7277,9 +7292,17 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
       FOR i := 1 TO Len(aCols)
 
-         IF HB_IsChar(aCols[i]) .AND. "(" $ aCols[i] .AND. ::CanUseExpressionIndex()
+         IF HB_IsChar(aCols[i]) .AND. "(" $ aCols[i]
 
             // Expression index component (UPPER/SUBSTR/LEFT/STRZERO/...)
+
+            IF !::CanOpenExpressionIndex()
+               ::RunTimeErr("18", SR_Msg(18) + aCols[i] + " Table : " + ::cFileName + ;
+                  " (index uses a PostgreSQL expression key created by the SQLRDD RDD;" + ;
+                  " it cannot be opened by the " + RDDNAME() + " RDD - recreate the index" + ;
+                  " with this RDD or open the table with SQLRDD)")
+               RETURN 0    // error exit
+            ENDIF
 
             uComp := ::BuildIndexComponent(aCols[i])
 
