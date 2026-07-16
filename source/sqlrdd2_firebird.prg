@@ -3258,7 +3258,12 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
    IF ::lISAM
 
-      IF ValType(uKey) $ "NDLT"       // One field seek, piece of cake!
+      SWITCH ValType(uKey)
+
+      CASE "N"
+      CASE "D"
+      CASE "L"
+      CASE "T"
 
          lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
          nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS, 1, 2], FIELD_DEC]
@@ -3314,7 +3319,10 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             cRet += cNam + cSep + cQot + " "
          ENDIF
 
-      ELSEIF HB_IsChar(uKey)
+         EXIT
+
+      CASE "C"
+      CASE "M"
 
          nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
@@ -3361,12 +3369,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
          cRet := " WHERE (( "
          nLen := Min(nLen, Len(::aQuoted))
-
-         IF lSoft
-            nSimpl := nLen
-         ELSE
-            nSimpl := 1
-         ENDIF
+         nSimpl := IIf(lSoft, nLen, 1)
 
          FOR j := 1 TO nSimpl
 
@@ -3426,20 +3429,20 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
          NEXT j
 
-      ELSE
+         EXIT
+
+      SR_OTHERWISE
+
          ::RuntimeErr("26")
          Set(_SET_EXACT, uSet)
          RETURN NIL
-      ENDIF
+
+      ENDSWITCH
 
       cTemp := ::SolveRestrictors()
 
       IF cRet == " WHERE (( "
-         IF Empty(cTemp)
-            cRet := ""
-         ELSE
-            cRet := " WHERE " + cTemp
-         ENDIF
+         cRet := IIf(Empty(cTemp), "", " WHERE " + cTemp)
       ELSE
          cRet += ")) "
          IF !Empty(cTemp)
