@@ -6377,7 +6377,9 @@ int DEFUN(sqlo_get_oci_handle, (sqloh, ocihp, type),
   }
   default: {
     return SQLO_INVALID_OCI_HANDLE_TYPE;
+#if !defined(__BORLANDC__)
     break; /* to keep the compiler happy */ // TODO: unnecessary break
+#endif
   }
   }
   return SQLO_SUCCESS;
@@ -6919,7 +6921,9 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_lob_read_stream",
                             "sqlo_lob_read_buffer(FIRST)");
     return dbp->status;
+#if !defined(__BORLANDC__)
     break;
+#endif
   }
   case SQLO_NEED_DATA: {
     remainder = loblen;
