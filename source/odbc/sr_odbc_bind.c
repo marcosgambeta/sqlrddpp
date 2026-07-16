@@ -255,6 +255,12 @@ HB_FUNC(SR_UNINSTALLUSERDSN)
 HB_FUNC(SR_LISTODBCDRIVERS)
 {
   SQLHENV henv = SQL_NULL_HENV;
+  SQLRETURN retcode;
+  SQLCHAR driverDesc[256];
+  SQLSMALLINT descLen;
+  SQLCHAR driverAttr[256];
+  SQLSMALLINT attrLen;
+  PHB_ITEM pArray;
 
   if (SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv) != SQL_SUCCESS) {
     hb_reta(0);
@@ -267,28 +273,25 @@ HB_FUNC(SR_LISTODBCDRIVERS)
     return;
   }
 
-  SQLCHAR driverDesc[256];
-  SQLSMALLINT descLen;
-  SQLCHAR driverAttr[256];
-  SQLSMALLINT attrLen;
-
   // first entry
-  SQLRETURN retcode = SQLDrivers(henv, SQL_FETCH_FIRST,
-                                 driverDesc, sizeof(driverDesc), &descLen,
-                                 driverAttr, sizeof(driverAttr), &attrLen);
+  retcode = SQLDrivers(henv, SQL_FETCH_FIRST,
+                             driverDesc, sizeof(driverDesc), &descLen,
+                             driverAttr, sizeof(driverAttr), &attrLen);
 
-  PHB_ITEM pArray = hb_itemNew(SR_NULLPTR);
+  pArray = hb_itemNew(SR_NULLPTR);
   hb_arrayNew(pArray, 0);
 
   while (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
+    PHB_ITEM pTempArray;
     // change '\0' to ';'
-    for (int i = attrLen - 1; i > 0; i--) {
+    int i;
+    for (i = attrLen - 1; i > 0; i--) {
       if (driverAttr[i] == '\0') {
         driverAttr[i] = ';';
       }
     }
     // add description and attributes to array
-    PHB_ITEM pTempArray = hb_itemNew(SR_NULLPTR);
+    pTempArray = hb_itemNew(SR_NULLPTR);
     hb_arrayNew(pTempArray, 2);
     hb_arraySetC(pTempArray, 1, (const char *)driverDesc);
     hb_arraySetC(pTempArray, 2, (const char *)driverAttr);
@@ -308,6 +311,12 @@ HB_FUNC(SR_LISTODBCDRIVERS)
 static HB_BOOL sr_listodbcdatasources(SQLUSMALLINT direction)
 {
   SQLHENV henv = SQL_NULL_HENV;
+  SQLCHAR dsn_name[SQL_MAX_DSN_LENGTH + 1];
+  SQLSMALLINT dsn_name_len;
+  SQLCHAR driver_desc[256];
+  SQLSMALLINT driver_desc_len;
+  SQLRETURN retcode;
+  PHB_ITEM pArray;
 
   if (SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv) != SQL_SUCCESS) {
     hb_reta(0);
@@ -320,18 +329,13 @@ static HB_BOOL sr_listodbcdatasources(SQLUSMALLINT direction)
     return HB_FALSE;
   }
 
-  SQLCHAR dsn_name[SQL_MAX_DSN_LENGTH + 1];
-  SQLSMALLINT dsn_name_len;
-  SQLCHAR driver_desc[256];
-  SQLSMALLINT driver_desc_len;
-
   // first entry
-  SQLRETURN retcode = SQLDataSources(henv, direction,
-                                     dsn_name, sizeof(dsn_name), &dsn_name_len,
-                                     driver_desc, sizeof(driver_desc), &driver_desc_len);
+  retcode = SQLDataSources(henv, direction,
+                                 dsn_name, sizeof(dsn_name), &dsn_name_len,
+                                 driver_desc, sizeof(driver_desc), &driver_desc_len);
 
 
-  PHB_ITEM pArray = hb_itemNew(SR_NULLPTR);
+  pArray = hb_itemNew(SR_NULLPTR);
   hb_arrayNew(pArray, 0);
 
   while (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) {
