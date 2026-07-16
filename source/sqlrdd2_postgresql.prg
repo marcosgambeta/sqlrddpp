@@ -270,6 +270,8 @@ CLASS SR_WORKAREA
 
    // Expression index support (PostgreSQL native expression indexes)
 
+   METHOD CanOpenExpressionIndex()      // .T. when this workarea can OPEN expression indexes
+   METHOD CanUseExpressionIndex()       // .T. when this workarea can CREATE expression indexes
    METHOD ParseIndexComponents(cExpr)   // xBase index key => array of components or NIL
    METHOD BuildIndexComponent(cItem)    // one component => column name, component array or NIL
    METHOD IndexFieldSQL(aFld)           // SQL expression (or qualified column) of a component
@@ -723,6 +725,21 @@ RETURN cRet
 // All SQL expressions produce TRIMMED text ("rtrim(...)") because ::Quoted()
 // always trims character values, so equality comparisons stay consistent.
 //
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:CanOpenExpressionIndex()   // opening never depends on SR_GetExpressionIndex()
+
+// The SQLEX RDD builds its queries at C level directly from INDEX_FIELDS
+// and does not understand expression components
+
+RETURN !(RDDNAME() == "SQLEX")
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:CanUseExpressionIndex()    // creating new expression indexes
+
+RETURN ::CanOpenExpressionIndex() .AND. SR_GetExpressionIndex()
+
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:ParseIndexComponents(cExpr)
@@ -1628,6 +1645,14 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
 
             // Expression index component (UPPER/SUBSTR/LEFT/STRZERO/...)
 
+            IF !::CanOpenExpressionIndex()
+               ::RunTimeErr("18", SR_Msg(18) + aCols[i] + " Table : " + ::cFileName + ;
+                  " (index uses a PostgreSQL expression key created by the SQLRDD RDD;" + ;
+                  " it cannot be opened by the " + RDDNAME() + " RDD - recreate the index" + ;
+                  " with this RDD or open the table with SQLRDD)")
+               RETURN 0    // error exit
+            ENDIF
+
             uComp := ::BuildIndexComponent(aCols[i])
 
             IF HB_IsArray(uComp)
@@ -1708,7 +1733,10 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
       ::aIndex[nInd, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+            // SQLEX does not expose the INDKEY_ column as a field, so the key
+            // codeblock must evaluate the original xBase expression client
+            // side (same value stored in INDKEY_, without the recno suffix)
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY]) + ") }")
          ELSE
             ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          ENDIF
@@ -5530,6 +5558,14 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
             // Expression index component (UPPER/SUBSTR/LEFT/STRZERO/...)
 
+            IF !::CanOpenExpressionIndex()
+               ::RunTimeErr("18", SR_Msg(18) + aCols[i] + " Table : " + ::cFileName + ;
+                  " (index uses a PostgreSQL expression key created by the SQLRDD RDD;" + ;
+                  " it cannot be opened by the " + RDDNAME() + " RDD - recreate the index" + ;
+                  " with this RDD or open the table with SQLRDD)")
+               RETURN 0    // error exit
+            ENDIF
+
             uComp := ::BuildIndexComponent(aCols[i])
 
             IF HB_IsArray(uComp)
@@ -5611,7 +5647,10 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
       ::aIndex[nLen, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+            // SQLEX does not expose the INDKEY_ column as a field, so the key
+            // codeblock must evaluate the original xBase expression client
+            // side (same value stored in INDKEY_, without the recno suffix)
+            ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY]) + ") }")
          ELSE
             ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          ENDIF
@@ -6027,7 +6066,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
    // of a synthetic INDKEY_ column. Only untranslatable (user defined)
    // functions still fall back to the synthetic column.
 
-   IF lSyntheticIndex .AND. !SR_GetSyntheticIndex() .AND. SR_GetExpressionIndex()
+   IF lSyntheticIndex .AND. !SR_GetSyntheticIndex() .AND. ::CanUseExpressionIndex()
       aExprCols := ::ParseIndexComponents(cColumns)
       IF aExprCols != NIL
          lSyntheticIndex := .F.
@@ -6060,7 +6099,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
       // expression indexes are enabled PostgreSQL handles multi column and
       // expression indexes natively, so keep the regular index instead of
       // creating an INDKEY_ column.
-      IF !SR_GetExpressionIndex()
+      IF !::CanUseExpressionIndex()
          lSyntheticIndex := .T.
          lSyntheticVirtual := .F.
       ENDIF
