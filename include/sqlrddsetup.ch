@@ -85,7 +85,7 @@
 #define SR_ORD_DIR_BWD                    2
 #define SR_ORD_NATURAL                    3 // not used in sqlrdd code
 
-#define SQL_NULL_HSTMT                 0
+#define SR_SQL_NULL_HSTMT                 0 // not used in sqlrdd code
 
 // aIndexMgmnt array structure
 
