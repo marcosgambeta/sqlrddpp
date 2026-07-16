@@ -1733,7 +1733,10 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
       ::aIndex[nInd, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+            // SQLEX does not expose the INDKEY_ column as a field, so the key
+            // codeblock must evaluate the original xBase expression client
+            // side (same value stored in INDKEY_, without the recno suffix)
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY]) + ") }")
          ELSE
             ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ENDIF
@@ -5644,7 +5647,10 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
       ::aIndex[nLen, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+            // SQLEX does not expose the INDKEY_ column as a field, so the key
+            // codeblock must evaluate the original xBase expression client
+            // side (same value stored in INDKEY_, without the recno suffix)
+            ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY]) + ") }")
          ELSE
             ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
          ENDIF
