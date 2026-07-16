@@ -1051,28 +1051,28 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
    ::oSql:Exec("SELECT TABLE_,SIGNATURE_,IDXNAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(::cFileName) + "' ORDER BY IDXNAME_, TAGNUM_", .F., .T., @::aIndexMgmnt)
 
    FOR EACH aInd IN ::aIndexMgmnt
-      ASize(aInd, INDEXMAN_SIZE)
-      IF SubStr(aInd[INDEXMAN_IDXKEY], 4, 1) == "@"
-         aInd[INDEXMAN_IDXKEY] := SubStr(aInd[INDEXMAN_IDXKEY], 5)
+      ASize(aInd, SR_INDEXMAN_SIZE)
+      IF SubStr(aInd[SR_INDEXMAN_IDXKEY], 4, 1) == "@"
+         aInd[SR_INDEXMAN_IDXKEY] := SubStr(aInd[SR_INDEXMAN_IDXKEY], 5)
       ENDIF
-      IF !Empty(aInd[INDEXMAN_COLUMNS])
-         aInd[INDEXMAN_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(aInd[INDEXMAN_IDXKEY]) + ") + Str(RecNo(),15) }")
-         aInd[INDEXMAN_SYNTH_COLPOS] := AScan(::aNames, "INDKEY_" + aInd[INDEXMAN_COLUMNS])     // Make life easier in odbcrdd2.c
+      IF !Empty(aInd[SR_INDEXMAN_COLUMNS])
+         aInd[SR_INDEXMAN_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(aInd[SR_INDEXMAN_IDXKEY]) + ") + Str(RecNo(),15) }")
+         aInd[SR_INDEXMAN_SYNTH_COLPOS] := AScan(::aNames, "INDKEY_" + aInd[SR_INDEXMAN_COLUMNS])     // Make life easier in odbcrdd2.c
       ELSE
-         aInd[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + AllTrim(aInd[INDEXMAN_IDXKEY]) + " }")
+         aInd[SR_INDEXMAN_KEY_CODEBLOCK] := &("{|| " + AllTrim(aInd[SR_INDEXMAN_IDXKEY]) + " }")
       ENDIF
-      aInd[INDEXMAN_IDXNAME] := AllTrim(aInd[INDEXMAN_IDXNAME])
-      aInd[INDEXMAN_TAG] := AllTrim(aInd[INDEXMAN_TAG])
-      IF SubStr(aInd[INDEXMAN_FOR_EXPRESS], 1, 1) == "#"
-         aInd[INDEXMAN_FOR_CODEBLOCK] := &("{|| if(" + AllTrim(SubStr(aInd[INDEXMAN_FOR_EXPRESS], 5)) + ",'T','F') }")     // FOR clause codeblock
-         aInd[INDEXMAN_FOR_COLPOS] := AScan(::aNames, "INDFOR_" + SubStr(aInd[INDEXMAN_FOR_EXPRESS], 2, 3))   // Make life easier in odbcrdd2.c
+      aInd[SR_INDEXMAN_IDXNAME] := AllTrim(aInd[SR_INDEXMAN_IDXNAME])
+      aInd[SR_INDEXMAN_TAG] := AllTrim(aInd[SR_INDEXMAN_TAG])
+      IF SubStr(aInd[SR_INDEXMAN_FOR_EXPRESS], 1, 1) == "#"
+         aInd[SR_INDEXMAN_FOR_CODEBLOCK] := &("{|| if(" + AllTrim(SubStr(aInd[SR_INDEXMAN_FOR_EXPRESS], 5)) + ",'T','F') }")     // FOR clause codeblock
+         aInd[SR_INDEXMAN_FOR_COLPOS] := AScan(::aNames, "INDFOR_" + SubStr(aInd[SR_INDEXMAN_FOR_EXPRESS], 2, 3))   // Make life easier in odbcrdd2.c
       ENDIF
       // If there is no more than one occourrence of same index bag name,
       // for sure we are dealing with CDX compatible application
-      IF cLast == aInd[INDEXMAN_IDXNAME]
+      IF cLast == aInd[SR_INDEXMAN_IDXNAME]
          lCDXCompat := .T.
       ENDIF
-      cLast := aInd[INDEXMAN_IDXNAME]
+      cLast := aInd[SR_INDEXMAN_IDXNAME]
    NEXT
 
    IF s_lUseDBCatalogs
@@ -1080,16 +1080,16 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
       ::oSql:oSqlTransact:Exec("SELECT DISTINCT cls.oid, cls.relname as idxname FROM pg_index idx JOIN pg_class cls ON cls.oid=indexrelid JOIN pg_class tab ON tab.oid=indrelid WHERE tab.relname = '" + Lower(::cFileName) + "' order by idxname", .F., .T., @aRet)
       ::oSql:oSqlTransact:Commit()
       FOR EACH aInd IN aRet
-         aThisIndex := Array(INDEXMAN_SIZE)
-         aThisIndex[INDEXMAN_TABLE] := ::cFileName
-         aThisIndex[INDEXMAN_SIGNATURE] := "DBCATALOG"
-         aThisIndex[INDEXMAN_IDXNAME] := Upper(RTrim(aInd[2]))
+         aThisIndex := Array(SR_INDEXMAN_SIZE)
+         aThisIndex[SR_INDEXMAN_TABLE] := ::cFileName
+         aThisIndex[SR_INDEXMAN_SIGNATURE] := "DBCATALOG"
+         aThisIndex[SR_INDEXMAN_IDXNAME] := Upper(RTrim(aInd[2]))
 
-         IF Right(aThisIndex[INDEXMAN_IDXNAME], 4) == "_UNQ"
+         IF Right(aThisIndex[SR_INDEXMAN_IDXNAME], 4) == "_UNQ"
             LOOP
          ENDIF
 
-         aThisIndex[INDEXMAN_IDXKEY] := ""
+         aThisIndex[SR_INDEXMAN_IDXKEY] := ""
          aCols := {}
          FOR i := 1 TO 20
             ::oSql:oSqlTransact:Exec("SELECT pg_get_indexdef(" + Str(aInd[1]) + "," + Str(i, 2) + ",true)", .F., .T., @aCols)
@@ -1099,7 +1099,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
                IF aCols[1, 1] == ::cRecnoName .OR. aCols[1, 1] == "R_E_C_N_O_" .AND. i == 1
                   EXIT
                ENDIF
-               aThisIndex[INDEXMAN_IDXKEY] += IIf(i > 1, ',"', Chr(34)) + aCols[1, 1] + Chr(34)
+               aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, ',"', Chr(34)) + aCols[1, 1] + Chr(34)
                IF aCols[1, 1] == ::cRecnoName .OR. aCols[1, 1] == "R_E_C_N_O_"
                   EXIT
                ENDIF
@@ -1107,14 +1107,14 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
                EXIT
             ENDIF
          NEXT i
-         IF !Empty(aThisIndex[INDEXMAN_IDXKEY])
-            aThisIndex[INDEXMAN_FOR_EXPRESS] := ""
-            aThisIndex[INDEXMAN_COLUMNS] := ""
-            aThisIndex[INDEXMAN_TAG] := Upper(RTrim(aInd[2]))
-            aThisIndex[INDEXMAN_TAGNUM] := StrZero(SR_ENUMINDEX(aInd), 6)
-            aThisIndex[INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[INDEXMAN_IDXKEY] + " }")
-            aThisIndex[INDEXMAN_SYNTH_COLPOS] := 0
-            aThisIndex[INDEXMAN_FOR_COLPOS] := 0
+         IF !Empty(aThisIndex[SR_INDEXMAN_IDXKEY])
+            aThisIndex[SR_INDEXMAN_FOR_EXPRESS] := ""
+            aThisIndex[SR_INDEXMAN_COLUMNS] := ""
+            aThisIndex[SR_INDEXMAN_TAG] := Upper(RTrim(aInd[2]))
+            aThisIndex[SR_INDEXMAN_TAGNUM] := StrZero(SR_ENUMINDEX(aInd), 6)
+            aThisIndex[SR_INDEXMAN_KEY_CODEBLOCK] := &("{|| " + aThisIndex[SR_INDEXMAN_IDXKEY] + " }")
+            aThisIndex[SR_INDEXMAN_SYNTH_COLPOS] := 0
+            aThisIndex[SR_INDEXMAN_FOR_COLPOS] := 0
             AAdd(::aIndexMgmnt, aThisIndex)
          ENDIF
       NEXT
@@ -1122,7 +1122,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
 
    IF !lCDXCompat
       // If not CDX, orders should be added by creation order
-      ASort(::aIndexMgmnt, , , {|x, y|x[INDEXMAN_TAGNUM] < y[INDEXMAN_TAGNUM]})
+      ASort(::aIndexMgmnt, , , {|x, y|x[SR_INDEXMAN_TAGNUM] < y[SR_INDEXMAN_TAGNUM]})
    ENDIF
 
 //   ::aConstrMgmnt := {}
@@ -1595,15 +1595,15 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
 
    FOR nInd := 1 TO Len(::aIndexMgmnt)
 
-      IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
-         aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS]}
+      IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+         aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]}
       ELSE
-         aCols := &("{" + ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY] + "}")
-         // aCols := HB_ATokens(StrTran(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], Chr(34), ""), ",")
+         aCols := &("{" + ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY] + "}")
+         // aCols := HB_ATokens(StrTran(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], Chr(34), ""), ",")
       ENDIF
 
-      cOrdName := ::aIndexMgmnt[nInd, INDEXMAN_TAG]
-      cColumns := ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY]
+      cOrdName := ::aIndexMgmnt[nInd, SR_INDEXMAN_TAG]
+      cColumns := ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY]
       cSqlA := " ORDER BY "
       cSqlD := " ORDER BY "
       cXBase := ""
@@ -1612,14 +1612,14 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
          cOrdName := ""
       ENDIF
 
-      IF ::aIndexMgmnt[nInd, INDEXMAN_VIRTUAL_SYNTH] != NIL
+      IF ::aIndexMgmnt[nInd, SR_INDEXMAN_VIRTUAL_SYNTH] != NIL
          lSyntheticVirtual := .T.
-         cPhysicalVIndexName := ::aIndexMgmnt[nInd, INDEXMAN_VIRTUAL_SYNTH]
+         cPhysicalVIndexName := ::aIndexMgmnt[nInd, SR_INDEXMAN_VIRTUAL_SYNTH]
       ELSE
          cPhysicalVIndexName := NIL
       ENDIF
 
-      ::aIndex[nInd] := {"", "", {}, "", "", "", NIL, NIL, cOrdName, cColumns, , , , , , 0, SubStr(::aIndexMgmnt[nInd, INDEXMAN_SIGNATURE], 19, 1) == "D", cPhysicalVIndexName, , , ::aIndexMgmnt[nInd, INDEXMAN_IDXNAME]}
+      ::aIndex[nInd] := {"", "", {}, "", "", "", NIL, NIL, cOrdName, cColumns, , , , , , 0, SubStr(::aIndexMgmnt[nInd, SR_INDEXMAN_SIGNATURE], 19, 1) == "D", cPhysicalVIndexName, , , ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXNAME]}
       ::aIndex[nInd, INDEX_FIELDS] := Array(Len(aCols))
 
       FOR i := 1 TO Len(aCols)
@@ -1705,23 +1705,23 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
 
       ::aIndex[nInd, ORDER_ASCEND] := cSqlA
       ::aIndex[nInd, ORDER_DESEND] := cSqlD
-      ::aIndex[nInd, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], cXBase))
-      IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+      ::aIndex[nInd, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], cXBase))
+      IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          ELSE
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          ENDIF
       ELSE
          ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
       ENDIF
-      IF SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
-         ::aIndex[nInd, FOR_CLAUSE] := RTrim(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS])
+      IF SubStr(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
+         ::aIndex[nInd, FOR_CLAUSE] := RTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_EXPRESS])
       ELSE
-         ::aIndex[nInd, FOR_CLAUSE] := "INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3) + " = 'T'"
+         ::aIndex[nInd, FOR_CLAUSE] := "INDFOR_" + SubStr(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_EXPRESS], 2, 3) + " = 'T'"
       ENDIF
       ::aIndex[nInd, STR_DESCENDS] := ""
-      ::aIndex[nInd, SYNTH_INDEX_COL_POS] := IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndex[nInd, SYNTH_INDEX_COL_POS], 0)
+      ::aIndex[nInd, SYNTH_INDEX_COL_POS] := IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])), ::aIndex[nInd, SYNTH_INDEX_COL_POS], 0)
 
       IF lSyntheticVirtual
          ::aIndex[nInd, VIRTUAL_INDEX_EXPR] := ::GetSyntheticVirtualExpr(aCols, "A")
@@ -2551,15 +2551,15 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
 
             IF !lFirst
                FOR nInd := 1 TO Len(::aIndexMgmnt)
-                  IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
-                     cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
-                     cRet += ", " + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS]) + " = E'" + cKey + "' "
-                     ::aLocalBuffer[::aIndexMgmnt[nInd, INDEXMAN_SYNTH_COLPOS]] := cKey
+                  IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+                     cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, SR_INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
+                     cRet += ", " + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]) + " = E'" + cKey + "' "
+                     ::aLocalBuffer[::aIndexMgmnt[nInd, SR_INDEXMAN_SYNTH_COLPOS]] := cKey
                   ENDIF
-                  IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_FOR_CODEBLOCK])
-                     cKey := (::cAlias)->(Eval(::aIndexMgmnt[nInd, INDEXMAN_FOR_CODEBLOCK]))
-                     cRet += ", " + SR_DBQUALIFY("INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3)) + " = E'" + cKey + "' "
-                     ::aLocalBuffer[::aIndexMgmnt[nInd, INDEXMAN_FOR_COLPOS]] := cKey
+                  IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_CODEBLOCK])
+                     cKey := (::cAlias)->(Eval(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_CODEBLOCK]))
+                     cRet += ", " + SR_DBQUALIFY("INDFOR_" + SubStr(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_EXPRESS], 2, 3)) + " = E'" + cKey + "' "
+                     ::aLocalBuffer[::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_COLPOS]] := cKey
                   ENDIF
                NEXT nInd
             ENDIF
@@ -2699,21 +2699,21 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
          // Write the index columns
 
          FOR nInd := 1 TO Len(::aIndexMgmnt)
-            IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+            IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
                IF ::cIns == NIL
-                  cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+                  cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
                ENDIF
-               cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
+               cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, SR_INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
                cVal += IIf(!lFirst, ", E'", "( E'") + cKey + "'"
-               ::aLocalBuffer[::aIndexMgmnt[nInd, INDEXMAN_SYNTH_COLPOS]] := cKey
+               ::aLocalBuffer[::aIndexMgmnt[nInd, SR_INDEXMAN_SYNTH_COLPOS]] := cKey
             ENDIF
-            IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_FOR_CODEBLOCK])
+            IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_CODEBLOCK])
                IF ::cIns == NIL
-                  cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3))
+                  cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDFOR_" + SubStr(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_EXPRESS], 2, 3))
                ENDIF
-               cKey := (::cAlias)->(Eval(::aIndexMgmnt[nInd, INDEXMAN_FOR_CODEBLOCK]))
+               cKey := (::cAlias)->(Eval(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_CODEBLOCK]))
                cVal += IIf(!lFirst, ", E'", "( E'") + cKey + "'"
-               ::aLocalBuffer[::aIndexMgmnt[nInd, INDEXMAN_FOR_COLPOS]] := cKey
+               ::aLocalBuffer[::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_COLPOS]] := cKey
             ENDIF
          NEXT nInd
 
@@ -5429,12 +5429,12 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
          // Not opened, than try find it in the orders management
 
-         nInd := AScan(::aIndexMgmnt, {|x|AllTrim(Upper(x[INDEXMAN_IDXNAME])) == AllTrim(Upper(cBagName))})
+         nInd := AScan(::aIndexMgmnt, {|x|AllTrim(Upper(x[SR_INDEXMAN_IDXNAME])) == AllTrim(Upper(cBagName))})
          IF nInd > 0
             AAdd(aInd, nInd)
             nInd ++
             DO WHILE nInd <= Len(::aIndexMgmnt)
-               IF AllTrim(Upper(::aIndexMgmnt[nInd, INDEXMAN_IDXNAME])) == AllTrim(Upper(cBagName))
+               IF AllTrim(Upper(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXNAME])) == AllTrim(Upper(cBagName))
                   AAdd(aInd, nInd)
                ELSE
                   EXIT
@@ -5444,7 +5444,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
          ENDIF
          cTag := NIL
       ELSE
-         nInd := AScan(::aIndexMgmnt, {|x|AllTrim(Upper(x[INDEXMAN_IDXNAME])) == AllTrim(Upper(cBagName)) .AND. AllTrim(Upper(x[INDEXMAN_TAG])) == AllTrim(Upper(cTag))})
+         nInd := AScan(::aIndexMgmnt, {|x|AllTrim(Upper(x[SR_INDEXMAN_IDXNAME])) == AllTrim(Upper(cBagName)) .AND. AllTrim(Upper(x[SR_INDEXMAN_TAG])) == AllTrim(Upper(cTag))})
          IF nInd > 0
             // Index already opened
             AAdd(aInd, nInd)
@@ -5494,24 +5494,24 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
    FOR EACH nInd IN aInd
 
-      IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
-         aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS]}
+      IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+         aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]}
       ELSE
-         IF HB_IsChar(::aIndexMgmnt[nInd, INDEXMAN_IDXKEY])
-            aCols := &("{" + ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY] + "}")
+         IF HB_IsChar(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY])
+            aCols := &("{" + ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY] + "}")
          ELSE
-            aCols := ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY]
+            aCols := ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY]
          ENDIF
       ENDIF
-      cOrdName := ::aIndexMgmnt[nInd, INDEXMAN_TAG]
+      cOrdName := ::aIndexMgmnt[nInd, SR_INDEXMAN_TAG]
 
       IF Empty(cOrdName)
          cOrdName := ""
       ENDIF
 
-      IF ::aIndexMgmnt[nInd, INDEXMAN_VIRTUAL_SYNTH] != NIL
+      IF ::aIndexMgmnt[nInd, SR_INDEXMAN_VIRTUAL_SYNTH] != NIL
          lSyntheticVirtual := .T.
-         cPhysicalVIndexName := ::aIndexMgmnt[nInd, INDEXMAN_VIRTUAL_SYNTH]
+         cPhysicalVIndexName := ::aIndexMgmnt[nInd, SR_INDEXMAN_VIRTUAL_SYNTH]
       ELSE
          cPhysicalVIndexName := NIL
       ENDIF
@@ -5521,7 +5521,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
       cXBase := ""
 
-      AAdd(::aIndex, {"", "", {}, "", "", "", NIL, NIL, cOrdName, cBagName, , , , , , 0, SubStr(::aIndexMgmnt[nInd, INDEXMAN_SIGNATURE], 19, 1) == "D", cPhysicalVIndexName, , , ::aIndexMgmnt[nInd, INDEXMAN_IDXNAME]})
+      AAdd(::aIndex, {"", "", {}, "", "", "", NIL, NIL, cOrdName, cBagName, , , , , , 0, SubStr(::aIndexMgmnt[nInd, SR_INDEXMAN_SIGNATURE], 19, 1) == "D", cPhysicalVIndexName, , , ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXNAME]})
       nLen := Len(::aIndex)
 
       FOR i := 1 TO Len(aCols)
@@ -5608,25 +5608,25 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
       ::aIndex[nLen, ORDER_ASCEND] := cSqlA
       ::aIndex[nLen, ORDER_DESEND] := cSqlD
-      ::aIndex[nLen, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, INDEXMAN_IDXKEY], cXBase))
-      IF !Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+      ::aIndex[nLen, INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], cXBase))
+      IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+            ::aIndex[nInd, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          ELSE
-            ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])
+            ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          ENDIF
       ELSE
          ::aIndex[nLen, INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
       ENDIF
 
-      IF SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
-         ::aIndex[nLen, FOR_CLAUSE] := RTrim(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS])
+      IF SubStr(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_EXPRESS], 1, 1) != "#"
+         ::aIndex[nLen, FOR_CLAUSE] := RTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_EXPRESS])
       ELSE
-         ::aIndex[nLen, FOR_CLAUSE] := "INDFOR_" + SubStr(::aIndexMgmnt[nInd, INDEXMAN_FOR_EXPRESS], 2, 3) + " = 'T'"
+         ::aIndex[nLen, FOR_CLAUSE] := "INDFOR_" + SubStr(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_EXPRESS], 2, 3) + " = 'T'"
       ENDIF
 
       ::aIndex[nLen, STR_DESCENDS] := ""
-      ::aIndex[nLen, SYNTH_INDEX_COL_POS] := IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, INDEXMAN_COLUMNS])), ::aIndex[nLen, SYNTH_INDEX_COL_POS], 0)
+      ::aIndex[nLen, SYNTH_INDEX_COL_POS] := IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])), ::aIndex[nLen, SYNTH_INDEX_COL_POS], 0)
 
       IF lSyntheticVirtual
          ::aIndex[nLen, VIRTUAL_INDEX_EXPR] := ::GetSyntheticVirtualExpr(aCols, "A")
@@ -6086,14 +6086,14 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
 
    FOR i := 1 TO Len(::aIndexMgmnt)
       AAdd(aOldPhisNames, AllTrim(::aIndexMgmnt[i, 9]))
-      IF !Empty(::aIndexMgmnt[i, INDEXMAN_COLUMNS])
-         ::DropColumn("INDKEY_" + AllTrim(::aIndexMgmnt[i, INDEXMAN_COLUMNS]), .F.)
+      IF !Empty(::aIndexMgmnt[i, SR_INDEXMAN_COLUMNS])
+         ::DropColumn("INDKEY_" + AllTrim(::aIndexMgmnt[i, SR_INDEXMAN_COLUMNS]), .F.)
       ENDIF
-      IF SubStr(::aIndexMgmnt[i, INDEXMAN_FOR_EXPRESS], 1, 1) == "#"
-         ::DropColumn("INDFOR_" + SubStr(::aIndexMgmnt[i, INDEXMAN_FOR_EXPRESS], 2, 3), .F., .T.)
+      IF SubStr(::aIndexMgmnt[i, SR_INDEXMAN_FOR_EXPRESS], 1, 1) == "#"
+         ::DropColumn("INDFOR_" + SubStr(::aIndexMgmnt[i, SR_INDEXMAN_FOR_EXPRESS], 2, 3), .F., .T.)
       ENDIF
-      IF Len(::aIndexMgmnt[i, INDEXMAN_IDXKEY]) > 4 .AND. SubStr(::aIndexMgmnt[i, INDEXMAN_IDXKEY], 4, 1) == "@"
-         cPrevPhysicalVIndexName := SubStr(::aIndexMgmnt[i, INDEXMAN_IDXKEY], 1, 3) + SubStr(::cFileName, 1, 25)
+      IF Len(::aIndexMgmnt[i, SR_INDEXMAN_IDXKEY]) > 4 .AND. SubStr(::aIndexMgmnt[i, SR_INDEXMAN_IDXKEY], 4, 1) == "@"
+         cPrevPhysicalVIndexName := SubStr(::aIndexMgmnt[i, SR_INDEXMAN_IDXKEY], 1, 3) + SubStr(::cFileName, 1, 25)
          HB_SYMBOL_UNUSED(cPrevPhysicalVIndexName)
       ENDIF
    NEXT i
@@ -6131,7 +6131,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
    ::oSql:Exec("SELECT TABLE_,SIGNATURE_,IDXNAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(::cFileName) + "' ORDER BY IDXNAME_, TAGNUM_", .F., .T., @::aIndexMgmnt)
    ::oSql:Commit()
 
-   cNextTagNum := StrZero(Val(IIf(Len(::aIndexMgmnt) == 0, "0", ::aIndexMgmnt[Len(::aIndexMgmnt), INDEXMAN_TAGNUM])) + 1, 6)
+   cNextTagNum := StrZero(Val(IIf(Len(::aIndexMgmnt) == 0, "0", ::aIndexMgmnt[Len(::aIndexMgmnt), SR_INDEXMAN_TAGNUM])) + 1, 6)
 
    // Create the index
 
@@ -6161,7 +6161,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
       FOR nNewTag := 1 TO 120
          lTagFound := .T.
          FOR i := 1 TO Len(::aIndexMgmnt)
-            IF SubStr(::aIndexMgmnt[i, INDEXMAN_COLUMNS], 1, 3) == StrZero(nNewTag, 3)
+            IF SubStr(::aIndexMgmnt[i, SR_INDEXMAN_COLUMNS], 1, 3) == StrZero(nNewTag, 3)
                lTagFound := .F.
                EXIT
             ENDIF

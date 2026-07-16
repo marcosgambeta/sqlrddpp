@@ -89,22 +89,22 @@
 
 // aIndexMgmnt array structure
 
-#define INDEXMAN_SIZE                 14
+#define SR_INDEXMAN_SIZE                 14
 
-#define INDEXMAN_TABLE                 1
-#define INDEXMAN_SIGNATURE             2
-#define INDEXMAN_IDXNAME               3
-#define INDEXMAN_IDXKEY                4
-#define INDEXMAN_FOR_EXPRESS           5
-#define INDEXMAN_COLUMNS               6
-#define INDEXMAN_TAG                   7
-#define INDEXMAN_TAGNUM                8
-#define INDEXMAN_KEY_CODEBLOCK         9
-#define INDEXMAN_FOR_CODEBLOCK         10
-#define INDEXMAN_VIRTUAL_SYNTH         11
-#define INDEXMAN_UNUSED                12
-#define INDEXMAN_SYNTH_COLPOS          13
-#define INDEXMAN_FOR_COLPOS            14
+#define SR_INDEXMAN_TABLE                 1
+#define SR_INDEXMAN_SIGNATURE             2
+#define SR_INDEXMAN_IDXNAME               3
+#define SR_INDEXMAN_IDXKEY                4
+#define SR_INDEXMAN_FOR_EXPRESS           5
+#define SR_INDEXMAN_COLUMNS               6
+#define SR_INDEXMAN_TAG                   7
+#define SR_INDEXMAN_TAGNUM                8
+#define SR_INDEXMAN_KEY_CODEBLOCK         9
+#define SR_INDEXMAN_FOR_CODEBLOCK         10
+#define SR_INDEXMAN_VIRTUAL_SYNTH         11
+#define SR_INDEXMAN_UNUSED                12
+#define SR_INDEXMAN_SYNTH_COLPOS          13
+#define SR_INDEXMAN_FOR_COLPOS            14
 
 // aIndex array structure
 
