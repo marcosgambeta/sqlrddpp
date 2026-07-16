@@ -4306,7 +4306,7 @@ static int sqlKeyCompareEx(SQLEXAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
     itemTemp = hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK);
     // if (pTag) {
     //   HB_EVALINFO info;
-    //   hb_evalNew(&info, hb_itemArrayGet(pTag, INDEXMAN_KEY_CODEBLOCK));
+    //   hb_evalNew(&info, hb_itemArrayGet(pTag, SR_INDEXMAN_KEY_CODEBLOCK));
     //   pKey1 = hb_evalLaunch(&info);
     //   hb_evalRelease(&info);
     // }
