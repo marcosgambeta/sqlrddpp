@@ -240,7 +240,7 @@ HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
 
     pIndexRef =
         hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent);
-    pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
+    pColumns = hb_arrayGetItemPtr(pIndexRef, SR_AINDEX_INDEX_FIELDS);
     thiswa->indexColumns = hb_arrayLen(pColumns);
 
     // Free the statements we are about to recreate

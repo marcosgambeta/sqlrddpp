@@ -568,17 +568,17 @@ static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
       SELF_GOTOP((AREAP)thiswa);
       ((SQLAREAP)thiswa)->firstinteract = HB_FALSE;
     }
-    itemTemp = hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK);
+    itemTemp = hb_itemArrayGet(pTag, SR_AINDEX_INDEX_KEY_CODEBLOCK);
     if (HB_IS_NUMBER(itemTemp)) {
       pKeyVal = hb_itemArrayGet(((SQLAREAP)thiswa)->aBuffer,
-                                hb_arrayGetNL(pTag, INDEX_KEY_CODEBLOCK));
+                                hb_arrayGetNL(pTag, SR_AINDEX_INDEX_KEY_CODEBLOCK));
       len1 =
           (HB_BYTE)hb_strRTrimLen(hb_itemGetCPtr(pKeyVal), hb_itemGetCLen(pKeyVal), HB_FALSE) -
           15;
       val1 = hb_itemGetCPtr(pKeyVal);
     } else {
       HB_EVALINFO info;
-      hb_evalNew(&info, hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK));
+      hb_evalNew(&info, hb_itemArrayGet(pTag, SR_AINDEX_INDEX_KEY_CODEBLOCK));
       pKeyVal = hb_evalLaunch(&info);
       hb_evalRelease(&info);
       len1 = (HB_BYTE)hb_itemGetCLen(pKeyVal);
@@ -2420,7 +2420,7 @@ static HB_ERRCODE sqlOrderListFocus(SQLAREAP thiswa, LPDBORDERINFO pOrderInfo)
   pTag = sr_loadTagDefault(thiswa, SR_NULLPTR, &lorder);
 
   if (pTag) {
-    hb_arrayGet(pTag, ORDER_TAG, pOrderInfo->itmResult);
+    hb_arrayGet(pTag, SR_AINDEX_ORDER_TAG, pOrderInfo->itmResult);
     hb_itemRelease(pTag);
   } else {
     hb_itemPutC(pOrderInfo->itmResult, "");
@@ -2706,7 +2706,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
     case DBOI_CONDITION: {
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
-        pTemp = hb_itemArrayGet(pTag, FOR_CLAUSE);
+        pTemp = hb_itemArrayGet(pTag, SR_AINDEX_FOR_CLAUSE);
         hb_itemCopy(pInfo->itmResult, pTemp);
         hb_itemRelease(pTemp);
         hb_itemRelease(pTag);
@@ -2719,7 +2719,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
 
       if (pTag) {
-        pTemp = hb_itemArrayGet(pTag, INDEX_KEY);
+        pTemp = hb_itemArrayGet(pTag, SR_AINDEX_INDEX_KEY);
         hb_itemCopy(pInfo->itmResult, pTemp);
         hb_itemRelease(pTemp);
         hb_itemRelease(pTag);
@@ -2735,7 +2735,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
     case DBOI_BAGNAME: {
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
-        pTemp = hb_itemArrayGet(pTag, ORDER_NAME);
+        pTemp = hb_itemArrayGet(pTag, SR_AINDEX_ORDER_NAME);
         hb_itemCopy(pInfo->itmResult, pTemp);
         hb_itemRelease(pTemp);
         hb_itemRelease(pTag);
@@ -2747,7 +2747,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
     case DBOI_NAME: {
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
-        pTemp = hb_itemArrayGet(pTag, ORDER_TAG);
+        pTemp = hb_itemArrayGet(pTag, SR_AINDEX_ORDER_TAG);
         hb_itemCopy(pInfo->itmResult, pTemp);
         hb_itemRelease(pTemp);
         hb_itemRelease(pTag);
@@ -2764,7 +2764,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
     case DBOI_ISCOND: {
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
-        pTemp = hb_itemArrayGet(pTag, FOR_CLAUSE);
+        pTemp = hb_itemArrayGet(pTag, SR_AINDEX_FOR_CLAUSE);
         hb_itemPutL(pInfo->itmResult, !HB_IS_NIL(pTemp));
         hb_itemRelease(pTemp);
         hb_itemRelease(pTag);
@@ -2776,16 +2776,16 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
     case DBOI_ISDESC: {
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
-        hb_itemPutL(pInfo->itmResult, hb_arrayGetL(pTag, DESCEND_INDEX_ORDER));
+        hb_itemPutL(pInfo->itmResult, hb_arrayGetL(pTag, SR_AINDEX_DESCEND_INDEX_ORDER));
 
         if (pInfo->itmNewVal && HB_IS_LOGICAL(pInfo->itmNewVal)) {
           hb_itemPutL(pInfo->itmResult, hb_arrayGetL(thiswa->aInfo, SR_AINFO_REVERSE_INDEX));
-          hb_itemPutL(hb_arrayGetItemPtr(pTag, DESCEND_INDEX_ORDER),
+          hb_itemPutL(hb_arrayGetItemPtr(pTag, SR_AINDEX_DESCEND_INDEX_ORDER),
                       hb_itemGetL(pInfo->itmNewVal));
           hb_itemPutL(hb_arrayGetItemPtr(thiswa->aInfo, SR_AINFO_REVERSE_INDEX),
                       hb_itemGetL(pInfo->itmNewVal));
-          hb_arraySetForward(pTag, ORDER_SKIP_UP, hb_itemNew(SR_NULLPTR));
-          hb_arraySetForward(pTag, ORDER_SKIP_DOWN, hb_itemNew(SR_NULLPTR));
+          hb_arraySetForward(pTag, SR_AINDEX_ORDER_SKIP_UP, hb_itemNew(SR_NULLPTR));
+          hb_arraySetForward(pTag, SR_AINDEX_ORDER_SKIP_DOWN, hb_itemNew(SR_NULLPTR));
           hb_itemPutNL(hb_arrayGetItemPtr(thiswa->aInfo, SR_AINFO_BOF_AT), 0);
           hb_itemPutNL(hb_arrayGetItemPtr(thiswa->aInfo, SR_AINFO_EOF_AT), 0);
         }
@@ -2813,7 +2813,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         if (pInfo->itmResult) {
-          pTemp = hb_itemArrayGet(pTag, TOP_SCOPE);
+          pTemp = hb_itemArrayGet(pTag, SR_AINDEX_TOP_SCOPE);
           hb_itemCopy(pInfo->itmResult, pTemp);
           hb_itemRelease(pTemp);
         }
@@ -2830,7 +2830,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         if (pInfo->itmResult) {
-          pTemp = hb_itemArrayGet(pTag, BOTTOM_SCOPE);
+          pTemp = hb_itemArrayGet(pTag, SR_AINDEX_BOTTOM_SCOPE);
           hb_itemCopy(pInfo->itmResult, pTemp);
           hb_itemRelease(pTemp);
         }
@@ -2861,7 +2861,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
         if (pInfo->itmResult) {
-          pTemp = hb_itemArrayGet(pTag, TOP_SCOPE);
+          pTemp = hb_itemArrayGet(pTag, SR_AINDEX_TOP_SCOPE);
           hb_itemCopy(pInfo->itmResult, pTemp);
           hb_itemRelease(pTemp);
         }
@@ -2890,7 +2890,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
           thiswa->firstinteract = HB_FALSE;
         }
 
-        pTemp = hb_itemArrayGet(pTag, INDEX_KEY);
+        pTemp = hb_itemArrayGet(pTag, SR_AINDEX_INDEX_KEY);
         pMacro = hb_macroCompile(hb_itemGetCPtr(pTemp));
         hb_macroRun(pMacro);
         hb_macroDelete(pMacro);
@@ -3024,7 +3024,7 @@ static HB_ERRCODE sqlScopeInfo(SQLAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem
     lorder = hb_itemGetNL(hb_stackReturnItem());
     if (lorder) {
       pTag = hb_itemArrayGet(thiswa->aOrders, (HB_ULONG)lorder);
-      pTemp = hb_itemArrayGet(pTag, nScope ? BOTTOM_SCOPE : TOP_SCOPE);
+      pTemp = hb_itemArrayGet(pTag, nScope ? SR_AINDEX_BOTTOM_SCOPE : SR_AINDEX_TOP_SCOPE);
       hb_itemCopy(pItem, pTemp);
       hb_itemRelease(pTag);
       hb_itemRelease(pTemp);

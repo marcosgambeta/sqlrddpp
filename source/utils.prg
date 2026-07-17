@@ -426,9 +426,9 @@ FUNCTION SR_SetReverseIndex(nIndex, lSet)
    LOCAL lOldSet
 
    IF IS_SQLRDD .AND. nIndex > 0 .AND. nIndex <= Len((Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex)
-      lOldSet := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, DESCEND_INDEX_ORDER]
+      lOldSet := (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, SR_AINDEX_DESCEND_INDEX_ORDER]
       IF HB_IsLogical(lSet)
-         (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, DESCEND_INDEX_ORDER] := lSet
+         (Select())->(dbInfo(DBI_INTERNAL_OBJECT)):aIndex[nIndex, SR_AINDEX_DESCEND_INDEX_ORDER] := lSet
       ENDIF
    ENDIF
 

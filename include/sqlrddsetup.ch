@@ -108,27 +108,27 @@
 
 // aIndex array structure
 
-#define ORDER_ASCEND                   1
-#define ORDER_DESEND                   2
-#define INDEX_FIELDS                   3
-#define INDEX_KEY                      4
-#define FOR_CLAUSE                     5
-#define STR_DESCENDS                   6
-#define SEEK_CODEBLOCK                 7
-#define FOR_CODEBLOCK                  8
-#define ORDER_TAG                      9
-#define ORDER_NAME                    10
-#define TOP_SCOPE                     11
-#define BOTTOM_SCOPE                  12
-#define SCOPE_SQLEXPR                 13
-#define ORDER_SKIP_UP                 14
-#define ORDER_SKIP_DOWN               15
-#define SYNTH_INDEX_COL_POS           16
-#define DESCEND_INDEX_ORDER           17
-#define VIRTUAL_INDEX_NAME            18
-#define VIRTUAL_INDEX_EXPR            19
-#define INDEX_KEY_CODEBLOCK           20
-#define INDEX_PHISICAL_NAME           21
+#define SR_AINDEX_ORDER_ASCEND                   1
+#define SR_AINDEX_ORDER_DESEND                   2
+#define SR_AINDEX_INDEX_FIELDS                   3
+#define SR_AINDEX_INDEX_KEY                      4
+#define SR_AINDEX_FOR_CLAUSE                     5
+#define SR_AINDEX_STR_DESCENDS                   6
+#define SR_AINDEX_SEEK_CODEBLOCK                 7
+#define SR_AINDEX_FOR_CODEBLOCK                  8
+#define SR_AINDEX_ORDER_TAG                      9
+#define SR_AINDEX_ORDER_NAME                    10
+#define SR_AINDEX_TOP_SCOPE                     11
+#define SR_AINDEX_BOTTOM_SCOPE                  12
+#define SR_AINDEX_SCOPE_SQLEXPR                 13
+#define SR_AINDEX_ORDER_SKIP_UP                 14
+#define SR_AINDEX_ORDER_SKIP_DOWN               15
+#define SR_AINDEX_SYNTH_INDEX_COL_POS           16
+#define SR_AINDEX_DESCEND_INDEX_ORDER           17
+#define SR_AINDEX_VIRTUAL_INDEX_NAME            18
+#define SR_AINDEX_VIRTUAL_INDEX_EXPR            19
+#define SR_AINDEX_INDEX_KEY_CODEBLOCK           20
+#define SR_AINDEX_INDEX_PHISICAL_NAME           21
 
 // INDEX_FIELDS component structure
 // Plain column components have only NAME and POS.

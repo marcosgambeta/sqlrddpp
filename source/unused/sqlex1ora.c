@@ -334,7 +334,7 @@ void getOrderByExpressionOra(SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints)
     if (thiswa->sqlarea.hOrdCurrent > 0) {
       pIndexRef =
           hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent);
-      sprintf(thiswa->sOrderBy, "%s", hb_arrayGetCPtr(pIndexRef, INDEX_PHISICAL_NAME));
+      sprintf(thiswa->sOrderBy, "%s", hb_arrayGetCPtr(pIndexRef, SR_AINDEX_INDEX_PHISICAL_NAME));
     } else {
       thiswa->sOrderBy[0] = '\0';
     }
@@ -349,7 +349,7 @@ void getOrderByExpressionOra(SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints)
       pIndexRef =
           hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent);
       sprintf(thiswa->sOrderBy, "\n%s",
-              hb_arrayGetCPtr(pIndexRef, bDirectionFWD ? ORDER_ASCEND : ORDER_DESEND));
+              hb_arrayGetCPtr(pIndexRef, bDirectionFWD ? SR_AINDEX_ORDER_ASCEND : SR_AINDEX_ORDER_DESEND));
     } else {
       // sprintf(thiswa->sOrderBy, "\nORDER BY %c%s%c %s", OPEN_QUALIFIER(thiswa),
       // thiswa->sRecnoName, CLOSE_QUALIFIER(thiswa), bDirectionFWD ? "ASC" : "DESC");
@@ -1069,7 +1069,7 @@ void SolveFiltersOra(SQLEXORAAREAP thiswa, HB_BOOL bWhere)
   if (thiswa->sqlarea.hOrdCurrent > 0) {
     PHB_ITEM pIndexRef =
         hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent);
-    const char *szFilter = hb_arrayGetCPtr(pIndexRef, SCOPE_SQLEXPR);
+    const char *szFilter = hb_arrayGetCPtr(pIndexRef, SR_AINDEX_SCOPE_SQLEXPR);
     if (szFilter && szFilter[0]) {
       if (bWhere) {
         temp = hb_strdup((const char *)thiswa->sWhere);
@@ -1130,7 +1130,7 @@ void SetIndexBindStructureOra(SQLEXORAAREAP thiswa)
   if (thiswa->sqlarea.hOrdCurrent > 0) {
     pIndexRef =
         hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent);
-    pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
+    pColumns = hb_arrayGetItemPtr(pIndexRef, SR_AINDEX_INDEX_FIELDS);
     thiswa->indexColumns = hb_arrayLen(pColumns);
 
     // Alloc memory for binding structures
@@ -2207,7 +2207,7 @@ static HB_BOOL CreateSkipStmtOra(SQLEXORAAREAP thiswa)
     if (thiswa->sqlarea.hOrdCurrent > 0) {
       pIndexRef =
           hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent);
-      pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
+      pColumns = hb_arrayGetItemPtr(pIndexRef, SR_AINDEX_INDEX_FIELDS);
       thiswa->indexColumns = hb_arrayLen(pColumns);
     } else {
       thiswa->indexColumns = 1; // Natural order, RECNO
@@ -2887,7 +2887,7 @@ static HB_ERRCODE sqlExOraSkipRaw(SQLEXORAAREAP thiswa, HB_LONG lToSkip)
     if (thiswa->sqlarea.hOrdCurrent > 0) {
       thiswa->indexColumns = hb_arrayLen(hb_arrayGetItemPtr(
           hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent),
-          INDEX_FIELDS));
+          SR_AINDEX_INDEX_FIELDS));
     } else {
       thiswa->indexColumns = 1; // Natural order, RECNO
     }
@@ -3766,7 +3766,7 @@ static HB_ERRCODE sqlExOraOrderListFocus(SQLEXORAAREAP thiswa, LPDBORDERINFO pOr
   if (thiswa->sqlarea.hOrdCurrent > 0) {
     thiswa->indexColumns = hb_arrayLen(hb_arrayGetItemPtr(
         hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent),
-        INDEX_FIELDS));
+        SR_AINDEX_INDEX_FIELDS));
     bOldReverseIndex = thiswa->bReverseIndex;
     thiswa->bReverseIndex = hb_arrayGetL(thiswa->sqlarea.aInfo, SR_AINFO_REVERSE_INDEX);
     if (thiswa->IndexBindings[thiswa->sqlarea.hOrdCurrent]) {
@@ -4228,7 +4228,7 @@ static int sqlKeyCompareEx(SQLEXORAAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
       thiswa->sqlarea.firstinteract = 0;
     }
 
-    itemTemp = hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK);
+    itemTemp = hb_itemArrayGet(pTag, SR_AINDEX_INDEX_KEY_CODEBLOCK);
     // if (pTag) {
     //   EVALINFO info;
     //   hb_evalNew(&info, hb_itemArrayGet(pTag, SR_INDEXMAN_KEY_CODEBLOCK));
@@ -4238,12 +4238,12 @@ static int sqlKeyCompareEx(SQLEXORAAREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 
     if (HB_IS_NUMBER(itemTemp)) {
       pKeyVal = hb_itemArrayGet(thiswa->sqlarea.aBuffer,
-                                hb_arrayGetNL(pTag, INDEX_KEY_CODEBLOCK) - 2);
+                                hb_arrayGetNL(pTag, SR_AINDEX_INDEX_KEY_CODEBLOCK) - 2);
       len1 = hb_strRTrimLen(hb_itemGetCPtr(pKeyVal), hb_itemGetCLen(pKeyVal), HB_FALSE) - 15;
       val1 = hb_itemGetCPtr(pKeyVal);
     } else {
       EVALINFO info;
-      hb_evalNew(&info, hb_itemArrayGet(pTag, INDEX_KEY_CODEBLOCK));
+      hb_evalNew(&info, hb_itemArrayGet(pTag, SR_AINDEX_INDEX_KEY_CODEBLOCK));
       pKeyVal = hb_evalLaunch(&info);
       hb_evalRelease(&info);
       len1 = hb_itemGetCLen(pKeyVal);

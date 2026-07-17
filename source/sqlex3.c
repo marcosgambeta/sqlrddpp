@@ -321,7 +321,7 @@ HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
       (thiswa->recordListDirection == LIST_BACKWARD && (!SeekBind->SeekBwdStmt))) {
 
     pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent);
-    pColumns = hb_arrayGetItemPtr(pIndexRef, INDEX_FIELDS);
+    pColumns = hb_arrayGetItemPtr(pIndexRef, SR_AINDEX_INDEX_FIELDS);
     thiswa->indexColumns = (int)hb_arrayLen(pColumns);
 
     // Free the statements we are about to recreate
