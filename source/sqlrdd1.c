@@ -2798,7 +2798,7 @@ static HB_ERRCODE sqlOrderInfo(SQLAREAP thiswa, HB_USHORT uiIndex, LPDBORDERINFO
     case DBOI_UNIQUE: {
       pTag = sr_loadTagDefault(thiswa, pInfo, &lorder);
       if (pTag) {
-        hb_itemPutL(pInfo->itmResult, hb_arrayGetL(pTag, AORDER_UNIQUE));
+        hb_itemPutL(pInfo->itmResult, hb_arrayGetL(pTag, SR_AORDER_UNIQUE));
         hb_itemRelease(pTag);
       } else {
         hb_itemPutL(pInfo->itmResult, HB_FALSE);

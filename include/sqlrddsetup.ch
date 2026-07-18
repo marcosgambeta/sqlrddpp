@@ -142,10 +142,10 @@
 #define IDXFLD_LEN                     5
 #define IDXFLD_XFORM                   6
 
-#define AORDER_NAME                    1
-#define AORDER_FOR                     2
-#define AORDER_TYPE                    3
-#define AORDER_UNIQUE                  4
+#define SR_AORDER_NAME                    1
+#define SR_AORDER_FOR                     2
+#define SR_AORDER_TYPE                    3
+#define SR_AORDER_UNIQUE                  4
 
 #define CACHEINFO_LEN                 13
 #define CACHEINFO_TABINFO              1
