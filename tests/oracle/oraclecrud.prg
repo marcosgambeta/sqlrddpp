@@ -129,6 +129,7 @@ PROCEDURE Main()
          EXIT
       CASE K_PGDN
          oTB:PageDown()
+         EXIT
       CASE K_INS
          addrecord()
          oTB:RefreshAll()
