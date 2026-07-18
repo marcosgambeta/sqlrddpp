@@ -1472,29 +1472,29 @@ METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
       IF lCheck4ExcLock
 
          // Step 1: Try to create a LOCK to check If someone have this table EXCLUSIVE
-         // Lock format is: EXCLUSIVE_TABLE_LOCK_SIGN + TableName
+         // Lock format is: SR_EXCLUSIVE_TABLE_LOCK_SIGN + TableName
 
-         lRet := SR_SetLocks(EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql, 4)
+         lRet := SR_SetLocks(SR_EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql, 4)
 
          // Step 2: If LOCK acquired, RELEASE IT and return TRUE, else LOOP
 
          IF lRet
             // Ok, nobody have it EXCLUSIVE !
-            SR_ReleaseLocks(EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
+            SR_ReleaseLocks(SR_EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
          ENDIF
 
       ELSE
 
          // Try to create a LOCK to this table
-         // Lock format is: EXCLUSIVE_TABLE_LOCK_SIGN + TableName
+         // Lock format is: SR_EXCLUSIVE_TABLE_LOCK_SIGN + TableName
          // IF LOCK acquired, return TRUE. Lock MUST be removed at workarea close
 
          IF lFLock
-            lRet := SR_SetLocks(FLOCK_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql, 4)
+            lRet := SR_SetLocks(SR_FLOCK_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql, 4)
          ELSE
-            lRet := SR_SetLocks({FLOCK_TABLE_LOCK_SIGN + Upper(::cFileName), ;
-               EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), ;
-               SHARED_TABLE_LOCK_SIGN + Upper(::cFileName)}, ::oSql, 4)
+            lRet := SR_SetLocks({SR_FLOCK_TABLE_LOCK_SIGN + Upper(::cFileName), ;
+               SR_EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), ;
+               SR_SHARED_TABLE_LOCK_SIGN + Upper(::cFileName)}, ::oSql, 4)
          ENDIF
 
       ENDIF
@@ -1535,7 +1535,7 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
       RETURN .F. // USE EXCLUSIVE cannot be released until file is closed
    ENDIF
 
-   SR_ReleaseLocks({EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), FLOCK_TABLE_LOCK_SIGN + Upper(::cFileName)}, ::oSql)
+   SR_ReleaseLocks({SR_EXCLUSIVE_TABLE_LOCK_SIGN + Upper(::cFileName), SR_FLOCK_TABLE_LOCK_SIGN + Upper(::cFileName)}, ::oSql)
 
    ::lTableLocked := .F.
    nPos := AScan(::aExclusive, {|x|x[1] == ::nThisArea})
@@ -4554,7 +4554,7 @@ METHOD SR_WORKAREA:sqlClose()
             ::UnlockTable(.T.)
          ENDIF
          IF ::lSharedLock .AND. ::lOpened
-            SR_ReleaseLocks(SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
+            SR_ReleaseLocks(SR_SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
          ENDIF
       ENDIF
    ENDIF
@@ -5315,7 +5315,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
         IF !::LockTable(.T.)   // Test If can Lock the file for a moment in current ID
             ::lOpened := .F.
          ELSE
-            ::lSharedLock := SR_SetLocks(SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
+            ::lSharedLock := SR_SetLocks(SR_SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
          ENDIF
       ENDIF
 
@@ -6693,9 +6693,9 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                   IF Len(AllTrim(cPart)) < nThis .AND. nScoping == BOTTOMSCOPE
                      IF Empty(AllTrim(cPart))
-                        cPart := " " + LAST_CHAR
+                        cPart := " " + SR_LAST_CHAR
                      ELSE
-                        cPart := AllTrim(cPart) + LAST_CHAR
+                        cPart := AllTrim(cPart) + SR_LAST_CHAR
                      ENDIF
                   ENDIF
 
@@ -6755,12 +6755,12 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                      IF IsNull(::aQuoted[i])
                         IF cSep == " >= " .OR. cSep == " <= "
-                           cExpr += IIf(nFeitos > 1," AND ", "") + cNam + cSep + " ' " + IIf(cSep == " <= ", LAST_CHAR, "") + "' "
+                           cExpr += IIf(nFeitos > 1," AND ", "") + cNam + cSep + " ' " + IIf(cSep == " <= ", SR_LAST_CHAR, "") + "' "
                            AAdd(aNulls, cNam)
                         ELSEIF cSep == " = "
                            AAdd(aNulls, cNam)
                         ELSE
-                           cExpr += IIf(nFeitos > 1, " AND ", "") + cNam + cSep + " ' " + LAST_CHAR + "' "
+                           cExpr += IIf(nFeitos > 1, " AND ", "") + cNam + cSep + " ' " + SR_LAST_CHAR + "' "
                            AAdd(aNotNulls, cNam)
                         ENDIF
                      ELSE

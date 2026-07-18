@@ -176,10 +176,10 @@
 #define SR_LONG_LIST                      0 // not used in sqlrdd code
 #define SR_SHORT_LIST                     1 // not used in sqlrdd code
 
-#define EXCLUSIVE_TABLE_LOCK_SIGN   "SQL_EXCLUSIVE_TABLE_$_"
-#define FLOCK_TABLE_LOCK_SIGN       "SQL_FLOCK_TABLE_$_"
-#define SHARED_TABLE_LOCK_SIGN      "SQL_SHARED_TABLE_$_"
-#define LAST_CHAR                   "z"
+#define SR_EXCLUSIVE_TABLE_LOCK_SIGN   "SQL_EXCLUSIVE_TABLE_$_"
+#define SR_FLOCK_TABLE_LOCK_SIGN       "SQL_FLOCK_TABLE_$_"
+#define SR_SHARED_TABLE_LOCK_SIGN      "SQL_SHARED_TABLE_$_"
+#define SR_LAST_CHAR                   "z"
 
 #define ARRAY_BLOCK1      1
 #define ARRAY_BLOCK2      10

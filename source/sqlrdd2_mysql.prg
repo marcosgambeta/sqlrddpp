@@ -4071,7 +4071,7 @@ METHOD SR_WORKAREA:sqlClose()
             ::UnlockTable(.T.)
          ENDIF
          IF ::lSharedLock .AND. ::lOpened
-            SR_ReleaseLocks(SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
+            SR_ReleaseLocks(SR_SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
          ENDIF
       ENDIF
    ENDIF
@@ -4854,7 +4854,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
         IF !::LockTable(.T.)   // Test If can Lock the file for a moment in current ID
             ::lOpened := .F.
          ELSE
-            ::lSharedLock := SR_SetLocks(SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
+            ::lSharedLock := SR_SetLocks(SR_SHARED_TABLE_LOCK_SIGN + Upper(::cFileName), ::oSql)
          ENDIF
       ENDIF
 
@@ -6129,9 +6129,9 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                   IF Len(AllTrim(cPart)) < nThis .AND. nScoping == BOTTOMSCOPE
                      IF Empty(AllTrim(cPart))
-                        cPart := " " + LAST_CHAR
+                        cPart := " " + SR_LAST_CHAR
                      ELSE
-                        cPart := AllTrim(cPart) + LAST_CHAR
+                        cPart := AllTrim(cPart) + SR_LAST_CHAR
                      ENDIF
                   ENDIF
 
@@ -6191,12 +6191,12 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                      IF IsNull(::aQuoted[i])
                         IF cSep == " >= " .OR. cSep == " <= "
-                           cExpr += IIf(nFeitos > 1," AND ", "") + cNam + cSep + " ' " + IIf(cSep == " <= ", LAST_CHAR, "") + "' "
+                           cExpr += IIf(nFeitos > 1," AND ", "") + cNam + cSep + " ' " + IIf(cSep == " <= ", SR_LAST_CHAR, "") + "' "
                            AAdd(aNulls, cNam)
                         ELSEIF cSep == " = "
                            AAdd(aNulls, cNam)
                         ELSE
-                           cExpr += IIf(nFeitos > 1, " AND ", "") + cNam + cSep + " ' " + LAST_CHAR + "' "
+                           cExpr += IIf(nFeitos > 1, " AND ", "") + cNam + cSep + " ' " + SR_LAST_CHAR + "' "
                            AAdd(aNotNulls, cNam)
                         ENDIF
                      ELSE
