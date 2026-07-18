@@ -384,7 +384,7 @@ RETURN NIL
 
 METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRecords, lNoRecno, cRecnoName, cDeletedName, lTranslate, nLogMode, cType)
 
-   LOCAL nRet := 0
+   LOCAL nRet //:= 0 (value not used)
    LOCAL i
    LOCAL j
    LOCAL n
@@ -393,15 +393,15 @@ METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRec
    LOCAL aDb
    LOCAL nFieldRec
    LOCAL aFields
-   LOCAL nBlocks
-   LOCAL nAllocated := 0
+   //LOCAL nBlocks (variable not used)
+   LOCAL nAllocated //:= 0 (value not used)
    LOCAL nLenMemo
    LOCAL nLinesMemo
    LOCAL aMemo
    LOCAL cFileTemp
 
-   HB_SYMBOL_UNUSED(nRet)
-   HB_SYMBOL_UNUSED(nAllocated)
+   //HB_SYMBOL_UNUSED(nRet)
+   //HB_SYMBOL_UNUSED(nAllocated)
 
    DEFAULT nLogMode TO ::nLogMode
    DEFAULT cType TO SQLLOGCHANGES_TYPE_DML
@@ -434,221 +434,220 @@ METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRec
 
    IF cCommand == NIL
       RETURN SQL_ERROR
-   ELSE
-      ::cLastComm := cCommand
+   ENDIF
 
-      IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[6] == "1" .AND. ((!Upper(SubStr(LTrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK)
-         ::LogQuery(cCommand, cType, nLogMode)
-      ENDIF
+   ::cLastComm := cCommand
 
-      ::AllocStatement()
-      ::nMiliseconds := Seconds() * 100
-      nRet := ::ExecuteRaw(cCommand)
+   IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[6] == "1" .AND. ((!Upper(SubStr(LTrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK)
+      ::LogQuery(cCommand, cType, nLogMode)
+   ENDIF
 
-      IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[5] == "1" .AND. ((!Upper(SubStr(LTrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK)
-         ::LogQuery(cCommand, cType, nLogMode)
-      ENDIF
+   ::AllocStatement()
+   ::nMiliseconds := Seconds() * 100
+   nRet := ::ExecuteRaw(cCommand)
 
-      lFetch := lFetch .AND. ::lResultSet
+   IF nLogMode > 0 .AND. StrZero(nLogMode, SQLLOGCHANGES_SIZE)[5] == "1" .AND. ((!Upper(SubStr(LTrim(cCommand), 1, 6)) $ "SELECT,") .OR. cType == SQLLOGCHANGES_TYPE_LOCK)
+      ::LogQuery(cCommand, cType, nLogMode)
+   ENDIF
 
-      IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ Upper(cCommand) .OR. "UPDATE " $ Upper(Left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
+   lFetch := lFetch .AND. ::lResultSet
 
-         ::nRetCode := nRet
-         ::cSQLError := ""
-         IF lMsg
-            IF Len(cCommand) > 10000
-               ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
-                  "Command sent to database : " + SR_CRLF + SubStr(cCommand, 1, 2000) + ;
-                  " ... (command too long to display here)")
-            ELSE
-               ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
-                  "Command sent to database : " + SR_CRLF + cCommand)
-            ENDIF
+   IF nRet != SQL_SUCCESS .AND. nRet != SQL_SUCCESS_WITH_INFO .AND. (!(("DELETE FROM " $ Upper(cCommand) .OR. "UPDATE " $ Upper(Left(cCommand, 7))) .AND. nRet == SQL_NO_DATA_FOUND))
+
+      ::nRetCode := nRet
+      ::cSQLError := ""
+      IF lMsg
+         IF Len(cCommand) > 10000
+            ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+               "Command sent to database : " + SR_CRLF + SubStr(cCommand, 1, 2000) + ;
+               " ... (command too long to display here)")
          ELSE
-            ::cSQLError := ::LastError()
+            ::RunTimeErr("", "SQLExecDirect Error" + SR_CRLF + ::LastError() + SR_CRLF + ;
+               "Command sent to database : " + SR_CRLF + cCommand)
          ENDIF
       ELSE
+         ::cSQLError := ::LastError()
+      ENDIF
+   ELSE
 
-         ::nRetCode := nRet
-         ::nMiliseconds := (Seconds() * 100) - ::nMiliseconds
+      ::nRetCode := nRet
+      ::nMiliseconds := (Seconds() * 100) - ::nMiliseconds
 
-         IF ::nMiliseconds > ::nTimeTraceMin
-            SR_WriteTimeLog(cCommand, SELF, ::nMiliseconds)
-         ENDIF
-
-         IF lFetch
-            IF !Empty(cFile)
-
-               aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
-
-               IF Select(cAlias) == 0
-                  aDb := {}
-                  IF lNoRecno
-                     FOR i := 1 TO Len(aFields)
-                        IF aFields[i, 1] != cRecnoName
-                           AAdd(aDb, aFields[i])
-                        ELSE
-                           nFieldRec := i
-                        ENDIF
-                     NEXT i
-                     DBCreate(cFile, SR_AdjustNum(aDb), SR_SetRDDTemp())
-                  ELSE
-                     DBCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
-                  ENDIF
-
-                  DBUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
-               ELSE
-                  DBSelectArea(cAlias)
-               ENDIF
-
-               n := 1
-
-               DO WHILE n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
-
-                  APPEND BLANK
-
-                  IF nFieldRec == NIL
-                     FOR i := 1 TO Len(aFields)
-                        FieldPut(i, ::FieldGet(i, aFields, lTranslate))
-                     NEXT i
-                  ELSE
-                     FOR i := 1 TO Len(aFields)
-                        DO CASE
-                        CASE i == nFieldRec
-                           ::FieldGet(i, aFields, lTranslate)
-                        CASE i > nFieldRec
-                           FieldPut(i - 1, ::FieldGet(i, aFields, lTranslate))
-                        CASE i < nFieldRec
-                           FieldPut(i, ::FieldGet(i, aFields, lTranslate))
-                        ENDCASE
-                     NEXT i
-                  ENDIF
-
-                  n++
-
-               ENDDO
-
-               DBGoTop()
-
-            ELSEIF aArray == NIL
-
-               ::cResult := ""
-               n := 0
-               aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
-
-               FOR i := 1 TO Len(aFields)
-                  ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30)), Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
-               NEXT i
-
-               ::cResult += SR_CRLF
-               aMemo := Array(Len(aFields))
-
-               DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
-
-                  cEste := ""
-                  nLenMemo := 0
-                  nLinesMemo := 0
-
-                  FOR i := 1 TO Len(aFields)
-                     cCampo := ::FieldGet(i, aFields, lTranslate)
-                     IF aFields[i, 2] == "M"
-                        nLenMemo := Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30))
-                        nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
-                        cEste += memoline(cCampo, nLenMemo, 1) + " "
-                        aMemo[i] := cCampo
-                     ELSE
-                        cEste += PadR(SR_Val2Char(cCampo), Max(Len(aFields[i, 1]), aFields[i, 3])) + " "
-                     ENDIF
-                  NEXT i
-
-                  ::cResult += cEste + SR_CRLF
-                  n++
-
-                  IF ::lShowTxtMemo .AND. nLinesMemo > 1
-                     FOR j := 2 TO nLinesMemo
-                        cEste := ""
-                        FOR i := 1 TO Len(aFields)
-                           IF aFields[i, 2] == "M"
-                              cEste += memoline(aMemo[i], nLenMemo, j) + " "
-                           ELSE
-                              cEste += Space(Max(Len(aFields[i, 1]), aFields[i, 3])) + " "
-                           ENDIF
-                        NEXT i
-                        ::cResult += cEste + SR_CRLF
-                        n++
-                     NEXT j
-                  ENDIF
-
-               ENDDO
-
-            ELSE      // Retorno deve ser para Array !
-
-               //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
-
-               IF HB_IsArray(aArray)
-                  IF Len(aArray) == 0
-                     ASize(aArray, ARRAY_BLOCK1)
-                     nAllocated := ARRAY_BLOCK1
-                  ELSE
-                     nAllocated := Len(aArray)
-                  ENDIF
-               ELSE
-                  aArray := Array(ARRAY_BLOCK1)
-                  nAllocated := ARRAY_BLOCK1
-               ENDIF
-
-               nBlocks := 1
-               n := 0
-               aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
-
-               DO WHILE (::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS
-                  n++
-                  IF n > nAllocated
-                     SWITCH nAllocated
-                     CASE ARRAY_BLOCK1
-                        nAllocated := ARRAY_BLOCK2
-                        EXIT
-                     CASE ARRAY_BLOCK2
-                        nAllocated := ARRAY_BLOCK3
-                        EXIT
-                     CASE ARRAY_BLOCK3
-                        nAllocated := ARRAY_BLOCK4
-                        EXIT
-                     CASE ARRAY_BLOCK4
-                        nAllocated := ARRAY_BLOCK5
-                        EXIT
-                     SR_OTHERWISE
-                        nAllocated += ARRAY_BLOCK5
-                     ENDSWITCH
-
-                     ASize(aArray, nAllocated)
-                  ENDIF
-
-                  aArray[n] := Array(Len(aFields))
-                  FOR i := 1 TO Len(aFields)
-                     aArray[n, i] := ::FieldGet(i, aFields, lTranslate)
-                  NEXT i
-                  IF n > nMaxRecords
-                     EXIT
-                  ENDIF
-               ENDDO
-               ASize(aArray, n)
-            ENDIF
-         ENDIF
-
-         IF ::nAutoCommit > 0 .AND. Upper(SubStr(LTrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
-            IF (++::nIteractions) >= ::nAutoCommit .AND. ::nTransacCount == 0
-               ::Commit()
-            ENDIF
-         ENDIF
-
+      IF ::nMiliseconds > ::nTimeTraceMin
+         SR_WriteTimeLog(cCommand, SELF, ::nMiliseconds)
       ENDIF
 
-      ::FreeStatement()
+      IF lFetch
+         IF !Empty(cFile)
+
+            aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
+
+            IF Select(cAlias) == 0
+               aDb := {}
+               IF lNoRecno
+                  FOR i := 1 TO Len(aFields)
+                     IF aFields[i, 1] != cRecnoName
+                        AAdd(aDb, aFields[i])
+                     ELSE
+                        nFieldRec := i
+                     ENDIF
+                  NEXT i
+                  DBCreate(cFile, SR_AdjustNum(aDb), SR_SetRDDTemp())
+               ELSE
+                  DBCreate(cFile, SR_AdjustNum(aFields), SR_SetRDDTemp())
+               ENDIF
+
+               DBUseArea(.T., SR_SetRDDTemp(), cFile, cAlias, .F.)
+            ELSE
+               DBSelectArea(cAlias)
+            ENDIF
+
+            n := 1
+
+            DO WHILE n <= nMaxRecords .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
+
+               APPEND BLANK
+
+               IF nFieldRec == NIL
+                  FOR i := 1 TO Len(aFields)
+                     FieldPut(i, ::FieldGet(i, aFields, lTranslate))
+                  NEXT i
+               ELSE
+                  FOR i := 1 TO Len(aFields)
+                     DO CASE
+                     CASE i == nFieldRec
+                        ::FieldGet(i, aFields, lTranslate)
+                     CASE i > nFieldRec
+                        FieldPut(i - 1, ::FieldGet(i, aFields, lTranslate))
+                     CASE i < nFieldRec
+                        FieldPut(i, ::FieldGet(i, aFields, lTranslate))
+                     ENDCASE
+                  NEXT i
+               ENDIF
+
+               n++
+
+            ENDDO
+
+            DBGoTop()
+
+         ELSEIF aArray == NIL
+
+            ::cResult := ""
+            n := 0
+            aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
+
+            FOR i := 1 TO Len(aFields)
+               ::cResult += PadR(aFields[i, 1], IIf(aFields[i, 2] == "M", Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30)), Max(Len(aFields[i, 1]), aFields[i, 3])), "-") + " "
+            NEXT i
+
+            ::cResult += SR_CRLF
+            aMemo := Array(Len(aFields))
+
+            DO WHILE n <= ::nMaxTextLines .AND. ((::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS)
+
+               cEste := ""
+               nLenMemo := 0
+               nLinesMemo := 0
+
+               FOR i := 1 TO Len(aFields)
+                  cCampo := ::FieldGet(i, aFields, lTranslate)
+                  IF aFields[i, 2] == "M"
+                     nLenMemo := Max(Len(aFields[i, 1]), IIf(::lShowTxtMemo, 79, 30))
+                     nLinesMemo := Max(mlCount(cCampo, nLenMemo), nLinesMemo)
+                     cEste += memoline(cCampo, nLenMemo, 1) + " "
+                     aMemo[i] := cCampo
+                  ELSE
+                     cEste += PadR(SR_Val2Char(cCampo), Max(Len(aFields[i, 1]), aFields[i, 3])) + " "
+                  ENDIF
+               NEXT i
+
+               ::cResult += cEste + SR_CRLF
+               n++
+
+               IF ::lShowTxtMemo .AND. nLinesMemo > 1
+                  FOR j := 2 TO nLinesMemo
+                     cEste := ""
+                     FOR i := 1 TO Len(aFields)
+                        IF aFields[i, 2] == "M"
+                           cEste += memoline(aMemo[i], nLenMemo, j) + " "
+                        ELSE
+                           cEste += Space(Max(Len(aFields[i, 1]), aFields[i, 3])) + " "
+                        ENDIF
+                     NEXT i
+                     ::cResult += cEste + SR_CRLF
+                     n++
+                  NEXT j
+               ENDIF
+
+            ENDDO
+
+         ELSE      // Retorno deve ser para Array !
+
+            //AsizeAlloc(aArray, 300) // TODO: ASIZEALLOC does nothing in Harbour
+
+            IF HB_IsArray(aArray)
+               IF Len(aArray) == 0
+                  ASize(aArray, ARRAY_BLOCK1)
+                  nAllocated := ARRAY_BLOCK1
+               ELSE
+                  nAllocated := Len(aArray)
+               ENDIF
+            ELSE
+               aArray := Array(ARRAY_BLOCK1)
+               nAllocated := ARRAY_BLOCK1
+            ENDIF
+
+            //nBlocks := 1 (variable and value not used)
+            n := 0
+            aFields := ::IniFields(.F.,,,,, cRecnoName, cDeletedName)
+
+            DO WHILE (::nRetCode := ::Fetch(, lTranslate)) == SQL_SUCCESS
+               n++
+               IF n > nAllocated
+                  SWITCH nAllocated
+                  CASE ARRAY_BLOCK1
+                     nAllocated := ARRAY_BLOCK2
+                     EXIT
+                  CASE ARRAY_BLOCK2
+                     nAllocated := ARRAY_BLOCK3
+                     EXIT
+                  CASE ARRAY_BLOCK3
+                     nAllocated := ARRAY_BLOCK4
+                     EXIT
+                  CASE ARRAY_BLOCK4
+                     nAllocated := ARRAY_BLOCK5
+                     EXIT
+                  SR_OTHERWISE
+                     nAllocated += ARRAY_BLOCK5
+                  ENDSWITCH
+
+                  ASize(aArray, nAllocated)
+               ENDIF
+
+               aArray[n] := Array(Len(aFields))
+               FOR i := 1 TO Len(aFields)
+                  aArray[n, i] := ::FieldGet(i, aFields, lTranslate)
+               NEXT i
+               IF n > nMaxRecords
+                  EXIT
+               ENDIF
+            ENDDO
+            ASize(aArray, n)
+         ENDIF
+      ENDIF
+
+      IF ::nAutoCommit > 0 .AND. Upper(SubStr(LTrim(cCommand), 1, 6)) $ "UPDATE,INSERT,DELETE"
+         IF (++::nIteractions) >= ::nAutoCommit .AND. ::nTransacCount == 0
+            ::Commit()
+         ENDIF
+      ENDIF
 
    ENDIF
 
-   HB_SYMBOL_UNUSED(nBlocks)
+   ::FreeStatement()
+
+   //HB_SYMBOL_UNUSED(nBlocks)
 
 RETURN nRet
 
@@ -658,7 +657,7 @@ RETURN SQL_SUCCESS
 METHOD SR_CONNECTION:Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog)
 
    LOCAL nRet := 0
-   
+
    HB_SYMBOL_UNUSED(nRet)
 
    DEFAULT lErrMsg TO .T.
