@@ -275,7 +275,7 @@ typedef struct _SQLEXAREA
   char *deletedList;           // deleted list relative to record list
   int recordListPos;           // record list position
   int recordListSize;          // record list size
-  int recordListDirection;     // LIST_FORWARD or LIST_BACKWARD
+  int recordListDirection;     // SR_LIST_FORWARD or SR_LIST_BACKWARD
   int iTCCompat;               // Top Connect compatible
 
   int indexColumns; // current index column list lenght

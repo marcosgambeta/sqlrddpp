@@ -108,8 +108,8 @@ static HB_ERRCODE getSeekWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType,
   // Nao necessario esta aqui, fazia com que fosse para o ultimo item da chave
   // SeekBind += (queryLevel - 1); // place offset
 
-  thiswa->recordListDirection = (iListType == LIST_SKIP_FWD ? LIST_FORWARD : LIST_BACKWARD);
-  bDirectionFWD = iListType == LIST_SKIP_FWD;
+  thiswa->recordListDirection = (iListType == SR_LIST_SKIP_FWD ? SR_LIST_FORWARD : SR_LIST_BACKWARD);
+  bDirectionFWD = iListType == SR_LIST_SKIP_FWD;
 
   if (thiswa->bReverseIndex) {
     bDirectionFWD = !bDirectionFWD;
@@ -132,7 +132,7 @@ static HB_ERRCODE getSeekWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType,
                 BindStructure->colName, CLOSE_QUALIFIER(thiswa));
         hb_xfree(temp);
       } else {
-        if (iCol == queryLevel && iListType == LIST_SKIP_FWD) {
+        if (iCol == queryLevel && iListType == SR_LIST_SKIP_FWD) {
           // This condition should create a WHERE clause like "COLUMN >= NULL".
           // Since this is not numeric, EVERYTHING is greater
           // or equal to NULL, so we do not add any restriction to WHERE clause.
@@ -170,13 +170,13 @@ HB_ERRCODE prepareSeekQueryOra(SQLEXORAAREAP thiswa, INDEXBINDORAP SeekBind)
   // res = SQLAllocStmt((HDBC) thiswa->hDbc, &hPrep);
   // hPrep = OCI_StatementCreate(GetConnection(thiswa->hDbc));
 
-  if (thiswa->recordListDirection == LIST_FORWARD) {
+  if (thiswa->recordListDirection == SR_LIST_FORWARD) {
     SeekBind->SeekFwdStmt = OCI_StatementCreate(GetConnection(thiswa->hDbc));
   } else {
     SeekBind->SeekBwdStmt = OCI_StatementCreate(GetConnection(thiswa->hDbc));
   }
 
-  if (thiswa->recordListDirection == LIST_FORWARD) {
+  if (thiswa->recordListDirection == SR_LIST_FORWARD) {
     if (SeekBind->SeekFwdStmt == SR_NULLPTR) {
       return HB_FAILURE;
     }
@@ -189,17 +189,17 @@ HB_ERRCODE prepareSeekQueryOra(SQLEXORAAREAP thiswa, INDEXBINDORAP SeekBind)
   // if (hPrep == NULL) {
   //   return HB_FAILURE;
   // }
-  OCI_AllowRebinding(thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt
+  OCI_AllowRebinding(thiswa->recordListDirection == SR_LIST_FORWARD ? SeekBind->SeekFwdStmt
                                                                  : SeekBind->SeekBwdStmt,
                      1);
 
-  if (!OCI_Prepare(thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt
+  if (!OCI_Prepare(thiswa->recordListDirection == SR_LIST_FORWARD ? SeekBind->SeekFwdStmt
                                                                : SeekBind->SeekBwdStmt,
                    thiswa->sSql)) {
     return HB_FAILURE;
   }
 
-  if (thiswa->recordListDirection == LIST_FORWARD) {
+  if (thiswa->recordListDirection == SR_LIST_FORWARD) {
     memset(&SeekBind->SeekFwdSql, 0, PREPARED_SQL_LEN);
     hb_xmemcpy(SeekBind->SeekFwdSql, thiswa->sSql, PREPARED_SQL_LEN - 1);
     SeekBind->SeekFwdSql[PREPARED_SQL_LEN - 1] = '\0';
@@ -235,8 +235,8 @@ HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
   // Check if stmt must be created or recreated
 
   if (thiswa->bConditionChanged2 || thiswa->bRebuildSeekQuery ||
-      (thiswa->recordListDirection == LIST_FORWARD && (!SeekBind->SeekFwdStmt)) ||
-      (thiswa->recordListDirection == LIST_BACKWARD && (!SeekBind->SeekBwdStmt))) {
+      (thiswa->recordListDirection == SR_LIST_FORWARD && (!SeekBind->SeekFwdStmt)) ||
+      (thiswa->recordListDirection == SR_LIST_BACKWARD && (!SeekBind->SeekBwdStmt))) {
 
     pIndexRef =
         hb_arrayGetItemPtr(thiswa->sqlarea.aOrders, (HB_ULONG)thiswa->sqlarea.hOrdCurrent);
@@ -256,7 +256,7 @@ HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
     }
 
     getSeekWhereExpressionOra(
-        thiswa, thiswa->recordListDirection == LIST_FORWARD ? LIST_SKIP_FWD : LIST_SKIP_BWD,
+        thiswa, thiswa->recordListDirection == SR_LIST_FORWARD ? SR_LIST_SKIP_FWD : SR_LIST_SKIP_BWD,
         queryLevel, &bUseOptimizerHints);
     getOrderByExpressionOra(thiswa, bUseOptimizerHints);
     setResultSetLimitOra(thiswa, 1);
@@ -529,10 +529,10 @@ void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
   // removed, this line bellow make the data be the last field name
   // SeekBind += (queryLevel - 1); // place offset
 
-  hStmt = thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt
+  hStmt = thiswa->recordListDirection == SR_LIST_FORWARD ? SeekBind->SeekFwdStmt
                                                       : SeekBind->SeekBwdStmt;
   sSql =
-      thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdSql : SeekBind->SeekBwdSql;
+      thiswa->recordListDirection == SR_LIST_FORWARD ? SeekBind->SeekFwdSql : SeekBind->SeekBwdSql;
   SeekBindParam = thiswa->IndexBindings[thiswa->sqlarea.hOrdCurrent];
   iBind = 1;
 
@@ -640,7 +640,7 @@ HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, HB_USHORT *i
   // SeekBind += (queryLevel - 1); // place offset
   HB_SYMBOL_UNUSED(queryLevel);
 
-  *hStmt = thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdStmt
+  *hStmt = thiswa->recordListDirection == SR_LIST_FORWARD ? SeekBind->SeekFwdStmt
                                                        : SeekBind->SeekBwdStmt;
 
   // res = SQLExecute(*hStmt);
@@ -704,7 +704,7 @@ HB_ERRCODE FeedSeekStmtOra(SQLEXORAAREAP thiswa, int queryLevel)
   SeekBind = thiswa->IndexBindings[thiswa->sqlarea.hOrdCurrent];
 
   sSql =
-      thiswa->recordListDirection == LIST_FORWARD ? SeekBind->SeekFwdSql : SeekBind->SeekBwdSql;
+      thiswa->recordListDirection == SR_LIST_FORWARD ? SeekBind->SeekFwdSql : SeekBind->SeekBwdSql;
 
   SeekBindParam = thiswa->IndexBindings[thiswa->sqlarea.hOrdCurrent];
 

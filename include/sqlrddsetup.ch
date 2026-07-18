@@ -162,20 +162,19 @@
 #define SR_CACHEINFO_HNCOLPK             12
 #define SR_CACHEINFO_ANAMES_LOWER        13
 
+#define SR_ORDER_TYPE_ASCEND              1 // not used in sqlrdd code
+#define SR_ORDER_TYPE_DESASCEND           0 // not used in sqlrdd code
 
-#define ORDER_TYPE_ASCEND              1
-#define ORDER_TYPE_DESASCEND           0
+#define SR_LIST_FROM_TOP                  0
+#define SR_LIST_FROM_BOTTOM               1
+#define SR_LIST_SKIP_FWD                  2
+#define SR_LIST_SKIP_BWD                  3
 
-#define LIST_FROM_TOP                  0
-#define LIST_FROM_BOTTOM               1
-#define LIST_SKIP_FWD                  2
-#define LIST_SKIP_BWD                  3
+#define SR_LIST_FORWARD                   0
+#define SR_LIST_BACKWARD                  1
 
-#define LIST_FORWARD                   0
-#define LIST_BACKWARD                  1
-
-#define LONG_LIST                      0
-#define SHORT_LIST                     1
+#define SR_LONG_LIST                      0 // not used in sqlrdd code
+#define SR_SHORT_LIST                     1 // not used in sqlrdd code
 
 #define EXCLUSIVE_TABLE_LOCK_SIGN   "SQL_EXCLUSIVE_TABLE_$_"
 #define FLOCK_TABLE_LOCK_SIGN       "SQL_FLOCK_TABLE_$_"
