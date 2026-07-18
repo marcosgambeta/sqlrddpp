@@ -188,8 +188,8 @@
 #define SR_ARRAY_BLOCK5      500
 
 // dbCreate Record Array Structure
-#ifndef FIELD_INFO_SIZE
-#define FIELD_INFO_SIZE                11
+#ifndef SR_FIELD_INFO_SIZE
+#define SR_FIELD_INFO_SIZE                11
 
 #define FIELD_NAME                      1
 #define FIELD_TYPE                      2
@@ -203,8 +203,8 @@
 #define FIELD_PRIMARY_KEY              10
 #define FIELD_UNIQUE                   11
 
-#define SUPPORTED_DATABASES           23
+#define SR_SUPPORTED_DATABASES           23
 
-#endif
+#endif // SR_FIELD_INFO_SIZE
 
 #endif // SQLRDDSETUP_CH

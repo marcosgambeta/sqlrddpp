@@ -2721,7 +2721,7 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
 
       FOR n := 1 TO ::nFields
          cName := Upper(AllTrim(::aFields[n, FIELD_NAME]))
-         ASize(::aFields[n], FIELD_INFO_SIZE)
+         ASize(::aFields[n], SR_FIELD_INFO_SIZE)
          ::aFields[n, FIELD_MULTILANG] := .F.
          ::aFields[n, FIELD_ENUM] := n
          ::aFields[n, FIELD_WAOFFSET] := 0
@@ -2817,7 +2817,7 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
 
       FOR n := 1 TO ::nFields
          cName := ::aFields[n, FIELD_NAME]
-         ASize(::aFields[n], FIELD_INFO_SIZE)
+         ASize(::aFields[n], SR_FIELD_INFO_SIZE)
          ::aFields[n, FIELD_MULTILANG] := .F.
          ::aFields[n, FIELD_ENUM] := n
          ::aFields[n, FIELD_WAOFFSET] := 0
@@ -4274,7 +4274,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
    FOR EACH aRec IN aStruct
 
-      ASize(aRec, FIELD_INFO_SIZE)
+      ASize(aRec, SR_FIELD_INFO_SIZE)
 
       aRec[FIELD_NAME] := AllTrim(Upper(aRec[FIELD_NAME]))
       aRec[FIELD_TYPE] := AllTrim(Upper(aRec[FIELD_TYPE]))
@@ -7064,7 +7064,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
 
    FOR i := 1 TO Len(aCreate)
 
-      ASize(aCreate[i], FIELD_INFO_SIZE)
+      ASize(aCreate[i], SR_FIELD_INFO_SIZE)
       //cLobs := "" (variable not used)
 
       DEFAULT aCreate[i, FIELD_PRIMARY_KEY] TO 0
@@ -7261,7 +7261,7 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
 
    FOR i := 1 TO Len(aCreate)
 
-      ASize(aCreate[i], FIELD_INFO_SIZE)
+      ASize(aCreate[i], SR_FIELD_INFO_SIZE)
       //cLobs := "" (variable not used)
 
       DEFAULT aCreate[i, FIELD_PRIMARY_KEY] TO 0

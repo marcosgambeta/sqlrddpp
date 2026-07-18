@@ -118,7 +118,7 @@
 
 // supported RDBMS
 
-#define SUPPORTED_DATABASES           23
+#define SR_SUPPORTED_DATABASES           23
 
 #define LASTREC_POS             99999998
 
@@ -187,7 +187,7 @@
 
 // dbCreate Record Array Structure
 
-#define FIELD_INFO_SIZE                11
+#define SR_FIELD_INFO_SIZE                11
 
 #define FIELD_NAME                      1
 #define FIELD_TYPE                      2

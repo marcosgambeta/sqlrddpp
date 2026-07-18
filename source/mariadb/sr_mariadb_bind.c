@@ -683,7 +683,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
   for (row = 0; row < rows; row++) {
     // Column name
     field = mysql_fetch_field_direct(session->stmt, row);
-    hb_arrayNew(atemp, FIELD_INFO_SIZE);
+    hb_arrayNew(atemp, SR_FIELD_INFO_SIZE);
     hb_arraySetForward(atemp, FIELD_NAME, hb_itemPutC(&TempItem, hb_strupr(field->name)));
 
     // Data type, len, dec

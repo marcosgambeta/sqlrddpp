@@ -1375,7 +1375,7 @@ PROCEDURE __SR_StartSQL()
    s_bTableInfo := {|cTableName, nSystemID|SR_TableAttr(cTableName, nSystemID)}
    s_bIndexInfo := {|cIndexName, nSystemID|SR_IndexAttr(cIndexName, nSystemID)}
    s_bNextRecord := {||++s_nRecordNum}
-   s_aJoinWords := Array(SUPPORTED_DATABASES)
+   s_aJoinWords := Array(SR_SUPPORTED_DATABASES)
    aFill(s_aJoinWords, {" LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " LEFT JOIN ", " RIGHT JOIN ", " JOIN "})
 
 RETURN
