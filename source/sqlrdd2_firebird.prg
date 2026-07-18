@@ -2513,8 +2513,8 @@ METHOD SR_WORKAREA:Refresh(lGoCold)
 
       // Load the cache to ::aCache
 
-      ASize(::aCache, ARRAY_BLOCK2)
-      nAllocated := ARRAY_BLOCK2
+      ASize(::aCache, SR_ARRAY_BLOCK2)
+      nAllocated := SR_ARRAY_BLOCK2
       n := 0
 
       IF ::hnRecno == NIL
@@ -2533,17 +2533,17 @@ METHOD SR_WORKAREA:Refresh(lGoCold)
          n ++
          IF n > nAllocated
             SWITCH nAllocated
-            CASE ARRAY_BLOCK2
-               nAllocated := ARRAY_BLOCK3
+            CASE SR_ARRAY_BLOCK2
+               nAllocated := SR_ARRAY_BLOCK3
                EXIT
-            CASE ARRAY_BLOCK3
-               nAllocated := ARRAY_BLOCK4
+            CASE SR_ARRAY_BLOCK3
+               nAllocated := SR_ARRAY_BLOCK4
                EXIT
-            CASE ARRAY_BLOCK4
-               nAllocated := ARRAY_BLOCK5
+            CASE SR_ARRAY_BLOCK4
+               nAllocated := SR_ARRAY_BLOCK5
                EXIT
             SR_OTHERWISE
-               nAllocated += ARRAY_BLOCK5
+               nAllocated += SR_ARRAY_BLOCK5
             ENDSWITCH
 
             ASize(::aCache, nAllocated)
@@ -4683,8 +4683,8 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
 
       // Load the cache to ::aCache
 
-      ASize(::aCache, ARRAY_BLOCK2)
-      nAllocated := ARRAY_BLOCK2
+      ASize(::aCache, SR_ARRAY_BLOCK2)
+      nAllocated := SR_ARRAY_BLOCK2
       n := 0
 
       IF ::hnRecno == NIL .OR. ::hnRecno == 0
@@ -4703,17 +4703,17 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
          n ++
          IF n > nAllocated
             SWITCH nAllocated
-            CASE ARRAY_BLOCK2
-               nAllocated := ARRAY_BLOCK3
+            CASE SR_ARRAY_BLOCK2
+               nAllocated := SR_ARRAY_BLOCK3
                EXIT
-            CASE ARRAY_BLOCK3
-               nAllocated := ARRAY_BLOCK4
+            CASE SR_ARRAY_BLOCK3
+               nAllocated := SR_ARRAY_BLOCK4
                EXIT
-            CASE ARRAY_BLOCK4
-               nAllocated := ARRAY_BLOCK5
+            CASE SR_ARRAY_BLOCK4
+               nAllocated := SR_ARRAY_BLOCK5
                EXIT
             SR_OTHERWISE
-               nAllocated += ARRAY_BLOCK5
+               nAllocated += SR_ARRAY_BLOCK5
             ENDSWITCH
 
             ASize(::aCache, nAllocated)

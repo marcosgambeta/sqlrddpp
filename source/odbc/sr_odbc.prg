@@ -133,7 +133,7 @@ RETURN aArray
 METHOD SR_ODBC:DriverCatTables()
 
    LOCAL nRet
-   LOCAL aArray := Array(ARRAY_BLOCK1)
+   LOCAL aArray := Array(SR_ARRAY_BLOCK1)
    LOCAL nAllocated
    LOCAL nBlocks
    LOCAL aFields
@@ -144,7 +144,7 @@ METHOD SR_ODBC:DriverCatTables()
 
    IF nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO
 
-      nAllocated := ARRAY_BLOCK1
+      nAllocated := SR_ARRAY_BLOCK1
       nBlocks := 1
       n := 0
       aFields := ::IniFields(.F.,,,,,,)
@@ -154,20 +154,20 @@ METHOD SR_ODBC:DriverCatTables()
          n++
          IF n > nAllocated
             SWITCH nAllocated
-            CASE ARRAY_BLOCK1
-               nAllocated := ARRAY_BLOCK2
+            CASE SR_ARRAY_BLOCK1
+               nAllocated := SR_ARRAY_BLOCK2
                EXIT
-            CASE ARRAY_BLOCK2
-               nAllocated := ARRAY_BLOCK3
+            CASE SR_ARRAY_BLOCK2
+               nAllocated := SR_ARRAY_BLOCK3
                EXIT
-            CASE ARRAY_BLOCK3
-               nAllocated := ARRAY_BLOCK4
+            CASE SR_ARRAY_BLOCK3
+               nAllocated := SR_ARRAY_BLOCK4
                EXIT
-            CASE ARRAY_BLOCK4
-               nAllocated := ARRAY_BLOCK5
+            CASE SR_ARRAY_BLOCK4
+               nAllocated := SR_ARRAY_BLOCK5
                EXIT
             SR_OTHERWISE
-               nAllocated += ARRAY_BLOCK5
+               nAllocated += SR_ARRAY_BLOCK5
             ENDSWITCH
 
             ASize(aArray, nAllocated)

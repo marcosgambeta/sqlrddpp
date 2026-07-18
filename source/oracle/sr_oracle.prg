@@ -703,14 +703,14 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
 
          IF HB_IsArray(aArray)
             IF Len(aArray) == 0
-               ASize(aArray, ARRAY_BLOCK1)
-               nAllocated := ARRAY_BLOCK1
+               ASize(aArray, SR_ARRAY_BLOCK1)
+               nAllocated := SR_ARRAY_BLOCK1
             ELSE
                nAllocated := Len(aArray)
             ENDIF
          ELSE
-            aArray := Array(ARRAY_BLOCK1)
-            nAllocated := ARRAY_BLOCK1
+            aArray := Array(SR_ARRAY_BLOCK1)
+            nAllocated := SR_ARRAY_BLOCK1
          ENDIF
 
          n := 0
@@ -720,20 +720,20 @@ METHOD SR_ORACLE:ExecSPRC(cComm, lMsg, lFetch, aArray, cFile, cAlias, cVar, nMax
             n++
             IF n > nAllocated
                SWITCH nAllocated
-               CASE ARRAY_BLOCK1
-                  nAllocated := ARRAY_BLOCK2
+               CASE SR_ARRAY_BLOCK1
+                  nAllocated := SR_ARRAY_BLOCK2
                   EXIT
-               CASE ARRAY_BLOCK2
-                  nAllocated := ARRAY_BLOCK3
+               CASE SR_ARRAY_BLOCK2
+                  nAllocated := SR_ARRAY_BLOCK3
                   EXIT
-               CASE ARRAY_BLOCK3
-                  nAllocated := ARRAY_BLOCK4
+               CASE SR_ARRAY_BLOCK3
+                  nAllocated := SR_ARRAY_BLOCK4
                   EXIT
-               CASE ARRAY_BLOCK4
-                  nAllocated := ARRAY_BLOCK5
+               CASE SR_ARRAY_BLOCK4
+                  nAllocated := SR_ARRAY_BLOCK5
                   EXIT
                SR_OTHERWISE
-                  nAllocated += ARRAY_BLOCK5
+                  nAllocated += SR_ARRAY_BLOCK5
                ENDSWITCH
                ASize(aArray, nAllocated)
             ENDIF

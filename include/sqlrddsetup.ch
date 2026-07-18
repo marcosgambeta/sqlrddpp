@@ -181,11 +181,11 @@
 #define SR_SHARED_TABLE_LOCK_SIGN      "SQL_SHARED_TABLE_$_"
 #define SR_LAST_CHAR                   "z"
 
-#define ARRAY_BLOCK1      1
-#define ARRAY_BLOCK2      10
-#define ARRAY_BLOCK3      50
-#define ARRAY_BLOCK4      100
-#define ARRAY_BLOCK5      500
+#define SR_ARRAY_BLOCK1      1
+#define SR_ARRAY_BLOCK2      10
+#define SR_ARRAY_BLOCK3      50
+#define SR_ARRAY_BLOCK4      100
+#define SR_ARRAY_BLOCK5      500
 
 // dbCreate Record Array Structure
 #ifndef FIELD_INFO_SIZE
