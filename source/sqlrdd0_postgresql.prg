@@ -1519,9 +1519,12 @@ FUNCTION SR_DropTable(cFileName, cOwner)
 
    LOCAL oCnn
    LOCAL lRet
-   LOCAL aRet := {}
+   LOCAL aRet //:= {} (value not used)
+   LOCAL cTemp1
+   LOCAL cTemp2
+   LOCAL cTemp3
 
-   HB_SYMBOL_UNUSED(aRet)
+   //HB_SYMBOL_UNUSED(aRet)
 
    oCnn := SR_GetConnection()
 
@@ -1551,26 +1554,29 @@ FUNCTION SR_DropTable(cFileName, cOwner)
    oCnn:Commit()
 
    IF lRet
-      oCnn:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + ;
-         Upper(cFileName) + "'" + IIf(oCnn:lComments, " /* Wipe index info */", ""), .F.)
+      cTemp1 := SR_GetToolsOwner() // call SR_GetToolsOwner() only once
+      cTemp2 := "'" + Upper(cFileName) + "'" // call Upper only once
+      cTemp3 := IIf(oCnn:lComments, " /* Wipe table info */", "") // define the string only once
+      oCnn:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTINDEXES WHERE TABLE_ = " + ;
+         cTemp2 + IIf(oCnn:lComments, " /* Wipe index info */", ""), .F.)
       oCnn:Commit()
-      oCnn:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES WHERE TABLE_ = '" + ;
-         Upper(cFileName) + "'" + IIf(oCnn:lComments, " /* Wipe table info */", ""), .F.)
+      oCnn:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTTABLES WHERE TABLE_ = " + ;
+         cTemp2 + cTemp3, .F.)
       oCnn:Commit()
-      oCnn:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLANG WHERE TABLE_ = '" + ;
-         Upper(cFileName) + "'" + IIf(oCnn:lComments, " /* Wipe table info */", ""), .F.)
+      oCnn:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTLANG WHERE TABLE_ = " + ;
+         cTemp2 + cTemp3, .F.)
       oCnn:Commit()
-      oCnn:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRAINTS WHERE TABLE_ = '" + ;
-         Upper(cFileName) + "'" + IIf(oCnn:lComments, " /* Wipe table info */", ""), .F.)
+      oCnn:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTCONSTRAINTS WHERE TABLE_ = " + ;
+         cTemp2 + cTemp3, .F.)
       oCnn:Commit()
-      oCnn:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRAINTS WHERE SOURCETABLE_ = '" + ;
-         Upper(cFileName) + "'" + IIf(oCnn:lComments, " /* Wipe table info */", ""), .F.)
+      oCnn:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTCONSTRAINTS WHERE SOURCETABLE_ = " + ;
+         cTemp2 + cTemp3, .F.)
       oCnn:Commit()
-      oCnn:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRTGTCOLS WHERE SOURCETABLE_ = '" + ;
-         Upper(cFileName) + "'" + IIf(oCnn:lComments, " /* Wipe table info */", ""), .F.)
+      oCnn:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTCONSTRTGTCOLS WHERE SOURCETABLE_ = " + ;
+         cTemp2 + cTemp3, .F.)
       oCnn:Commit()
-      oCnn:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRSRCCOLS WHERE SOURCETABLE_ = '" + ;
-         Upper(cFileName) + "'" + IIf(oCnn:lComments, " /* Wipe table info */", ""), .F.)
+      oCnn:Exec("DELETE FROM " + cTemp1 + "SR_MGMNTCONSTRSRCCOLS WHERE SOURCETABLE_ = " + ;
+         cTemp2 + cTemp3, .F.)
       oCnn:Commit()
    ENDIF
 
