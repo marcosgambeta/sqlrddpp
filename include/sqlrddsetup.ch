@@ -147,20 +147,20 @@
 #define SR_AORDER_TYPE                    3
 #define SR_AORDER_UNIQUE                  4
 
-#define CACHEINFO_LEN                 13
-#define CACHEINFO_TABINFO              1
-#define CACHEINFO_TABNAME              2
-#define CACHEINFO_CONNECT              3
-#define CACHEINFO_INDEX                4
-#define CACHEINFO_AFIELDS              5
-#define CACHEINFO_ANAMES               6
-#define CACHEINFO_ABLANK               7
-#define CACHEINFO_HNRECNO              8
-#define CACHEINFO_HNDELETED            9
-#define CACHEINFO_INIFIELDS           10
-#define CACHEINFO_HNPOSDTHIST         11
-#define CACHEINFO_HNCOLPK             12
-#define CACHEINFO_ANAMES_LOWER        13
+#define SR_CACHEINFO_LEN                 13
+#define SR_CACHEINFO_TABINFO              1
+#define SR_CACHEINFO_TABNAME              2
+#define SR_CACHEINFO_CONNECT              3
+#define SR_CACHEINFO_INDEX                4
+#define SR_CACHEINFO_AFIELDS              5
+#define SR_CACHEINFO_ANAMES               6
+#define SR_CACHEINFO_ABLANK               7
+#define SR_CACHEINFO_HNRECNO              8
+#define SR_CACHEINFO_HNDELETED            9
+#define SR_CACHEINFO_INIFIELDS           10
+#define SR_CACHEINFO_HNPOSDTHIST         11
+#define SR_CACHEINFO_HNCOLPK             12
+#define SR_CACHEINFO_ANAMES_LOWER        13
 
 
 #define ORDER_TYPE_ASCEND              1

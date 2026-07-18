@@ -2734,7 +2734,7 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
 
    DEFAULT lLoadCache TO .F.
 
-   lHaveInfoCache := aInfo != NIL .AND. aInfo[CACHEINFO_AFIELDS] != NIL
+   lHaveInfoCache := aInfo != NIL .AND. aInfo[SR_CACHEINFO_AFIELDS] != NIL
 
    IF !::lISAM
       IF Empty(::cCustomSQL)
@@ -2968,14 +2968,14 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
    ENDIF
 
    IF !lHaveInfoCache .AND. aInfo != NIL
-      aInfo[CACHEINFO_AFIELDS] := AClone(::aFields)
-      aInfo[CACHEINFO_ANAMES] := AClone(::aNames)
-      aInfo[CACHEINFO_ABLANK] := AClone(::aEmptyBuffer)
-      aInfo[CACHEINFO_HNRECNO] := ::hnRecno
-      aInfo[CACHEINFO_HNDELETED] := ::hnDeleted
-      aInfo[CACHEINFO_INIFIELDS] := AClone(::aIniFields)
-      aInfo[CACHEINFO_HNPOSDTHIST] := ::nPosDtHist
-      aInfo[CACHEINFO_HNCOLPK] := ::nPosColPK
+      aInfo[SR_CACHEINFO_AFIELDS] := AClone(::aFields)
+      aInfo[SR_CACHEINFO_ANAMES] := AClone(::aNames)
+      aInfo[SR_CACHEINFO_ABLANK] := AClone(::aEmptyBuffer)
+      aInfo[SR_CACHEINFO_HNRECNO] := ::hnRecno
+      aInfo[SR_CACHEINFO_HNDELETED] := ::hnDeleted
+      aInfo[SR_CACHEINFO_INIFIELDS] := AClone(::aIniFields)
+      aInfo[SR_CACHEINFO_HNPOSDTHIST] := ::nPosDtHist
+      aInfo[SR_CACHEINFO_HNCOLPK] := ::nPosColPK
    ENDIF
 
 RETURN NIL
@@ -4307,7 +4307,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    LOCAL cLobs := ""
    LOCAL lRecnoAdded := .F.
    LOCAL lShared := .F.
-   LOCAL aCacheInfo := Array(CACHEINFO_LEN)
+   LOCAL aCacheInfo := Array(SR_CACHEINFO_LEN)
    LOCAL nPos
    LOCAL nMax := 0
    LOCAL cTemp1
@@ -4712,10 +4712,10 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
    aRet[TABLE_INFO_HISTORIC] := ::lHistoric
 
-   aCacheInfo[CACHEINFO_TABINFO] := aRet
-   aCacheInfo[CACHEINFO_TABNAME] := ::cFileName
-   aCacheInfo[CACHEINFO_CONNECT] := ::oSql
-   aCacheInfo[CACHEINFO_INDEX] := ::aIndexMgmnt
+   aCacheInfo[SR_CACHEINFO_TABINFO] := aRet
+   aCacheInfo[SR_CACHEINFO_TABNAME] := ::cFileName
+   aCacheInfo[SR_CACHEINFO_CONNECT] := ::oSql
+   aCacheInfo[SR_CACHEINFO_INDEX] := ::aIndexMgmnt
    ::oSql:aTableInfo[::cOriginalFN] := aCacheInfo
 
 RETURN Self
@@ -4789,11 +4789,11 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
 #else
          aCacheInfo := AClone(hb_HValueAt(::oSql:aTableInfo, nPos))
 #endif
-         aRet := aCacheInfo[CACHEINFO_TABINFO]
-         ::cFileName := aCacheInfo[CACHEINFO_TABNAME]
-         ::oSql := aCacheInfo[CACHEINFO_CONNECT]
+         aRet := aCacheInfo[SR_CACHEINFO_TABINFO]
+         ::cFileName := aCacheInfo[SR_CACHEINFO_TABNAME]
+         ::oSql := aCacheInfo[SR_CACHEINFO_CONNECT]
       ELSE
-         aCacheInfo := Array(CACHEINFO_LEN)
+         aCacheInfo := Array(SR_CACHEINFO_LEN)
          aRet := Eval(SR_GetTableInfoBlock(), cFileName)
          ::cFileName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
       ENDIF
@@ -4877,15 +4877,15 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
 
    IF Empty(::cCustomSQL)
       IF nPos > 0
-         ::aIndexMgmnt := aCacheInfo[CACHEINFO_INDEX]
-         ::aFields := aCacheInfo[CACHEINFO_AFIELDS]
-         ::aNames := aCacheInfo[CACHEINFO_ANAMES]
-         ::aNamesLower := aCacheInfo[CACHEINFO_ANAMES_LOWER]
-         ::hnRecno := aCacheInfo[CACHEINFO_HNRECNO]
-         ::hnDeleted := aCacheInfo[CACHEINFO_HNDELETED]
-         ::aIniFields := aCacheInfo[CACHEINFO_INIFIELDS]
-         ::nPosDtHist := aCacheInfo[CACHEINFO_HNPOSDTHIST]
-         ::nPosColPK := aCacheInfo[CACHEINFO_HNCOLPK]
+         ::aIndexMgmnt := aCacheInfo[SR_CACHEINFO_INDEX]
+         ::aFields := aCacheInfo[SR_CACHEINFO_AFIELDS]
+         ::aNames := aCacheInfo[SR_CACHEINFO_ANAMES]
+         ::aNamesLower := aCacheInfo[SR_CACHEINFO_ANAMES_LOWER]
+         ::hnRecno := aCacheInfo[SR_CACHEINFO_HNRECNO]
+         ::hnDeleted := aCacheInfo[SR_CACHEINFO_HNDELETED]
+         ::aIniFields := aCacheInfo[SR_CACHEINFO_INIFIELDS]
+         ::nPosDtHist := aCacheInfo[SR_CACHEINFO_HNPOSDTHIST]
+         ::nPosColPK := aCacheInfo[SR_CACHEINFO_HNCOLPK]
          ::nFields := Len(::aFields)
          ::aInfo[SR_AINFO_FCOUNT] := ::nFields
          IF ::hnRecno != NIL
@@ -4895,7 +4895,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
             ::cDeletedName := ::aFields[::hnDeleted, FIELD_NAME]
          ENDIF
          ASize(::aEmptyBuffer, ::nFields)
-         AEval(::aEmptyBuffer, {|x, i|HB_SYMBOL_UNUSED(x), ::aEmptyBuffer[i] := aCacheInfo[CACHEINFO_ABLANK][i]})
+         AEval(::aEmptyBuffer, {|x, i|HB_SYMBOL_UNUSED(x), ::aEmptyBuffer[i] := aCacheInfo[SR_CACHEINFO_ABLANK][i]})
          ASize(::aSelectList, ::nFields)
 //         aFill(::aCache, Array(Len(::aLocalBuffer)))
          AEval(::aCache, {|x, i|HB_SYMBOL_UNUSED(x), ::aCache[i] := Array(Len(::aLocalBuffer))})
@@ -5058,10 +5058,10 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
    ENDIF
 
    IF nPos <= 0 .AND. Empty(::cCustomSQL)
-      aCacheInfo[CACHEINFO_TABINFO] := aRet
-      aCacheInfo[CACHEINFO_TABNAME] := ::cFileName
-      aCacheInfo[CACHEINFO_CONNECT] := ::oSql
-      aCacheInfo[CACHEINFO_INDEX] := ::aIndexMgmnt
+      aCacheInfo[SR_CACHEINFO_TABINFO] := aRet
+      aCacheInfo[SR_CACHEINFO_TABNAME] := ::cFileName
+      aCacheInfo[SR_CACHEINFO_CONNECT] := ::oSql
+      aCacheInfo[SR_CACHEINFO_INDEX] := ::aIndexMgmnt
       ::oSql:aTableInfo[::cOriginalFN] := aCacheInfo
    ENDIF
 
@@ -5246,7 +5246,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
 //      IF Empty(::cCustomSQL)
 //         aInf := ::oSql:aTableInfo[::cOriginalFN]
-//         aInf[CACHEINFO_INDEX] := ::aIndexMgmnt
+//         aInf[SR_CACHEINFO_INDEX] := ::aIndexMgmnt
 //      ENDIF
 
       AAdd(aInd, Len(::aIndexMgmnt))
@@ -6113,7 +6113,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
    ::LoadRegisteredTags()
 
    aInf := ::oSql:aTableInfo[::cOriginalFN]
-   aInf[CACHEINFO_INDEX] := ::aIndexMgmnt
+   aInf[SR_CACHEINFO_INDEX] := ::aIndexMgmnt
 
    ::aLastOrdCond := NIL
 
@@ -7464,9 +7464,9 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
       aFill(::aSelectList, 1)           // Next SELECT should include ALL columns
 
       aInfo := ::oSql:aTableInfo[::cOriginalFN]
-      aInfo[CACHEINFO_AFIELDS] := ::aFields
-      aInfo[CACHEINFO_ANAMES] := ::aNames
-      aInfo[CACHEINFO_ABLANK] := ::aEmptyBuffer
+      aInfo[SR_CACHEINFO_AFIELDS] := ::aFields
+      aInfo[SR_CACHEINFO_ANAMES] := ::aNames
+      aInfo[SR_CACHEINFO_ABLANK] := ::aEmptyBuffer
 
       // Add multilang columns in catalog
 
@@ -7657,9 +7657,9 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
       aFill(::aSelectList, 1)           // Next SELECT should include ALL columns
 
       aInfo := ::oSql:aTableInfo[::cOriginalFN]
-      aInfo[CACHEINFO_AFIELDS] := ::aFields
-      aInfo[CACHEINFO_ANAMES] := ::aNames
-      aInfo[CACHEINFO_ABLANK] := ::aEmptyBuffer
+      aInfo[SR_CACHEINFO_AFIELDS] := ::aFields
+      aInfo[SR_CACHEINFO_ANAMES] := ::aNames
+      aInfo[SR_CACHEINFO_ABLANK] := ::aEmptyBuffer
 
       // Add multilang columns in catalog
 
