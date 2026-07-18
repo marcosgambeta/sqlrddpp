@@ -271,8 +271,8 @@ FUNCTION SR_ChangeStruct(cTableName, aNewStruct)
 
             IF aNewStruct[i, 2] == oWA:aFields[n, 2] .AND. aNewStruct[i, 3] == oWA:aFields[n, 3] .AND. aNewStruct[i, 4] == oWA:aFields[n, 4]
                // Structure is identical. Only need to check for NOT NULL flag.
-               IF aNewStruct[i, FIELD_NULLABLE] != NIL .AND. aNewStruct[i, FIELD_NULLABLE] !=  oWA:aFields[n, FIELD_NULLABLE]
-                  IF aNewStruct[i, FIELD_NULLABLE]
+               IF aNewStruct[i, SR_FIELD_NULLABLE] != NIL .AND. aNewStruct[i, SR_FIELD_NULLABLE] !=  oWA:aFields[n, SR_FIELD_NULLABLE]
+                  IF aNewStruct[i, SR_FIELD_NULLABLE]
                      SR_LogFile("changestruct.log", {oWA:cFileName, "Changing to nullable:", aNewStruct[i, 1]})
                      oWA:DropRuleNotNull(aNewStruct[i, 1])
                   ELSE

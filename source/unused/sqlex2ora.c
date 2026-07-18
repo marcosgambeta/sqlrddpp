@@ -230,14 +230,14 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
 
   for (i = 1; i <= iCols; i++) {
     pFieldStruct = hb_arrayGetItemPtr(thiswa->aFields, i);
-    bNullable = hb_arrayGetL(pFieldStruct, FIELD_NULLABLE);
-    pFieldLen = hb_arrayGetItemPtr(pFieldStruct, FIELD_LEN);
-    pFieldDec = hb_arrayGetItemPtr(pFieldStruct, FIELD_DEC);
-    lFieldPosWA = hb_arrayGetNL(pFieldStruct, FIELD_WAOFFSET);
-    lType = hb_arrayGetNL(pFieldStruct, FIELD_DOMAIN);
-    cType = *hb_arrayGetCPtr(pFieldStruct, FIELD_TYPE);
-    colName = hb_arrayGetC(pFieldStruct, FIELD_NAME);
-    bMultiLang = hb_arrayGetL(pFieldStruct, FIELD_MULTILANG);
+    bNullable = hb_arrayGetL(pFieldStruct, SR_FIELD_NULLABLE);
+    pFieldLen = hb_arrayGetItemPtr(pFieldStruct, SR_FIELD_LEN);
+    pFieldDec = hb_arrayGetItemPtr(pFieldStruct, SR_FIELD_DEC);
+    lFieldPosWA = hb_arrayGetNL(pFieldStruct, SR_FIELD_WAOFFSET);
+    lType = hb_arrayGetNL(pFieldStruct, SR_FIELD_DOMAIN);
+    cType = *hb_arrayGetCPtr(pFieldStruct, SR_FIELD_TYPE);
+    colName = hb_arrayGetC(pFieldStruct, SR_FIELD_NAME);
+    bMultiLang = hb_arrayGetL(pFieldStruct, SR_FIELD_MULTILANG);
     bIsMemo = cType == 'M';
 
     if (i != (int)(thiswa->sqlarea.ulhRecno)) { // RECNO is never included in INSERT column list

@@ -203,7 +203,7 @@ METHOD SR_MARIADB:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRe
    ::aFields := aFields
 
    FOR EACH aFld IN ::aFields
-      aFld[FIELD_ENUM] := SR_ENUMINDEX(aFld)
+      aFld[SR_FIELD_ENUM] := SR_ENUMINDEX(aFld)
    NEXT
 
    IF lReSelect .AND. !lLoadCache

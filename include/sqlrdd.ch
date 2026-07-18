@@ -189,17 +189,17 @@
 
 #define SR_FIELD_INFO_SIZE                11
 
-#define FIELD_NAME                      1
-#define FIELD_TYPE                      2
-#define FIELD_LEN                       3
-#define FIELD_DEC                       4
-#define FIELD_NULLABLE                  5
-#define FIELD_DOMAIN                    6  // Not used by dbCreate
-#define FIELD_MULTILANG                 7
-#define FIELD_ENUM                      8  // Not used by dbCreate
-#define FIELD_WAOFFSET                  9  // Not used by dbCreate
-#define FIELD_PRIMARY_KEY              10
-#define FIELD_UNIQUE                   11
+#define SR_FIELD_NAME                      1
+#define SR_FIELD_TYPE                      2
+#define SR_FIELD_LEN                       3
+#define SR_FIELD_DEC                       4
+#define SR_FIELD_NULLABLE                  5
+#define SR_FIELD_DOMAIN                    6  // Not used by dbCreate
+#define SR_FIELD_MULTILANG                 7
+#define SR_FIELD_ENUM                      8  // Not used by dbCreate
+#define SR_FIELD_WAOFFSET                  9  // Not used by dbCreate
+#define SR_FIELD_PRIMARY_KEY              10
+#define SR_FIELD_UNIQUE                   11
 
 #define MULTILANG_FIELD_ON             .T.
 #define MULTILANG_FIELD_OFF            .F.

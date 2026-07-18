@@ -496,7 +496,7 @@ METHOD SR_WORKAREA:GetSelectList()
    LOCAL aInd
 
    IF ::lCollectingBehavior .OR. ::lAllColumnsSelected
-      AEval(::aFields, {|x, i|HB_SYMBOL_UNUSED(x), ::aFields[i, FIELD_ENUM] := i})
+      AEval(::aFields, {|x, i|HB_SYMBOL_UNUSED(x), ::aFields[i, SR_FIELD_ENUM] := i})
       RETURN " A.* "
    ENDIF
 
@@ -519,9 +519,9 @@ METHOD SR_WORKAREA:GetSelectList()
          nFeitos++
          cSelectList += IIf(nFeitos > 1, ", A.", "A.") + SR_DBQUALIFY(::aNames[i])
 
-         ::aFields[i, FIELD_ENUM] := nFeitos
+         ::aFields[i, SR_FIELD_ENUM] := nFeitos
       ELSE
-         ::aFields[i, FIELD_ENUM] := 0
+         ::aFields[i, SR_FIELD_ENUM] := 0
       ENDIF
    NEXT i
 
@@ -548,8 +548,8 @@ METHOD SR_WORKAREA:sqlGetValue(nField)
    IF ::oSql:Execute("SELECT " + SR_DBQUALIFY(::aNames[nField]) + ;
       " FROM " + ::cQualifiedTableName + ::WhereEqual()) == SQL_SUCCESS
 
-      lOldIndex := ::aFields[nField, FIELD_ENUM]
-      ::aFields[nField, FIELD_ENUM] := 1
+      lOldIndex := ::aFields[nField, SR_FIELD_ENUM]
+      ::aFields[nField, SR_FIELD_ENUM] := 1
 
       IF ::oSql:Fetch(NIL, .F., {::aFields[nField]}) == SQL_SUCCESS
          ::oSql:GetLine({::aFields[nField]}, .F., @aRet)
@@ -565,7 +565,7 @@ METHOD SR_WORKAREA:sqlGetValue(nField)
          ENDIF
       ENDIF
 
-      ::aFields[nField, FIELD_ENUM] := lOldIndex
+      ::aFields[nField, SR_FIELD_ENUM] := lOldIndex
 
    ENDIF
 
@@ -663,18 +663,18 @@ METHOD SR_WORKAREA:GetSyntheticVirtualExpr(aExpr, cAlias)
          IF !Empty(cRet)
             cRet += "||"
          ENDIF
-         SWITCH ::aFields[nPos, FIELD_TYPE]
+         SWITCH ::aFields[nPos, SR_FIELD_TYPE]
          CASE "C"
-            cRet += "RPAD(NVL(" + cAlias + ::aFields[nPos, FIELD_NAME] + ",' ')," + AllTrim(Str(::aFields[nPos, FIELD_LEN], 5)) + ")"
+            cRet += "RPAD(NVL(" + cAlias + ::aFields[nPos, SR_FIELD_NAME] + ",' ')," + AllTrim(Str(::aFields[nPos, SR_FIELD_LEN], 5)) + ")"
             EXIT
          CASE "D"
-            cRet += "TO_CHAR(" + cAlias + ::aFields[nPos, FIELD_NAME] + ",'YYYYMMDD')"
+            cRet += "TO_CHAR(" + cAlias + ::aFields[nPos, SR_FIELD_NAME] + ",'YYYYMMDD')"
             EXIT
          CASE "N"
-            cRet += "SUBSTR(TO_CHAR(NVL(" + cAlias + ::aFields[nPos, FIELD_NAME] + ",0),'" + ;
-               replicate("9", ::aFields[nPos, FIELD_LEN] - ::aFields[nPos, FIELD_DEC] - 1 - IIf(::aFields[nPos, FIELD_DEC] > 0, 1, 0)) + ;
-               "0" + IIf(::aFields[nPos, FIELD_DEC] > 0, "." + replicate("9", ::aFields[nPos, FIELD_DEC]), "") + "'),2," + ;
-               Str(::aFields[nPos, FIELD_LEN]) + ")"
+            cRet += "SUBSTR(TO_CHAR(NVL(" + cAlias + ::aFields[nPos, SR_FIELD_NAME] + ",0),'" + ;
+               replicate("9", ::aFields[nPos, SR_FIELD_LEN] - ::aFields[nPos, SR_FIELD_DEC] - 1 - IIf(::aFields[nPos, SR_FIELD_DEC] > 0, 1, 0)) + ;
+               "0" + IIf(::aFields[nPos, SR_FIELD_DEC] > 0, "." + replicate("9", ::aFields[nPos, SR_FIELD_DEC]), "") + "'),2," + ;
+               Str(::aFields[nPos, SR_FIELD_LEN]) + ")"
             EXIT
          SR_OTHERWISE
             ::RunTimeErr("31", SR_Msg(31) + cColName + "(2) Table : " + ::cFileName)
@@ -833,7 +833,7 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
    aQuot := Array(nLen)
 
    FOR i := 1 TO nLen
-      aQuot[i] := ::QuotedNull(::aLocalBuffer[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2]], .T., , , , ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_NULLABLE])
+      aQuot[i] := ::QuotedNull(::aLocalBuffer[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2]], .T., , , , ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE])
    NEXT i
 
    nLen := Len(cSql)
@@ -846,7 +846,7 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
 
          IF aQuot[nIndexCol] == "NULL"  // This 90% of the problem from 1% of the cases
 
-            cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, nIndexCol, 2], FIELD_TYPE]
+            cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, nIndexCol, 2], SR_FIELD_TYPE]
 
             IF cType == "N"
 
@@ -887,7 +887,7 @@ METHOD SR_WORKAREA:ParseIndexColInfo(cSQL)
                ENDSWITCH
             ENDIF
          ELSE
-            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, nIndexCol, 2], FIELD_NULLABLE]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, nIndexCol, 2], SR_FIELD_NULLABLE]
 
             SWITCH SubStr(cSql, i + 1, 1)
             CASE "1"  // >
@@ -1224,7 +1224,7 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
          IF (nPos := AScan(::aNames, {|x|x == cCol})) != 0
             IF ::aNames[nPos] != ::cRecnoName
                ::aIndex[nInd, SR_AINDEX_SYNTH_INDEX_COL_POS] := nPos
-               SWITCH ::aFields[nPos, FIELD_TYPE]
+               SWITCH ::aFields[nPos, SR_FIELD_TYPE]
                CASE "C"
                   IF ::aNames[nPos] == ::cDeletedName
                      cXBase += "Deleted() + "
@@ -1239,7 +1239,7 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
                   cXBase += "TTOS(" + ::aNames[nPos] + ") + " // TODO: TTOS -> HB_TTOS
                   EXIT
                CASE "N"
-                  cXBase += "STR(" + ::aNames[nPos] + ", " + AllTrim(Str(::aFields[nPos, FIELD_LEN])) + ", " + AllTrim(Str(::aFields[nPos, FIELD_DEC])) + ") + "
+                  cXBase += "STR(" + ::aNames[nPos] + ", " + AllTrim(Str(::aFields[nPos, SR_FIELD_LEN])) + ", " + AllTrim(Str(::aFields[nPos, SR_FIELD_DEC])) + ") + "
                   EXIT
                CASE "L"
                   cXBase += "Sr_cdbvalue("+ ::aNames[nPos] + ")" + " + "
@@ -2027,12 +2027,12 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                LOOP
             ENDIF
 
-            nLen := ::aFields[nThisField, FIELD_LEN]
-            nDec := ::aFields[nThisField, FIELD_DEC]
-            lNull := ::aFields[nThisField, FIELD_NULLABLE]
-            lMemo := ::aFields[nThisField, FIELD_TYPE] == "M"
-            lML := ::aFields[nThisField, FIELD_MULTILANG]
-            IF lMemo .AND. ::aFields[nThisField, FIELD_DOMAIN] == SQL_LONGVARCHARXML
+            nLen := ::aFields[nThisField, SR_FIELD_LEN]
+            nDec := ::aFields[nThisField, SR_FIELD_DEC]
+            lNull := ::aFields[nThisField, SR_FIELD_NULLABLE]
+            lMemo := ::aFields[nThisField, SR_FIELD_TYPE] == "M"
+            lML := ::aFields[nThisField, SR_FIELD_MULTILANG]
+            IF lMemo .AND. ::aFields[nThisField, SR_FIELD_DOMAIN] == SQL_LONGVARCHARXML
                lMemo := .F.
             ENDIF
             IF lML .OR. ;
@@ -2044,16 +2044,16 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   aBuffer[nThisField] := hb_Hash(SR_SetBaseLang(), aBuffer[nThisField])
                ENDIF
                // TODO: review
-               IF (lMemo .OR. lML) .AND. (::oSql:nSystemID == SQLRDD_RDBMS_ORACLE) .AND. ::aFields[nThisField, FIELD_DOMAIN] != SQL_FAKE_LOB
+               IF (lMemo .OR. lML) .AND. (::oSql:nSystemID == SQLRDD_RDBMS_ORACLE) .AND. ::aFields[nThisField, SR_FIELD_DOMAIN] != SQL_FAKE_LOB
 #ifdef SQLRDD_TOPCONN
-               ELSEIF ::aFields[nThisField, FIELD_DOMAIN] == SQL_FAKE_DATE
+               ELSEIF ::aFields[nThisField, SR_FIELD_DOMAIN] == SQL_FAKE_DATE
                   cRet += IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField]) + " = '" + DToS(aBuffer[nThisField]) + "' "
-               ELSEIF ::aFields[nThisField, FIELD_DOMAIN] == SQL_FAKE_NUM
+               ELSEIF ::aFields[nThisField, SR_FIELD_DOMAIN] == SQL_FAKE_NUM
                   cRet += IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField]) + " = " + Str(aBuffer[nThisField], nLen, nDec) + " "
 #endif
-               ELSEIF ::aFields[nThisField, FIELD_DOMAIN] != SQL_GUID
+               ELSEIF ::aFields[nThisField, SR_FIELD_DOMAIN] != SQL_GUID
                   cRet += IIf(!lFirst, ", ", "") + SR_DBQUALIFY(::aNames[nThisField]) + " = " + ::QuotedNull(aBuffer[nThisField], .T., IIf(lMemo, NIL, nLen), nDec, , lNull, lMemo) + " "
-               ELSEIF ::aFields[nThisField, FIELD_DOMAIN] == SQL_LONGVARCHARXML
+               ELSEIF ::aFields[nThisField, SR_FIELD_DOMAIN] == SQL_LONGVARCHARXML
                   oXml := sr_arraytoXml(aBuffer[nThisField])
 #ifdef __XHARBOUR__
                   nlen := Len(oxml:tostring(HBXML_STYLE_NONEWLINE))
@@ -2139,12 +2139,12 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                LOOP
             ENDIF
 
-            nLen := ::aFields[i, FIELD_LEN]
-            nDec := ::aFields[i, FIELD_DEC]
-            lNull := ::aFields[i, FIELD_NULLABLE]
-            lMemo := ::aFields[i, FIELD_TYPE] == "M"
-            lML := ::aFields[i, FIELD_MULTILANG]
-            IF lMemo .AND. ::aFields[i, FIELD_DOMAIN] == SQL_LONGVARCHARXML
+            nLen := ::aFields[i, SR_FIELD_LEN]
+            nDec := ::aFields[i, SR_FIELD_DEC]
+            lNull := ::aFields[i, SR_FIELD_NULLABLE]
+            lMemo := ::aFields[i, SR_FIELD_TYPE] == "M"
+            lML := ::aFields[i, SR_FIELD_MULTILANG]
+            IF lMemo .AND. ::aFields[i, SR_FIELD_DOMAIN] == SQL_LONGVARCHARXML
                lMemo := .F.
             ENDIF
 
@@ -2205,7 +2205,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY(::aNames[i])
                ENDIF
 
-               SWITCH ::aFields[i, FIELD_DOMAIN]
+               SWITCH ::aFields[i, SR_FIELD_DOMAIN]
                CASE SQL_GUID
                   cVal += IIf(!lFirst, ", ", "( ") + " NEWID() "
                   EXIT
@@ -2386,8 +2386,8 @@ METHOD SR_WORKAREA:UpdateCache(aResultSet)
       IF ::aInfo[SR_AINFO_RECNO] == uRecord
          FOR EACH uVal IN aResultSet[1]
             IF HB_IsHash(::aLocalBuffer[SR_ENUMINDEX(uVal)])
-               IF ::aFields[SR_ENUMINDEX(uVal), FIELD_TYPE] $ "CM"
-                  (::aLocalBuffer[SR_ENUMINDEX(uVal)])[SR_SetBaseLang()] := PadR(uVal, ::aFields[SR_ENUMINDEX(uVal), FIELD_LEN])
+               IF ::aFields[SR_ENUMINDEX(uVal), SR_FIELD_TYPE] $ "CM"
+                  (::aLocalBuffer[SR_ENUMINDEX(uVal)])[SR_SetBaseLang()] := PadR(uVal, ::aFields[SR_ENUMINDEX(uVal), SR_FIELD_LEN])
                ELSE
                   (::aLocalBuffer[SR_ENUMINDEX(uVal)])[SR_SetBaseLang()] := uVal
                ENDIF
@@ -2706,42 +2706,42 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
       ENDIF
 
       FOR n := 1 TO ::nFields
-         cName := Upper(AllTrim(::aFields[n, FIELD_NAME]))
+         cName := Upper(AllTrim(::aFields[n, SR_FIELD_NAME]))
          ASize(::aFields[n], SR_FIELD_INFO_SIZE)
-         ::aFields[n, FIELD_MULTILANG] := .F.
-         ::aFields[n, FIELD_ENUM] := n
-         ::aFields[n, FIELD_WAOFFSET] := 0
+         ::aFields[n, SR_FIELD_MULTILANG] := .F.
+         ::aFields[n, SR_FIELD_ENUM] := n
+         ::aFields[n, SR_FIELD_WAOFFSET] := 0
 
-         IF ::aFields[n, FIELD_TYPE] == "M" .AND. SR_SetMultiLang()
-            aML := SR_GetMLHash(::cFileName, ::aFields[n, FIELD_NAME])
+         IF ::aFields[n, SR_FIELD_TYPE] == "M" .AND. SR_SetMultiLang()
+            aML := SR_GetMLHash(::cFileName, ::aFields[n, SR_FIELD_NAME])
             IF aML != NIL
-               ::aFields[n, FIELD_TYPE] := aML[3]
-               ::aFields[n, FIELD_LEN] := Val(aML[4])
-               ::aFields[n, FIELD_MULTILANG] := .T.
+               ::aFields[n, SR_FIELD_TYPE] := aML[3]
+               ::aFields[n, SR_FIELD_LEN] := Val(aML[4])
+               ::aFields[n, SR_FIELD_MULTILANG] := .T.
             ENDIF
          ENDIF
 
          IF cName == ::cRecnoName .OR. cName == "SR_RECNO"
             ::hnRecno := n
             IF ::cRecnoName != SR_RecnoName() .OR. !SR_SetHideRecno()
-               AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-               ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+               AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+               ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
             ENDIF
          ELSEIF cName == ::cDeletedName
             ::hnDeleted := n
-            ::aFields[n, FIELD_NULLABLE] := .F. // NOT NULL
+            ::aFields[n, SR_FIELD_NULLABLE] := .F. // NOT NULL
          ELSEIF cName == "DT__HIST" .AND. ::lISAM
             ::nPosDtHist := n
             ::lHistoric := .T.
 
             IF !SR_SetHideHistoric()
-               AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-               ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+               AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+               ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
             ENDIF
          ELSEIF cName == ::cColPK
             ::nPosColPK := n
-            AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-            ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+            AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+            ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
          ELSEIF SubStr(cName, 1, 7) == "INDKEY_" .OR. SubStr(cName, 1, 7) == "INDFOR_"
             // Ignore these columns
          ELSEIF cName == "R_E_C_N_O_"
@@ -2749,8 +2749,8 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
             ::hnRecno := n
             ::nTCCompat := 2
             IF ::cRecnoName != SR_RecnoName() .OR. !SR_SetHideRecno()
-               AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-               ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+               AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+               ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
             ENDIF
             // Fix record numbering to work like TopConnect
             SR_SetNextRecordBlock({|oWA|SR_TCNextRecord(oWA)})
@@ -2765,35 +2765,35 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
             nPos := AScan(aFlds, {|x|Upper(AllTrim(x[1])) == cName})
             IF nPos > 0
                IF aFlds[nPos, 2] == "P"
-                  ::aFields[n, FIELD_TYPE] := "N"
-                  ::aFields[n, FIELD_LEN] := Val(aFlds[nPos, 3])
-                  ::aFields[n, FIELD_DEC] := Val(aFlds[nPos, 4])
-                  ::aFields[n, FIELD_DOMAIN] := SQL_FAKE_NUM
+                  ::aFields[n, SR_FIELD_TYPE] := "N"
+                  ::aFields[n, SR_FIELD_LEN] := Val(aFlds[nPos, 3])
+                  ::aFields[n, SR_FIELD_DEC] := Val(aFlds[nPos, 4])
+                  ::aFields[n, SR_FIELD_DOMAIN] := SQL_FAKE_NUM
                ELSEIF aFlds[nPos, 2] == "D"
-                  IF ::aFields[n, FIELD_TYPE] != "D"
-                     ::aFields[n, FIELD_TYPE] := "D"
-                     ::aFields[n, FIELD_LEN] := 8
-                     ::aFields[n, FIELD_DOMAIN] := SQL_FAKE_DATE
+                  IF ::aFields[n, SR_FIELD_TYPE] != "D"
+                     ::aFields[n, SR_FIELD_TYPE] := "D"
+                     ::aFields[n, SR_FIELD_LEN] := 8
+                     ::aFields[n, SR_FIELD_DOMAIN] := SQL_FAKE_DATE
                   ENDIF
                ENDIF
             ENDIF
-            AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-            ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+            AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+            ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
          ENDIF
 
          ::aNames[n] := cName
 
-         IF ::aFields[n, FIELD_MULTILANG] .AND. SR_SetMultiLang()
+         IF ::aFields[n, SR_FIELD_MULTILANG] .AND. SR_SetMultiLang()
             ::aEmptyBuffer[n] := hb_Hash()
          ELSE
-            ::aEmptyBuffer[n] := SR_BlankVar(::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC])
+            ::aEmptyBuffer[n] := SR_BlankVar(::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC])
          ENDIF
 
       NEXT n
 
       IF ::nTCCompat > 0
          FOR n := 1 TO ::nFields
-            ::aFields[n, FIELD_NULLABLE] := .F.
+            ::aFields[n, SR_FIELD_NULLABLE] := .F.
          NEXT n
       ENDIF
 
@@ -2802,18 +2802,18 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
 #endif
 
       FOR n := 1 TO ::nFields
-         cName := ::aFields[n, FIELD_NAME]
+         cName := ::aFields[n, SR_FIELD_NAME]
          ASize(::aFields[n], SR_FIELD_INFO_SIZE)
-         ::aFields[n, FIELD_MULTILANG] := .F.
-         ::aFields[n, FIELD_ENUM] := n
-         ::aFields[n, FIELD_WAOFFSET] := 0
+         ::aFields[n, SR_FIELD_MULTILANG] := .F.
+         ::aFields[n, SR_FIELD_ENUM] := n
+         ::aFields[n, SR_FIELD_WAOFFSET] := 0
 
-         IF ::aFields[n, FIELD_TYPE] == "M" .AND. SR_SetMultiLang()
-            aML := SR_GetMLHash(::cFileName, ::aFields[n, FIELD_NAME])
+         IF ::aFields[n, SR_FIELD_TYPE] == "M" .AND. SR_SetMultiLang()
+            aML := SR_GetMLHash(::cFileName, ::aFields[n, SR_FIELD_NAME])
             IF aML != NIL
-               ::aFields[n, FIELD_TYPE] := aML[3]
-               ::aFields[n, FIELD_LEN] := Val(aML[4])
-               ::aFields[n, FIELD_MULTILANG] := .T.
+               ::aFields[n, SR_FIELD_TYPE] := aML[3]
+               ::aFields[n, SR_FIELD_LEN] := Val(aML[4])
+               ::aFields[n, SR_FIELD_MULTILANG] := .T.
             ENDIF
          ENDIF
 
@@ -2821,43 +2821,43 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
             ::cRecnoName := cName
             ::hnRecno := n
             IF ::cRecnoName != SR_RecnoName() .OR. !SR_SetHideRecno()
-               AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-               ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+               AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+               ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
             ENDIF
          ELSEIF cName == ::cDeletedName
             ::hnDeleted := n
-            ::aFields[n, FIELD_NULLABLE] := .F. // NOT NULL
+            ::aFields[n, SR_FIELD_NULLABLE] := .F. // NOT NULL
          ELSEIF cName == "DT__HIST" .AND. ::lISAM
             ::nPosDtHist := n
             ::lHistoric := .T.
 
             IF !SR_SetHideHistoric()
-               AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-               ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+               AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+               ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
             ENDIF
          ELSEIF cName == ::cColPK
             ::nPosColPK := n
-            AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-            ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+            AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+            ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
          ELSEIF SubStr(cName, 1, 7) == "INDKEY_" .OR. SubStr(cName, 1, 7) == "INDFOR_"
             // Ignore these columns
             // Culik are we in sqlex? if yes, we need to return this fields to query also
             IF RDDNAME() == "SQLEX"
-               AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-               ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+               AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+               ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
             ENDIF
 
          ELSE
-            AAdd(::aIniFields, {::aFields[n, FIELD_NAME], ::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC], n})
-            ::aFields[n, FIELD_WAOFFSET] := Len(::aIniFields)
+            AAdd(::aIniFields, {::aFields[n, SR_FIELD_NAME], ::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC], n})
+            ::aFields[n, SR_FIELD_WAOFFSET] := Len(::aIniFields)
          ENDIF
 
          ::aNames[n] := cName
 
-         IF ::aFields[n, FIELD_MULTILANG] .AND. SR_SetMultiLang()
+         IF ::aFields[n, SR_FIELD_MULTILANG] .AND. SR_SetMultiLang()
             ::aEmptyBuffer[n] := hb_Hash()
          ELSE
-            ::aEmptyBuffer[n] := SR_BlankVar(::aFields[n, FIELD_TYPE], ::aFields[n, FIELD_LEN], ::aFields[n, FIELD_DEC])
+            ::aEmptyBuffer[n] := SR_BlankVar(::aFields[n, SR_FIELD_TYPE], ::aFields[n, SR_FIELD_LEN], ::aFields[n, SR_FIELD_DEC])
          ENDIF
 
       NEXT n
@@ -3265,9 +3265,9 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
       CASE "L"
       CASE "T"
 
-         lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-         nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_DEC]
-         nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_LEN]
+         lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_NULLABLE]
+         nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_DEC]
+         nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_LEN]
 
          cRet := " WHERE (( "
 
@@ -3287,7 +3287,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
                   CfIELD := StrTran(CfIELD, ")", "")
                   nfieldPos := AScan(::aFields, {|x|x[1] == cField})
                   IF nFieldPos >0
-                     cKeyValue := Str(uKey, ::aFields[nFieldPos, FIELD_LEN]) + "%"
+                     cKeyValue := Str(uKey, ::aFields[nFieldPos, SR_FIELD_LEN]) + "%"
                      lLikeSep := .T.
                   ENDIF
                ENDIF
@@ -3298,7 +3298,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
                cQot := ::QuotedNull(uKey, , nFLen, nFDec, , lNull)
             ENDIF
             IF lLikeSep
-               AAdd(::aDat, Str(uKey, ::aFields[nFieldPos, FIELD_LEN]))
+               AAdd(::aDat, Str(uKey, ::aFields[nFieldPos, SR_FIELD_LEN]))
             ELSE
                AAdd(::aDat, uKey)
             ENDIF
@@ -3332,18 +3332,18 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
          FOR i := 1 TO nLen
 
-            nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_LEN]
+            nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_LEN]
             cPart := SubStr(uKey, nCons + 1, nThis)
 
             AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2])
 
-            cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_TYPE]
-            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_TYPE]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE]
             // unnecessary, the value is not used
-            //nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_DEC]
+            //nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_DEC]
             //HB_SYMBOL_UNUSED(nFDec)
             // unnecessary, the value is not used
-            //nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_LEN]
+            //nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_LEN]
             //HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= Len(uKey)
@@ -4259,25 +4259,25 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
       ASize(aRec, SR_FIELD_INFO_SIZE)
 
-      aRec[FIELD_NAME] := AllTrim(Upper(aRec[FIELD_NAME]))
-      aRec[FIELD_TYPE] := AllTrim(Upper(aRec[FIELD_TYPE]))
+      aRec[SR_FIELD_NAME] := AllTrim(Upper(aRec[SR_FIELD_NAME]))
+      aRec[SR_FIELD_TYPE] := AllTrim(Upper(aRec[SR_FIELD_TYPE]))
 
-      IF aRec[FIELD_NULLABLE] == NIL .OR. !HB_IsLogical(aRec[FIELD_NULLABLE])
-         aRec[FIELD_NULLABLE] := .T.
+      IF aRec[SR_FIELD_NULLABLE] == NIL .OR. !HB_IsLogical(aRec[SR_FIELD_NULLABLE])
+         aRec[SR_FIELD_NULLABLE] := .T.
       ENDIF
-      IF aRec[FIELD_UNIQUE] == NIL
-         aRec[FIELD_UNIQUE] := .F.
+      IF aRec[SR_FIELD_UNIQUE] == NIL
+         aRec[SR_FIELD_UNIQUE] := .F.
       ENDIF
-      IF aRec[FIELD_PRIMARY_KEY] == NIL
-         aRec[FIELD_PRIMARY_KEY] := 0
+      IF aRec[SR_FIELD_PRIMARY_KEY] == NIL
+         aRec[SR_FIELD_PRIMARY_KEY] := 0
       ENDIF
-      IF aRec[FIELD_MULTILANG] == NIL
-         aRec[FIELD_MULTILANG] := MULTILANG_FIELD_OFF
+      IF aRec[SR_FIELD_MULTILANG] == NIL
+         aRec[SR_FIELD_MULTILANG] := MULTILANG_FIELD_OFF
       ENDIF
 
-      IF !("*" + aRec[FIELD_NAME] + "*") $ "*" + ::cRecnoName + "*" //DT__HIST*"
-         IF aRec[FIELD_PRIMARY_KEY] != 0
-            AAdd(aPk, {aRec[FIELD_PRIMARY_KEY], aRec[FIELD_NAME]})
+      IF !("*" + aRec[SR_FIELD_NAME] + "*") $ "*" + ::cRecnoName + "*" //DT__HIST*"
+         IF aRec[SR_FIELD_PRIMARY_KEY] != 0
+            AAdd(aPk, {aRec[SR_FIELD_PRIMARY_KEY], aRec[SR_FIELD_NAME]})
          ENDIF
          AAdd(aCreate, aRec)
       ENDIF
@@ -4298,22 +4298,22 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
    FOR i := 1 TO Len(aCreate)
 
-      cField := Upper(AllTrim(aCreate[i, FIELD_NAME]))
-      lPrimary := aCreate[i, FIELD_PRIMARY_KEY] > 0
-      nRowSize += aCreate[i, FIELD_LEN]
+      cField := Upper(AllTrim(aCreate[i, SR_FIELD_NAME]))
+      lPrimary := aCreate[i, SR_FIELD_PRIMARY_KEY] > 0
+      nRowSize += aCreate[i, SR_FIELD_LEN]
 
-      IF aCreate[i, FIELD_MULTILANG] .AND. aCreate[i, FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
+      IF aCreate[i, SR_FIELD_MULTILANG] .AND. aCreate[i, SR_FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
          AAdd(aMultilang, AClone(aCreate[i]))
-         aCreate[i, FIELD_TYPE] := "M"
+         aCreate[i, SR_FIELD_TYPE] := "M"
       ENDIF
 
       cSql += "   " + SR_DBQUALIFY(cField) + " "
 
-      lNotNull := (!aCreate[i, FIELD_NULLABLE]) .OR. lPrimary
+      lNotNull := (!aCreate[i, SR_FIELD_NULLABLE]) .OR. lPrimary
 
-      SWITCH aCreate[i, FIELD_TYPE]
+      SWITCH aCreate[i, SR_FIELD_TYPE]
       CASE "C"
-         cSql += IIf(aCreate[i, FIELD_LEN] > 254, "VARCHAR (", "CHAR (") + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
+         cSql += IIf(aCreate[i, SR_FIELD_LEN] > 254, "VARCHAR (", "CHAR (") + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
          EXIT
       CASE "D"
          cSql += "DATE"
@@ -4326,12 +4326,12 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          EXIT
       CASE "N"
          IF cField == ::cRecnoName
-            cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") " + IIf(::oSql:nSystemID == SQLRDD_RDBMS_FIREBR, "", "GENERATED BY DEFAULT AS IDENTITY") + " NOT NULL UNIQUE "
+            cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") " + IIf(::oSql:nSystemID == SQLRDD_RDBMS_FIREBR, "", "GENERATED BY DEFAULT AS IDENTITY") + " NOT NULL UNIQUE "
          ELSE
-            IF aCreate[i, FIELD_LEN] > 18
+            IF aCreate[i, SR_FIELD_LEN] > 18
                cSql += "DOUBLE PRECISION" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
             ELSE
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
+               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
             ENDIF
          ENDIF
          EXIT
@@ -4339,7 +4339,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          cSql += "TIMESTAMP "
          EXIT
       SR_OTHERWISE
-         SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
+         SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
       ENDSWITCH
 
       cSql += IIf(i != Len(aCreate), ", " + SR_CRLF, SR_CRLF)
@@ -4401,7 +4401,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    // Add multilang columns in catalog
 
    FOR EACH aField IN aMultilang
-      ::oSql:Exec("INSERT INTO " + SR_GetToolsOwner() + "SR_MGMNTLANG ( TABLE_ , COLUMN_, TYPE_, LEN_, DEC_ ) VALUES ( '" + Upper(::cFileName) + "','" + aField[FIELD_NAME] + "', '" + aField[FIELD_TYPE] + "','" + AllTrim(Str(aField[FIELD_LEN], 8)) + "','" + AllTrim(Str(aField[FIELD_DEC], 8)) + "' )")
+      ::oSql:Exec("INSERT INTO " + SR_GetToolsOwner() + "SR_MGMNTLANG ( TABLE_ , COLUMN_, TYPE_, LEN_, DEC_ ) VALUES ( '" + Upper(::cFileName) + "','" + aField[SR_FIELD_NAME] + "', '" + aField[SR_FIELD_TYPE] + "','" + AllTrim(Str(aField[SR_FIELD_LEN], 8)) + "','" + AllTrim(Str(aField[SR_FIELD_DEC], 8)) + "' )")
       ::oSql:Commit()
    NEXT
 
@@ -4652,10 +4652,10 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
          ::nFields := Len(::aFields)
          ::aInfo[SR_AINFO_FCOUNT] := ::nFields
          IF ::hnRecno != NIL
-            ::cRecnoName := ::aFields[::hnRecno, FIELD_NAME]
+            ::cRecnoName := ::aFields[::hnRecno, SR_FIELD_NAME]
          ENDIF
          IF ::hnDeleted > 0
-            ::cDeletedName := ::aFields[::hnDeleted, FIELD_NAME]
+            ::cDeletedName := ::aFields[::hnDeleted, SR_FIELD_NAME]
          ENDIF
          ASize(::aEmptyBuffer, ::nFields)
          AEval(::aEmptyBuffer, {|x, i|HB_SYMBOL_UNUSED(x), ::aEmptyBuffer[i] := aCacheInfo[SR_CACHEINFO_ABLANK][i]})
@@ -5069,7 +5069,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
          IF (nPos := AScan(::aNames, {|x|x == cCol})) != 0
             IF ::aNames[nPos] != ::cRecnoName
                ::aIndex[nLen, SR_AINDEX_SYNTH_INDEX_COL_POS] := nPos
-               SWITCH ::aFields[nPos, FIELD_TYPE]
+               SWITCH ::aFields[nPos, SR_FIELD_TYPE]
                CASE "C"
                   IF ::aNames[nPos] == ::cDeletedName
                      cXBase += "Deleted() + "
@@ -5084,7 +5084,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
                   cXBase += "TTOS(" + ::aNames[nPos] + ") + " // TODO: TTOS -> HB_TTOS
                   EXIT
                CASE "N"
-                  cXBase += "STR(" + ::aNames[nPos] + ", " + AllTrim(Str(::aFields[nPos, FIELD_LEN])) + ", " + AllTrim(Str(::aFields[nPos, FIELD_DEC])) + ") + "
+                  cXBase += "STR(" + ::aNames[nPos] + ", " + AllTrim(Str(::aFields[nPos, SR_FIELD_LEN])) + ", " + AllTrim(Str(::aFields[nPos, SR_FIELD_DEC])) + ") + "
                   EXIT
                CASE "L"
                   cXBase += "Sr_cdbvalue(" + ::aNames[nPos] + ")" + " + "
@@ -5942,9 +5942,9 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
          IF ValType(uKey) $ "NDL"       // One field, piece of cake!
 
-            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-            nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_DEC]
-            nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_LEN]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_NULLABLE]
+            nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_DEC]
+            nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_LEN]
 
             cQot := ::QuotedNull(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_TOP_SCOPE], , nFLen, nFDec, , lNull)
             cSep := IIf(cQot == "NULL", " IS ", " = ")
@@ -5978,7 +5978,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
             FOR i := 1 TO nLen
 
-               nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_LEN]
+               nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_LEN]
                cPart := SubStr(uKey, nCons + 1, nThis)
 
                IF AllTrim(cPart) == "%"
@@ -5987,11 +5987,11 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2])
 
-               cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_TYPE]
-               lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_NULLABLE]
-               nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_DEC]
+               cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_TYPE]
+               lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE]
+               nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_DEC]
                HB_SYMBOL_UNUSED(nFDec)
-               nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_LEN]
+               nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_LEN]
                HB_SYMBOL_UNUSED(nFLen)
 
                IF i == 1 .AND. nThis >= Len(uKey)
@@ -6070,9 +6070,9 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
             IF ValType(uKey) $ "NDL"       // One field, piece of cake!
 
-               lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_NULLABLE]
-               nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_DEC]
-               nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], FIELD_LEN]
+               lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_NULLABLE]
+               nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_DEC]
+               nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1, 2], SR_FIELD_LEN]
 
                IF ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_TOP_SCOPE] != NIL
                   cQot := ::QuotedNull(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_TOP_SCOPE], , nFLen, nFDec, , lNull)
@@ -6127,7 +6127,7 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                FOR i := 1 TO nLen
 
-                  nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_LEN]
+                  nThis := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_LEN]
                   cPart := SubStr(uKey, nCons + 1, nThis)
 
                   IF Len(AllTrim(cPart)) < nThis .AND. nScoping == BOTTOMSCOPE
@@ -6140,11 +6140,11 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
                   AAdd(::aPosition, ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2])
 
-                  cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_TYPE]
-                  lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_NULLABLE]
-                  nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_DEC]
+                  cType := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_TYPE]
+                  lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE]
+                  nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_DEC]
                   HB_SYMBOL_UNUSED(nFDec)
-                  nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_LEN]
+                  nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_LEN]
                   HB_SYMBOL_UNUSED(nFLen)
 
                   IF i == 1 .AND. nThis >= Len(uKey)
@@ -6643,7 +6643,7 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
          c2 := ""
 
          FOR i := 1 TO j
-            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE]
             HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
             cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2]])
@@ -6878,7 +6878,7 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
 
          FOR i := 1 TO j
 
-            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], FIELD_NULLABLE]
+            lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE]
             HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
             cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2]])
@@ -7087,25 +7087,25 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
       ASize(aCreate[i], SR_FIELD_INFO_SIZE)
       //cLobs := "" (variable not used)
 
-      DEFAULT aCreate[i, FIELD_PRIMARY_KEY] TO 0
-      DEFAULT aCreate[i, FIELD_NULLABLE] TO .T.
-      DEFAULT aCreate[i, FIELD_MULTILANG] TO MULTILANG_FIELD_OFF
+      DEFAULT aCreate[i, SR_FIELD_PRIMARY_KEY] TO 0
+      DEFAULT aCreate[i, SR_FIELD_NULLABLE] TO .T.
+      DEFAULT aCreate[i, SR_FIELD_MULTILANG] TO MULTILANG_FIELD_OFF
 
-      aCreate[i, FIELD_NAME] := Upper(AllTrim(aCreate[i, FIELD_NAME]))
-      cField := aCreate[i, FIELD_NAME]
-      lPrimary := aCreate[i, FIELD_PRIMARY_KEY] > 0
+      aCreate[i, SR_FIELD_NAME] := Upper(AllTrim(aCreate[i, SR_FIELD_NAME]))
+      cField := aCreate[i, SR_FIELD_NAME]
+      lPrimary := aCreate[i, SR_FIELD_PRIMARY_KEY] > 0
 
       IF (nPos_ := AScan(::aNames, {|x|AllTrim(Upper(x)) == cField})) > 0
          // Column exists
 
-         lCurrentIsMultLang := ::aFields[nPos_, FIELD_MULTILANG]
+         lCurrentIsMultLang := ::aFields[nPos_, SR_FIELD_MULTILANG]
 
          IF lBakcup .AND. (!lCurrentIsMultLang)
             // Create backup column
             aBack := {AClone(::aFields[nPos_])}
             aBack[1, 1] := "BACKUP_"
             ::AlterColumns(aBack, lDisplayErrorMessage, .F.)
-            ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET BACKUP_ = " + SR_DBQUALIFY(::aFields[nPos_, FIELD_NAME]), lDisplayErrorMessage)
+            ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET BACKUP_ = " + SR_DBQUALIFY(::aFields[nPos_, SR_FIELD_NAME]), lDisplayErrorMessage)
             ::oSql:Commit()
             lDataInBackup := .T.
          ENDIF
@@ -7115,7 +7115,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
 
       // DROP the column
 
-      IF !(lCurrentIsMultLang .AND. aCreate[i, FIELD_TYPE] $ "MC")
+      IF !(lCurrentIsMultLang .AND. aCreate[i, SR_FIELD_TYPE] $ "MC")
 
          ::DropColumn(cField, .F.)   // It may be a new column or not - don't care.
 
@@ -7123,63 +7123,63 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
          cSql += " ADD " + "" + SR_DBQUALIFY(AllTrim(cField))
          cSql += " "
 
-         // lNotNull := (!aCreate[i, FIELD_NULLABLE]) .OR. lPrimary
+         // lNotNull := (!aCreate[i, SR_FIELD_NULLABLE]) .OR. lPrimary
          lNotNull := .F.
 
       ENDIF
 
-      IF lCurrentIsMultLang .AND. aCreate[i, FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
+      IF lCurrentIsMultLang .AND. aCreate[i, SR_FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
 
          aField := AClone(aCreate[i])
          AAdd(aMultilang, AClone(aCreate[i]))
-         ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLANG WHERE TABLE_ = '" + Upper(::cFileName) + "' AND COLUMN_ = '" + aField[FIELD_NAME] + "'")
+         ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLANG WHERE TABLE_ = '" + Upper(::cFileName) + "' AND COLUMN_ = '" + aField[SR_FIELD_NAME] + "'")
          ::oSql:Commit()
-         SR_LogFile("changestruct.log", {::cFileName, "Removing MLANG column:", aField[FIELD_NAME]})
+         SR_LogFile("changestruct.log", {::cFileName, "Removing MLANG column:", aField[SR_FIELD_NAME]})
          lRet2 := .F.
 
       ELSE
 
-         IF aCreate[i, FIELD_MULTILANG] .AND. aCreate[i, FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
+         IF aCreate[i, SR_FIELD_MULTILANG] .AND. aCreate[i, SR_FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
             AAdd(aMultilang, AClone(aCreate[i]))
-            aCreate[i, FIELD_TYPE] := "M"
+            aCreate[i, SR_FIELD_TYPE] := "M"
          ENDIF
 
          DO CASE // TODO: switch ?
 
-         CASE (aCreate[i, FIELD_TYPE] == "C") .AND. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR
-            IF aCreate[i, FIELD_LEN] > 254
-               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
+         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR
+            IF aCreate[i, SR_FIELD_LEN] > 254
+               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
             ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
+               cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
             ENDIF
 
-         CASE (aCreate[i, FIELD_TYPE] == "D") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR)
+         CASE (aCreate[i, SR_FIELD_TYPE] == "D") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR)
             cSql += "DATE"
 
-         CASE (aCreate[i, FIELD_TYPE] == "L") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR)
+         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR)
             cSql += "SMALLINT"
 
-         CASE (aCreate[i, FIELD_TYPE] == "M") .AND. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR
+         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR
             cSql += "BLOB SUB_TYPE 1" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")
 
-         CASE (aCreate[i, FIELD_TYPE] == "N") .AND. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .AND. cField == ::cRecnoName
-           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
+         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .AND. cField == ::cRecnoName
+           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
 
-         CASE (aCreate[i, FIELD_TYPE] == "N") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5) .AND. cField == ::cRecnoName
-           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") GENERATED BY DEFAULT AS IDENTITY  NOT NULL UNIQUE "
+         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5) .AND. cField == ::cRecnoName
+           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") GENERATED BY DEFAULT AS IDENTITY  NOT NULL UNIQUE "
 
-         CASE (aCreate[i, FIELD_TYPE] == "N") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
-            IF aCreate[i, FIELD_LEN] > 18
+         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
+            IF aCreate[i, SR_FIELD_LEN] > 18
                cSql += "DOUBLE PRECISION" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
             ELSE
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
+               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
             ENDIF
 
-         CASE (aCreate[i, FIELD_TYPE] == "T") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
+         CASE (aCreate[i, SR_FIELD_TYPE] == "T") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
             cSql += "TIMESTAMP "
 
          OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
 
          ENDCASE
 
@@ -7193,11 +7193,11 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
       IF nPos_ > 0
          ::aFields[nPos_] := AClone(aCreate[i])
          ::aNames[nPos_] := aCreate[i, 1]
-         ::aEmptyBuffer[nPos_] := SR_BlankVar(::aFields[Len(::aFields), FIELD_TYPE], ::aFields[Len(::aFields), FIELD_LEN], ::aFields[Len(::aFields), FIELD_DEC])
+         ::aEmptyBuffer[nPos_] := SR_BlankVar(::aFields[Len(::aFields), SR_FIELD_TYPE], ::aFields[Len(::aFields), SR_FIELD_LEN], ::aFields[Len(::aFields), SR_FIELD_DEC])
       ELSE
          AAdd(::aFields, AClone(aCreate[i]))
          AAdd(::aNames, aCreate[i, 1])
-         AAdd(::aEmptyBuffer, SR_BlankVar(::aFields[Len(::aFields), FIELD_TYPE], ::aFields[Len(::aFields), FIELD_LEN], ::aFields[Len(::aFields), FIELD_DEC]))
+         AAdd(::aEmptyBuffer, SR_BlankVar(::aFields[Len(::aFields), SR_FIELD_TYPE], ::aFields[Len(::aFields), SR_FIELD_LEN], ::aFields[Len(::aFields), SR_FIELD_DEC]))
          nPos_ := Len(::aFields)
       ENDIF
 
@@ -7214,9 +7214,9 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
       // Add multilang columns in catalog
 
       FOR EACH aField IN aMultilang
-         ::oSql:Exec("INSERT INTO " + SR_GetToolsOwner() + "SR_MGMNTLANG ( TABLE_ , COLUMN_, TYPE_, LEN_, DEC_ ) VALUES ( '" + Upper(::cFileName) + "','" + aField[FIELD_NAME] + "', '" + aField[FIELD_TYPE] + "','" + AllTrim(Str(aField[FIELD_LEN], 8)) + "','" + AllTrim(Str(aField[FIELD_DEC], 8)) + "' )")
+         ::oSql:Exec("INSERT INTO " + SR_GetToolsOwner() + "SR_MGMNTLANG ( TABLE_ , COLUMN_, TYPE_, LEN_, DEC_ ) VALUES ( '" + Upper(::cFileName) + "','" + aField[SR_FIELD_NAME] + "', '" + aField[SR_FIELD_TYPE] + "','" + AllTrim(Str(aField[SR_FIELD_LEN], 8)) + "','" + AllTrim(Str(aField[SR_FIELD_DEC], 8)) + "' )")
          ::oSql:Commit()
-         SR_LogFile("changestruct.log", {::cFileName, "Adding MLANG column:", "'" + aField[FIELD_NAME] + "', '" + aField[FIELD_TYPE] + "','" + AllTrim(Str(aField[FIELD_LEN], 8)) + "'"})
+         SR_LogFile("changestruct.log", {::cFileName, "Adding MLANG column:", "'" + aField[SR_FIELD_NAME] + "', '" + aField[SR_FIELD_TYPE] + "','" + AllTrim(Str(aField[SR_FIELD_LEN], 8)) + "'"})
          SR_ReloadMLHash(::oSql)
       NEXT
 
@@ -7224,15 +7224,15 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
 
       IF lDataInBackup
          // Put data back in column
-         ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, FIELD_NAME]) + " = BACKUP_", lDisplayErrorMessage)
+         ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, SR_FIELD_NAME]) + " = BACKUP_", lDisplayErrorMessage)
          ::oSql:Commit()
          // Drop backup
          ::DropColumn("BACKUP_", lDisplayErrorMessage)
          lDataInBackup := .F.
       ENDIF
 
-      IF lRet2 .AND. (!aCreate[i, FIELD_NULLABLE])  // Column should be NOT NULL
-         ::AddRuleNotNull(aCreate[i, FIELD_NAME])
+      IF lRet2 .AND. (!aCreate[i, SR_FIELD_NULLABLE])  // Column should be NOT NULL
+         ::AddRuleNotNull(aCreate[i, SR_FIELD_NAME])
       ENDIF
 
    NEXT i
@@ -7283,25 +7283,25 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
       ASize(aCreate[i], SR_FIELD_INFO_SIZE)
       //cLobs := "" (variable not used)
 
-      DEFAULT aCreate[i, FIELD_PRIMARY_KEY] TO 0
-      DEFAULT aCreate[i, FIELD_NULLABLE] TO .T.
-      DEFAULT aCreate[i, FIELD_MULTILANG] TO MULTILANG_FIELD_OFF
+      DEFAULT aCreate[i, SR_FIELD_PRIMARY_KEY] TO 0
+      DEFAULT aCreate[i, SR_FIELD_NULLABLE] TO .T.
+      DEFAULT aCreate[i, SR_FIELD_MULTILANG] TO MULTILANG_FIELD_OFF
 
-      aCreate[i, FIELD_NAME] := Upper(AllTrim(aCreate[i, FIELD_NAME]))
-      cField := aCreate[i, FIELD_NAME]
-      lPrimary := aCreate[i, FIELD_PRIMARY_KEY] > 0
+      aCreate[i, SR_FIELD_NAME] := Upper(AllTrim(aCreate[i, SR_FIELD_NAME]))
+      cField := aCreate[i, SR_FIELD_NAME]
+      lPrimary := aCreate[i, SR_FIELD_PRIMARY_KEY] > 0
 
       IF (nPos_ := AScan(::aNames, {|x| AllTrim(Upper(x)) == cField})) > 0
          // Column exists
 
-         lCurrentIsMultLang := ::aFields[nPos_, FIELD_MULTILANG]
+         lCurrentIsMultLang := ::aFields[nPos_, SR_FIELD_MULTILANG]
 
          IF lBakcup .AND. (!lCurrentIsMultLang)
             // Create backup column
             aBack := {AClone(::aFields[nPos_])}
             aBack[1, 1] := "BACKUP_"
             ::AlterColumns(aBack, lDisplayErrorMessage, .F.)
-            ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET BACKUP_ = " + SR_DBQUALIFY(::aFields[nPos_, FIELD_NAME]), lDisplayErrorMessage)
+            ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET BACKUP_ = " + SR_DBQUALIFY(::aFields[nPos_, SR_FIELD_NAME]), lDisplayErrorMessage)
             ::oSql:Commit()
             lDataInBackup := .T.
          ENDIF
@@ -7311,7 +7311,7 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
 
       // DROP the column
 
-      IF !(lCurrentIsMultLang .AND. aCreate[i, FIELD_TYPE] $ "MC")
+      IF !(lCurrentIsMultLang .AND. aCreate[i, SR_FIELD_TYPE] $ "MC")
 
          cSql := "ALTER TABLE " + ::cQualifiedTableName
          IF ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5
@@ -7319,54 +7319,54 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
          ENDIF
          cSql += " "
 
-         // lNotNull := (!aCreate[i, FIELD_NULLABLE]) .OR. lPrimary
+         // lNotNull := (!aCreate[i, SR_FIELD_NULLABLE]) .OR. lPrimary
          lNotNull := .F.
 
       ENDIF
 
-      IF lCurrentIsMultLang .AND. aCreate[i, FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
+      IF lCurrentIsMultLang .AND. aCreate[i, SR_FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
 
          aField := AClone(aCreate[i])
          AAdd(aMultilang, AClone(aCreate[i]))
-         ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLANG WHERE TABLE_ = '" + Upper(::cFileName) + "' AND COLUMN_ = '" + aField[FIELD_NAME] + "'")
+         ::oSql:Exec("DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTLANG WHERE TABLE_ = '" + Upper(::cFileName) + "' AND COLUMN_ = '" + aField[SR_FIELD_NAME] + "'")
          ::oSql:Commit()
-         SR_LogFile("changestruct.log", {::cFileName, "Removing MLANG column:", aField[FIELD_NAME]})
+         SR_LogFile("changestruct.log", {::cFileName, "Removing MLANG column:", aField[SR_FIELD_NAME]})
          lRet2 := .F.
 
       ELSE
 
-         IF aCreate[i, FIELD_MULTILANG] .AND. aCreate[i, FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
+         IF aCreate[i, SR_FIELD_MULTILANG] .AND. aCreate[i, SR_FIELD_TYPE] $ "MC" .AND. SR_SetMultiLang()
             AAdd(aMultilang, AClone(aCreate[i]))
-            aCreate[i, FIELD_TYPE] := "M"
+            aCreate[i, SR_FIELD_TYPE] := "M"
          ENDIF
 
          DO CASE // TODO: switch ?
 
-         CASE (aCreate[i, FIELD_TYPE] == "C") .AND. ( ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
-            IF aCreate[i, FIELD_LEN] > 254
-               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
+         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ( ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
+            IF aCreate[i, SR_FIELD_LEN] > 254
+               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
             ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
+               cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
             ENDIF
 
-         CASE (aCreate[i, FIELD_TYPE] == "M") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
+         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
             cSql += "BLOB SUB_TYPE 1" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")
 
-         CASE (aCreate[i, FIELD_TYPE] == "N") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5) .AND. cField == ::cRecnoName
-           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") GENERATED BY DEFAULT AS IDENTITY  NOT NULL UNIQUE "
+         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5) .AND. cField == ::cRecnoName
+           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") GENERATED BY DEFAULT AS IDENTITY  NOT NULL UNIQUE "
 
-         CASE (aCreate[i, FIELD_TYPE] == "N") .AND. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .AND. cField == ::cRecnoName
-           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN])) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
+         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .AND. cField == ::cRecnoName
+           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
 
-         CASE (aCreate[i, FIELD_TYPE] == "N") .AND. ( ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
-            IF aCreate[i, FIELD_LEN] > 18
+         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ( ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR3 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR4 .OR. ::oSql:nSystemID == SQLRDD_RDBMS_FIREBR5)
+            IF aCreate[i, SR_FIELD_LEN] > 18
                cSql += "DOUBLE PRECISION" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
             ELSE
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
+               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
             ENDIF
 
          OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
 
          ENDCASE
 
@@ -7380,11 +7380,11 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
       IF nPos_ > 0
          ::aFields[nPos_] := AClone(aCreate[i])
          ::aNames[nPos_] := aCreate[i, 1]
-         ::aEmptyBuffer[nPos_] := SR_BlankVar(::aFields[Len(::aFields), FIELD_TYPE], ::aFields[Len(::aFields), FIELD_LEN], ::aFields[Len(::aFields), FIELD_DEC])
+         ::aEmptyBuffer[nPos_] := SR_BlankVar(::aFields[Len(::aFields), SR_FIELD_TYPE], ::aFields[Len(::aFields), SR_FIELD_LEN], ::aFields[Len(::aFields), SR_FIELD_DEC])
       ELSE
          AAdd(::aFields, AClone(aCreate[i]))
          AAdd(::aNames, aCreate[i, 1])
-         AAdd(::aEmptyBuffer, SR_BlankVar(::aFields[Len(::aFields), FIELD_TYPE], ::aFields[Len(::aFields), FIELD_LEN], ::aFields[Len(::aFields), FIELD_DEC]))
+         AAdd(::aEmptyBuffer, SR_BlankVar(::aFields[Len(::aFields), SR_FIELD_TYPE], ::aFields[Len(::aFields), SR_FIELD_LEN], ::aFields[Len(::aFields), SR_FIELD_DEC]))
          nPos_ := Len(::aFields)
       ENDIF
 
@@ -7401,9 +7401,9 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
       // Add multilang columns in catalog
 
       FOR EACH aField IN aMultilang
-         ::oSql:Exec("INSERT INTO " + SR_GetToolsOwner() + "SR_MGMNTLANG ( TABLE_ , COLUMN_, TYPE_, LEN_, DEC_ ) VALUES ( '" + Upper(::cFileName) + "','" + aField[FIELD_NAME] + "', '" + aField[FIELD_TYPE] + "','" + AllTrim(Str(aField[FIELD_LEN], 8)) + "','" + AllTrim(Str(aField[FIELD_DEC], 8)) + "' )")
+         ::oSql:Exec("INSERT INTO " + SR_GetToolsOwner() + "SR_MGMNTLANG ( TABLE_ , COLUMN_, TYPE_, LEN_, DEC_ ) VALUES ( '" + Upper(::cFileName) + "','" + aField[SR_FIELD_NAME] + "', '" + aField[SR_FIELD_TYPE] + "','" + AllTrim(Str(aField[SR_FIELD_LEN], 8)) + "','" + AllTrim(Str(aField[SR_FIELD_DEC], 8)) + "' )")
          ::oSql:Commit()
-         SR_LogFile("changestruct.log", {::cFileName, "Adding MLANG column:", "'" + aField[FIELD_NAME] + "', '" + aField[FIELD_TYPE] + "','" + AllTrim(Str(aField[FIELD_LEN], 8)) + "'"})
+         SR_LogFile("changestruct.log", {::cFileName, "Adding MLANG column:", "'" + aField[SR_FIELD_NAME] + "', '" + aField[SR_FIELD_TYPE] + "','" + AllTrim(Str(aField[SR_FIELD_LEN], 8)) + "'"})
          SR_ReloadMLHash(::oSql)
       NEXT
 
@@ -7411,15 +7411,15 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
 
       IF lDataInBackup
          // Put data back in column
-         ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, FIELD_NAME]) + " = BACKUP_", lDisplayErrorMessage)
+         ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + SR_DBQUALIFY(::aFields[nPos_, SR_FIELD_NAME]) + " = BACKUP_", lDisplayErrorMessage)
          ::oSql:Commit()
          // Drop backup
          ::DropColumn("BACKUP_", lDisplayErrorMessage)
          lDataInBackup := .F.
       ENDIF
 
-      IF lRet2 .AND. (!aCreate[i, FIELD_NULLABLE])  // Column should be NOT NULL
-         ::AddRuleNotNull(aCreate[i, FIELD_NAME])
+      IF lRet2 .AND. (!aCreate[i, SR_FIELD_NULLABLE])  // Column should be NOT NULL
+         ::AddRuleNotNull(aCreate[i, SR_FIELD_NAME])
       ENDIF
 
       IF lRet2
@@ -7577,7 +7577,7 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
    nCol := AScan(::aNames, {|x|AllTrim(Upper(x)) == AllTrim(Upper(cColumn))})
 
    IF nCol > 0
-      SWITCH ::aFields[nCol, FIELD_TYPE]
+      SWITCH ::aFields[nCol, SR_FIELD_TYPE]
       CASE "C"
          uVal := "' '"
          EXIT
@@ -7589,7 +7589,7 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
          EXIT
       SR_OTHERWISE
          lOk := .F.
-//         ::RunTimeErr("", "Cannot change NULL constraint to datatype: " + ::aFields[nCol, FIELD_TYPE])
+//         ::RunTimeErr("", "Cannot change NULL constraint to datatype: " + ::aFields[nCol, SR_FIELD_TYPE])
       ENDSWITCH
 
       ::oSql:Commit()
@@ -7620,7 +7620,7 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
 
    IF nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO .OR. nRet == SQL_NO_DATA_FOUND
       lOk := .T.
-      ::aFields[nCol, FIELD_NULLABLE] := .F.
+      ::aFields[nCol, SR_FIELD_NULLABLE] := .F.
    ENDIF
 
 RETURN lOk
@@ -7642,7 +7642,7 @@ METHOD SR_WORKAREA:DropRuleNotNull(cColumn)
 
    IF nRet == SQL_SUCCESS .OR. nRet == SQL_SUCCESS_WITH_INFO .OR. nRet == SQL_NO_DATA_FOUND
       lOk := .T.
-      ::aFields[nCol, FIELD_NULLABLE] := .F.
+      ::aFields[nCol, SR_FIELD_NULLABLE] := .F.
    ENDIF
 
 RETURN lOk
@@ -7773,7 +7773,7 @@ METHOD SR_WORKAREA:CreateConstraint(cSourceTable, aSourceColumns, cTargetTable, 
 
             nCol := AScan(::aNames, {|x|Upper(AllTrim(x)) == Upper(AllTrim(aTargetColumns[i]))})
 
-            IF nCol > 0 .AND. ::aFields[nCol, FIELD_NULLABLE]
+            IF nCol > 0 .AND. ::aFields[nCol, SR_FIELD_NULLABLE]
                IF !::AddRuleNotNull(aTargetColumns[i])
                   ::RunTimeErr("30", SR_Msg(30) + " Table: " + ::cFileName + " Column: " + aTargetColumns[i])
                ENDIF

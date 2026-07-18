@@ -257,9 +257,9 @@ static void sr_MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer,
                             const HB_SIZE lLenBuff, /*HB_BOOL bQueryOnly,*/
                             /*HB_ULONG ulSystemID,*/ const HB_BOOL bTranslate)
 {
-  const HB_LONG lType = hb_arrayGetNL(pField, FIELD_DOMAIN);
-  const HB_SIZE lLen = hb_arrayGetNL(pField, FIELD_LEN);
-  const HB_SIZE lDec = hb_arrayGetNL(pField, FIELD_DEC);
+  const HB_LONG lType = hb_arrayGetNL(pField, SR_FIELD_DOMAIN);
+  const HB_SIZE lLen = hb_arrayGetNL(pField, SR_FIELD_LEN);
+  const HB_SIZE lDec = hb_arrayGetNL(pField, SR_FIELD_DEC);
 
   // HB_SYMBOL_UNUSED(bQueryOnly);
   // HB_SYMBOL_UNUSED(ulSystemID);
@@ -473,7 +473,7 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
     for (col = 0; col < cols; col++) {
       // temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
       HB_ITEM TempItem = {0};
-      lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, col + 1), FIELD_ENUM);
+      lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, col + 1), SR_FIELD_ENUM);
 
       if (lIndex != 0) {
         if (thisrow[lIndex - 1]) {
@@ -684,7 +684,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
     // Column name
     field = mysql_fetch_field_direct(session->stmt, row);
     hb_arrayNew(atemp, SR_FIELD_INFO_SIZE);
-    hb_arraySetForward(atemp, FIELD_NAME, hb_itemPutC(&TempItem, hb_strupr(field->name)));
+    hb_arraySetForward(atemp, SR_FIELD_NAME, hb_itemPutC(&TempItem, hb_strupr(field->name)));
 
     // Data type, len, dec
     type = field->type;
@@ -708,89 +708,89 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
         char_len = (int)field->length;
       }
 
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "C"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, char_len));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_CHAR));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "C"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, char_len));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_CHAR));
       break;
     }
     case MYSQL_TINY_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "L"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, 1));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_BIT));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "L"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, 1));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_BIT));
       break;
     }
     case MYSQL_TINY_BLOB_TYPE:
     case MYSQL_MEDIUM_BLOB_TYPE:
     case MYSQL_LONG_BLOB_TYPE:
     case MYSQL_BLOB_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "M"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, 10));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_LONGVARCHAR));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "M"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, 10));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_LONGVARCHAR));
       break;
     }
     case MYSQL_DATE_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "D"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, 8));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_DATE));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "D"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, 8));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_DATE));
       break;
     }
     case MYSQL_DATETIME_TYPE:
     case MYSQL_TIMESTAMP_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "T"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, 8));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_DATETIME));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "T"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, 8));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_DATETIME));
       break;
     }
     case MYSQL_TIME_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "T"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, 4));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_TIME));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "T"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, 4));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_TIME));
       break;
     }
     case MYSQL_SHORT_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, 6));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, 6));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
       break;
     }
     case MYSQL_LONGLONG_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, 20));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, 20));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
       break;
     }
     case MYSQL_LONG_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
-      hb_arraySetForward(atemp, FIELD_LEN,
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN,
                          hb_itemPutNI(&TempItem, HB_MIN(11, (int)field->length)));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
       break;
     }
     case MYSQL_INT24_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
-      hb_arraySetForward(atemp, FIELD_LEN,
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN,
                          hb_itemPutNI(&TempItem, HB_MIN(8, (int)field->length)));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
       break;
     }
     case MYSQL_FLOAT_TYPE:
     case MYSQL_DECIMAL_TYPE:
     case MYSQL_DOUBLE_TYPE:
     case MYSQL_NEWDECIMAL_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(&TempItem, (int)field->length));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(&TempItem, field->decimals));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, (int)field->length));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, field->decimals));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
       break;
     }
     default: {
@@ -799,7 +799,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
     }
 
     // Nullable
-    hb_arraySetForward(atemp, FIELD_NULLABLE,
+    hb_arraySetForward(atemp, SR_FIELD_NULLABLE,
                        hb_itemPutL(&TempItem, IS_NOT_NULL(field->flags) ? HB_FALSE : HB_TRUE));
     // add to main array
     hb_arraySetForward(ret, row + 1, atemp);
@@ -878,18 +878,18 @@ mysql_error(session->dbh));
         char_len = (int)field->length;
       }
 
-      hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, char_len));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, char_len));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_CHAR));
       break;
     }
     case MYSQL_TINY_TYPE: {
       hb_itemPutC(temp, "L");
-      hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 1));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_BIT));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, 1));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_BIT));
       break;
     }
     case MYSQL_TINY_BLOB_TYPE:
@@ -897,80 +897,80 @@ mysql_error(session->dbh));
     case MYSQL_LONG_BLOB_TYPE:
     case MYSQL_BLOB_TYPE: {
       hb_itemPutC(temp, "M");
-      hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 10));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_LONGVARCHAR));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, 10));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_LONGVARCHAR));
       break;
     }
     case MYSQL_DATE_TYPE: {
       hb_itemPutC(temp, "D");
-      hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 8));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_DATE));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, 8));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_DATE));
       break;
     }
     case MYSQL_DATETIME_TYPE:
     case MYSQL_TIMESTAMP_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(temp, "T"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 8));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_DATETIME));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(temp, "T"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, 8));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_DATETIME));
       break;
     }
     case MYSQL_TIME_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(temp, "T"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 4));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_TIME));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(temp, "T"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, 4));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_TIME));
       break;
     }
     case MYSQL_SHORT_TYPE: {
       hb_itemPutC(temp, "N");
-      hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 6));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, 6));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
     }
     case MYSQL_LONGLONG_TYPE: {
       hb_itemPutC(temp, "N");
-      hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, 20));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, 20));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
     }
     case MYSQL_LONG_TYPE: {
       hb_itemPutC(temp, "N");
-      hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, HB_MIN(11, (int)field->length)));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, HB_MIN(11, (int)field->length)));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
     }
     case MYSQL_INT24_TYPE: {
       hb_itemPutC(temp, "N");
-      hb_arraySetForward(atemp, FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, HB_MIN(8, (int)field->length)));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, 0));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, HB_MIN(8, (int)field->length)));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
     }
     case MYSQL_FLOAT_TYPE:
     case MYSQL_DECIMAL_TYPE:
     case MYSQL_DOUBLE_TYPE: {
-      hb_arraySetForward(atemp, FIELD_TYPE, hb_itemPutC(temp, "N"));
-      hb_arraySetForward(atemp, FIELD_LEN, hb_itemPutNI(temp, (int)field->length));
-      hb_arraySetForward(atemp, FIELD_DEC, hb_itemPutNI(temp, field->decimals));
-      hb_arraySetForward(atemp, FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
+      hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(temp, "N"));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, (int)field->length));
+      hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, field->decimals));
+      hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
     }
     }
 
     // Nullable
-    hb_arraySetForward(atemp, FIELD_NULLABLE, hb_itemPutL(temp, IS_NOT_NULL(field->flags) ?
+    hb_arraySetForward(atemp, SR_FIELD_NULLABLE, hb_itemPutL(temp, IS_NOT_NULL(field->flags) ?
 HB_FALSE : HB_TRUE));
     // add to main array
     hb_arraySetForward(ret, row + 1, atemp);

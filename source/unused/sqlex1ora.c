@@ -382,7 +382,7 @@ static HB_ERRCODE getMissingColumn(SQLEXORAAREAP thiswa, PHB_ITEM pFieldData,
     }
     OCI_AllowRebinding(thiswa->colStmt[lFieldPosDB - 1].pStmt, 1);
 
-    colName = QualifyName2(hb_arrayGetC(pFieldStruct, FIELD_NAME), thiswa);
+    colName = QualifyName2(hb_arrayGetC(pFieldStruct, SR_FIELD_NAME), thiswa);
 
     if (thiswa->bIsSelect) {
       sprintf(sSql, "SELECT %c%s%c FROM (%s) WHERE %c%s%c = :sz001", OPEN_QUALIFIER(thiswa),
@@ -1184,21 +1184,21 @@ void SetCurrRecordStructureOra(SQLEXORAAREAP thiswa)
 
   for (i = 1; i <= iCols; i++) {
     pFieldStruct = hb_arrayGetItemPtr(thiswa->aFields, i);
-    pFieldLen = hb_arrayGetItemPtr(pFieldStruct, FIELD_LEN);
-    pFieldDec = hb_arrayGetItemPtr(pFieldStruct, FIELD_DEC);
-    lType = hb_arrayGetNL(pFieldStruct, FIELD_DOMAIN);
-    cType = *hb_arrayGetCPtr(pFieldStruct, FIELD_TYPE);
+    pFieldLen = hb_arrayGetItemPtr(pFieldStruct, SR_FIELD_LEN);
+    pFieldDec = hb_arrayGetItemPtr(pFieldStruct, SR_FIELD_DEC);
+    lType = hb_arrayGetNL(pFieldStruct, SR_FIELD_DOMAIN);
+    cType = *hb_arrayGetCPtr(pFieldStruct, SR_FIELD_TYPE);
 
     BindStructure->iSQLType = (int)lType;
-    BindStructure->isNullable = hb_arrayGetL(pFieldStruct, FIELD_NULLABLE);
+    BindStructure->isNullable = hb_arrayGetL(pFieldStruct, SR_FIELD_NULLABLE);
     BindStructure->isBoundNULL = HB_FALSE;
     BindStructure->isArgumentNull = HB_FALSE;
     BindStructure->lFieldPosDB = i;
-    BindStructure->lFieldPosWA = hb_arrayGetNL(pFieldStruct, FIELD_WAOFFSET);
+    BindStructure->lFieldPosWA = hb_arrayGetNL(pFieldStruct, SR_FIELD_WAOFFSET);
     BindStructure->ColumnSize = (unsigned int)hb_itemGetNI(pFieldLen);
     BindStructure->DecimalDigits = (unsigned short)hb_itemGetNI(pFieldDec);
-    BindStructure->colName = QualifyName2(hb_arrayGetC(pFieldStruct, FIELD_NAME), thiswa);
-    sprintf(BindStructure->szBindName, ":%s", hb_arrayGetCPtr(pFieldStruct, FIELD_NAME));
+    BindStructure->colName = QualifyName2(hb_arrayGetC(pFieldStruct, SR_FIELD_NAME), thiswa);
+    sprintf(BindStructure->szBindName, ":%s", hb_arrayGetCPtr(pFieldStruct, SR_FIELD_NAME));
 
 #ifdef SQLRDD_TOPCONN
     switch (lType) {

@@ -204,7 +204,7 @@ METHOD SR_MYSQL:IniFields(lReSelect, cTable, cCommand, lLoadCache, cWhere, cRecn
    ::aFields := aFields
 
    FOR EACH aFld IN ::aFields
-      aFld[FIELD_ENUM] := SR_ENUMINDEX(aFld)
+      aFld[SR_FIELD_ENUM] := SR_ENUMINDEX(aFld)
    NEXT
 
    IF lReSelect .AND. !lLoadCache
