@@ -1049,16 +1049,16 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
 
    LOCAL hEnv := NIL
    LOCAL hDbc := NIL
-   LOCAL cVersion := ""
-   LOCAL cSystemVers := ""
-   LOCAL cBuff := ""
+   //LOCAL cVersion := "" (variable not used)
+   //LOCAL cSystemVers := "" (variable not used)
+   LOCAL cBuff //:= "" (value not used)
    LOCAL aCon
    LOCAL aItem
    LOCAL aToken
 
-   HB_SYMBOL_UNUSED(cVersion)
-   HB_SYMBOL_UNUSED(cSystemVers)
-   HB_SYMBOL_UNUSED(cBuff)
+   //HB_SYMBOL_UNUSED(cVersion)
+   //HB_SYMBOL_UNUSED(cSystemVers)
+   //HB_SYMBOL_UNUSED(cBuff)
 
    DEFAULT nVersion TO 1
    DEFAULT lTrace TO .F.
@@ -1122,9 +1122,7 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
          ENDIF
 #ifdef __XHARBOUR__
          DO CASE
-         CASE cBuff == "UID" .OR. ;
-              cBuff == "UIID" .OR. ;
-              cBuff == "USR"
+         CASE cBuff $ "|UID|UIID|USR|"
             ::cUser += aToken[2]
          CASE cBuff == "PWD"
             ::cPassword += aToken[2]
@@ -1132,36 +1130,17 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
             ::cDSN += aToken[2]
          CASE cBuff == "DBS"
             ::cDBS += aToken[2]
-         CASE cBuff == "HST" .OR. ;
-              cBuff == "OCI" .OR. ;
-              cBuff == "MYSQL" .OR. ;
-              cBuff == "PGS" .OR. ;
-              cBuff == "SERVER" .OR. ;
-              cBuff == "MARIA" .OR. ; /* deprecated */
-              cBuff == "MARIADB"
+         CASE cBuff $ "|HST|OCI|MYSQL|PGS|SERVER|MARIA|MARIADB|" // MARIA is deprecated
             ::cHost += aToken[2]
-         CASE cBuff == "PRT" .OR. ;
-              cBuff == "PORT"
+         CASE cBuff $ "|PRT|PORT|"
             ::cPort := Val(sr_val2char(aToken[2]))
-         CASE cBuff == "DRV" .OR. ;
-              cBuff == "DRIVER"
+         CASE cBuff $ "|DRV|DRIVER|"
             ::cDRV += aToken[2]
          CASE cBuff == "CHARSET"
             ::cCharSet := aToken[2]
          CASE cBuff == "AUTOCOMMIT"
             ::nAutoCommit := Val(aToken[2])
-         CASE cBuff == "DTB" .OR. ;
-              cBuff == "FB" .OR. ;
-              cBuff == "FIREBIRD" .OR. ;
-              cBuff == "FB3" .OR. ;
-              cBuff == "FIREBIRD3" .OR. ;
-              cBuff == "FB4" .OR. ;
-              cBuff == "FIREBIRD4" .OR. ;
-              cBuff == "FB5" .OR. ;
-              cBuff == "FIREBIRD5" .OR. ;
-              cBuff == "IB" .OR. ;
-              cBuff == "TNS" .OR. ;
-              cBuff == "DATABASE"
+         CASE cBuff $ "|DTB|FB|FIREBIRD|FB3|FIREBIRD3|FB4|FIREBIRD4|FB5|FIREBIRD5|IB|TNS|DATABASE|"
             ::cDTB += aToken[2]
          CASE cBuff == "TABLESPACE_DATA"
             ::cDsnTblData := aToken[2]
@@ -1176,9 +1155,7 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
             IF !Empty(::cOwner) .AND. Right(::cOwner, 1) != "."
                ::cOwner += "."
             ENDIF
-         CASE cBuff == "NETWORK" .OR. ;
-              cBuff == "LIBRARY" .OR. ;
-              cBuff == "NETLIBRARY"
+         CASE cBuff $ "|NETWORK|LIBRARY|NETLIBRARY|"
             ::cNetLibrary := aToken[2]
          CASE cBuff == "APP"
             ::cApp := aToken[2]
@@ -1296,16 +1273,8 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
    ENDIF
 
    ::nSystemID := SQLRDD_RDBMS_UNKNOW
-
    ::ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, AllTrim(cConnect), nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
-
-   SWITCH ::nSystemID
-   CASE SQLRDD_RDBMS_ORACLE
-      ::cLockWait := " WAIT " + Str(Int(::nLockWaitTime))
-      EXIT
-   SR_OTHERWISE
-      ::cLockWait := ""
-   ENDSWITCH
+   ::cLockWait := IIf(::nSystemID == SQLRDD_RDBMS_ORACLE, " WAIT " + Str(Int(::nLockWaitTime)), "")
 
 RETURN SELF
 
