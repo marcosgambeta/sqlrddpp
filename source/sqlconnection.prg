@@ -57,6 +57,29 @@
 
 #define DEBUGSESSION     .F.
 
+// set of macros to check the RDBMS
+#define ISACCESS() (::nSystemID == SQLRDD_RDBMS_ACCESS)
+#define ISADABAS() (::nSystemID == SQLRDD_RDBMS_ADABAS)
+#define ISAZURE() (::nSystemID == SQLRDD_RDBMS_AZURE)
+#define ISCACHE() (::nSystemID == SQLRDD_RDBMS_CACHE)
+#define ISCUBRID() (::nsystemID == SQLRDD_RDBMS_CUBRID)
+#define ISFIREBIRD() (::nSystemID == SQLRDD_RDBMS_FIREBR)
+#define ISFIREBIRD3() (::nSystemID == SQLRDD_RDBMS_FIREBR3)
+#define ISFIREBIRD4() (::nSystemID == SQLRDD_RDBMS_FIREBR4)
+#define ISFIREBIRD5() (::nSystemID == SQLRDD_RDBMS_FIREBR5)
+#define ISIBMDB2() (::nSystemID == SQLRDD_RDBMS_IBMDB2)
+#define ISINFORM() (::nSystemID == SQLRDD_RDBMS_INFORM)
+#define ISINGRES() (::nSystemID == SQLRDD_RDBMS_INGRES)
+#define ISMARIADB() (::nSystemID == SQLRDD_RDBMS_MARIADB)
+#define ISMSSQL6() (::nSystemID == SQLRDD_RDBMS_MSSQL6)
+#define ISMSSQL7() (::nSystemID == SQLRDD_RDBMS_MSSQL7)
+#define ISMYSQL() (::nSystemID == SQLRDD_RDBMS_MYSQL)
+#define ISORACLE() (::nSystemID == SQLRDD_RDBMS_ORACLE)
+#define ISPOSTGRESQL() (::nsystemID == SQLRDD_RDBMS_POSTGR)
+#define ISSQLANY() (::nSystemID == SQLRDD_RDBMS_SQLANY)
+#define ISSQLBAS() (::nSystemID == SQLRDD_RDBMS_SQLBAS)
+#define ISSYBASE() (::nSystemID == SQLRDD_RDBMS_SYBASE)
+
 STATIC s_lNwgOldCompat := .F.
 
 //----------------------------------------------------------------------------//
@@ -1274,7 +1297,7 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
 
    ::nSystemID := SQLRDD_RDBMS_UNKNOW
    ::ConnectRaw(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxBuff, lTrace, AllTrim(cConnect), nPrefetch, cTargetDB, nSelMeth, nEmptyMode, nDateMode, lCounter, lAutoCommit, nTimeout)
-   ::cLockWait := IIf(::nSystemID == SQLRDD_RDBMS_ORACLE, " WAIT " + Str(Int(::nLockWaitTime)), "")
+   ::cLockWait := IIf(ISORACLE(), " WAIT " + Str(Int(::nLockWaitTime)), "")
 
 RETURN SELF
 
@@ -1329,13 +1352,13 @@ METHOD SR_CONNECTION:SQLType(nType, cName, nLen)
       cType := "D"
       EXIT
    CASE SQL_TIME
-      IF      ::nSystemID == SQLRDD_RDBMS_POSTGR ;
-         .OR. ::nSystemID == SQLRDD_RDBMS_MYSQL ;
-         .OR. ::nSystemID == SQLRDD_RDBMS_MARIADB ;
-         .OR. ::nSystemID == SQLRDD_RDBMS_FIREBR ;
-         .OR. ::nSystemID == SQLRDD_RDBMS_FIREBR3 ;
-         .OR. ::nSystemID == SQLRDD_RDBMS_FIREBR4 ;
-         .OR. ::nSystemID == SQLRDD_RDBMS_FIREBR5
+      IF      ISPOSTGRESQL() ;
+         .OR. ISMYSQL() ;
+         .OR. ISMARIADB() ;
+         .OR. ISFIREBIRD() ;
+         .OR. ISFIREBIRD3() ;
+         .OR. ISFIREBIRD4() ;
+         .OR. ISFIREBIRD5()
          cType := "T"
       ELSE
          cType := "C"
@@ -1351,7 +1374,7 @@ METHOD SR_CONNECTION:SQLType(nType, cName, nLen)
       IF ::nSystemID != SQLRDD_RDBMS_MSSQL7
          cType := "M"
       ENDIF
-      IF ::nSystemID == SQLRDD_RDBMS_MSSQL7
+      IF ISMSSQL7()
          cType := "V"
       ENDIF
       EXIT
