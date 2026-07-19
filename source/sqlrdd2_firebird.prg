@@ -6496,16 +6496,16 @@ METHOD SR_WORKAREA:WhereMajor()
    LOCAL cNam
    LOCAL c1 := ""
    LOCAL c2 := ""
-   LOCAL c3 := ""
-   LOCAL c4 := ""
-   LOCAL cRet2 := ""
+   //LOCAL c3 := "" (variable not used)
+   //LOCAL c4 := "" (variable not used)
+   LOCAL cRet2 //:= "" (value not used)
    LOCAL j
-   LOCAL aQuot := {}
+   //LOCAL aQuot := {} (variable not used)
 
-   HB_SYMBOL_UNUSED(c3)
-   HB_SYMBOL_UNUSED(c4)
-   HB_SYMBOL_UNUSED(cRet2)
-   HB_SYMBOL_UNUSED(aQuot)
+   //HB_SYMBOL_UNUSED(c3)
+   //HB_SYMBOL_UNUSED(c4)
+   //HB_SYMBOL_UNUSED(cRet2)
+   //HB_SYMBOL_UNUSED(aQuot)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
