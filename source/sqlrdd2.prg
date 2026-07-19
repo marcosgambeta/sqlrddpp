@@ -9392,20 +9392,20 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
    LOCAL cSep
    LOCAL cQot
    LOCAL cNam
-   LOCAL lNull
-   LOCAL c1 := ""
-   LOCAL c2 := ""
-   LOCAL c3 := ""
-   LOCAL c4 := ""
+   LOCAL lNull := NIL
+   //LOCAL c1 := "" (variable not used)
+   LOCAL c2 //:= "" (value not used)
+   //LOCAL c3 := "" (variable not used)
+   //LOCAL c4 := "" (variable not used)
    LOCAL cRet := ""
-   LOCAL cRet2 := ""
+   LOCAL cRet2 //:= "" (value not used)
    LOCAL j
    LOCAL aQuot := {}
 
-   HB_SYMBOL_UNUSED(c1)
-   HB_SYMBOL_UNUSED(c3)
-   HB_SYMBOL_UNUSED(c4)
-   HB_SYMBOL_UNUSED(cRet2)
+   //HB_SYMBOL_UNUSED(c1)
+   //HB_SYMBOL_UNUSED(c3)
+   //HB_SYMBOL_UNUSED(c4)
+   //HB_SYMBOL_UNUSED(cRet2)
 
    DEFAULT lPartialSeek TO .T.
 
@@ -9440,8 +9440,8 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
          c2 := ""
 
          FOR i := 1 TO j
-            lNull := ::IndexFieldNul(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i])
-            HB_SYMBOL_UNUSED(lNull)
+            //lNull := ::IndexFieldNul(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i]) (variable and value not used)
+            //HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
             cNam := ::IndexFieldSQL(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i])
 
