@@ -7181,22 +7181,22 @@ RETURN cRet
 
 METHOD SR_WORKAREA:WhereVMajor(cQot)
 
-   LOCAL cRet := ""
-   LOCAL c1 := ""
-   LOCAL c2 := ""
-   LOCAL c3 := ""
-   LOCAL c4 := ""
-   LOCAL cRet2 := ""
-   LOCAL aQuot := {}
+   LOCAL cRet //:= "" (value not used)
+   //LOCAL c1 := ""
+   //LOCAL c2 := ""
+   //LOCAL c3 := ""
+   //LOCAL c4 := ""
+   LOCAL cRet2 //:= "" (value not used)
+   //LOCAL aQuot := {} (variable not used)
 
-   HB_SYMBOL_UNUSED(cRet)
+   //HB_SYMBOL_UNUSED(cRet)
 
-   HB_SYMBOL_UNUSED(c1)
-   HB_SYMBOL_UNUSED(c2)
-   HB_SYMBOL_UNUSED(c3)
-   HB_SYMBOL_UNUSED(c4)
-   HB_SYMBOL_UNUSED(cRet2)
-   HB_SYMBOL_UNUSED(aQuot)
+   //HB_SYMBOL_UNUSED(c1)
+   //HB_SYMBOL_UNUSED(c2)
+   //HB_SYMBOL_UNUSED(c3)
+   //HB_SYMBOL_UNUSED(c4)
+   //HB_SYMBOL_UNUSED(cRet2)
+   //HB_SYMBOL_UNUSED(aQuot)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
