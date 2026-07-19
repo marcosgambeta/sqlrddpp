@@ -4821,7 +4821,12 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
    ELSEIF ::lISAM .AND. ISPOSTGRESQL()
 
-      IF ValType(uKey) $ "NDLT"       // One field seek, piece of cake!
+      SWITCH ValType(uKey)
+
+      CASE "N"
+      CASE "D"
+      CASE "L"
+      CASE "T"
 
          lNull := ::IndexFieldNul(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1])
          nFDec := ::IndexFieldDec(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1])
@@ -4896,7 +4901,9 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             ::oSql:Execute("SELECT" + ::Optmizer_1s + cJoin3 + "FROM" + cJoin1 + cRet + ::OrderBy(NIL, IIf(lLast, .F., .T.)) + ::Optmizer_1e + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */",""))
          ENDIF
 
-      ELSEIF HB_IsChar(uKey)
+         EXIT
+
+      CASE "C"
 
          nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS]) - 1, 1)      // Esse -1 � para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
@@ -4996,11 +5003,15 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
 
          ::oSql:Execute(cSql + IIf(::oSql:lComments, " /* " + IIf(lSoft, "Soft", "") + "Seek " + Str(::aInfo[SR_AINFO_INDEXORD]) + " */",""))
 
-      ELSE
+         EXIT
+
+      SR_OTHERWISE
+
          ::RuntimeErr("26")
          Set(_SET_EXACT, uSet)
          RETURN NIL
-      ENDIF
+
+      ENDSWITCH
 
       ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
       ::aInfo[SR_AINFO_NPOSCACHE] := 0
