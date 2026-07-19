@@ -3322,7 +3322,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          EXIT
 
       CASE "C"
-      CASE "M"
 
          nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS]) - 1, 1)      // Esse -1 é para remover o NRECNO que SEMPRE faz parte do indice !
          nCons := 0
