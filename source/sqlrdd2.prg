@@ -1000,61 +1000,61 @@ RETURN {|u|PadR(Eval(bXForm, u), nLen)}
 
 METHOD SR_WORKAREA:IndexFieldSQL(aFld)
 
-   IF Len(aFld) >= IDXFLD_SQL .AND. aFld[IDXFLD_SQL] != NIL
-      RETURN aFld[IDXFLD_SQL]
+   IF Len(aFld) >= SR_IDXFLD_SQL .AND. aFld[SR_IDXFLD_SQL] != NIL
+      RETURN aFld[SR_IDXFLD_SQL]
    ENDIF
 
-RETURN "A." + SR_DBQUALIFY(::aNames[aFld[IDXFLD_POS]], ::oSql:nSystemID)
+RETURN "A." + SR_DBQUALIFY(::aNames[aFld[SR_IDXFLD_POS]], ::oSql:nSystemID)
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:IndexFieldVal(aFld)
 
-   IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
-      RETURN Eval(aFld[IDXFLD_XFORM], ::aLocalBuffer[aFld[IDXFLD_POS]])
+   IF Len(aFld) >= SR_IDXFLD_XFORM .AND. aFld[SR_IDXFLD_XFORM] != NIL
+      RETURN Eval(aFld[SR_IDXFLD_XFORM], ::aLocalBuffer[aFld[SR_IDXFLD_POS]])
    ENDIF
 
-RETURN ::aLocalBuffer[aFld[IDXFLD_POS]]
+RETURN ::aLocalBuffer[aFld[SR_IDXFLD_POS]]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:IndexFieldType(aFld)
 
-   IF Len(aFld) >= IDXFLD_TYPE .AND. aFld[IDXFLD_TYPE] != NIL
-      RETURN aFld[IDXFLD_TYPE]
+   IF Len(aFld) >= SR_IDXFLD_TYPE .AND. aFld[SR_IDXFLD_TYPE] != NIL
+      RETURN aFld[SR_IDXFLD_TYPE]
    ENDIF
 
-RETURN ::aFields[aFld[IDXFLD_POS], SR_FIELD_TYPE]
+RETURN ::aFields[aFld[SR_IDXFLD_POS], SR_FIELD_TYPE]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:IndexFieldLen(aFld)
 
-   IF Len(aFld) >= IDXFLD_LEN .AND. aFld[IDXFLD_LEN] != NIL
-      RETURN aFld[IDXFLD_LEN]
+   IF Len(aFld) >= SR_IDXFLD_LEN .AND. aFld[SR_IDXFLD_LEN] != NIL
+      RETURN aFld[SR_IDXFLD_LEN]
    ENDIF
 
-RETURN ::aFields[aFld[IDXFLD_POS], SR_FIELD_LEN]
+RETURN ::aFields[aFld[SR_IDXFLD_POS], SR_FIELD_LEN]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:IndexFieldDec(aFld)
 
-   IF Len(aFld) >= IDXFLD_SQL .AND. aFld[IDXFLD_SQL] != NIL
+   IF Len(aFld) >= SR_IDXFLD_SQL .AND. aFld[SR_IDXFLD_SQL] != NIL
       RETURN 0
    ENDIF
 
-RETURN ::aFields[aFld[IDXFLD_POS], SR_FIELD_DEC]
+RETURN ::aFields[aFld[SR_IDXFLD_POS], SR_FIELD_DEC]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:IndexFieldNul(aFld)
 
-   IF Len(aFld) >= IDXFLD_SQL .AND. aFld[IDXFLD_SQL] != NIL
+   IF Len(aFld) >= SR_IDXFLD_SQL .AND. aFld[SR_IDXFLD_SQL] != NIL
       RETURN .F.
    ENDIF
 
-RETURN ::aFields[aFld[IDXFLD_POS], SR_FIELD_NULLABLE]
+RETURN ::aFields[aFld[SR_IDXFLD_POS], SR_FIELD_NULLABLE]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -1064,7 +1064,7 @@ METHOD SR_WORKAREA:HasExpressionOrder()
 
    IF ::aInfo[SR_AINFO_INDEXORD] > 0 .AND. ::aInfo[SR_AINFO_INDEXORD] <= Len(::aIndex)
       FOR EACH aFld IN ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS]
-         IF Len(aFld) >= IDXFLD_SQL .AND. aFld[IDXFLD_SQL] != NIL
+         IF Len(aFld) >= SR_IDXFLD_SQL .AND. aFld[SR_IDXFLD_SQL] != NIL
             RETURN .T.
          ENDIF
       NEXT
@@ -1961,13 +1961,13 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
 
             IF HB_IsArray(uComp)
                IF ::osql:lPostgresql8
-                  cSqlA += " " + uComp[IDXFLD_SQL] + " NULLS FIRST,"
-                  cSqlD += " " + uComp[IDXFLD_SQL] + " DESC NULLS LAST,"
+                  cSqlA += " " + uComp[SR_IDXFLD_SQL] + " NULLS FIRST,"
+                  cSqlD += " " + uComp[SR_IDXFLD_SQL] + " DESC NULLS LAST,"
                ELSE
-                  cSqlA += " " + uComp[IDXFLD_SQL] + ","
-                  cSqlD += " " + uComp[IDXFLD_SQL] + " DESC,"
+                  cSqlA += " " + uComp[SR_IDXFLD_SQL] + ","
+                  cSqlD += " " + uComp[SR_IDXFLD_SQL] + " DESC,"
                ENDIF
-               cXBase += uComp[IDXFLD_NAME] + " + "
+               cXBase += uComp[SR_IDXFLD_NAME] + " + "
                ::aIndex[nInd, SR_AINDEX_INDEX_FIELDS, i] := uComp
                LOOP
             ELSEIF HB_IsChar(uComp)
@@ -2370,8 +2370,8 @@ METHOD SR_WORKAREA:Stabilize()
    lXF := .F.
    FOR i := 1 TO nLen
       aFld := ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i]
-      IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
-         aXF[i] := aFld[IDXFLD_XFORM]
+      IF Len(aFld) >= SR_IDXFLD_XFORM .AND. aFld[SR_IDXFLD_XFORM] != NIL
+         aXF[i] := aFld[SR_IDXFLD_XFORM]
          lXF := .T.
       ENDIF
    NEXT i
@@ -4900,10 +4900,10 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             nThis := ::IndexFieldLen(aFld)
             cPart := SubStr(uKey, nCons + 1, nThis)
 
-            AAdd(::aPosition, aFld[IDXFLD_POS])
+            AAdd(::aPosition, aFld[SR_IDXFLD_POS])
 
-            IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
-               AAdd(::aSeekXF, IdxBlkPad(aFld[IDXFLD_XFORM], nThis))
+            IF Len(aFld) >= SR_IDXFLD_XFORM .AND. aFld[SR_IDXFLD_XFORM] != NIL
+               AAdd(::aSeekXF, IdxBlkPad(aFld[SR_IDXFLD_XFORM], nThis))
             ELSE
                AAdd(::aSeekXF, NIL)
             ENDIF
@@ -7334,13 +7334,13 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
             IF HB_IsArray(uComp)
                IF ::osql:lPostgresql8
-                  cSqlA += " " + uComp[IDXFLD_SQL] + " NULLS FIRST,"
-                  cSqlD += " " + uComp[IDXFLD_SQL] + " DESC NULLS LAST,"
+                  cSqlA += " " + uComp[SR_IDXFLD_SQL] + " NULLS FIRST,"
+                  cSqlD += " " + uComp[SR_IDXFLD_SQL] + " DESC NULLS LAST,"
                ELSE
-                  cSqlA += " " + uComp[IDXFLD_SQL] + ","
-                  cSqlD += " " + uComp[IDXFLD_SQL] + " DESC,"
+                  cSqlA += " " + uComp[SR_IDXFLD_SQL] + ","
+                  cSqlD += " " + uComp[SR_IDXFLD_SQL] + " DESC,"
                ENDIF
-               cXBase += uComp[IDXFLD_NAME] + " + "
+               cXBase += uComp[SR_IDXFLD_NAME] + " + "
                AAdd(::aIndex[nLen, SR_AINDEX_INDEX_FIELDS], uComp)
                LOOP
             ELSEIF HB_IsChar(uComp)
@@ -7874,7 +7874,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
 
    IF !Empty(AllTrim(cConstraintName))
       aConstraintCols := {}
-      AEval(aCols, {|x|AAdd(aConstraintCols, IIf(HB_IsArray(x), ::aNames[x[IDXFLD_POS]], x))})
+      AEval(aCols, {|x|AAdd(aConstraintCols, IIf(HB_IsArray(x), ::aNames[x[SR_IDXFLD_POS]], x))})
    ENDIF
 
    IF !lSyntheticIndex
@@ -8245,8 +8245,8 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
          FOR i := 1 TO Len(aCols)
             IF HB_IsArray(aCols[i])
                // Expression index component: index the SQL expression itself
-               cList += "(" + StrTran(aCols[i][IDXFLD_SQL], "A.", "") + ") NULLS FIRST"
-               cList2 += Chr(34) + aCols[i][IDXFLD_NAME] + Chr(34)
+               cList += "(" + StrTran(aCols[i][SR_IDXFLD_SQL], "A.", "") + ") NULLS FIRST"
+               cList2 += Chr(34) + aCols[i][SR_IDXFLD_NAME] + Chr(34)
             ELSE
                cList += SR_DBQUALIFY(aCols[i], ::oSql:nSystemID) + " NULLS FIRST"
                cList2 += Chr(34) + aCols[i] + Chr(34)
@@ -8257,8 +8257,8 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
       ELSE
          FOR i := 1 TO Len(aCols)
             IF HB_IsArray(aCols[i])
-               cList += "(" + StrTran(aCols[i][IDXFLD_SQL], "A.", "") + ")"
-               cList2 += Chr(34) + aCols[i][IDXFLD_NAME] + Chr(34)
+               cList += "(" + StrTran(aCols[i][SR_IDXFLD_SQL], "A.", "") + ")"
+               cList2 += Chr(34) + aCols[i][SR_IDXFLD_NAME] + Chr(34)
             ELSE
                cList += SR_DBQUALIFY(aCols[i], ::oSql:nSystemID)
                cList2 += Chr(34) + aCols[i] + Chr(34)
@@ -8560,10 +8560,10 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                   EXIT
                ENDIF
 
-               AAdd(::aPosition, aFld[IDXFLD_POS])
+               AAdd(::aPosition, aFld[SR_IDXFLD_POS])
 
-               IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
-                  AAdd(::aSeekXF, IdxBlkPad(aFld[IDXFLD_XFORM], nThis))
+               IF Len(aFld) >= SR_IDXFLD_XFORM .AND. aFld[SR_IDXFLD_XFORM] != NIL
+                  AAdd(::aSeekXF, IdxBlkPad(aFld[SR_IDXFLD_XFORM], nThis))
                ELSE
                   AAdd(::aSeekXF, NIL)
                ENDIF
@@ -8722,10 +8722,10 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                      ENDIF
                   ENDIF
 
-                  AAdd(::aPosition, aFld[IDXFLD_POS])
+                  AAdd(::aPosition, aFld[SR_IDXFLD_POS])
 
-                  IF Len(aFld) >= IDXFLD_XFORM .AND. aFld[IDXFLD_XFORM] != NIL
-                     AAdd(::aSeekXF, IdxBlkPad(aFld[IDXFLD_XFORM], nThis))
+                  IF Len(aFld) >= SR_IDXFLD_XFORM .AND. aFld[SR_IDXFLD_XFORM] != NIL
+                     AAdd(::aSeekXF, IdxBlkPad(aFld[SR_IDXFLD_XFORM], nThis))
                   ELSE
                      AAdd(::aSeekXF, NIL)
                   ENDIF

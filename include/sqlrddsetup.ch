@@ -135,12 +135,12 @@
 // Expression index components (PostgreSQL) carry the SQL expression,
 // the component type/len and a client-side transform codeblock.
 
-#define IDXFLD_NAME                    1
-#define IDXFLD_POS                     2
-#define IDXFLD_SQL                     3
-#define IDXFLD_TYPE                    4
-#define IDXFLD_LEN                     5
-#define IDXFLD_XFORM                   6
+#define SR_IDXFLD_NAME                    1
+#define SR_IDXFLD_POS                     2
+#define SR_IDXFLD_SQL                     3
+#define SR_IDXFLD_TYPE                    4
+#define SR_IDXFLD_LEN                     5
+#define SR_IDXFLD_XFORM                   6
 
 #define SR_AORDER_NAME                    1
 #define SR_AORDER_FOR                     2
