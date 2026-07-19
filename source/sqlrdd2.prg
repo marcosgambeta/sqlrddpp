@@ -8534,7 +8534,11 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
 
          nLen := Max(Len(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS]) - 1, 1)      // -1 to remove RECNO from index key
 
-         IF ValType(uKey) $ "NDL"       // One field, piece of cake!
+         SWITCH ValType(uKey)
+
+         CASE "N"
+         CASE "D"
+         CASE "L"
 
             lNull := ::IndexFieldNul(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1])
             nFDec := ::IndexFieldDec(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1])
@@ -8557,8 +8561,10 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
             IF !Empty(cRet)
                ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_SCOPE_SQLEXPR] := " ( " + cRet + " ) "
             ENDIF
+            
+            EXIT
 
-         ELSEIF HB_IsChar(uKey)
+         CASE "C"
 
             ::aQuoted := {}
             ::aDat := {}
@@ -8648,13 +8654,18 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_SCOPE_SQLEXPR] := " ( " + cRet + " ) "
             ENDIF
 
-         ELSEIF ValType(uKey) == "U"
-            // Clear scope
+            EXIT
 
-         ELSE
+         CASE "U"
+            // Clear scope
+            EXIT
+
+         SR_OTHERWISE
+
             ::RuntimeErr("26")
             RETURN -1
-         ENDIF
+
+         ENDSWITCH
 
       ELSEIF ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_TOP_SCOPE] != NIL .OR. ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_BOTTOM_SCOPE] != NIL
 
@@ -8671,7 +8682,11 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                ENDIF
             ENDIF
 
-            IF ValType(uKey) $ "NDL"       // One field, piece of cake!
+            SWITCH ValType(uKey)
+
+            CASE "N"
+            CASE "D"
+            CASE "L"
 
                lNull := ::IndexFieldNul(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1])
                nFDec := ::IndexFieldDec(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, 1])
@@ -8714,8 +8729,11 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                      cRet := cRet + " and " + cRet2
                   ENDIF
                ENDIF
+               
+               EXIT
 
-            ELSEIF HB_IsString(ukey) //ValType(uKey) == "C"
+            CASE "C"
+            CASE "M"
 
                ::aQuoted := {}
                ::aDat := {}
@@ -8837,13 +8855,19 @@ METHOD SR_WORKAREA:sqlSetScope(nType, uValue)
                NEXT j
 
                cRet += " )   )"
+               
+               EXIT
 
-            ELSEIF ValType(uKey) == "U"
+            CASE "U"
                // Clear scope
-            ELSE
+               EXIT
+
+            SR_OTHERWISE
+
                ::RuntimeErr("26")
                RETURN -1
-            ENDIF
+
+            ENDSWITCH
 
          NEXT nScoping
 
