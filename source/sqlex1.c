@@ -2384,7 +2384,7 @@ static HB_ERRCODE sqlExGoTo(SQLEXAREAP thiswa, HB_LONG recno)
 // (DBENTRYP_I)
 static HB_ERRCODE sqlExGoToId(SQLEXAREAP thiswa, PHB_ITEM pItem)
 {
-  HB_TRACE(HB_TR_DEBUG, ("sqlExGoToId(%p)", thiswa));
+  HB_TRACE(HB_TR_DEBUG, ("sqlExGoToId(%p, %p)", thiswa, pItem));
 
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
@@ -3469,7 +3469,7 @@ static HB_ERRCODE sqlExRecNo(SQLEXAREAP thiswa, HB_ULONG *recno)
 // (DBENTRYP_I)
 static HB_ERRCODE sqlExRecId(SQLEXAREAP thiswa, PHB_ITEM recno)
 {
-  HB_TRACE(HB_TR_DEBUG, ("sqlExRecId(%p)", thiswa));
+  HB_TRACE(HB_TR_DEBUG, ("sqlExRecId(%p, %p)", thiswa, recno));
 
   if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
@@ -4165,7 +4165,7 @@ static HB_ERRCODE sqlExLock(SQLEXAREAP thiswa, LPDBLOCKINFO pLockInfo)
 // (DBENTRYP_I)
 static HB_ERRCODE sqlExUnLock(SQLEXAREAP thiswa, PHB_ITEM pRecNo)
 {
-  HB_TRACE(HB_TR_DEBUG, ("sqlExUnLock(%p)", thiswa));
+  HB_TRACE(HB_TR_DEBUG, ("sqlExUnLock(%p, %p)", thiswa, pRecNo));
 
   if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
