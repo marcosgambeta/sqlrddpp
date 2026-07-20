@@ -2186,6 +2186,8 @@ static HB_BOOL CreateSkipStmt(SQLEXAREAP thiswa)
 // (DBENTRYP_BP)
 static HB_ERRCODE sqlExBof(SQLEXAREAP thiswa, HB_BOOL *bof)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExBof(%p)", thiswa));
+
   if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
@@ -2205,6 +2207,8 @@ static HB_ERRCODE sqlExBof(SQLEXAREAP thiswa, HB_BOOL *bof)
 // (DBENTRYP_BP)
 static HB_ERRCODE sqlExEof(SQLEXAREAP thiswa, HB_BOOL *eof)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExEof(%p)", thiswa));
+
   if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
@@ -2228,6 +2232,8 @@ static HB_ERRCODE sqlExEof(SQLEXAREAP thiswa, HB_BOOL *eof)
 // (DBENTRYP_BP)
 static HB_ERRCODE sqlExFound(SQLEXAREAP thiswa, HB_BOOL *found)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExFound(%p)", thiswa));
+
   if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
@@ -2242,6 +2248,8 @@ static HB_ERRCODE sqlExFound(SQLEXAREAP thiswa, HB_BOOL *found)
 // (DBENTRYP_V)
 static HB_ERRCODE sqlExGoBottom(SQLEXAREAP thiswa)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExGoBottom(%p)", thiswa));
+
   thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
@@ -2317,6 +2325,8 @@ static HB_ERRCODE sqlExGoTo(SQLEXAREAP thiswa, HB_LONG recno)
 {
   int i;
 
+  HB_TRACE(HB_TR_DEBUG, ("sqlExGoTo(%p)", thiswa));
+
   if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
@@ -2372,6 +2382,8 @@ static HB_ERRCODE sqlExGoTo(SQLEXAREAP thiswa, HB_LONG recno)
 // (DBENTRYP_I)
 static HB_ERRCODE sqlExGoToId(SQLEXAREAP thiswa, PHB_ITEM pItem)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExGoToId(%p)", thiswa));
+
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
 
@@ -2392,6 +2404,8 @@ static HB_ERRCODE sqlExGoToId(SQLEXAREAP thiswa, PHB_ITEM pItem)
 // (DBENTRYP_V)
 static HB_ERRCODE sqlExGoTop(SQLEXAREAP thiswa)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExGoTop(%p)", thiswa));
+
   thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
   thiswa->wasdel = HB_FALSE;
@@ -2475,6 +2489,8 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
   HB_ERRCODE retvalue = HB_SUCCESS;
   PHB_ITEM pNewKey = SR_NULLPTR;
   HSTMT hStmt = SR_NULLPTR;
+
+  HB_TRACE(HB_TR_DEBUG, ("sqlExSeek(%p)", thiswa));
 
   thiswa->lpdbPendingRel = SR_NULLPTR;
   thiswa->firstinteract = HB_FALSE;
@@ -2641,6 +2657,8 @@ static HB_ERRCODE sqlExSkip(SQLEXAREAP thiswa, HB_LONG lToSkip)
 {
   HB_LONG lSkip;
 
+  HB_TRACE(HB_TR_DEBUG, ("sqlExSkip(%p)", thiswa));
+
   if (thiswa->lpdbPendingRel) {
     if (SELF_FORCEREL((AREAP)thiswa) != HB_SUCCESS) {
       return HB_FAILURE;
@@ -2700,7 +2718,7 @@ static HB_ERRCODE sqlExSkipFilter(SQLEXAREAP thiswa, HB_LONG lUpDown)
   HB_BOOL fBottom, fDeleted;
   HB_ERRCODE uiError;
 
-  HB_TRACE(HB_TR_DEBUG, ("hb_waSkipFilter(%p, %ld)", thiswa, lUpDown));
+  HB_TRACE(HB_TR_DEBUG, ("sqlExSkipFilter(%p, %ld)", thiswa, lUpDown));
 
   if (!hb_setGetDeleted() && thiswa->area.dbfi.itmCobExpr == SR_NULLPTR) {
     return HB_SUCCESS;
@@ -2778,6 +2796,8 @@ static HB_ERRCODE sqlExSkipFilter(SQLEXAREAP thiswa, HB_LONG lUpDown)
 static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
 {
   HB_ERRCODE res;
+
+  HB_TRACE(HB_TR_DEBUG, ("sqlExSkipRaw(%p)", thiswa));
 
   if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
@@ -2877,6 +2897,8 @@ static HB_ERRCODE sqlExSkipRaw(SQLEXAREAP thiswa, HB_LONG lToSkip)
 // (DBENTRYP_B)
 static HB_ERRCODE sqlExAppend(SQLEXAREAP thiswa, HB_BOOL value)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExAppend(%p)", thiswa));
+
   HB_SYMBOL_UNUSED(value);
 
   // Reset parent rel struct
@@ -2910,6 +2932,8 @@ static HB_ERRCODE sqlExDeleteRec(SQLEXAREAP thiswa)
 {
   HB_BOOL isDeleted;
   SQLRETURN res;
+
+  HB_TRACE(HB_TR_DEBUG, ("sqlExDeleteRec(%p)", thiswa));
 
   if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
@@ -2970,6 +2994,8 @@ static HB_ERRCODE sqlExDeleteRec(SQLEXAREAP thiswa)
 // (DBENTRYP_BP)
 static HB_ERRCODE sqlExDeleted(SQLEXAREAP thiswa, HB_BOOL *isDeleted)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExDeleted(%p)", thiswa));
+
   if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
     thiswa->firstinteract = HB_FALSE;
@@ -3004,6 +3030,8 @@ static HB_ERRCODE sqlExDeleted(SQLEXAREAP thiswa, HB_BOOL *isDeleted)
 // (DBENTRYP_V)
 static HB_ERRCODE sqlExFlush(SQLEXAREAP thiswa)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExFlush(%p)", thiswa));
+
   return SELF_GOCOLD((AREAP)thiswa);
 }
 
@@ -3019,6 +3047,8 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
 {
   PHB_ITEM itemTemp, itemTemp3;
   HB_SIZE ulPos;
+
+  HB_TRACE(HB_TR_DEBUG, ("sqlExGetValue(%p)", thiswa));
 
   if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
@@ -3145,6 +3175,8 @@ static HB_ERRCODE sqlExGetValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
 // (DBENTRYP_V)
 static HB_ERRCODE sqlExGoCold(SQLEXAREAP thiswa)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExGoCold(%p)", thiswa));
+
   if (thiswa->bufferHot) { // && (!(thiswa->ulhDeleted > 0 ? HB_TRUE :
                            // thiswa->deletedList[thiswa->recordListPos] == '
                            // ') )
@@ -3223,6 +3255,8 @@ static HB_ERRCODE sqlExPutValue(SQLEXAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM 
   char *cfield;
   double dNum;
   HB_USHORT len, dec, fieldindex;
+
+  HB_TRACE(HB_TR_DEBUG, ("sqlExPutValue(%p)", thiswa));
 
   if (thiswa->firstinteract) {
     SELF_GOTOP((AREAP)thiswa);
@@ -3325,6 +3359,8 @@ static HB_ERRCODE sqlExRecall(SQLEXAREAP thiswa)
   HB_BOOL isDeleted;
   SQLRETURN res;
 
+  HB_TRACE(HB_TR_DEBUG, ("sqlExRecall(%p)", thiswa));
+
   if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
@@ -3367,6 +3403,8 @@ static HB_ERRCODE sqlExRecall(SQLEXAREAP thiswa)
 // (DBENTRYP_ULP)
 static HB_ERRCODE sqlExRecCount(SQLEXAREAP thiswa, HB_ULONG *recCount)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExRecCount(%p)", thiswa));
+
   if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   }
@@ -3392,6 +3430,8 @@ static HB_ERRCODE sqlExRecCount(SQLEXAREAP thiswa, HB_ULONG *recCount)
 // (DBENTRYP_ULP)
 static HB_ERRCODE sqlExRecNo(SQLEXAREAP thiswa, HB_ULONG *recno)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExRecNo(%p)", thiswa));
+
 #ifdef SQLRDD_NWG_SPECIFIC
   if (thiswa->bIsInsert) {
     SR_commonError((AREAP)thiswa, EG_ARG, ESQLRDD_NOT_COMMITED_YET, SR_NULLPTR);
@@ -3415,6 +3455,8 @@ static HB_ERRCODE sqlExRecNo(SQLEXAREAP thiswa, HB_ULONG *recno)
 // (DBENTRYP_I)
 static HB_ERRCODE sqlExRecId(SQLEXAREAP thiswa, PHB_ITEM recno)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExRecId(%p)", thiswa));
+
   if (thiswa->lpdbPendingRel) {
     SELF_FORCEREL((AREAP)thiswa);
   } else if (thiswa->firstinteract) {
@@ -3448,6 +3490,9 @@ static HB_ERRCODE sqlExRecId(SQLEXAREAP thiswa, PHB_ITEM recno)
 static HB_ERRCODE sqlExClose(SQLEXAREAP thiswa)
 {
   HB_ERRCODE code;
+
+  HB_TRACE(HB_TR_DEBUG, ("sqlExClose(%p)", thiswa));
+
   if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
@@ -3534,6 +3579,8 @@ static HB_ERRCODE sqlExCreate(SQLEXAREAP thiswa, LPDBOPENINFO OpenInfo)
 {
   HB_ERRCODE err;
 
+  HB_TRACE(HB_TR_DEBUG, ("sqlExCreate(%p)", thiswa));
+
   err = SUPER_CREATE((AREAP)thiswa, OpenInfo);
 
   return err;
@@ -3554,6 +3601,8 @@ static HB_ERRCODE sqlExNewArea(SQLEXAREAP thiswa)
 {
   HB_ERRCODE errCode;
   // int i;
+
+  HB_TRACE(HB_TR_DEBUG, ("sqlExNewArea(%p)", thiswa));
 
   errCode = SUPER_NEW((AREAP)thiswa);
 
@@ -3616,6 +3665,8 @@ static HB_ERRCODE sqlExOpen(SQLEXAREAP thiswa, LPDBOPENINFO OpenInfo)
 {
   HB_ERRCODE errCode;
 
+  HB_TRACE(HB_TR_DEBUG, ("sqlExOpen(%p)", thiswa));
+
   errCode = SUPER_OPEN((AREAP)thiswa, OpenInfo);
 
   if (errCode != HB_SUCCESS) {
@@ -3644,6 +3695,8 @@ static HB_ERRCODE sqlExOpen(SQLEXAREAP thiswa, LPDBOPENINFO OpenInfo)
 // (DBENTRYP_SP)
 static HB_ERRCODE sqlExStructSize(SQLEXAREAP thiswa, HB_USHORT *StructSize)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExStructSize(%p)", thiswa));
+
   HB_SYMBOL_UNUSED(thiswa); // Avoid compiler warning
   *StructSize = sizeof(SQLEXAREA);
   return HB_SUCCESS;
@@ -3696,6 +3749,8 @@ static HB_ERRCODE sqlExOrderListAdd(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInfo)
   HB_ERRCODE err;
   HB_LONG hOldOrder = thiswa->hOrdCurrent;
 
+  HB_TRACE(HB_TR_DEBUG, ("sqlExOrderListAdd(%p)", thiswa));
+
   err = SUPER_ORDLSTADD((AREAP)thiswa, pOrderInfo);
 
   if (hOldOrder != thiswa->hOrdCurrent) {
@@ -3714,6 +3769,8 @@ static HB_ERRCODE sqlExOrderListAdd(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInfo)
 // (DBENTRYP_V)
 static HB_ERRCODE sqlExOrderListClear(SQLEXAREAP thiswa)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExOrderListClear(%p)", thiswa));
+
   thiswa->lBofAt = 0;
   thiswa->lEofAt = 0;
   thiswa->indexLevel = -1;
@@ -3738,6 +3795,8 @@ static HB_ERRCODE sqlExOrderListFocus(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInf
 {
   HB_ERRCODE err;
   HB_LONG hOldOrder = thiswa->hOrdCurrent;
+
+  HB_TRACE(HB_TR_DEBUG, ("sqlExOrderListFocus(%p)", thiswa));
 
   err = SUPER_ORDLSTFOCUS((AREAP)thiswa, pOrderInfo);
 
@@ -3781,6 +3840,8 @@ static HB_ERRCODE sqlExOrderCreate(SQLEXAREAP thiswa, LPDBORDERCREATEINFO pOrder
   thiswa->lEofAt = 0;
   thiswa->indexLevel = -1;
 
+  HB_TRACE(HB_TR_DEBUG, ("sqlExOrderCreate(%p)", thiswa));
+
   err = SUPER_ORDCREATE((AREAP)thiswa, pOrderCreateInfo);
 
   // Now a big GPF trap: If created index added a new database field
@@ -3811,6 +3872,8 @@ static HB_ERRCODE sqlExOrderCreate(SQLEXAREAP thiswa, LPDBORDERCREATEINFO pOrder
 // (DBENTRYP_VOI)
 static HB_ERRCODE sqlExOrderDestroy(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInfo)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExOrderDestroy(%p)", thiswa));
+
   thiswa->lBofAt = 0;
   thiswa->lEofAt = 0;
   thiswa->indexLevel = -1;
@@ -3886,6 +3949,8 @@ static HB_ERRCODE sqlExOrderInfo(SQLEXAREAP thiswa, HB_USHORT uiIndex, LPDBORDER
 // (DBENTRYP_V)
 static HB_ERRCODE sqlExClearFilter(SQLEXAREAP thiswa)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExClearFilter(%p)", thiswa));
+
   thiswa->lBofAt = 0;
   thiswa->lEofAt = 0;
   thiswa->bConditionChanged1 = HB_TRUE;
@@ -3910,6 +3975,8 @@ static HB_ERRCODE sqlExClearFilter(SQLEXAREAP thiswa)
 // (DBENTRYP_SI)
 static HB_ERRCODE sqlExScopeInfo(SQLEXAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExScopeInfo(%p)", thiswa));
+
   thiswa->lBofAt = 0;
   thiswa->lEofAt = 0;
   thiswa->bConditionChanged1 = HB_TRUE;
@@ -3929,6 +3996,8 @@ static HB_ERRCODE sqlExSetFilter(SQLEXAREAP thiswa, LPDBFILTERINFO pFilterInfo)
 {
   HB_ERRCODE ret;
 
+  HB_TRACE(HB_TR_DEBUG, ("sqlExSetFilter(%p)", thiswa));
+
   ret = SUPER_SETFILTER((AREAP)thiswa, pFilterInfo);
   if (ret == HB_SUCCESS) {
     thiswa->bConditionChanged1 = HB_TRUE;
@@ -3946,6 +4015,8 @@ static HB_ERRCODE sqlExSetFilter(SQLEXAREAP thiswa, LPDBFILTERINFO pFilterInfo)
 // (DBENTRYP_VOS)
 static HB_ERRCODE sqlExSetScope(SQLEXAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExSetScope(%p)", thiswa));
+
   thiswa->lBofAt = 0;
   thiswa->lEofAt = 0;
   thiswa->bConditionChanged1 = HB_TRUE;
@@ -3974,6 +4045,8 @@ static HB_ERRCODE sqlExSetScope(SQLEXAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 // (DBENTRYP_VL)
 static HB_ERRCODE sqlExLock(SQLEXAREAP thiswa, LPDBLOCKINFO pLockInfo)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExLock(%p)", thiswa));
+
   if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
@@ -3995,6 +4068,8 @@ static HB_ERRCODE sqlExLock(SQLEXAREAP thiswa, LPDBLOCKINFO pLockInfo)
 // (DBENTRYP_I)
 static HB_ERRCODE sqlExUnLock(SQLEXAREAP thiswa, PHB_ITEM pRecNo)
 {
+  HB_TRACE(HB_TR_DEBUG, ("sqlExUnLock(%p)", thiswa));
+
   if (SELF_GOCOLD((AREAP)thiswa) == HB_FAILURE) {
     return HB_FAILURE;
   }
