@@ -28,6 +28,7 @@ source/sqlgen1.prg
 #source/sqlrdd0.prg
 source/sqlrdd0_mysql.prg
 #source/sqlrdd2.prg
+source/sqlrdd2_base.prg
 source/sqlrdd2_mysql.prg
 source/utils.prg
 source/utilslang.prg

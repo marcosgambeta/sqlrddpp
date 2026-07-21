@@ -115,7 +115,7 @@ STATIC s_lOracleSyntheticVirtual := .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-CLASS SR_WORKAREA
+CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    CLASSDATA nCnt
    CLASSDATA cWSID

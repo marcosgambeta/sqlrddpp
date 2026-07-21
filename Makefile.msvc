@@ -100,6 +100,7 @@ $(LIB_NAME_FIREBIRD): \
 	$(OBJ_DIR)\sqlconnection$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlgen1$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlrdd0_firebird$(OBJ_EXT) \
+	$(OBJ_DIR)\sqlrdd2_base$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlrdd2_firebird$(OBJ_EXT) \
 	$(OBJ_DIR)\utils$(OBJ_EXT) \
 	$(OBJ_DIR)\utilslang$(OBJ_EXT) \
@@ -129,6 +130,7 @@ $(LIB_NAME_MYSQL): \
 	$(OBJ_DIR)\sqlconnection$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlgen1$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlrdd0_mysql$(OBJ_EXT) \
+	$(OBJ_DIR)\sqlrdd2_base$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlrdd2_mysql$(OBJ_EXT) \
 	$(OBJ_DIR)\utils$(OBJ_EXT) \
 	$(OBJ_DIR)\utilslang$(OBJ_EXT) \
@@ -156,6 +158,7 @@ $(LIB_NAME_ORACLE): \
 	$(OBJ_DIR)\sqlconnection$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlgen1$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlrdd0_oracle$(OBJ_EXT) \
+	$(OBJ_DIR)\sqlrdd2_base$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlrdd2_oracle$(OBJ_EXT) \
 	$(OBJ_DIR)\utils$(OBJ_EXT) \
 	$(OBJ_DIR)\utilslang$(OBJ_EXT) \
@@ -184,6 +187,7 @@ $(LIB_NAME_POSTGRESQL): \
 	$(OBJ_DIR)\sqlconnection$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlgen1$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlrdd0_postgresql$(OBJ_EXT) \
+	$(OBJ_DIR)\sqlrdd2_base$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlrdd2_postgresql$(OBJ_EXT) \
 	$(OBJ_DIR)\utils$(OBJ_EXT) \
 	$(OBJ_DIR)\utilslang$(OBJ_EXT) \
@@ -272,6 +276,11 @@ $(OBJ_DIR)\sqlrdd0_postgresql$(OBJ_EXT) : $(OBJ_DIR)\sqlrdd0_postgresql.c
 $(OBJ_DIR)\sqlrdd2.c : $(SRC_DIR)\sqlrdd2.prg
 	$(HB) $(HBFLAGS) $** -o$@
 $(OBJ_DIR)\sqlrdd2$(OBJ_EXT) : $(OBJ_DIR)\sqlrdd2.c
+	$(CC) $(CFLAGS) /Fo$@ $**
+
+$(OBJ_DIR)\sqlrdd2_base.c : $(SRC_DIR)\sqlrdd2_base.prg
+	$(HB) $(HBFLAGS) $** -o$@
+$(OBJ_DIR)\sqlrdd2_base$(OBJ_EXT) : $(OBJ_DIR)\sqlrdd2_base.c
 	$(CC) $(CFLAGS) /Fo$@ $**
 
 $(OBJ_DIR)\sqlrdd2_firebird.c : $(SRC_DIR)\sqlrdd2_firebird.prg
