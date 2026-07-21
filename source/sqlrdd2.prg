@@ -109,6 +109,9 @@ STATIC s_aPos := {}
 STATIC s_nPosData := 0
 STATIC s_lUseXmlField := .F.
 STATIC s_lUseJSONField := .F.
+
+/*
+// static variables used only in STATIC FUNCTION aScanIndexed(...) (static function not used)
 #ifdef __XHARBOUR__
 // NOTE: to avoid warning about variable declared but not used in function.
 STATIC s_ItP11 := NIL
@@ -121,6 +124,8 @@ STATIC s_ItP14
 STATIC s_ItP2
 STATIC s_ItP3
 #endif
+*/
+
 STATIC s_lGoTopOnFirstInteract := .T.
 STATIC s_lUseDTHISTAuto := .F.
 STATIC s_nLineCountResult := 0
@@ -9172,8 +9177,8 @@ RETURN cStr1 < cStr2
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-#if 0
-STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound) // function not used
+/*
+STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound) // static function not used
 
    LOCAL nRet := 0
    LOCAL first
@@ -9255,7 +9260,7 @@ STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound) // function 
    ENDIF
 
 RETURN nRet
-#endif
+*/
 
 //-------------------------------------------------------------------------------------------------------------------//
 
