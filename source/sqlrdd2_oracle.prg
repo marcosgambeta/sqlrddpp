@@ -4360,7 +4360,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    ::cAlias := cAlias
    ::aInfo[SR_AINFO_SHARED] := .F.
    ::cOriginalFN := Upper(AllTrim(cFileName))
-   ::lGoTopOnFirstInteract := s_lGoTopOnFirstInteract
+   ::lGoTopOnFirstInteract := SR_GetlGoTopOnFirstInteract()
 
    IF !::aInfo[SR_AINFO_SHARED]
       ::lQuickAppend := .T.
@@ -4755,7 +4755,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
    ::cAlias := cAlias
    ::aInfo[SR_AINFO_SHARED] := lShared
    ::cOriginalFN := Upper(AllTrim(cFileName))
-   ::lGoTopOnFirstInteract := s_lGoTopOnFirstInteract
+   ::lGoTopOnFirstInteract := SR_GetlGoTopOnFirstInteract()
 
    ::cRecnoName := SR_RecnoName()
    ::cDeletedName := SR_DeletedName()
@@ -8209,6 +8209,11 @@ FUNCTION SR_SetlGoTopOnFirstInteract(l)
    ENDIF
 
 RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetlGoTopOnFirstInteract()
+RETURN s_lGoTopOnFirstInteract
 
 //-------------------------------------------------------------------------------------------------------------------//
 
