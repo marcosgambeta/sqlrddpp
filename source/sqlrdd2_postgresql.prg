@@ -226,9 +226,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    DATA aPosition
    DATA aQuoted
    DATA aDat
-#endif
    DATA aSeekXF   AS ARRAY INIT {}          // client side transforms for seek found() check (expression indexes)
-#if 0 // moved to SR_BASE_WORKAREA
    DATA nPartialDateSeek
 
    // For Self recno filter

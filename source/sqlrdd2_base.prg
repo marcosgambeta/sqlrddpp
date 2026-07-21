@@ -175,6 +175,7 @@ CLASS SR_BASE_WORKAREA
    DATA aPosition
    DATA aQuoted
    DATA aDat
+   DATA aSeekXF   AS ARRAY INIT {}          // client side transforms for seek found() check (expression indexes)
    DATA nPartialDateSeek
 
    // For Self recno filter
