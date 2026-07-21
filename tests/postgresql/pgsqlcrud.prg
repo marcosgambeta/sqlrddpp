@@ -13,10 +13,12 @@
 // Make a copy of this file and change the values below.
 // NOTE: the database must exist before runnning the test.
 
-STATIC s_SERVER := "localhost"
-STATIC s_UID    := "postgres"
-STATIC s_PWD    := "password"
-STATIC s_DTB    := "dbtest"
+STATIC s_SERVER     := "localhost"
+STATIC s_UID        := "postgres"
+STATIC s_PWD        := "password"
+STATIC s_DTB        := "dbtest"
+STATIC s_NEW_TABLE  := .F.
+STATIC s_DROP_TABLE := .F.
 
 REQUEST SQLRDD
 REQUEST SR_PGS
@@ -35,10 +37,12 @@ PROCEDURE Main()
    n := 1
    DO WHILE n <= PCount()
       DO CASE
-      CASE HB_PValue(n) == "--server" ; s_SERVER := HB_PValue(++n)
-      CASE HB_PValue(n) == "--uid"    ; s_UID := HB_PValue(++n)
-      CASE HB_PValue(n) == "--pwd"    ; s_PWD := HB_PValue(++n)
-      CASE HB_PValue(n) == "--dtb"    ; s_DTB := HB_PValue(++n)
+      CASE HB_PValue(n) == "--server"    ; s_SERVER := HB_PValue(++n)
+      CASE HB_PValue(n) == "--uid"       ; s_UID := HB_PValue(++n)
+      CASE HB_PValue(n) == "--pwd"       ; s_PWD := HB_PValue(++n)
+      CASE HB_PValue(n) == "--dtb"       ; s_DTB := HB_PValue(++n)
+      CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
+      CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
       ENDCASE
       ++n
    ENDDO
@@ -58,6 +62,10 @@ PROCEDURE Main()
    ENDIF
 
    sr_StartLog(nConnection)
+
+   IF s_NEW_TABLE .AND. sr_ExistTable("tabcrud")
+      sr_DropTable("tabcrud")
+   ENDIF
 
    IF !sr_ExistTable("tabcrud")
       dbCreate("tabcrud", {{"ID",      "N", 10, 0}, ;
@@ -113,39 +121,23 @@ PROCEDURE Main()
       dispend()
       nKey := inkey(0)
       SWITCH nKey
-      CASE K_UP
-         oTB:up()
-         EXIT
-      CASE K_DOWN
-         oTB:down()
-         EXIT
-      CASE K_LEFT
-         oTB:left()
-         EXIT
-      CASE K_RIGHT
-         oTB:right()
-         EXIT
-      CASE K_PGUP
-         oTB:PageUp()
-         EXIT
-      CASE K_PGDN
-         oTB:PageDown()
-         EXIT
-      CASE K_INS
-         addrecord()
-         oTB:RefreshAll()
-         EXIT
-      CASE K_ENTER
-         updaterecord()
-         oTB:RefreshAll()
-         EXIT
-      CASE K_DEL
-         deleterecord()
-         oTB:RefreshAll()
+      CASE K_UP    ; oTB:up()          ; EXIT
+      CASE K_DOWN  ; oTB:down()        ; EXIT
+      CASE K_LEFT  ; oTB:left()        ; EXIT
+      CASE K_RIGHT ; oTB:right()       ; EXIT
+      CASE K_PGUP  ; oTB:PageUp()      ; EXIT
+      CASE K_PGDN  ; oTB:PageDown()    ; EXIT
+      CASE K_INS   ; addrecord(oTB)    ; EXIT
+      CASE K_ENTER ; updaterecord(oTB) ; EXIT
+      CASE K_DEL   ; deleterecord(oTB)
       ENDSWITCH
    ENDDO
 
    CLOSE DATABASE
+
+   IF s_DROP_TABLE .AND. sr_ExistTable("tabcrud")
+      sr_DropTable("tabcrud")
+   ENDIF
 
    sr_StopLog(nConnection)
 
@@ -153,7 +145,7 @@ PROCEDURE Main()
 
 RETURN
 
-STATIC FUNCTION AddRecord()
+STATIC FUNCTION AddRecord(oTB)
 
    LOCAL n := reccount()
 
@@ -168,9 +160,15 @@ STATIC FUNCTION AddRecord()
    REPLACE MARRIED WITH iif(n / 2 == int(n / 2), .T., .F.)
    REPLACE VALUE   WITH n * 1000 / 100
 
+   oTB:RefreshAll()
+
 RETURN NIL
 
-STATIC FUNCTION UpdateRecord()
+STATIC FUNCTION UpdateRecord(oTB)
+
+   IF reccount() == 0
+      RETURN NIL
+   ENDIF
 
    REPLACE FIRST   WITH alltrim(FIRST) + " (modified)"
    REPLACE LAST    WITH alltrim(LAST) + " (modified)"
@@ -179,10 +177,18 @@ STATIC FUNCTION UpdateRecord()
    REPLACE MARRIED WITH iif(MARRIED, .F., .T.)
    REPLACE VALUE   WITH VALUE * 2
 
+   oTB:RefreshAll()
+
 RETURN NIL
 
-STATIC FUNCTION DeleteRecord()
+STATIC FUNCTION DeleteRecord(oTB)
+
+   IF reccount() == 0
+      RETURN NIL
+   ENDIF
 
    DELETE
+
+   oTB:RefreshAll()
 
 RETURN NIL
