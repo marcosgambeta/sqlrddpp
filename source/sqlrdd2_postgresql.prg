@@ -4689,8 +4689,8 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
    ::cRights := "S" + IIf(::lCanUpd, "U", "") + IIf(::lCanIns, "I", "") + IIf(::lCanDel, "D", "") + LTrim(StrZero(::nRelacType, 1))
 
-   IF !Empty(s_cGlobalOwner)
-      ::cOwner := AllTrim(s_cGlobalOwner)
+   IF !Empty(SR_GetGlobalOwner())
+      ::cOwner := AllTrim(SR_GetGlobalOwner())
    ELSEIF !Empty(::oSql:cOwner)
       ::cOwner := AllTrim(::oSql:cOwner)
    ENDIF
@@ -5141,8 +5141,8 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
       ::lISAM := .F.
    ENDIF
 
-   IF !Empty(s_cGlobalOwner)
-      ::cOwner := AllTrim(s_cGlobalOwner)
+   IF !Empty(SR_GetGlobalOwner())
+      ::cOwner := AllTrim(SR_GetGlobalOwner())
    ELSEIF !Empty(::oSql:cOwner)
       ::cOwner := AllTrim(::oSql:cOwner)
    ENDIF
@@ -8604,7 +8604,6 @@ RETURN cStr
 //-------------------------------------------------------------------------------------------------------------------//
 
 FUNCTION SR_GetGlobalOwner()
-
 RETURN s_cGlobalOwner
 
 //-------------------------------------------------------------------------------------------------------------------//
