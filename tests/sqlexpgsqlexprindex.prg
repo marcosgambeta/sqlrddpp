@@ -1,20 +1,16 @@
 // SQLRDD++
-// Indices com funcoes no RDD SQLEX (ODBC/PostgreSQL)
+// Indices de expressao no RDD SQLEX (ODBC/PostgreSQL)
 //
-// O RDD SQLEX monta as consultas em nivel C diretamente a partir das
-// colunas do indice (INDEX_FIELDS) e NAO suporta os indices de expressao
-// nativos do PostgreSQL introduzidos para o RDD SQLRDD.
+// O motor C do SQLEX (sqlex1/2/3.c) agora consome componentes de
+// expressao: o SQL gerado para SKIP/SEEK usa a expressao do componente
+// (rtrim/upper/substr/lpad) e o valor comparado e transformado no lado
+// cliente pelo codeblock do componente.
 //
-// Este exemplo demonstra o comportamento esperado no SQLEX:
-//
-// 1. Indices com funcoes na chave (UPPER, SUBSTR, STRZERO, UDF) criados
-//    sob o SQLEX continuam usando o mecanismo classico da coluna
-//    sintetica INDKEY_ - tudo funciona como sempre funcionou;
-// 2. Indices de EXPRESSAO criados pelo RDD SQLRDD nao podem ser abertos
-//    pelo SQLEX: a abertura gera o erro 18 com mensagem explicativa.
-//    Nesse cenario, recrie o indice sob o SQLEX (vira sintetico) ou abra
-//    a tabela com o SQLRDD. Para cargas em massa via SQLEX sem uso de
-//    indices, RDDINFO(RDDI_AUTOOPEN, .F.) evita a abertura automatica.
+// Este exemplo demonstra que, tambem no SQLEX, indices criados com
+// funcoes padrao do Harbour (UPPER, SUBSTR, LEFT, STRZERO, DTOS, STR)
+// usam indices de expressao nativos do PostgreSQL, SEM criar a coluna
+// extra INDKEY_. Apenas indices com funcao proprietaria (UDF) continuam
+// criando a coluna sintetica.
 //
 // Para compilar (na pasta tests, que linka a lib generica sqlrddpp):
 // hbmk2 sqlexpgsqlexprindex
@@ -69,7 +65,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--database" ; s_ODBC_DATABASE := HB_PValue(++n)
       CASE HB_PValue(n) == "--options"  ; s_ODBC_OPTIONS := HB_PValue(++n)
       OTHERWISE
-         ? "Parâmetro desconhecido:", HB_PValue(n)
+         ? "Parï¿½metro desconhecido:", HB_PValue(n)
       ENDCASE
       ++n
    ENDDO
@@ -125,7 +121,7 @@ PROCEDURE Main()
       CLS
       ? "=============================================================="
       ? " SQLRDD++ - Indices com funcoes no RDD SQLEX (PostgreSQL)"
-      ? " Comportamento classico: chaves com funcao usam INDKEY_"
+      ? " Indices de expressao nativos tambem no SQLEX"
       ? "=============================================================="
       ? ""
       MostraOrdens()
@@ -219,22 +215,22 @@ RETURN
 STATIC PROCEDURE CriaIndices()
 
    ? ""
-   ? "Criando indices sob o SQLEX (chaves com funcao => INDKEY_ classico)..."
+   ? "Criando indices sob o SQLEX (INDEX ON ... TAG <tabela+seq> TO <tabela>)..."
    ? ""
 
-   ? "  TAG testexpx1: UPPER(NOME)                    => sintetico (INDKEY_)"
+   ? "  TAG testexpx1: UPPER(NOME)                    => expressao (sem coluna extra)"
    INDEX ON UPPER(NOME) TAG testexpx1 TO testexpx
 
-   ? "  TAG testexpx2: SUBSTR(CIDADE,1,10)            => sintetico (INDKEY_)"
+   ? "  TAG testexpx2: SUBSTR(CIDADE,1,10)            => expressao (sem coluna extra)"
    INDEX ON SUBSTR(CIDADE, 1, 10) TAG testexpx2 TO testexpx
 
-   ? "  TAG testexpx3: STRZERO(SALDO,12,2)            => sintetico (INDKEY_)"
+   ? "  TAG testexpx3: STRZERO(SALDO,12,2)            => expressao com decimais (sem coluna extra)"
    INDEX ON STRZERO(SALDO, 12, 2) TAG testexpx3 TO testexpx
 
-   ? "  TAG testexpx4: DTOS(ADMISSAO)+STRZERO(ID,10)  => sintetico (INDKEY_)"
+   ? "  TAG testexpx4: DTOS(ADMISSAO)+STRZERO(ID,10)  => data crua + expressao (sem coluna extra)"
    INDEX ON DTOS(ADMISSAO) + STRZERO(ID, 10) TAG testexpx4 TO testexpx
 
-   ? "  TAG testexpx5: MYUDF(NOME)                    => sintetico (INDKEY_)"
+   ? "  TAG testexpx5: MYUDF(NOME)                    => UDF: sintetico (CRIA coluna INDKEY_)"
    INDEX ON MYUDF(NOME) TAG testexpx5 TO testexpx
 
 RETURN
@@ -255,8 +251,7 @@ STATIC PROCEDURE MostraColunasExtras()
    LOCAL aLinha
 
    ? ""
-   ? "Colunas INDKEY_/INDFOR_ existentes na tabela"
-   ? "(no SQLEX o esperado sao colunas INDKEY_ para as chaves com funcao):"
+   ? "Colunas INDKEY_/INDFOR_ existentes na tabela (esperado: apenas 1, do indice via UDF):"
 
    oCnn:Exec("select column_name from information_schema.columns where table_name = '" + ;
              Lower(TABLE_NAME) + "' and (column_name like 'indkey_%' or column_name like 'indfor_%') order by 1", .F., .T., @aRes)
@@ -267,6 +262,12 @@ STATIC PROCEDURE MostraColunasExtras()
       FOR EACH aLinha IN aRes
          ? "  - " + AllTrim(aLinha[1])
       NEXT
+   ENDIF
+
+   IF Len(aRes) == 1
+      ? "  RESULTADO: OK - somente o indice com UDF criou coluna extra"
+   ELSE
+      ? "  RESULTADO: VERIFICAR - quantidade de colunas extras diferente do esperado (" + LTrim(Str(Len(aRes))) + ")"
    ENDIF
 
 RETURN
@@ -280,7 +281,7 @@ STATIC PROCEDURE MostraIndicesFisicos()
    LOCAL aLinha
 
    ? ""
-   ? "Indices fisicos no PostgreSQL (sob o SQLEX apontam para as colunas INDKEY_):"
+   ? "Indices fisicos no PostgreSQL (observe as expressoes rtrim/upper/substr/lpad):"
 
    oCnn:Exec("select indexname, indexdef from pg_indexes where tablename = '" + ;
              Lower(TABLE_NAME) + "' order by 1", .F., .T., @aRes)

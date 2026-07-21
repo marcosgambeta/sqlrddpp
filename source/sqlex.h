@@ -158,24 +158,6 @@ typedef struct _SQL_CHAR_STRUCT
   int size_alloc;
 } SQL_CHAR_STRUCT;
 
-typedef struct _INDEXBIND
-{
-  HB_LONG lFieldPosDB; // Relative field position in aFields
-  HB_LONG hIndexOrder; // Index order
-  int iLevel;          // The current column in index
-  int iIndexColumns;   // How many index columns in index
-  HSTMT SkipFwdStmt;   // Index stmt handle for SQL phrase in this level for FWD movment
-  HSTMT SkipBwdStmt;   // Index stmt handle for SQL phrase in this level for BWD movment
-  HSTMT SeekFwdStmt;   // Index stmt handle for SQL phrase in this level for FWD movment
-  HSTMT SeekBwdStmt;   // Index stmt handle for SQL phrase in this level for BWD movment
-  char SkipFwdSql[PREPARED_SQL_LEN]; // Partial prepared query for debugging pourposes
-  char SkipBwdSql[PREPARED_SQL_LEN]; // Partial prepared query for debugging pourposes
-  char SeekFwdSql[PREPARED_SQL_LEN]; // Partial prepared query for debugging pourposes
-  char SeekBwdSql[PREPARED_SQL_LEN]; // Partial prepared query for debugging pourposes
-} INDEXBIND;
-
-typedef INDEXBIND *INDEXBINDP;
-
 typedef struct _COLUMNBIND
 {
   int iParNum;            // Parameter number in binded parameters
@@ -204,6 +186,32 @@ typedef struct _COLUMNBIND
 } COLUMNBIND;
 
 typedef COLUMNBIND *COLUMNBINDP;
+
+typedef struct _INDEXBIND
+{
+  HB_LONG lFieldPosDB; // Relative field position in aFields
+  HB_LONG hIndexOrder; // Index order
+  int iLevel;          // The current column in index
+  int iIndexColumns;   // How many index columns in index
+  HSTMT SkipFwdStmt;   // Index stmt handle for SQL phrase in this level for FWD movment
+  HSTMT SkipBwdStmt;   // Index stmt handle for SQL phrase in this level for BWD movment
+  HSTMT SeekFwdStmt;   // Index stmt handle for SQL phrase in this level for FWD movment
+  HSTMT SeekBwdStmt;   // Index stmt handle for SQL phrase in this level for BWD movment
+  char SkipFwdSql[PREPARED_SQL_LEN]; // Partial prepared query for debugging pourposes
+  char SkipBwdSql[PREPARED_SQL_LEN]; // Partial prepared query for debugging pourposes
+  char SeekFwdSql[PREPARED_SQL_LEN]; // Partial prepared query for debugging pourposes
+  char SeekBwdSql[PREPARED_SQL_LEN]; // Partial prepared query for debugging pourposes
+
+  // Expression index support (PostgreSQL): the component is a SQL
+  // expression over a column instead of the plain column itself
+
+  HB_BOOL bIsExpr;     // Component is an expression index component
+  char *sExprSQL;      // SQL expression to be used instead of the column name
+  PHB_ITEM pExprBlock; // Client side transform codeblock (raw value => key value)
+  COLUMNBIND ExprBind; // Private bind structure (char domain, component length)
+} INDEXBIND;
+
+typedef INDEXBIND *INDEXBINDP;
 
 // SQL WORKAREA
 
@@ -351,6 +359,10 @@ HB_ERRCODE SR_SetBindEmptylValue(COLUMNBINDP BindStructure);
 HB_ERRCODE SR_SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hStmt);
 char *SR_QualifyName(char *szName, SQLEXAREAP thiswa);
 COLUMNBINDP SR_GetBindStruct(SQLEXAREAP thiswa, INDEXBINDP IndexBind);
+COLUMNBINDP SR_GetIndexColBind(SQLEXAREAP thiswa, INDEXBINDP IndexBind);
+PHB_ITEM SR_EvalExprComp(INDEXBINDP IndexBind, PHB_ITEM pRawData);
+void SR_SetExprBindValue(INDEXBINDP IndexBind, PHB_ITEM pXVal);
+void SR_ReleaseIndexBindExpr(INDEXBINDP IndexBindBase);
 HB_BOOL SR_getColumnList(SQLEXAREAP thiswa);
 void SR_SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere);
 void SR_getOrderByExpression(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints);

@@ -801,6 +801,7 @@ void ReleaseIndexBindStructure(SQLEXAREAP thiswa)
         }
         IndexBind++;
       }
+      SR_ReleaseIndexBindExpr(thiswa->IndexBindings[i]);
       hb_xfree(thiswa->IndexBindings[i]);
       thiswa->IndexBindings[i] = SR_NULLPTR;
     }
@@ -814,6 +815,146 @@ COLUMNBINDP SR_GetBindStruct(SQLEXAREAP thiswa, INDEXBINDP IndexBind)
   COLUMNBINDP pBind = thiswa->CurrRecord;
   pBind += (IndexBind->lFieldPosDB - 1); // Place offset
   return pBind;
+}
+
+//----------------------------------------------------------------------------//
+//
+// Expression index support (PostgreSQL)
+//
+// Expression index components carry a SQL expression to be used in place of
+// the column name and a client side codeblock which transforms the raw
+// column value into the key domain (e.g. RTrim(Upper(<value>))). Each
+// component uses a private COLUMNBIND (char domain, component length)
+// instead of the shared per column structure from thiswa->CurrRecord.
+//
+//----------------------------------------------------------------------------//
+
+COLUMNBINDP SR_GetIndexColBind(SQLEXAREAP thiswa, INDEXBINDP IndexBind)
+{
+  if (IndexBind->bIsExpr) {
+    return &(IndexBind->ExprBind);
+  }
+  return SR_GetBindStruct(thiswa, IndexBind);
+}
+
+//----------------------------------------------------------------------------//
+
+PHB_ITEM SR_EvalExprComp(INDEXBINDP IndexBind,
+                         PHB_ITEM pRawData) // Caller must release the returned item
+{
+  HB_EVALINFO info;
+  PHB_ITEM pResult;
+
+  hb_evalNew(&info, hb_itemNew(IndexBind->pExprBlock));
+  hb_evalPutParam(&info, hb_itemNew(pRawData));
+  pResult = hb_evalLaunch(&info);
+  hb_evalRelease(&info);
+
+  if (!pResult) {
+    pResult = hb_itemPutC(SR_NULLPTR, "");
+  }
+
+  return pResult;
+}
+
+//----------------------------------------------------------------------------//
+
+void SR_SetExprBindValue(INDEXBINDP IndexBind, PHB_ITEM pXVal)
+{
+  COLUMNBINDP pBind = &(IndexBind->ExprBind);
+  int size = (int)hb_itemGetCLen(pXVal);
+
+  if (size >= pBind->asChar.size_alloc) {
+    size = pBind->asChar.size_alloc - 1;
+  }
+  if (size > 0) {
+    hb_xmemcpy(pBind->asChar.value, hb_itemGetCPtr(pXVal), size);
+  }
+  pBind->asChar.value[size] = '\0';
+  pBind->asChar.size = size;
+  pBind->lIndPtr = SQL_NTS;
+  pBind->isBoundNULL = HB_FALSE;
+  pBind->isArgumentNull = HB_FALSE;
+}
+
+//----------------------------------------------------------------------------//
+
+static void SR_SetupExprBind(SQLEXAREAP thiswa, INDEXBINDP IndexBind, PHB_ITEM pColDef)
+{
+  COLUMNBINDP RealCol;
+  int iLen;
+
+  IndexBind->bIsExpr = HB_FALSE;
+
+  if (pColDef && HB_IS_ARRAY(pColDef) && hb_arrayLen(pColDef) >= SR_IDXFLD_XFORM &&
+      HB_IS_STRING(hb_arrayGetItemPtr(pColDef, SR_IDXFLD_SQL)) &&
+      hb_arrayGetCLen(pColDef, SR_IDXFLD_SQL) > 0) {
+
+    iLen = (int)hb_arrayGetNL(pColDef, SR_IDXFLD_LEN);
+    if (iLen <= 0) {
+      iLen = 254;
+    }
+
+    if (!thiswa->CurrRecord) {
+      SR_SetCurrRecordStructure(thiswa); // Need the real column info below
+    }
+
+    IndexBind->bIsExpr = HB_TRUE;
+    IndexBind->sExprSQL = hb_strdup(hb_arrayGetCPtr(pColDef, SR_IDXFLD_SQL));
+    IndexBind->pExprBlock = hb_itemNew(hb_arrayGetItemPtr(pColDef, SR_IDXFLD_XFORM));
+
+    RealCol = SR_GetBindStruct(thiswa, IndexBind);
+
+    memset(&(IndexBind->ExprBind), 0, sizeof(COLUMNBIND));
+    IndexBind->ExprBind.iCType = SQL_C_CHAR;
+    IndexBind->ExprBind.iSQLType = SQL_VARCHAR;
+    IndexBind->ExprBind.lFieldPosDB = IndexBind->lFieldPosDB;
+    IndexBind->ExprBind.lFieldPosWA = RealCol->lFieldPosWA;
+    IndexBind->ExprBind.colName = IndexBind->sExprSQL;
+    IndexBind->ExprBind.ColumnSize = (SQLUINTEGER)iLen;
+    IndexBind->ExprBind.DecimalDigits = 0;
+    IndexBind->ExprBind.isNullable = HB_FALSE;
+    IndexBind->ExprBind.isArgumentNull = HB_FALSE;
+    IndexBind->ExprBind.isBoundNULL = HB_FALSE;
+    IndexBind->ExprBind.lIndPtr = SQL_NTS;
+    IndexBind->ExprBind.asChar.value = (SQLCHAR *)hb_xgrab(iLen + 32);
+    IndexBind->ExprBind.asChar.size_alloc = iLen + 32;
+    IndexBind->ExprBind.asChar.value[0] = '\0';
+    IndexBind->ExprBind.asChar.size = 0;
+  }
+}
+
+//----------------------------------------------------------------------------//
+
+void SR_ReleaseIndexBindExpr(INDEXBINDP IndexBindBase)
+{
+  INDEXBINDP IndexBind = IndexBindBase;
+  int n, iCols;
+
+  if (!IndexBindBase) {
+    return;
+  }
+
+  iCols = IndexBind->iIndexColumns;
+
+  for (n = 0; n < iCols; n++) {
+    if (IndexBind->bIsExpr) {
+      if (IndexBind->sExprSQL) {
+        hb_xfree(IndexBind->sExprSQL);
+        IndexBind->sExprSQL = SR_NULLPTR;
+      }
+      if (IndexBind->pExprBlock) {
+        hb_itemRelease(IndexBind->pExprBlock);
+        IndexBind->pExprBlock = SR_NULLPTR;
+      }
+      if (IndexBind->ExprBind.asChar.value) {
+        hb_xfree(IndexBind->ExprBind.asChar.value);
+        IndexBind->ExprBind.asChar.value = SR_NULLPTR;
+      }
+      IndexBind->bIsExpr = HB_FALSE;
+    }
+    IndexBind++;
+  }
 }
 
 //----------------------------------------------------------------------------//
@@ -858,7 +999,7 @@ static void BindAllIndexStmts(SQLEXAREAP thiswa)
       iBind = 1;
 
       for (iLoop = 1; iLoop <= IndexBind->iLevel; iLoop++) {
-        BindStructure = SR_GetBindStruct(thiswa, IndexBindParam);
+        BindStructure = SR_GetIndexColBind(thiswa, IndexBindParam);
         if (!BindStructure->isArgumentNull) {
           switch (BindStructure->iCType) {
           case SQL_C_CHAR: {
@@ -947,7 +1088,7 @@ static void FeedCurrentRecordToBindings(SQLEXAREAP thiswa)
     IndexBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
 
     for (iCol = 1; iCol <= thiswa->indexColumns; iCol++) {
-      BindStructure = SR_GetBindStruct(thiswa, IndexBind);
+      BindStructure = SR_GetIndexColBind(thiswa, IndexBind);
 
       if (BindStructure->lFieldPosWA > 0) {
         // Get item value from Workarea
@@ -959,12 +1100,23 @@ static void FeedCurrentRecordToBindings(SQLEXAREAP thiswa)
       }
 
       if (IndexBind->lFieldPosDB == (HB_LONG)(thiswa->ulhRecno)) {
+        if (!newFieldData) {
+          pFieldData = hb_itemNew(SR_NULLPTR);
+          newFieldData = HB_TRUE;
+        }
         hb_itemPutNL(pFieldData, thiswa->recordList[thiswa->recordListPos]);
       }
 
       if (HB_IS_NIL(pFieldData)) {
         getMissingColumn(thiswa, pFieldData, IndexBind->lFieldPosDB);
       }
+
+      if (IndexBind->bIsExpr) {
+        // Expression index component: bind the transformed value (never NULL)
+        PHB_ITEM pXVal = SR_EvalExprComp(IndexBind, pFieldData);
+        SR_SetExprBindValue(IndexBind, pXVal);
+        hb_itemRelease(pXVal);
+      } else
 
       // Check if column is NULL
 
@@ -1140,6 +1292,7 @@ void SR_SetIndexBindStructure(SQLEXAREAP thiswa)
       IndexBind->hIndexOrder = thiswa->hOrdCurrent;
       IndexBind->iLevel = i;
       IndexBind->iIndexColumns = thiswa->indexColumns;
+      SR_SetupExprBind(thiswa, IndexBind, hb_arrayGetItemPtr(pColumns, i));
       IndexBind++;
     }
   } else {
@@ -1306,7 +1459,9 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
       bWhere = HB_TRUE;
     } else {
       for (iCol = 1; iCol <= thiswa->indexLevel; iCol++) {
-        BindStructure = SR_GetBindStruct(thiswa, IndexBind);
+        PHB_ITEM pXVal = SR_NULLPTR;
+
+        BindStructure = SR_GetIndexColBind(thiswa, IndexBind);
 
         pTemp = SR_NULLPTR;
         pFieldData = SR_NULLPTR;
@@ -1329,6 +1484,12 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
           // Get the synthetic index item value from database
         }
 
+        if (IndexBind->bIsExpr) {
+          // Expression index component: move the raw value to the key domain
+          pXVal = SR_EvalExprComp(IndexBind, pFieldData);
+          pFieldData = pXVal;
+        }
+
         bArgumentIsNull = BindStructure->isNullable && IsItemNull(pFieldData, thiswa);
 
         if (iCol == thiswa->indexLevel) {
@@ -1338,7 +1499,11 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
             // Bind column value only if argument is NOT null
             HSTMT hStmt = thiswa->recordListDirection == SR_LIST_FORWARD ? IndexBind->SkipFwdStmt
                                                                       : IndexBind->SkipBwdStmt;
-            SR_SetBindValue(pFieldData, BindStructure, hStmt);
+            if (IndexBind->bIsExpr) {
+              SR_SetExprBindValue(IndexBind, pFieldData);
+            } else {
+              SR_SetBindValue(pFieldData, BindStructure, hStmt);
+            }
           }
         }
 
@@ -1367,6 +1532,14 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
               hb_xfree(temp);
             }
           }
+        } else if (IndexBind->bIsExpr) {
+          // Expression index component: use the SQL expression as is
+          temp = hb_strdup((const char *)thiswa->sWhere);
+          sprintf(thiswa->sWhere, "%s %s %s %s ?", bWhere ? temp : "\nWHERE",
+                  bWhere ? "AND" : "", IndexBind->sExprSQL,
+                  iCol == thiswa->indexLevel ? (bDirectionFWD ? ">=" : "<=") : "=");
+          bWhere = HB_TRUE;
+          hb_xfree(temp);
         } else {
           temp = hb_strdup((const char *)thiswa->sWhere);
           sprintf(thiswa->sWhere, "%s %s A.%c%s%c %s ?", bWhere ? temp : "\nWHERE",
@@ -1375,6 +1548,9 @@ static HB_ERRCODE getWhereExpression(SQLEXAREAP thiswa, int iListType)
                   iCol == thiswa->indexLevel ? (bDirectionFWD ? ">=" : "<=") : "=");
           bWhere = HB_TRUE;
           hb_xfree(temp);
+        }
+        if (pXVal) {
+          hb_itemRelease(pXVal);
         }
         if (pTemp) {
           hb_itemRelease(pTemp);
@@ -3880,6 +4056,7 @@ static HB_ERRCODE sqlExOrderListFocus(SQLEXAREAP thiswa, LPDBORDERINFO pOrderInf
     s_bOldReverseIndex = thiswa->bReverseIndex;
     thiswa->bReverseIndex = hb_arrayGetL(thiswa->aInfo, SR_AINFO_REVERSE_INDEX);
     if (thiswa->IndexBindings[thiswa->hOrdCurrent]) {
+      SR_ReleaseIndexBindExpr(thiswa->IndexBindings[thiswa->hOrdCurrent]);
       hb_xfree(thiswa->IndexBindings[thiswa->hOrdCurrent]);
       thiswa->IndexBindings[thiswa->hOrdCurrent] = SR_NULLPTR;
     }

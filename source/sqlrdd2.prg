@@ -747,15 +747,15 @@ RETURN cRet
 // always trims character values on PostgreSQL, so equality comparisons stay
 // consistent.
 //
-// The SQLEX RDD builds its queries at C level directly from INDEX_FIELDS and
-// does not understand expression components, so the feature is restricted to
-// the SQLRDD RDD on PostgreSQL connections (see CanUseExpressionIndex()).
+// The SQLEX RDD consumes expression components at C level: the SKIP/SEEK
+// engine (sqlex1/2/3.c) uses the component SQL expression in the generated
+// statements and binds the value transformed by the client side codeblock.
 //
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:CanOpenExpressionIndex()   // opening never depends on SR_GetExpressionIndex()
 
-RETURN ISPOSTGRESQL() .AND. !(RDDNAME() == "SQLEX")
+RETURN ISPOSTGRESQL()
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -1951,9 +1951,8 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
 
             IF !::CanOpenExpressionIndex()
                ::RunTimeErr("18", SR_Msg(18) + aCols[i] + " Table : " + ::cFileName + ;
-                  " (index uses a PostgreSQL expression key created by the SQLRDD RDD;" + ;
-                  " it cannot be opened by the " + RDDNAME() + " RDD - recreate the index" + ;
-                  " with this RDD or open the table with SQLRDD)")
+                  " (index uses a PostgreSQL expression key;" + ;
+                  " it can only be opened on a PostgreSQL connection)")
                RETURN 0    // error exit
             ENDIF
 
@@ -7346,9 +7345,8 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
 
             IF !::CanOpenExpressionIndex()
                ::RunTimeErr("18", SR_Msg(18) + aCols[i] + " Table : " + ::cFileName + ;
-                  " (index uses a PostgreSQL expression key created by the SQLRDD RDD;" + ;
-                  " it cannot be opened by the " + RDDNAME() + " RDD - recreate the index" + ;
-                  " with this RDD or open the table with SQLRDD)")
+                  " (index uses a PostgreSQL expression key;" + ;
+                  " it can only be opened on a PostgreSQL connection)")
                RETURN 0    // error exit
             ENDIF
 

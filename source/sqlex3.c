@@ -131,7 +131,7 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
   }
 
   for (iCol = 1; iCol <= queryLevel; iCol++) {
-    BindStructure = SR_GetBindStruct(thiswa, SeekBind);
+    BindStructure = SR_GetIndexColBind(thiswa, SeekBind);
 
     if (BindStructure->isArgumentNull) {
       *bUseOptimizerHints = HB_FALSE; // We cannot use this high speed solution
@@ -159,6 +159,12 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
           hb_xfree(temp);
         }
       }
+    } else if (SeekBind->bIsExpr) {
+      // Expression index component: use the SQL expression as is
+      temp = hb_strdup((const char *)thiswa->sWhere);
+      sprintf(thiswa->sWhere, "%s %s %s %s ?", bWhere ? temp : "\nWHERE", bWhere ? "AND" : "",
+              SeekBind->sExprSQL, iCol == queryLevel ? (bDirectionFWD ? ">=" : "<=") : "=");
+      hb_xfree(temp);
     } else {
       temp = hb_strdup((const char *)thiswa->sWhere);
       sprintf(thiswa->sWhere, "%s %s A.%c%s%c %s ?", bWhere ? temp : "\nWHERE",
@@ -372,7 +378,7 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
     SeekBind->hIndexOrder = thiswa->hOrdCurrent; // Store latest prepared index order query
 
     for (iCol = 1; iCol <= thiswa->indexColumns; iCol++) {
-      BindStructure = SR_GetBindStruct(thiswa, SeekBind);
+      BindStructure = SR_GetIndexColBind(thiswa, SeekBind);
 
       if (!thiswa->uiFieldList[(BindStructure->lFieldPosDB) - 1]) {
         thiswa->uiFieldList[(BindStructure->lFieldPosDB) - 1] =
@@ -413,7 +419,7 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
     *queryLevel = thiswa->indexColumns;
 
     for (i = 1; i <= thiswa->indexColumns; i++) {
-      BindStructure = SR_GetBindStruct(thiswa, SeekBind);
+      BindStructure = SR_GetIndexColBind(thiswa, SeekBind);
       size = 0;
 
       switch (BindStructure->iCType) {
@@ -537,7 +543,7 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
     }
   } else {
     *queryLevel = 1;
-    BindStructure = SR_GetBindStruct(thiswa, SeekBind);
+    BindStructure = SR_GetIndexColBind(thiswa, SeekBind);
 
     if (HB_IS_NUMERIC(pKey)) {
       if (BindStructure->iCType != SQL_C_DOUBLE) { // Check column data type
@@ -612,7 +618,7 @@ void SR_BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
   iBind = 1;
 
   for (iLoop = 1; iLoop <= queryLevel; iLoop++) {
-    BindStructure = SR_GetBindStruct(thiswa, SeekBindParam);
+    BindStructure = SR_GetIndexColBind(thiswa, SeekBindParam);
     if (!BindStructure->isArgumentNull) {
       // Corrigido 27/12/2013 09:53 - lpereira
       // Estava atribuindo o valor de SQLRDD_RDBMS_ORACLE para thiswa->nSystemID.
