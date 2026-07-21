@@ -64,6 +64,8 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
       CASE HB_PValue(n) == "--records"   ; s_NUM_REC := val(HB_PValue(++n))
       CASE HB_PValue(n) == "--times"     ; s_NUM_TIMES := val(HB_PValue(++n))
+      OTHERWISE
+         ? "Unknow parameter:", HB_PValue(n)
       ENDCASE
       ++n
    ENDDO

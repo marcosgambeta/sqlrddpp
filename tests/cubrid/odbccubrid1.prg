@@ -53,6 +53,8 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
       CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
       CASE HB_PValue(n) == "--records"   ; s_NUM_REC := val(HB_PValue(++n))
+      OTHERWISE
+         ? "Unknow parameter:", HB_PValue(n)
       ENDCASE
       ++n
    ENDDO

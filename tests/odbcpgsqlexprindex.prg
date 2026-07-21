@@ -64,6 +64,8 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--pwd"      ; s_ODBC_PWD := HB_PValue(++n)
       CASE HB_PValue(n) == "--database" ; s_ODBC_DATABASE := HB_PValue(++n)
       CASE HB_PValue(n) == "--options"  ; s_ODBC_OPTIONS := HB_PValue(++n)
+      OTHERWISE
+         ? "Parâmetro desconhecido:", HB_PValue(n)
       ENDCASE
       ++n
    ENDDO

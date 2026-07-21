@@ -40,6 +40,8 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--uid"    ; s_UID := HB_PValue(++n)
       CASE HB_PValue(n) == "--pwd"    ; s_PWD := HB_PValue(++n)
       CASE HB_PValue(n) == "--dtb"    ; s_DTB := HB_PValue(++n)
+      OTHERWISE
+         ? "Unknow parameter:", HB_PValue(n)
       ENDCASE
       ++n
    ENDDO

@@ -55,6 +55,8 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--options"   ; s_OPTIONS := HB_PValue(++n)
       CASE HB_PValue(n) == "--newtable"  ; s_NEW_TABLE := .T.
       CASE HB_PValue(n) == "--droptable" ; s_DROP_TABLE := .T.
+      OTHERWISE
+         ? "Unknow parameter:", HB_PValue(n)
       ENDCASE
       ++n
    ENDDO
