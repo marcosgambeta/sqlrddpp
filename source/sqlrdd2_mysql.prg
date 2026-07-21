@@ -86,8 +86,9 @@
 // STATIC s_nStartId :=0 (moved to base class)
 // STATIC s_aPos := {} (moved to base class)
 // STATIC s_nPosData := 0 (moved to base class)
-STATIC s_lUseXmlField := .F.
-STATIC s_lUseJSONField := .F.
+
+// STATIC s_lUseXmlField := .F. (moved to base class)
+// STATIC s_lUseJSONField := .F. (moved to base class)
 
 /*
 // static variables used only in STATIC FUNCTION aScanIndexed(...) (static function not used)
@@ -8187,7 +8188,7 @@ RETURN cRet
 //    LOCAL oNode
 //    //LOCAL oNode1
 //    LOCAL aItem
-// 
+//
 //    s_nPosData := 0
 //    hhash := hb_hash()
 // 
@@ -8243,7 +8244,7 @@ RETURN cRet
 //       hHash["FatherId"] := AllTrim(Str(s_aFather[Len(s_aFather)]))
 //       hHash["Pos"] := AllTrim(Str(++s_nPosData))
 //       AAdd(s_aPos, s_nPosData)
-// 
+//
 //       s_nPosData := 0
 // #ifdef __XHARBOUR__
 //       oNode1 := tXMLNode():New(HBXML_TYPE_TAG, "Array", hhash)
@@ -8354,36 +8355,40 @@ RETURN cRet
 //          EXIT
 //       ENDIF
 //       oNode := oDoc:Next()
-// 
+//
 //    ENDDO
 //
 // RETURN aret
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_getUseXmlField()
-RETURN s_lUseXmlField
+// moved to base class
+// FUNCTION SR_getUseXmlField()
+// RETURN s_lUseXmlField
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_SetUseXmlField(l)
-
-   s_lUseXmlField := l
-
-RETURN NIL
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_getUseJSON()
-RETURN s_lUseJSONField
+// moved to base class
+// FUNCTION SR_SetUseXmlField(l)
+//
+//    s_lUseXmlField := l
+//
+// RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_SetUseJSON(l)
+// moved to base class
+// FUNCTION SR_getUseJSON()
+// RETURN s_lUseJSONField
 
-   s_lUseJSONField := l
+//-------------------------------------------------------------------------------------------------------------------//
 
-RETURN NIL
+// moved to base class
+// FUNCTION SR_SetUseJSON(l)
+//
+//    s_lUseJSONField := l
+//
+// RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 

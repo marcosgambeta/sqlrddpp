@@ -66,6 +66,9 @@ STATIC s_nStartId :=0
 STATIC s_aPos := {}
 STATIC s_nPosData := 0
 
+STATIC s_lUseXmlField := .F.
+STATIC s_lUseJSONField := .F.
+
 //----------------------------------------------------------------------------//
 
 CLASS SR_BASE_WORKAREA
@@ -387,5 +390,27 @@ FUNCTION SR_fromXml(oDoc, aRet, nLen, c)
    ENDDO
 
 RETURN aret
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_getUseXmlField()
+RETURN s_lUseXmlField
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_SetUseXmlField(l)
+   s_lUseXmlField := l
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_getUseJSON()
+RETURN s_lUseJSONField
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_SetUseJSON(l)
+   s_lUseJSONField := l
+RETURN NIL
 
 //----------------------------------------------------------------------------//
