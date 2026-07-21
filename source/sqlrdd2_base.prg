@@ -67,6 +67,119 @@ CLASS SR_BASE_WORKAREA
 
    // TODO: add here common properties and methods
 
+   CLASSDATA nCnt
+   CLASSDATA cWSID
+   CLASSDATA aExclusive       AS ARRAY    INIT {}
+
+   DATA aInfo         AS ARRAY INIT {.T., .T., .F., 0, 0, 0, .F., .F., 0, 0, .F., .F., 0, 0, .T., 0, .F., 0, .F., 0, 0, 0, 0, 0}  // See sqlrdd.ch, SR_AINFO_*
+   DATA aLocked       AS ARRAY INIT {}
+   DATA aIndex        AS ARRAY INIT {}
+   DATA aIndexMgmnt   AS ARRAY INIT {}
+   DATA aConstrMgmnt  AS ARRAY INIT {}
+   DATA aCache        AS ARRAY INIT Array(SR_CACHE_PAGE_SIZE * 3)
+   DATA aLocalBuffer  AS ARRAY INIT {}
+   DATA aOldBuffer    AS ARRAY INIT {}
+   DATA aEmptyBuffer  AS ARRAY INIT {}
+   DATA aSelectList   AS ARRAY INIT {}
+
+   DATA nThisArea     AS NUMERIC INIT 0
+   DATA nFetchSize    AS NUMERIC INIT SR_FetchSize()
+
+   DATA cOwner        AS CHARACTER INIT ""
+   DATA cColPK        AS CHARACTER INIT ""
+   DATA cFor          AS CHARACTER INIT ""
+   DATA cScope        AS CHARACTER INIT ""
+   DATA cOriginalFN   AS CHARACTER INIT ""
+   DATA cRights       AS CHARACTER INIT ""
+   DATA cRecnoName    AS CHARACTER INIT ""
+   DATA cDeletedName  AS CHARACTER INIT ""
+
+   DATA cQualifiedTableName  AS CHARACTER
+   DATA lTableIsSelect       INIT .F.
+
+   DATA Optmizer_1s
+   DATA Optmizer_1e
+   DATA Optmizer_ns
+   DATA Optmizer_ne
+
+   DATA nCurrentFetch   AS NUMERIC INIT SR_FetchSize()
+   DATA nSkipCount      AS NUMERIC INIT 0
+   DATA nLastRecordAded AS NUMERIC INIT -1
+   DATA nLastRefresh    AS NUMERIC INIT 0
+   DATA hnRecno         AS NUMERIC INIT 0
+   DATA hnDeleted       AS NUMERIC INIT 0
+
+   DATA cLastMove       AS CHARACTER INIT ""
+   DATA cLastComm       AS CHARACTER INIT ""
+
+   DATA lStable        AS LOGICAL INIT .T.
+   DATA lOrderValid    AS LOGICAL INIT .F.
+   DATA lTableLocked   AS LOGICAL INIT .F.
+   DATA lHistoric      AS LOGICAL INIT .F.
+   DATA lHistEnable    AS LOGICAL INIT .T.
+   DATA lNoData        AS LOGICAL INIT .F.
+   DATA lEmptyTable    AS LOGICAL INIT .F.
+   DATA lVers          AS LOGICAL INIT .T.
+   DATA lDisableFlts   AS LOGICAL INIT .F.
+   DATA lSharedLock    AS LOGICAL INIT .F.
+   DATA lOpened        AS LOGICAL INIT .T.
+   DATA lCreating      AS LOGICAL INIT .F.
+   DATA lQuickAppend   AS LOGICAL INIT .F.
+   DATA lUseSequences  AS LOGICAL INIT .T.
+
+   DATA lCollectingBehavior  AS LOGICAL INIT .T.
+   DATA lAllColumnsSelected  AS LOGICAL INIT .F.
+
+   DATA nTCCompat      AS NUMERIC INIT 0      // TopConnect compatibility mode
+
+   DATA nSequencePerTable  AS NUMERIC INIT SEQ_NOTDEFINED
+
+   DATA bScope    AS CODEBLOCK INIT {||.T.}
+   DATA bFilter   AS CODEBLOCK INIT {||.T.}
+
+   DATA oSql      AS OBJECT
+
+   DATA cFileName
+   DATA aFields
+   DATA aIniFields
+   DATA aNames
+   DATA aNamesLower
+   DATA nPosColPK
+   DATA cAlias
+   DATA aFilters
+   DATA nFields
+   DATA CurrDate
+   DATA cFltUsr
+   DATA cFilter
+   DATA nLogMode
+   DATA lCanSel
+   DATA lCanUpd
+   DATA lCanIns
+   DATA lCanDel
+   DATA nRelacType
+   DATA lISAM
+   DATA cCustomSQL
+   DATA nLastRec
+   DATA lGoTopOnFirstInteract
+   DATA aLastOrdCond
+
+   DATA lFetchAll AS LOGICAL INIT .F.
+   DATA aFetch    AS ARRAY   INIT {}
+
+   DATA cDel
+   DATA cUpd
+   DATA cIns
+   DATA nPosDtHist
+   DATA dNextDt                              // Date value for next INSERT with Historic
+
+   DATA aPosition
+   DATA aQuoted
+   DATA aDat
+   DATA nPartialDateSeek
+
+   // For Self recno filter
+   Data aRecnoFilter AS ARRAY INIT {}
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
