@@ -1955,7 +1955,7 @@ METHOD SR_WORKAREA:HistExpression(n, cAlias)
 
    DEFAULT cAlias TO "A"
 
-   IF s_lUseDTHISTAuto
+   IF SR_GetlUseDTHISTAuto()
       DEFAULT ::CurrDate TO SR_GetActiveDt()
    ELSE
       ::CurrDate := SR_GetActiveDt()
@@ -2022,7 +2022,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
    IF ::lHistoric .AND. (!Empty(aBuffer[::nPosDtHist])) .AND. (!Empty(aBuffer[::hnRecno]))
       aRet := {}
 
-      IF s_lUseDTHISTAuto
+      IF SR_GetlUseDTHISTAuto()
          ::oSql:Exec("SELECT " + SR_DBQUALIFY(::cRecnoName) + " FROM " + ::cQualifiedTableName + " WHERE " + ;
             ::cColPK + " = " + SR_cDbValue(aBuffer[::nPosColPK]) + " AND DT__HIST = " + SR_cDbValue(aBuffer[::nPosDtHist]), ;
             .F., .T., @aRet)
@@ -7997,6 +7997,11 @@ FUNCTION SR_SetUseDTHISTAuto(l)
    ENDIF
 
 RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetlUseDTHISTAuto()
+RETURN s_lUseDTHISTAuto
 
 //-------------------------------------------------------------------------------------------------------------------//
 
