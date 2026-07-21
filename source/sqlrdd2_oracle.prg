@@ -1220,7 +1220,7 @@ METHOD SR_WORKAREA:LineCount(lMsg)
 
    IF ::lISAM
 
-      IF s_nLineCountResult == 0
+      IF SR_GetnLineCountResult() == 0
          ::oSql:Exec("SELECT MAX( " + SR_DBQUALIFY(::cRecnoName) + " ) FROM " + ::cQualifiedTableName + IIf(::oSql:lComments, " /* Counting Records */", ""), lMsg, .T., @aRet)
 
          IF Len(aRet) > 0 .AND. !HB_IsNumeric(aRet[1, 1])
@@ -1234,7 +1234,7 @@ METHOD SR_WORKAREA:LineCount(lMsg)
             nRet := -1     // Error
          ENDIF
       ELSE
-         nRet := s_nLineCountResult
+         nRet := SR_GetnLineCountResult()
          ::aInfo[SR_AINFO_RCOUNT] := nRet
       ENDIF
    ELSE
@@ -8226,6 +8226,11 @@ FUNCTION SR_SetnLineCountResult(l)
    ENDIF
 
 RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetnLineCountResult()
+RETURN s_nLineCountResult
 
 //-------------------------------------------------------------------------------------------------------------------//
 

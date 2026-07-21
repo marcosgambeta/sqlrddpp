@@ -1122,7 +1122,7 @@ METHOD SR_WORKAREA:LineCount(lMsg)
 
    IF ::lISAM
 
-      IF s_nLineCountResult == 0
+      IF SR_GetnLineCountResult() == 0
          SWITCH ::oSql:nSystemID
          CASE SQLRDD_RDBMS_FIREBR
             ::oSql:Exec("SELECT gen_id(" + ::cFileName + ",0) FROM RDB$DATABASE", .F., .T., @aRet)
@@ -1142,7 +1142,7 @@ METHOD SR_WORKAREA:LineCount(lMsg)
             nRet := -1     // Error
          ENDIF
       ELSE
-         nRet := s_nLineCountResult
+         nRet := SR_GetnLineCountResult()
          ::aInfo[SR_AINFO_RCOUNT] := nRet
       ENDIF
    ELSE
@@ -7944,6 +7944,11 @@ FUNCTION SR_SetnLineCountResult(l)
    ENDIF
 
 RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetnLineCountResult()
+RETURN s_nLineCountResult
 
 //-------------------------------------------------------------------------------------------------------------------//
 
