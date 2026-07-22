@@ -733,30 +733,65 @@ RETURN cRet
 
 //----------------------------------------------------------------------------//
 //
-// Expression index support (PostgreSQL)
+// Expression index support (PostgreSQL and MySQL)
 //
 // Index keys built with translatable Harbour functions (UPPER, SUBSTR, LEFT,
-// STRZERO) are mapped to native PostgreSQL expression indexes instead of the
-// classic synthetic INDKEY_ column. Only keys using non translatable (user
-// defined) functions still create the extra column.
+// STRZERO) are mapped to native expression indexes (PostgreSQL) or functional
+// indexes (MySQL 8.0.13+) instead of the classic synthetic INDKEY_ column.
+// Only keys using non translatable (user defined) functions still create the
+// extra column.
 //
 // A translated component is stored in INDEX_FIELDS as:
 //    {cXBaseExpr, nFieldPos, cSqlExpr, cType, nLen, bClientTransform}
 // while plain column components keep the original {cName, nFieldPos} format.
 //
-// All SQL expressions produce TRIMMED text ("rtrim(...)") because ::Quoted()
-// always trims character values on PostgreSQL, so equality comparisons stay
-// consistent.
+// All SQL expressions produce TRIMMED text ("rtrim(...)") to stay consistent
+// with the trimmed character values produced by ::Quoted().
 //
 // The SQLEX RDD consumes expression components at C level: the SKIP/SEEK
 // engine (sqlex1/2/3.c) uses the component SQL expression in the generated
 // statements and binds the value transformed by the client side codeblock.
 //
+// MariaDB has no functional indexes (it uses indexed generated columns), so
+// it keeps the classic synthetic index.
+//
 //----------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:CanOpenExpressionIndex()   // opening never depends on SR_GetExpressionIndex()
 
-RETURN ISPOSTGRESQL()
+   LOCAL cVers
+   LOCAL aVers
+   LOCAL nVers
+
+   IF ISPOSTGRESQL()
+      RETURN .T.
+   ENDIF
+
+   IF ISMYSQL()
+
+      cVers := Upper(AllTrim(SR_Val2Char(::oSql:cSystemVers)))
+
+      IF "MARIA" $ cVers .OR. "MARIA" $ Upper(SR_Val2Char(::oSql:cTargetDB))
+         RETURN .F.     // MariaDB server behind a MySQL driver
+      ENDIF
+
+      // The native driver reports mysql_get_server_version() (80013 for
+      // 8.0.13) while ODBC reports a dotted string ("8.0.36")
+
+      IF "." $ cVers
+         aVers := HB_ATokens(cVers, ".")
+         nVers := Val(aVers[1]) * 10000 + ;
+                  IIf(Len(aVers) > 1, Val(aVers[2]) * 100, 0) + ;
+                  IIf(Len(aVers) > 2, Val(aVers[3]), 0)
+      ELSE
+         nVers := Val(cVers)
+      ENDIF
+
+      RETURN nVers >= 80013      // MySQL functional indexes
+
+   ENDIF
+
+RETURN .F.
 
 //----------------------------------------------------------------------------//
 
@@ -943,8 +978,11 @@ METHOD SR_WORKAREA:BuildIndexComponent(cItem)
          RETURN NIL
       ENDIF
 
+      // MySQL rpad() requires the pad string
+
       cSql := "rtrim(substr(rpad(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",'')," + ;
-              LTrim(Str(nFldLen)) + ")," + LTrim(Str(nStart)) + "," + LTrim(Str(nCount)) + "))"
+              LTrim(Str(nFldLen)) + IIf(ISMYSQL(), ",' '", "") + ")," + ;
+              LTrim(Str(nStart)) + "," + LTrim(Str(nCount)) + "))"
 
       RETURN {cItem, nPos, cSql, "C", nCount, IdxBlkSubStr(nStart, nCount, nFldLen)}
 
@@ -957,15 +995,21 @@ METHOD SR_WORKAREA:BuildIndexComponent(cItem)
       nZLen := Val(aArgs[2])
       nZDec := IIf(Len(aArgs) == 3, Val(aArgs[3]), 0)
 
-      IF nZLen < 1 .OR. nZDec < 0 .OR. (nZDec > 0 .AND. nZLen < nZDec + 2)
+      IF nZLen < 1 .OR. nZDec < 0 .OR. nZDec > 30 .OR. (nZDec > 0 .AND. nZLen < nZDec + 2)
          RETURN NIL
       ENDIF
 
-      // round(numeric, d)::text keeps d decimal places, so lpad() zero fills
+      // Fixing the scale (round()::text on PostgreSQL, cast() to decimal on
+      // MySQL, where round() keeps the column scale) makes lpad() zero fill
       // exactly like StrZero() (negative values are not supported)
 
-      cSql := "lpad(round(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",0)," + ;
-              LTrim(Str(nZDec)) + ")::text," + LTrim(Str(nZLen)) + ",'0')"
+      IF ISMYSQL()
+         cSql := "lpad(cast(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",0) as decimal(65," + ;
+                 LTrim(Str(nZDec)) + "))," + LTrim(Str(nZLen)) + ",'0')"
+      ELSE
+         cSql := "lpad(round(coalesce(A." + SR_DBQUALIFY(cCol, ::oSql:nSystemID) + ",0)," + ;
+                 LTrim(Str(nZDec)) + ")::text," + LTrim(Str(nZLen)) + ",'0')"
+      ENDIF
 
       RETURN {cItem, nPos, cSql, "C", nZLen, IdxBlkStrZero(nZLen, nZDec)}
 

@@ -104,6 +104,8 @@ STATIC s_lErrorOnGotoToInvalidRecord := .F.
 
 STATIC s_lUseNullsFirst := .T.
 
+STATIC s_lExpressionIndex := .T.
+
 //-------------------------------------------------------------------------------------------------------------------//
 
 PROCEDURE SR_Init()
@@ -237,6 +239,30 @@ RETURN lOld
 FUNCTION SR_GetSyntheticIndex()
 
 RETURN s_lSyntheticInd
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// Enables/disables the use of native MySQL functional indexes for index keys
+// built with translatable Harbour functions (UPPER, SUBSTR, LEFT, STRZERO,
+// ...). When disabled, such keys fall back to the classic synthetic INDKEY_
+// column. Functional indexes require MySQL 8.0.13 or newer (MariaDB always
+// uses the synthetic column).
+
+FUNCTION SR_SetExpressionIndex(lSet)
+
+   LOCAL lOld := s_lExpressionIndex
+
+   IF HB_IsLogical(lSet)
+      s_lExpressionIndex := lSet
+   ENDIF
+
+RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetExpressionIndex()
+
+RETURN s_lExpressionIndex
 
 //-------------------------------------------------------------------------------------------------------------------//
 

@@ -698,8 +698,16 @@ HB_FUNC_STATIC(SR_MYSQUERYATTR)
 
       // hb_itemPutC(&temp, "C"); (moved below)
 
+      // field->length is expressed in BYTES, so it must be divided by the
+      // bytes-per-character of the COLUMN charset to get the declared width.
+      // mysql_get_character_set_info() only knows the CONNECTION charset, so
+      // the division is applied only when the column really uses it -
+      // otherwise a modern client (utf8mb4, mbmaxlen 4) reading tables
+      // declared in a single byte charset (latin1) would shrink every column
+      // to a quarter of its size, silently truncating the fetched values.
+
       mysql_get_character_set_info(session->dbh, &cs);
-      if (cs.mbmaxlen > 0) {
+      if (cs.mbmaxlen > 1 && field->charsetnr == cs.number) {
         mbmax = (unsigned int)cs.mbmaxlen;
       }
 
@@ -866,8 +874,16 @@ mysql_error(session->dbh));
 
       hb_itemPutC(temp, "C");
 
+      // field->length is expressed in BYTES, so it must be divided by the
+      // bytes-per-character of the COLUMN charset to get the declared width.
+      // mysql_get_character_set_info() only knows the CONNECTION charset, so
+      // the division is applied only when the column really uses it -
+      // otherwise a modern client (utf8mb4, mbmaxlen 4) reading tables
+      // declared in a single byte charset (latin1) would shrink every column
+      // to a quarter of its size, silently truncating the fetched values.
+
       mysql_get_character_set_info(session->dbh, &cs);
-      if (cs.mbmaxlen > 0) {
+      if (cs.mbmaxlen > 1 && field->charsetnr == cs.number) {
         mbmax = (unsigned int)cs.mbmaxlen;
       }
 
