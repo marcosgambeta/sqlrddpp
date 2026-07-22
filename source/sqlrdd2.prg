@@ -4389,7 +4389,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL nThis
    LOCAL cSep
    LOCAL cSql
-   //LOCAL c1 := "" (variable not used)
    LOCAL cQot
    LOCAL cNam
    LOCAL nSimpl
@@ -4400,13 +4399,11 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL cJoin3
    LOCAL lNull
    LOCAL uSet
-   //LOCAL lBlockSearch := .T. (variable not used)
    LOCAL cField
    LOCAL nfieldPos
    LOCAL lLikeSep := .F.
    LOCAL cKeyValue
    LOCAL aFld
-   //LOCAL lIsIndKey := .F. (variable not used)
 
    IF ::lCollectingBehavior
       FOR EACH i IN ::aSelectList
@@ -5735,11 +5732,8 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    LOCAL aMultilang := {}
    LOCAL aField
    LOCAL cLobs := ""
-   //LOCAL lRecnoAdded := .F. (variable not used)
-   //LOCAL lShared := .F. (variable not used)
    LOCAL aCacheInfo := Array(SR_CACHEINFO_LEN)
    LOCAL nPos
-   //LOCAL nMax := 0 (variable not used)
    LOCAL cTemp1
    LOCAL cTemp2
    LOCAL cTemp3
@@ -9293,11 +9287,8 @@ METHOD SR_WORKAREA:WhereMajor()
    LOCAL cNam
    LOCAL c1 := ""
    LOCAL c2 := ""
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
-   //LOCAL aQuot := {} (variable not used)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
@@ -9359,12 +9350,7 @@ RETURN cRet
 METHOD SR_WORKAREA:WhereVMajor(cQot)
 
    LOCAL cRet //:= "" (value not used)
-   //LOCAL c1 := "" (variable not used)
-   //LOCAL c2 := "" (variable not used)
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet2 //:= "" (value not used)
-   //LOCAL aQuot := {} (variable not used)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
@@ -9402,10 +9388,7 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
    LOCAL cQot
    LOCAL cNam
    LOCAL lNull := NIL
-   //LOCAL c1 := "" (variable not used)
    LOCAL c2 //:= "" (value not used)
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet := ""
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
@@ -9506,11 +9489,8 @@ METHOD SR_WORKAREA:WhereMinor()
    LOCAL cNam
    LOCAL c1 := ""
    LOCAL c2 := ""
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
-   //LOCAL aQuot := {} (variable not used)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
@@ -9572,12 +9552,7 @@ RETURN cRet
 METHOD SR_WORKAREA:WhereVMinor(cQot)
 
    LOCAL cRet //:= "" (value not used)
-   //LOCAL c1 := "" (variable not used)
-   //LOCAL c2 := "" (variable not used)
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet2 //:= "" (value not used)
-   //LOCAL aQuot := {} (variable not used)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
@@ -9618,10 +9593,7 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
    LOCAL cQot
    LOCAL cNam
    LOCAL lNull := NIL
-   //LOCAL c1 := "" (variable not used)
    LOCAL c2 := ""
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet := ""
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
