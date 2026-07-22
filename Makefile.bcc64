@@ -89,6 +89,7 @@ $(LIB_NAME): \
 	$(OBJ_DIR)\sqlrdd1$(OBJ_EXT) \
 	$(OBJ_DIR)\tracelog$(OBJ_EXT) \
 	$(OBJ_DIR)\xthrow$(OBJ_EXT) \
+	$(OBJ_DIR)\xmlfun$(OBJ_EXT) \
 	$(OBJ_DIR)\sqly$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlora$(OBJ_EXT)
 	tlib64 "$(LIB_NAME)" @&&!
@@ -124,6 +125,7 @@ $(LIB_NAME_FIREBIRD): \
 	$(OBJ_DIR)\sqlrdd1$(OBJ_EXT) \
 	$(OBJ_DIR)\tracelog$(OBJ_EXT) \
 	$(OBJ_DIR)\xthrow$(OBJ_EXT) \
+	$(OBJ_DIR)\xmlfun$(OBJ_EXT) \
 	$(OBJ_DIR)\sqly$(OBJ_EXT)
 	tlib64 "$(LIB_NAME_FIREBIRD)" @&&!
 +$(**: = &^
@@ -156,6 +158,7 @@ $(LIB_NAME_MYSQL): \
 	$(OBJ_DIR)\sqlrdd1$(OBJ_EXT) \
 	$(OBJ_DIR)\tracelog$(OBJ_EXT) \
 	$(OBJ_DIR)\xthrow$(OBJ_EXT) \
+	$(OBJ_DIR)\xmlfun$(OBJ_EXT) \
 	$(OBJ_DIR)\sqly$(OBJ_EXT)
 	tlib64 "$(LIB_NAME_MYSQL)" @&&!
 +$(**: = &^
@@ -188,6 +191,7 @@ $(LIB_NAME_ORACLE): \
 	$(OBJ_DIR)\sqlrdd1$(OBJ_EXT) \
 	$(OBJ_DIR)\tracelog$(OBJ_EXT) \
 	$(OBJ_DIR)\xthrow$(OBJ_EXT) \
+	$(OBJ_DIR)\xmlfun$(OBJ_EXT) \
 	$(OBJ_DIR)\sqly$(OBJ_EXT) \
 	$(OBJ_DIR)\sqlora$(OBJ_EXT)
 	tlib64 "$(LIB_NAME_ORACLE)" @&&!
@@ -220,6 +224,7 @@ $(LIB_NAME_POSTGRESQL): \
 	$(OBJ_DIR)\sqlrdd1$(OBJ_EXT) \
 	$(OBJ_DIR)\tracelog$(OBJ_EXT) \
 	$(OBJ_DIR)\xthrow$(OBJ_EXT) \
+	$(OBJ_DIR)\xmlfun$(OBJ_EXT) \
 	$(OBJ_DIR)\sqly$(OBJ_EXT)
 	tlib64 "$(LIB_NAME_POSTGRESQL)" @&&!
 +$(**: = &^
@@ -384,6 +389,11 @@ $(OBJ_DIR)\sr_oracle2$(OBJ_EXT) : $(OBJ_DIR)\sr_oracle2.c
 $(OBJ_DIR)\sr_pgs.c : $(SRC_DIR)\postgresql\sr_pgs.prg
 	$(HB) $(HBFLAGS) $** -o$@
 $(OBJ_DIR)\sr_pgs$(OBJ_EXT) : $(OBJ_DIR)\sr_pgs.c
+	$(CC) $(CFLAGS) -o$@ $**
+
+$(OBJ_DIR)\xmlfun.c : $(SRC_DIR)\xml\xmlfun.prg
+	$(HB) $(HBFLAGS) $** -o$@
+$(OBJ_DIR)\xmlfun$(OBJ_EXT) : $(OBJ_DIR)\xmlfun.c
 	$(CC) $(CFLAGS) -o$@ $**
 
 ###########

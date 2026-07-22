@@ -49,6 +49,7 @@ source/parser/sqly.c
 # XML
 source/xml/txml.prg
 source/xml/srxml.c
+source/xml/xmlfun.prg
 
 # Firebird
 source/firebird/sr_firebird.prg

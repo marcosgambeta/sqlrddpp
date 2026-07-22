@@ -66,6 +66,7 @@ source/parser/sqly.c
 # xHarbour use hbxml (from xHarbour RTL)
 #source/xml/txml.prg
 #source/xml/srxml.c
+#source/xml/xmlfun.prg
 
 # Firebird
 source/firebird/sr_firebird.prg
