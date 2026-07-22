@@ -204,6 +204,35 @@ ENDCLASS
 // Functions
 //----------------------------------------------------------------------------//
 
+//----------------------------------------------------------------------------//
+// Get/Set s_lUseXmlField
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_getUseXmlField()
+RETURN s_lUseXmlField
+
+FUNCTION SR_SetUseXmlField(l)
+   s_lUseXmlField := l
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+// Get/Set s_lUseJSONField
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_getUseJSON()
+RETURN s_lUseJSONField
+
+FUNCTION SR_SetUseJSON(l)
+   s_lUseJSONField := l
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+// Get/Set s_lGoTopOnFirstInteract
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetlGoTopOnFirstInteract()
+RETURN s_lGoTopOnFirstInteract
+
 FUNCTION SR_SetlGoTopOnFirstInteract(l)
 
    LOCAL lOld := s_lGoTopOnFirstInteract
@@ -215,11 +244,11 @@ FUNCTION SR_SetlGoTopOnFirstInteract(l)
 RETURN lOld
 
 //----------------------------------------------------------------------------//
-
-FUNCTION SR_GetlGoTopOnFirstInteract()
-RETURN s_lGoTopOnFirstInteract
-
+// Get/Set s_lUseDTHISTAuto
 //----------------------------------------------------------------------------//
+
+FUNCTION SR_GetlUseDTHISTAuto()
+RETURN s_lUseDTHISTAuto
 
 FUNCTION SR_SetUseDTHISTAuto(l)
 
@@ -232,11 +261,11 @@ FUNCTION SR_SetUseDTHISTAuto(l)
 RETURN lOld
 
 //----------------------------------------------------------------------------//
-
-FUNCTION SR_GetlUseDTHISTAuto()
-RETURN s_lUseDTHISTAuto
-
+// Get/Set s_nLineCountResult
 //----------------------------------------------------------------------------//
+
+FUNCTION SR_GetnLineCountResult()
+RETURN s_nLineCountResult
 
 FUNCTION SR_SetnLineCountResult(l)
 
@@ -249,16 +278,11 @@ FUNCTION SR_SetnLineCountResult(l)
 RETURN lOld
 
 //----------------------------------------------------------------------------//
-
-FUNCTION SR_GetnLineCountResult()
-RETURN s_nLineCountResult
-
+// Get/Set s_cGlobalOwner
 //----------------------------------------------------------------------------//
 
 FUNCTION SR_GetGlobalOwner()
 RETURN s_cGlobalOwner
-
-//----------------------------------------------------------------------------//
 
 FUNCTION SR_SetGlobalOwner(cOwner)
 
@@ -469,27 +493,5 @@ FUNCTION SR_fromXml(oDoc, aRet, nLen, c)
    ENDDO
 
 RETURN aret
-
-//----------------------------------------------------------------------------//
-
-FUNCTION SR_getUseXmlField()
-RETURN s_lUseXmlField
-
-//----------------------------------------------------------------------------//
-
-FUNCTION SR_SetUseXmlField(l)
-   s_lUseXmlField := l
-RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-FUNCTION SR_getUseJSON()
-RETURN s_lUseJSONField
-
-//----------------------------------------------------------------------------//
-
-FUNCTION SR_SetUseJSON(l)
-   s_lUseJSONField := l
-RETURN NIL
 
 //----------------------------------------------------------------------------//
