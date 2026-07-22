@@ -165,12 +165,22 @@ RETURN
 STATIC PROCEDURE MostraVersao()
 
    LOCAL oCnn := SR_GetConnection()
-   LOCAL cVers := SR_Val2Char(oCnn:cSystemVers)
+   LOCAL cVers := AllTrim(SR_Val2Char(oCnn:cSystemVers))
+   LOCAL aRes := {}
 
    ? ""
-   ? "Versao do servidor: " + AllTrim(cVers) + ;
-     IIf(Val(AllTrim(cVers)) >= 80013, "  (indices funcionais suportados)", ;
-                                       "  (SEM indices funcionais - sera usado o indice sintetico)")
+   ? "Versao reportada pelo driver: " + cVers + ;
+     IIf(Val(cVers) >= 80013, "  (indices funcionais suportados)", ;
+                              "  (SEM indices funcionais - sera usado o indice sintetico)")
+
+   // Confirmacao direta no servidor (o driver pode reportar a versao do
+   // protocolo/proxy em vez da versao real do servidor)
+
+   oCnn:Exec("select version()", .F., .T., @aRes)
+
+   IF Len(aRes) > 0
+      ? "Versao retornada por select version(): " + AllTrim(SR_Val2Char(aRes[1, 1]))
+   ENDIF
 
 RETURN
 
