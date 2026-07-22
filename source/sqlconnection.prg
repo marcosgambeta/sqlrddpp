@@ -439,9 +439,6 @@ METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRec
    LOCAL aMemo
    LOCAL cFileTemp
 
-   //HB_SYMBOL_UNUSED(nRet)
-   //HB_SYMBOL_UNUSED(nAllocated)
-
    DEFAULT nLogMode TO ::nLogMode
    DEFAULT cType TO SQLLOGCHANGES_TYPE_DML
 
@@ -685,8 +682,6 @@ METHOD SR_CONNECTION:Exec(cCommand, lMsg, lFetch, aArray, cFile, cAlias, nMaxRec
    ENDIF
 
    ::FreeStatement()
-
-   //HB_SYMBOL_UNUSED(nBlocks)
 
 RETURN nRet
 
@@ -1078,10 +1073,6 @@ METHOD SR_CONNECTION:Connect(cDSN, cUser, cPassword, nVersion, cOwner, nSizeMaxB
    LOCAL aCon
    LOCAL aItem
    LOCAL aToken
-
-   //HB_SYMBOL_UNUSED(cVersion)
-   //HB_SYMBOL_UNUSED(cSystemVers)
-   //HB_SYMBOL_UNUSED(cBuff)
 
    DEFAULT nVersion TO 1
    DEFAULT lTrace TO .F.

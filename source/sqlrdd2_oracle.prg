@@ -3294,12 +3294,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL cKeyValue
    //LOCAL lIsIndKey := .F. (variable not used)
 
-   //HB_SYMBOL_UNUSED(cType)
-   //HB_SYMBOL_UNUSED(c1)
-   //HB_SYMBOL_UNUSED(lBlockSearch)
-   //HB_SYMBOL_UNUSED(lIsIndKey)
-   //HB_SYMBOL_UNUSED(lLast)
-
    IF ::lCollectingBehavior
       FOR EACH i IN ::aSelectList
          IF i == 1
@@ -3341,7 +3335,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
       nCons := 0
       nLenKey := Len(uKey)
       //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
-      //HB_SYMBOL_UNUSED(cPart)
 
       FOR i := 1 TO nLen
 
@@ -3354,10 +3347,8 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE]
          // unnecessary, the value is not used
          //nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_DEC]
-         //HB_SYMBOL_UNUSED(nFDec)
          // unnecessary, the value is not used
          //nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_LEN]
-         //HB_SYMBOL_UNUSED(nFLen)
 
          IF i == 1 .AND. nThis >= Len(uKey)
             IF uKey == ""
@@ -3527,7 +3518,6 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
          nCons := 0
          nLenKey := Len(uKey)
          //cPart := "" (unnecessary, cPart is used only inside the loop FOR/NEXT)
-         //HB_SYMBOL_UNUSED(cPart)
 
          FOR i := 1 TO nLen
 
@@ -3540,10 +3530,8 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
             lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE]
             // unnecessary, the value is not used
             //nFDec := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_DEC]
-            //HB_SYMBOL_UNUSED(nFDec)
             // unnecessary, the value is not used
             //nFLen := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_LEN]
-            //HB_SYMBOL_UNUSED(nFLen)
 
             IF i == 1 .AND. nThis >= Len(uKey)
                IF uKey == ""
@@ -4320,10 +4308,6 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    LOCAL cTemp1
    LOCAL cTemp2
    LOCAL cTemp3
-
-   //HB_SYMBOL_UNUSED(lRecnoAdded)
-   //HB_SYMBOL_UNUSED(lShared)
-   //HB_SYMBOL_UNUSED(nMax)
 
    ::cRecnoName := SR_RecnoName()
    ::cDeletedName := SR_DeletedName()
@@ -6770,11 +6754,6 @@ METHOD SR_WORKAREA:WhereMajor()
    LOCAL j
    //LOCAL aQuot := {} (variable not used)
 
-   //HB_SYMBOL_UNUSED(c3)
-   //HB_SYMBOL_UNUSED(c4)
-   //HB_SYMBOL_UNUSED(cRet2)
-   //HB_SYMBOL_UNUSED(aQuot)
-
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
@@ -6842,15 +6821,6 @@ METHOD SR_WORKAREA:WhereVMajor(cQot)
    LOCAL cRet2 //:= "" (value not used)
    //LOCAL aQuot := {}
 
-   //HB_SYMBOL_UNUSED(cRet)
-
-   //HB_SYMBOL_UNUSED(c1)
-   //HB_SYMBOL_UNUSED(c2)
-   //HB_SYMBOL_UNUSED(c3)
-   //HB_SYMBOL_UNUSED(c4)
-   //HB_SYMBOL_UNUSED(cRet2)
-   //HB_SYMBOL_UNUSED(aQuot)
-
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
@@ -6896,11 +6866,6 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
    LOCAL j
    LOCAL aQuot := {}
 
-   //HB_SYMBOL_UNUSED(c1)
-   //HB_SYMBOL_UNUSED(c3)
-   //HB_SYMBOL_UNUSED(c4)
-   //HB_SYMBOL_UNUSED(cRet2)
-
    DEFAULT lPartialSeek TO .T.
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
@@ -6935,7 +6900,6 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
 
          FOR i := 1 TO j
             //lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE] (variable and value not used)
-            //HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
             cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2]])
 
@@ -7002,11 +6966,6 @@ METHOD SR_WORKAREA:WhereMinor()
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
    //LOCAL aQuot := {} (variable not used)
-
-   //HB_SYMBOL_UNUSED(c3)
-   //HB_SYMBOL_UNUSED(c4)
-   //HB_SYMBOL_UNUSED(cRet2)
-   //HB_SYMBOL_UNUSED(aQuot)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
@@ -7075,14 +7034,6 @@ METHOD SR_WORKAREA:WhereVMinor(cQot)
    LOCAL cRet2 //:= "" (value not used)
    //LOCAL aQuot := {} (variable not used)
 
-   //HB_SYMBOL_UNUSED(cRet)
-   //HB_SYMBOL_UNUSED(c1)
-   //HB_SYMBOL_UNUSED(c2)
-   //HB_SYMBOL_UNUSED(c3)
-   //HB_SYMBOL_UNUSED(c4)
-   //HB_SYMBOL_UNUSED(cRet2)
-   //HB_SYMBOL_UNUSED(aQuot)
-
    IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
@@ -7131,11 +7082,6 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
    LOCAL j
    LOCAL aQuot := {}
 
-   //HB_SYMBOL_UNUSED(c1)
-   //HB_SYMBOL_UNUSED(c3)
-   //HB_SYMBOL_UNUSED(c4)
-   //HB_SYMBOL_UNUSED(cRet2)
-
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
       IF !Empty(cRet2)
@@ -7170,7 +7116,6 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
          FOR i := 1 TO j
 
             //lNull := ::aFields[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2], SR_FIELD_NULLABLE] (variable and value not used)
-            //HB_SYMBOL_UNUSED(lNull)
             cQot := aQuot[i]
             cNam := "A." + SR_DBQUALIFY(::aNames[::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i, 2]])
 

@@ -1834,8 +1834,6 @@ FUNCTION SR_DropTable(cFileName, cOwner)
    LOCAL cTemp2
    LOCAL cTemp3
 
-   //HB_SYMBOL_UNUSED(aRet)
-
    oCnn := SR_GetConnection()
 
    aRet := Eval(SR_GetTableInfoBlock(), cFileName)
