@@ -5712,18 +5712,18 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    LOCAL aMultilang := {}
    LOCAL aField
    LOCAL cLobs := ""
-   LOCAL lRecnoAdded := .F.
-   LOCAL lShared := .F.
+   //LOCAL lRecnoAdded := .F. (variable not used)
+   //LOCAL lShared := .F. (variable not used)
    LOCAL aCacheInfo := Array(SR_CACHEINFO_LEN)
    LOCAL nPos
-   LOCAL nMax := 0
+   //LOCAL nMax := 0 (variable not used)
    LOCAL cTemp1
    LOCAL cTemp2
    LOCAL cTemp3
 
-   HB_SYMBOL_UNUSED(lRecnoAdded)
-   HB_SYMBOL_UNUSED(lShared)
-   HB_SYMBOL_UNUSED(nMax)
+   //HB_SYMBOL_UNUSED(lRecnoAdded)
+   //HB_SYMBOL_UNUSED(lShared)
+   //HB_SYMBOL_UNUSED(nMax)
 
    ::cRecnoName := SR_RecnoName()
    ::cDeletedName := SR_DeletedName()
