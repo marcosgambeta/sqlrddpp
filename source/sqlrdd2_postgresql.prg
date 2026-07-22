@@ -98,10 +98,10 @@ STATIC s_ItP3
 #endif
 */
 
-STATIC s_lGoTopOnFirstInteract := .T.
-STATIC s_lUseDTHISTAuto := .F.
-STATIC s_nLineCountResult := 0
-STATIC s_cGlobalOwner := ""
+//STATIC s_lGoTopOnFirstInteract := .T. (moved to base class)
+//STATIC s_lUseDTHISTAuto := .F. (moved to base class)
+//STATIC s_nLineCountResult := 0 (moved to base class)
+//STATIC s_cGlobalOwner := "" (moved to base class)
 STATIC s_nOperat := 0
 STATIC s_cMySqlMemoDataType := "MEDIUMBLOB"
 STATIC s_cMySqlNumericDataType := "REAL"
@@ -8542,54 +8542,60 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_SetlGoTopOnFirstInteract(l)
-
-   LOCAL lOld := s_lGoTopOnFirstInteract
-
-   IF l != NIL
-      s_lGoTopOnFirstInteract := l
-   ENDIF
-
-RETURN lOld
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_GetlGoTopOnFirstInteract()
-RETURN s_lGoTopOnFirstInteract
+// moved to base class
+// FUNCTION SR_SetlGoTopOnFirstInteract(l)
+//
+//    LOCAL lOld := s_lGoTopOnFirstInteract
+//
+//    IF l != NIL
+//       s_lGoTopOnFirstInteract := l
+//    ENDIF
+//
+// RETURN lOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_SetnLineCountResult(l)
-
-   LOCAL lOld := s_nLineCountResult
-
-   IF l != NIL
-      s_nLineCountResult := l
-   ENDIF
-
-RETURN lOld
+// moved to base class
+// FUNCTION SR_GetlGoTopOnFirstInteract()
+// RETURN s_lGoTopOnFirstInteract
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_GetnLineCountResult()
-RETURN s_nLineCountResult
+// moved to base class
+// FUNCTION SR_SetnLineCountResult(l)
+//
+//    LOCAL lOld := s_nLineCountResult
+//
+//    IF l != NIL
+//       s_nLineCountResult := l
+//    ENDIF
+//
+// RETURN lOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_SetUseDTHISTAuto(l)
-
-   LOCAL lOld := s_lUseDTHISTAuto
-
-   IF l != NIL
-      s_lUseDTHISTAuto := l
-   ENDIF
-
-RETURN lOld
+// moved to base class
+// FUNCTION SR_GetnLineCountResult()
+// RETURN s_nLineCountResult
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_GetlUseDTHISTAuto()
-RETURN s_lUseDTHISTAuto
+// moved to base class
+// FUNCTION SR_SetUseDTHISTAuto(l)
+//
+//    LOCAL lOld := s_lUseDTHISTAuto
+//
+//    IF l != NIL
+//       s_lUseDTHISTAuto := l
+//    ENDIF
+//
+// RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// moved to base class
+// FUNCTION SR_GetlUseDTHISTAuto()
+// RETURN s_lUseDTHISTAuto
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -8603,28 +8609,30 @@ RETURN cStr
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_GetGlobalOwner()
-RETURN s_cGlobalOwner
+// moved to base class
+// FUNCTION SR_GetGlobalOwner()
+// RETURN s_cGlobalOwner
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_SetGlobalOwner(cOwner)
-
-   LOCAL cOld := s_cGlobalOwner
-   LOCAL oSql
-
-   IF cOwner != NIL
-      s_cGlobalOwner := cOwner
-   ELSE
-      IF Empty(s_cGlobalOwner)
-         oSql := SR_GetCnn()
-         IF HB_IsObject(oSql) .AND. (!Empty(oSql:cOwner))
-            RETURN oSql:cOwner
-         ENDIF
-      ENDIF
-   ENDIF
-
-RETURN cOld
+// moved to base class
+// FUNCTION SR_SetGlobalOwner(cOwner)
+//
+//    LOCAL cOld := s_cGlobalOwner
+//    LOCAL oSql
+//
+//    IF cOwner != NIL
+//       s_cGlobalOwner := cOwner
+//    ELSE
+//       IF Empty(s_cGlobalOwner)
+//          oSql := SR_GetCnn()
+//          IF HB_IsObject(oSql) .AND. (!Empty(oSql:cOwner))
+//             RETURN oSql:cOwner
+//          ENDIF
+//       ENDIF
+//    ENDIF
+//
+// RETURN cOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 

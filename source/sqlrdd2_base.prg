@@ -69,6 +69,11 @@ STATIC s_nPosData := 0
 STATIC s_lUseXmlField := .F.
 STATIC s_lUseJSONField := .F.
 
+STATIC s_lGoTopOnFirstInteract := .T.
+STATIC s_lUseDTHISTAuto := .F.
+STATIC s_nLineCountResult := 0
+STATIC s_cGlobalOwner := ""
+
 //----------------------------------------------------------------------------//
 
 CLASS SR_BASE_WORKAREA
@@ -198,6 +203,80 @@ ENDCLASS
 //----------------------------------------------------------------------------//
 // Functions
 //----------------------------------------------------------------------------//
+
+FUNCTION SR_SetlGoTopOnFirstInteract(l)
+
+   LOCAL lOld := s_lGoTopOnFirstInteract
+
+   IF l != NIL
+      s_lGoTopOnFirstInteract := l
+   ENDIF
+
+RETURN lOld
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetlGoTopOnFirstInteract()
+RETURN s_lGoTopOnFirstInteract
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_SetUseDTHISTAuto(l)
+
+   LOCAL lOld := s_lUseDTHISTAuto
+
+   IF l != NIL
+      s_lUseDTHISTAuto := l
+   ENDIF
+
+RETURN lOld
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetlUseDTHISTAuto()
+RETURN s_lUseDTHISTAuto
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_SetnLineCountResult(l)
+
+   LOCAL lOld := s_nLineCountResult
+
+   IF l != NIL
+      s_nLineCountResult := l
+   ENDIF
+
+RETURN lOld
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetnLineCountResult()
+RETURN s_nLineCountResult
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetGlobalOwner()
+RETURN s_cGlobalOwner
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_SetGlobalOwner(cOwner)
+
+   LOCAL cOld := s_cGlobalOwner
+   LOCAL oSql
+
+   IF cOwner != NIL
+      s_cGlobalOwner := cOwner
+   ELSE
+      IF Empty(s_cGlobalOwner)
+         oSql := SR_GetCnn()
+         IF HB_IsObject(oSql) .AND. (!Empty(oSql:cOwner))
+            RETURN oSql:cOwner
+         ENDIF
+      ENDIF
+   ENDIF
+
+RETURN cOld
 
 //----------------------------------------------------------------------------//
 // XML functions (TODO: move to a separate file ?)
