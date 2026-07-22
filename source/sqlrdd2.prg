@@ -4381,7 +4381,7 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL nLen
    LOCAL i
    LOCAL j
-   LOCAL cType //:= "" (value not used)
+   LOCAL cType
    LOCAL lPartialSeek := .F.
    LOCAL cRet := ""
    LOCAL nFDec
@@ -9287,7 +9287,7 @@ METHOD SR_WORKAREA:WhereMajor()
    LOCAL cNam
    LOCAL c1 := ""
    LOCAL c2 := ""
-   LOCAL cRet2 //:= "" (value not used)
+   LOCAL cRet2
    LOCAL j
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
@@ -9349,8 +9349,8 @@ RETURN cRet
 
 METHOD SR_WORKAREA:WhereVMajor(cQot)
 
-   LOCAL cRet //:= "" (value not used)
-   LOCAL cRet2 //:= "" (value not used)
+   LOCAL cRet
+   LOCAL cRet2
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
@@ -9388,9 +9388,9 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
    LOCAL cQot
    LOCAL cNam
    LOCAL lNull := NIL
-   LOCAL c2 //:= "" (value not used)
+   LOCAL c2
    LOCAL cRet := ""
-   LOCAL cRet2 //:= "" (value not used)
+   LOCAL cRet2
    LOCAL j
    LOCAL aQuot := {}
 
@@ -9489,7 +9489,7 @@ METHOD SR_WORKAREA:WhereMinor()
    LOCAL cNam
    LOCAL c1 := ""
    LOCAL c2 := ""
-   LOCAL cRet2 //:= "" (value not used)
+   LOCAL cRet2
    LOCAL j
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
@@ -9551,8 +9551,8 @@ RETURN cRet
 
 METHOD SR_WORKAREA:WhereVMinor(cQot)
 
-   LOCAL cRet //:= "" (value not used)
-   LOCAL cRet2 //:= "" (value not used)
+   LOCAL cRet
+   LOCAL cRet2
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
@@ -9595,7 +9595,7 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
    LOCAL lNull := NIL
    LOCAL c2 := ""
    LOCAL cRet := ""
-   LOCAL cRet2 //:= "" (value not used)
+   LOCAL cRet2
    LOCAL j
    LOCAL aQuot := {}
 
