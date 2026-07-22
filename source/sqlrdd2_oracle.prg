@@ -691,9 +691,6 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
    LOCAL aThisIndex
    LOCAL aCols
    LOCAL i
-   //LOCAL cind (variable not used)
-   //LOCAL nPos (variable not used)
-   //LOCAL cItem (variable not used)
 
    ASize(::aIndexMgmnt, 0)
    ::oSql:Exec("SELECT TABLE_,SIGNATURE_,IDXNAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_ FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(::cFileName) + "' ORDER BY IDXNAME_, TAGNUM_", .F., .T., @::aIndexMgmnt)
@@ -851,7 +848,6 @@ RETURN NIL
 METHOD SR_WORKAREA:GetNextRecordNumber()
 
    LOCAL nRet
-   //LOCAL aRet (variable not used)
 
    IF ::lQuickAppend
       RETURN ::aInfo[SR_AINFO_RCOUNT] + 1
@@ -3276,23 +3272,19 @@ METHOD SR_WORKAREA:sqlSeek(uKey, lSoft, lLast)
    LOCAL nThis
    LOCAL cSep
    LOCAL cSql
-   //LOCAL c1 := "" (variable not used)
    LOCAL cQot
    LOCAL cNam
    LOCAL nSimpl
    LOCAL nFeitos
-   //LOCAL aTemp (variable not used)
    LOCAL cTemp
    LOCAL cJoin1
    LOCAL cJoin3
    LOCAL lNull
    LOCAL uSet
-   //LOCAL lBlockSearch := .T. (variable not used)
    LOCAL cField
    LOCAL nfieldPos
    LOCAL lLikeSep := .F.
    LOCAL cKeyValue
-   //LOCAL lIsIndKey := .F. (variable not used)
 
    IF ::lCollectingBehavior
       FOR EACH i IN ::aSelectList
@@ -3802,7 +3794,6 @@ METHOD SR_WORKAREA:ReadPage(nDirection, lWasDel)
    LOCAL cJoin1
    LOCAL cJoin3
    LOCAL cTemp
-   //LOCAL aTemp (variable not used)
    LOCAL cSql := ""
    LOCAL uRecord
    LOCAL nFecth
@@ -4296,15 +4287,11 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
    LOCAL cTblName
    LOCAL nRet
    LOCAL nRowSize := 0
-   //LOCAL cRowSize (variable not used)
    LOCAL aMultilang := {}
    LOCAL aField
    LOCAL cLobs := ""
-   //LOCAL lRecnoAdded := .F. (variable not used)
-   //LOCAL lShared := .F. (variable not used)
    LOCAL aCacheInfo := Array(SR_CACHEINFO_LEN)
    LOCAL nPos
-   //LOCAL nMax := 0 (variable not used)
    LOCAL cTemp1
    LOCAL cTemp2
    LOCAL cTemp3
@@ -6748,11 +6735,8 @@ METHOD SR_WORKAREA:WhereMajor()
    LOCAL cNam
    LOCAL c1 := ""
    LOCAL c2 := ""
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
-   //LOCAL aQuot := {} (variable not used)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
@@ -6814,12 +6798,7 @@ RETURN cRet
 METHOD SR_WORKAREA:WhereVMajor(cQot)
 
    LOCAL cRet //:= "" (value not used)
-   //LOCAL c1 := "" (variable not used)
-   //LOCAL c2 := "" (variable not used)
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet2 //:= "" (value not used)
-   //LOCAL aQuot := {}
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0
       cRet2 := ::SolveRestrictors()
@@ -6857,10 +6836,7 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
    LOCAL cQot
    LOCAL cNam
    LOCAL lNull := NIL
-   //LOCAL c1 := "" (variable not used)
    LOCAL c2 //:= "" (value not used)
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet := ""
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
@@ -6961,11 +6937,8 @@ METHOD SR_WORKAREA:WhereMinor()
    LOCAL cNam
    LOCAL c1 := ""
    LOCAL c2 := ""
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
-   //LOCAL aQuot := {} (variable not used)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
@@ -7027,12 +7000,7 @@ RETURN cRet
 METHOD SR_WORKAREA:WhereVMinor(cQot)
 
    LOCAL cRet //:= "" (value not used)
-   //LOCAL c1 := "" (variable not used)
-   //LOCAL c2 := "" (variable not used)
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet2 //:= "" (value not used)
-   //LOCAL aQuot := {} (variable not used)
 
    IF ::aInfo[SR_AINFO_INDEXORD] == 0 .AND. ::aLocalBuffer[::hnRecno] != 0
       cRet2 := ::SolveRestrictors()
@@ -7073,10 +7041,7 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
    LOCAL cQot
    LOCAL cNam
    LOCAL lNull := NIL
-   //LOCAL c1 := "" (variable not used)
    LOCAL c2 := ""
-   //LOCAL c3 := "" (variable not used)
-   //LOCAL c4 := "" (variable not used)
    LOCAL cRet := ""
    LOCAL cRet2 //:= "" (value not used)
    LOCAL j
@@ -7497,8 +7462,6 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
    LOCAL cTblName := NIL
    LOCAL lCurrentIsMultLang := .F.
    LOCAL nPos
-   //LOCAL cSql2 := "" (variable not used)
-   //LOCAL cSql3 := "" (variable not used)
 
    HB_SYMBOL_UNUSED(lCurrentIsMultLang)
 
@@ -7815,7 +7778,6 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
    LOCAL nCol
    LOCAL nRet := SQL_ERROR
    LOCAL uVal
-   //LOCAL cType (variable not used)
 
    nCol := AScan(::aNames, {|x|AllTrim(Upper(x)) == AllTrim(Upper(cColumn))})
 
@@ -7867,7 +7829,6 @@ METHOD SR_WORKAREA:DropRuleNotNull(cColumn)
    LOCAL lOk := .T.
    LOCAL nCol
    LOCAL nRet := SQL_ERROR
-   //LOCAL cType (variable not used)
 
    nCol := AScan(::aNames, {|x|AllTrim(Upper(x)) == AllTrim(Upper(cColumn))})
 
