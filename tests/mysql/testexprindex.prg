@@ -16,6 +16,11 @@
 // Para executar:
 // testexprindex --server <servidor> --port <porta> --uid <usuario> --pwd <senha> --dtb <banco>
 // NOTA: o banco de dados deve existir antes de rodar o teste.
+//
+// Opcao --diag: executa passo a passo (em SQL puro) o mesmo DDL que a
+// biblioteca usa no caminho do indice sintetico, mostrando o retorno e a
+// mensagem de erro de cada comando. Util para identificar qual etapa falha
+// em servidores antigos.
 
 #ifdef __XHARBOUR__
 #xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
@@ -49,6 +54,7 @@ PROCEDURE Main()
    LOCAL n
    LOCAL cOpt
    LOCAL stringConect
+   LOCAL lDiag := .F.
 
    n := 1
    DO WHILE n <= PCount()
@@ -58,6 +64,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--uid"    ; s_UID := HB_PValue(++n)
       CASE HB_PValue(n) == "--pwd"    ; s_PWD := HB_PValue(++n)
       CASE HB_PValue(n) == "--dtb"    ; s_DTB := HB_PValue(++n)
+      CASE HB_PValue(n) == "--diag"   ; lDiag := .T.
       OTHERWISE
          ? "Parametro desconhecido:", HB_PValue(n)
       ENDCASE
@@ -86,6 +93,17 @@ PROCEDURE Main()
 
    MostraVersao()
    CriaTabela()
+
+   IF lDiag
+      Diagnostico()
+      CLOSE DATABASE
+      sr_StopLog(nConnection)
+      sr_EndConnection(nConnection)
+      ? ""
+      WAIT "Diagnostico concluido. Pressione uma tecla..."
+      QUIT
+   ENDIF
+
    CriaIndices()
    MostraColunasExtras()
    MostraIndicesFisicos()
@@ -219,6 +237,75 @@ STATIC PROCEDURE CriaTabela()
       REPLACE ADMISSAO WITH Date() - n
       REPLACE SALDO    WITH n * 10.50
    NEXT n
+
+RETURN
+
+//--------------------------------------------------------------------
+
+// Executa, em SQL puro, a mesma sequencia usada pela biblioteca ao criar
+// um indice sintetico, mostrando o retorno de cada comando
+
+STATIC PROCEDURE Diagnostico()
+
+   LOCAL oCnn := SR_GetConnection()
+   LOCAL cTbl := Lower(TABLE_NAME)
+   LOCAL aRes := {}
+
+   ? ""
+   ? "=== DIAGNOSTICO DO CAMINHO SINTETICO (SQL puro) ==="
+
+   ExecDiag(oCnn, "ALTER TABLE " + cTbl + " ADD `indkey_999` CHAR (45)")
+   ExecDiag(oCnn, "UPDATE " + cTbl + " SET `indkey_999` = 'TESTE' WHERE `sr_recno` = 1")
+   ExecDiag(oCnn, "DROP INDEX " + cTbl + "_diag ON " + cTbl + "   (pode falhar: indice ainda nao existe)")
+   ExecDiag(oCnn, "CREATE INDEX " + cTbl + "_diag ON " + cTbl + " (`indkey_999`)")
+
+   ExecDiag(oCnn, "DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(TABLE_NAME) + "'")
+   ExecDiag(oCnn, "INSERT INTO " + SR_GetToolsOwner() + "SR_MGMNTINDEXES " + ;
+                  "(TABLE_,SIGNATURE_,IDXNAME_,PHIS_NAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_) VALUES ( '" + ;
+                  Upper(TABLE_NAME) + "','" + DToS(Date()) + " " + Time() + " A','" + Upper(TABLE_NAME) + "','" + ;
+                  cTbl + "_diag','UPPER(NOME)','','999','DIAGTAG','000001' )")
+
+   oCnn:Commit()
+
+   ? ""
+   ? "Linhas em SR_MGMNTINDEXES para " + Upper(TABLE_NAME) + " (esperado: 1):"
+   aRes := {}
+   oCnn:Exec("SELECT TABLE_,IDXNAME_,TAG_,IDXCOL_,IDXKEY_ FROM " + SR_GetToolsOwner() + ;
+             "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(TABLE_NAME) + "'", .F., .T., @aRes)
+   ? "  registros retornados: " + LTrim(Str(Len(aRes)))
+   AEval(aRes, {|a|QOut("  IDXNAME_=[" + AllTrim(SR_Val2Char(a[2])) + "] TAG_=[" + AllTrim(SR_Val2Char(a[3])) + ;
+                        "] IDXCOL_=[" + AllTrim(SR_Val2Char(a[4])) + "] IDXKEY_=[" + AllTrim(SR_Val2Char(a[5])) + "]")})
+
+   ? ""
+   ? "Estrutura da tabela (procure por indkey_999):"
+   aRes := {}
+   oCnn:Exec("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = database() AND table_name = '" + ;
+             cTbl + "' ORDER BY ordinal_position", .F., .T., @aRes)
+   AEval(aRes, {|a|QOut("  " + AllTrim(SR_Val2Char(a[1])) + " " + AllTrim(SR_Val2Char(a[2])))})
+
+   // Limpeza
+   ExecDiag(oCnn, "DELETE FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(TABLE_NAME) + "'")
+   oCnn:Commit()
+
+RETURN
+
+//--------------------------------------------------------------------
+
+STATIC PROCEDURE ExecDiag(oCnn, cSql)
+
+   LOCAL nRet
+   LOCAL cShow := cSql
+
+   IF "   (pode falhar" $ cShow
+      cSql := Left(cSql, At("   (pode falhar", cSql) - 1)
+   ENDIF
+
+   nRet := oCnn:Exec(cSql, .F.)
+
+   ? ""
+   ? "SQL: " + Left(cShow, 110)
+   ? "  retorno: " + LTrim(Str(nRet)) + ;
+     IIf(nRet == SQL_SUCCESS, "  (SQL_SUCCESS)", "  ERRO: " + AllTrim(SR_Val2Char(oCnn:LastError())))
 
 RETURN
 
