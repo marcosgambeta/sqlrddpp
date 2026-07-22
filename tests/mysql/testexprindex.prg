@@ -317,20 +317,60 @@ STATIC PROCEDURE CriaIndices()
    ? "Criando indices (INDEX ON ... TAG <tabela+seq> TO <tabela>)..."
    ? ""
 
-   ? "  TAG testexpm1: UPPER(NOME)                    => expressao (sem coluna extra)"
-   INDEX ON UPPER(NOME) TAG testexpm1 TO testexpm
+   CriaIndice("testexpm1: UPPER(NOME)", "testexpm1", "UPPER(NOME)", {||Upper(FIELD->NOME)})
+   CriaIndice("testexpm2: SUBSTR(CIDADE,1,10)", "testexpm2", "SUBSTR(CIDADE,1,10)", {||SubStr(FIELD->CIDADE, 1, 10)})
+   CriaIndice("testexpm3: STRZERO(SALDO,12,2)", "testexpm3", "STRZERO(SALDO,12,2)", {||StrZero(FIELD->SALDO, 12, 2)})
+   CriaIndice("testexpm4: DTOS(ADMISSAO)+STRZERO(ID,10)", "testexpm4", "DTOS(ADMISSAO)+STRZERO(ID,10)", ;
+              {||DToS(FIELD->ADMISSAO) + StrZero(FIELD->ID, 10)})
+   CriaIndice("testexpm5: MYUDF(NOME)", "testexpm5", "MYUDF(NOME)", {||MYUDF(FIELD->NOME)})
 
-   ? "  TAG testexpm2: SUBSTR(CIDADE,1,10)            => expressao (sem coluna extra)"
-   INDEX ON SUBSTR(CIDADE, 1, 10) TAG testexpm2 TO testexpm
+RETURN
 
-   ? "  TAG testexpm3: STRZERO(SALDO,12,2)            => expressao com decimais (sem coluna extra)"
-   INDEX ON STRZERO(SALDO, 12, 2) TAG testexpm3 TO testexpm
+//--------------------------------------------------------------------
+// Cria um indice reportando o erro (em vez de abortar) e mostrando o
+// que ficou registrado em SR_MGMNTINDEXES
 
-   ? "  TAG testexpm4: DTOS(ADMISSAO)+STRZERO(ID,10)  => data crua + expressao (sem coluna extra)"
-   INDEX ON DTOS(ADMISSAO) + STRZERO(ID, 10) TAG testexpm4 TO testexpm
+STATIC PROCEDURE CriaIndice(cDesc, cTag, cKey, bKey)
 
-   ? "  TAG testexpm5: MYUDF(NOME)                    => UDF: sintetico (CRIA coluna INDKEY_)"
-   INDEX ON MYUDF(NOME) TAG testexpm5 TO testexpm
+   LOCAL bOld := ErrorBlock({|e|Break(e)})
+   LOCAL oErr
+   LOCAL lOk := .F.
+
+   BEGIN SEQUENCE
+      ordCreate(TABLE_NAME, cTag, cKey, bKey, .F.)
+      lOk := .T.
+   RECOVER USING oErr
+      lOk := .F.
+   END SEQUENCE
+
+   ErrorBlock(bOld)
+
+   ? "  " + PadR(cDesc, 42) + IIf(lOk, "=> OK", "=> ERRO: " + AllTrim(SR_Val2Char(oErr:description)))
+
+   IF !lOk
+      MostraRegistros("  registros em SR_MGMNTINDEXES apos a falha:")
+   ENDIF
+
+RETURN
+
+//--------------------------------------------------------------------
+
+STATIC PROCEDURE MostraRegistros(cTitulo)
+
+   LOCAL oCnn := SR_GetConnection()
+   LOCAL aRes := {}
+
+   ? cTitulo
+   oCnn:Exec("SELECT IDXNAME_,TAG_,IDXCOL_,IDXKEY_,PHIS_NAME_ FROM " + SR_GetToolsOwner() + ;
+             "SR_MGMNTINDEXES WHERE TABLE_ = '" + Upper(TABLE_NAME) + "' ORDER BY TAGNUM_", .F., .T., @aRes)
+
+   IF Len(aRes) == 0
+      ? "    (nenhum registro - a criacao nao foi registrada)"
+   ELSE
+      AEval(aRes, {|a|QOut("    IDXNAME_=[" + AllTrim(SR_Val2Char(a[1])) + "] TAG_=[" + AllTrim(SR_Val2Char(a[2])) + ;
+                           "] IDXCOL_=[" + AllTrim(SR_Val2Char(a[3])) + "] IDXKEY_=[" + AllTrim(SR_Val2Char(a[4])) + ;
+                           "] PHIS_NAME_=[" + AllTrim(SR_Val2Char(a[5])) + "]")})
+   ENDIF
 
 RETURN
 
