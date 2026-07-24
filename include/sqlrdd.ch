@@ -154,30 +154,30 @@
 
 // eval( SQLGetTableInfoBlock(), cTableName ) return array constants
 
-#define TABLE_INFO_SIZE               16
+#define SR_TABLE_INFO_SIZE               16
 
-#define TABLE_INFO_TABLE_NAME          1
-#define TABLE_INFO_FILTERS             2
-#define TABLE_INFO_PRIMARY_KEY         3
-#define TABLE_INFO_RELATION_TYPE       4
-#define TABLE_INFO_OWNER_NAME          5
-#define TABLE_INFO_ALL_IN_CACHE        6
-#define TABLE_INFO_CUSTOM_SQL          7
-#define TABLE_INFO_CAN_INSERT          8
-#define TABLE_INFO_CAN_UPDATE          9
-#define TABLE_INFO_CAN_DELETE         10
-#define TABLE_INFO_HISTORIC           11
-#define TABLE_INFO_RECNO_NAME         12
-#define TABLE_INFO_DELETED_NAME       13
-#define TABLE_INFO_CONNECTION         14
-#define TABLE_INFO_QUALIFIED_NAME     15
-#define TABLE_INFO_NO_TRANSAC         16
+#define SR_TABLE_INFO_TABLE_NAME          1
+#define SR_TABLE_INFO_FILTERS             2
+#define SR_TABLE_INFO_PRIMARY_KEY         3
+#define SR_TABLE_INFO_RELATION_TYPE       4
+#define SR_TABLE_INFO_OWNER_NAME          5
+#define SR_TABLE_INFO_ALL_IN_CACHE        6
+#define SR_TABLE_INFO_CUSTOM_SQL          7
+#define SR_TABLE_INFO_CAN_INSERT          8
+#define SR_TABLE_INFO_CAN_UPDATE          9
+#define SR_TABLE_INFO_CAN_DELETE         10
+#define SR_TABLE_INFO_HISTORIC           11
+#define SR_TABLE_INFO_RECNO_NAME         12
+#define SR_TABLE_INFO_DELETED_NAME       13
+#define SR_TABLE_INFO_CONNECTION         14
+#define SR_TABLE_INFO_QUALIFIED_NAME     15
+#define SR_TABLE_INFO_NO_TRANSAC         16
 
 // Table Relation Methods
 
-#define TABLE_INFO_RELATION_TYPE_SELECT     0
-#define TABLE_INFO_RELATION_TYPE_JOIN       1
-#define TABLE_INFO_RELATION_TYPE_OUTER_JOIN 2
+#define SR_TABLE_INFO_RELATION_TYPE_SELECT     0
+#define SR_TABLE_INFO_RELATION_TYPE_JOIN       1
+#define SR_TABLE_INFO_RELATION_TYPE_OUTER_JOIN 2
 
 // Historic management
 

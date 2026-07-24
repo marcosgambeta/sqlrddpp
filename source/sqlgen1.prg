@@ -235,19 +235,19 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             SKIPFWD
             IF lParseTableName
                aRet := Eval(s_bTableInfo, uData, nSystemId)
-               AAdd(aTables, aRet[TABLE_INFO_TABLE_NAME])
-               AAdd(aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME])
+               AAdd(aTables, aRet[SR_TABLE_INFO_TABLE_NAME])
+               AAdd(aQualifiedTables, aRet[SR_TABLE_INFO_QUALIFIED_NAME])
                IF nContext == SQL_CONTEXT_UPDATE
-                  cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
+                  cSql += aRet[SR_TABLE_INFO_QUALIFIED_NAME]
                   SR_SolveFilters(aFilters, aRet, , nSystemID)
                   cSql +=  NEWLINE + " SET" + NEWLINE + "  "
                ENDIF
                IF nContext == SQL_CONTEXT_DELETE
-                  cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
+                  cSql += aRet[SR_TABLE_INFO_QUALIFIED_NAME]
                   SR_SolveFilters(aFilters, aRet, , nSystemID)
                ENDIF
                IF nContext == SQL_CONTEXT_INSERT
-                  cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
+                  cSql += aRet[SR_TABLE_INFO_QUALIFIED_NAME]
                   cSql +=  NEWLINE + IDENTSPACE + "  "
                ENDIF
             ELSE
@@ -278,10 +278,10 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             IF lParseTableName
                aRet := Eval(s_bTableInfo, IIf(uData + 1 <= Len(aParam), IIf(HB_IsBlock(aParam[uData + 1]), Eval(aParam[uData + 1]), aParam[uData + 1]), "##PARAM_" + StrZero(uData + 1, 3) + "_NOT_SUPPLIED##"), nSystemId)
                IF nContext != SQL_CONTEXT_SELECT_FROM
-                  cSql += aRet[TABLE_INFO_QUALIFIED_NAME]
+                  cSql += aRet[SR_TABLE_INFO_QUALIFIED_NAME]
                ELSE
-                  AAdd(aTables, aRet[TABLE_INFO_TABLE_NAME])
-                  AAdd(aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME])
+                  AAdd(aTables, aRet[SR_TABLE_INFO_TABLE_NAME])
+                  AAdd(aQualifiedTables, aRet[SR_TABLE_INFO_QUALIFIED_NAME])
                ENDIF
                IF nContext == SQL_CONTEXT_UPDATE
                   SR_SolveFilters(aFilters, aRet, , nSystemID)
@@ -313,8 +313,8 @@ STATIC FUNCTION SR_SQLCodeGen2(apCode, aParam, nSystemId, lIdent, nIP, nContext,
             SKIPFWD
             IF lParseTableName
                aRet := Eval(s_bTableInfo, &uData, nSystemId)
-               AAdd(aTables, aRet[TABLE_INFO_TABLE_NAME])
-               AAdd(aQualifiedTables, aRet[TABLE_INFO_QUALIFIED_NAME])
+               AAdd(aTables, aRet[SR_TABLE_INFO_TABLE_NAME])
+               AAdd(aQualifiedTables, aRet[SR_TABLE_INFO_QUALIFIED_NAME])
                IF nContext == SQL_CONTEXT_UPDATE
                   SR_SolveFilters(aFilters, aRet, , nSystemID)
                   cSql +=  NEWLINE + " SET" + NEWLINE + "  "
@@ -1356,13 +1356,13 @@ STATIC FUNCTION SR_SolveFilters(aFilters, aRet, cAlias, nSystemID)
    ENDIF
 
    Default(nSystemID, SR_GetConnection():nSystemID)
-   Default(cAlias, SR_DBQUALIFY(aRet[TABLE_INFO_TABLE_NAME], nSystemID))
+   Default(cAlias, SR_DBQUALIFY(aRet[SR_TABLE_INFO_TABLE_NAME], nSystemID))
 
-   FOR i := 1 TO Len(aRet[TABLE_INFO_FILTERS])
+   FOR i := 1 TO Len(aRet[SR_TABLE_INFO_FILTERS])
       IF SR_EvalFilters()
-         AAdd(aFilters, &(StrTran(aRet[TABLE_INFO_FILTERS, i], "<ALIAS>", cAlias)))
+         AAdd(aFilters, &(StrTran(aRet[SR_TABLE_INFO_FILTERS, i], "<ALIAS>", cAlias)))
       ELSE
-         AAdd(aFilters, StrTran(aRet[TABLE_INFO_FILTERS, i], "<ALIAS>", cAlias ))
+         AAdd(aFilters, StrTran(aRet[SR_TABLE_INFO_FILTERS, i], "<ALIAS>", cAlias ))
       ENDIF
    NEXT i
 
@@ -1593,7 +1593,7 @@ FUNCTION SR_TableAttr(cTableName, nSystemID)
    aRet := {Upper(cTableName),;
             {},;
             "",;
-            TABLE_INFO_RELATION_TYPE_OUTER_JOIN,;
+            SR_TABLE_INFO_RELATION_TYPE_OUTER_JOIN,;
             SR_SetGlobalOwner(),;
             NIL,;
             "",;
@@ -1650,7 +1650,7 @@ FUNCTION SR_IndexAttr(cTableName, nSystemID)
       cTableName := SubStr(cTableName, Len(cTableName) - 30 + 1)
    ENDIF
 
-   aRet := {Upper(cTableName), {}, "", TABLE_INFO_RELATION_TYPE_OUTER_JOIN, SR_SetGlobalOwner(), .F., "", .T., .T., .T., .F., ,}
+   aRet := {Upper(cTableName), {}, "", SR_TABLE_INFO_RELATION_TYPE_OUTER_JOIN, SR_SetGlobalOwner(), .F., "", .T., .T., .T., .F., ,}
 
 RETURN aRet
 

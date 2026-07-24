@@ -4590,10 +4590,10 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
    aRet := Eval(SR_GetTableInfoBlock(), cFileName)
 
-   ASize(aRet, TABLE_INFO_SIZE)
+   ASize(aRet, SR_TABLE_INFO_SIZE)
 
-   IF aRet[TABLE_INFO_CONNECTION] != NIL
-      nConnection := aRet[TABLE_INFO_CONNECTION]
+   IF aRet[SR_TABLE_INFO_CONNECTION] != NIL
+      nConnection := aRet[SR_TABLE_INFO_CONNECTION]
    ENDIF
 
    IF ::nCnt == NIL
@@ -4620,37 +4620,37 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
       ::aInfo[SR_AINFO_SHARED] := .T.
    ENDIF
 
-   ::cFileName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
-   ::aFilters := aRet[TABLE_INFO_FILTERS]
-   ::cColPK := AllTrim(Upper(aRet[TABLE_INFO_PRIMARY_KEY]))
-   ::nRelacType := aRet[TABLE_INFO_RELATION_TYPE]
-   ::cOwner := aRet[TABLE_INFO_OWNER_NAME]
-   ::cCustomSQL := aRet[TABLE_INFO_CUSTOM_SQL]
+   ::cFileName := SR_ParseFileName(aRet[SR_TABLE_INFO_TABLE_NAME])
+   ::aFilters := aRet[SR_TABLE_INFO_FILTERS]
+   ::cColPK := AllTrim(Upper(aRet[SR_TABLE_INFO_PRIMARY_KEY]))
+   ::nRelacType := aRet[SR_TABLE_INFO_RELATION_TYPE]
+   ::cOwner := aRet[SR_TABLE_INFO_OWNER_NAME]
+   ::cCustomSQL := aRet[SR_TABLE_INFO_CUSTOM_SQL]
 
-   ::lHistoric := aRet[TABLE_INFO_HISTORIC] .OR. SR_SetCreateAsHistoric()
+   ::lHistoric := aRet[SR_TABLE_INFO_HISTORIC] .OR. SR_SetCreateAsHistoric()
 
-   ::lCanUpd := aRet[TABLE_INFO_CAN_UPDATE]
-   ::lCanIns := aRet[TABLE_INFO_CAN_INSERT]
-   ::lCanDel := aRet[TABLE_INFO_CAN_DELETE]
+   ::lCanUpd := aRet[SR_TABLE_INFO_CAN_UPDATE]
+   ::lCanIns := aRet[SR_TABLE_INFO_CAN_INSERT]
+   ::lCanDel := aRet[SR_TABLE_INFO_CAN_DELETE]
 
    ::lOpened := .T.
    ::lCreating := .T.
 
-   IF aRet[TABLE_INFO_RECNO_NAME] != NIL
-      ::cRecnoName := Upper(AllTrim(aRet[TABLE_INFO_RECNO_NAME]))
+   IF aRet[SR_TABLE_INFO_RECNO_NAME] != NIL
+      ::cRecnoName := Upper(AllTrim(aRet[SR_TABLE_INFO_RECNO_NAME]))
    ENDIF
 
-   IF aRet[TABLE_INFO_DELETED_NAME] != NIL
-      ::cDeletedName := Upper(AllTrim(aRet[TABLE_INFO_DELETED_NAME]))
+   IF aRet[SR_TABLE_INFO_DELETED_NAME] != NIL
+      ::cDeletedName := Upper(AllTrim(aRet[SR_TABLE_INFO_DELETED_NAME]))
    ENDIF
 
    ::oSql := SR_GetConnection(nConnection)
 
-   IF aRet[TABLE_INFO_ALL_IN_CACHE] == NIL
-      aRet[TABLE_INFO_ALL_IN_CACHE] := ::oSql:lAllInCache
+   IF aRet[SR_TABLE_INFO_ALL_IN_CACHE] == NIL
+      aRet[SR_TABLE_INFO_ALL_IN_CACHE] := ::oSql:lAllInCache
    ENDIF
 
-   ::lISAM := .T. // !aRet[TABLE_INFO_ALL_IN_CACHE]
+   ::lISAM := .T. // !aRet[SR_TABLE_INFO_ALL_IN_CACHE]
 
    // NewAge compatible rights string...
 
@@ -4964,7 +4964,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
       _SR_Register(Self)
    ENDIF
 
-   aRet[TABLE_INFO_HISTORIC] := ::lHistoric
+   aRet[SR_TABLE_INFO_HISTORIC] := ::lHistoric
 
    aCacheInfo[SR_CACHEINFO_TABINFO] := aRet
    aCacheInfo[SR_CACHEINFO_TABNAME] := ::cFileName
@@ -5024,16 +5024,16 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
       ELSE
          ::cFileName := cFileName
       ENDIF
-      aRet := Array(TABLE_INFO_SIZE)
-      aRet[TABLE_INFO_RELATION_TYPE] := TABLE_INFO_RELATION_TYPE_SELECT
-      aRet[TABLE_INFO_ALL_IN_CACHE] := .T.
-      aRet[TABLE_INFO_CUSTOM_SQL] := ::cFileName
-      aRet[TABLE_INFO_HISTORIC] := .F.
-      aRet[TABLE_INFO_OWNER_NAME] := ""
-      aRet[TABLE_INFO_CAN_UPDATE] := .F.
-      aRet[TABLE_INFO_CAN_INSERT] := .F.
-      aRet[TABLE_INFO_CAN_DELETE] := .F.
-      aRet[TABLE_INFO_PRIMARY_KEY] := ""
+      aRet := Array(SR_TABLE_INFO_SIZE)
+      aRet[SR_TABLE_INFO_RELATION_TYPE] := SR_TABLE_INFO_RELATION_TYPE_SELECT
+      aRet[SR_TABLE_INFO_ALL_IN_CACHE] := .T.
+      aRet[SR_TABLE_INFO_CUSTOM_SQL] := ::cFileName
+      aRet[SR_TABLE_INFO_HISTORIC] := .F.
+      aRet[SR_TABLE_INFO_OWNER_NAME] := ""
+      aRet[SR_TABLE_INFO_CAN_UPDATE] := .F.
+      aRet[SR_TABLE_INFO_CAN_INSERT] := .F.
+      aRet[SR_TABLE_INFO_CAN_DELETE] := .F.
+      aRet[SR_TABLE_INFO_PRIMARY_KEY] := ""
       ::oSql:cNextQuery := NIL                     // Reset Next query
    ELSE
       nPos := hb_HPos(::oSql:aTableInfo, ::cOriginalFN)
@@ -5049,7 +5049,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
       ELSE
          aCacheInfo := Array(SR_CACHEINFO_LEN)
          aRet := Eval(SR_GetTableInfoBlock(), cFileName)
-         ::cFileName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
+         ::cFileName := SR_ParseFileName(aRet[SR_TABLE_INFO_TABLE_NAME])
       ENDIF
 
       IF Len(::cFileName) > SR_MAX_TABLE_NAME_LENGHT
@@ -5058,50 +5058,50 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
 
    ENDIF
 
-   ASize(aRet, TABLE_INFO_SIZE)
-   IF aRet[TABLE_INFO_CONNECTION] != NIL
-      nConnection := aRet[TABLE_INFO_CONNECTION]
+   ASize(aRet, SR_TABLE_INFO_SIZE)
+   IF aRet[SR_TABLE_INFO_CONNECTION] != NIL
+      nConnection := aRet[SR_TABLE_INFO_CONNECTION]
       ::oSql := SR_GetConnection(nConnection)
    ENDIF
 
-   IF aRet[TABLE_INFO_NO_TRANSAC] != NIL .AND. aRet[TABLE_INFO_NO_TRANSAC]
+   IF aRet[SR_TABLE_INFO_NO_TRANSAC] != NIL .AND. aRet[SR_TABLE_INFO_NO_TRANSAC]
       ::oSql := ::oSql:oSqlTransact
    ENDIF
 
-   IF aRet[TABLE_INFO_ALL_IN_CACHE] == NIL
-      aRet[TABLE_INFO_ALL_IN_CACHE] := ::oSql:lAllInCache
+   IF aRet[SR_TABLE_INFO_ALL_IN_CACHE] == NIL
+      aRet[SR_TABLE_INFO_ALL_IN_CACHE] := ::oSql:lAllInCache
    ENDIF
 
-   ::aFilters := aRet[TABLE_INFO_FILTERS]
+   ::aFilters := aRet[SR_TABLE_INFO_FILTERS]
 
-   ::cColPK := AllTrim(Upper(aRet[TABLE_INFO_PRIMARY_KEY]))
-   ::nRelacType := aRet[TABLE_INFO_RELATION_TYPE]
-   ::cOwner := aRet[TABLE_INFO_OWNER_NAME]
-   ::lISAM := .T. // !aRet[TABLE_INFO_ALL_IN_CACHE]
-   ::cCustomSQL := aRet[TABLE_INFO_CUSTOM_SQL]
+   ::cColPK := AllTrim(Upper(aRet[SR_TABLE_INFO_PRIMARY_KEY]))
+   ::nRelacType := aRet[SR_TABLE_INFO_RELATION_TYPE]
+   ::cOwner := aRet[SR_TABLE_INFO_OWNER_NAME]
+   ::lISAM := .T. // !aRet[SR_TABLE_INFO_ALL_IN_CACHE]
+   ::cCustomSQL := aRet[SR_TABLE_INFO_CUSTOM_SQL]
 
-   ::lHistoric := aRet[TABLE_INFO_HISTORIC]
+   ::lHistoric := aRet[SR_TABLE_INFO_HISTORIC]
 
    IF lReadOnly .OR. (!Empty(::cCustomSQL))
       ::lCanUpd := .F.
       ::lCanIns := .F.
       ::lCanDel := .F.
    ELSE
-      ::lCanUpd := aRet[TABLE_INFO_CAN_UPDATE]
-      ::lCanIns := aRet[TABLE_INFO_CAN_INSERT]
-      ::lCanDel := aRet[TABLE_INFO_CAN_DELETE]
+      ::lCanUpd := aRet[SR_TABLE_INFO_CAN_UPDATE]
+      ::lCanIns := aRet[SR_TABLE_INFO_CAN_INSERT]
+      ::lCanDel := aRet[SR_TABLE_INFO_CAN_DELETE]
    ENDIF
 
    // NewAge compatible rights string...
 
    ::cRights := "S" + IIf(::lCanUpd, "U", "") + IIf(::lCanIns, "I", "") + IIf(::lCanDel, "D", "") + LTrim(StrZero(::nRelacType, 1))
 
-   IF aRet[TABLE_INFO_RECNO_NAME] != NIL
-     ::cRecnoName := aRet[TABLE_INFO_RECNO_NAME]
+   IF aRet[SR_TABLE_INFO_RECNO_NAME] != NIL
+     ::cRecnoName := aRet[SR_TABLE_INFO_RECNO_NAME]
    ENDIF
 
-   IF aRet[TABLE_INFO_DELETED_NAME] != NIL
-      ::cDeletedName := aRet[TABLE_INFO_DELETED_NAME]
+   IF aRet[SR_TABLE_INFO_DELETED_NAME] != NIL
+      ::cDeletedName := aRet[SR_TABLE_INFO_DELETED_NAME]
    ENDIF
 
    IF !Empty(::cCustomSQL)      // Custom SQL Commands requires ALL_DATA_IN_CACHE workarea
@@ -5312,7 +5312,7 @@ METHOD SR_WORKAREA:sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDB
       ::oSql:aTableInfo[::cOriginalFN] := aCacheInfo
    ENDIF
 
-   IF aRet[TABLE_INFO_ALL_IN_CACHE]
+   IF aRet[SR_TABLE_INFO_ALL_IN_CACHE]
       ::lGoTopOnFirstInteract := .T.
    ENDIF
 
@@ -5419,8 +5419,8 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
       cBagName := SubStr(cBagName, 5)
    ELSE
       aRet := Eval(SR_GetIndexInfoBlock(), cBagName)
-      ASize(aRet, TABLE_INFO_SIZE)
-      cBagName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
+      ASize(aRet, SR_TABLE_INFO_SIZE)
+      cBagName := SR_ParseFileName(aRet[SR_TABLE_INFO_TABLE_NAME])
 
       IF cTag == NIL .OR. Empty(AllTrim(cTag))
 
@@ -6081,9 +6081,9 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
    ENDIF
 
    aRet := Eval(SR_GetIndexInfoBlock(), cIndexName)
-   ASize(aRet, TABLE_INFO_SIZE)
+   ASize(aRet, SR_TABLE_INFO_SIZE)
 
-   cIndexName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
+   cIndexName := SR_ParseFileName(aRet[SR_TABLE_INFO_TABLE_NAME])
 
    IF Empty(cIndexName)
       cIndexName := ::cFileName

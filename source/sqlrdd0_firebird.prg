@@ -1056,7 +1056,7 @@ FUNCTION SR_ExistTable(cTableName, cOwner, oCnn)
    aRet := Eval(SR_GetTableInfoBlock(), cTableName)
 
    IF cOwner == NIL
-      cOwner := aRet[TABLE_INFO_OWNER_NAME]
+      cOwner := aRet[SR_TABLE_INFO_OWNER_NAME]
       IF !Empty(SR_GetGlobalOwner())
          cOwner := AllTrim(SR_GetGlobalOwner())
       ELSEIF !Empty(oCnn:cOwner)
@@ -1070,7 +1070,7 @@ FUNCTION SR_ExistTable(cTableName, cOwner, oCnn)
       cOwner += "."
    ENDIF
 
-   cFileName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cFileName := SR_ParseFileName(AllTrim(aRet[SR_TABLE_INFO_TABLE_NAME]))
 
    IF oCnn:oSqlTransact == NIL
       nRet := oCnn:Exec("SELECT * FROM " + cOwner + SR_DBQUALIFY(cFileName, oCnn:nSystemID) + " WHERE 0 = 2", .F.)
@@ -1099,9 +1099,9 @@ FUNCTION SR_ExistIndex(cIndexName, cOwner)
    oCnn := SR_GetConnection()
 
    aRet := Eval(SR_GetIndexInfoBlock(), cIndexName)
-   ASize(aRet, TABLE_INFO_SIZE)
+   ASize(aRet, SR_TABLE_INFO_SIZE)
 
-   cIndexName := SR_ParseFileName(aRet[TABLE_INFO_TABLE_NAME])
+   cIndexName := SR_ParseFileName(aRet[SR_TABLE_INFO_TABLE_NAME])
 
    aRet := {}
    nRet := oCnn:Exec("SELECT * FROM " + SR_GetToolsOwner() + "SR_MGMNTINDEXES WHERE IDXNAME_ = '" + ;
@@ -1403,10 +1403,10 @@ FUNCTION SR_DropIndex(cIndexName, cOwner)
 
    aRet := Eval(SR_GetIndexInfoBlock(), cIndexName)
    ctempIndex := cIndexName
-   cIndexName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cIndexName := SR_ParseFileName(AllTrim(aRet[SR_TABLE_INFO_TABLE_NAME]))
 
    IF cOwner == NIL
-      cOwner := aRet[TABLE_INFO_OWNER_NAME]
+      cOwner := aRet[SR_TABLE_INFO_OWNER_NAME]
       IF !Empty(SR_GetGlobalOwner())
          cOwner := AllTrim(SR_GetGlobalOwner())
       ELSEIF !Empty(oCnn:cOwner)
@@ -1491,10 +1491,10 @@ FUNCTION SR_DropTable(cFileName, cOwner)
    oCnn := SR_GetConnection()
 
    aRet := Eval(SR_GetTableInfoBlock(), cFileName)
-   cFileName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cFileName := SR_ParseFileName(AllTrim(aRet[SR_TABLE_INFO_TABLE_NAME]))
 
    IF cOwner == NIL
-      cOwner := aRet[TABLE_INFO_OWNER_NAME]
+      cOwner := aRet[SR_TABLE_INFO_OWNER_NAME]
       IF !Empty(SR_GetGlobalOwner())
          cOwner := AllTrim(SR_GetGlobalOwner())
       ELSEIF !Empty(oCnn:cOwner)
@@ -1556,7 +1556,7 @@ FUNCTION SR_ListIndex(cFilename)
    oCnn := SR_GetConnection()
 
    aRet := Eval(SR_GetIndexInfoBlock(), cFilename)
-   cFilename := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cFilename := SR_ParseFileName(AllTrim(aRet[SR_TABLE_INFO_TABLE_NAME]))
 
    aRet := {}
    nRet := oCnn:Exec("SELECT IDXNAME_,PHIS_NAME_,IDXKEY_,IDXFOR_,IDXCOL_,TAG_,TAGNUM_ FROM " + SR_GetToolsOwner() + ;
@@ -1582,10 +1582,10 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
    oCnn := SR_GetConnection()
 
    aRet := Eval(SR_GetTableInfoBlock(), cTable)
-   cTable := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cTable := SR_ParseFileName(AllTrim(aRet[SR_TABLE_INFO_TABLE_NAME]))
 
    IF cOwner == NIL
-      cOwner := aRet[TABLE_INFO_OWNER_NAME]
+      cOwner := aRet[SR_TABLE_INFO_OWNER_NAME]
       IF !Empty(SR_GetGlobalOwner())
          cOwner := AllTrim(SR_GetGlobalOwner())
       ELSEIF !Empty(oCnn:cOwner)
@@ -1600,7 +1600,7 @@ FUNCTION SR_RenameTable(cTable, cNewName, cOwner)
    ENDIF
 
    aRet := Eval(SR_GetTableInfoBlock(), cNewName)
-   cNewName := SR_ParseFileName(AllTrim(aRet[TABLE_INFO_TABLE_NAME]))
+   cNewName := SR_ParseFileName(AllTrim(aRet[SR_TABLE_INFO_TABLE_NAME]))
 
    aRet := {}
    nRet := oCnn:Exec("SELECT * FROM " + SR_GetToolsOwner() + "SR_MGMNTTABLES WHERE TABLE_ = '" + ;
