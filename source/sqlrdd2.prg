@@ -6423,11 +6423,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
 
       ENDSWITCH
 
-      IF i != Len(aCreate)
-         cSql += ", " + SR_CRLF
-      ELSE
-         cSql += SR_CRLF
-      ENDIF
+      cSql += IIf(i != Len(aCreate), ", " + SR_CRLF, SR_CRLF)
 
    NEXT i
 
