@@ -10210,6 +10210,8 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
 #else
          SWITCH aCreate[i, SR_FIELD_TYPE]
 
+#define SR_FIELD_SIZE LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0))
+
          CASE "C"
             SWITCH ::oSql:nSystemID
             CASE SQLRDD_RDBMS_ORACLE
@@ -10219,7 +10221,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                   IF aCreate[i, SR_FIELD_LEN] > s_nMininumVarchar2Size .AND. s_nMininumVarchar2Size < 30
                     cSql += "VARCHAR2(" + LTrim(Str(Min(aCreate[i, SR_FIELD_LEN], 4000), 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
                   ELSE
-                     cSql += "CHAR(" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
+                     cSql += "CHAR(" + SR_FIELD_SIZE + ")" + IIf(lNotNull, " NOT NULL", "")
                   ENDIF
                ENDIF
                EXIT
@@ -10227,7 +10229,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                IF aCreate[i, SR_FIELD_LEN] > 254
                   cSql += "LONG VARCHAR"
                ELSE
-                  cSql += "VARCHAR(" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(lPrimary, " NOT NULL", "")
+                  cSql += "VARCHAR(" + SR_FIELD_SIZE + ")" + IIf(lPrimary, " NOT NULL", "")
                ENDIF
                EXIT
             CASE SQLRDD_RDBMS_MSSQL6
@@ -10239,72 +10241,74 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                IF ISMSSQL7() .OR. ISAZURE()
                   IF ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
                      IF aCreate[i, SR_FIELD_LEN] > 10
-                        cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
+                        cSql += "VARCHAR (" + SR_FIELD_SIZE + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
                      ELSE
-                        cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
+                        cSql += "CHAR (" + SR_FIELD_SIZE + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
                      ENDIF
                   ELSE
-                     cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
+                     cSql += "CHAR (" + SR_FIELD_SIZE + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
                   ENDIF
                ELSEIF ISPOSTGRESQL() .AND. aCreate[i, SR_FIELD_LEN] > s_nMininumVarchar2Size -1 //10
-                  cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "VARCHAR (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
                ELSE
-                  cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "CHAR (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
                ENDIF
                EXIT
             CASE SQLRDD_RDBMS_MYSQL
             CASE SQLRDD_RDBMS_MARIADB
                IF aCreate[i, SR_FIELD_LEN] > 255
-                  cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "VARCHAR (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
                ELSE
-                  cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "CHAR (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
                ENDIF
                EXIT
             CASE SQLRDD_RDBMS_IBMDB2
                IF aCreate[i, SR_FIELD_LEN] > 255
-                  cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "VARCHAR (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
                ELSE
-                  cSql += "CHARACTER (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "CHARACTER (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
                ENDIF
                EXIT
             CASE SQLRDD_RDBMS_INGRES
-               cSql += "varchar(" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY", IIf(lNotNull, " NOT NULL", ""))
+               cSql += "varchar(" + SR_FIELD_SIZE + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY", IIf(lNotNull, " NOT NULL", ""))
                EXIT
             CASE SQLRDD_RDBMS_INFORM
-               cSql += "CHARACTER (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY", IIf(lNotNull, " NOT NULL", ""))
+               cSql += "CHARACTER (" + SR_FIELD_SIZE + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY", IIf(lNotNull, " NOT NULL", ""))
                EXIT
             CASE SQLRDD_RDBMS_ACCESS
                IF aCreate[i, SR_FIELD_LEN] > 254
                   cSql += "TEXT"
                ELSE
-                  cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")"
+                  cSql += "CHAR (" + SR_FIELD_SIZE + ")"
                ENDIF
                EXIT
             CASE SQLRDD_RDBMS_SQLANY
                IF aCreate[i, SR_FIELD_LEN] > 254
                   cSql += "LONG VARCHAR "
                ELSE
-                  cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + "  " + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "CHAR (" + SR_FIELD_SIZE + ")" + "  " + IIf(lNotNull, " NOT NULL", "")
                ENDIF
                EXIT
             CASE SQLRDD_RDBMS_FIREBR
                IF aCreate[i, SR_FIELD_LEN] > 254
-                  cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "VARCHAR (" + SR_FIELD_SIZE + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
                ELSE
-                  cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "CHAR (" + SR_FIELD_SIZE + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
                ENDIF
                EXIT
             CASE SQLRDD_RDBMS_SYBASE
                IF aCreate[i, SR_FIELD_LEN] > 30
-                  cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
+                  cSql += "VARCHAR (" + SR_FIELD_SIZE + ")" + IIf(lNotNull, " NOT NULL", "")
                ELSE
-                 cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
+                 cSql += "CHAR (" + SR_FIELD_SIZE + ")" + IIf(lNotNull, " NOT NULL", "")
                ENDIF
                EXIT
             SR_OTHERWISE
                SR_MsgLogFile(SR_Msg(9) + cField + " (C)")
             ENDSWITCH
             EXIT
+
+#undef SR_FIELD_SIZE
 
          CASE "D"
             SWITCH ::oSql:nSystemID
@@ -10431,72 +10435,76 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             ENDSWITCH
             EXIT
 
+#define SR_FIELD_SIZE LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0))
+
          CASE "N"
             DO CASE // TODO: change to SWITCH
             CASE (ISMSSQL6() .OR. ISMSSQL7() .OR. ISSYBASE() .OR. ISAZURE()) .AND. cField == ::cRecnoName
                IF ::oSql:lUseSequences
-                  cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") IDENTITY"
+                  cSql += "NUMERIC (" + SR_FIELD_SIZE + ") IDENTITY"
                ELSE
-                  cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE"
+                  cSql += "NUMERIC (" + SR_FIELD_SIZE + ") NOT NULL UNIQUE"
                ENDIF
             CASE ISCACHE() .AND. cField == ::cRecnoName
-               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") UNIQUE " + [default objectscript '##class(] + SR_GetToolsOwner() + [SequenceControler).NEXTVAL("] + ::cFileName + [")']
+               cSql += "NUMERIC (" + SR_FIELD_SIZE + ") UNIQUE " + [default objectscript '##class(] + SR_GetToolsOwner() + [SequenceControler).NEXTVAL("] + ::cFileName + [")']
             CASE (ISMSSQL6() .OR. ISMSSQL7() .OR. ISSYBASE() .OR. ISCACHE() .OR. ISAZURE())
-               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+               cSql += "NUMERIC (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL ", "")
             CASE ISPOSTGRESQL() .AND. cField == ::cRecnoName
-               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") default (nextval('" + ::cOwner + LimitLen(::cFileName, 3) + "_SQ')) NOT NULL UNIQUE"
+               cSql += "NUMERIC (" + SR_FIELD_SIZE + ") default (nextval('" + ::cOwner + LimitLen(::cFileName, 3) + "_SQ')) NOT NULL UNIQUE"
             CASE ISPOSTGRESQL()
-               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ")  default 0 " + IIf(lNotNull, " NOT NULL ", "")
+               cSql += "NUMERIC (" + SR_FIELD_SIZE + ")  default 0 " + IIf(lNotNull, " NOT NULL ", "")
             CASE (ISMYSQL() .OR. ISMARIADB()) .AND. cField == ::cRecnoName
                cSql += "BIGINT (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
             CASE (ISMYSQL() .OR. ISMARIADB())
-              cSql += s_cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+              cSql += s_cMySqlNumericDataType + " (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL ", "")
             CASE ISORACLE() .AND. cField == ::cRecnoName
-               cSql += "NUMBER (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ")" +;
+               cSql += "NUMBER (" + SR_FIELD_SIZE + ")" +;
                     IIf(lNotNull, " NOT NULL UNIQUE USING INDEX ( CREATE INDEX " + ::cOwner + LimitLen(::cFileName, 3) + "_UK ON " + ::cOwner + SR_DBQUALIFY(cTblName, ::oSql:nSystemID) + "( " + ::cRecnoName + ")" +;
                     IIf(Empty(SR_SetTblSpaceIndx()), "", " TABLESPACE " + SR_SetTblSpaceIndx()) , "") + ")"
             CASE ISORACLE()
-               cSql += "NUMBER (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
+               cSql += "NUMBER (" + SR_FIELD_SIZE + ")" + IIf(lNotNull, " NOT NULL", "")
             CASE ISIBMDB2() .AND. cField == ::cRecnoName
                IF ::oSql:lUseSequences
-                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1, NO CACHE)"
+                  cSql += "DECIMAL (" + SR_FIELD_SIZE + ") NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1, NO CACHE)"
                ELSE
-                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL"
+                  cSql += "DECIMAL (" + SR_FIELD_SIZE + ") NOT NULL"
                ENDIF
             CASE ISADABAS() .AND. cField == ::cRecnoName
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL DEFAULT SERIAL"
+               cSql += "DECIMAL (" + SR_FIELD_SIZE + ") NOT NULL DEFAULT SERIAL"
             CASE (ISIBMDB2() .OR. ISADABAS())
-               cSql += "DECIMAL(" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
+               cSql += "DECIMAL(" + SR_FIELD_SIZE + ")" + IIf(lNotNull, " NOT NULL", "")
             CASE ISINGRES() .AND. cField == ::cRecnoName
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
+               cSql += "DECIMAL (" + SR_FIELD_SIZE + ") NOT NULL UNIQUE "
             CASE ISINFORM() .AND. cField == ::cRecnoName
                cSql += "SERIAL NOT NULL UNIQUE"
             CASE (ISINFORM() .OR. ISINGRES())
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY ", IIf(lNotNull, " NOT NULL", ""))
+               cSql += "DECIMAL (" + SR_FIELD_SIZE + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY ", IIf(lNotNull, " NOT NULL", ""))
             CASE ISSQLBAS()
                IF aCreate[i, SR_FIELD_LEN] > 15
                   cSql += "NUMBER" + IIf(lPrimary, " NOT NULL", " ")
                ELSE
-                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ")" + IIf(lPrimary, " NOT NULL", " ")
+                  cSql += "DECIMAL (" + SR_FIELD_SIZE + ")" + IIf(lPrimary, " NOT NULL", " ")
                ENDIF
             CASE ISSQLANY()
-               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
+               cSql += "NUMERIC (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
             CASE ISACCESS()
                cSql += "NUMERIC"
             CASE ISFIREBIRD() .AND. cField == ::cRecnoName
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
+               cSql += "DECIMAL (" + SR_FIELD_SIZE + ") NOT NULL UNIQUE "
             CASE (ISFIREBIRD3() .OR. ISFIREBIRD4() .OR. ISFIREBIRD5()) .AND. cField == ::cRecnoName
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") GENERATED BY DEFAULT AS IDENTITY  NOT NULL UNIQUE "
+               cSql += "DECIMAL (" + SR_FIELD_SIZE + ") GENERATED BY DEFAULT AS IDENTITY  NOT NULL UNIQUE "
             CASE (ISFIREBIRD() .OR. ISFIREBIRD3() .OR. ISFIREBIRD4() .OR. ISFIREBIRD5())
                IF aCreate[i, SR_FIELD_LEN] > 18
                   cSql += "DOUBLE PRECISION" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
                ELSE
-                  cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
+                  cSql += "DECIMAL (" + SR_FIELD_SIZE +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
                ENDIF
             OTHERWISE
                SR_MsgLogFile(SR_Msg(9) + cField + " (N)")
             ENDCASE
             EXIT
+
+#undef SR_FIELD_SIZE
 
          CASE "T"
             // including xml data type
