@@ -6023,6 +6023,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             EXIT
          CASE SQLRDD_RDBMS_MYSQL
          CASE SQLRDD_RDBMS_MARIADB
+         CASE SQLRDD_RDBMS_CUBRID
             IF aCreate[i, SR_FIELD_LEN] > 255
                cSql += "VARCHAR (" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
             ELSE
@@ -6073,15 +6074,8 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
                cSql += "CHAR (" + SR_FIELD_SIZE + ")" + IIf(lNotNull, " NOT NULL", "")
             ENDIF
             EXIT
-         CASE SQLRDD_RDBMS_CUBRID
-            IF aCreate[i, SR_FIELD_LEN] > 255
-               cSql += "VARCHAR(" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
-            ELSE
-               cSql += "CHAR(" + SR_FIELD_SIZE + ") " + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-            EXIT
          SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (C)")
          ENDSWITCH
          EXIT
 
@@ -6100,15 +6094,14 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          CASE SQLRDD_RDBMS_FIREBR4
          CASE SQLRDD_RDBMS_FIREBR5
          CASE SQLRDD_RDBMS_CACHE
+         CASE SQLRDD_RDBMS_IBMDB2
+         CASE SQLRDD_RDBMS_POSTGR
+         CASE SQLRDD_RDBMS_ADABAS
+         CASE SQLRDD_RDBMS_CUBRID
             cSql += "DATE"
             EXIT
          CASE SQLRDD_RDBMS_SYBASE
             cSql += "DATETIME"
-            EXIT
-         CASE SQLRDD_RDBMS_IBMDB2
-         CASE SQLRDD_RDBMS_POSTGR
-         CASE SQLRDD_RDBMS_ADABAS
-            cSql += "DATE"
             EXIT
          CASE SQLRDD_RDBMS_ACCESS
          CASE SQLRDD_RDBMS_MSSQL6
@@ -6123,11 +6116,8 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          CASE SQLRDD_RDBMS_SQLANY
             cSql += "TIMESTAMP"
             EXIT
-         CASE SQLRDD_RDBMS_CUBRID
-            cSql += "DATE"
-            EXIT
          SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (D)")
          ENDSWITCH
          EXIT
 
@@ -6144,6 +6134,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          CASE SQLRDD_RDBMS_FIREBR3
          CASE SQLRDD_RDBMS_FIREBR4
          CASE SQLRDD_RDBMS_FIREBR5
+         CASE SQLRDD_RDBMS_INFORM
             cSql += "BOOLEAN"
             EXIT
          CASE SQLRDD_RDBMS_MYSQL
@@ -6152,6 +6143,8 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             EXIT
          CASE SQLRDD_RDBMS_IBMDB2
          CASE SQLRDD_RDBMS_FIREBR
+         CASE SQLRDD_RDBMS_ORACLE
+         CASE SQLRDD_RDBMS_CUBRID
             cSql += "SMALLINT"
             EXIT
          CASE SQLRDD_RDBMS_SYBASE
@@ -6160,20 +6153,11 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          CASE SQLRDD_RDBMS_SQLANY
             cSql += "NUMERIC (1) NULL"
             EXIT
-         CASE SQLRDD_RDBMS_ORACLE
-            cSql += "SMALLINT"
-            EXIT
-         CASE SQLRDD_RDBMS_INFORM
-            cSql += "BOOLEAN"
-            EXIT
          CASE SQLRDD_RDBMS_INGRES
             cSql += "tinyint"
             EXIT
-         CASE SQLRDD_RDBMS_CUBRID
-            cSql += "SMALLINT"
-            EXIT
          SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (L)")
          ENDSWITCH
          EXIT
 
@@ -6203,9 +6187,9 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          CASE SQLRDD_RDBMS_MSSQL6
          CASE SQLRDD_RDBMS_MSSQL7
          CASE SQLRDD_RDBMS_AZURE
-         //CASE SQLRDD_RDBMS_POSTGR
          CASE SQLRDD_RDBMS_INFORM
          CASE SQLRDD_RDBMS_CACHE
+         CASE SQLRDD_RDBMS_SYBASE
             cSql += "TEXT"
             EXIT
          CASE SQLRDD_RDBMS_MYSQL
@@ -6221,9 +6205,6 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          CASE SQLRDD_RDBMS_ACCESS
             cSql += "TEXT NULL"
             EXIT
-         CASE SQLRDD_RDBMS_SYBASE
-            cSql += "TEXT"
-            EXIT
          CASE SQLRDD_RDBMS_SQLANY
             cSql += "LONG VARCHAR"
             EXIT
@@ -6238,7 +6219,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             cLobs += IIf(Empty(cLobs), "", ",") + SR_DBQUALIFY(cField, ::oSql:nSystemID)
             EXIT
          SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (M)")
          ENDSWITCH
          EXIT
 
@@ -6385,7 +6366,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             ENDIF
             EXIT
          SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (N)")
          ENDSWITCH
          EXIT
 
@@ -6425,7 +6406,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             cSql += "DATETIME "
             EXIT
          SR_OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (T)")
          ENDSWITCH
          EXIT
 
@@ -6433,7 +6414,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          IF ISMSSQL7()
             cSql += " VARBINARY(MAX) "
          ELSE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
+            SR_MsgLogFile(SR_Msg(9) + cField + " (V)")
          ENDIF
          EXIT
 
