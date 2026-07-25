@@ -122,18 +122,18 @@ STATIC s_ItP3
 #endif
 */
 
-STATIC s_lGoTopOnFirstInteract := .T.
-STATIC s_lUseDTHISTAuto := .F.
-STATIC s_nLineCountResult := 0
-STATIC s_cGlobalOwner := ""
+STATIC s_lGoTopOnFirstInteract := .T. // Get/Set implemented
+STATIC s_lUseDTHISTAuto := .F. // Get/Set implemented
+STATIC s_nLineCountResult := 0 // Get/Set implemented
+STATIC s_cGlobalOwner := "" // Get/Set implemented
 STATIC s_nOperat := 0
-STATIC s_cMySqlMemoDataType := "MEDIUMBLOB"
-STATIC s_cMySqlNumericDataType := "REAL"
-STATIC s_lUseDBCatalogs := .F.
-STATIC s_lAllowRelationsInIndx := .F.
+STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // Get/Set implemented
+STATIC s_cMySqlNumericDataType := "REAL" // Get/Set implemented
+STATIC s_lUseDBCatalogs := .F. // Get/Set implemented
+STATIC s_lAllowRelationsInIndx := .F. // Get/Set implemented
 STATIC s_____lOld
 STATIC s_nMininumVarchar2Size := 31
-STATIC s_lOracleSyntheticVirtual := .T.
+STATIC s_lOracleSyntheticVirtual := .T. // Get/Set implemented
 
 //----------------------------------------------------------------------------//
 
@@ -11946,16 +11946,16 @@ FUNCTION SR_SetMininumVarchar2Size(n)
 RETURN NIL
 
 //----------------------------------------------------------------------------//
+// Get/Set s_lOracleSyntheticVirtual
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetOracleSyntheticVirtual()
+RETURN s_lOracleSyntheticVirtual
 
 FUNCTION SR_SetOracleSyntheticVirtual(l)
 
    s_lOracleSyntheticVirtual := l
 
 RETURN NIL
-
-//----------------------------------------------------------------------------//
-
-FUNCTION SR_GetOracleSyntheticVirtual()
-RETURN s_lOracleSyntheticVirtual
 
 //----------------------------------------------------------------------------//
