@@ -6194,7 +6194,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
             EXIT
          CASE SQLRDD_RDBMS_MYSQL
          CASE SQLRDD_RDBMS_MARIADB
-            cSql += s_cMySqlMemoDataType
+            cSql += SR_GetMySqlMemoDataType()
             EXIT
          CASE SQLRDD_RDBMS_ADABAS
             cSql += "LONG"
@@ -10058,7 +10058,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             cSql += "TEXT"
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. (ISMYSQL() .OR. ISMARIADB())
-            cSql += s_cMySqlMemoDataType
+            cSql += SR_GetMySqlMemoDataType()
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISADABAS()
             cSql += "LONG"
@@ -10387,7 +10387,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                EXIT
             CASE SQLRDD_RDBMS_MYSQL
             CASE SQLRDD_RDBMS_MARIADB
-               cSql += s_cMySqlMemoDataType
+               cSql += SR_GetMySqlMemoDataType()
                EXIT
             CASE SQLRDD_RDBMS_ADABAS
                cSql += "LONG"
@@ -10806,7 +10806,7 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
             cSql += "TEXT"
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. (ISMYSQL() .OR. ISMARIADB())
-            cSql += s_cMySqlMemoDataType
+            cSql += SR_GetMySqlMemoDataType()
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISADABAS()
             cSql += "LONG"
@@ -11772,6 +11772,11 @@ FUNCTION SR_SetUseSequences(lOpt, oCnn)
 RETURN lOld
 
 //----------------------------------------------------------------------------//
+// Get/Set s_cMySqlMemoDataType
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetMySQLMemoDataType()
+RETURN s_cMySqlMemoDataType
 
 FUNCTION SR_SetMySQLMemoDataType(cOpt)
 
