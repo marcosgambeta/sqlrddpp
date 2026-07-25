@@ -99,7 +99,6 @@ STATIC s_ItP3
 */
 
 STATIC s_nOperat := 0
-STATIC s_lUseDBCatalogs := .F.
 STATIC s_lAllowRelationsInIndx := .F.
 STATIC s_____lOld
 STATIC s_nMininumVarchar2Size := 31
@@ -719,7 +718,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
       cLast := aInd[SR_INDEXMAN_IDXNAME]
    NEXT
 
-   IF s_lUseDBCatalogs
+   IF SR_GetlUseDBCatalogs()
       aRet := {}
       ::oSql:Exec("select index_name, column_name, column_position from user_ind_columns where table_name = '" + ::cFileName + "' and index_name not like 'X_WA_Sys%' order by 1, 3", .F., .T., @aRet)
       IF Len(aRet) > 0
@@ -8140,18 +8139,6 @@ FUNCTION SR_TCNextRecord(oWA)
    oWA:Exec("SELECT nvl(max(R_E_C_N_O_),0) + 1 AS R_E_C_N_O_ FROM " + SR_DBQUALIFY(oWA:cFileName), .F., .T., @aRet)
 
 RETURN IIf(Len(aRet) > 0, aRet[1, 1], 0)
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetlUseDBCatalogs(lSet)
-
-   LOCAL lOld := s_lUseDBCatalogs
-
-   IF lSet != NIL
-      s_lUseDBCatalogs := lSet
-   ENDIF
-
-RETURN lOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 

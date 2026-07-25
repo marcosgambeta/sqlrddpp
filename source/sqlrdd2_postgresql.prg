@@ -99,7 +99,6 @@ STATIC s_ItP3
 */
 
 STATIC s_nOperat := 0
-STATIC s_lUseDBCatalogs := .F.
 STATIC s_lAllowRelationsInIndx := .F.
 STATIC s_____lOld
 STATIC s_nMininumVarchar2Size := 31
@@ -1084,7 +1083,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
       cLast := aInd[SR_INDEXMAN_IDXNAME]
    NEXT
 
-   IF s_lUseDBCatalogs
+   IF SR_GetlUseDBCatalogs()
       aRet := {}
       ::oSql:oSqlTransact:Exec("SELECT DISTINCT cls.oid, cls.relname as idxname FROM pg_index idx JOIN pg_class cls ON cls.oid=indexrelid JOIN pg_class tab ON tab.oid=indrelid WHERE tab.relname = '" + Lower(::cFileName) + "' order by idxname", .F., .T., @aRet)
       ::oSql:oSqlTransact:Commit()
@@ -8478,18 +8477,6 @@ FUNCTION SR_TCNextRecord(oWA)
    oWA:Exec("SELECT coalesce(max(R_E_C_N_O_),0) + 1 AS R_E_C_N_O_ FROM " + SR_DBQUALIFY(oWA:cFileName), .F., .T., @aRet)
 
 RETURN IIf(Len(aRet) > 0, aRet[1, 1], 0)
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetlUseDBCatalogs(lSet)
-
-   LOCAL lOld := s_lUseDBCatalogs
-
-   IF lSet != NIL
-      s_lUseDBCatalogs := lSet
-   ENDIF
-
-RETURN lOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 

@@ -99,7 +99,6 @@ STATIC s_ItP3
 */
 
 STATIC s_nOperat := 0
-STATIC s_lUseDBCatalogs := .F.
 STATIC s_lAllowRelationsInIndx := .F.
 STATIC s_____lOld
 STATIC s_nMininumVarchar2Size := 31
@@ -715,7 +714,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
       cLast := aInd[SR_INDEXMAN_IDXNAME]
    NEXT
 
-   IF s_lUseDBCatalogs
+   IF SR_GetlUseDBCatalogs()
       aRet := {}
       HB_SYMBOL_UNUSED(aRet)
    ENDIF
@@ -7854,18 +7853,6 @@ FUNCTION SR_TCNextRecord(oWA)
    HB_SYMBOL_UNUSED(oWA)
 
 RETURN IIf(Len(aRet) > 0, aRet[1, 1], 0)
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetlUseDBCatalogs(lSet)
-
-   LOCAL lOld := s_lUseDBCatalogs
-
-   IF lSet != NIL
-      s_lUseDBCatalogs := lSet
-   ENDIF
-
-RETURN lOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 
