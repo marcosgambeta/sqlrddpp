@@ -7825,7 +7825,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
                lSyntheticIndex := .T.
                EXIT
             ELSEIF c == "-" .AND. SubStr(cColumns, i + 1, 1) == ">"
-               IF s_lAllowRelationsInIndx
+               IF SR_GetlAllowRelationsInIndx()
                   lSyntheticIndex := .T.
                   EXIT
                ENDIF
@@ -7859,7 +7859,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
             ELSE
                IF c $ "|-;+-/*" .AND. !Empty(cWord)
                   IF c == "-" .AND. SubStr(cColumns, i + 1, 1) == ">"
-                     IF s_lAllowRelationsInIndx
+                     IF SR_GetlAllowRelationsInIndx()
                         lSyntheticIndex := .T.
                         EXIT
                      ENDIF
@@ -11849,6 +11849,11 @@ FUNCTION SR_SetlUseDBCatalogs(lSet)
 RETURN lOld
 
 //----------------------------------------------------------------------------//
+// Get/Set s_lAllowRelationsInIndx
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetlAllowRelationsInIndx()
+RETURN s_lAllowRelationsInIndx
 
 FUNCTION SR_SetAllowRelationsInIndx(lSet)
 
