@@ -101,7 +101,6 @@ STATIC s_ItP3
 STATIC s_nOperat := 0
 STATIC s_____lOld
 STATIC s_nMininumVarchar2Size := 31
-STATIC s_lOracleSyntheticVirtual := .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -7904,18 +7903,5 @@ FUNCTION SR_SetMininumVarchar2Size(n)
    s_nMininumVarchar2Size := n
 
 RETURN NIL
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetOracleSyntheticVirtual(l)
-
-   s_lOracleSyntheticVirtual := l
-
-RETURN NIL
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_GetOracleSyntheticVirtual()
-RETURN s_lOracleSyntheticVirtual
 
 //-------------------------------------------------------------------------------------------------------------------//

@@ -72,6 +72,7 @@ STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // TODO: used only by MySQL/MariaDB
 STATIC s_cMySqlNumericDataType := "REAL" // TODO: used only by MySQL/MariaDB
 STATIC s_lUseDBCatalogs := .F.
 STATIC s_lAllowRelationsInIndx := .F.
+STATIC s_lOracleSyntheticVirtual := .T. // TODO: used only by Oracle
 
 //----------------------------------------------------------------------------//
 
@@ -368,6 +369,19 @@ FUNCTION SR_SetAllowRelationsInIndx(lSet)
    ENDIF
 
 RETURN lOld
+
+//----------------------------------------------------------------------------//
+// Get/Set s_lOracleSyntheticVirtual (TODO: used only by Oracle)
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetOracleSyntheticVirtual()
+RETURN s_lOracleSyntheticVirtual
+
+FUNCTION SR_SetOracleSyntheticVirtual(l)
+
+   s_lOracleSyntheticVirtual := l
+
+RETURN NIL
 
 //----------------------------------------------------------------------------//
 
