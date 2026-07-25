@@ -8486,27 +8486,6 @@ RETURN SR_SQL_SERIALIZED_SIGNATURE + Str(Len(cMemo), 10) + cMemo
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-//STATIC FUNCTION OracleMinVersion(cString) (function not used)
-//
-//   STATIC s_reEnvVar
-//
-//   LOCAL cMatch
-//   LOCAL nStart
-//   LOCAL nLen
-//   LOCAL cTemp := cString
-//
-//   HB_SYMBOL_UNUSED(cTemp)
-//
-//   IF s_reEnvVar == NIL
-//      s_reEnvVar := HB_RegexComp("(([2]([0-4][0-9]|[5][0-5])|[0-1]?[0-9]?[0-9])[.]){3}(([2]([0-4][0-9]|[5][0-5])|[0-1]?[0-9]?[0-9]))")
-//   ENDIF
-//
-//   cMatch := HB_AtX(s_reEnvVar, cString, @nStart, @nLen)
-//
-//RETURN IIf(Empty(cMatch), 0, Val(hb_atokens(cMatch, '.')[1]))
-
-//-------------------------------------------------------------------------------------------------------------------//
-
 METHOD SR_WORKAREA:RecnoExpr()
 
    LOCAL cRet := ""
