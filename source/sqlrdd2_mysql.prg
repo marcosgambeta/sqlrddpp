@@ -99,7 +99,6 @@ STATIC s_ItP3
 */
 
 STATIC s_nOperat := 0
-STATIC s_cMySqlMemoDataType := "MEDIUMBLOB"
 STATIC s_cMySqlNumericDataType := "REAL"
 STATIC s_lUseDBCatalogs := .F.
 STATIC s_lAllowRelationsInIndx := .F.
@@ -4757,7 +4756,7 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          EXIT
 
       CASE "M"
-         cSql += s_cMySqlMemoDataType
+         cSql += SR_GetMySqlMemoDataType()
          EXIT
 
       CASE "N"
@@ -7586,7 +7585,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             cSql += "TINYINT"
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "M")
-            cSql += s_cMySqlMemoDataType
+            cSql += SR_GetMySqlMemoDataType()
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. cField == ::cRecnoName
             cSql += "BIGINT (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
@@ -7773,7 +7772,7 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
             ENDIF
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "M")
-            cSql += s_cMySqlMemoDataType
+            cSql += SR_GetMySqlMemoDataType()
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. cField == ::cRecnoName
             cSql += "BIGINT (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
@@ -8399,18 +8398,6 @@ FUNCTION SR_SetUseSequences(lOpt, oCnn)
    ENDIF
 
 RETURN lOld
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetMySQLMemoDataType(cOpt)
-
-   LOCAL cOld := s_cMySqlMemoDataType
-
-   IF cOpt != NIL
-      s_cMySqlMemoDataType := cOpt
-   ENDIF
-
-RETURN cOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 

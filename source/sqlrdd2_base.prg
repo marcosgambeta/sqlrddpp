@@ -68,6 +68,7 @@ STATIC s_lGoTopOnFirstInteract := .T.
 STATIC s_lUseDTHISTAuto := .F.
 STATIC s_nLineCountResult := 0
 STATIC s_cGlobalOwner := ""
+STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // TODO: used only by MySQL/MariaDB
 
 //----------------------------------------------------------------------------//
 
@@ -293,6 +294,23 @@ FUNCTION SR_SetGlobalOwner(cOwner)
             RETURN oSql:cOwner
          ENDIF
       ENDIF
+   ENDIF
+
+RETURN cOld
+
+//----------------------------------------------------------------------------//
+// Get/Set s_cMySqlMemoDataType (TODO: used only by MySQL/MariaDB)
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetMySQLMemoDataType()
+RETURN s_cMySqlMemoDataType
+
+FUNCTION SR_SetMySQLMemoDataType(cOpt)
+
+   LOCAL cOld := s_cMySqlMemoDataType
+
+   IF cOpt != NIL
+      s_cMySqlMemoDataType := cOpt
    ENDIF
 
 RETURN cOld

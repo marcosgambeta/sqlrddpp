@@ -99,7 +99,6 @@ STATIC s_ItP3
 */
 
 STATIC s_nOperat := 0
-STATIC s_cMySqlMemoDataType := "MEDIUMBLOB"
 STATIC s_cMySqlNumericDataType := "REAL"
 STATIC s_lUseDBCatalogs := .F.
 STATIC s_lAllowRelationsInIndx := .F.
@@ -8470,18 +8469,6 @@ FUNCTION SR_SetUseSequences(lOpt, oCnn)
    ENDIF
 
 RETURN lOld
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetMySQLMemoDataType(cOpt)
-
-   LOCAL cOld := s_cMySqlMemoDataType
-
-   IF cOpt != NIL
-      s_cMySqlMemoDataType := cOpt
-   ENDIF
-
-RETURN cOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 
