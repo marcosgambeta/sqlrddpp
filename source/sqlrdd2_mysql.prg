@@ -99,7 +99,6 @@ STATIC s_ItP3
 */
 
 STATIC s_nOperat := 0
-STATIC s_cMySqlNumericDataType := "REAL"
 STATIC s_lUseDBCatalogs := .F.
 STATIC s_lAllowRelationsInIndx := .F.
 STATIC s_____lOld
@@ -4767,11 +4766,11 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
                // use type DECIMAL instead of REAL when using MySQL 8 or upper,
                // except if the flag 'SQLRDD_MYSQL_REAL_DATA_TYPE' is set
                #ifdef SQLRDD_MYSQL_REAL_DATA_TYPE
-               cSql += s_cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+               cSql += SR_GetMySqlNumericDataType() + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
                #else
                IF SubStr(::oSql:cSystemVers, 1, 1) == "5"
                   // maintain the original behavior when using MySQL 5
-                  cSql += s_cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+                  cSql += SR_GetMySqlNumericDataType() + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
                ELSE
                   cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
                ENDIF
@@ -7590,7 +7589,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
          CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. cField == ::cRecnoName
             cSql += "BIGINT (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
          CASE (aCreate[i, SR_FIELD_TYPE] == "N")
-            cSql += s_cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+            cSql += SR_GetMySqlNumericDataType() + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
 
          CASE (aCreate[i, SR_FIELD_TYPE] == "T")
             IF aCreate[i, SR_FIELD_LEN] == 4
@@ -7777,7 +7776,7 @@ METHOD SR_WORKAREA:AlterColumnsDirect(aCreate, lDisplayErrorMessage, lBakcup, aR
          CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. cField == ::cRecnoName
             cSql += "BIGINT (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
          CASE (aCreate[i, SR_FIELD_TYPE] == "N")
-            cSql += s_cMySqlNumericDataType + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
+            cSql += SR_GetMySqlNumericDataType() + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
 
          OTHERWISE
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
@@ -8033,11 +8032,11 @@ METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
                // use type DECIMAL instead of REAL when using MySQL 8 or upper,
                // except if the flag 'SQLRDD_MYSQL_REAL_DATA_TYPE' is set
                #ifdef SQLRDD_MYSQL_REAL_DATA_TYPE
-               cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
+               cType := SR_GetMySqlNumericDataType() + " (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
                #else
                IF SubStr(::oSql:cSystemVers, 1, 1) == "5"
                   // maintain the original behavior when using MySQL 5
-                  cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
+                  cType := SR_GetMySqlNumericDataType() + " (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
                ELSE
                   cType := "DECIMAL (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
                ENDIF
@@ -8085,11 +8084,11 @@ METHOD SR_WORKAREA:DropRuleNotNull(cColumn)
             // use type DECIMAL instead of REAL when using MySQL 8 or upper,
             // except if the flag 'SQLRDD_MYSQL_REAL_DATA_TYPE' is set
             #ifdef SQLRDD_MYSQL_REAL_DATA_TYPE
-            cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
+            cType := SR_GetMySqlNumericDataType() + " (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
             #else
             IF SubStr(::oSql:cSystemVers, 1, 1) == "5"
                // maintain the original behavior when using MySQL 5
-               cType := s_cMySqlNumericDataType + " (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
+               cType := SR_GetMySqlNumericDataType() + " (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
             ELSE
                cType := "DECIMAL (" + Str(::aFields[nCol, SR_FIELD_LEN], 4) + "," + Str(::aFields[nCol, SR_FIELD_DEC], 3) + ")"
             ENDIF
@@ -8398,18 +8397,6 @@ FUNCTION SR_SetUseSequences(lOpt, oCnn)
    ENDIF
 
 RETURN lOld
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetMySQLNumericDataType(cOpt)
-
-   LOCAL cOld := s_cMySqlNumericDataType
-
-   IF cOpt != NIL
-      s_cMySqlNumericDataType := cOpt
-   ENDIF
-
-RETURN cOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 

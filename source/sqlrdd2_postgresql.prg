@@ -99,7 +99,6 @@ STATIC s_ItP3
 */
 
 STATIC s_nOperat := 0
-STATIC s_cMySqlNumericDataType := "REAL"
 STATIC s_lUseDBCatalogs := .F.
 STATIC s_lAllowRelationsInIndx := .F.
 STATIC s_____lOld
@@ -8469,18 +8468,6 @@ FUNCTION SR_SetUseSequences(lOpt, oCnn)
    ENDIF
 
 RETURN lOld
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetMySQLNumericDataType(cOpt)
-
-   LOCAL cOld := s_cMySqlNumericDataType
-
-   IF cOpt != NIL
-      s_cMySqlNumericDataType := cOpt
-   ENDIF
-
-RETURN cOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 

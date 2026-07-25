@@ -69,6 +69,7 @@ STATIC s_lUseDTHISTAuto := .F.
 STATIC s_nLineCountResult := 0
 STATIC s_cGlobalOwner := ""
 STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // TODO: used only by MySQL/MariaDB
+STATIC s_cMySqlNumericDataType := "REAL" // TODO: used only by MySQL/MariaDB
 
 //----------------------------------------------------------------------------//
 
@@ -311,6 +312,23 @@ FUNCTION SR_SetMySQLMemoDataType(cOpt)
 
    IF cOpt != NIL
       s_cMySqlMemoDataType := cOpt
+   ENDIF
+
+RETURN cOld
+
+//----------------------------------------------------------------------------//
+// Get/Set s_cMySqlNumericDataType (TODO: used only by MySQL/MariaDB)
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetMySQLNumericDataType()
+RETURN s_cMySqlNumericDataType
+
+FUNCTION SR_SetMySQLNumericDataType(cOpt)
+
+   LOCAL cOld := s_cMySqlNumericDataType
+
+   IF cOpt != NIL
+      s_cMySqlNumericDataType := cOpt
    ENDIF
 
 RETURN cOld
