@@ -71,6 +71,7 @@ STATIC s_cGlobalOwner := ""
 STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // TODO: used only by MySQL/MariaDB
 STATIC s_cMySqlNumericDataType := "REAL" // TODO: used only by MySQL/MariaDB
 STATIC s_lUseDBCatalogs := .F.
+STATIC s_lAllowRelationsInIndx := .F.
 
 //----------------------------------------------------------------------------//
 
@@ -347,6 +348,23 @@ FUNCTION SR_SetlUseDBCatalogs(lSet)
 
    IF lSet != NIL
       s_lUseDBCatalogs := lSet
+   ENDIF
+
+RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+// Get/Set s_lAllowRelationsInIndx
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetlAllowRelationsInIndx()
+RETURN s_lAllowRelationsInIndx
+
+FUNCTION SR_SetAllowRelationsInIndx(lSet)
+
+   LOCAL lOld := s_lAllowRelationsInIndx
+
+   IF lSet != NIL
+      s_lAllowRelationsInIndx := lSet
    ENDIF
 
 RETURN lOld

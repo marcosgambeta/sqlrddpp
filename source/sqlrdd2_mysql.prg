@@ -99,7 +99,6 @@ STATIC s_ItP3
 */
 
 STATIC s_nOperat := 0
-STATIC s_lAllowRelationsInIndx := .F.
 STATIC s_____lOld
 STATIC s_nMininumVarchar2Size := 31
 STATIC s_lOracleSyntheticVirtual := .T.
@@ -5922,7 +5921,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
                lSyntheticIndex := .T.
                EXIT
             ELSEIF c == "-" .AND. SubStr(cColumns, i + 1, 1) == ">"
-               IF s_lAllowRelationsInIndx
+               IF SR_GetlAllowRelationsInIndx()
                   lSyntheticIndex := .T.
                   EXIT
                ENDIF
@@ -5956,7 +5955,7 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
             ELSE
                IF c $ "|-;+-/*" .AND. !Empty(cWord)
                   IF c == "-" .AND. SubStr(cColumns, i + 1, 1) == ">"
-                     IF s_lAllowRelationsInIndx
+                     IF SR_GetlAllowRelationsInIndx()
                         lSyntheticIndex := .T.
                         EXIT
                      ENDIF
@@ -8406,18 +8405,6 @@ FUNCTION SR_TCNextRecord(oWA)
    oWA:Exec("SELECT coalesce(max(R_E_C_N_O_),0) + 1 AS R_E_C_N_O_ FROM " + SR_DBQUALIFY(oWA:cFileName), .F., .T., @aRet)
 
 RETURN IIf(Len(aRet) > 0, aRet[1, 1], 0)
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetAllowRelationsInIndx(lSet)
-
-   LOCAL lOld := s_lAllowRelationsInIndx
-
-   IF lSet != NIL
-      s_lAllowRelationsInIndx := lSet
-   ENDIF
-
-RETURN lOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 
