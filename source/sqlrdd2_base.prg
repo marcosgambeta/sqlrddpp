@@ -204,6 +204,34 @@ ENDCLASS
 // Functions
 //----------------------------------------------------------------------------//
 
+FUNCTION SR_ParseFileName(cInd)
+
+   LOCAL i
+   LOCAL cRet := ""
+
+   FOR i := Len(cInd) TO 1 STEP -1
+      IF SubStr(cInd, i, 1) == "."
+         cRet := ""
+         LOOP
+      ENDIF
+      IF SubStr(cInd, i, 1) $ "\/:"
+         EXIT
+      ENDIF
+      cRet := SubStr(cInd, i, 1) + cRet
+   NEXT i
+
+RETURN AllTrim(cRet)
+
+FUNCTION SR_CleanTabInfoCache()
+
+   LOCAL oCnn := SR_GetConnection()
+
+   IF HB_IsObject(oCnn)
+      oCnn:aTableInfo := {=>}
+   ENDIF
+
+RETURN NIL
+
 //----------------------------------------------------------------------------//
 // Get/Set s_lUseXmlField
 //----------------------------------------------------------------------------//
