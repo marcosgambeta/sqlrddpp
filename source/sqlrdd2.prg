@@ -1163,7 +1163,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
       cLast := aInd[SR_INDEXMAN_IDXNAME]
    NEXT
 
-   IF s_lUseDBCatalogs
+   IF SR_GetlUseDBCatalogs()
       aRet := {}
       SWITCH ::oSql:nSystemID
       CASE SQLRDD_RDBMS_IBMDB2
@@ -11832,6 +11832,11 @@ FUNCTION SR_TCNextRecord(oWA)
 RETURN IIf(Len(aRet) > 0, aRet[1, 1], 0)
 
 //----------------------------------------------------------------------------//
+// Get/Set s_lUseDBCatalogs
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetlUseDBCatalogs()
+RETURN s_lUseDBCatalogs
 
 FUNCTION SR_SetlUseDBCatalogs(lSet)
 
