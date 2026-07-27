@@ -131,7 +131,7 @@ STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // Get/Set implemented
 STATIC s_cMySqlNumericDataType := "REAL" // Get/Set implemented
 STATIC s_lUseDBCatalogs := .F. // Get/Set implemented
 STATIC s_lAllowRelationsInIndx := .F. // Get/Set implemented
-STATIC s_____lOld
+//STATIC s_____lOld (deprecated)
 STATIC s_nMininumVarchar2Size := 31
 STATIC s_lOracleSyntheticVirtual := .T. // Get/Set implemented
 
@@ -318,7 +318,7 @@ CLASS SR_WORKAREA
 
    METHOD FCount() INLINE ::nFields
    METHOD SetNextDt(d) INLINE ::dNextDt := d
-   METHOD SetQuickAppend(l) INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld)
+   METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated)
 
    // Table maintanance stuff
 
@@ -1884,6 +1884,16 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
    ENDIF
 
 RETURN lRet
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:SetQuickAppend(l)
+
+   LOCAL lOld := ::lQuickAppend
+
+   ::lQuickAppend := l
+
+RETURN lOld
 
 //----------------------------------------------------------------------------//
 
