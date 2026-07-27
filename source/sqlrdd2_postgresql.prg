@@ -98,7 +98,7 @@ STATIC s_ItP3
 #endif
 */
 
-STATIC s_nOperat := 0
+//STATIC s_nOperat := 0 // changed to CLASSDATA
 STATIC s_____lOld
 STATIC s_nMininumVarchar2Size := 31
 
@@ -110,6 +110,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    CLASSDATA nCnt
    CLASSDATA cWSID
    CLASSDATA aExclusive       AS ARRAY    INIT {}
+   CLASSDATA nOperat          AS NUMERIC  INIT 0
 
    DATA aInfo         AS ARRAY INIT {.T., .T., .F., 0, 0, 0, .F., .F., 0, 0, .F., .F., 0, 0, .T., 0, .F., 0, .F., 0, 0, 0, 0, 0}  // See sqlrdd.ch, SR_AINFO_*
    DATA aLocked       AS ARRAY INIT {}
@@ -4541,9 +4542,14 @@ METHOD SR_WORKAREA:sqlClose()
       ENDIF
    ENDIF
 
-   IF ++s_nOperat > 100
+   //IF ++s_nOperat > 100 (old code/to be deleted)
+   //   hb_gcAll(.T.)
+   //   s_nOperat := 0
+   //ENDIF
+
+   IF ++::nOperat > 100 // TODO: mutex ?
       hb_gcAll(.T.)
-      s_nOperat := 0
+      ::nOperat := 0
    ENDIF
 
 RETURN NIL
