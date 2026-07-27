@@ -696,6 +696,11 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
          aInd[SR_INDEXMAN_VIRTUAL_SYNTH] := SubStr(aInd[SR_INDEXMAN_IDXKEY], 1, 3) + SubStr(::cFileName, 1, 25)
          aInd[SR_INDEXMAN_IDXKEY] := SubStr(aInd[SR_INDEXMAN_IDXKEY], 5)
       ENDIF
+      // IDXCOL_ is CHAR(3), but a driver may return character values space
+      // padded to the width it reports for the column. Trim it here: the
+      // INDKEY_nnn name is built by concatenation and the padding would make
+      // it stop matching the column names in ::aNames
+      aInd[SR_INDEXMAN_COLUMNS] := AllTrim(aInd[SR_INDEXMAN_COLUMNS])
       IF !Empty(aInd[SR_INDEXMAN_COLUMNS])
          aInd[SR_INDEXMAN_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(aInd[SR_INDEXMAN_IDXKEY]) + ") + Str(RecNo(),15) }")
          aInd[SR_INDEXMAN_SYNTH_COLPOS] := AScan(::aNames, "INDKEY_" + aInd[SR_INDEXMAN_COLUMNS])     // Make life easier in odbcrdd2.c

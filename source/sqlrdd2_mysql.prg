@@ -1064,6 +1064,13 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
       IF SubStr(aInd[SR_INDEXMAN_IDXKEY], 4, 1) == "@"
          aInd[SR_INDEXMAN_IDXKEY] := SubStr(aInd[SR_INDEXMAN_IDXKEY], 5)
       ENDIF
+      // IDXCOL_ is CHAR(3), but some drivers return character values space
+      // padded to the width they report for the column - the native MySQL one
+      // reports field->length (in bytes) whenever the column charset differs
+      // from the connection charset, so a CHAR(3) in utf8mb4 comes back as 12.
+      // Trim it here: the INDKEY_nnn name is built by concatenation and the
+      // padding would make it stop matching the column names in ::aNames
+      aInd[SR_INDEXMAN_COLUMNS] := AllTrim(aInd[SR_INDEXMAN_COLUMNS])
       IF !Empty(aInd[SR_INDEXMAN_COLUMNS])
          aInd[SR_INDEXMAN_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(aInd[SR_INDEXMAN_IDXKEY]) + ") + Str(RecNo(),15) }")
          aInd[SR_INDEXMAN_SYNTH_COLPOS] := AScan(::aNames, "INDKEY_" + aInd[SR_INDEXMAN_COLUMNS])     // Make life easier in odbcrdd2.c
