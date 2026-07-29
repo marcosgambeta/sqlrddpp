@@ -42,6 +42,21 @@
 // Com a conexao em utf8mb4_0900_ai_ci isso da a mesma largura de 12 que
 // o Mario reportou. Use --forcecs utf8mb4_0900_ai_ci para voltar ao caso
 // que funciona e comparar.
+//
+// NOTA: o efeito do --forcecs depende da biblioteca cliente. As libmysql
+// modernas recebem os metadados ja convertidos para a collation da
+// conexao, entao a divisao e aplicada e o IDXCOL_ chega com 3 mesmo com
+// as collations diferentes. Nesse caso use a opcao abaixo.
+//
+// Opcao --forcewidth <n>: alarga IDXCOL_ para CHAR(n) no catalogo. Isso
+// reproduz o EFEITO do bug de forma deterministica em qualquer driver:
+// o valor passa a chegar preenchido com espacos ate n, exatamente como
+// chega no ambiente do Mario, sem depender do comportamento da lib
+// cliente. Com uma lib SEM a normalizacao do IDXCOL_ a abertura falha
+// com "Index Column not Found - INDKEY_001"; com a lib corrigida abre
+// normalmente:
+//
+//   testindkeypad ... --forcewidth 12
 
 #ifdef __XHARBOUR__
 #xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
@@ -69,6 +84,7 @@ STATIC s_DTB    := "dbtest"
 
 STATIC s_nPad := 0      // largura com que IDXCOL_ voltou do driver
 STATIC s_COLLATION := ""   // --forcecs
+STATIC s_nForceW := 0      // --forcewidth
 
 PROCEDURE Main()
 
@@ -88,6 +104,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--dtb"    ; s_DTB := HB_PValue(++n)
       CASE HB_PValue(n) == "--keep"   ; lKeep := .T.
       CASE HB_PValue(n) == "--forcecs"; s_COLLATION := HB_PValue(++n)
+      CASE HB_PValue(n) == "--forcewidth"; s_nForceW := Val(HB_PValue(++n))
       OTHERWISE
          ? "Parametro desconhecido:", HB_PValue(n)
       ENDCASE
@@ -114,6 +131,7 @@ PROCEDURE Main()
    sr_StartLog(nConnection)
 
    ForcaCollation()
+   ForcaLargura()
    MostraAmbiente()
    CriaTabela()
    CriaIndices()
@@ -162,6 +180,28 @@ STATIC PROCEDURE ForcaCollation()
 
    oCnn:Exec("alter table SR_MGMNTINDEXES convert to character set " + ;
              cCharset + " collate " + s_COLLATION, .T.)
+   oCnn:Commit()
+
+RETURN
+
+//--------------------------------------------------------------------
+// Alarga IDXCOL_ para CHAR(n): o driver passa a reportar essa largura e
+// o valor chega preenchido com espacos, reproduzindo o efeito do bug em
+// qualquer biblioteca cliente
+
+STATIC PROCEDURE ForcaLargura()
+
+   LOCAL oCnn := SR_GetConnection()
+
+   IF s_nForceW <= 3
+      RETURN
+   ENDIF
+
+   ? ""
+   ? "Alargando IDXCOL_ para CHAR(" + AllTrim(Str(s_nForceW)) + ") ..."
+
+   oCnn:Exec("alter table SR_MGMNTINDEXES modify IDXCOL_ char(" + ;
+             AllTrim(Str(s_nForceW)) + ")", .T.)
    oCnn:Commit()
 
 RETURN
@@ -387,6 +427,7 @@ STATIC PROCEDURE MedePadding()
       ? "  >> Nenhum registro sintetico encontrado no catalogo."
    ELSE
       ? "  >> Sem padding (len = 3). Este ambiente NAO reproduz o erro."
+      ? "  >> Para simular o efeito em qualquer driver, rode com --forcewidth 12"
    ENDIF
 
 RETURN
@@ -471,7 +512,8 @@ STATIC PROCEDURE Veredito(lFalhou)
 
    OTHERWISE
       ? "OK, porem sem padding neste ambiente - o teste nao exercitou o problema."
-      ? "Veja no README como forcar a diferenca de charset no catalogo."
+      ? "Rode novamente com --forcewidth 12 para simular o efeito do bug"
+      ? "independente da biblioteca cliente."
 
    ENDCASE
 
