@@ -30,6 +30,18 @@
 // testindkeypad --server <servidor> --port <porta> --uid <usuario> --pwd <senha> --dtb <banco>
 //
 // Opcao --keep: nao apaga a tabela de teste no final (para inspecao manual)
+//
+// Opcao --forcecs <collation>: converte SR_MGMNTINDEXES para a collation
+// informada antes de criar os indices. O erro so aparece quando a
+// collation da COLUNA difere da collation da CONEXAO, entao para
+// reproduzir basta escolher uma collation utf8mb4 diferente da que a
+// conexao negociou (o teste mostra as duas no bloco Ambiente):
+//
+//   testindkeypad ... --forcecs utf8mb4_general_ci
+//
+// Com a conexao em utf8mb4_0900_ai_ci isso da a mesma largura de 12 que
+// o Mario reportou. Use --forcecs utf8mb4_0900_ai_ci para voltar ao caso
+// que funciona e comparar.
 
 #ifdef __XHARBOUR__
 #xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
@@ -56,6 +68,7 @@ STATIC s_PWD    := "password"
 STATIC s_DTB    := "dbtest"
 
 STATIC s_nPad := 0      // largura com que IDXCOL_ voltou do driver
+STATIC s_COLLATION := ""   // --forcecs
 
 PROCEDURE Main()
 
@@ -74,6 +87,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--pwd"    ; s_PWD := HB_PValue(++n)
       CASE HB_PValue(n) == "--dtb"    ; s_DTB := HB_PValue(++n)
       CASE HB_PValue(n) == "--keep"   ; lKeep := .T.
+      CASE HB_PValue(n) == "--forcecs"; s_COLLATION := HB_PValue(++n)
       OTHERWISE
          ? "Parametro desconhecido:", HB_PValue(n)
       ENDCASE
@@ -99,6 +113,7 @@ PROCEDURE Main()
 
    sr_StartLog(nConnection)
 
+   ForcaCollation()
    MostraAmbiente()
    CriaTabela()
    CriaIndices()
@@ -123,6 +138,35 @@ PROCEDURE Main()
 RETURN
 
 //--------------------------------------------------------------------
+// Converte SR_MGMNTINDEXES para a collation pedida em --forcecs.
+// O catalogo ja existe neste ponto: SR_SetEnvSQLRDD o cria na conexao.
+
+STATIC PROCEDURE ForcaCollation()
+
+   LOCAL oCnn := SR_GetConnection()
+   LOCAL cCharset
+   LOCAL nPos
+
+   IF Empty(s_COLLATION)
+      RETURN
+   ENDIF
+
+   // O charset e o primeiro segmento do nome da collation
+   // (utf8mb4_general_ci => utf8mb4, latin1_swedish_ci => latin1)
+
+   nPos := At("_", s_COLLATION)
+   cCharset := IIf(nPos == 0, s_COLLATION, Left(s_COLLATION, nPos - 1))
+
+   ? ""
+   ? "Convertendo SR_MGMNTINDEXES para " + cCharset + " / " + s_COLLATION + " ..."
+
+   oCnn:Exec("alter table SR_MGMNTINDEXES convert to character set " + ;
+             cCharset + " collate " + s_COLLATION, .T.)
+   oCnn:Commit()
+
+RETURN
+
+//--------------------------------------------------------------------
 // Versao do servidor, charset da conexao e collation do IDXCOL_
 
 STATIC PROCEDURE MostraAmbiente()
@@ -130,6 +174,8 @@ STATIC PROCEDURE MostraAmbiente()
    LOCAL oCnn := SR_GetConnection()
    LOCAL aRes := {}
    LOCAL aRow
+   LOCAL cCollCnn := ""
+   LOCAL cCollCol := ""
 
    ? ""
    ? "=============================================================="
@@ -153,7 +199,8 @@ STATIC PROCEDURE MostraAmbiente()
    aRes := {}
    oCnn:Exec("show variables like 'collation_connection'", .F., .T., @aRes)
    FOR EACH aRow IN aRes
-      ? "collation_connection         : " + AllTrim(SR_Val2Char(aRow[2]))
+      cCollCnn := AllTrim(SR_Val2Char(aRow[2]))
+      ? "collation_connection         : " + cCollCnn
    NEXT
 
    // Collation real da coluna IDXCOL_ no catalogo
@@ -165,9 +212,24 @@ STATIC PROCEDURE MostraAmbiente()
              "and COLUMN_NAME = 'IDXCOL_'", .F., .T., @aRes)
 
    IF Len(aRes) > 0
-      ? "IDXCOL_ charset / collation  : " + AllTrim(SR_Val2Char(aRes[1, 1])) + " / " + ;
-                                            AllTrim(SR_Val2Char(aRes[1, 2]))
+
+      cCollCol := AllTrim(SR_Val2Char(aRes[1, 2]))
+
+      ? "IDXCOL_ charset / collation  : " + AllTrim(SR_Val2Char(aRes[1, 1])) + " / " + cCollCol
       ? "IDXCOL_ largura declarada    : " + AllTrim(SR_Val2Char(aRes[1, 3])) + " caracteres"
+
+      ? ""
+
+      IF cCollCol == cCollCnn
+         ? ">> Coluna e conexao usam a MESMA collation: a largura e calculada"
+         ? "   corretamente e este ambiente nao deve reproduzir o erro."
+         ? "   Use --forcecs <outra collation> para provocar a diferenca."
+      ELSE
+         ? ">> Coluna e conexao usam collations DIFERENTES (" + cCollCol + " x " + cCollCnn + ")."
+         ? "   E nesta condicao que a largura da coluna passa a ser contada"
+         ? "   em bytes. Veja abaixo o comprimento com que o IDXCOL_ chega."
+      ENDIF
+
    ELSE
       ? "IDXCOL_                      : SR_MGMNTINDEXES ainda nao existe"
    ENDIF
