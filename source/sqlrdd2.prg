@@ -126,12 +126,12 @@ STATIC s_lGoTopOnFirstInteract := .T. // Get/Set implemented
 STATIC s_lUseDTHISTAuto := .F. // Get/Set implemented
 STATIC s_nLineCountResult := 0 // Get/Set implemented
 STATIC s_cGlobalOwner := "" // Get/Set implemented
-STATIC s_nOperat := 0
+//STATIC s_nOperat := 0 // changed to CLASSDATA
 STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // Get/Set implemented
 STATIC s_cMySqlNumericDataType := "REAL" // Get/Set implemented
 STATIC s_lUseDBCatalogs := .F. // Get/Set implemented
 STATIC s_lAllowRelationsInIndx := .F. // Get/Set implemented
-STATIC s_____lOld
+//STATIC s_____lOld (deprecated)
 STATIC s_nMininumVarchar2Size := 31
 STATIC s_lOracleSyntheticVirtual := .T. // Get/Set implemented
 
@@ -142,6 +142,7 @@ CLASS SR_WORKAREA
    CLASSDATA nCnt
    CLASSDATA cWSID
    CLASSDATA aExclusive       AS ARRAY    INIT {}
+   CLASSDATA nOperat          AS NUMERIC  INIT 0
 
    DATA aInfo         AS ARRAY INIT {.T., .T., .F., 0, 0, 0, .F., .F., 0, 0, .F., .F., 0, 0, .T., 0, .F., 0, .F., 0, 0, 0, 0, 0}  // See sqlrdd.ch, SR_AINFO_*
    DATA aLocked       AS ARRAY INIT {}
@@ -317,7 +318,7 @@ CLASS SR_WORKAREA
 
    METHOD FCount() INLINE ::nFields
    METHOD SetNextDt(d) INLINE ::dNextDt := d
-   METHOD SetQuickAppend(l) INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld)
+   METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated)
 
    // Table maintanance stuff
 
@@ -1888,6 +1889,16 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
    ENDIF
 
 RETURN lRet
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:SetQuickAppend(l)
+
+   LOCAL lOld := ::lQuickAppend
+
+   ::lQuickAppend := l
+
+RETURN lOld
 
 //----------------------------------------------------------------------------//
 
@@ -5708,9 +5719,14 @@ METHOD SR_WORKAREA:sqlClose()
       ENDIF
    ENDIF
 
-   IF ++s_nOperat > 100
+   //IF ++s_nOperat > 100 (old code/to be deleted)
+   //   hb_gcAll(.T.)
+   //   s_nOperat := 0
+   //ENDIF
+
+   IF ++::nOperat > 100 // TODO: mutex ?
       hb_gcAll(.T.)
-      s_nOperat := 0
+      ::nOperat := 0
    ENDIF
 
 RETURN NIL
