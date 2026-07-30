@@ -287,7 +287,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    METHOD FCount() INLINE ::nFields
    METHOD SetNextDt(d) INLINE ::dNextDt := d
-   METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated)
+   //METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated) (moved to base class)
 
    // Table maintanance stuff
 
@@ -1538,13 +1538,14 @@ RETURN .T. //lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:SetQuickAppend(l)
-
-   LOCAL lOld := ::lQuickAppend
-
-   ::lQuickAppend := l
-
-RETURN lOld
+// moved to base class
+// METHOD SR_WORKAREA:SetQuickAppend(l)
+//
+//    LOCAL lOld := ::lQuickAppend
+//
+//    ::lQuickAppend := l
+//
+// RETURN lOld
 
 //-------------------------------------------------------------------------------------------------------------------//
 

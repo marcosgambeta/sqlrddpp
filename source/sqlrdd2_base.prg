@@ -195,11 +195,21 @@ CLASS SR_BASE_WORKAREA
    // For Self recno filter
    Data aRecnoFilter AS ARRAY INIT {}
 
+   METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated)
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 // SR_BASE_WORKAREA class methods
 //----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:SetQuickAppend(l)
+
+   LOCAL lOld := ::lQuickAppend
+
+   ::lQuickAppend := l
+
+RETURN lOld
 
 //----------------------------------------------------------------------------//
 // Functions
