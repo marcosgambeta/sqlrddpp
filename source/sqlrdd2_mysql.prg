@@ -1065,6 +1065,13 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
       IF SubStr(aInd[SR_INDEXMAN_IDXKEY], 4, 1) == "@"
          aInd[SR_INDEXMAN_IDXKEY] := SubStr(aInd[SR_INDEXMAN_IDXKEY], 5)
       ENDIF
+      // IDXCOL_ is CHAR(3), but some drivers return character values space
+      // padded to the width they report for the column - the native MySQL one
+      // reports field->length (in bytes) whenever the column charset differs
+      // from the connection charset, so a CHAR(3) in utf8mb4 comes back as 12.
+      // Trim it here: the INDKEY_nnn name is built by concatenation and the
+      // padding would make it stop matching the column names in ::aNames
+      aInd[SR_INDEXMAN_COLUMNS] := AllTrim(aInd[SR_INDEXMAN_COLUMNS])
       IF !Empty(aInd[SR_INDEXMAN_COLUMNS])
          aInd[SR_INDEXMAN_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(aInd[SR_INDEXMAN_IDXKEY]) + ") + Str(RecNo(),15) }")
          aInd[SR_INDEXMAN_SYNTH_COLPOS] := AScan(::aNames, "INDKEY_" + aInd[SR_INDEXMAN_COLUMNS])     // Make life easier in odbcrdd2.c
@@ -1595,7 +1602,7 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
    FOR nInd := 1 TO Len(::aIndexMgmnt)
 
       IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
-         aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]}
+         aCols := {"INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])}
       ELSE
          aCols := &("{" + ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY] + "}")
          // aCols := HB_ATokens(StrTran(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], Chr(34), ""), ",")
@@ -1704,9 +1711,9 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
       ::aIndex[nInd, SR_AINDEX_INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+            ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]))
          ELSE
-            ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+            ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]))
          ENDIF
       ELSE
          ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
@@ -2536,7 +2543,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                FOR nInd := 1 TO Len(::aIndexMgmnt)
                   IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
                      cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, SR_INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
-                     cRet += ", " + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]) + " = '" + cKey + "' "
+                     cRet += ", " + SR_DBQUALIFY("INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])) + " = '" + cKey + "' "
                      ::aLocalBuffer[::aIndexMgmnt[nInd, SR_INDEXMAN_SYNTH_COLPOS]] := cKey
                   ENDIF
                   IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_FOR_CODEBLOCK])
@@ -2683,7 +2690,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
          FOR nInd := 1 TO Len(::aIndexMgmnt)
             IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
                IF ::cIns == NIL
-                  cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+                  cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]))
                ENDIF
                cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, SR_INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
                cVal += IIf(!lFirst, ", '", "( '") + cKey + "'"
@@ -5473,7 +5480,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
    FOR EACH nInd IN aInd
 
       IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
-         aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]}
+         aCols := {"INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])}
       ELSE
          IF HB_IsChar(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY])
             aCols := &("{" + ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY] + "}")
@@ -5586,9 +5593,9 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
       ::aIndex[nLen, SR_AINDEX_INDEX_KEY] := RTrim(IIf(nInd > 0 .AND. (!Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])), ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], cXBase))
       IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
          IF RDDNAME() == "SQLEX"
-            ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+            ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")  //AScan(::aNames, "INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]))
          ELSE
-            ::aIndex[nLen, SR_AINDEX_INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+            ::aIndex[nLen, SR_AINDEX_INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]))
          ENDIF
       ELSE
          ::aIndex[nLen, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")

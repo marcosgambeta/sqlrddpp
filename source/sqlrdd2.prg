@@ -1144,6 +1144,11 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
          ENDIF
          aInd[SR_INDEXMAN_IDXKEY] := SubStr(aInd[SR_INDEXMAN_IDXKEY], 5)
       ENDIF
+      // IDXCOL_ is CHAR(3), but a driver may return character values space
+      // padded to the width it reports for the column. Trim it here: the
+      // INDKEY_nnn name is built by concatenation and the padding would make
+      // it stop matching the column names in ::aNames
+      aInd[SR_INDEXMAN_COLUMNS] := AllTrim(aInd[SR_INDEXMAN_COLUMNS])
       IF !Empty(aInd[SR_INDEXMAN_COLUMNS])
          aInd[SR_INDEXMAN_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(aInd[SR_INDEXMAN_IDXKEY]) + ") + Str(RecNo(),15) }")
          aInd[SR_INDEXMAN_SYNTH_COLPOS] := AScan(::aNames, "INDKEY_" + aInd[SR_INDEXMAN_COLUMNS])     // Make life easier in odbcrdd2.c
@@ -1975,7 +1980,7 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
    FOR nInd := 1 TO Len(::aIndexMgmnt)
 
       IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
-         aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]}
+         aCols := {"INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])}
       ELSE
          aCols := &("{" + ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY] + "}")
          // aCols := HB_ATokens(StrTran(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY], Chr(34), ""), ",")
@@ -2123,7 +2128,7 @@ METHOD SR_WORKAREA:sqlOpenAllIndexes()
             // side (same value stored in INDKEY_, without the recno suffix)
             ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY]) + ") }")
          ELSE
-            ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+            ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]))
          ENDIF
       ELSE
          ::aIndex[nInd, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
@@ -3068,9 +3073,9 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                   IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
                      cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, SR_INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
                      IF ISPOSTGRESQL()
-                        cRet += ", " + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS], ::oSql:nSystemID) + " = E'" + cKey + "' "
+                        cRet += ", " + SR_DBQUALIFY("INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]), ::oSql:nSystemID) + " = E'" + cKey + "' "
                      ELSE
-                        cRet += ", " + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS], ::oSql:nSystemID) + " = '" + cKey + "' "
+                        cRet += ", " + SR_DBQUALIFY("INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]), ::oSql:nSystemID) + " = '" + cKey + "' "
                      ENDIF
                      ::aLocalBuffer[::aIndexMgmnt[nInd, SR_INDEXMAN_SYNTH_COLPOS]] := cKey
                   ENDIF
@@ -3269,7 +3274,7 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
          FOR nInd := 1 TO Len(::aIndexMgmnt)
             IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
                IF ::cIns == NIL
-                  cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS], ::oSql:nSystemID)
+                  cRet += IIf(!lFirst, ", ", "( ") + SR_DBQUALIFY("INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]), ::oSql:nSystemID)
                ENDIF
                cKey := (::cAlias)->(SR_ESCAPESTRING(Eval(::aIndexMgmnt[nInd, SR_INDEXMAN_KEY_CODEBLOCK]), ::oSql:nSystemID))
                IF ISPOSTGRESQL()
@@ -7318,7 +7323,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
    FOR EACH nInd IN aInd
 
       IF !Empty(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
-         aCols := {"INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]}
+         aCols := {"INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])}
       ELSE
          IF HB_IsChar(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY])
             aCols := &("{" + ::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY] + "}")
@@ -7492,7 +7497,7 @@ METHOD SR_WORKAREA:sqlOrderListAdd(cBagName, cTag)
             // side (same value stored in INDKEY_, without the recno suffix)
             ::aIndex[nLen, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| SR_Val2Char(" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_IDXKEY]) + ") }")
          ELSE
-            ::aIndex[nLen, SR_AINDEX_INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + ::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS])
+            ::aIndex[nLen, SR_AINDEX_INDEX_KEY_CODEBLOCK] := AScan(::aNames, "INDKEY_" + AllTrim(::aIndexMgmnt[nInd, SR_INDEXMAN_COLUMNS]))
          ENDIF
       ELSE
          ::aIndex[nLen, SR_AINDEX_INDEX_KEY_CODEBLOCK] := &("{|| " + cXBase + " }")
