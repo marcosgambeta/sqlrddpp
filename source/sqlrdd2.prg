@@ -1850,7 +1850,7 @@ RETURN lRet
 
 METHOD SR_WORKAREA:UnlockTable(lClosing)
 
-   LOCAL lRet := .T.
+   //LOCAL lRet := .T. (unnecessary)
    //LOCAL aVet := {} (variable not used)
    //LOCAL aResultSet := {} (variable not used)
    LOCAL nPos
@@ -1890,7 +1890,7 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
       ASize(::aExclusive, Len(::aExclusive) - 1)
    ENDIF
 
-RETURN lRet
+RETURN .T. //lRet
 
 //----------------------------------------------------------------------------//
 
