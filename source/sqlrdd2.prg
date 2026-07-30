@@ -1765,14 +1765,14 @@ RETURN NIL
 METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
 
    LOCAL lRet := .T.
-   LOCAL aVet := {}
-   LOCAL aResultSet := {}
+   //LOCAL aVet := {} (variable not used)
+   //LOCAL aResultSet := {} (variable not used)
    LOCAL i
 
-   HB_SYMBOL_UNUSED(aVet)
-   HB_SYMBOL_UNUSED(aResultSet)
+   //HB_SYMBOL_UNUSED(aVet)
+   //HB_SYMBOL_UNUSED(aResultSet)
 
-   IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0    // Table already exclusive by this application instance
+   IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0 // Table already exclusive by this application instance
       RETURN .T.
    ENDIF
 
@@ -1781,11 +1781,12 @@ METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
 
    SWITCH ::oSql:nSystemID
 
-   CASE SQLRDD_RDBMS_IBMDB2
-   CASE SQLRDD_RDBMS_MYSQL
-   CASE SQLRDD_RDBMS_MARIADB
-   CASE SQLRDD_RDBMS_SYBASE
-      EXIT
+   // unnecessary code
+   //CASE SQLRDD_RDBMS_IBMDB2
+   //CASE SQLRDD_RDBMS_MYSQL
+   //CASE SQLRDD_RDBMS_MARIADB
+   //CASE SQLRDD_RDBMS_SYBASE
+   //   EXIT
 
    CASE SQLRDD_RDBMS_MSSQL7
    CASE SQLRDD_RDBMS_ORACLE
@@ -1828,7 +1829,7 @@ METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
             EXIT
          ENDIF
 
-         Inkey(0.5)         // wait .5 seconds before trying again
+         Inkey(0.5) // wait .5 seconds before trying again
       NEXT i
 
    ENDSWITCH
@@ -1845,12 +1846,12 @@ RETURN lRet
 METHOD SR_WORKAREA:UnlockTable(lClosing)
 
    LOCAL lRet := .T.
-   LOCAL aVet := {}
-   LOCAL aResultSet := {}
+   //LOCAL aVet := {} (variable not used)
+   //LOCAL aResultSet := {} (variable not used)
    LOCAL nPos
 
-   HB_SYMBOL_UNUSED(aVet)
-   HB_SYMBOL_UNUSED(aResultSet)
+   //HB_SYMBOL_UNUSED(aVet)
+   //HB_SYMBOL_UNUSED(aResultSet)
 
    IF AScan(::aExclusive, {|x|x[1] == ::nThisArea}) == 0
       RETURN .T.
@@ -1863,11 +1864,12 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
    ENDIF
 
    SWITCH ::oSql:nSystemID
-   CASE SQLRDD_RDBMS_IBMDB2
-   CASE SQLRDD_RDBMS_MYSQL
-   CASE SQLRDD_RDBMS_MARIADB
-   CASE SQLRDD_RDBMS_SYBASE
-      EXIT
+   // unnecessary code
+   //CASE SQLRDD_RDBMS_IBMDB2
+   //CASE SQLRDD_RDBMS_MYSQL
+   //CASE SQLRDD_RDBMS_MARIADB
+   //CASE SQLRDD_RDBMS_SYBASE
+   //   EXIT
    CASE SQLRDD_RDBMS_MSSQL7
    CASE SQLRDD_RDBMS_ORACLE
    CASE SQLRDD_RDBMS_POSTGR

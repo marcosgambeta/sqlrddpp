@@ -1043,38 +1043,38 @@ RETURN NIL
 
 METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
 
-   LOCAL lRet := .T.
-   LOCAL aVet := {}
-   LOCAL aResultSet := {}
+   //LOCAL lRet := .T. (unnecessary)
+   //LOCAL aVet := {} (variable not used)
+   //LOCAL aResultSet := {} (variable not used)
 
-   HB_SYMBOL_UNUSED(aVet)
-   HB_SYMBOL_UNUSED(aResultSet)
+   //HB_SYMBOL_UNUSED(aVet)
+   //HB_SYMBOL_UNUSED(aResultSet)
 
-   IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0    // Table already exclusive by this application instance
+   IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0 // Table already exclusive by this application instance
       RETURN .T.
    ENDIF
 
    DEFAULT lCheck4ExcLock TO .T.
    DEFAULT lFLock TO .F.
 
-   IF !lCheck4ExcLock .AND. lRet
+   IF !lCheck4ExcLock //.AND. lRet
       ::lTableLocked := .T.
       AAdd(::aExclusive, {::nThisArea, ::cFileName})
    ENDIF
 
-RETURN lRet
+RETURN .T. //lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:UnlockTable(lClosing)
 
-   LOCAL lRet := .T.
-   LOCAL aVet := {}
-   LOCAL aResultSet := {}
+   ///LOCAL lRet := .T. (unnecessary)
+   //LOCAL aVet := {} (variable not used)
+   //LOCAL aResultSet := {} (variable not used)
    LOCAL nPos
 
-   HB_SYMBOL_UNUSED(aVet)
-   HB_SYMBOL_UNUSED(aResultSet)
+   //HB_SYMBOL_UNUSED(aVet)
+   //HB_SYMBOL_UNUSED(aResultSet)
 
    IF AScan(::aExclusive, {|x|x[1] == ::nThisArea}) == 0
       RETURN .T.
@@ -1094,7 +1094,7 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
       ASize(::aExclusive, Len(::aExclusive) - 1)
    ENDIF
 
-RETURN lRet
+RETURN .T. //lRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 
