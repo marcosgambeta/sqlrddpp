@@ -98,8 +98,6 @@ STATIC s_ItP3
 #endif
 */
 
-//STATIC s_nOperat := 0 // changed to CLASSDATA
-//STATIC s_____lOld // changed to LOCAL
 STATIC s_nMininumVarchar2Size := 31
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -285,7 +283,6 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    METHOD FCount() INLINE ::nFields
    METHOD SetNextDt(d) INLINE ::dNextDt := d
-   //METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated) (moved to base class)
 
    // Table maintanance stuff
 
@@ -1472,13 +1469,6 @@ RETURN NIL
 
 METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
 
-   //LOCAL lRet := .T. (unnecessary)
-   //LOCAL aVet := {} (variable not used)
-   //LOCAL aResultSet := {} (variable not used)
-
-   //HB_SYMBOL_UNUSED(aVet)
-   //HB_SYMBOL_UNUSED(aResultSet)
-
    IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0 // Table already exclusive by this application instance
       RETURN .T.
    ENDIF
@@ -1486,24 +1476,18 @@ METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
    DEFAULT lCheck4ExcLock TO .T.
    DEFAULT lFLock TO .F.
 
-   IF !lCheck4ExcLock //.AND. lRet
+   IF !lCheck4ExcLock
       ::lTableLocked := .T.
       AAdd(::aExclusive, {::nThisArea, ::cFileName})
    ENDIF
 
-RETURN .T. //lRet
+RETURN .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:UnlockTable(lClosing)
 
-   //LOCAL lRet := .T. (unnecessary)
-   //LOCAL aVet := {} (variable not used)
-   //LOCAL aResultSet := {} (variable not used)
    LOCAL nPos
-
-   //HB_SYMBOL_UNUSED(aVet)
-   //HB_SYMBOL_UNUSED(aResultSet)
 
    IF AScan(::aExclusive, {|x|x[1] == ::nThisArea}) == 0
       RETURN .T.
@@ -1523,18 +1507,7 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
       ASize(::aExclusive, Len(::aExclusive) - 1)
    ENDIF
 
-RETURN .T. //lRet
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-// moved to base class
-// METHOD SR_WORKAREA:SetQuickAppend(l)
-//
-//    LOCAL lOld := ::lQuickAppend
-//
-//    ::lQuickAppend := l
-//
-// RETURN lOld
+RETURN .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -4507,11 +4480,6 @@ METHOD SR_WORKAREA:sqlClose()
          ENDIF
       ENDIF
    ENDIF
-
-   //IF ++s_nOperat > 100 (old code/to be deleted)
-   //   hb_gcAll(.T.)
-   //   s_nOperat := 0
-   //ENDIF
 
    IF ++::nOperat > 100 // TODO: mutex ?
       hb_gcAll(.T.)

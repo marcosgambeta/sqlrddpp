@@ -126,12 +126,10 @@ STATIC s_lGoTopOnFirstInteract := .T. // Get/Set implemented
 STATIC s_lUseDTHISTAuto := .F. // Get/Set implemented
 STATIC s_nLineCountResult := 0 // Get/Set implemented
 STATIC s_cGlobalOwner := "" // Get/Set implemented
-//STATIC s_nOperat := 0 // changed to CLASSDATA
 STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // Get/Set implemented
 STATIC s_cMySqlNumericDataType := "REAL" // Get/Set implemented
 STATIC s_lUseDBCatalogs := .F. // Get/Set implemented
 STATIC s_lAllowRelationsInIndx := .F. // Get/Set implemented
-//STATIC s_____lOld (deprecated)
 STATIC s_nMininumVarchar2Size := 31
 STATIC s_lOracleSyntheticVirtual := .T. // Get/Set implemented
 
@@ -318,7 +316,7 @@ CLASS SR_WORKAREA
 
    METHOD FCount() INLINE ::nFields
    METHOD SetNextDt(d) INLINE ::dNextDt := d
-   METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated)
+   METHOD SetQuickAppend(l)
 
    // Table maintanance stuff
 
@@ -1770,12 +1768,7 @@ RETURN NIL
 METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
 
    LOCAL lRet := .T.
-   //LOCAL aVet := {} (variable not used)
-   //LOCAL aResultSet := {} (variable not used)
    LOCAL i
-
-   //HB_SYMBOL_UNUSED(aVet)
-   //HB_SYMBOL_UNUSED(aResultSet)
 
    IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0 // Table already exclusive by this application instance
       RETURN .T.
@@ -1785,13 +1778,6 @@ METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
    DEFAULT lFLock TO .F.
 
    SWITCH ::oSql:nSystemID
-
-   // unnecessary code
-   //CASE SQLRDD_RDBMS_IBMDB2
-   //CASE SQLRDD_RDBMS_MYSQL
-   //CASE SQLRDD_RDBMS_MARIADB
-   //CASE SQLRDD_RDBMS_SYBASE
-   //   EXIT
 
    CASE SQLRDD_RDBMS_MSSQL7
    CASE SQLRDD_RDBMS_ORACLE
@@ -1850,13 +1836,7 @@ RETURN lRet
 
 METHOD SR_WORKAREA:UnlockTable(lClosing)
 
-   //LOCAL lRet := .T. (unnecessary)
-   //LOCAL aVet := {} (variable not used)
-   //LOCAL aResultSet := {} (variable not used)
    LOCAL nPos
-
-   //HB_SYMBOL_UNUSED(aVet)
-   //HB_SYMBOL_UNUSED(aResultSet)
 
    IF AScan(::aExclusive, {|x|x[1] == ::nThisArea}) == 0
       RETURN .T.
@@ -1869,12 +1849,6 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
    ENDIF
 
    SWITCH ::oSql:nSystemID
-   // unnecessary code
-   //CASE SQLRDD_RDBMS_IBMDB2
-   //CASE SQLRDD_RDBMS_MYSQL
-   //CASE SQLRDD_RDBMS_MARIADB
-   //CASE SQLRDD_RDBMS_SYBASE
-   //   EXIT
    CASE SQLRDD_RDBMS_MSSQL7
    CASE SQLRDD_RDBMS_ORACLE
    CASE SQLRDD_RDBMS_POSTGR
@@ -1890,7 +1864,7 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
       ASize(::aExclusive, Len(::aExclusive) - 1)
    ENDIF
 
-RETURN .T. //lRet
+RETURN .T.
 
 //----------------------------------------------------------------------------//
 
@@ -5720,11 +5694,6 @@ METHOD SR_WORKAREA:sqlClose()
          ENDIF
       ENDIF
    ENDIF
-
-   //IF ++s_nOperat > 100 (old code/to be deleted)
-   //   hb_gcAll(.T.)
-   //   s_nOperat := 0
-   //ENDIF
 
    IF ++::nOperat > 100 // TODO: mutex ?
       hb_gcAll(.T.)
