@@ -2143,8 +2143,6 @@ FUNCTION SR_SetLocks(uLocks, oCnn, nRetries)
             "', (select pg_backend_pid()) )"
          cDel := "DELETE FROM " + SR_GetToolsOwner() + ;
             "SR_MGMNTLOCKS WHERE SPID_ NOT IN (select pg_stat_get_backend_pid(pg_stat_get_backend_idset()))"
-         EXIT
-      CASE SQLRDD_RDBMS_IBMDB2 // TODO: unnecessary
       ENDSWITCH
 
       nRet := oCnn:oSqlTransact:Exec(cIns, .F.)
@@ -2262,20 +2260,11 @@ FUNCTION SR_ListLocks(oCnn, lAll)
          "SR_MGMNTLOCKS WHERE SPID_ NOT IN (select " + Chr(34) + "SID" + Chr(34) + " from " + ;
          IIf(oCnn:lCluster, "g", "") + "v$session)", .F.)
       EXIT
-   CASE SQLRDD_RDBMS_INGRES // TODO: unnecessary
-      EXIT
-   CASE SQLRDD_RDBMS_IBMDB2 // TODO: unnecessary
-      EXIT
-   CASE SQLRDD_RDBMS_SYBASE // TODO: unnecessary
-      EXIT
    CASE SQLRDD_RDBMS_MSSQL7
    CASE SQLRDD_RDBMS_MSSQL6
    CASE SQLRDD_RDBMS_AZURE
       oCnn:oSqlTransact:Exec("DELETE FROM " + SR_GetToolsOwner() + ;
          "SR_MGMNTLOCKS WHERE convert( CHAR(10), SPID_ ) + convert( CHAR(23), LOGIN_TIME_, 21 ) NOT IN (SELECT convert( CHAR(10), SPID) + CONVERT( CHAR(23), LOGIN_TIME, 21 ) FROM MASTER.DBO.SYSPROCESSES)", .F.)
-      EXIT
-   CASE SQLRDD_RDBMS_MYSQL // TODO: unnecessary
-   CASE SQLRDD_RDBMS_MARIADB // TODO: unnecessary
       EXIT
    CASE SQLRDD_RDBMS_POSTGR
       oCnn:oSqlTransact:Exec("DELETE FROM  " + SR_GetToolsOwner() + ;
