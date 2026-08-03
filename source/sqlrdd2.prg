@@ -3160,15 +3160,6 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                      ENDIF
                      cVal += IIf(!lFirst, ", ", "( ") + LTrim(Str(aBuffer[::hnRecno], 15))
                      lFirst := .F.
-                     EXIT
-                  CASE SQLRDD_RDBMS_INFORM // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_ORACLE // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_MSSQL7 // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_POSTGR // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_MSSQL6 // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_SYBASE // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_IBMDB2 // Use IDENTITY column (or similar) // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_AZURE // TODO: unnecessary
                   ENDSWITCH
                ENDIF
             ELSE
@@ -4046,11 +4037,6 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
       aFlds := {}
 
       SWITCH ::oSQL:nSystemID
-      CASE SQLRDD_RDBMS_IBMDB2
-      CASE SQLRDD_RDBMS_MYSQL
-      CASE SQLRDD_RDBMS_MARIADB
-      CASE SQLRDD_RDBMS_SYBASE
-         EXIT
       CASE SQLRDD_RDBMS_MSSQL7
       CASE SQLRDD_RDBMS_AZURE
          ::oSql:Exec("sp_pkeys " + ::cFileName, .T., .T., @aFlds)
@@ -4058,9 +4044,6 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
             ::hnRecno := AScan(::aFields, {|x|x[1] == AllTrim(Upper(aflds[1, 4]))})
             ::cRecnoName := aflds[1, 4]
          ENDIF
-         EXIT
-      CASE SQLRDD_RDBMS_ORACLE // TODO: unnecessary
-      CASE SQLRDD_RDBMS_POSTGR // TODO: unnecessary
       ENDSWITCH
 
       IF Empty(::hnRecno)
@@ -9044,9 +9027,7 @@ METHOD SR_WORKAREA:sqlLock(nType, uRecord)
             lRet := .F.
          ENDIF
       ENDIF
-      EXIT
 
-   CASE SQLRDD_RDBMS_CACHE // TODO: unnecessary
 /*
 drop function newage.LOCK
 drop function newage.UNLOCK

@@ -4782,10 +4782,6 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          ENDIF
          EXIT
 
-      CASE "V" // TODO: unnecessary
-         SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
-         EXIT
-
       SR_OTHERWISE
          SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
 
