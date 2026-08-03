@@ -307,10 +307,10 @@ RETURN NIL
 METHOD SR_CONNECTION:ListCatTables(cOwner)
 
    LOCAL aRet := {}
-   LOCAL aRet2 := {}
+   LOCAL aRet2 //:= {} (value not used)
    LOCAL i
 
-   HB_SYMBOL_UNUSED(aRet2)
+   //HB_SYMBOL_UNUSED(aRet2)
 
    DEFAULT cOwner TO SR_SetGlobalOwner()
 
@@ -694,9 +694,9 @@ RETURN SQL_SUCCESS
 
 METHOD SR_CONNECTION:Execute(cCommand, lErrMsg, nLogMode, cType, lNeverLog)
 
-   LOCAL nRet := 0
+   LOCAL nRet //:= 0 (value not used)
 
-   HB_SYMBOL_UNUSED(nRet)
+   //HB_SYMBOL_UNUSED(nRet)
 
    DEFAULT lErrMsg TO .T.
    DEFAULT lNeverLog TO .F.
@@ -1385,9 +1385,9 @@ RETURN cType
 
 METHOD SR_CONNECTION:SQLLen(nType, nLen, nDec)
 
-   LOCAL cType := "U"
+   //LOCAL cType := "U" (variable not used)
 
-   HB_SYMBOL_UNUSED(cType)
+   //HB_SYMBOL_UNUSED(cType)
 
    DEFAULT nDec TO -1
 
