@@ -43,7 +43,9 @@
 
 #include <hbclass.ch>
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ExpressionSimplifierBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ExpressionSimplifierBase
 
@@ -79,6 +81,8 @@ CLASS SR_ExpressionSimplifierBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionSimplifierBase:new(pFixVariables, pIgnoreRelations, pContext)
 
    IF pFixVariables != NIL
@@ -90,6 +94,8 @@ METHOD SR_ExpressionSimplifierBase:new(pFixVariables, pIgnoreRelations, pContext
    ::cContext := Upper(pContext)
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionSimplifierBase:SimplifyComposition(oExpression)
 
@@ -121,12 +127,16 @@ METHOD SR_ExpressionSimplifierBase:SimplifyComposition(oExpression)
 
 RETURN oExpression
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionSimplifierBase:CompositionAssessable(oExpression)
 RETURN       (oExpression:oOperand1:lSimplified .OR. ::Assessable(oExpression:oOperand1)) ;
        .AND. (oExpression:oOperand2:lSimplified .OR. ::Assessable(oExpression:oOperand2))
 
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ExpressionSimplifier FROM SR_ExpressionSimplifierBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ExpressionSimplifier FROM SR_ExpressionSimplifierBase
 
@@ -159,11 +169,15 @@ CLASS SR_ExpressionSimplifier FROM SR_ExpressionSimplifierBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionSimplifier:new(pFixVariables, pIgnoreRelations, pContext, pConditionSimplifier)
 
    ::_oConditionSimplifier := pConditionSimplifier
 
 RETURN ::super:new(pFixVariables, pIgnoreRelations, pContext)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionSimplifier:Simplify(oExpression)
 
@@ -248,6 +262,8 @@ METHOD SR_ExpressionSimplifier:Simplify(oExpression)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionSimplifier:Assessable(oExpression)
 
    LOCAL result
@@ -267,6 +283,8 @@ METHOD SR_ExpressionSimplifier:Assessable(oExpression)
    oExpression:lAssessable := result
 
 RETURN result
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionSimplifier:ValueAssessable(oExpression)
 
@@ -296,6 +314,8 @@ METHOD SR_ExpressionSimplifier:ValueAssessable(oExpression)
 
 RETURN lRet
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionSimplifier:FunctionAssessable(oExpression)
 
    LOCAL item
@@ -316,7 +336,9 @@ RETURN __DynsIsFun(__DynsGetIndex(oExpression:cFunctionName)) ;
    .AND. !oExpression:cFunctionName == "deleted" ;
    .AND. !oExpression:cFunctionName == "recno"
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ConditionSimplifier FROM SR_ExpressionSimplifierBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ConditionSimplifier FROM SR_ExpressionSimplifierBase
 
@@ -346,11 +368,15 @@ CLASS SR_ConditionSimplifier FROM SR_ExpressionSimplifierBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ConditionSimplifier:new(pFixVariables, pIgnoreRelations, pContext)
 
    ::_oExpressionSimplifier := SR_ExpressionSimplifier():new(pFixVariables, pIgnoreRelations, pContext, SELF)
 
 RETURN ::super:new(pFixVariables, pIgnoreRelations, pContext)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ConditionSimplifier:Simplify(oCondition)
 
@@ -389,6 +415,8 @@ METHOD SR_ConditionSimplifier:Simplify(oCondition)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ConditionSimplifier:Assessable(oCondition)
 
    LOCAL result
@@ -408,11 +436,15 @@ METHOD SR_ConditionSimplifier:Assessable(oCondition)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ConditionSimplifier:BooleanExprAssessable(oCondition)
 RETURN ::_oExpressionSimplifier:Assessable(oCondition:oExpression)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ConditionSimplifier:ComparisonAssessable(oCondition)
 RETURN       ::_oExpressionSimplifier:Assessable(oCondition:oOperand1) ;
        .AND. ::_oExpressionSimplifier:Assessable(oCondition:oOperand2)
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//

@@ -42,69 +42,11 @@
 // $END_LICENSE$
 
 #include <hbclass.ch>
-
 #include "sqlrdd.ch"
 
-///////////////////////////////////////////////////////////////////////////////
-
-FUNCTION SR_NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
-
-   DbSetRelation(cAlias, bRelation, cRelation, lScoped)
-   SR_RelationManager():new():AddRelation(SR_EnchancedRelationFactory():new(), Alias(), cAlias, cRelation)
-
-RETURN NIL
-
-FUNCTION SR_NewdbClearRelation()
-
-   dbClearRelation()
-   SR_RelationManager():new():Clear(Alias())
-
-RETURN NIL
-
-FUNCTION SR_Newdbclearfilter()
-
-   dbclearfilter()
-   SR_oGetWorkarea(Alias()):cFilterExpression := ""
-
-RETURN NIL
-
-FUNCTION SR_oGetWorkarea(cAlias)
-
-   LOCAL result
-   LOCAL oErr
-
-#ifdef __XHARBOUR__
-   TRY
-      result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
-   CATCH oErr
-      oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
-      throw(oErr)
-   END
-#else
-   BEGIN SEQUENCE WITH __BreakBlock()
-      result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
-   RECOVER USING oErr
-      oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
-      _SR_Throw(oErr)
-   END SEQUENCE
-#endif
-
-RETURN result
-
-PROCEDURE SR_SelectFirstAreaNotInUse()
-
-   LOCAL nArea
-
-   FOR nArea := 1 TO 65534
-      IF Empty(Alias(nArea))
-         DBSelectArea(nArea)
-         EXIT
-      ENDIF
-   NEXT
-
-RETURN
-
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_RelationBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_RelationBase
 
@@ -116,7 +58,9 @@ CLASS SR_RelationBase
 
 ENDCLASS
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_IndirectRelation FROM SR_RelationBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_IndirectRelation FROM SR_RelationBase
 
@@ -131,7 +75,9 @@ CLASS SR_IndirectRelation FROM SR_RelationBase
 
 ENDCLASS
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_DirectRelation FROM SR_RelationBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_DirectRelation FROM SR_RelationBase
 
@@ -142,6 +88,8 @@ CLASS SR_DirectRelation FROM SR_RelationBase
    METHOD new(pWorkarea1, pWorkarea2, pExpression)
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_DirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
 
@@ -160,7 +108,9 @@ METHOD SR_DirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_RelationFactory
+//----------------------------------------------------------------------------//
 
 CLASS SR_RelationFactory
 
@@ -172,6 +122,8 @@ CLASS SR_RelationFactory
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_RelationFactory:new()
 
    STATIC instance
@@ -182,7 +134,9 @@ METHOD SR_RelationFactory:new()
 
 RETURN instance
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_RelationManager
+//----------------------------------------------------------------------------//
 
 CLASS SR_RelationManager
 
@@ -209,6 +163,8 @@ CLASS SR_RelationManager
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_RelationManager:new()
 
    STATIC instance
@@ -219,12 +175,16 @@ METHOD SR_RelationManager:new()
 
 RETURN instance
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_RelationManager:Clear(cAlias)
 
    ::oInternDictionary:Clear()
    RemoveAll(::aDirectRelations, {|y|Lower(y:oWorkarea1:cAlias) == Lower(cAlias)})
 
 RETURN NIL
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_RelationManager:AddRelation(oFactory, pAlias1, pAlias2, pExpression)
 
@@ -241,6 +201,8 @@ METHOD SR_RelationManager:AddRelation(oFactory, pAlias1, pAlias2, pExpression)
    ::oInternDictionary:Clear()
 
 RETURN NIL
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_RelationManager:GetRelations(cAlias1, cAlias2)
 
@@ -279,6 +241,8 @@ METHOD SR_RelationManager:GetRelations(cAlias1, cAlias2)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_RelationManager:BuildRelations(oIndirectRelation, cAlias1, cAlias2)
 
    LOCAL result := {}
@@ -311,7 +275,9 @@ METHOD SR_RelationManager:BuildRelations(oIndirectRelation, cAlias1, cAlias2)
 
 RETURN result
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_DbIndex
+//----------------------------------------------------------------------------//
 
 CLASS SR_DbIndex
 
@@ -353,6 +319,8 @@ CLASS SR_DbIndex
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_DbIndex:new(pWorkarea, pName)
 
    IF HB_IsChar(pWorkarea)
@@ -366,6 +334,8 @@ METHOD SR_DbIndex:new(pWorkarea, pName)
 
 RETURN SELF
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_DbIndex:lIsSynthetic()
 
    IF ::_lIsSynthetic == NIL
@@ -373,6 +343,8 @@ METHOD SR_DbIndex:lIsSynthetic()
    ENDIF
 
 RETURN ::_lIsSynthetic
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_DbIndex:aDbFields()
 
@@ -392,6 +364,8 @@ METHOD SR_DbIndex:aDbFields()
 
 RETURN ::_aDbFields
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_DbIndex:nLength()
 
    LOCAL item
@@ -405,7 +379,9 @@ METHOD SR_DbIndex:nLength()
 
 RETURN ::_nLength
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_DbField
+//----------------------------------------------------------------------------//
 
 CLASS SR_DbField
 
@@ -423,6 +399,8 @@ CLASS SR_DbField
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_DbField:new(pName, pType, pLength)
 
    ::cName := pName
@@ -431,7 +409,9 @@ METHOD SR_DbField:new(pName, pType, pLength)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ClipperExpression
+//----------------------------------------------------------------------------//
 
 CLASS SR_ClipperExpression
 
@@ -470,6 +450,8 @@ CLASS SR_ClipperExpression
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ClipperExpression:new(pContext, pValue, pIgnoreRelations)
 
    ::cContext := pContext
@@ -478,6 +460,8 @@ METHOD SR_ClipperExpression:new(pContext, pValue, pIgnoreRelations)
 
 RETURN SELF
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ClipperExpression:cEvaluation()
 
    IF ::_cEvaluation == NIL
@@ -485,6 +469,8 @@ METHOD SR_ClipperExpression:cEvaluation()
    ENDIF
 
 RETURN NIL
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ClipperExpression:Evaluate(lIgnoreRelations)
 
@@ -534,6 +520,8 @@ METHOD SR_ClipperExpression:Evaluate(lIgnoreRelations)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ClipperExpression:cType()
 
    IF ::_cType == NIL
@@ -541,6 +529,8 @@ METHOD SR_ClipperExpression:cType()
    ENDIF
 
 RETURN ::_cType
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ClipperExpression:nLength()
 
@@ -550,7 +540,76 @@ METHOD SR_ClipperExpression:nLength()
 
 RETURN ::_nLength
 
-**************************************************
+//----------------------------------------------------------------------------//
+// FUNCTIONS
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_NewDbSetRelation(cAlias, bRelation, cRelation, lScoped)
+
+   DbSetRelation(cAlias, bRelation, cRelation, lScoped)
+   SR_RelationManager():new():AddRelation(SR_EnchancedRelationFactory():new(), Alias(), cAlias, cRelation)
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_NewdbClearRelation()
+
+   dbClearRelation()
+   SR_RelationManager():new():Clear(Alias())
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_Newdbclearfilter()
+
+   dbclearfilter()
+   SR_oGetWorkarea(Alias()):cFilterExpression := ""
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_oGetWorkarea(cAlias)
+
+   LOCAL result
+   LOCAL oErr
+
+#ifdef __XHARBOUR__
+   TRY
+      result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
+   CATCH oErr
+      oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
+      throw(oErr)
+   END
+#else
+   BEGIN SEQUENCE WITH __BreakBlock()
+      result := &cAlias->(dbInfo(DBI_INTERNAL_OBJECT))
+   RECOVER USING oErr
+      oErr:Description += " (cAlias: " + cstr(cAlias) + ")"
+      _SR_Throw(oErr)
+   END SEQUENCE
+#endif
+
+RETURN result
+
+//----------------------------------------------------------------------------//
+
+PROCEDURE SR_SelectFirstAreaNotInUse()
+
+   LOCAL nArea
+
+   FOR nArea := 1 TO 65534
+      IF Empty(Alias(nArea))
+         DBSelectArea(nArea)
+         EXIT
+      ENDIF
+   NEXT
+
+RETURN
+
+//----------------------------------------------------------------------------//
 
 #if 0
 FUNCTION ExtendWorkarea() // TODO: requires xhbcls.ch (to be deleted)
@@ -570,6 +629,8 @@ FUNCTION ExtendWorkarea() // TODO: requires xhbcls.ch (to be deleted)
 RETURN NIL
 #endif
 
+//----------------------------------------------------------------------------//
+
 FUNCTION SR_ExtendWorkarea() // do not requires xhbcls.ch
 
    __clsAddMsg(SR_WORKAREA():classH, "aIndexes", __cls_IncData(SR_WORKAREA():classH), 32 + 1, NIL,)
@@ -585,6 +646,8 @@ FUNCTION SR_ExtendWorkarea() // do not requires xhbcls.ch
    __clsModMsg(SR_WORKAREA():classH, "ParseForClause", @SR_NewParseForClause())
 
 RETURN NIL
+
+//----------------------------------------------------------------------------//
 
 FUNCTION SR_GetIndexes(lOrdered)
 
@@ -606,6 +669,8 @@ FUNCTION SR_GetIndexes(lOrdered)
 
 RETURN ::aIndexes
 
+//----------------------------------------------------------------------------//
+
 FUNCTION SR_GetControllingIndex()
 
    LOCAL self := HB_QSelf()
@@ -617,6 +682,8 @@ FUNCTION SR_GetControllingIndex()
    ENDIF
 
 RETURN aIndexes[nIndex]
+
+//----------------------------------------------------------------------------//
 
 FUNCTION SR_GetFields()
 
@@ -645,11 +712,15 @@ FUNCTION SR_GetFields()
 
 RETURN ::aDbFields
 
+//----------------------------------------------------------------------------//
+
 FUNCTION SR_GetFieldByName(cName)
 
    LOCAL self := HB_QSelf()
 
 RETURN SR_xFirst(::GetFields(), {|x|Lower(x:cName) == Lower(cName)})
+
+//----------------------------------------------------------------------------//
 
 // should be implemented : GetTranslations() and lFixVariables
 FUNCTION SR_NewParseForClause(cFor, lFixVariables)
@@ -668,4 +739,4 @@ FUNCTION SR_NewParseForClause(cFor, lFixVariables)
 
 RETURN otranslator:Translate(oCondition)
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//

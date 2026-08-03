@@ -43,7 +43,9 @@
 
 #include <hbclass.ch>
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ParserBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ParserBase
 
@@ -97,11 +99,15 @@ CLASS SR_ParserBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ParserBase:new(pWorkarea)
 
    ::_cDefaultContext := pWorkarea
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ParserBase:SortedOperators
 
@@ -111,8 +117,12 @@ METHOD SR_ParserBase:SortedOperators
 
 RETURN ::_SortedOperators
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ParserBase:Parse(cExpression)
 RETURN ::InternParse("?" + AtRepl(Chr(34), cExpression, "'") + "?", ::_cDefaultContext)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ParserBase:InternParse(cExpression, cAlias)
 
@@ -127,6 +137,8 @@ METHOD SR_ParserBase:InternParse(cExpression, cAlias)
    ENDIF
 
 RETURN oOperand1
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ParserBase:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
@@ -162,6 +174,8 @@ METHOD SR_ParserBase:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOp
 
 RETURN NIL
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ParserBase:ResolveParenthesis(cExpression)
 
    LOCAL i
@@ -189,6 +203,8 @@ METHOD SR_ParserBase:ResolveParenthesis(cExpression)
 
 RETURN NIL
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ParserBase:RestoreParenthesis(cExpression)
 
    LOCAL cParenthesis := "("
@@ -206,11 +222,15 @@ METHOD SR_ParserBase:RestoreParenthesis(cExpression)
 
 RETURN cExpression
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ParserBase:ExtractAlias1(cExpression)
 
    STATIC regex := "^(\w+)\s*->\s*(\?.+\?)$"
 
 RETURN ::ExtractAlias(@cExpression, regex)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ParserBase:ExtractAlias2(cExpression)
 
@@ -218,11 +238,15 @@ METHOD SR_ParserBase:ExtractAlias2(cExpression)
 
 RETURN ::ExtractAlias(@cExpression, regex)
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ParserBase:ExtractAlias3(cExpression)
 
    STATIC regex := "^(\w+)\s*->\s*(\w+)$"
 
 RETURN ::ExtractAlias(@cExpression, regex)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ParserBase:ExtractAlias(cExpression, cRegex)
 
@@ -236,7 +260,9 @@ METHOD SR_ParserBase:ExtractAlias(cExpression, cRegex)
 
 RETURN NIL
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ExpressionParser FROM SR_ParserBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ExpressionParser FROM SR_ParserBase
 
@@ -257,6 +283,8 @@ CLASS SR_ExpressionParser FROM SR_ParserBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionParser:GetOperators()
 
    IF ::_Operators == NIL
@@ -271,8 +299,12 @@ METHOD SR_ExpressionParser:GetOperators()
 
 RETURN ::_Operators
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
 RETURN SR_ComposedExpression():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
@@ -312,6 +344,8 @@ METHOD SR_ExpressionParser:GetOperands(cExpression, cAlias, oOperand1, oConnecto
 
 RETURN NIL
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionParser:GetParameter(cExpression, cAlias)
 
    STATIC cRegParam := "^(@?)(.*)$"
@@ -331,7 +365,9 @@ METHOD SR_ExpressionParser:GetParameter(cExpression, cAlias)
 
 RETURN SR_Parameter():new(oExpression, lByRef)
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ConditionParser FROM SR_ParserBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ConditionParser FROM SR_ParserBase
 
@@ -357,6 +393,8 @@ CLASS SR_ConditionParser FROM SR_ParserBase
    METHOD new(pWorkarea)
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ConditionParser:new(pWorkarea)
 
@@ -387,6 +425,8 @@ METHOD SR_ConditionParser:new(pWorkarea)
 
 RETURN SELF
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ConditionParser:GetOperators()
 
    IF ::_Operators == NIL
@@ -398,8 +438,12 @@ METHOD SR_ConditionParser:GetOperators()
 
 RETURN ::_Operators
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ConditionParser:GetComposedExpression(cAlias, cExpression, oOperand1, oConnector, oOperand2)
 RETURN SR_ComposedCondition():new(cAlias, ::RestoreParenthesis(cExpression), oOperand1, oConnector, oOperand2)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector, oOperand2)
 
@@ -446,7 +490,9 @@ METHOD SR_ConditionParser:GetOperands(cExpression, cAlias, oOperand1, oConnector
 
 RETURN NIL
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// FUNCTIONS
+//----------------------------------------------------------------------------//
 
 STATIC FUNCTION GetConditionOrExpression(cExpression, cAlias)
 
@@ -462,6 +508,8 @@ STATIC FUNCTION GetConditionOrExpression(cExpression, cAlias)
 
 RETURN oResult
 
+//----------------------------------------------------------------------------//
+
 FUNCTION SR_cPattern(cString)
 
    LOCAL item
@@ -473,4 +521,4 @@ FUNCTION SR_cPattern(cString)
 
 RETURN cString
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
