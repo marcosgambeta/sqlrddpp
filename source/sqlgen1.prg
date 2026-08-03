@@ -1753,6 +1753,7 @@ HB_FUNC_STATIC(SR_ISCOMPAROP)
   case SQL_PCODE_OPERATOR_IS_NULL:
   case SQL_PCODE_OPERATOR_IS_NOT_NULL:
     hb_retl(HB_TRUE);
+    break;
   default:
     hb_retl(HB_FALSE);
   }
@@ -1764,6 +1765,7 @@ HB_FUNC_STATIC(SR_ISCOMPARNULLOP)
   case SQL_PCODE_OPERATOR_IS_NULL:
   case SQL_PCODE_OPERATOR_IS_NOT_NULL:
     hb_retl(HB_TRUE);
+    break;
   default:
     hb_retl(HB_FALSE);
   }
