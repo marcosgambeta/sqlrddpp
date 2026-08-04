@@ -86,6 +86,7 @@ PROCEDURE Main()
    ? "bof()", bof()
    ? "eof()", eof()
    ? "reccount()", reccount()
+   ? "recsize()", recsize()
 
    IF reccount() == 0 // < NUM_REC
       ? "Adding records"
