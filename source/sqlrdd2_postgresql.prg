@@ -416,7 +416,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    METHOD SetBOF()
    METHOD sqlKeyCount(lFilters)
-   METHOD sqlRecSize()
+   //METHOD sqlRecSize() (moved to base class)
    METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
    METHOD GetSelectList()
    METHOD RecnoExpr()   // add recno filters
@@ -587,16 +587,16 @@ RETURN aRet[1]
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:sqlRecSize()
-
-   LOCAL i := 0
-   LOCAL aCol
-
-   FOR EACH aCol IN ::aFields
-      i += aCol[3]
-   NEXT
-
-RETURN i
+// METHOD SR_WORKAREA:sqlRecSize() (moved to base class)
+//
+//    LOCAL i := 0
+//    LOCAL aCol
+//
+//    FOR EACH aCol IN ::aFields
+//       i += aCol[3]
+//    NEXT
+//
+// RETURN i
 
 //-------------------------------------------------------------------------------------------------------------------//
 
