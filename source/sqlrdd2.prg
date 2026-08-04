@@ -10010,15 +10010,13 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             CASE SQLRDD_RDBMS_FIREBR4
             CASE SQLRDD_RDBMS_FIREBR5
             CASE SQLRDD_RDBMS_CACHE
-               cSql += "DATE"
-               EXIT
-            CASE SQLRDD_RDBMS_SYBASE
-               cSql += "DATETIME"
-               EXIT
             CASE SQLRDD_RDBMS_IBMDB2
             CASE SQLRDD_RDBMS_POSTGR
             CASE SQLRDD_RDBMS_ADABAS
                cSql += "DATE"
+               EXIT
+            CASE SQLRDD_RDBMS_SYBASE
+               cSql += "DATETIME"
                EXIT
             CASE SQLRDD_RDBMS_ACCESS
             CASE SQLRDD_RDBMS_MSSQL6
@@ -10047,6 +10045,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             CASE SQLRDD_RDBMS_FIREBR3
             CASE SQLRDD_RDBMS_FIREBR4
             CASE SQLRDD_RDBMS_FIREBR5
+            CASE SQLRDD_RDBMS_INFORM
                cSql += "BOOLEAN"
                EXIT
             CASE SQLRDD_RDBMS_MYSQL
@@ -10055,6 +10054,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                EXIT
             CASE SQLRDD_RDBMS_IBMDB2
             CASE SQLRDD_RDBMS_FIREBR
+            CASE SQLRDD_RDBMS_ORACLE
                cSql += "SMALLINT"
                EXIT
             CASE SQLRDD_RDBMS_SYBASE
@@ -10062,12 +10062,6 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                EXIT
             CASE SQLRDD_RDBMS_SQLANY
                cSql += "NUMERIC (1) NULL"
-               EXIT
-            CASE SQLRDD_RDBMS_ORACLE
-               cSql += "SMALLINT"
-               EXIT
-            CASE SQLRDD_RDBMS_INFORM
-               cSql += "BOOLEAN"
                EXIT
             CASE SQLRDD_RDBMS_INGRES
                cSql += "tinyint"
@@ -10099,6 +10093,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             CASE SQLRDD_RDBMS_INFORM
             CASE SQLRDD_RDBMS_CACHE
             CASE SQLRDD_RDBMS_AZURE
+            CASE SQLRDD_RDBMS_SYBASE
                cSql += "TEXT"
                EXIT
             CASE SQLRDD_RDBMS_MYSQL
@@ -10113,9 +10108,6 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                EXIT
             CASE SQLRDD_RDBMS_ACCESS
                cSql += "TEXT NULL"
-               EXIT
-            CASE SQLRDD_RDBMS_SYBASE
-               cSql += "TEXT"
                EXIT
             CASE SQLRDD_RDBMS_SQLANY
                cSql += "LONG VARCHAR"
