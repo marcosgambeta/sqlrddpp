@@ -195,6 +195,10 @@ CLASS SR_BASE_WORKAREA
    // For Self recno filter
    Data aRecnoFilter AS ARRAY INIT {}
 
+   // SQL Methods
+
+   METHOD ResetStatistics() INLINE (::nCurrentFetch := SR_FetchSize(), ::aInfo[SR_AINFO_SKIPCOUNT] := 0, ::cLastMove := "OPEN")
+
    METHOD SetQuickAppend(l)
 
 ENDCLASS

@@ -223,7 +223,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    // SQL Methods
 
-   METHOD ResetStatistics() INLINE (::nCurrentFetch := SR_FetchSize(), ::aInfo[SR_AINFO_SKIPCOUNT] := 0, ::cLastMove := "OPEN")
+   //METHOD ResetStatistics() INLINE (::nCurrentFetch := SR_FetchSize(), ::aInfo[SR_AINFO_SKIPCOUNT] := 0, ::cLastMove := "OPEN") (moved to base class)
    METHOD GetNextRecordNumber()
 
    METHOD IniFields(lReSelect, lLoadCache, aInfo)
