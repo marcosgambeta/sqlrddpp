@@ -275,105 +275,105 @@ CLASS SR_BASE_WORKAREA
 
    // Workarea methods reflexion
 
-//    // METHOD sqlBof                       C level implemented - reads from ::aInfo
-//    // METHOD sqlEof                       C level implemented - reads from ::aInfo
-//    // METHOD qlFound                      C level implemented - reads from ::aInfo
+   // METHOD sqlBof                       C level implemented - reads from ::aInfo
+   // METHOD sqlEof                       C level implemented - reads from ::aInfo
+   // METHOD qlFound                      C level implemented - reads from ::aInfo
 //    METHOD sqlGoBottom()
 //    METHOD sqlGoPhantom()
 //    METHOD sqlGoTo(uRecord, lNoOptimize)
-//    // METHOD sqlGoToId                    C level implemented - maps to sqlGoTo()
+   // METHOD sqlGoToId                    C level implemented - maps to sqlGoTo()
 //    METHOD sqlGoTop()
 //    METHOD sqlSeek(uKey, lSoft, lLast)
-//    // METHOD sqlSkip                      C level implemented
-//    // METHOD sqlSkipFilter                Superclass does the job
-//    // METHOD sqlSkipRaw                   C level implemented
-//    // METHOD sqlAddField                  Superclass does the job
-//    // METHOD sqlAppend()                  C level implemented
-//    // METHOD sqlCreateFields              Superclass does the job
+   // METHOD sqlSkip                      C level implemented
+   // METHOD sqlSkipFilter                Superclass does the job
+   // METHOD sqlSkipRaw                   C level implemented
+   // METHOD sqlAddField                  Superclass does the job
+   // METHOD sqlAppend()                  C level implemented
+   // METHOD sqlCreateFields              Superclass does the job
 //    METHOD sqlDeleteRec()
-//    // METHOD sqlDeleted                   C level implemented - reads from ::aInfo
-//    // METHOD sqlFieldCount                C level implemented - reads from ::aInfo
-//    // METHOD sqlFieldDisplay              Superclass does the job
-//    // METHOD sqlFieldInfo                 Superclass does the job
-//    // METHOD sqlFieldName                 Superclass does the job
+   // METHOD sqlDeleted                   C level implemented - reads from ::aInfo
+   // METHOD sqlFieldCount                C level implemented - reads from ::aInfo
+   // METHOD sqlFieldDisplay              Superclass does the job
+   // METHOD sqlFieldInfo                 Superclass does the job
+   // METHOD sqlFieldName                 Superclass does the job
 //    METHOD sqlFlush()
-//    // METHOD sqlGetRec                    Superclass does the job
+   // METHOD sqlGetRec                    Superclass does the job
 //    METHOD sqlGetValue(nField)
-//    // METHOD sqlGetVarLen                 C level implemented - reads from aLocalBuffer
+   // METHOD sqlGetVarLen                 C level implemented - reads from aLocalBuffer
 //    METHOD sqlGoCold()                     // NOT called from SQLRDD1.C
-//    // METHOD sqlGoHot                     C level implemented - writes to ::aInfo
-//    // METHOD sqlPutRec                    Superclass does the job
-//    // METHOD sqlPutValue                  C level implemented - writes to aLocalBuffer
+   // METHOD sqlGoHot                     C level implemented - writes to ::aInfo
+   // METHOD sqlPutRec                    Superclass does the job
+   // METHOD sqlPutValue                  C level implemented - writes to aLocalBuffer
 //    METHOD sqlRecall()
-//    // METHOD sqlRecCount                  C level implemented - reads from ::aInfo
-//    // METHOD sqlRecInfo                   Superclass does the job
-//    // METHOD sqlRecNo                     C level implemented - reads from ::aInfo
-//    // METHOD sqlSetFieldExtent            Superclass does the job
-//    // METHOD sqlAlias                     Superclass does the job
+   // METHOD sqlRecCount                  C level implemented - reads from ::aInfo
+   // METHOD sqlRecInfo                   Superclass does the job
+   // METHOD sqlRecNo                     C level implemented - reads from ::aInfo
+   // METHOD sqlSetFieldExtent            Superclass does the job
+   // METHOD sqlAlias                     Superclass does the job
 //    METHOD sqlClose()
 //    METHOD sqlCreate(aStruct, cFileName, cAlias, nArea)
-//    // METHOD sqlInfo                      C level implemented - reads from ::aInfo
-//    // METHOD sqlNewArea                   Superclass does the job
-//    //METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias) // the constructor
+   // METHOD sqlInfo                      C level implemented - reads from ::aInfo
+   // METHOD sqlNewArea                   Superclass does the job
+   // METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias) // the constructor
 //    METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection)
-//    // METHOD sqlRelease                   Superclass does the job
-//    // METHOD sqlStructSize                C level implemented
-//    // METHOD sqlSysName                   C level implemented
-//    // METHOD sqlEval                      Superclass does the job
+   // METHOD sqlRelease                   Superclass does the job
+   // METHOD sqlStructSize                C level implemented
+   // METHOD sqlSysName                   C level implemented
+   // METHOD sqlEval                      Superclass does the job
 //    METHOD sqlPack()
-//    // METHOD sqlPackRec                   Superclass does the job
-//    // METHOD sqlSort                      Superclass does the job - UNSUPPORTED
-//    // METHOD sqlTrans                     Superclass does the job
-//    // METHOD sqlTransRec                  Superclass does the job
+   // METHOD sqlPackRec                   Superclass does the job
+   // METHOD sqlSort                      Superclass does the job - UNSUPPORTED
+   // METHOD sqlTrans                     Superclass does the job
+   // METHOD sqlTransRec                  Superclass does the job
 //    METHOD sqlZap()
-//    // METHOD sqlChildEnd                  C level implemented
-//    // METHOD sqlChildStart                C level implemented
-//    // METHOD sqlChildSync                 C level implemented
-//    // METHOD sqlSyncChildren              C level implemented
-//    // METHOD sqlClearRel                  C level implemented
-//    // METHOD sqlForceRel                  C level implemented
-//    // METHOD sqlRelArea                   Superclass does the job
-//    // METHOD sqlRelEval                   Superclass does the job
-//    // METHOD sqlRelText                   Superclass does the job
-//    // METHOD sqlSetRel                    C level implemented
+   // METHOD sqlChildEnd                  C level implemented
+   // METHOD sqlChildStart                C level implemented
+   // METHOD sqlChildSync                 C level implemented
+   // METHOD sqlSyncChildren              C level implemented
+   // METHOD sqlClearRel                  C level implemented
+   // METHOD sqlForceRel                  C level implemented
+   // METHOD sqlRelArea                   Superclass does the job
+   // METHOD sqlRelEval                   Superclass does the job
+   // METHOD sqlRelText                   Superclass does the job
+   // METHOD sqlSetRel                    C level implemented
 //    METHOD sqlOrderListAdd(cBagName, cTag)
 //    METHOD sqlOrderListClear()
-//    // METHOD sqlOrderListDelete           Superclass does the job
+   // METHOD sqlOrderListDelete           Superclass does the job
 //    METHOD sqlOrderListFocus(uOrder, cBag)
 //    METHOD sqlOrderListNum(uOrder)       // Used by sqlOrderInfo
-//    // METHOD sqlOrderListRebuild          Superclass does the job - UNSUPPORTED
+   // METHOD sqlOrderListRebuild          Superclass does the job - UNSUPPORTED
 //    METHOD sqlOrderCondition(cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc)
 //    METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable, aTargetColumns, lEnable)
 //    METHOD sqlOrderDestroy(uOrder, cBag)
-//    // METHOD sqlOrderInfo                 C level implemented - reads from ::aInfo and ::aIndex
+   // METHOD sqlOrderInfo                 C level implemented - reads from ::aInfo and ::aIndex
 //    METHOD sqlClearFilter()
-//    // METHOD sqlClearLocate               Superclass does the job
+   // METHOD sqlClearLocate               Superclass does the job
 //    METHOD sqlClearScope()
-//    // METHOD sqlCountScope                Superclass does the job
+   // METHOD sqlCountScope                Superclass does the job
 //    METHOD sqlFilterText()
-//    // METHOD sqlScopeInfo                 C level implemented
+   // METHOD sqlScopeInfo                 C level implemented
 //    METHOD sqlSetFilter(cFilter)
-//    // METHOD sqlSetLocate                 Superclass does the job
+   // METHOD sqlSetLocate                 Superclass does the job
 //    METHOD sqlSetScope(nType, uValue)
-//    // METHOD sqlSkipScope                 Superclass does the job
-//    // METHOD sqlCompile                   Superclass does the job
-//    // METHOD sqlError                     Superclass does the job
-//    // METHOD sqlEvalBlock                 Superclass does the job
-//    // METHOD sqlRawLock                   Superclass does the job
+   // METHOD sqlSkipScope                 Superclass does the job
+   // METHOD sqlCompile                   Superclass does the job
+   // METHOD sqlError                     Superclass does the job
+   // METHOD sqlEvalBlock                 Superclass does the job
+   // METHOD sqlRawLock                   Superclass does the job
 //    METHOD sqlLock(nType, uRecord)
 //    METHOD sqlUnLock(uRecord)
-//    // METHOD sqlCloseMemFile              Superclass does the job - UNSUPPORTED
-//    // METHOD sqlCreateMemFile             Superclass does the job - UNSUPPORTED
-//    // METHOD sqlGetValueFile              Superclass does the job - UNSUPPORTED
-//    // METHOD sqlOpenMemFile               Superclass does the job - UNSUPPORTED
-//    // METHOD sqlPutValueFile              Superclass does the job - UNSUPPORTED
-//    // METHOD sqlReadDBHeader              Superclass does the job - UNSUPPORTED
-//    // METHOD sqlWriteDBHeader             Superclass does the job - UNSUPPORTED
-//    // METHOD sqlExit                      Superclass does the job
+   // METHOD sqlCloseMemFile              Superclass does the job - UNSUPPORTED
+   // METHOD sqlCreateMemFile             Superclass does the job - UNSUPPORTED
+   // METHOD sqlGetValueFile              Superclass does the job - UNSUPPORTED
+   // METHOD sqlOpenMemFile               Superclass does the job - UNSUPPORTED
+   // METHOD sqlPutValueFile              Superclass does the job - UNSUPPORTED
+   // METHOD sqlReadDBHeader              Superclass does the job - UNSUPPORTED
+   // METHOD sqlWriteDBHeader             Superclass does the job - UNSUPPORTED
+   // METHOD sqlExit                      Superclass does the job
 //    METHOD sqlDrop(cFileName)
 //    METHOD sqlExists(cFileName)
-//    // METHOD sqlWhoCares                  Superclass does the job
-//
+   // METHOD sqlWhoCares                  Superclass does the job
+
 //    METHOD SetBOF()
 //    METHOD sqlKeyCount(lFilters)
    METHOD sqlRecSize()
