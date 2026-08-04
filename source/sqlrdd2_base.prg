@@ -234,7 +234,7 @@ CLASS SR_BASE_WORKAREA
 //    METHOD HasFilters()
 //    METHOD ParseForClause(cFor)
 //    METHOD OrdSetForClause(cFor, cForxBase)
-//    METHOD SetColPK(cColName)
+   METHOD SetColPK(cColName)
 //    METHOD ConvType(cData, cType, lPartialSeek, nThis, lLike)
 
 //    METHOD LoadRegisteredTags()
@@ -263,8 +263,8 @@ CLASS SR_BASE_WORKAREA
 
 //    //METHOD HistExpression(cAlias, cAlias)
 //    METHOD HistExpression(n, cAlias)
-//    METHOD DisableHistoric()
-//    METHOD EnableHistoric()
+   METHOD DisableHistoric()
+   METHOD EnableHistoric()
 //    METHOD SetCurrDate(d) INLINE IIf(d == NIL, ::CurrDate, ::CurrDate := d)
 //
 //    METHOD LineCount(lMsg) //METHOD LineCount()
@@ -350,7 +350,7 @@ CLASS SR_BASE_WORKAREA
    // METHOD sqlClearLocate               Superclass does the job
 //    METHOD sqlClearScope()
    // METHOD sqlCountScope                Superclass does the job
-//    METHOD sqlFilterText()
+   METHOD sqlFilterText()
    // METHOD sqlScopeInfo                 C level implemented
 //    METHOD sqlSetFilter(cFilter)
    // METHOD sqlSetLocate                 Superclass does the job
@@ -380,12 +380,61 @@ CLASS SR_BASE_WORKAREA
 //    METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
 //    METHOD GetSelectList()
 //    METHOD RecnoExpr()   // add recno filters
-//    // DESTRUCTOR WA_ENDED
+   // DESTRUCTOR WA_ENDED
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 // SR_BASE_WORKAREA class methods
+//----------------------------------------------------------------------------//
+
+// PROCEDURE SR_WORKAREA:WA_ENDED
+//
+//    ? "Cleanup:", "WORKAREA", ::cFileName
+//
+// RETURN
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:SetColPK(cColName)
+
+   LOCAL nPos := AScan(::aNames, {|x|x == Upper(cColName)})
+
+   IF nPos > 0
+      ::nPosCOlPK := nPos
+      ::cColPK := Upper(cColName)
+   ENDIF
+
+RETURN ::cColPK
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:DisableHistoric()
+
+   LOCAL i
+
+   ::lHistEnable := .F.
+   FOR i := 1 TO Len(::aIndex)
+      ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
+      ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
+   NEXT i
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:EnableHistoric()
+
+   LOCAL i
+
+   ::lHistEnable := .T.
+   FOR i := 1 TO Len(::aIndex)
+      ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
+      ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
+   NEXT i
+
+RETURN NIL
+
 //----------------------------------------------------------------------------//
 
 METHOD SR_BASE_WORKAREA:SetQuickAppend(l)
@@ -395,6 +444,16 @@ METHOD SR_BASE_WORKAREA:SetQuickAppend(l)
    ::lQuickAppend := l
 
 RETURN lOld
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlFilterText()
+
+   IF ::cFilter == NIL
+      RETURN ""
+   ENDIF
+
+RETURN ::cFilter
 
 //----------------------------------------------------------------------------//
 

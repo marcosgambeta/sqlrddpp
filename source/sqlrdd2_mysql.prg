@@ -156,7 +156,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD HasFilters()
    METHOD ParseForClause(cFor)
    METHOD OrdSetForClause(cFor, cForxBase)
-   METHOD SetColPK(cColName)
+   //METHOD SetColPK(cColName) (moved to base class)
    METHOD ConvType(cData, cType, lPartialSeek, nThis, lLike)
 
    METHOD LoadRegisteredTags()
@@ -184,8 +184,8 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    //METHOD HistExpression(cAlias, cAlias)
    METHOD HistExpression(n, cAlias)
-   METHOD DisableHistoric()
-   METHOD EnableHistoric()
+   //METHOD DisableHistoric() (moved to base class)
+   //METHOD EnableHistoric() (moved to base class)
    METHOD SetCurrDate(d) INLINE IIf(d == NIL, ::CurrDate, ::CurrDate := d)
 
    METHOD LineCount(lMsg) //METHOD LineCount()
@@ -220,7 +220,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD sqlOrderDestroy(uOrder, cBag)
    METHOD sqlClearFilter()
    METHOD sqlClearScope()
-   METHOD sqlFilterText()
+   //METHOD sqlFilterText() (moved to base class)
    METHOD sqlSetFilter(cFilter)
    METHOD sqlSetScope(nType, uValue)
    METHOD sqlLock(nType, uRecord)
@@ -233,13 +233,13 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
    METHOD GetSelectList()
    METHOD RecnoExpr()   // add recno filters
-   // DESTRUCTOR WA_ENDED
+   // DESTRUCTOR WA_ENDED (moved to base class)
 
 ENDCLASS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-// PROCEDURE SR_WORKAREA:WA_ENDED
+// PROCEDURE SR_WORKAREA:WA_ENDED (moved to base class)
 //
 //    ? "Cleanup:", "WORKAREA", ::cFileName
 //
@@ -295,13 +295,13 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:sqlFilterText()
-
-   IF ::cFilter == NIL
-      RETURN ""
-   ENDIF
-
-RETURN ::cFilter
+// METHOD SR_WORKAREA:sqlFilterText() (moved to base class)
+//
+//    IF ::cFilter == NIL
+//       RETURN ""
+//    ENDIF
+//
+// RETURN ::cFilter
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -969,44 +969,44 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:SetColPK(cColName)
-
-   LOCAL nPos := AScan(::aNames, {|x|x == Upper(cColName)})
-
-   IF nPos > 0
-      ::nPosCOlPK := nPos
-      ::cColPK := Upper(cColName)
-   ENDIF
-
-RETURN ::cColPK
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-METHOD SR_WORKAREA:DisableHistoric()
-
-   LOCAL i
-
-   ::lHistEnable := .F.
-   FOR i := 1 TO Len(::aIndex)
-      ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
-      ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
-   NEXT i
-
-RETURN NIL
+// METHOD SR_WORKAREA:SetColPK(cColName) (moved to base class)
+//
+//    LOCAL nPos := AScan(::aNames, {|x|x == Upper(cColName)})
+//
+//    IF nPos > 0
+//       ::nPosCOlPK := nPos
+//       ::cColPK := Upper(cColName)
+//    ENDIF
+//
+// RETURN ::cColPK
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:EnableHistoric()
+// METHOD SR_WORKAREA:DisableHistoric() (moved to base class)
+//
+//    LOCAL i
+//
+//    ::lHistEnable := .F.
+//    FOR i := 1 TO Len(::aIndex)
+//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
+//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
+//    NEXT i
+//
+// RETURN NIL
 
-   LOCAL i
+//-------------------------------------------------------------------------------------------------------------------//
 
-   ::lHistEnable := .T.
-   FOR i := 1 TO Len(::aIndex)
-      ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
-      ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
-   NEXT i
-
-RETURN NIL
+// METHOD SR_WORKAREA:EnableHistoric() (moved to base class)
+//
+//    LOCAL i
+//
+//    ::lHistEnable := .T.
+//    FOR i := 1 TO Len(::aIndex)
+//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
+//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
+//    NEXT i
+//
+// RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
