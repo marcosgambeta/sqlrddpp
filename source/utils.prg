@@ -74,6 +74,7 @@ REQUEST HB_Deserialize
 Static s_DtAtiv, s_lHistorico
 Static s__nCnt := 1
 Static s_lCreateAsHistoric := .F.
+STATIC s_lPostgreSQLEscapeString := .T.
 
 #ifdef HB_C52_UNDOC
 STATIC s_lNoAlert
@@ -545,7 +546,7 @@ STATIC FUNCTION SR_SubQuoted(cType, uData, nSystemID)
       CASE SQLRDD_RDBMS_MSSQL7
          RETURN "'" + RTrim(StrTran(uData, "'", "'" + "'")) + "'"
       CASE SQLRDD_RDBMS_POSTGR
-         RETURN "E'" + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
+         RETURN IIf(SR_GetPostgreSQLEscapeString(), "E'", "'") + StrTran(RTrim(StrTran(uData, "'", "'" + "'")), "\", "\\") + "'"
       SR_OTHERWISE
          RETURN "'" + RTrim(StrTran(uData, "'", "")) + "'"
       ENDSWITCH
@@ -2164,3 +2165,16 @@ RETURN NIL
 
 FUNCTION SR_Deserialize1(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
 RETURN HB_Deserialize(cSerial, nMaxLen, lRecursive, aObj, aHash, aArray, aBlock)
+
+//----------------------------------------------------------------------------//
+// Get/Set s_lPostgreSQLEscapeString
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_GetPostgreSQLEscapeString()
+RETURN s_lPostgreSQLEscapeString
+
+FUNCTION SR_SetPostgreSQLEscapeString(l)
+   s_lPostgreSQLEscapeString := l
+RETURN NIL
+
+//----------------------------------------------------------------------------//

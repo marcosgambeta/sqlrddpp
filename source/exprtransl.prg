@@ -48,12 +48,13 @@
 #include <dbinfo.ch>
 #include <hbclass.ch>
 #include <inkey.ch>
-
 #include "sqlrdd.ch"
 
 //#define DEBUG
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ExpressionTranslator
+//----------------------------------------------------------------------------//
 
 CLASS SR_ExpressionTranslator
 
@@ -194,6 +195,8 @@ CLASS SR_ExpressionTranslator
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
 
    IF HB_IsChar(pWorkarea)
@@ -210,6 +213,8 @@ METHOD SR_ExpressionTranslator:new(pWorkarea, pFixVariables, pSimplifyCondition,
    ENDIF
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionTranslator:GetTranslation(oCondition)
 
@@ -255,6 +260,8 @@ METHOD SR_ExpressionTranslator:GetTranslation(oCondition)
    oResult:cSQLCondition := SR_cJoin(aSQLConditions, " " + ::GetLogicalOperatorSymbol("and") + " ")
 
 RETURN oResult
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionTranslator:Translate(oExpression, x)
 
@@ -402,6 +409,8 @@ METHOD SR_ExpressionTranslator:Translate(oExpression, x)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:InternalTranslate(oExpression, x)
 
    LOCAL result
@@ -420,6 +429,8 @@ METHOD SR_ExpressionTranslator:InternalTranslate(oExpression, x)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:TranslateCondition(oCondition)
 
    LOCAL result
@@ -437,6 +448,8 @@ METHOD SR_ExpressionTranslator:TranslateCondition(oCondition)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:TranslateComposition(oSerialComposition)
 
     LOCAL cOperand1 := ::TranslateOperand(oSerialComposition:oOperand1, oSerialComposition:oOperator)
@@ -444,6 +457,8 @@ METHOD SR_ExpressionTranslator:TranslateComposition(oSerialComposition)
     LOCAL cOperator := ::GetSQLOperator(oSerialComposition:oOperator):aSymbols[1]
 
 RETURN cOperand1 + " " + cOperator + " " + cOperand2
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionTranslator:TranslateOperand(oOperand, oOperator)
 
@@ -456,11 +471,17 @@ METHOD SR_ExpressionTranslator:TranslateOperand(oOperand, oOperator)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:TranslateComparison(oComparison)
 RETURN ::TranslateExpression(oComparison:oOperand1) + " " + ::GetSQLOperator(oComparison:oOperator):aSymbols[1] + " " + ::TranslateExpression(oComparison:oOperand2)
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:TranslateBooleanExpression(oBooleanExpression)
 RETURN ::TranslateExpression(oBooleanExpression:oExpression)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionTranslator:TranslateExpression(oExpression)
 
@@ -479,6 +500,8 @@ METHOD SR_ExpressionTranslator:TranslateExpression(oExpression)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:TranslateFunctionExpression(oFunctionExpression)
 
    LOCAL aParameters
@@ -496,6 +519,8 @@ METHOD SR_ExpressionTranslator:TranslateFunctionExpression(oFunctionExpression)
 
 RETURN cSQLFunctionName + "(" + SR_cJoin(aParameters, ",") + ")"
 
+//----------------------------------------------------------------------------//
+
 #if 0
 METHOD SR_ExpressionTranslator:CheckParams(oFunctionExpression)
 
@@ -505,6 +530,8 @@ METHOD SR_ExpressionTranslator:CheckParams(oFunctionExpression)
 
 RETURN
 #endif
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionTranslator:TranslateValueExpression(oValueExpression)
 
@@ -576,11 +603,17 @@ METHOD SR_ExpressionTranslator:TranslateValueExpression(oValueExpression)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:GetSQLAlias(oWorkArea)
 RETURN IIf(oWorkArea == ::_oDefaultContext, "A", Upper(oWorkArea:cAlias))
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:FormatField(oWorkArea, cFieldName)
 RETURN ::GetSQLAlias(oWorkArea) + "." + Upper(AllTrim(cFieldName)) // SR_DBQUALIFY
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionTranslator:GetSQLOperator(oOperator)
 
@@ -597,8 +630,12 @@ METHOD SR_ExpressionTranslator:GetSQLOperator(oOperator)
 
 RETURN aSQLOperators[AScan(aSQLOperators, {|x|x:cName == oOperator:cName})]
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionTranslator:GetOperatorSymbol(aOperators, cName)
 RETURN SR_xFirst(aOperators, {|x|x:cName == cName}):aSymbols[1]
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionTranslator:TranslateRelationExpression(oDirectRelation)
 
@@ -645,7 +682,9 @@ METHOD SR_ExpressionTranslator:TranslateRelationExpression(oDirectRelation)
 
 RETURN cRelationExpr + " " + ::GetComparisonOperatorSymbol("equal") + " " + cIndexExpr
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_MSSQLExpressionTranslator FROM SR_ExpressionTranslator
+//----------------------------------------------------------------------------//
 
 CLASS SR_MSSQLExpressionTranslator FROM SR_ExpressionTranslator
 
@@ -693,11 +732,15 @@ CLASS SR_MSSQLExpressionTranslator FROM SR_ExpressionTranslator
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_MSSQLExpressionTranslator:new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
 
    ::aUDF := {"padl", "padr", "padc", "valtype", "transform", "at", "rat", "strtran", "min", "max"}
 
 RETURN ::super:new(pWorkarea, pFixVariables, pSimplifyCondition, pIndexExpression)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_MSSQLExpressionTranslator:TranslateComparison(oComparison)
 
@@ -720,6 +763,8 @@ METHOD SR_MSSQLExpressionTranslator:TranslateComparison(oComparison)
    ENDIF
 
 RETURN NIL
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_MSSQLExpressionTranslator:TranslateFunctionExpression(oFunctionExpression)
 
@@ -869,8 +914,12 @@ METHOD SR_MSSQLExpressionTranslator:TranslateFunctionExpression(oFunctionExpress
 
 RETURN ::super:TranslateFunctionExpression(oFunctionExpression)
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_MSSQLExpressionTranslator:TranslateBooleanExpression(oBooleanExpression)
 RETURN ::super:TranslateBooleanExpression(oBooleanExpression) + " = 1"
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_MSSQLExpressionTranslator:GetFunctionName(oFunctionExpression)
 
@@ -891,8 +940,12 @@ METHOD SR_MSSQLExpressionTranslator:GetFunctionName(oFunctionExpression)
 
 RETURN NIL
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_MSSQLExpressionTranslator:GetNewTranslator(pFixVariables, pSimplifyCondition, pIndexExpression)
 RETURN SR_MSSQLExpressionTranslator():new(::_oDefaultContext, pFixVariables, pSimplifyCondition, pIndexExpression)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_MSSQLExpressionTranslator:GetComparisonOperators()
 
@@ -911,6 +964,8 @@ METHOD SR_MSSQLExpressionTranslator:GetComparisonOperators()
 
 RETURN ::_aComparisonOperators
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_MSSQLExpressionTranslator:GetLogicalOperators()
 
    IF ::_aLogicalOperators == NIL
@@ -922,6 +977,8 @@ METHOD SR_MSSQLExpressionTranslator:GetLogicalOperators()
    ENDIF
 
 RETURN ::_aLogicalOperators
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_MSSQLExpressionTranslator:GetArithmeticOperators()
 
@@ -938,7 +995,9 @@ METHOD SR_MSSQLExpressionTranslator:GetArithmeticOperators()
 
 RETURN ::_aArithmeticOperators
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_TranslationResult
+//----------------------------------------------------------------------------//
 
 CLASS SR_TranslationResult
 
@@ -953,7 +1012,9 @@ CLASS SR_TranslationResult
 
 ENDCLASS
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_EnchancedDirectRelation FROM SR_DirectRelation
+//----------------------------------------------------------------------------//
 
 CLASS SR_EnchancedDirectRelation FROM SR_DirectRelation
 
@@ -998,6 +1059,8 @@ CLASS SR_EnchancedDirectRelation FROM SR_DirectRelation
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_EnchancedDirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
 
    LOCAL indexLength
@@ -1009,6 +1072,8 @@ METHOD SR_EnchancedDirectRelation:new(pWorkarea1, pWorkarea2, pExpression)
    ::nMaxLength := Min(::oClipperExpression:nLength, indexLength)
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_EnchancedDirectRelation:oExpression(xValue)
 
@@ -1026,6 +1091,8 @@ METHOD SR_EnchancedDirectRelation:oExpression(xValue)
 
 RETURN ::_oExpression
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_EnchancedDirectRelation:oIndexExpression(xValue)
 
    LOCAL cIndexExpr
@@ -1042,6 +1109,8 @@ METHOD SR_EnchancedDirectRelation:oIndexExpression(xValue)
 
 RETURN ::_oIndexExpression
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_EnchancedDirectRelation:aDependingContexts()
 
    IF ::_aDependingContexts == NIL
@@ -1050,7 +1119,9 @@ METHOD SR_EnchancedDirectRelation:aDependingContexts()
 
 RETURN ::_aDependingContexts
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_EnchancedRelationFactory FROM SR_RelationFactory
+//----------------------------------------------------------------------------//
 
 CLASS SR_EnchancedRelationFactory FROM SR_RelationFactory
 
@@ -1062,6 +1133,8 @@ CLASS SR_EnchancedRelationFactory FROM SR_RelationFactory
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_EnchancedRelationFactory:new()
 
    STATIC instance
@@ -1072,7 +1145,9 @@ METHOD SR_EnchancedRelationFactory:new()
 
 RETURN instance
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// FUNCTIONS
+//----------------------------------------------------------------------------//
 
 FUNCTION SR_SplitCondition(oCondition, aConditions)
 
@@ -1083,6 +1158,8 @@ FUNCTION SR_SplitCondition(oCondition, aConditions)
    AAdd(aConditions, oCondition)
 
 RETURN aConditions
+
+//----------------------------------------------------------------------------//
 
 FUNCTION SR_GetJointsFields(oRelationExpr, oIndexExpr, oWorkArea1, oWorkArea2, aFields1, aFields2)
 
@@ -1111,4 +1188,4 @@ FUNCTION SR_GetJointsFields(oRelationExpr, oIndexExpr, oWorkArea1, oWorkArea2, a
 
 RETURN .F.
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//

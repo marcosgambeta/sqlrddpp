@@ -126,12 +126,10 @@ STATIC s_lGoTopOnFirstInteract := .T. // Get/Set implemented
 STATIC s_lUseDTHISTAuto := .F. // Get/Set implemented
 STATIC s_nLineCountResult := 0 // Get/Set implemented
 STATIC s_cGlobalOwner := "" // Get/Set implemented
-//STATIC s_nOperat := 0 // changed to CLASSDATA
 STATIC s_cMySqlMemoDataType := "MEDIUMBLOB" // Get/Set implemented
 STATIC s_cMySqlNumericDataType := "REAL" // Get/Set implemented
 STATIC s_lUseDBCatalogs := .F. // Get/Set implemented
 STATIC s_lAllowRelationsInIndx := .F. // Get/Set implemented
-//STATIC s_____lOld (deprecated)
 STATIC s_nMininumVarchar2Size := 31
 STATIC s_lOracleSyntheticVirtual := .T. // Get/Set implemented
 
@@ -318,7 +316,7 @@ CLASS SR_WORKAREA
 
    METHOD FCount() INLINE ::nFields
    METHOD SetNextDt(d) INLINE ::dNextDt := d
-   METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated)
+   METHOD SetQuickAppend(l)
 
    // Table maintanance stuff
 
@@ -1191,7 +1189,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
                IF AllTrim(aCols[i]) == ::cRecnoName .OR. AllTrim(aCols[i]) == "R_E_C_N_O_" .AND. Len(aCols) == 1
                   EXIT
                ENDIF
-               aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, ',"', Chr(34)) + AllTrim(aCols[i]) + Chr(34)
+               aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, "," + Chr(34), Chr(34)) + AllTrim(aCols[i]) + Chr(34)
                IF AllTrim(aCols[i]) == ::cRecnoName .OR. AllTrim(aCols[i]) == "R_E_C_N_O_"
                   EXIT
                ENDIF
@@ -1304,7 +1302,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
                   IF aCols[1, 1] == ::cRecnoName .OR. aCols[1, 1] == "R_E_C_N_O_" .AND. i == 1
                      EXIT
                   ENDIF
-                  aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, ',"', Chr(34)) + aCols[1, 1] + Chr(34)
+                  aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, "," + Chr(34), Chr(34)) + aCols[1, 1] + Chr(34)
                   IF aCols[1, 1] == ::cRecnoName .OR. aCols[1, 1] == "R_E_C_N_O_"
                      EXIT
                   ENDIF
@@ -1344,7 +1342,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
                   IF AllTrim(aCols[i]) == ::cRecnoName .OR. AllTrim(aCols[i]) == "R_E_C_N_O_" .AND. Len(aCols) == 1
                      EXIT
                   ENDIF
-                  aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, ',"', Chr(34)) + AllTrim(aCols[i]) + Chr(34)
+                  aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, "," + Chr(34), Chr(34)) + AllTrim(aCols[i]) + Chr(34)
                   IF AllTrim(aCols[i]) == ::cRecnoName .OR. AllTrim(aCols[i]) == "R_E_C_N_O_"
                      EXIT
                   ENDIF
@@ -1372,7 +1370,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
                IF AllTrim(aCols[i]) == ::cRecnoName .OR. AllTrim(aCols[i]) == "R_E_C_N_O_" .AND. Len(aCols) == 1
                   EXIT
                ENDIF
-               aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, ',"', Chr(34)) + AllTrim(aCols[i]) + Chr(34)
+               aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, "," + Chr(34), Chr(34)) + AllTrim(aCols[i]) + Chr(34)
                IF AllTrim(aCols[i]) == ::cRecnoName .OR. AllTrim(aCols[i]) == "R_E_C_N_O_"
                   EXIT
                ENDIF
@@ -1413,7 +1411,7 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
                IF (AllTrim(aCols[i]) == ::cRecnoName .OR. AllTrim(aCols[i]) == "R_E_C_N_O_") .AND. Len(aCols) == 1
                   EXIT
                ENDIF
-               aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, ',"', Chr(34)) + AllTrim(aCols[i]) + Chr(34)
+               aThisIndex[SR_INDEXMAN_IDXKEY] += IIf(i > 1, "," + Chr(34), Chr(34)) + AllTrim(aCols[i]) + Chr(34)
                IF AllTrim(aCols[i]) == ::cRecnoName .OR. AllTrim(aCols[i]) == "R_E_C_N_O_"
                   EXIT
                ENDIF
@@ -1770,14 +1768,9 @@ RETURN NIL
 METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
 
    LOCAL lRet := .T.
-   LOCAL aVet := {}
-   LOCAL aResultSet := {}
    LOCAL i
 
-   HB_SYMBOL_UNUSED(aVet)
-   HB_SYMBOL_UNUSED(aResultSet)
-
-   IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0    // Table already exclusive by this application instance
+   IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0 // Table already exclusive by this application instance
       RETURN .T.
    ENDIF
 
@@ -1785,12 +1778,6 @@ METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
    DEFAULT lFLock TO .F.
 
    SWITCH ::oSql:nSystemID
-
-   CASE SQLRDD_RDBMS_IBMDB2
-   CASE SQLRDD_RDBMS_MYSQL
-   CASE SQLRDD_RDBMS_MARIADB
-   CASE SQLRDD_RDBMS_SYBASE
-      EXIT
 
    CASE SQLRDD_RDBMS_MSSQL7
    CASE SQLRDD_RDBMS_ORACLE
@@ -1833,7 +1820,7 @@ METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
             EXIT
          ENDIF
 
-         Inkey(0.5)         // wait .5 seconds before trying again
+         Inkey(0.5) // wait .5 seconds before trying again
       NEXT i
 
    ENDSWITCH
@@ -1849,13 +1836,7 @@ RETURN lRet
 
 METHOD SR_WORKAREA:UnlockTable(lClosing)
 
-   LOCAL lRet := .T.
-   LOCAL aVet := {}
-   LOCAL aResultSet := {}
    LOCAL nPos
-
-   HB_SYMBOL_UNUSED(aVet)
-   HB_SYMBOL_UNUSED(aResultSet)
 
    IF AScan(::aExclusive, {|x|x[1] == ::nThisArea}) == 0
       RETURN .T.
@@ -1868,11 +1849,6 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
    ENDIF
 
    SWITCH ::oSql:nSystemID
-   CASE SQLRDD_RDBMS_IBMDB2
-   CASE SQLRDD_RDBMS_MYSQL
-   CASE SQLRDD_RDBMS_MARIADB
-   CASE SQLRDD_RDBMS_SYBASE
-      EXIT
    CASE SQLRDD_RDBMS_MSSQL7
    CASE SQLRDD_RDBMS_ORACLE
    CASE SQLRDD_RDBMS_POSTGR
@@ -1888,7 +1864,7 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
       ASize(::aExclusive, Len(::aExclusive) - 1)
    ENDIF
 
-RETURN lRet
+RETURN .T.
 
 //----------------------------------------------------------------------------//
 
@@ -3184,15 +3160,6 @@ METHOD SR_WORKAREA:WriteBuffer(lInsert, aBuffer)
                      ENDIF
                      cVal += IIf(!lFirst, ", ", "( ") + LTrim(Str(aBuffer[::hnRecno], 15))
                      lFirst := .F.
-                     EXIT
-                  CASE SQLRDD_RDBMS_INFORM // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_ORACLE // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_MSSQL7 // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_POSTGR // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_MSSQL6 // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_SYBASE // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_IBMDB2 // Use IDENTITY column (or similar) // TODO: unnecessary
-                  CASE SQLRDD_RDBMS_AZURE // TODO: unnecessary
                   ENDSWITCH
                ENDIF
             ELSE
@@ -4070,11 +4037,6 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
       aFlds := {}
 
       SWITCH ::oSQL:nSystemID
-      CASE SQLRDD_RDBMS_IBMDB2
-      CASE SQLRDD_RDBMS_MYSQL
-      CASE SQLRDD_RDBMS_MARIADB
-      CASE SQLRDD_RDBMS_SYBASE
-         EXIT
       CASE SQLRDD_RDBMS_MSSQL7
       CASE SQLRDD_RDBMS_AZURE
          ::oSql:Exec("sp_pkeys " + ::cFileName, .T., .T., @aFlds)
@@ -4082,9 +4044,6 @@ METHOD SR_WORKAREA:IniFields(lReSelect, lLoadCache, aInfo)
             ::hnRecno := AScan(::aFields, {|x|x[1] == AllTrim(Upper(aflds[1, 4]))})
             ::cRecnoName := aflds[1, 4]
          ENDIF
-         EXIT
-      CASE SQLRDD_RDBMS_ORACLE // TODO: unnecessary
-      CASE SQLRDD_RDBMS_POSTGR // TODO: unnecessary
       ENDSWITCH
 
       IF Empty(::hnRecno)
@@ -5718,11 +5677,6 @@ METHOD SR_WORKAREA:sqlClose()
          ENDIF
       ENDIF
    ENDIF
-
-   //IF ++s_nOperat > 100 (old code/to be deleted)
-   //   hb_gcAll(.T.)
-   //   s_nOperat := 0
-   //ENDIF
 
    IF ++::nOperat > 100 // TODO: mutex ?
       hb_gcAll(.T.)
@@ -9075,9 +9029,7 @@ METHOD SR_WORKAREA:sqlLock(nType, uRecord)
             lRet := .F.
          ENDIF
       ENDIF
-      EXIT
 
-   CASE SQLRDD_RDBMS_CACHE // TODO: unnecessary
 /*
 drop function newage.LOCK
 drop function newage.UNLOCK
@@ -9942,272 +9894,6 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             aCreate[i, SR_FIELD_TYPE] := "M"
          ENDIF
 
-#if 0 // original code for reference (to be deleted)
-         DO CASE // TODO: switch ?
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ISORACLE()
-            IF aCreate[i, SR_FIELD_LEN] > 30
-               cSql += "VARCHAR2(" + LTrim(Str(Min(aCreate[i, SR_FIELD_LEN], 4000), 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
-            ELSE
-               IF aCreate[i, SR_FIELD_LEN] > s_nMininumVarchar2Size .AND. s_nMininumVarchar2Size < 30
-                  cSql += "VARCHAR2(" + LTrim(Str(Min(aCreate[i, SR_FIELD_LEN], 4000), 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
-               ELSE
-               cSql += "CHAR(" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C" .OR. aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISSQLBAS()
-            IF aCreate[i, SR_FIELD_LEN] > 254 .OR. aCreate[i, SR_FIELD_TYPE] == "M"
-               cSql += "LONG VARCHAR"
-            ELSE
-               cSql += "VARCHAR(" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(lPrimary, " NOT NULL", "")
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. (ISMSSQL6() .OR. ISMSSQL7() .OR. ISPOSTGRESQL() .OR. ISCACHE() .OR. ISADABAS() .OR. ISAZURE())
-            IF ISMSSQL7() .OR. ISAZURE()
-               IF ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
-                  IF aCreate[i, SR_FIELD_LEN] > 10
-                     cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
-                  ELSE
-                     cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
-                  ENDIF
-               ELSE
-                  cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(!Empty(SR_SetCollation()), "COLLATE " + SR_SetCollation() + " " , "")  + IIf(lNotNull, " NOT NULL", "")
-               ENDIF
-            ELSEIF ISPOSTGRESQL() .AND. aCreate[i, SR_FIELD_LEN] > s_nMininumVarchar2Size -1 //10
-               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
-            ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-
-         CASE aCreate[i, SR_FIELD_TYPE] == "C" .AND. (ISMYSQL() .OR. ISMARIADB())
-            IF aCreate[i, SR_FIELD_LEN] > 255
-               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
-            ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. (ISIBMDB2())
-            IF aCreate[i, SR_FIELD_LEN] > 255
-               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
-            ELSE
-               cSql += "CHARACTER (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ISINGRES()
-            cSql += "varchar(" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY", IIf(lNotNull, " NOT NULL", ""))
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ISINFORM()
-            cSql += "CHARACTER (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY", IIf(lNotNull, " NOT NULL", ""))
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ISACCESS()
-            IF aCreate[i, SR_FIELD_LEN] > 254
-               cSql += "TEXT"
-            ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")"
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ISSQLANY()
-            IF aCreate[i, SR_FIELD_LEN] > 254
-               cSql += "LONG VARCHAR "
-            ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + "  " + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ISFIREBIRD()
-            IF aCreate[i, SR_FIELD_LEN] > 254
-               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
-            ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")  + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "C") .AND. ISSYBASE()
-            IF aCreate[i, SR_FIELD_LEN] > 30
-               cSql += "VARCHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
-            ELSE
-               cSql += "CHAR (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "D") .AND. (ISORACLE() .OR. ISSQLBAS() .OR. ISINFORM() .OR. ISINGRES() .OR. (ISMYSQL() .OR. ISMARIADB()) .OR. ISFIREBIRD() .OR. ISCACHE())
-            cSql += "DATE"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "D") .AND. ISSYBASE()
-            cSql += "DATETIME"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "D") .AND. (ISIBMDB2() .OR. ISPOSTGRESQL() .OR. ISADABAS())
-            cSql += "DATE"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "D") .AND. (ISACCESS() .OR. ISMSSQL6() .OR. ISMSSQL7() .OR. ISAZURE())
-            cSql += "DATETIME NULL"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "D") .AND. ISSQLANY()
-            cSql += "TIMESTAMP"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. (ISMSSQL6() .OR. ISMSSQL7() .OR. ISCACHE() .OR. ISAZURE())
-            cSql += "BIT"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. (ISPOSTGRESQL() .OR. ISADABAS())
-            cSql += "BOOLEAN"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. ((ISMYSQL() .OR. ISMARIADB()))
-            cSql += "TINYINT"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. (ISIBMDB2() .OR. ISFIREBIRD())
-            cSql += "SMALLINT"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. ISSYBASE()
-            cSql += "BIT NOT NULL"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. ISSQLANY()
-            cSql += "NUMERIC (1) NULL"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. ISORACLE()
-            cSql += "SMALLINT"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. ISINFORM()
-            cSql += "BOOLEAN"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "L") .AND. ISINGRES()
-            cSql += "tinyint"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISORACLE()
-            cSql += "CLOB"
-            cLobs += IIf(Empty(cLobs), "", ",") + SR_DBQUALIFY(AllTrim(cField), ::oSql:nSystemID)
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISIBMDB2()
-            cSql += "CLOB (256000) " + IIf("DB2/400" $ ::oSql:cSystemName, "",  " NOT LOGGED COMPACT")
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. (ISMSSQL6() .OR. ISMSSQL7() .OR. ISPOSTGRESQL() .OR. ISINFORM() .OR. ISCACHE() .OR. ISAZURE())
-            cSql += "TEXT"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. (ISMYSQL() .OR. ISMARIADB())
-            cSql += SR_GetMySqlMemoDataType()
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISADABAS()
-            cSql += "LONG"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISINGRES()
-            cSql += "long varchar"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISACCESS()
-            cSql += "TEXT NULL"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISSYBASE()
-            cSql += "TEXT"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISSQLANY()
-            cSql += "LONG VARCHAR"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "M") .AND. ISFIREBIRD()
-            cSql += "BLOB SUB_TYPE 1" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (ISMSSQL6() .OR. ISMSSQL7() .OR. ISSYBASE() .OR. ISAZURE()) .AND. cField == ::cRecnoName
-            IF ::oSql:lUseSequences
-               cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") IDENTITY"
-            ELSE
-            cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE"
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISCACHE() .AND. cField == ::cRecnoName
-            cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") UNIQUE " + [default objectscript '##class(] + SR_GetToolsOwner() + [SequenceControler).NEXTVAL("] + ::cFileName + [")']
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (ISMSSQL6() .OR. ISMSSQL7() .OR. ISSYBASE() .OR. ISCACHE() .OR. ISAZURE())
-            cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISPOSTGRESQL() .AND. cField == ::cRecnoName
-            cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") default (nextval('" + ::cOwner + LimitLen(::cFileName, 3) + "_SQ')) NOT NULL UNIQUE"
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISPOSTGRESQL()
-            cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ")  default 0 " + IIf(lNotNull, " NOT NULL ", "")
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (ISMYSQL() .OR. ISMARIADB()) .AND. cField == ::cRecnoName
-            cSql += "BIGINT (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + ") NOT NULL UNIQUE AUTO_INCREMENT "
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (ISMYSQL() .OR. ISMARIADB())
-            cSql += SR_GetMySqlNumericDataType() + " (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC])) + ") " + IIf(lNotNull, " NOT NULL ", "")
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISORACLE() .AND. cField == ::cRecnoName
-            cSql += "NUMBER (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ")" +;
-                 IIf(lNotNull, " NOT NULL UNIQUE USING INDEX ( CREATE INDEX " + ::cOwner + LimitLen(::cFileName, 3) + "_UK ON " + ::cOwner + SR_DBQUALIFY(cTblName, ::oSql:nSystemID) + "( " + ::cRecnoName + ")" +;
-                 IIf(Empty(SR_SetTblSpaceIndx()), "", " TABLESPACE " + SR_SetTblSpaceIndx()) , "") + ")"
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISORACLE()
-            cSql += "NUMBER (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISIBMDB2() .AND. cField == ::cRecnoName
-            IF ::oSql:lUseSequences
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1, NO CACHE)"
-            ELSE
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL"
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISADABAS() .AND. cField == ::cRecnoName
-            cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL DEFAULT SERIAL"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (ISIBMDB2() .OR. ISADABAS())
-            cSql += "DECIMAL(" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ")" + IIf(lNotNull, " NOT NULL", "")
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISINGRES() .AND. cField == ::cRecnoName
-            cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISINFORM() .AND. cField == ::cRecnoName
-            cSql += "SERIAL NOT NULL UNIQUE"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (ISINFORM() .OR. ISINGRES())
-            cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") " + IIf(lPrimary, "NOT NULL PRIMARY KEY ", IIf(lNotNull, " NOT NULL", ""))
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISSQLBAS()
-            IF aCreate[i, SR_FIELD_LEN] > 15
-               cSql += "NUMBER" + IIf(lPrimary, " NOT NULL", " ")
-            ELSE
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ")" + IIf(lPrimary, " NOT NULL", " ")
-            ENDIF
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISSQLANY()
-            cSql += "NUMERIC (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") " + IIf(lNotNull, " NOT NULL", "")
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISACCESS()
-            cSql += "NUMERIC"
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. ISFIREBIRD() .AND. cField == ::cRecnoName
-           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") NOT NULL UNIQUE "
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (ISFIREBIRD3() .OR. ISFIREBIRD4() .OR. ISFIREBIRD5()) .AND. cField == ::cRecnoName
-           cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN])) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) + ") GENERATED BY DEFAULT AS IDENTITY  NOT NULL UNIQUE "
-
-         CASE (aCreate[i, SR_FIELD_TYPE] == "N") .AND. (ISFIREBIRD() .OR. ISFIREBIRD3() .OR. ISFIREBIRD4() .OR. ISFIREBIRD5())
-            IF aCreate[i, SR_FIELD_LEN] > 18
-               cSql += "DOUBLE PRECISION" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
-            ELSE
-               cSql += "DECIMAL (" + LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0)) + "," + LTrim(Str(aCreate[i, SR_FIELD_DEC], 9, 0)) +  ")" + IIf(lPrimary .OR. lNotNull, " NOT NULL", " ")
-            ENDIF
-         // including xml data type
-         // postgresql datetime
-         CASE (aCreate[i, SR_FIELD_TYPE] == "T") .AND. (ISPOSTGRESQL())
-            IF aCreate[i, SR_FIELD_LEN] == 4
-               cSql += "time  without time zone "
-            ELSE
-               cSql += "timestamp  without time zone "
-            ENDIF
-         CASE (aCreate[i, SR_FIELD_TYPE] == "T") .AND. (ISMYSQL() .OR. ISMARIADB())
-         IF aCreate[i, SR_FIELD_LEN] == 4
-             cSql += "time "
-         ELSE
-             cSql += "DATETIME "
-         ENDIF
-
-         // oracle datetime
-         CASE (aCreate[i, SR_FIELD_TYPE] == "T") .AND. (ISORACLE() .OR. ISFIREBIRD() .OR. ISFIREBIRD3() .OR. ISFIREBIRD4() .OR. ISFIREBIRD5())
-            cSql += "TIMESTAMP "
-         CASE (aCreate[i, SR_FIELD_TYPE] == "T") .AND. (ISMSSQL7()) // .AND. ::OSQL:lSqlServer2008 .AND. SR_Getsql2008newTypes()
-            cSql += "DATETIME NULL "
-         CASE (aCreate[i, SR_FIELD_TYPE] == "T") .AND. (ISMYSQL() .OR. ISMARIADB())
-            cSql += "DATETIME "
-         CASE (aCreate[i, SR_FIELD_TYPE] == "V") .AND. (ISMSSQL7())
-             cSql += " VARBINARY(MAX) "
-
-         OTHERWISE
-            SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
-
-         ENDCASE
-#else
          SWITCH aCreate[i, SR_FIELD_TYPE]
 
 #define SR_FIELD_SIZE LTrim(Str(aCreate[i, SR_FIELD_LEN], 9, 0))
@@ -10290,6 +9976,9 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                ENDIF
                EXIT
             CASE SQLRDD_RDBMS_FIREBR
+            CASE SQLRDD_RDBMS_FIREBR3
+            CASE SQLRDD_RDBMS_FIREBR4
+            CASE SQLRDD_RDBMS_FIREBR5
                IF aCreate[i, SR_FIELD_LEN] > 254
                   cSql += "VARCHAR (" + SR_FIELD_SIZE + ")" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "") + IIf(lNotNull, " NOT NULL", "")
                ELSE
@@ -10319,16 +10008,17 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             CASE SQLRDD_RDBMS_MYSQL
             CASE SQLRDD_RDBMS_MARIADB
             CASE SQLRDD_RDBMS_FIREBR
+            CASE SQLRDD_RDBMS_FIREBR3
+            CASE SQLRDD_RDBMS_FIREBR4
+            CASE SQLRDD_RDBMS_FIREBR5
             CASE SQLRDD_RDBMS_CACHE
-               cSql += "DATE"
-               EXIT
-            CASE SQLRDD_RDBMS_SYBASE
-               cSql += "DATETIME"
-               EXIT
             CASE SQLRDD_RDBMS_IBMDB2
             CASE SQLRDD_RDBMS_POSTGR
             CASE SQLRDD_RDBMS_ADABAS
                cSql += "DATE"
+               EXIT
+            CASE SQLRDD_RDBMS_SYBASE
+               cSql += "DATETIME"
                EXIT
             CASE SQLRDD_RDBMS_ACCESS
             CASE SQLRDD_RDBMS_MSSQL6
@@ -10354,6 +10044,10 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                EXIT
             CASE SQLRDD_RDBMS_POSTGR
             CASE SQLRDD_RDBMS_ADABAS
+            CASE SQLRDD_RDBMS_FIREBR3
+            CASE SQLRDD_RDBMS_FIREBR4
+            CASE SQLRDD_RDBMS_FIREBR5
+            CASE SQLRDD_RDBMS_INFORM
                cSql += "BOOLEAN"
                EXIT
             CASE SQLRDD_RDBMS_MYSQL
@@ -10362,6 +10056,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                EXIT
             CASE SQLRDD_RDBMS_IBMDB2
             CASE SQLRDD_RDBMS_FIREBR
+            CASE SQLRDD_RDBMS_ORACLE
                cSql += "SMALLINT"
                EXIT
             CASE SQLRDD_RDBMS_SYBASE
@@ -10369,12 +10064,6 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
                EXIT
             CASE SQLRDD_RDBMS_SQLANY
                cSql += "NUMERIC (1) NULL"
-               EXIT
-            CASE SQLRDD_RDBMS_ORACLE
-               cSql += "SMALLINT"
-               EXIT
-            CASE SQLRDD_RDBMS_INFORM
-               cSql += "BOOLEAN"
                EXIT
             CASE SQLRDD_RDBMS_INGRES
                cSql += "tinyint"
@@ -10406,6 +10095,7 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             CASE SQLRDD_RDBMS_INFORM
             CASE SQLRDD_RDBMS_CACHE
             CASE SQLRDD_RDBMS_AZURE
+            CASE SQLRDD_RDBMS_SYBASE
                cSql += "TEXT"
                EXIT
             CASE SQLRDD_RDBMS_MYSQL
@@ -10421,13 +10111,13 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             CASE SQLRDD_RDBMS_ACCESS
                cSql += "TEXT NULL"
                EXIT
-            CASE SQLRDD_RDBMS_SYBASE
-               cSql += "TEXT"
-               EXIT
             CASE SQLRDD_RDBMS_SQLANY
                cSql += "LONG VARCHAR"
                EXIT
             CASE SQLRDD_RDBMS_FIREBR
+            CASE SQLRDD_RDBMS_FIREBR3
+            CASE SQLRDD_RDBMS_FIREBR4
+            CASE SQLRDD_RDBMS_FIREBR5
                cSql += "BLOB SUB_TYPE 1" + IIf(!Empty(::oSql:cCharSet), " CHARACTER SET " + ::oSql:cCharSet, "")
                EXIT
             SR_OTHERWISE
@@ -10559,7 +10249,6 @@ METHOD SR_WORKAREA:AlterColumns(aCreate, lDisplayErrorMessage, lBakcup)
             SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
 
          ENDSWITCH
-#endif
 
          IF ISORACLE() .AND. (!Empty(SR_SetTblSpaceLob())) .AND. (!Empty(cLobs))
             cSql += " LOB (" + cLobs + ") STORE AS (TABLESPACE " + SR_SetTblSpaceLob() + ")"

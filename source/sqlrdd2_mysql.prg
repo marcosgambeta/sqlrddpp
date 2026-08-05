@@ -98,133 +98,14 @@ STATIC s_ItP3
 #endif
 */
 
-//STATIC s_nOperat := 0 // changed to CLASSDATA
-//STATIC s_____lOld // changed to LOCAL
 STATIC s_nMininumVarchar2Size := 31
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
-#if 0 // moved to SR_BASE_WORKAREA
-   CLASSDATA nCnt
-   CLASSDATA cWSID
-   CLASSDATA aExclusive       AS ARRAY    INIT {}
-   CLASSDATA nOperat          AS NUMERIC  INIT 0
-
-   DATA aInfo         AS ARRAY INIT {.T., .T., .F., 0, 0, 0, .F., .F., 0, 0, .F., .F., 0, 0, .T., 0, .F., 0, .F., 0, 0, 0, 0, 0}  // See sqlrdd.ch, SR_AINFO_*
-   DATA aLocked       AS ARRAY INIT {}
-   DATA aIndex        AS ARRAY INIT {}
-   DATA aIndexMgmnt   AS ARRAY INIT {}
-   DATA aConstrMgmnt  AS ARRAY INIT {}
-   DATA aCache        AS ARRAY INIT Array(SR_CACHE_PAGE_SIZE * 3)
-   DATA aLocalBuffer  AS ARRAY INIT {}
-   DATA aOldBuffer    AS ARRAY INIT {}
-   DATA aEmptyBuffer  AS ARRAY INIT {}
-   DATA aSelectList   AS ARRAY INIT {}
-
-   DATA nThisArea     AS NUMERIC INIT 0
-   DATA nFetchSize    AS NUMERIC INIT SR_FetchSize()
-
-   DATA cOwner        AS CHARACTER INIT ""
-   DATA cColPK        AS CHARACTER INIT ""
-   DATA cFor          AS CHARACTER INIT ""
-   DATA cScope        AS CHARACTER INIT ""
-   DATA cOriginalFN   AS CHARACTER INIT ""
-   DATA cRights       AS CHARACTER INIT ""
-   DATA cRecnoName    AS CHARACTER INIT ""
-   DATA cDeletedName  AS CHARACTER INIT ""
-
-   DATA cQualifiedTableName  AS CHARACTER
-   DATA lTableIsSelect       INIT .F.
-
-   DATA Optmizer_1s
-   DATA Optmizer_1e
-   DATA Optmizer_ns
-   DATA Optmizer_ne
-
-   DATA nCurrentFetch   AS NUMERIC INIT SR_FetchSize()
-   DATA nSkipCount      AS NUMERIC INIT 0
-   DATA nLastRecordAded AS NUMERIC INIT -1
-   DATA nLastRefresh    AS NUMERIC INIT 0
-   DATA hnRecno         AS NUMERIC INIT 0
-   DATA hnDeleted       AS NUMERIC INIT 0
-
-   DATA cLastMove       AS CHARACTER INIT ""
-   DATA cLastComm       AS CHARACTER INIT ""
-
-   DATA lStable        AS LOGICAL INIT .T.
-   DATA lOrderValid    AS LOGICAL INIT .F.
-   DATA lTableLocked   AS LOGICAL INIT .F.
-   DATA lHistoric      AS LOGICAL INIT .F.
-   DATA lHistEnable    AS LOGICAL INIT .T.
-   DATA lNoData        AS LOGICAL INIT .F.
-   DATA lEmptyTable    AS LOGICAL INIT .F.
-   DATA lVers          AS LOGICAL INIT .T.
-   DATA lDisableFlts   AS LOGICAL INIT .F.
-   DATA lSharedLock    AS LOGICAL INIT .F.
-   DATA lOpened        AS LOGICAL INIT .T.
-   DATA lCreating      AS LOGICAL INIT .F.
-   DATA lQuickAppend   AS LOGICAL INIT .F.
-   DATA lUseSequences  AS LOGICAL INIT .T.
-
-   DATA lCollectingBehavior  AS LOGICAL INIT .T.
-   DATA lAllColumnsSelected  AS LOGICAL INIT .F.
-
-   DATA nTCCompat      AS NUMERIC INIT 0      // TopConnect compatibility mode
-
-   DATA nSequencePerTable  AS NUMERIC INIT SEQ_NOTDEFINED
-
-   DATA bScope    AS CODEBLOCK INIT {||.T.}
-   DATA bFilter   AS CODEBLOCK INIT {||.T.}
-
-   DATA oSql      AS OBJECT
-
-   DATA cFileName
-   DATA aFields
-   DATA aIniFields
-   DATA aNames
-   DATA aNamesLower
-   DATA nPosColPK
-   DATA cAlias
-   DATA aFilters
-   DATA nFields
-   DATA CurrDate
-   DATA cFltUsr
-   DATA cFilter
-   DATA nLogMode
-   DATA lCanSel
-   DATA lCanUpd
-   DATA lCanIns
-   DATA lCanDel
-   DATA nRelacType
-   DATA lISAM
-   DATA cCustomSQL
-   DATA nLastRec
-   DATA lGoTopOnFirstInteract
-   DATA aLastOrdCond
-
-   DATA lFetchAll AS LOGICAL INIT .F.
-   DATA aFetch    AS ARRAY   INIT {}
-
-   DATA cDel
-   DATA cUpd
-   DATA cIns
-   DATA nPosDtHist
-   DATA dNextDt                              // Date value for next INSERT with Historic
-
-   DATA aPosition
-   DATA aQuoted
-   DATA aDat
-   DATA nPartialDateSeek
-
-   // For Self recno filter
-   Data aRecnoFilter AS ARRAY INIT {}
-#endif
-
    // SQL Methods
 
-   METHOD ResetStatistics() INLINE (::nCurrentFetch := SR_FetchSize(), ::aInfo[SR_AINFO_SKIPCOUNT] := 0, ::cLastMove := "OPEN")
    METHOD GetNextRecordNumber()
 
    METHOD IniFields(lReSelect, lLoadCache, aInfo)
@@ -275,7 +156,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD HasFilters()
    METHOD ParseForClause(cFor)
    METHOD OrdSetForClause(cFor, cForxBase)
-   METHOD SetColPK(cColName)
+   //METHOD SetColPK(cColName) (moved to base class)
    METHOD ConvType(cData, cType, lPartialSeek, nThis, lLike)
 
    METHOD LoadRegisteredTags()
@@ -285,7 +166,6 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    METHOD FCount() INLINE ::nFields
    METHOD SetNextDt(d) INLINE ::dNextDt := d
-   METHOD SetQuickAppend(l) //INLINE (s_____lOld := ::lQuickAppend, ::lQuickAppend := l, s_____lOld) (INLINE deprecated)
 
    // Table maintanance stuff
 
@@ -304,8 +184,8 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    //METHOD HistExpression(cAlias, cAlias)
    METHOD HistExpression(n, cAlias)
-   METHOD DisableHistoric()
-   METHOD EnableHistoric()
+   //METHOD DisableHistoric() (moved to base class)
+   //METHOD EnableHistoric() (moved to base class)
    METHOD SetCurrDate(d) INLINE IIf(d == NIL, ::CurrDate, ::CurrDate := d)
 
    METHOD LineCount(lMsg) //METHOD LineCount()
@@ -316,118 +196,50 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    // Workarea methods reflexion
 
-   // METHOD sqlBof                       C level implemented - reads from ::aInfo
-   // METHOD sqlEof                       C level implemented - reads from ::aInfo
-   // METHOD qlFound                      C level implemented - reads from ::aInfo
    METHOD sqlGoBottom()
    METHOD sqlGoPhantom()
    METHOD sqlGoTo(uRecord, lNoOptimize)
-   // METHOD sqlGoToId                    C level implemented - maps to sqlGoTo()
    METHOD sqlGoTop()
    METHOD sqlSeek(uKey, lSoft, lLast)
-   // METHOD sqlSkip                      C level implemented
-   // METHOD sqlSkipFilter                Superclass does the job
-   // METHOD sqlSkipRaw                   C level implemented
-   // METHOD sqlAddField                  Superclass does the job
-   // METHOD sqlAppend()                  C level implemented
-   // METHOD sqlCreateFields              Superclass does the job
    METHOD sqlDeleteRec()
-   // METHOD sqlDeleted                   C level implemented - reads from ::aInfo
-   // METHOD sqlFieldCount                C level implemented - reads from ::aInfo
-   // METHOD sqlFieldDisplay              Superclass does the job
-   // METHOD sqlFieldInfo                 Superclass does the job
-   // METHOD sqlFieldName                 Superclass does the job
    METHOD sqlFlush()
-   // METHOD sqlGetRec                    Superclass does the job
    METHOD sqlGetValue(nField)
-   // METHOD sqlGetVarLen                 C level implemented - reads from aLocalBuffer
    METHOD sqlGoCold()                     // NOT called from SQLRDD1.C
-   // METHOD sqlGoHot                     C level implemented - writes to ::aInfo
-   // METHOD sqlPutRec                    Superclass does the job
-   // METHOD sqlPutValue                  C level implemented - writes to aLocalBuffer
    METHOD sqlRecall()
-   // METHOD sqlRecCount                  C level implemented - reads from ::aInfo
-   // METHOD sqlRecInfo                   Superclass does the job
-   // METHOD sqlRecNo                     C level implemented - reads from ::aInfo
-   // METHOD sqlSetFieldExtent            Superclass does the job
-   // METHOD sqlAlias                     Superclass does the job
    METHOD sqlClose()
    METHOD sqlCreate(aStruct, cFileName, cAlias, nArea)
-   // METHOD sqlInfo                      C level implemented - reads from ::aInfo
-   // METHOD sqlNewArea                   Superclass does the job
-   //METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias) // the constructor
    METHOD sqlOpenArea(cFileName, nArea, lShared, lReadOnly, cAlias, nDBConnection)
-   // METHOD sqlRelease                   Superclass does the job
-   // METHOD sqlStructSize                C level implemented
-   // METHOD sqlSysName                   C level implemented
-   // METHOD sqlEval                      Superclass does the job
    METHOD sqlPack()
-   // METHOD sqlPackRec                   Superclass does the job
-   // METHOD sqlSort                      Superclass does the job - UNSUPPORTED
-   // METHOD sqlTrans                     Superclass does the job
-   // METHOD sqlTransRec                  Superclass does the job
    METHOD sqlZap()
-   // METHOD sqlChildEnd                  C level implemented
-   // METHOD sqlChildStart                C level implemented
-   // METHOD sqlChildSync                 C level implemented
-   // METHOD sqlSyncChildren              C level implemented
-   // METHOD sqlClearRel                  C level implemented
-   // METHOD sqlForceRel                  C level implemented
-   // METHOD sqlRelArea                   Superclass does the job
-   // METHOD sqlRelEval                   Superclass does the job
-   // METHOD sqlRelText                   Superclass does the job
-   // METHOD sqlSetRel                    C level implemented
    METHOD sqlOrderListAdd(cBagName, cTag)
    METHOD sqlOrderListClear()
-   // METHOD sqlOrderListDelete           Superclass does the job
    METHOD sqlOrderListFocus(uOrder, cBag)
    METHOD sqlOrderListNum(uOrder)       // Used by sqlOrderInfo
-   // METHOD sqlOrderListRebuild          Superclass does the job - UNSUPPORTED
    METHOD sqlOrderCondition(cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc)
    METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable, aTargetColumns, lEnable)
    METHOD sqlOrderDestroy(uOrder, cBag)
-   // METHOD sqlOrderInfo                 C level implemented - reads from ::aInfo and ::aIndex
    METHOD sqlClearFilter()
-   // METHOD sqlClearLocate               Superclass does the job
    METHOD sqlClearScope()
-   // METHOD sqlCountScope                Superclass does the job
-   METHOD sqlFilterText()
-   // METHOD sqlScopeInfo                 C level implemented
+   //METHOD sqlFilterText() (moved to base class)
    METHOD sqlSetFilter(cFilter)
-   // METHOD sqlSetLocate                 Superclass does the job
    METHOD sqlSetScope(nType, uValue)
-   // METHOD sqlSkipScope                 Superclass does the job
-   // METHOD sqlCompile                   Superclass does the job
-   // METHOD sqlError                     Superclass does the job
-   // METHOD sqlEvalBlock                 Superclass does the job
-   // METHOD sqlRawLock                   Superclass does the job
    METHOD sqlLock(nType, uRecord)
    METHOD sqlUnLock(uRecord)
-   // METHOD sqlCloseMemFile              Superclass does the job - UNSUPPORTED
-   // METHOD sqlCreateMemFile             Superclass does the job - UNSUPPORTED
-   // METHOD sqlGetValueFile              Superclass does the job - UNSUPPORTED
-   // METHOD sqlOpenMemFile               Superclass does the job - UNSUPPORTED
-   // METHOD sqlPutValueFile              Superclass does the job - UNSUPPORTED
-   // METHOD sqlReadDBHeader              Superclass does the job - UNSUPPORTED
-   // METHOD sqlWriteDBHeader             Superclass does the job - UNSUPPORTED
-   // METHOD sqlExit                      Superclass does the job
    METHOD sqlDrop(cFileName)
    METHOD sqlExists(cFileName)
-   // METHOD sqlWhoCares                  Superclass does the job
 
    METHOD SetBOF()
    METHOD sqlKeyCount(lFilters)
-   METHOD sqlRecSize()
    METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
    METHOD GetSelectList()
    METHOD RecnoExpr()   // add recno filters
-   // DESTRUCTOR WA_ENDED
+   // DESTRUCTOR WA_ENDED (moved to base class)
 
 ENDCLASS
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-// PROCEDURE SR_WORKAREA:WA_ENDED
+// PROCEDURE SR_WORKAREA:WA_ENDED (moved to base class)
 //
 //    ? "Cleanup:", "WORKAREA", ::cFileName
 //
@@ -483,13 +295,13 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:sqlFilterText()
-
-   IF ::cFilter == NIL
-      RETURN ""
-   ENDIF
-
-RETURN ::cFilter
+// METHOD SR_WORKAREA:sqlFilterText() (moved to base class)
+//
+//    IF ::cFilter == NIL
+//       RETURN ""
+//    ENDIF
+//
+// RETURN ::cFilter
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -576,19 +388,6 @@ METHOD SR_WORKAREA:sqlGetValue(nField)
    ENDIF
 
 RETURN aRet[1]
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-METHOD SR_WORKAREA:sqlRecSize()
-
-   LOCAL i := 0
-   LOCAL aCol
-
-   FOR EACH aCol IN ::aFields
-      i += aCol[3]
-   NEXT
-
-RETURN i
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -1170,44 +969,44 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:SetColPK(cColName)
-
-   LOCAL nPos := AScan(::aNames, {|x|x == Upper(cColName)})
-
-   IF nPos > 0
-      ::nPosCOlPK := nPos
-      ::cColPK := Upper(cColName)
-   ENDIF
-
-RETURN ::cColPK
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-METHOD SR_WORKAREA:DisableHistoric()
-
-   LOCAL i
-
-   ::lHistEnable := .F.
-   FOR i := 1 TO Len(::aIndex)
-      ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
-      ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
-   NEXT i
-
-RETURN NIL
+// METHOD SR_WORKAREA:SetColPK(cColName) (moved to base class)
+//
+//    LOCAL nPos := AScan(::aNames, {|x|x == Upper(cColName)})
+//
+//    IF nPos > 0
+//       ::nPosCOlPK := nPos
+//       ::cColPK := Upper(cColName)
+//    ENDIF
+//
+// RETURN ::cColPK
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:EnableHistoric()
+// METHOD SR_WORKAREA:DisableHistoric() (moved to base class)
+//
+//    LOCAL i
+//
+//    ::lHistEnable := .F.
+//    FOR i := 1 TO Len(::aIndex)
+//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
+//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
+//    NEXT i
+//
+// RETURN NIL
 
-   LOCAL i
+//-------------------------------------------------------------------------------------------------------------------//
 
-   ::lHistEnable := .T.
-   FOR i := 1 TO Len(::aIndex)
-      ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
-      ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
-   NEXT i
-
-RETURN NIL
+// METHOD SR_WORKAREA:EnableHistoric() (moved to base class)
+//
+//    LOCAL i
+//
+//    ::lHistEnable := .T.
+//    FOR i := 1 TO Len(::aIndex)
+//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
+//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
+//    NEXT i
+//
+// RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -1472,38 +1271,25 @@ RETURN NIL
 
 METHOD SR_WORKAREA:LockTable(lCheck4ExcLock, lFLock)
 
-   LOCAL lRet := .T.
-   LOCAL aVet := {}
-   LOCAL aResultSet := {}
-
-   HB_SYMBOL_UNUSED(aVet)
-   HB_SYMBOL_UNUSED(aResultSet)
-
-   IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0    // Table already exclusive by this application instance
+   IF AScan(::aExclusive, {|x|x[2] == ::cFileName}) > 0 // Table already exclusive by this application instance
       RETURN .T.
    ENDIF
 
    DEFAULT lCheck4ExcLock TO .T.
    DEFAULT lFLock TO .F.
 
-   IF !lCheck4ExcLock .AND. lRet
+   IF !lCheck4ExcLock
       ::lTableLocked := .T.
       AAdd(::aExclusive, {::nThisArea, ::cFileName})
    ENDIF
 
-RETURN lRet
+RETURN .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
 METHOD SR_WORKAREA:UnlockTable(lClosing)
 
-   LOCAL lRet := .T.
-   LOCAL aVet := {}
-   LOCAL aResultSet := {}
    LOCAL nPos
-
-   HB_SYMBOL_UNUSED(aVet)
-   HB_SYMBOL_UNUSED(aResultSet)
 
    IF AScan(::aExclusive, {|x|x[1] == ::nThisArea}) == 0
       RETURN .T.
@@ -1523,17 +1309,7 @@ METHOD SR_WORKAREA:UnlockTable(lClosing)
       ASize(::aExclusive, Len(::aExclusive) - 1)
    ENDIF
 
-RETURN lRet
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-METHOD SR_WORKAREA:SetQuickAppend(l)
-
-   LOCAL lOld := ::lQuickAppend
-
-   ::lQuickAppend := l
-
-RETURN lOld
+RETURN .T.
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -4507,11 +4283,6 @@ METHOD SR_WORKAREA:sqlClose()
       ENDIF
    ENDIF
 
-   //IF ++s_nOperat > 100 (old code/to be deleted)
-   //   hb_gcAll(.T.)
-   //   s_nOperat := 0
-   //ENDIF
-
    IF ++::nOperat > 100 // TODO: mutex ?
       hb_gcAll(.T.)
       ::nOperat := 0
@@ -4811,10 +4582,6 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          ELSE
             cSql += "DATETIME "
          ENDIF
-         EXIT
-
-      CASE "V" // TODO: unnecessary
-         SR_MsgLogFile(SR_Msg(9) + cField + " (" + aCreate[i, SR_FIELD_TYPE] + ")")
          EXIT
 
       SR_OTHERWISE

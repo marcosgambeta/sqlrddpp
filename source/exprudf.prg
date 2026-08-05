@@ -47,137 +47,9 @@
 
 #include <hbclass.ch>
 
-///////////////////////////////////////////////////////////////////////////////
-
-FUNCTION SR_cJoin(aArray, cString)
-
-   LOCAL result := ""
-   LOCAL i
-
-   IF Len(aArray) > 0
-      FOR i := 1 TO Len(aArray) - 1
-         result += aArray[i] + cString
-      NEXT i
-      result += aArray[Len(aArray)]
-   ENDIF
-
-RETURN result
-
-FUNCTION SR_xSelect(aArray, bSelector)
-
-   LOCAL newArray := Array(Len(aArray))
-
-   AEval(aArray, {|x, n|newArray[n] := Eval(bSelector, x)})
-
-RETURN newArray
-
-FUNCTION SR_xSelectMany(aArray, bSelector)
-
-   LOCAL newArray := {}
-
-   AEval(aArray, {|x|SR_aAddRange(newArray, Eval(bSelector, x))})
-
-RETURN newArray
-
-FUNCTION SR_aWhere(aArray, bPredicate)
-
-   LOCAL item
-   LOCAL newArray := {}
-
-   FOR EACH item IN aArray
-      IF Eval(bPredicate, item)
-         AAdd(newArray, item)
-      ENDIF
-   NEXT
-
-RETURN newArray
-
-FUNCTION SR_xFirst(aArray, bPredicate)
-
-   LOCAL i := AScan(aArray, bPredicate)
-
-   IF i == 0
-      RETURN NIL
-   ENDIF
-
-RETURN aArray[i]
-
-FUNCTION SR_xFirstOrDefault(aArray)
-
-   IF Len(aArray) == 0
-      RETURN NIL
-   ENDIF
-
-RETURN aArray[1]
-
-FUNCTION SR_aDistinct(aArray, bSelector)
-
-   LOCAL item
-   LOCAL newArray := {}
-   LOCAL ids := {}
-   LOCAL id
-
-   FOR EACH item IN aArray
-      id := Eval(bSelector, item)
-      IF !(AScan(ids, id) > 0)
-         AAdd(ids, id)
-         AAdd(newArray, item)
-      ENDIF
-   NEXT
-
-RETURN newArray
-
-PROCEDURE SR_aAddRange(aArray1, aArray2)
-
-   LOCAL item
-
-   FOR EACH item IN aArray2
-      AAdd(aArray1, item)
-   NEXT
-
-RETURN
-
-PROCEDURE sr_aAddDistinct(aArray1, xValue, bSelector)
-
-   LOCAL id
-
-   IF bSelector == NIL
-      bSelector := {|x|x}
-   ENDIF
-   id := Eval(bSelector, xValue)
-   IF AScan(aArray1, {|x|id == Eval(bSelector, x)}) == 0
-      AAdd(aArray1, xValue)
-   ENDIF
-
-RETURN
-
-PROCEDURE sr_aAddRangeDistinct(aArray1, aArray2, bSelector)
-
-   LOCAL item
-
-   FOR EACH item IN aArray2
-      SR_aAddDistinct(aArray1, item, bSelector)
-   NEXT
-
-RETURN
-
-PROCEDURE SR_RemoveAll(aArray, bPredicate)
-
-   LOCAL i
-
-   FOR i := 1 TO Len(aArray)
-      IF Eval(bPredicate, aArray[i])
-          hb_ADel(aArray, i, .T.)
-          i--
-      ENDIF
-   NEXT i
-
-RETURN
-
-FUNCTION SR_aReplaceNilBy(aArray, xValue)
-RETURN AEval(aArray, {|x, n|IIf(x == NIL, aArray[n] := xValue, NIL)})
-
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_Dictionary
+//----------------------------------------------------------------------------//
 
 CLASS SR_Dictionary
 
@@ -216,6 +88,8 @@ CLASS SR_Dictionary
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 // nMode = 1 : If the key exist, an exception is thrown
 // nMode = 2 : If the key exist, the method does nothing
 // nMode = 3 : If the key exist, the value is replaced
@@ -237,6 +111,8 @@ METHOD SR_Dictionary:aAdd(xKey, xValue, nMode)
 
 RETURN NIL
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Dictionary:GetKeyValuePair(xKey)
 
    LOCAL result := SR_xFirst(::aInternArray, {|y|y:xKey == xKey})
@@ -247,11 +123,17 @@ METHOD SR_Dictionary:GetKeyValuePair(xKey)
 
 RETURN result
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Dictionary:At(nIndex)
 RETURN ::aInternArray[nIndex]
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Dictionary:xValue(xKey)
 RETURN ::GetKeyValuePair(xKey):xValue
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_Dictionary:SetValue(xKey, xValue)
 
@@ -259,8 +141,12 @@ METHOD SR_Dictionary:SetValue(xKey, xValue)
 
 RETURN NIL
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Dictionary:nIndexOfKey(xKey)
 RETURN AScan(::aInternArray, {|x|x:xKey == xKey})
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_Dictionary:Remove(xKey)
 
@@ -272,16 +158,22 @@ METHOD SR_Dictionary:Remove(xKey)
 
 RETURN hb_ADel(::aInternArray, nIndex, .T.)
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Dictionary:Clear()
 
    ::aInternArray := {}
 
 RETURN NIL
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Dictionary:lContainsKey(xKey)
 RETURN ::nIndexOfKey(xKey) > 0
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_KeyValuePair
+//----------------------------------------------------------------------------//
 
 CLASS SR_KeyValuePair
 
@@ -294,6 +186,8 @@ CLASS SR_KeyValuePair
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_KeyValuePair:new(pKey, pValue)
 
    ::xKey := pKey
@@ -301,7 +195,161 @@ METHOD SR_KeyValuePair:new(pKey, pValue)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// FUNCTIONS
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_cJoin(aArray, cString)
+
+   LOCAL result := ""
+   LOCAL i
+
+   IF Len(aArray) > 0
+      FOR i := 1 TO Len(aArray) - 1
+         result += aArray[i] + cString
+      NEXT i
+      result += aArray[Len(aArray)]
+   ENDIF
+
+RETURN result
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_xSelect(aArray, bSelector)
+
+   LOCAL newArray := Array(Len(aArray))
+
+   AEval(aArray, {|x, n|newArray[n] := Eval(bSelector, x)})
+
+RETURN newArray
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_xSelectMany(aArray, bSelector)
+
+   LOCAL newArray := {}
+
+   AEval(aArray, {|x|SR_aAddRange(newArray, Eval(bSelector, x))})
+
+RETURN newArray
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_aWhere(aArray, bPredicate)
+
+   LOCAL item
+   LOCAL newArray := {}
+
+   FOR EACH item IN aArray
+      IF Eval(bPredicate, item)
+         AAdd(newArray, item)
+      ENDIF
+   NEXT
+
+RETURN newArray
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_xFirst(aArray, bPredicate)
+
+   LOCAL i := AScan(aArray, bPredicate)
+
+   IF i == 0
+      RETURN NIL
+   ENDIF
+
+RETURN aArray[i]
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_xFirstOrDefault(aArray)
+
+   IF Len(aArray) == 0
+      RETURN NIL
+   ENDIF
+
+RETURN aArray[1]
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_aDistinct(aArray, bSelector)
+
+   LOCAL item
+   LOCAL newArray := {}
+   LOCAL ids := {}
+   LOCAL id
+
+   FOR EACH item IN aArray
+      id := Eval(bSelector, item)
+      IF !(AScan(ids, id) > 0)
+         AAdd(ids, id)
+         AAdd(newArray, item)
+      ENDIF
+   NEXT
+
+RETURN newArray
+
+//----------------------------------------------------------------------------//
+
+PROCEDURE SR_aAddRange(aArray1, aArray2)
+
+   LOCAL item
+
+   FOR EACH item IN aArray2
+      AAdd(aArray1, item)
+   NEXT
+
+RETURN
+
+//----------------------------------------------------------------------------//
+
+PROCEDURE sr_aAddDistinct(aArray1, xValue, bSelector)
+
+   LOCAL id
+
+   IF bSelector == NIL
+      bSelector := {|x|x}
+   ENDIF
+   id := Eval(bSelector, xValue)
+   IF AScan(aArray1, {|x|id == Eval(bSelector, x)}) == 0
+      AAdd(aArray1, xValue)
+   ENDIF
+
+RETURN
+
+//----------------------------------------------------------------------------//
+
+PROCEDURE sr_aAddRangeDistinct(aArray1, aArray2, bSelector)
+
+   LOCAL item
+
+   FOR EACH item IN aArray2
+      SR_aAddDistinct(aArray1, item, bSelector)
+   NEXT
+
+RETURN
+
+//----------------------------------------------------------------------------//
+
+PROCEDURE SR_RemoveAll(aArray, bPredicate)
+
+   LOCAL i
+
+   FOR i := 1 TO Len(aArray)
+      IF Eval(bPredicate, aArray[i])
+          hb_ADel(aArray, i, .T.)
+          i--
+      ENDIF
+   NEXT i
+
+RETURN
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_aReplaceNilBy(aArray, xValue)
+RETURN AEval(aArray, {|x, n|IIf(x == NIL, aArray[n] := xValue, NIL)})
+
+//----------------------------------------------------------------------------//
 
 FUNCTION SR_ToDictionary(aArray, bKeySelector)
 
@@ -313,6 +361,8 @@ FUNCTION SR_ToDictionary(aArray, bKeySelector)
    NEXT
 
 RETURN result
+
+//----------------------------------------------------------------------------//
 
 FUNCTION SR_GetFileName(cPath)
 
@@ -328,4 +378,4 @@ FUNCTION SR_GetFileName(cPath)
 
 RETURN NIL
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//

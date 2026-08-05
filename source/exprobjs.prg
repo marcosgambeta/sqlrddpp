@@ -43,7 +43,9 @@
 
 #include <hbclass.ch>
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_Operator
+//----------------------------------------------------------------------------//
 
 CLASS SR_Operator
 
@@ -62,12 +64,16 @@ CLASS SR_Operator
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Operator:new(pName, pSymbols)
 
    ::cName := pName
    ::aSymbols := pSymbols
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_Operator:cPattern()
 
@@ -78,7 +84,9 @@ METHOD SR_Operator:cPattern()
 
 RETURN ::_cPattern
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ComparisonOperator FROM SR_Operator
+//----------------------------------------------------------------------------//
 
 CLASS SR_ComparisonOperator FROM SR_Operator
 
@@ -87,13 +95,17 @@ CLASS SR_ComparisonOperator FROM SR_Operator
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ComparisonOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_SerialOperator FROM SR_Operator
+//----------------------------------------------------------------------------//
 
 CLASS SR_SerialOperator FROM SR_Operator
 
@@ -108,13 +120,17 @@ CLASS SR_SerialOperator FROM SR_Operator
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_SerialOperator:new(pName, pSymbols)
 
    ::super:new(pName, pSymbols)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_LogicalOperator FROM SR_SerialOperator
+//----------------------------------------------------------------------------//
 
 CLASS SR_LogicalOperator FROM SR_SerialOperator
 
@@ -122,6 +138,8 @@ CLASS SR_LogicalOperator FROM SR_SerialOperator
    METHOD new(pName, pSymbols)
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_LogicalOperator:new(pName, pSymbols)
 
@@ -134,7 +152,9 @@ METHOD SR_LogicalOperator:new(pName, pSymbols)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ArithmeticOperator FROM SR_SerialOperator
+//----------------------------------------------------------------------------//
 
 CLASS SR_ArithmeticOperator FROM SR_SerialOperator
 
@@ -142,6 +162,8 @@ CLASS SR_ArithmeticOperator FROM SR_SerialOperator
    METHOD new(pName, pSymbols)
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ArithmeticOperator:new(pName, pSymbols)
 
@@ -172,7 +194,9 @@ METHOD SR_ArithmeticOperator:new(pName, pSymbols)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_AlgebraSet
+//----------------------------------------------------------------------------//
 
 CLASS SR_AlgebraSet
 
@@ -192,6 +216,8 @@ CLASS SR_AlgebraSet
    METHOD new(pOperator, pType)
 
 ENDCLASS
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_AlgebraSet:new(pOperator, pType)
 
@@ -260,12 +286,16 @@ METHOD SR_AlgebraSet:new(pOperator, pType)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ISerialComposition
+//----------------------------------------------------------------------------//
 
 CLASS SR_ISerialComposition // just a dummy class that is used as interface
 ENDCLASS
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ExpressionBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ExpressionBase
 
@@ -298,12 +328,16 @@ CLASS SR_ExpressionBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ExpressionBase:new(pContext, pClipperString)
 
    ::oClipperExpression := SR_ClipperExpression():new(pContext, pClipperString)
    ::cContext := Upper(pContext)
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ExpressionBase:oWorkArea()
 
@@ -313,7 +347,9 @@ METHOD SR_ExpressionBase:oWorkArea()
 
 RETURN ::_oWorkArea
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ConditionBase FROM SR_ExpressionBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ConditionBase FROM SR_ExpressionBase
 
@@ -335,11 +371,15 @@ CLASS SR_ConditionBase FROM SR_ExpressionBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ConditionBase:new2(pContext, pClipperString, pDenied)
 
    ::lDenied_ := pDenied
 
 RETURN ::super:new(pContext, pClipperString)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ConditionBase:lDenied(value)
 
@@ -350,7 +390,9 @@ METHOD SR_ConditionBase:lDenied(value)
 
 RETURN ::lDenied_
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_BooleanExpression FROM SR_ConditionBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_BooleanExpression FROM SR_ConditionBase
 
@@ -372,11 +414,15 @@ CLASS SR_BooleanExpression FROM SR_ConditionBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_BooleanExpression:new2(pContext, pClipperString, pDenied, pExpr)
 
    ::lDenied_ := pDenied
 
 RETURN ::new(pContext, pClipperString, pExpr)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_BooleanExpression:new(pContext, pClipperString, pExpr)
 
@@ -386,6 +432,8 @@ METHOD SR_BooleanExpression:new(pContext, pClipperString, pExpr)
    ::lSimplified := pExpr:lSimplified
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 // not very usefull, but cleaner
 METHOD SR_BooleanExpression:lDenied(value)
@@ -398,7 +446,9 @@ METHOD SR_BooleanExpression:lDenied(value)
 
 RETURN ::super:lDenied(value)
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ComposedConditionBase FROM SR_ConditionBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ComposedConditionBase FROM SR_ConditionBase
 
@@ -415,11 +465,15 @@ CLASS SR_ComposedConditionBase FROM SR_ConditionBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ComposedConditionBase:new2(pContext, pClipperString, pDenied, pOperand1, pOperator, pOperand2)
 
    ::lDenied_ := pDenied
 
 RETURN ::new(pContext, pClipperString, /*pExpr,*/ pOperand1, pOperator, pOperand2)
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ComposedConditionBase:new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
 
@@ -430,17 +484,23 @@ METHOD SR_ComposedConditionBase:new(pContext, pClipperString, pOperand1, pOperat
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_Comparison FROM SR_ComposedConditionBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_Comparison FROM SR_ComposedConditionBase
 ENDCLASS
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ComposedCondition FROM SR_ComposedConditionBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_ComposedCondition FROM SR_ComposedConditionBase
 ENDCLASS
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_Expression FROM SR_ExpressionBase
+//----------------------------------------------------------------------------//
 
 CLASS SR_Expression FROM SR_ExpressionBase
 
@@ -452,10 +512,14 @@ CLASS SR_Expression FROM SR_ExpressionBase
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Expression:GetType()
 RETURN ::oClipperExpression:cType
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ValueExpression FROM SR_Expression
+//----------------------------------------------------------------------------//
 
 CLASS SR_ValueExpression FROM SR_Expression
 
@@ -479,6 +543,8 @@ CLASS SR_ValueExpression FROM SR_Expression
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ValueExpression:new(pContext, pValue)
 
    ::super:new(pContext, AllTrim(pValue))
@@ -496,6 +562,8 @@ METHOD SR_ValueExpression:new(pContext, pValue)
    ::lIsSimple := .T.
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 // method redefined because it's faster than evaluate the expression.
 METHOD SR_ValueExpression:GetType()
@@ -543,7 +611,9 @@ METHOD SR_ValueExpression:GetType()
 
 RETURN ::cType
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_FunctionExpression FROM SR_Expression
+//----------------------------------------------------------------------------//
 
 CLASS SR_FunctionExpression FROM SR_Expression
 
@@ -556,6 +626,8 @@ CLASS SR_FunctionExpression FROM SR_Expression
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_FunctionExpression:new(pContext, pClipperString, pFunctionName, aParameters)
 
    ::super:new(pContext, pClipperString)
@@ -564,7 +636,9 @@ METHOD SR_FunctionExpression:new(pContext, pClipperString, pFunctionName, aParam
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_Parameter
+//----------------------------------------------------------------------------//
 
 CLASS SR_Parameter
 
@@ -577,6 +651,8 @@ CLASS SR_Parameter
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_Parameter:new(pExpression, pIsByRef)
 
    ::oExpression := pExpression
@@ -584,7 +660,9 @@ METHOD SR_Parameter:new(pExpression, pIsByRef)
 
 RETURN SELF
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// CLASS SR_ComposedExpression FROM SR_Expression
+//----------------------------------------------------------------------------//
 
 CLASS SR_ComposedExpression FROM SR_Expression
 
@@ -604,6 +682,8 @@ CLASS SR_ComposedExpression FROM SR_Expression
 
 ENDCLASS
 
+//----------------------------------------------------------------------------//
+
 METHOD SR_ComposedExpression:new(pContext, pClipperString, pOperand1, pOperator, pOperand2)
 
    ::super:new(pContext, pClipperString)
@@ -612,6 +692,8 @@ METHOD SR_ComposedExpression:new(pContext, pClipperString, pOperand1, pOperator,
    ::oOperator := pOperator
 
 RETURN SELF
+
+//----------------------------------------------------------------------------//
 
 METHOD SR_ComposedExpression:GetType()
 
@@ -628,7 +710,9 @@ METHOD SR_ComposedExpression:GetType()
 
 RETURN ::cType
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
+// FUNCTIONS
+//----------------------------------------------------------------------------//
 
 PROCEDURE SR_Visualize(oExpression) // for debuging
 
@@ -658,6 +742,8 @@ PROCEDURE SR_Visualize(oExpression) // for debuging
 
 RETURN
 
+//----------------------------------------------------------------------------//
+
 FUNCTION SR_CollectAliases(oExpression, aAliases)
 
    LOCAL item
@@ -676,6 +762,8 @@ FUNCTION SR_CollectAliases(oExpression, aAliases)
 
 RETURN aAliases
 
+//----------------------------------------------------------------------------//
+
 FUNCTION SR_ConvertToCondition(oExpression)
 
    IF !oExpression:isKindOf("SR_ComposedExpression") .AND. oExpression:GetType() == "L"
@@ -684,4 +772,4 @@ FUNCTION SR_ConvertToCondition(oExpression)
 
 RETURN NIL
 
-///////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------//
