@@ -4614,11 +4614,13 @@ METHOD SR_WORKAREA:sqlCreate(aStruct, cFileName, cAlias, nArea)
          cSql += " Engine=InnoDb "
       ENDIF
 #endif
-      IF SubStr(::oSql:cSystemVers, 1, 1) == "5" // NOTE: trying another method [MAG]
-         cSql += " Type=InnoDb "
-      ELSE
-         cSql += " Engine=InnoDb "
-      ENDIF
+      // TYPE= was removed in MySQL 5.5, while ENGINE= has been accepted since
+      // MySQL 4.0, so ENGINE= is the form that works on every server still in
+      // use. Testing only the first character of the version emitted TYPE= for
+      // the whole 5.x line - it works on 5.0 but fails from 5.5 on with
+      // "You have an error in your SQL syntax (...) near 'Type=InnoDb'"
+
+      cSql += " Engine=InnoDb "
 
    ENDIF
 
