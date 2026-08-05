@@ -242,8 +242,8 @@ CLASS SR_BASE_WORKAREA
 //    METHOD LockTable(lCheck4ExcLock, lFLock) //METHOD LockTable(lCheck)
 //    METHOD UnlockTable(lClosing) //METHOD UnlockTable()
 
-//    METHOD FCount() INLINE ::nFields
-//    METHOD SetNextDt(d) INLINE ::dNextDt := d
+   METHOD FCount() INLINE ::nFields
+   METHOD SetNextDt(d) INLINE ::dNextDt := d
    METHOD SetQuickAppend(l)
 
    // Table maintanance stuff
@@ -265,7 +265,7 @@ CLASS SR_BASE_WORKAREA
 //    METHOD HistExpression(n, cAlias)
    METHOD DisableHistoric()
    METHOD EnableHistoric()
-//    METHOD SetCurrDate(d) INLINE IIf(d == NIL, ::CurrDate, ::CurrDate := d)
+   METHOD SetCurrDate(d) INLINE IIf(d == NIL, ::CurrDate, ::CurrDate := d)
 //
 //    METHOD LineCount(lMsg) //METHOD LineCount()
 //    METHOD CreateOrclFunctions(cOwner, cFileName)

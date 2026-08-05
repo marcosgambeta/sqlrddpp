@@ -156,16 +156,12 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD HasFilters()
    METHOD ParseForClause(cFor)
    METHOD OrdSetForClause(cFor, cForxBase)
-   //METHOD SetColPK(cColName) (moved to base class)
    METHOD ConvType(cData, cType, lPartialSeek, nThis, lLike)
 
    METHOD LoadRegisteredTags()
 
    METHOD LockTable(lCheck4ExcLock, lFLock) //METHOD LockTable(lCheck)
    METHOD UnlockTable(lClosing) //METHOD UnlockTable()
-
-   METHOD FCount() INLINE ::nFields
-   METHOD SetNextDt(d) INLINE ::dNextDt := d
 
    // Table maintanance stuff
 
@@ -184,9 +180,6 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
 
    //METHOD HistExpression(cAlias, cAlias)
    METHOD HistExpression(n, cAlias)
-   //METHOD DisableHistoric() (moved to base class)
-   //METHOD EnableHistoric() (moved to base class)
-   METHOD SetCurrDate(d) INLINE IIf(d == NIL, ::CurrDate, ::CurrDate := d)
 
    METHOD LineCount(lMsg) //METHOD LineCount()
    METHOD CreateOrclFunctions(cOwner, cFileName)
@@ -220,7 +213,6 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD sqlOrderDestroy(uOrder, cBag)
    METHOD sqlClearFilter()
    METHOD sqlClearScope()
-   //METHOD sqlFilterText() (moved to base class)
    METHOD sqlSetFilter(cFilter)
    METHOD sqlSetScope(nType, uValue)
    METHOD sqlLock(nType, uRecord)
@@ -233,17 +225,8 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
    METHOD GetSelectList()
    METHOD RecnoExpr()   // add recno filters
-   // DESTRUCTOR WA_ENDED (moved to base class)
 
 ENDCLASS
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-// PROCEDURE SR_WORKAREA:WA_ENDED (moved to base class)
-//
-//    ? "Cleanup:", "WORKAREA", ::cFileName
-//
-// RETURN
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -292,16 +275,6 @@ METHOD SR_WORKAREA:sqlClearFilter()
    ::Refresh()
 
 RETURN NIL
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-// METHOD SR_WORKAREA:sqlFilterText() (moved to base class)
-//
-//    IF ::cFilter == NIL
-//       RETURN ""
-//    ENDIF
-//
-// RETURN ::cFilter
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -966,47 +939,6 @@ METHOD SR_WORKAREA:LoadRegisteredTags()
 //   ::oSql:Exec("SELECT SOURCETABLE_ , SOURCECOLUMNS_, CONSTRTYPE_, TARGETTABLE_, TARGETCOLUMNS_, CONSTRNAME_ FROM " + SR_GetToolsOwner() + "SR_MGMNTCONSTRAINTS WHERE SOURCETABLE_ = '" + Upper(::cFileName) + "' ORDER BY CONSTRNAME_", .F., .T., @::aConstrMgmnt)
 
 RETURN NIL
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-// METHOD SR_WORKAREA:SetColPK(cColName) (moved to base class)
-//
-//    LOCAL nPos := AScan(::aNames, {|x|x == Upper(cColName)})
-//
-//    IF nPos > 0
-//       ::nPosCOlPK := nPos
-//       ::cColPK := Upper(cColName)
-//    ENDIF
-//
-// RETURN ::cColPK
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-// METHOD SR_WORKAREA:DisableHistoric() (moved to base class)
-//
-//    LOCAL i
-//
-//    ::lHistEnable := .F.
-//    FOR i := 1 TO Len(::aIndex)
-//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
-//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
-//    NEXT i
-//
-// RETURN NIL
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-// METHOD SR_WORKAREA:EnableHistoric() (moved to base class)
-//
-//    LOCAL i
-//
-//    ::lHistEnable := .T.
-//    FOR i := 1 TO Len(::aIndex)
-//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_UP] := NIL
-//       ::aIndex[i, SR_AINDEX_ORDER_SKIP_DOWN] := NIL
-//    NEXT i
-//
-// RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
