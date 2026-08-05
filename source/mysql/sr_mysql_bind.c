@@ -84,6 +84,11 @@ static int s_iConnectionCount = 0;
 #define GET_MYSQL_SESSION(session, numpar)                                                     \
   MYSQL_SESSION *session = (MYSQL_SESSION *)hb_itemGetPtr(hb_param(numpar, HB_IT_POINTER))
 
+// Highest collation id the charset map holds. MySQL ids currently stay well
+// below this; anything beyond simply falls back to the connection charset.
+
+#define SR_MYSQL_MAX_COLLATION 1024
+
 typedef struct _MYSQL_SESSION
 {
   int status;                   // Execution return value
@@ -92,7 +97,94 @@ typedef struct _MYSQL_SESSION
   MYSQL *dbh;                   // Connection handler
   MYSQL_RES *stmt;              // Current statement handler
   HB_ULONGLONG ulAffected_rows; // Number of affected rows
+  HB_BOOL bCsMapLoaded;         // Charset map already read from the catalog
+  unsigned char csMaxLen[SR_MYSQL_MAX_COLLATION]; // collation id -> bytes per character
 } MYSQL_SESSION;
+
+//----------------------------------------------------------------------------//
+
+// MYSQL_FIELD.length is expressed in BYTES, so the declared width of a
+// character column is field->length divided by the bytes-per-character of the
+// charset of THAT column. The C API has no call to translate an arbitrary
+// field->charsetnr into its maximum character length, and
+// mysql_get_character_set_info() only ever describes the CONNECTION charset -
+// using it for every column is wrong in both directions: it shrinks latin1
+// columns to a quarter of their size on a utf8mb4 connection, and leaving the
+// division out reports utf8mb4 columns four times wider than they are.
+//
+// So the id -> maxlen map is read once from the catalog when the session is
+// opened, and every column is then measured with its own charset.
+
+static void SR_MysLoadCharsetMap(MYSQL_SESSION *session)
+{
+  static const char *szQuery = "SELECT co.ID, cs.MAXLEN"
+                               " FROM information_schema.COLLATIONS co"
+                               " JOIN information_schema.CHARACTER_SETS cs"
+                               " ON co.CHARACTER_SET_NAME = cs.CHARACTER_SET_NAME";
+  MYSQL_RES *res;
+  MYSQL_ROW row;
+
+  if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->bCsMapLoaded) {
+    return;
+  }
+
+  // Only ever attempted once: on a server without information_schema, or with
+  // the privilege denied, the fallback below is used for the whole session
+
+  session->bCsMapLoaded = HB_TRUE;
+
+  if (mysql_real_query(session->dbh, szQuery, (unsigned long)strlen(szQuery)) != 0) {
+    return;
+  }
+
+  res = mysql_store_result(session->dbh);
+
+  if (res == SR_NULLPTR) {
+    return;
+  }
+
+  while ((row = mysql_fetch_row(res)) != SR_NULLPTR) {
+    if (row[0] != SR_NULLPTR && row[1] != SR_NULLPTR) {
+      unsigned long ulId = strtoul(row[0], SR_NULLPTR, 10);
+      unsigned long ulMaxLen = strtoul(row[1], SR_NULLPTR, 10);
+
+      if (ulId < SR_MYSQL_MAX_COLLATION && ulMaxLen > 0 && ulMaxLen < 256) {
+        session->csMaxLen[ulId] = (unsigned char)ulMaxLen;
+      }
+    }
+  }
+
+  mysql_free_result(res);
+}
+
+//----------------------------------------------------------------------------//
+
+// Bytes per character of the charset of one column, 1 when it cannot be told
+
+static unsigned int SR_MysColMaxLen(MYSQL_SESSION *session, unsigned int uiCharsetNr)
+{
+  MY_CHARSET_INFO cs;
+
+  if (session == SR_NULLPTR) {
+    return 1;
+  }
+
+  if (uiCharsetNr < SR_MYSQL_MAX_COLLATION && session->csMaxLen[uiCharsetNr] > 0) {
+    return (unsigned int)session->csMaxLen[uiCharsetNr];
+  }
+
+  // Catalog unavailable: the connection charset is all we know, so apply it
+  // only to the columns that actually report it
+
+  if (session->dbh != SR_NULLPTR) {
+    mysql_get_character_set_info(session->dbh, &cs);
+    if (cs.mbmaxlen > 1 && uiCharsetNr == cs.number) {
+      return (unsigned int)cs.mbmaxlen;
+    }
+  }
+
+  return 1;
+}
 
 //----------------------------------------------------------------------------//
 
@@ -123,6 +215,12 @@ HB_FUNC_STATIC(SR_MYSCONNECT)
       mysql_real_connect(session->dbh, szHost, szUser, szPass, szDb, uiPort, SR_NULLPTR,
                          CLIENT_ALL_FLAGS2);
     }
+
+    // Read the collation id -> bytes per character map while no result set is
+    // open, so that character column widths can be measured per column
+
+    SR_MysLoadCharsetMap(session);
+
     hb_retptr((void *)session);
   } else {
     mysql_close(SR_NULLPTR);
@@ -692,24 +790,16 @@ HB_FUNC_STATIC(SR_MYSQUERYATTR)
     case MYSQL_STRING_TYPE:
     case MYSQL_VAR_STRING_TYPE: {
       // case MYSQL_DATETIME_TYPE:
-      MY_CHARSET_INFO cs;
-      unsigned int mbmax = 1;
+      unsigned int mbmax;
       int char_len;
 
       // hb_itemPutC(&temp, "C"); (moved below)
 
-      // field->length is expressed in BYTES, so it must be divided by the
-      // bytes-per-character of the COLUMN charset to get the declared width.
-      // mysql_get_character_set_info() only knows the CONNECTION charset, so
-      // the division is applied only when the column really uses it -
-      // otherwise a modern client (utf8mb4, mbmaxlen 4) reading tables
-      // declared in a single byte charset (latin1) would shrink every column
-      // to a quarter of its size, silently truncating the fetched values.
+      // field->length is in BYTES: divide it by the bytes-per-character of
+      // the charset of THIS column (see SR_MysColMaxLen) to get the declared
+      // width in characters
 
-      mysql_get_character_set_info(session->dbh, &cs);
-      if (cs.mbmaxlen > 1 && field->charsetnr == cs.number) {
-        mbmax = (unsigned int)cs.mbmaxlen;
-      }
+      mbmax = SR_MysColMaxLen(session, (unsigned int)field->charsetnr);
 
       char_len = (int)((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0) {
@@ -868,24 +958,16 @@ mysql_error(session->dbh));
     case MYSQL_STRING_TYPE:
     case MYSQL_VAR_STRING_TYPE: {
       // case MYSQL_DATETIME_TYPE:
-      MY_CHARSET_INFO cs;
-      unsigned int mbmax = 1;
+      unsigned int mbmax;
       int char_len;
 
       hb_itemPutC(temp, "C");
 
-      // field->length is expressed in BYTES, so it must be divided by the
-      // bytes-per-character of the COLUMN charset to get the declared width.
-      // mysql_get_character_set_info() only knows the CONNECTION charset, so
-      // the division is applied only when the column really uses it -
-      // otherwise a modern client (utf8mb4, mbmaxlen 4) reading tables
-      // declared in a single byte charset (latin1) would shrink every column
-      // to a quarter of its size, silently truncating the fetched values.
+      // field->length is in BYTES: divide it by the bytes-per-character of
+      // the charset of THIS column (see SR_MysColMaxLen) to get the declared
+      // width in characters
 
-      mysql_get_character_set_info(session->dbh, &cs);
-      if (cs.mbmaxlen > 1 && field->charsetnr == cs.number) {
-        mbmax = (unsigned int)cs.mbmaxlen;
-      }
+      mbmax = SR_MysColMaxLen(session, (unsigned int)field->charsetnr);
 
       char_len = (int)((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0) {
