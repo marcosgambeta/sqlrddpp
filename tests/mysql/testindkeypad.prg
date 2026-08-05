@@ -57,6 +57,16 @@
 // normalmente:
 //
 //   testindkeypad ... --forcewidth 12
+//
+// Opcao --tblcs <charset>: converte a tabela de teste para o charset
+// informado. O calculo da largura depende do charset da COLUNA, nao da
+// versao do servidor, entao os dois lados do defeito sao exercitados no
+// mesmo servidor:
+//
+//   --tblcs latin1    colunas de 1 byte  -> nao pode dividir (o driver
+//                     ja truncou colunas assim para 1/4 do tamanho)
+//   --tblcs utf8mb4   colunas de 4 bytes -> tem que dividir por 4 (sem
+//                     isso CHAR(2) chega como 8)
 
 #ifdef __XHARBOUR__
 #xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
@@ -86,6 +96,7 @@ STATIC s_DTB    := "dbtest"
 STATIC s_nPad := 0      // largura com que IDXCOL_ voltou do driver
 STATIC s_COLLATION := ""   // --forcecs
 STATIC s_nForceW := 0      // --forcewidth
+STATIC s_TBLCS := ""       // --tblcs
 
 PROCEDURE Main()
 
@@ -107,6 +118,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--keep"   ; lKeep := .T.
       CASE HB_PValue(n) == "--forcecs"; s_COLLATION := HB_PValue(++n)
       CASE HB_PValue(n) == "--forcewidth"; s_nForceW := Val(HB_PValue(++n))
+      CASE HB_PValue(n) == "--tblcs"  ; s_TBLCS := HB_PValue(++n)
       OTHERWISE
          ? "Parametro desconhecido:", HB_PValue(n)
       ENDCASE
@@ -333,12 +345,56 @@ STATIC PROCEDURE CriaTabela()
 
    CLOSE DATABASE
 
+   ConverteTabela()
+
+RETURN
+
+//--------------------------------------------------------------------
+// Converte a tabela de teste para o charset pedido em --tblcs. O bug
+// depende do charset da COLUNA, nao da versao do servidor, entao os
+// dois lados do defeito podem ser exercitados no mesmo servidor:
+//
+//   --tblcs latin1    colunas de 1 byte  -> nao pode dividir
+//   --tblcs utf8mb4   colunas de 4 bytes -> tem que dividir por 4
+
+STATIC PROCEDURE ConverteTabela()
+
+   LOCAL oCnn := SR_GetConnection()
+
+   IF Empty(s_TBLCS)
+      RETURN
+   ENDIF
+
+   ? "Convertendo " + TABLE_NAME + " para character set " + s_TBLCS + " ..."
+
+   oCnn:Exec("alter table " + TABLE_NAME + " convert to character set " + s_TBLCS, .T.)
+   oCnn:Commit()
+
 RETURN
 
 //--------------------------------------------------------------------
 // Confere a largura das colunas de dados: o driver deve reportar a
 // largura DECLARADA (em caracteres), nao o tamanho em bytes. Foi aqui
 // que o Mario viu CHAR(2) chegar como 8 e quebrar o menu dele.
+
+STATIC PROCEDURE MostraCharsetTabela()
+
+   LOCAL oCnn := SR_GetConnection()
+   LOCAL aRes := {}
+
+   oCnn:Exec("select distinct CHARACTER_SET_NAME from information_schema.columns " + ;
+             "where TABLE_SCHEMA = database() and TABLE_NAME = '" + Lower(TABLE_NAME) + "' " + ;
+             "and CHARACTER_SET_NAME is not null", .F., .T., @aRes)
+
+   IF Len(aRes) > 0
+      ? "Charset das colunas char: " + AllTrim(SR_Val2Char(aRes[1, 1])) + ;
+        IIf(Len(aRes) > 1, " (e outros)", "")
+      ? ""
+   ENDIF
+
+RETURN
+
+//--------------------------------------------------------------------
 
 STATIC FUNCTION VerificaLarguras()
 
@@ -351,6 +407,8 @@ STATIC FUNCTION VerificaLarguras()
    ? "=============================================================="
    ? " Largura das colunas de dados"
    ? "=============================================================="
+
+   MostraCharsetTabela()
 
    USE (TABLE_NAME) SHARED NEW VIA (RDD_NAME)
    dbGoTop()
