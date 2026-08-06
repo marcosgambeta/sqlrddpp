@@ -82,22 +82,6 @@
 
 #define SR_DBQUALIFYM(arg) "`" + lower(arg) + "`"
 
-/*
-// static variables used only in STATIC FUNCTION aScanIndexed(...) (static function not used)
-#ifdef __XHARBOUR__
-// NOTE: to avoid warning about variable declared but not used in function.
-STATIC s_ItP11 := NIL
-STATIC s_ItP14 := NIL
-STATIC s_ItP2 := NIL
-STATIC s_ItP3 := NIL
-#else
-STATIC s_ItP11
-STATIC s_ItP14
-STATIC s_ItP2
-STATIC s_ItP3
-#endif
-*/
-
 STATIC s_nMininumVarchar2Size := 31
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -6557,93 +6541,6 @@ STATIC FUNCTION aOrdX(x, y, aPos, aXF)    // cache sort honoring expression inde
    NEXT i
 
 RETURN cStr1 < cStr2
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-/*
-STATIC FUNCTION aScanIndexed(aVet, nPos, uKey, lSoft, nLen, lFound) // static function not used
-
-   LOCAL nRet := 0
-   LOCAL first
-   LOCAL last
-   LOCAL mid
-   LOCAL closest
-   LOCAL icomp
-   LOCAL exec
-   LOCAL nRegress
-
-   exec := HB_IsBlock(nPos)
-   first := 1
-   last := Len(aVet)
-   mid := Int((first + last) / 2)
-   lFound := .T.
-
-   closest := mid
-
-   DO WHILE last > 0
-
-      s_ItP11 := nPos
-      s_ItP14 := nPos
-      s_ItP2 := uKey
-      s_ItP3 := nLen
-
-      icomp := sr_ItemCmp(IIf(exec, Eval(s_ItP11, mid, aVet), aVet[mid, s_ItP14]), s_ItP2, s_ItP3)
-
-      IF icomp == 0
-         nRegress := mid
-         DO WHILE --nRegress > 0
-            IF sr_ItemCmp(IIf(exec, Eval(s_ItP11, nRegress, aVet), aVet[nRegress, s_ItP14]), s_ItP2, s_ItP3) != 0
-               EXIT
-            ENDIF
-         ENDDO
-         RETURN (++nRegress)
-      ELSE
-         IF first == last
-            EXIT
-         ELSEIF first == (last - 1)
-
-            s_ItP11 := nPos
-            s_ItP14 := nPos
-            s_ItP2 := uKey
-            s_ItP3 := nLen
-
-            IF sr_ItemCmp(IIf(exec, Eval(s_ItP11, last, aVet), aVet[last, s_ItP14]), s_ItP2, s_ItP3) == 0
-               nRegress := last
-               DO WHILE --nRegress > 0
-                  IF sr_ItemCmp(IIf(exec, Eval(s_ItP11, nRegress, aVet), aVet[nRegress, s_ItP14]), s_ItP2, s_ItP3) != 0
-                     EXIT
-                  ENDIF
-               ENDDO
-               RETURN (++nRegress)
-            ENDIF
-            EXIT
-         ENDIF
-
-         IF icomp > 0
-            last := mid
-            closest := mid
-         ELSE
-            first := mid
-            closest := first
-         ENDIF
-
-         mid := Int((last + first) / 2)
-
-      ENDIF
-
-   ENDDO
-
-   IF lSoft .AND. Len(aVet) > 0
-      lFound := .F.
-      IF Len(aVet) > mid
-         nRet := mid + 1    // Soft seek should stop at immediatelly superior item
-      ELSE
-         nRet := mid
-      ENDIF
-   ENDIF
-
-RETURN nRet
-*/
 
 //-------------------------------------------------------------------------------------------------------------------//
 
