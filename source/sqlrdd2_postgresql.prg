@@ -154,7 +154,6 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD IndexFieldNul(aFld)           // component nullability (.F. for expressions)
    METHOD HasExpressionOrder()          // .T. when the active order has expression components
 
-   METHOD HasFilters()
    METHOD ParseForClause(cFor)
    METHOD OrdSetForClause(cFor, cForxBase)
    METHOD ConvType(cData, cType, lPartialSeek, nThis, lLike)
@@ -206,7 +205,6 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD sqlPack()
    METHOD sqlZap()
    METHOD sqlOrderListAdd(cBagName, cTag)
-   METHOD sqlOrderListClear()
    METHOD sqlOrderListFocus(uOrder, cBag)
    METHOD sqlOrderListNum(uOrder)       // Used by sqlOrderInfo
    METHOD sqlOrderCondition(cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc)
@@ -218,14 +216,11 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD sqlSetScope(nType, uValue)
    METHOD sqlLock(nType, uRecord)
    METHOD sqlUnLock(uRecord)
-   METHOD sqlDrop(cFileName)
-   METHOD sqlExists(cFileName)
 
    METHOD SetBOF()
    METHOD sqlKeyCount(lFilters)
    METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
    METHOD GetSelectList()
-   METHOD RecnoExpr()   // add recno filters
 
 ENDCLASS
 
@@ -5379,19 +5374,6 @@ RETURN ::aInfo[SR_AINFO_INDEXORD] // Len(::aIndex) Controlling order should not 
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:sqlOrderListClear()
-
-   ::aInfo[SR_AINFO_FOUND] := .F.
-   ASize(::aIndex, 0)
-   ::cFor := ""
-   ::aInfo[SR_AINFO_INDEXORD] := 0
-   ::lStable := .T.
-   ::lOrderValid := .F.
-
-RETURN .T.
-
-//-------------------------------------------------------------------------------------------------------------------//
-
 METHOD SR_WORKAREA:sqlOrderListFocus(uOrder, cBag)
 
    LOCAL nOrder := 0
@@ -6627,26 +6609,6 @@ RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:sqlDrop(cFileName)
-
-   IF SR_ExistTable(cFileName)
-      SR_DropTable(cFileName)
-   ELSEIF SR_ExistIndex(cFileName)
-      SR_DropIndex(cFileName)
-   ELSE
-      RETURN .F.
-   ENDIF
-
-RETURN .T.
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-METHOD SR_WORKAREA:sqlExists(cFileName)
-
-RETURN SR_File(cFileName)
-
-//-------------------------------------------------------------------------------------------------------------------//
-
 STATIC FUNCTION aOrd(x, y, aPos)
 
    LOCAL i
@@ -7818,16 +7780,6 @@ RETURN cOut
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-METHOD SR_WORKAREA:HasFilters()
-
-   IF !Empty(::cFilter) .OR. !Empty(::cFltUsr) .OR. !Empty(::cFor) .OR. !Empty(::cScope) .OR. (::lHistoric .AND. ::lHistEnable)
-      RETURN .T.
-   ENDIF
-
-RETURN .F.
-
-//-------------------------------------------------------------------------------------------------------------------//
-
 METHOD SR_WORKAREA:AddRuleNotNull(cColumn)
 
    LOCAL lOk := .T.
@@ -8172,21 +8124,6 @@ FUNCTION SR_Serialize1(uVal)
    LOCAL cMemo := SR_STRTOHEX(HB_Serialize(uVal))
 
 RETURN SR_SQL_SERIALIZED_SIGNATURE + Str(Len(cMemo), 10) + cMemo
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-METHOD SR_WORKAREA:RecnoExpr()
-
-   LOCAL cRet := ""
-   LOCAL aItem
-
-   cRet +=  "( " +::cRecnoname  + " IN ( "
-   FOR EACH aItem IN ::aRecnoFilter
-      cRet += AllTrim(Str(aItem)) + ","
-   NEXT
-   cRet := SubStr(cRet, 1, Len(cRet) - 1) + " ) ) "
-
-RETURN cRet
 
 //-------------------------------------------------------------------------------------------------------------------//
 

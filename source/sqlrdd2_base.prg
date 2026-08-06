@@ -231,7 +231,7 @@ CLASS SR_BASE_WORKAREA
 //    METHOD WherePgsMinor(aQuotedCols)    // Retrieves an SQL/WHERE Minor or equal the currente record
 //    // METHOD sqlKeyCompare(uKey)                       C level implemented - reads from ::aInfo
 //    METHOD ParseIndexColInfo(cSQL)
-//    METHOD HasFilters()
+   METHOD HasFilters()
 //    METHOD ParseForClause(cFor)
 //    METHOD OrdSetForClause(cFor, cForxBase)
    METHOD SetColPK(cColName)
@@ -337,7 +337,7 @@ CLASS SR_BASE_WORKAREA
    // METHOD sqlRelText                   Superclass does the job
    // METHOD sqlSetRel                    C level implemented
 //    METHOD sqlOrderListAdd(cBagName, cTag)
-//    METHOD sqlOrderListClear()
+   METHOD sqlOrderListClear()
    // METHOD sqlOrderListDelete           Superclass does the job
 //    METHOD sqlOrderListFocus(uOrder, cBag)
 //    METHOD sqlOrderListNum(uOrder)       // Used by sqlOrderInfo
@@ -370,8 +370,8 @@ CLASS SR_BASE_WORKAREA
    // METHOD sqlReadDBHeader              Superclass does the job - UNSUPPORTED
    // METHOD sqlWriteDBHeader             Superclass does the job - UNSUPPORTED
    // METHOD sqlExit                      Superclass does the job
-//    METHOD sqlDrop(cFileName)
-//    METHOD sqlExists(cFileName)
+   METHOD sqlDrop(cFileName)
+   METHOD sqlExists(cFileName)
    // METHOD sqlWhoCares                  Superclass does the job
 
 //    METHOD SetBOF()
@@ -379,7 +379,7 @@ CLASS SR_BASE_WORKAREA
    METHOD sqlRecSize()
 //    METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
 //    METHOD GetSelectList()
-//    METHOD RecnoExpr()   // add recno filters
+   METHOD RecnoExpr()   // add recno filters
    // DESTRUCTOR WA_ENDED
 
 ENDCLASS
@@ -447,6 +447,19 @@ RETURN lOld
 
 //----------------------------------------------------------------------------//
 
+METHOD SR_BASE_WORKAREA:sqlOrderListClear()
+
+   ::aInfo[SR_AINFO_FOUND] := .F.
+   ASize(::aIndex, 0)
+   ::cFor := ""
+   ::aInfo[SR_AINFO_INDEXORD] := 0
+   ::lStable := .T.
+   ::lOrderValid := .F.
+
+RETURN .T.
+
+//----------------------------------------------------------------------------//
+
 METHOD SR_BASE_WORKAREA:sqlFilterText()
 
    IF ::cFilter == NIL
@@ -467,6 +480,50 @@ METHOD SR_BASE_WORKAREA:sqlRecSize()
    NEXT
 
 RETURN i
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:RecnoExpr()
+
+   LOCAL cRet := ""
+   LOCAL aItem
+
+   cRet +=  "( " +::cRecnoname  + " IN ( "
+   FOR EACH aItem IN ::aRecnoFilter
+      cRet += AllTrim(Str(aItem)) + ","
+   NEXT
+   cRet := SubStr(cRet, 1, Len(cRet) - 1) + " ) ) "
+
+RETURN cRet
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:HasFilters()
+
+   IF !Empty(::cFilter) .OR. !Empty(::cFltUsr) .OR. !Empty(::cFor) .OR. !Empty(::cScope) .OR. (::lHistoric .AND. ::lHistEnable)
+      RETURN .T.
+   ENDIF
+
+RETURN .F.
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlDrop(cFileName)
+
+   IF SR_ExistTable(cFileName)
+      SR_DropTable(cFileName)
+   ELSEIF SR_ExistIndex(cFileName)
+      SR_DropIndex(cFileName)
+   ELSE
+      RETURN .F.
+   ENDIF
+
+RETURN .T.
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlExists(cFileName)
+RETURN SR_File(cFileName)
 
 //----------------------------------------------------------------------------//
 // Functions
