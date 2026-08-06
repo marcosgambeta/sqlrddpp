@@ -105,7 +105,6 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
    METHOD CheckCache(oWorkArea)
    METHOD WhereEqual()
-   METHOD RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode)
    METHOD Normalize(nDirection)
    METHOD SkipRawCache(nToSkip)
    METHOD Stabilize()
@@ -1801,46 +1800,6 @@ METHOD SR_WORKAREA:SkipRawCache(nToSkip)
    ENDCASE
 
 RETURN 0
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-METHOD SR_WORKAREA:RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode)
-
-   LOCAL oErr := ErrorNew()
-   LOCAL cDescr
-
-   DEFAULT cOperation TO RddName()  // ::ClassName()
-   DEFAULT nOSCode TO 0
-   DEFAULT nGenCode TO 99
-   DEFAULT SubCode TO Val(cOperation)
-
-   IF SubCode > 0 .AND. SubCode <= SR_GetErrMessageMax()
-      DEFAULT cErr TO SR_Msg(SubCode)
-   ELSE
-      DEFAULT cErr TO "RunTime Error"
-   ENDIF
-
-   cDescr := AllTrim(cErr)
-
-   ::oSql:RollBack()
-
-   oErr:genCode := nGenCode
-   oErr:subCode := SubCode
-   oErr:CanDefault := .F.
-   oErr:Severity := ES_ERROR
-   oErr:CanRetry := .T.
-   oErr:CanSubstitute := .F.
-   oErr:Description := cDescr + " - RollBack executed."
-   oErr:subSystem := RddName()  // ::ClassName()
-   oErr:operation := cOperation
-   oErr:OsCode := nOSCode
-   oErr:FileName := ::cFileName
-
-   SR_LogFile("sqlerror.log", {cDescr})
-
-   _SR_Throw(oErr)
-
-RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
