@@ -7461,48 +7461,13 @@ RETURN cStr
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-FUNCTION SR_UseSequences(oCnn)
-
-   DEFAULT oCnn TO SR_GetConnection()
-
-   IF HB_IsObject(oCnn)
-      RETURN oCnn:lUseSequences
-   ENDIF
-
-RETURN .T.
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_SetUseSequences(lOpt, oCnn)
-
-   LOCAL lOld := .T.
-
-   DEFAULT oCnn TO SR_GetConnection()
-
-   IF HB_IsObject(oCnn)
-      lOld := oCnn:lUseSequences
-      oCnn:lUseSequences := lOpt
-   ENDIF
-
-RETURN lOld
-
-//-------------------------------------------------------------------------------------------------------------------//
-
 FUNCTION SR_TCNextRecord(oWA)
 
    LOCAL aRet := {}
-   
+
    HB_SYMBOL_UNUSED(oWA)
 
 RETURN IIf(Len(aRet) > 0, aRet[1, 1], 0)
-
-//-------------------------------------------------------------------------------------------------------------------//
-
-FUNCTION SR_Serialize1(uVal)
-
-   LOCAL cMemo := SR_STRTOHEX(HB_Serialize(uVal))
-
-RETURN SR_SQL_SERIALIZED_SIGNATURE + Str(Len(cMemo), 10) + cMemo
 
 //-------------------------------------------------------------------------------------------------------------------//
 
