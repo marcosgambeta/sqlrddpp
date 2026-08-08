@@ -106,6 +106,8 @@ STATIC s_lUseNullsFirst := .T.
 
 STATIC s_lExpressionIndex := .T.
 
+STATIC s_lRowCompare := .T.
+
 //-------------------------------------------------------------------------------------------------------------------//
 
 PROCEDURE SR_Init()
@@ -214,6 +216,30 @@ RETURN lOld
 FUNCTION SR_GetExpressionIndex()
 
 RETURN s_lExpressionIndex
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// Enables/disables expressing index navigation as a row constructor
+// comparison - (a, b, c) >= (x, y, z) - instead of the equivalent set of
+// alternatives ORed together and sent as UNIONed subselects. The row form
+// maps onto a multi column btree and is dramatically faster; disable it to
+// go back to the previous SQL if a plan ever regresses.
+
+FUNCTION SR_SetRowCompare(lSet)
+
+   LOCAL lOld := s_lRowCompare
+
+   IF HB_IsLogical(lSet)
+      s_lRowCompare := lSet
+   ENDIF
+
+RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetRowCompare()
+
+RETURN s_lRowCompare
 
 //-------------------------------------------------------------------------------------------------------------------//
 
