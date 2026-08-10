@@ -120,6 +120,9 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    //METHOD WherePgsMajor(aQuotedCols)    // Retrieves an SQL/WHERE Major or equal the currente record
    METHOD WherePgsMajor(aQuotedCols, lPartialSeek)
    METHOD WherePgsMinor(aQuotedCols)    // Retrieves an SQL/WHERE Minor or equal the currente record
+   METHOD CanUseRowCompare(aQuot)       // .T. when the OR/UNION expansion can be replaced by a row comparison
+   METHOD RowCompareWhere(aQuot, cOper) // (col1, col2, ...) >= (val1, val2, ...)
+   METHOD EnsureKeyColumnsNotNull(aCols) // key columns become NOT NULL DEFAULT ''/0 at index creation
    // METHOD sqlKeyCompare(uKey)                       C level implemented - reads from ::aInfo
    METHOD ParseIndexColInfo(cSQL)
 
@@ -5927,6 +5930,12 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
          (::cAlias)->(DBSetOrder(nOldOrd))
       ENDIF
 
+      // xBase semantics: key columns must not hold NULL, or column based
+      // navigation cannot reach those rows. Normalized before the index is
+      // built, so the btree is created once over the corrected data.
+
+      ::EnsureKeyColumnsNotNull(aCols)
+
       IF ::osql:lPostgresql8
          // PGS 8.3 will use it once released
          FOR i := 1 TO Len(aCols)
@@ -6697,6 +6706,155 @@ RETURN cRet
 
 //----------------------------------------------------------------------------//
 
+// Navigation over a key of N columns used to be expressed as N alternatives
+// ORed together, which the caller turns into N UNIONed subselects:
+//
+//    ( a >= x AND b >= y AND c >= z )
+// OR ( a >= x AND b =  y AND c >  z )
+// OR ( a =  x AND b >  y )
+// OR ( a >  x )
+//
+// PostgreSQL cannot turn that into a single range scan. It reads each branch
+// separately, sorts what does not come out in index order, and then has to
+// deduplicate the whole thing, because the >= prefixes make the branches
+// overlap. Measured on a 500k row table with a 6 column key, one SKIP took
+// 159 ms: a HashAggregate over six index scans, two of them behind an
+// Incremental Sort of ~61 ms each, with the planner picking the wrong index
+// for two branches since a >= prefix is not selective.
+//
+// The row constructor comparison below says the same thing in the form the
+// planner understands, and maps straight onto the multi column btree:
+//
+//    (a, b, c) >= (x, y, z)
+//
+// Same query, same 32 rows, 0.19 ms - the plan is a single Index Scan.
+// Equivalence was checked over 600 cursor positions on two tables (4 and 6
+// column keys, including 27k rows with NULLs in key columns): identical
+// result sets everywhere.
+//
+// Note the >= on the last column is deliberate and is preserved: the current
+// record is meant to come back as the first row of the buffer.
+
+METHOD SR_WORKAREA:CanUseRowCompare(aQuot)
+
+   LOCAL cQot
+
+   IF !SR_GetRowCompare()
+      RETURN .F.
+   ENDIF
+
+   IF Len(aQuot) < 2
+      RETURN .F.      // a single component already produces a single branch
+   ENDIF
+
+   // A NULL in the key takes the IS / IS NOT path, and the expansion also
+   // drops such columns from some branches. A row constructor cannot express
+   // that, so those keys keep the original form.
+
+   FOR EACH cQot IN aQuot
+      IF !HB_IsChar(cQot) .OR. cQot == "NULL"
+         RETURN .F.
+      ENDIF
+   NEXT
+
+RETURN .T.
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+METHOD SR_WORKAREA:RowCompareWhere(aQuot, cOper)
+
+   LOCAL i
+   LOCAL cCols := ""
+   LOCAL cVals := ""
+
+   FOR i := 1 TO Len(aQuot)
+      cCols += IIf(Empty(cCols), "", ", ") + ;
+               ::IndexFieldSQL(::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS, i])
+      cVals += IIf(Empty(cVals), "", ", ") + aQuot[i]
+   NEXT i
+
+RETURN "( ( " + cCols + " ) " + cOper + " ( " + cVals + " ) ) "
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// DBF has no NULL: a blank character field is '' and an empty number is 0.
+// The library itself only writes NULL because the column allows it -
+// QuotedNull() switches to ' '/0 the moment the column is NOT NULL. A NULL
+// in a key column breaks column based navigation (old expansion and row
+// comparison alike): venda >= '' is unknown when venda IS NULL, and with
+// NULLS FIRST the row sorts before the seek position, so SEEK cannot reach
+// it. The synthetic index masked this by building the key client side,
+// where NULL renders as spaces inside the concatenated string.
+//
+// So when a regular (non synthetic) index is created, every character and
+// numeric key column is normalized here: existing NULLs become ''/0 and the
+// column becomes NOT NULL DEFAULT ''/0. Date columns are left alone - an
+// empty date stored as NULL already sorts first, like a blank date in xBase.
+// Disable with SR_SetIndexNotNull(.F.).
+
+METHOD SR_WORKAREA:EnsureKeyColumnsNotNull(aCols)
+
+   LOCAL uCol
+   LOCAL nPos
+   LOCAL cName
+   LOCAL cEmpty
+   LOCAL aInfo
+   LOCAL lChanged := .F.
+
+   IF !SR_GetIndexNotNull()
+      RETURN NIL
+   ENDIF
+
+   FOR EACH uCol IN aCols
+
+      IF HB_IsArray(uCol)
+         nPos := uCol[SR_IDXFLD_POS]      // expression component: the underlying column
+      ELSE
+         nPos := AScan(::aNames, {|x|x == uCol})
+      ENDIF
+
+      IF nPos == 0 .OR. !::aFields[nPos, SR_FIELD_NULLABLE]
+         LOOP
+      ENDIF
+
+      IF !::aFields[nPos, SR_FIELD_TYPE] $ "CN"
+         LOOP                             // dates keep NULL for the empty value
+      ENDIF
+
+      cName := SR_DBQUALIFYM(::aNames[nPos])   // PostgreSQL folds unquoted identifiers to lower case
+      cEmpty := IIf(::aFields[nPos, SR_FIELD_TYPE] == "C", ;
+                    IIf(SR_SETPGSOLDBEHAVIOR(), "''", "' '"), "0")
+
+      // The UPDATE first: SET NOT NULL validates the whole table
+
+      IF ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + cName + " = " + cEmpty + ;
+                     " WHERE " + cName + " IS NULL", .T.) == SQL_SUCCESS .AND. ;
+         ::oSql:Exec("ALTER TABLE " + ::cQualifiedTableName + ;
+                     " ALTER COLUMN " + cName + " SET DEFAULT " + cEmpty + ;
+                     ", ALTER COLUMN " + cName + " SET NOT NULL", .T.) == SQL_SUCCESS
+
+         ::aFields[nPos, SR_FIELD_NULLABLE] := .F.
+         lChanged := .T.
+
+      ENDIF
+
+      ::oSql:Commit()
+
+   NEXT
+
+   // Keep the connection wide table info cache in sync, or a workarea opened
+   // from the cache would still believe the column is nullable and write NULL
+   // into a column that no longer accepts it
+
+   IF lChanged
+      aInfo := ::oSql:aTableInfo[::cOriginalFN]
+      aInfo[SR_CACHEINFO_AFIELDS] := ::aFields
+   ENDIF
+
+RETURN NIL
+
+//-------------------------------------------------------------------------------------------------------------------//
+
 METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
 
    LOCAL i
@@ -6738,6 +6896,15 @@ METHOD SR_WORKAREA:WherePgsMajor(aQuotedCols, lPartialSeek)
       ELSE
          nLen := Len(aQuotedCols)
          aQuot := aQuotedCols
+      ENDIF
+
+      IF lPartialSeek .AND. ::CanUseRowCompare(aQuot)
+         AAdd(aRet, ::RowCompareWhere(aQuot, ">="))
+         cRet := ::SolveRestrictors()
+         IF !Empty(cRet)
+            aRet[1] += " AND ( " + cRet + " ) "
+         ENDIF
+         RETURN aRet
       ENDIF
 
       FOR j := nLen TO 1 STEP -1
@@ -6942,6 +7109,15 @@ METHOD SR_WORKAREA:WherePgsMinor(aQuotedCols)
       ELSE
          nLen := Len(aQuotedCols)
          aQuot := aQuotedCols
+      ENDIF
+
+      IF ::CanUseRowCompare(aQuot)
+         AAdd(aRet, ::RowCompareWhere(aQuot, "<="))
+         cRet := ::SolveRestrictors()
+         IF !Empty(cRet)
+            aRet[1] += " AND ( " + cRet + " ) "
+         ENDIF
+         RETURN aRet
       ENDIF
 
       FOR j := nLen TO 1 STEP -1
