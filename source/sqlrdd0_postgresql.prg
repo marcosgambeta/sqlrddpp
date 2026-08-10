@@ -108,6 +108,8 @@ STATIC s_lExpressionIndex := .T.
 
 STATIC s_lRowCompare := .T.
 
+STATIC s_lIndexNotNull := .T.
+
 //-------------------------------------------------------------------------------------------------------------------//
 
 PROCEDURE SR_Init()
@@ -240,6 +242,30 @@ RETURN lOld
 FUNCTION SR_GetRowCompare()
 
 RETURN s_lRowCompare
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// Enables/disables normalizing key columns at index creation: existing NULLs
+// become ''/0 and the column becomes NOT NULL DEFAULT ''/0, restoring the
+// xBase semantics (DBF has no NULL). Without it, rows holding NULL in a key
+// column are unreachable by column based navigation - the synthetic index
+// masked this by rendering NULL as spaces inside the client built key.
+
+FUNCTION SR_SetIndexNotNull(lSet)
+
+   LOCAL lOld := s_lIndexNotNull
+
+   IF HB_IsLogical(lSet)
+      s_lIndexNotNull := lSet
+   ENDIF
+
+RETURN lOld
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+FUNCTION SR_GetIndexNotNull()
+
+RETURN s_lIndexNotNull
 
 //-------------------------------------------------------------------------------------------------------------------//
 

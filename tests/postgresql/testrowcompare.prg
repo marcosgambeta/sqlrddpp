@@ -79,7 +79,9 @@ PROCEDURE Main()
    ENDIF
 
    CriaTabela()
+   InjetaNulos()
    CriaIndice()
+   lOk := VerificaNotNull() .AND. lOk
 
    ? ""
    ? "=============================================================="
@@ -174,6 +176,67 @@ STATIC PROCEDURE CriaTabela()
    CLOSE DATABASE
 
 RETURN
+
+//--------------------------------------------------------------------
+// Poe NULL em colunas de chave de parte dos registros ANTES do INDEX ON.
+// DBF nao tem NULL: sem o ajuste feito na criacao do indice, esses
+// registros ficariam inalcancaveis pela navegacao por colunas (o campo
+// NULL falha em qualquer comparacao e, com NULLS FIRST, ordena antes da
+// posicao do seek).
+
+STATIC PROCEDURE InjetaNulos()
+
+   LOCAL oCnn := SR_GetConnection()
+
+   ? "Colocando NULL em colunas de chave de parte dos registros..."
+
+   oCnn:Exec("UPDATE " + TABLE_NAME + " SET grupo = NULL WHERE sr_recno % 11 = 0", .T.)
+   oCnn:Exec("UPDATE " + TABLE_NAME + " SET codigo = NULL WHERE sr_recno % 13 = 0", .T.)
+   oCnn:Commit()
+
+RETURN
+
+//--------------------------------------------------------------------
+// Depois do INDEX ON as colunas da chave tem que estar NOT NULL e sem
+// nenhum NULL remanescente
+
+STATIC FUNCTION VerificaNotNull()
+
+   LOCAL oCnn := SR_GetConnection()
+   LOCAL aRes := {}
+   LOCAL aRow
+   LOCAL lOk := .T.
+
+   ? ""
+   ? "Colunas da chave apos o INDEX ON:"
+
+   oCnn:Exec("SELECT column_name, is_nullable FROM information_schema.columns " + ;
+             "WHERE table_schema = 'public' AND table_name = '" + TABLE_NAME + "' " + ;
+             "AND column_name IN ('tipo','grupo','codigo') ORDER BY column_name", .F., .T., @aRes)
+
+   FOR EACH aRow IN aRes
+      ? "  " + PadR(AllTrim(SR_Val2Char(aRow[1])), 10) + " is_nullable = " + AllTrim(SR_Val2Char(aRow[2]))
+      IF AllTrim(SR_Val2Char(aRow[2])) != "NO"
+         lOk := .F.
+      ENDIF
+   NEXT
+
+   aRes := {}
+   oCnn:Exec("SELECT count(*) FROM " + TABLE_NAME + ;
+             " WHERE grupo IS NULL OR codigo IS NULL", .F., .T., @aRes)
+
+   IF Len(aRes) > 0
+      ? "  registros ainda com NULL na chave: " + AllTrim(SR_Val2Char(aRes[1, 1]))
+      IF Val(SR_Val2Char(aRes[1, 1])) != 0
+         lOk := .F.
+      ENDIF
+   ENDIF
+
+   IF !lOk
+      ? "  >> FALHOU: a criacao do indice deveria ter normalizado as colunas."
+   ENDIF
+
+RETURN lOk
 
 //--------------------------------------------------------------------
 

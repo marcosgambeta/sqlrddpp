@@ -140,6 +140,7 @@ CLASS SR_WORKAREA FROM SR_BASE_WORKAREA
    METHOD WherePgsMinor(aQuotedCols)    // Retrieves an SQL/WHERE Minor or equal the currente record
    METHOD CanUseRowCompare(aQuot)       // .T. when the OR/UNION expansion can be replaced by a row comparison
    METHOD RowCompareWhere(aQuot, cOper) // (col1, col2, ...) >= (val1, val2, ...)
+   METHOD EnsureKeyColumnsNotNull(aCols) // key columns become NOT NULL DEFAULT ''/0 at index creation
    // METHOD sqlKeyCompare(uKey)                       C level implemented - reads from ::aInfo
    METHOD ParseIndexColInfo(cSQL)
 
@@ -6073,6 +6074,12 @@ METHOD SR_WORKAREA:sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, c
          (::cAlias)->(DBSetOrder(nOldOrd))
       ENDIF
 
+      // xBase semantics: key columns must not hold NULL, or column based
+      // navigation cannot reach those rows. Normalized before the index is
+      // built, so the btree is created once over the corrected data.
+
+      ::EnsureKeyColumnsNotNull(aCols)
+
       IF ::osql:lPostgresql8
          // PGS 8.3 will use it once released
          FOR i := 1 TO Len(aCols)
@@ -7018,6 +7025,84 @@ METHOD SR_WORKAREA:RowCompareWhere(aQuot, cOper)
    NEXT i
 
 RETURN "( ( " + cCols + " ) " + cOper + " ( " + cVals + " ) ) "
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+// DBF has no NULL: a blank character field is '' and an empty number is 0.
+// The library itself only writes NULL because the column allows it -
+// QuotedNull() switches to ' '/0 the moment the column is NOT NULL. A NULL
+// in a key column breaks column based navigation (old expansion and row
+// comparison alike): venda >= '' is unknown when venda IS NULL, and with
+// NULLS FIRST the row sorts before the seek position, so SEEK cannot reach
+// it. The synthetic index masked this by building the key client side,
+// where NULL renders as spaces inside the concatenated string.
+//
+// So when a regular (non synthetic) index is created, every character and
+// numeric key column is normalized here: existing NULLs become ''/0 and the
+// column becomes NOT NULL DEFAULT ''/0. Date columns are left alone - an
+// empty date stored as NULL already sorts first, like a blank date in xBase.
+// Disable with SR_SetIndexNotNull(.F.).
+
+METHOD SR_WORKAREA:EnsureKeyColumnsNotNull(aCols)
+
+   LOCAL uCol
+   LOCAL nPos
+   LOCAL cName
+   LOCAL cEmpty
+   LOCAL aInfo
+   LOCAL lChanged := .F.
+
+   IF !SR_GetIndexNotNull()
+      RETURN NIL
+   ENDIF
+
+   FOR EACH uCol IN aCols
+
+      IF HB_IsArray(uCol)
+         nPos := uCol[SR_IDXFLD_POS]      // expression component: the underlying column
+      ELSE
+         nPos := AScan(::aNames, {|x|x == uCol})
+      ENDIF
+
+      IF nPos == 0 .OR. !::aFields[nPos, SR_FIELD_NULLABLE]
+         LOOP
+      ENDIF
+
+      IF !::aFields[nPos, SR_FIELD_TYPE] $ "CN"
+         LOOP                             // dates keep NULL for the empty value
+      ENDIF
+
+      cName := SR_DBQUALIFY(::aNames[nPos])
+      cEmpty := IIf(::aFields[nPos, SR_FIELD_TYPE] == "C", ;
+                    IIf(SR_SETPGSOLDBEHAVIOR(), "''", "' '"), "0")
+
+      // The UPDATE first: SET NOT NULL validates the whole table
+
+      IF ::oSql:Exec("UPDATE " + ::cQualifiedTableName + " SET " + cName + " = " + cEmpty + ;
+                     " WHERE " + cName + " IS NULL", .T.) == SQL_SUCCESS .AND. ;
+         ::oSql:Exec("ALTER TABLE " + ::cQualifiedTableName + ;
+                     " ALTER COLUMN " + cName + " SET DEFAULT " + cEmpty + ;
+                     ", ALTER COLUMN " + cName + " SET NOT NULL", .T.) == SQL_SUCCESS
+
+         ::aFields[nPos, SR_FIELD_NULLABLE] := .F.
+         lChanged := .T.
+
+      ENDIF
+
+      ::oSql:Commit()
+
+   NEXT
+
+   // Keep the connection wide table info cache in sync, or a workarea opened
+   // from the cache would still believe the column is nullable and write NULL
+   // into a column that no longer accepts it
+
+   IF lChanged
+      aInfo := ::oSql:aTableInfo[::cOriginalFN]
+      aInfo[SR_CACHEINFO_AFIELDS] := ::aFields
+   ENDIF
+
+RETURN NIL
 
 //-------------------------------------------------------------------------------------------------------------------//
 
