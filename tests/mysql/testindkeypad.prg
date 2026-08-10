@@ -57,6 +57,16 @@
 // normalmente:
 //
 //   testindkeypad ... --forcewidth 12
+//
+// Opcao --tblcs <charset>: converte a tabela de teste para o charset
+// informado. O calculo da largura depende do charset da COLUNA, nao da
+// versao do servidor, entao os dois lados do defeito sao exercitados no
+// mesmo servidor:
+//
+//   --tblcs latin1    colunas de 1 byte  -> nao pode dividir (o driver
+//                     ja truncou colunas assim para 1/4 do tamanho)
+//   --tblcs utf8mb4   colunas de 4 bytes -> tem que dividir por 4 (sem
+//                     isso CHAR(2) chega como 8)
 
 #ifdef __XHARBOUR__
 #xtranslate HB_PVALUE([<x,...>]) => PVALUE(<x>)
@@ -64,6 +74,7 @@
 
 #include "sqlrdd.ch"
 #include "inkey.ch"
+#include "dbstruct.ch"
 
 #define RDD_NAME "SQLRDD"
 #define TABLE_NAME "arbankt"
@@ -85,6 +96,7 @@ STATIC s_DTB    := "dbtest"
 STATIC s_nPad := 0      // largura com que IDXCOL_ voltou do driver
 STATIC s_COLLATION := ""   // --forcecs
 STATIC s_nForceW := 0      // --forcewidth
+STATIC s_TBLCS := ""       // --tblcs
 
 PROCEDURE Main()
 
@@ -93,6 +105,7 @@ PROCEDURE Main()
    LOCAL lKeep := .F.
    LOCAL stringConect
    LOCAL lFalhou
+   LOCAL lLarguraOk
 
    n := 1
    DO WHILE n <= PCount()
@@ -105,6 +118,7 @@ PROCEDURE Main()
       CASE HB_PValue(n) == "--keep"   ; lKeep := .T.
       CASE HB_PValue(n) == "--forcecs"; s_COLLATION := HB_PValue(++n)
       CASE HB_PValue(n) == "--forcewidth"; s_nForceW := Val(HB_PValue(++n))
+      CASE HB_PValue(n) == "--tblcs"  ; s_TBLCS := HB_PValue(++n)
       OTHERWISE
          ? "Parametro desconhecido:", HB_PValue(n)
       ENDCASE
@@ -134,12 +148,13 @@ PROCEDURE Main()
    ForcaLargura()
    MostraAmbiente()
    CriaTabela()
+   lLarguraOk := VerificaLarguras()
    CriaIndices()
    MedePadding()
 
    lFalhou := AbreComoNoRelato()
 
-   Veredito(lFalhou)
+   Veredito(lFalhou, lLarguraOk)
 
    IF !lKeep
       CLOSE DATABASE
@@ -299,7 +314,13 @@ STATIC PROCEDURE CriaTabela()
       sr_DropTable(TABLE_NAME)
    ENDIF
 
-   dbCreate(TABLE_NAME, {{"BANK_CODE", "C", 10, 0}, ;
+   // M_COL/M_LEVEL/M_ROW sao CHAR(2) de proposito: e o formato da tabela de
+   // menu do relato, onde Len() voltava 8 em vez de 2
+
+   dbCreate(TABLE_NAME, {{"M_COL",     "C",  2, 0}, ;
+                         {"M_LEVEL",   "C",  2, 0}, ;
+                         {"M_ROW",     "C",  2, 0}, ;
+                         {"BANK_CODE", "C", 10, 0}, ;
                          {"BANK_NAME", "C", 40, 0}, ;
                          {"ADDRESS",   "C", 40, 0}, ;
                          {"BALANCE",   "N", 14, 2}}, RDD_NAME)
@@ -309,6 +330,9 @@ STATIC PROCEDURE CriaTabela()
    FOR EACH cItem IN aBancos
       nPos := At("|", cItem)
       dbAppend()
+      FIELD->M_COL     := "01"
+      FIELD->M_LEVEL   := "01"
+      FIELD->M_ROW     := StrZero(cItem:__enumIndex(), 2)
       FIELD->BANK_CODE := Left(cItem, nPos - 1)
       FIELD->BANK_NAME := SubStr(cItem, nPos + 1)
       FIELD->ADDRESS   := "MANILA"
@@ -321,7 +345,110 @@ STATIC PROCEDURE CriaTabela()
 
    CLOSE DATABASE
 
+   ConverteTabela()
+
 RETURN
+
+//--------------------------------------------------------------------
+// Converte a tabela de teste para o charset pedido em --tblcs. O bug
+// depende do charset da COLUNA, nao da versao do servidor, entao os
+// dois lados do defeito podem ser exercitados no mesmo servidor:
+//
+//   --tblcs latin1    colunas de 1 byte  -> nao pode dividir
+//   --tblcs utf8mb4   colunas de 4 bytes -> tem que dividir por 4
+
+STATIC PROCEDURE ConverteTabela()
+
+   LOCAL oCnn := SR_GetConnection()
+
+   IF Empty(s_TBLCS)
+      RETURN
+   ENDIF
+
+   ? "Convertendo " + TABLE_NAME + " para character set " + s_TBLCS + " ..."
+
+   oCnn:Exec("alter table " + TABLE_NAME + " convert to character set " + s_TBLCS, .T.)
+   oCnn:Commit()
+
+RETURN
+
+//--------------------------------------------------------------------
+// Confere a largura das colunas de dados: o driver deve reportar a
+// largura DECLARADA (em caracteres), nao o tamanho em bytes. Foi aqui
+// que o Mario viu CHAR(2) chegar como 8 e quebrar o menu dele.
+
+STATIC PROCEDURE MostraCharsetTabela()
+
+   LOCAL oCnn := SR_GetConnection()
+   LOCAL aRes := {}
+
+   oCnn:Exec("select distinct CHARACTER_SET_NAME from information_schema.columns " + ;
+             "where TABLE_SCHEMA = database() and TABLE_NAME = '" + Lower(TABLE_NAME) + "' " + ;
+             "and CHARACTER_SET_NAME is not null", .F., .T., @aRes)
+
+   IF Len(aRes) > 0
+      ? "Charset das colunas char: " + AllTrim(SR_Val2Char(aRes[1, 1])) + ;
+        IIf(Len(aRes) > 1, " (e outros)", "")
+      ? ""
+   ENDIF
+
+RETURN
+
+//--------------------------------------------------------------------
+
+STATIC FUNCTION VerificaLarguras()
+
+   LOCAL aStru
+   LOCAL aFld
+   LOCAL nLenVal
+   LOCAL nErros := 0
+
+   ? ""
+   ? "=============================================================="
+   ? " Largura das colunas de dados"
+   ? "=============================================================="
+
+   MostraCharsetTabela()
+
+   USE (TABLE_NAME) SHARED NEW VIA (RDD_NAME)
+   dbGoTop()
+
+   aStru := dbStruct()
+
+   ? "  " + PadR("COLUNA", 12) + PadL("DECLARADA", 10) + PadL("LIDA", 8)
+   ? "  " + Replicate("-", 30)
+
+   FOR EACH aFld IN aStru
+
+      IF aFld[DBS_TYPE] != "C"
+         LOOP
+      ENDIF
+
+      nLenVal := Len(SR_Val2Char(FieldGet(aFld:__enumIndex())))
+
+      ? "  " + PadR(aFld[DBS_NAME], 12) + ;
+        PadL(AllTrim(Str(aFld[DBS_LEN])), 10) + ;
+        PadL(AllTrim(Str(nLenVal)), 8) + ;
+        IIf(nLenVal == aFld[DBS_LEN], "", "   <== DIVERGENTE")
+
+      IF nLenVal != aFld[DBS_LEN]
+         nErros++
+      ENDIF
+
+   NEXT
+
+   ? ""
+
+   IF nErros > 0
+      ? "  >> " + AllTrim(Str(nErros)) + " coluna(s) com largura errada."
+      ? "  >> O driver esta reportando bytes em vez de caracteres."
+   ELSE
+      ? "  >> Todas as colunas com a largura declarada. OK."
+   ENDIF
+
+   CLOSE DATABASE
+
+RETURN (nErros == 0)
 
 //--------------------------------------------------------------------
 // Indices no formato do relato: bag unico, dois tags, caminho sintetico
@@ -489,12 +616,20 @@ RETURN lFalhou
 
 //--------------------------------------------------------------------
 
-STATIC PROCEDURE Veredito(lFalhou)
+STATIC PROCEDURE Veredito(lFalhou, lLarguraOk)
 
    ? ""
    ? "=============================================================="
    ? " Resultado"
    ? "=============================================================="
+
+   IF !lLarguraOk
+      ? "LARGURA DE COLUNA ERRADA. O driver reportou colunas char com um"
+      ? "tamanho diferente do declarado - e o mesmo defeito que quebrou o"
+      ? "menu do relato (CHAR(2) chegando como 8). Isso corrompe QUALQUER"
+      ? "leitura de campo char, nao so os indices."
+      ? ""
+   ENDIF
 
    DO CASE
 

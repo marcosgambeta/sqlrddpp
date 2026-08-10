@@ -213,7 +213,7 @@ CLASS SR_BASE_WORKAREA
 //    METHOD Quoted(uData, trim, nLen, nDec, nTargetDB, lSynthetic)
 //    METHOD CheckCache(oWorkArea)
 //    METHOD WhereEqual()
-//    METHOD RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode)
+   METHOD RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode)
 //    METHOD Normalize(nDirection)
 //    METHOD SkipRawCache(nToSkip)
 //    METHOD Stabilize()
@@ -231,7 +231,7 @@ CLASS SR_BASE_WORKAREA
 //    METHOD WherePgsMinor(aQuotedCols)    // Retrieves an SQL/WHERE Minor or equal the currente record
 //    // METHOD sqlKeyCompare(uKey)                       C level implemented - reads from ::aInfo
 //    METHOD ParseIndexColInfo(cSQL)
-//    METHOD HasFilters()
+   METHOD HasFilters()
 //    METHOD ParseForClause(cFor)
 //    METHOD OrdSetForClause(cFor, cForxBase)
    METHOD SetColPK(cColName)
@@ -242,8 +242,8 @@ CLASS SR_BASE_WORKAREA
 //    METHOD LockTable(lCheck4ExcLock, lFLock) //METHOD LockTable(lCheck)
 //    METHOD UnlockTable(lClosing) //METHOD UnlockTable()
 
-//    METHOD FCount() INLINE ::nFields
-//    METHOD SetNextDt(d) INLINE ::dNextDt := d
+   METHOD FCount() INLINE ::nFields
+   METHOD SetNextDt(d) INLINE ::dNextDt := d
    METHOD SetQuickAppend(l)
 
    // Table maintanance stuff
@@ -265,7 +265,7 @@ CLASS SR_BASE_WORKAREA
 //    METHOD HistExpression(n, cAlias)
    METHOD DisableHistoric()
    METHOD EnableHistoric()
-//    METHOD SetCurrDate(d) INLINE IIf(d == NIL, ::CurrDate, ::CurrDate := d)
+   METHOD SetCurrDate(d) INLINE IIf(d == NIL, ::CurrDate, ::CurrDate := d)
 //
 //    METHOD LineCount(lMsg) //METHOD LineCount()
 //    METHOD CreateOrclFunctions(cOwner, cFileName)
@@ -337,7 +337,7 @@ CLASS SR_BASE_WORKAREA
    // METHOD sqlRelText                   Superclass does the job
    // METHOD sqlSetRel                    C level implemented
 //    METHOD sqlOrderListAdd(cBagName, cTag)
-//    METHOD sqlOrderListClear()
+   METHOD sqlOrderListClear()
    // METHOD sqlOrderListDelete           Superclass does the job
 //    METHOD sqlOrderListFocus(uOrder, cBag)
 //    METHOD sqlOrderListNum(uOrder)       // Used by sqlOrderInfo
@@ -370,8 +370,8 @@ CLASS SR_BASE_WORKAREA
    // METHOD sqlReadDBHeader              Superclass does the job - UNSUPPORTED
    // METHOD sqlWriteDBHeader             Superclass does the job - UNSUPPORTED
    // METHOD sqlExit                      Superclass does the job
-//    METHOD sqlDrop(cFileName)
-//    METHOD sqlExists(cFileName)
+   METHOD sqlDrop(cFileName)
+   METHOD sqlExists(cFileName)
    // METHOD sqlWhoCares                  Superclass does the job
 
 //    METHOD SetBOF()
@@ -379,7 +379,7 @@ CLASS SR_BASE_WORKAREA
    METHOD sqlRecSize()
 //    METHOD GetSyntheticVirtualExpr(aExpr, cAlias)
 //    METHOD GetSelectList()
-//    METHOD RecnoExpr()   // add recno filters
+   METHOD RecnoExpr()   // add recno filters
    // DESTRUCTOR WA_ENDED
 
 ENDCLASS
@@ -393,6 +393,46 @@ ENDCLASS
 //    ? "Cleanup:", "WORKAREA", ::cFileName
 //
 // RETURN
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:RuntimeErr(cOperation, cErr, nOSCode, nGenCode, SubCode)
+
+   LOCAL oErr := ErrorNew()
+   LOCAL cDescr
+
+   DEFAULT cOperation TO RddName()  // ::ClassName()
+   DEFAULT nOSCode TO 0
+   DEFAULT nGenCode TO 99
+   DEFAULT SubCode TO Val(cOperation)
+
+   IF SubCode > 0 .AND. SubCode <= SR_GetErrMessageMax()
+      DEFAULT cErr TO SR_Msg(SubCode)
+   ELSE
+      DEFAULT cErr TO "RunTime Error"
+   ENDIF
+
+   cDescr := AllTrim(cErr)
+
+   ::oSql:RollBack()
+
+   oErr:genCode := nGenCode
+   oErr:subCode := SubCode
+   oErr:CanDefault := .F.
+   oErr:Severity := ES_ERROR
+   oErr:CanRetry := .T.
+   oErr:CanSubstitute := .F.
+   oErr:Description := cDescr + " - RollBack executed."
+   oErr:subSystem := RddName()  // ::ClassName()
+   oErr:operation := cOperation
+   oErr:OsCode := nOSCode
+   oErr:FileName := ::cFileName
+
+   SR_LogFile("sqlerror.log", {cDescr})
+
+   _SR_Throw(oErr)
+
+RETURN NIL
 
 //----------------------------------------------------------------------------//
 
@@ -447,6 +487,19 @@ RETURN lOld
 
 //----------------------------------------------------------------------------//
 
+METHOD SR_BASE_WORKAREA:sqlOrderListClear()
+
+   ::aInfo[SR_AINFO_FOUND] := .F.
+   ASize(::aIndex, 0)
+   ::cFor := ""
+   ::aInfo[SR_AINFO_INDEXORD] := 0
+   ::lStable := .T.
+   ::lOrderValid := .F.
+
+RETURN .T.
+
+//----------------------------------------------------------------------------//
+
 METHOD SR_BASE_WORKAREA:sqlFilterText()
 
    IF ::cFilter == NIL
@@ -467,6 +520,50 @@ METHOD SR_BASE_WORKAREA:sqlRecSize()
    NEXT
 
 RETURN i
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:RecnoExpr()
+
+   LOCAL cRet := ""
+   LOCAL aItem
+
+   cRet +=  "( " +::cRecnoname  + " IN ( "
+   FOR EACH aItem IN ::aRecnoFilter
+      cRet += AllTrim(Str(aItem)) + ","
+   NEXT
+   cRet := SubStr(cRet, 1, Len(cRet) - 1) + " ) ) "
+
+RETURN cRet
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:HasFilters()
+
+   IF !Empty(::cFilter) .OR. !Empty(::cFltUsr) .OR. !Empty(::cFor) .OR. !Empty(::cScope) .OR. (::lHistoric .AND. ::lHistEnable)
+      RETURN .T.
+   ENDIF
+
+RETURN .F.
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlDrop(cFileName)
+
+   IF SR_ExistTable(cFileName)
+      SR_DropTable(cFileName)
+   ELSEIF SR_ExistIndex(cFileName)
+      SR_DropIndex(cFileName)
+   ELSE
+      RETURN .F.
+   ENDIF
+
+RETURN .T.
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlExists(cFileName)
+RETURN SR_File(cFileName)
 
 //----------------------------------------------------------------------------//
 // Functions
@@ -649,9 +746,9 @@ FUNCTION SR_SetlUseDBCatalogs(lSet)
 
 RETURN lOld
 
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Get/Set s_lAllowRelationsInIndx
-//-------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 FUNCTION SR_GetlAllowRelationsInIndx()
 RETURN s_lAllowRelationsInIndx
@@ -678,6 +775,41 @@ FUNCTION SR_SetOracleSyntheticVirtual(l)
    s_lOracleSyntheticVirtual := l
 
 RETURN NIL
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_UseSequences(oCnn)
+
+   DEFAULT oCnn TO SR_GetConnection()
+
+   IF HB_IsObject(oCnn)
+      RETURN oCnn:lUseSequences
+   ENDIF
+
+RETURN .T.
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_SetUseSequences(lOpt, oCnn)
+
+   LOCAL lOld := .T.
+
+   DEFAULT oCnn TO SR_GetConnection()
+
+   IF HB_IsObject(oCnn)
+      lOld := oCnn:lUseSequences
+      oCnn:lUseSequences := lOpt
+   ENDIF
+
+RETURN lOld
+
+//----------------------------------------------------------------------------//
+
+FUNCTION SR_Serialize1(uVal)
+
+   LOCAL cMemo := SR_STRTOHEX(HB_Serialize(uVal))
+
+RETURN SR_SQL_SERIALIZED_SIGNATURE + Str(Len(cMemo), 10) + cMemo
 
 //----------------------------------------------------------------------------//
 
