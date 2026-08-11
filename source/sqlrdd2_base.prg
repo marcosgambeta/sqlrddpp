@@ -339,12 +339,12 @@ CLASS SR_BASE_WORKAREA
 //    METHOD sqlOrderListAdd(cBagName, cTag)
    METHOD sqlOrderListClear()
    // METHOD sqlOrderListDelete           Superclass does the job
-//    METHOD sqlOrderListFocus(uOrder, cBag)
-//    METHOD sqlOrderListNum(uOrder)       // Used by sqlOrderInfo
+   METHOD sqlOrderListFocus(uOrder, cBag)
+   METHOD sqlOrderListNum(uOrder)       // Used by sqlOrderInfo
    // METHOD sqlOrderListRebuild          Superclass does the job - UNSUPPORTED
-//    METHOD sqlOrderCondition(cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc)
+   METHOD sqlOrderCondition(cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc)
 //    METHOD sqlOrderCreate(cIndexName, cColumns, cTag, cConstraintName, cTargetTable, aTargetColumns, lEnable)
-//    METHOD sqlOrderDestroy(uOrder, cBag)
+   METHOD sqlOrderDestroy(uOrder, cBag)
    // METHOD sqlOrderInfo                 C level implemented - reads from ::aInfo and ::aIndex
 //    METHOD sqlClearFilter()
    // METHOD sqlClearLocate               Superclass does the job
@@ -564,6 +564,210 @@ RETURN .T.
 
 METHOD SR_BASE_WORKAREA:sqlExists(cFileName)
 RETURN SR_File(cFileName)
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlOrderListFocus(uOrder, cBag)
+
+   LOCAL nOrder := 0
+   LOCAL i
+   LOCAL aInd
+
+   HB_SYMBOL_UNUSED(cBag)
+
+   IF HB_IsChar(uOrder)      // TAG order
+      nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[SR_AINDEX_ORDER_TAG])) == Upper(AllTrim(uOrder))})
+      IF nOrder == 0 .OR. nOrder > Len(::aIndex)
+         ::cFor := ""
+         ::aInfo[SR_AINFO_INDEXORD] := 0
+         ::RuntimeErr("19", SR_Msg(19) + SR_Val2Char(uOrder))
+         RETURN 0 // error exit
+      ENDIF
+   ELSEIF HB_IsNumeric(uOrder)
+      nOrder := uOrder
+   ENDIF
+
+   IF nOrder == ::aInfo[SR_AINFO_INDEXORD]
+      RETURN nOrder
+   ENDIF
+
+   IF nOrder == 0 .OR. nOrder > Len(::aIndex)
+
+      ::cFor := ""
+      ::aInfo[SR_AINFO_INDEXORD] := 0
+
+      IF nOrder > Len(::aIndex)
+         ::RuntimeErr("19", SR_Msg(19) + AllTrim(SR_Val2Char(uOrder)) + ", " + ::cAlias)
+      ENDIF
+
+      ::aInfo[SR_AINFO_EOF_AT] := 0
+      ::aInfo[SR_AINFO_BOF_AT] := 0
+
+//      IF (!(::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])) .AND. !::aInfo[SR_AINFO_DELETED]
+//         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+//         ::aInfo[SR_AINFO_NPOSCACHE] := 1
+//         ACopy(::aLocalBuffer, ::aCache[1])
+//      ELSE
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+         ::aInfo[SR_AINFO_NPOSCACHE] := 0
+//      ENDIF
+
+      RETURN 0
+
+   ENDIF
+
+   ::cFor := ::aIndex[nOrder, SR_AINDEX_FOR_CLAUSE]
+
+   IF !(nOrder == ::aInfo[SR_AINFO_INDEXORD] .AND. ::lStable)
+      ::lStable := .F.
+   ENDIF
+
+   ::aInfo[SR_AINFO_INDEXORD] := nOrder
+   ::aInfo[SR_AINFO_REVERSE_INDEX] := ::aIndex[nOrder, SR_AINDEX_DESCEND_INDEX_ORDER]
+   ::lOrderValid := .T.
+   ::aInfo[SR_AINFO_EOF_AT] := 0
+   ::aInfo[SR_AINFO_BOF_AT] := 0
+
+   IF (!(::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])) .AND. (!::aInfo[SR_AINFO_DELETED]) .AND. ::aInfo[SR_AINFO_NPOSCACHE] > 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+      ::aInfo[SR_AINFO_NPOSCACHE] := 1
+      ACopy(::aLocalBuffer, ::aCache[1])
+   ELSE
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
+   ENDIF
+
+   aInd := ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS]
+   FOR i := 1 TO Len(aInd)
+      ::aSelectList[aInd[i, 2]] := 1
+   NEXT i
+
+RETURN nOrder
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlOrderDestroy(uOrder, cBag)
+
+   LOCAL nOrder := 0
+   //LOCAL i
+   //LOCAL aInd
+
+   HB_SYMBOL_UNUSED(cBag)
+
+   IF HB_IsChar(uOrder)      // TAG order
+      nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[SR_AINDEX_ORDER_TAG])) == Upper(AllTrim(uOrder))})
+      IF nOrder == 0 .OR. nOrder > Len(::aIndex)
+         ::cFor := ""
+         ::aInfo[SR_AINFO_INDEXORD] := 0
+         ::RuntimeErr("19", SR_Msg(19) + SR_Val2Char(uOrder))
+         RETURN 0
+      ELSE
+         SR_DropIndex(::aIndex[nOrder, SR_AINDEX_ORDER_TAG])
+         hb_ADel(::aIndex, 12, .T.)
+         RETURN 0
+      ENDIF
+   ELSEIF HB_IsNumeric(uOrder)
+      nOrder := uOrder
+      IF nOrder == 0 .OR. nOrder > Len(::aIndex)
+         ::cFor := ""
+         ::aInfo[SR_AINFO_INDEXORD] := 0
+         ::RuntimeErr("19", SR_Msg(19) + SR_Val2Char(uOrder))
+         RETURN 0
+      ELSE
+         SR_DropIndex(::aIndex[nOrder, SR_AINDEX_ORDER_TAG])
+         hb_ADel(::aIndex, 12, .T.)
+         RETURN 0
+      ENDIF
+
+   ENDIF
+
+#if 0
+   IF nOrder == 0 .OR. nOrder > Len(::aIndex)
+
+      ::cFor := ""
+      ::aInfo[SR_AINFO_INDEXORD] := 0
+
+      IF nOrder > Len(::aIndex)
+         ::RuntimeErr("19", SR_Msg(19) + AllTrim(SR_Val2Char(uOrder)) + ", " + ::cAlias)
+      ENDIF
+
+      ::aInfo[SR_AINFO_EOF_AT] := 0
+      ::aInfo[SR_AINFO_BOF_AT] := 0
+
+      // IF (!(::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])) .AND. !::aInfo[SR_AINFO_DELETED]
+      //    ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+      //    ::aInfo[SR_AINFO_NPOSCACHE] := 1
+      //    ACopy(::aLocalBuffer, ::aCache[1])
+      // ELSE
+         ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+         ::aInfo[SR_AINFO_NPOSCACHE] := 0
+      // ENDIF
+
+      RETURN 0
+
+   ENDIF
+
+   ::cFor := ::aIndex[nOrder, SR_AINDEX_FOR_CLAUSE]
+
+   IF !(nOrder == ::aInfo[SR_AINFO_INDEXORD] .AND. ::lStable)
+      ::lStable := .F.
+   ENDIF
+
+   ::aInfo[SR_AINFO_INDEXORD] := nOrder
+   ::aInfo[SR_AINFO_REVERSE_INDEX] := ::aIndex[nOrder, SR_AINDEX_DESCEND_INDEX_ORDER]
+   ::lOrderValid := .T.
+   ::aInfo[SR_AINFO_EOF_AT] := 0
+   ::aInfo[SR_AINFO_BOF_AT] := 0
+
+   IF (!(::aInfo[SR_AINFO_EOF] .AND. ::aInfo[SR_AINFO_BOF])) .AND. (!::aInfo[SR_AINFO_DELETED]) .AND. ::aInfo[SR_AINFO_NPOSCACHE] > 0
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 1
+      ::aInfo[SR_AINFO_NPOSCACHE] := 1
+      ACopy(::aLocalBuffer, ::aCache[1])
+   ELSE
+      ::aInfo[SR_AINFO_NCACHEEND] := ::aInfo[SR_AINFO_NCACHEBEGIN] := 0
+      ::aInfo[SR_AINFO_NPOSCACHE] := 0
+   ENDIF
+
+   aInd := ::aIndex[::aInfo[SR_AINFO_INDEXORD], SR_AINDEX_INDEX_FIELDS]
+   FOR i := 1 TO Len(aInd)
+      ::aSelectList[aInd[i, 2]] := 1
+   NEXT i
+#endif
+
+RETURN nOrder
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlOrderListNum(uOrder)
+
+   LOCAL nOrder := 0
+
+   HB_SYMBOL_UNUSED(nOrder)
+
+   IF HB_IsChar(uOrder)      // TAG order
+      nOrder := AScan(::aIndex, {|x|Upper(AllTrim(x[SR_AINDEX_ORDER_TAG])) == Upper(AllTrim(uOrder))})
+      IF nOrder == 0 .OR. nOrder > Len(::aIndex)
+         RETURN 0 // error exit
+      ENDIF
+   ELSEIF HB_IsNumeric(uOrder)
+      nOrder := uOrder
+   ELSE
+      nOrder := ::aInfo[SR_AINFO_INDEXORD]
+   ENDIF
+
+   IF nOrder == 0 .OR. nOrder > Len(::aIndex)
+      RETURN 0 // error exit
+   ENDIF
+
+RETURN nOrder
+
+//----------------------------------------------------------------------------//
+
+METHOD SR_BASE_WORKAREA:sqlOrderCondition(cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc)
+
+   ::aLastOrdCond := {cFor, cWhile, nStart, nNext, uRecord, lRest, lDesc}
+
+RETURN NIL
 
 //----------------------------------------------------------------------------//
 // Functions
