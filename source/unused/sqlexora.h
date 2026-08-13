@@ -430,7 +430,7 @@ char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
                     HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo,
                     HB_BOOL *bNullArgument);
 HB_BOOL SR_itemEmpty2(PHB_ITEM pItem);
-void SR_commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode,
+void SR_commonError(AREAP ThisDb, uint16_t uiGenCode, uint16_t uiSubCode,
                     const char *filename);
 HB_ERRCODE SetBindEmptylValue2(COLUMNBINDORAP BindStructure);
 HB_ERRCODE SetBindValue2(PHB_ITEM pFieldData, COLUMNBINDORAP BindStructure,
@@ -461,7 +461,7 @@ HB_ERRCODE ExecuteUpdateStmtOra(SQLEXORAAREAP thiswa);
 HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *queryLevel);
 HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel);
 void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel);
-HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, HB_USHORT *iIndex,
+HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, uint16_t *iIndex,
                               OCI_Statement **hStmt, OCI_Resultset **rs);
 OCI_Connection *GetConnection(OCI_ORASESSION *p);
 void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int iField, HB_BOOL bQueryOnly,

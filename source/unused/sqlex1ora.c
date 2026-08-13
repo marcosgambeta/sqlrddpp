@@ -1692,7 +1692,7 @@ static HB_ERRCODE getFirstColumnAsLong(
 
 HB_BOOL getColumnListOra(SQLEXORAAREAP thiswa)
 {
-  HB_USHORT n, uiFlds;
+  uint16_t n, uiFlds;
   LPFIELD pField;
   char *colName;
   char *fName, *temp;
@@ -1867,7 +1867,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
               CLOSE_QUALIFIER(thiswa));
     }
     // // SR_TraceLog("aaa.log", "thiswa->sSqlBuffer %s\n", thiswa->sSqlBuffer);
-    // iEnd = (HB_USHORT) strlen(thiswa->sSqlBuffer);
+    // iEnd = (uint16_t) strlen(thiswa->sSqlBuffer);
     // for (i = 20; i < (MAX_SQL_QUERY_LEN/5); i++) {
     //   if (thiswa->sSqlBuffer[i] == '?') {
     //     thiswa->sSqlBuffer[i] = ":";
@@ -1880,7 +1880,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
     //     break;
     //   }
     // }
-    // iEnd = (HB_USHORT) strlen(thiswa->sSqlBuffer);
+    // iEnd = (uint16_t) strlen(thiswa->sSqlBuffer);
     // for (i = 20; i < (MAX_SQL_QUERY_LEN/5); i++) {
     //   if (thiswa->sSqlBuffer[i] == '?') {
     //     thiswa->sSqlBuffer[i] = ' ';
@@ -2544,7 +2544,7 @@ static HB_ERRCODE sqlExOraSeek(SQLEXORAAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM
                                HB_BOOL bFindLast)
 {
   int queryLevel;
-  HB_USHORT iIndex, i;
+  uint16_t iIndex, i;
   HB_ERRCODE retvalue = HB_SUCCESS;
   PHB_ITEM pNewKey = SR_NULLPTR;
   OCI_Statement *hStmt;
@@ -3085,7 +3085,7 @@ static HB_ERRCODE sqlExOraFlush(SQLEXORAAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE sqlExOraGetValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM value)
+static HB_ERRCODE sqlExOraGetValue(SQLEXORAAREAP thiswa, uint16_t fieldNum, PHB_ITEM value)
 {
   PHB_ITEM itemTemp, itemTemp3;
   HB_SIZE ulPos;
@@ -3253,13 +3253,13 @@ static HB_ERRCODE sqlExOraGoCold(SQLEXORAAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB_ITEM value)
+static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, uint16_t fieldNum, PHB_ITEM value)
 {
   PHB_ITEM pDest;
   LPFIELD pField;
   char *cfield;
   double dNum;
-  HB_USHORT len, dec, fieldindex;
+  uint16_t len, dec, fieldindex;
 
   // SR_TraceLog(SR_NULLPTR, "sqlPutValue, writing column %i\n", fieldNum);
 
@@ -3272,7 +3272,7 @@ static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, HB_USHORT fieldNum, PHB
     SELF_FORCEREL(&thiswa->sqlarea.area);
   }
 
-  fieldindex = (HB_USHORT)thiswa->sqlarea.uiBufferIndex[fieldNum - 1];
+  fieldindex = (uint16_t)thiswa->sqlarea.uiBufferIndex[fieldNum - 1];
   thiswa->editMask[fieldindex - 1] = '1';
   pDest = hb_itemArrayGet(thiswa->sqlarea.aBuffer, fieldindex);
 
@@ -3680,7 +3680,7 @@ static HB_ERRCODE sqlExOraOpen(SQLEXORAAREAP thiswa, LPDBOPENINFO OpenInfo)
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE sqlExOraStructSize(SQLEXORAAREAP thiswa, HB_USHORT *StructSize)
+static HB_ERRCODE sqlExOraStructSize(SQLEXORAAREAP thiswa, uint16_t *StructSize)
 {
   HB_SYMBOL_UNUSED(thiswa); // Avoid compiler warning
   *StructSize = sizeof(SQLEXORAAREA);
@@ -3836,7 +3836,7 @@ static HB_ERRCODE sqlExOraOrderDestroy(SQLEXORAAREAP thiswa, LPDBORDERINFO pOrde
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE sqlExOraOrderInfo(SQLEXORAAREAP thiswa, HB_USHORT uiIndex,
+static HB_ERRCODE sqlExOraOrderInfo(SQLEXORAAREAP thiswa, uint16_t uiIndex,
                                     LPDBORDERINFO pInfo)
 {
   HB_LONG lIndexes;
@@ -3916,7 +3916,7 @@ static HB_ERRCODE sqlExOraClearFilter(SQLEXORAAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE sqlExOraScopeInfo(SQLEXORAAREAP thiswa, HB_USHORT nScope, PHB_ITEM pItem)
+static HB_ERRCODE sqlExOraScopeInfo(SQLEXORAAREAP thiswa, uint16_t nScope, PHB_ITEM pItem)
 {
   thiswa->lBofAt = 0;
   thiswa->lEofAt = 0;
@@ -4114,11 +4114,11 @@ HB_FUNC(SQLEXORA)
 HB_FUNC(SQLEXORA_GETFUNCTABLE)
 {
   RDDFUNCS *pTable;
-  HB_USHORT *uiCount;
+  uint16_t *uiCount;
 
   // startsqlExOraSymbols();
 
-  uiCount = (HB_USHORT *)hb_parptr(1);
+  uiCount = (uint16_t *)hb_parptr(1);
   pTable = (RDDFUNCS *)hb_parptr(2);
 
   HB_TRACE(HB_TR_DEBUG, ("sqlExOra_GETFUNCTABLE(%p, %p)", uiCount, pTable));
@@ -4145,11 +4145,11 @@ HB_FUNC(SQLEXORA_GETFUNCTABLE)
 
 static void hb_sqlExOraRddInitora(void *cargo)
 {
-  HB_USHORT usResult;
+  uint16_t usResult;
   HB_SYMBOL_UNUSED(cargo);
 
   if (hb_rddRegister("SQLRDD", RDT_FULL) <= 1) {
-    usResult = (HB_USHORT)hb_rddRegister("SQLEXORA", RDT_FULL);
+    usResult = (uint16_t)hb_rddRegister("SQLEXORA", RDT_FULL);
     if (usResult <= 1) {
       if (usResult == 0) {
         PHB_DYNS pDynSym;

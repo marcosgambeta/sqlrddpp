@@ -118,7 +118,7 @@ static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 void SR_odbcErrorDiagRTE(SQLHSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res,
                          int line, const char *module);
 void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly,
-                    HB_ULONG ulSystemID, HB_BOOL bTranslate, HB_USHORT ui);
+                    HB_ULONG ulSystemID, HB_BOOL bTranslate, uint16_t ui);
 
 //----------------------------------------------------------------------------//
 
@@ -772,7 +772,7 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
 {
   // HB_LONG lLen, lInitBuff, lIndex;
   HB_LONG lLen;
-  HB_USHORT lIndex;
+  uint16_t lIndex;
   // SQLLEN lLenOut;
   // PTR bBuffer, bOut;
   // RETCODE wResult;
@@ -809,7 +809,7 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
   for (i = 1; i <= cols; i++) {
     // temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
     HB_ITEM temp = {0};
-    lIndex = (HB_USHORT)hb_arrayGetNI(hb_arrayGetItemPtr(pFields, i), SR_FIELD_ENUM);
+    lIndex = (uint16_t)hb_arrayGetNI(hb_arrayGetItemPtr(pFields, i), SR_FIELD_ENUM);
 
     if (lIndex == 0) {
       hb_arraySetForward(pRet, i, &temp);
@@ -1343,7 +1343,7 @@ HB_FUNC_STATIC(SR_ODBCWRITEMEMO)
 //----------------------------------------------------------------------------//
 
 void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly,
-                    HB_ULONG ulSystemID, HB_BOOL bTranslate, HB_USHORT ui)
+                    HB_ULONG ulSystemID, HB_BOOL bTranslate, uint16_t ui)
 {
   HB_LONG lType;
   HB_SIZE lDec, lLen;

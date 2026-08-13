@@ -132,7 +132,7 @@ static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 //    unsigned int   ubBindNum;
 // } OCI_ORASESSION;
 
-static HB_USHORT OCI_initilized = 0;
+static uint16_t OCI_initilized = 0;
 
 #ifdef HAVE_USLEEP
 #define SQLO2_USLEEP usleep(20000)
@@ -856,7 +856,7 @@ HB_FUNC(SQLO2_LINE) // TODO: not used in SQLRDD source code
   const char **line;
   CONST unsigned int *lens;
   PHB_ITEM ret, temp;
-  HB_USHORT i;
+  uint16_t i;
   SQLO2_stmt_handle_t stmtParamRes;
 
   ret = hb_itemNew(SR_NULLPTR);

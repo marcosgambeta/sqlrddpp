@@ -119,7 +119,7 @@ typedef SQLAREA *LPSQLAREA;
 
 // prototypes
 
-void SR_commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode,
+void SR_commonError(AREAP ThisDb, uint16_t uiGenCode, uint16_t uiSubCode,
                     const char *filename);
 
 #endif // SQLRDD_H

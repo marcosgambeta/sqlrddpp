@@ -353,7 +353,7 @@ char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
                     HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo,
                     HB_BOOL *bNullArgument);
 HB_BOOL SR_itemEmpty(PHB_ITEM pItem);
-void SR_commonError(AREAP ThisDb, HB_USHORT uiGenCode, HB_USHORT uiSubCode,
+void SR_commonError(AREAP ThisDb, uint16_t uiGenCode, uint16_t uiSubCode,
                     const char *filename);
 HB_ERRCODE SR_SetBindEmptylValue(COLUMNBINDP BindStructure);
 HB_ERRCODE SR_SetBindValue(PHB_ITEM pFieldData, COLUMNBINDP BindStructure, HSTMT hStmt);
@@ -371,7 +371,7 @@ void SR_SetIndexBindStructure(SQLEXAREAP thiswa);
 void SR_SetInsertRecordStructure(SQLEXAREAP thiswa);
 HB_ULONG SR_GetCurrentRecordNum(SQLEXAREAP thiswa);
 extern void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQueryOnly,
-                           HB_ULONG ulSystemID, HB_BOOL bTranslate, HB_USHORT ui);
+                           HB_ULONG ulSystemID, HB_BOOL bTranslate, uint16_t ui);
 
 // INSERT and UPDATE prototypes
 
@@ -389,7 +389,7 @@ HB_ERRCODE SR_ExecuteUpdateStmt(SQLEXAREAP thiswa);
 HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLevel);
 HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel);
 void SR_BindSeekStmt(SQLEXAREAP thiswa, int queryLevel);
-HB_ERRCODE SR_getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, HB_USHORT *iIndex,
+HB_ERRCODE SR_getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, uint16_t *iIndex,
                               HSTMT *hStmt);
 
 #endif // ODBCRDD_H

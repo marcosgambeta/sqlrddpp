@@ -1027,7 +1027,7 @@ HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
 {
   GET_PGSQL_SESSION(session, 1);
   // PHB_ITEM temp;
-  HB_USHORT i;
+  uint16_t i;
   char *col;
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
   // HB_BOOL bQueryOnly = hb_parl(4); (not used)
