@@ -999,7 +999,7 @@ HB_FUNC(SR_ORACLEGETBINDDATA)
     } else if (p->pLink[iPos - 1].iType == 8 || p->pLink[iPos - 1].iType == 9) {
       int32_t century = p->pLink[iPos - 1].sDate[0];
       if (century >= 100) {
-        int32_t year = (unsigned char)(p->pLink[iPos - 1].sDate[1]);
+        int32_t year = (uint8_t)(p->pLink[iPos - 1].sDate[1]);
         int32_t month;
         int32_t day;
         int32_t hour;

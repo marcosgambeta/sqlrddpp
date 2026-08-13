@@ -70,7 +70,7 @@
 #include <assert.h>
 #if !defined(HB_OS_WIN)
 #if !defined(SQLLEN) && !defined(SQLTCHAR)
-typedef unsigned char SQLTCHAR;
+typedef uint8_t SQLTCHAR;
 #endif
 #endif
 
@@ -1441,7 +1441,7 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
   }
   case SQL_BIT:
   case SQL_TINYINT: {
-    unsigned char val = 0;
+    uint8_t val = 0;
     if (SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_BIT, &val, sizeof(val), &iLen))) {
       pItem = hb_itemPutL(pItem, val != 0);
     }
@@ -1462,7 +1462,7 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
   }
 #if 0
   case SQL_BINARY: {
-    unsigned char val = 0;
+    uint8_t val = 0;
     if (SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_BINARY, &val, sizeof(val), &iLen))) {
       pItem = hb_itemPutL(pItem, val != 0);
     }

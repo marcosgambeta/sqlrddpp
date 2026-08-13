@@ -234,7 +234,7 @@ int32_t yylex(YYSTYPE *yylvaluep, void *s);
 #ifdef YYTYPE_UINT8
 typedef YYTYPE_UINT8 yytype_uint8;
 #else
-typedef unsigned char yytype_uint8;
+typedef uint8_t yytype_uint8;
 #endif
 
 #ifdef YYTYPE_INT8

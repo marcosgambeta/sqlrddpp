@@ -98,7 +98,7 @@ typedef struct _MYSQL_SESSION
   MYSQL_RES *stmt;              // Current statement handler
   HB_ULONGLONG ulAffected_rows; // Number of affected rows
   HB_BOOL bCsMapLoaded;         // Charset map already read from the catalog
-  unsigned char csMaxLen[SR_MYSQL_MAX_COLLATION]; // collation id -> bytes per character
+  uint8_t csMaxLen[SR_MYSQL_MAX_COLLATION]; // collation id -> bytes per character
 } MYSQL_SESSION;
 
 //----------------------------------------------------------------------------//
@@ -149,7 +149,7 @@ static void SR_MysLoadCharsetMap(MYSQL_SESSION *session)
       unsigned long ulMaxLen = strtoul(row[1], SR_NULLPTR, 10);
 
       if (ulId < SR_MYSQL_MAX_COLLATION && ulMaxLen > 0 && ulMaxLen < 256) {
-        session->csMaxLen[ulId] = (unsigned char)ulMaxLen;
+        session->csMaxLen[ulId] = (uint8_t)ulMaxLen;
       }
     }
   }

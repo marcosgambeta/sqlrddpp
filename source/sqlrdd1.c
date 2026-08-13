@@ -3407,7 +3407,7 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
 
     thiswa->uiBufferIndex[i - 1] = (int32_t)hb_arrayGetNI(thisfield, 5);
 
-    fieldType = (unsigned char *)hb_arrayGetCPtr(thisfield, 2);
+    fieldType = (uint8_t *)hb_arrayGetCPtr(thisfield, 2);
 
     switch (*fieldType) {
     case 'c':

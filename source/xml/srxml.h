@@ -145,7 +145,7 @@ typedef struct tag_mxml_refil
   MXML_ERROR_CODE error;
 
   // buffer for reading data
-  unsigned char *buffer;
+  uint8_t *buffer;
   HB_ISIZ bufsize; // size of the whole buffer
   HB_ISIZ buflen;  // valid characters in the current buffer
   HB_ISIZ bufpos;  // current position

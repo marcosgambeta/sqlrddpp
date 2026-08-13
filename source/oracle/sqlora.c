@@ -403,7 +403,7 @@ enum _sqlora_constants
 /**
  * Boolean type
  */
-typedef unsigned char bool_t;
+typedef uint8_t bool_t;
 
 /**
  * Cursor types
@@ -6679,7 +6679,7 @@ DEFUN(sqlo_lob_write_stream, (dbh, loblp, filelen, fp),
       sqlo_db_handle_t dbh AND sqlo_lob_desc_t loblp AND uint32_t filelen AND FILE *fp)
 {
   sqlo_db_struct_ptr_t dbp;
-  unsigned char buf[MAX_LONG_SIZE]; /* The buffer */
+  uint8_t buf[MAX_LONG_SIZE]; /* The buffer */
   uint32_t nbytes;              /* number of bytes to read from stream */
   uint32_t remainder = filelen; /* The number of bytes left */
   uint32_t piece;
@@ -6883,7 +6883,7 @@ DEFUN(sqlo_lob_read_stream, (dbh, loblp, loblen, fp),
       sqlo_db_handle_t dbh AND sqlo_lob_desc_t loblp AND uint32_t loblen AND FILE *fp)
 {
   sqlo_db_struct_ptr_t dbp;
-  unsigned char buf[MAX_LONG_SIZE]; /* The buffer */
+  uint8_t buf[MAX_LONG_SIZE]; /* The buffer */
   uint32_t nbytes;              /* number of bytes to read from stream */
   uint32_t remainder;           /* The number of bytes left */
 
