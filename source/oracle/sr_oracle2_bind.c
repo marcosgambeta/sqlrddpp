@@ -114,7 +114,7 @@ static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 //    //bellow for bind vars
 //    SQLO2_stmt_handle_t stmtParam;
 //    ORA_BIND_COLS *  pLink;
-//    unsigned int   ubBindNum;
+//    uint32_t   ubBindNum;
 //    SQLO2_stmt_handle_t stmtParamRes;
 //
 //} OCI_ORASESSION;
@@ -129,7 +129,7 @@ static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 //     char server_version[1024];
 //
 //    ORA_BIND_COLS *  pLink;
-//    unsigned int   ubBindNum;
+//    uint32_t   ubBindNum;
 // } OCI_ORASESSION;
 
 static uint16_t OCI_initilized = 0;
@@ -506,7 +506,7 @@ HB_FUNC_STATIC(SR_ORACLEINBINDPARAM2)
         hb_xmemcpy(Stmt->pLink[iPos].col_name, hb_parc(6), hb_parclen(6));
         Stmt->pLink[iPos].col_name[hb_parclen(6)] = '\0';
         ret = OCI_BindString(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].col_name,
-                             (unsigned int)hb_parclen(6));
+                             (uint32_t)hb_parclen(6));
       } else {
         ret = OCI_BindString(Stmt->stmt, Stmt->pLink[iPos].bindname, Stmt->pLink[iPos].col_name,
                              iFieldSize);
@@ -676,7 +676,7 @@ static void SQLO2_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int32_t iField, HB_B
   HB_LONG lType;
   HB_SIZE lLen, lDec;
   PHB_ITEM pTemp;
-  unsigned int uiLen;
+  uint32_t uiLen;
 
   HB_SYMBOL_UNUSED(bQueryOnly);
   HB_SYMBOL_UNUSED(ulSystemID);
@@ -854,7 +854,7 @@ HB_FUNC(SQLO2_LINE) // TODO: not used in SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
   const char **line;
-  CONST unsigned int *lens;
+  CONST uint32_t *lens;
   PHB_ITEM ret, temp;
   uint16_t i;
   SQLO2_stmt_handle_t stmtParamRes;
@@ -972,7 +972,7 @@ HB_FUNC_STATIC(
   GET_OCI_SESSION(session, 1);
 
   int32_t prec, scale, nullok, type;
-  unsigned int dbsize, dType, ncol;
+  uint32_t dbsize, dType, ncol;
   char *name;
   //     SQLO2_stmt_handle_t stmtParamRes;
 
@@ -1143,7 +1143,7 @@ HB_FUNC_STATIC(SR_ORACLEWRITEMEMO2)
 
       // status = SQLO2_lob_write_buffer(session->dbh, loblp, strlen(sMemo), sMemo,
       // strlen(sMemo), SQLO2_ONE_PIECE);
-      status = OCI_LobWrite(lob1, (void *)sMemo, (unsigned int)strlen(sMemo));
+      status = OCI_LobWrite(lob1, (void *)sMemo, (uint32_t)strlen(sMemo));
 
       if (status < 0) {
         // SQLO2_free_lob_desc(session->dbh, &loblp);
@@ -1217,7 +1217,7 @@ HB_FUNC_STATIC(SR_SQLO2_ORACLESETLOBPREFETCH) // TODO: not used in SQLRDD source
   GET_OCI_SESSION(session, 1);
 
   if (session != SR_NULLPTR) {
-    hb_retl(OCI_SetDefaultLobPrefetchSize(session->cn, (unsigned int)hb_parni(2)));
+    hb_retl(OCI_SetDefaultLobPrefetchSize(session->cn, (uint32_t)hb_parni(2)));
   } else {
     hb_retl(HB_FALSE);
   }
@@ -1230,7 +1230,7 @@ HB_FUNC_STATIC(SR_SQLO2_SETSTATEMENTCACHESIZE)
   GET_OCI_SESSION(session, 1);
 
   if (session != SR_NULLPTR) {
-    hb_retl(OCI_SetStatementCacheSize(session->cn, (unsigned int)hb_parni(2)));
+    hb_retl(OCI_SetStatementCacheSize(session->cn, (uint32_t)hb_parni(2)));
   } else {
     hb_retl(HB_FALSE);
   }
@@ -1243,7 +1243,7 @@ HB_FUNC_STATIC(SR_SQLO2_GETSTATEMENTCACHESIZE) // TODO: not used in SQLRDD sourc
   GET_OCI_SESSION(session, 1);
 
   if (session != SR_NULLPTR) {
-    hb_retni((unsigned int)OCI_GetStatementCacheSize(session->cn));
+    hb_retni((uint32_t)OCI_GetStatementCacheSize(session->cn));
   } else {
     hb_retni(0);
   }

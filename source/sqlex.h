@@ -71,7 +71,7 @@
 #define DEFAULT_INDEX_COLUMN_MAX_LEN 200
 #define INITIAL_MEMO_ALLOC 256
 
-static unsigned int openQuotes[24] =
+static uint32_t openQuotes[24] =
   {
     '"', // SQLRDD_RDBMS_UNKNOW    0
     '"', // SQLRDD_RDBMS_ORACLE    1
@@ -99,7 +99,7 @@ static unsigned int openQuotes[24] =
     '`'  // SQLRDD_RDBMS_CUBRID    23
   };
 
-static unsigned int closeQuotes[24] =
+static uint32_t closeQuotes[24] =
   {
     '"', // SQLRDD_RDBMS_UNKNOW    0
     '"', // SQLRDD_RDBMS_ORACLE    1

@@ -693,14 +693,14 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
     case MYSQL_VAR_STRING_TYPE: {
       // case MYSQL_DATETIME_TYPE:
       MY_CHARSET_INFO cs;
-      unsigned int mbmax = 1;
+      uint32_t mbmax = 1;
       int32_t char_len;
 
       // hb_itemPutC(&temp, "C"); (moved below)
 
       mysql_get_character_set_info(session->dbh, &cs);
       if (cs.mbmaxlen > 0) {
-        mbmax = (unsigned int)cs.mbmaxlen;
+        mbmax = (uint32_t)cs.mbmaxlen;
       }
 
       char_len = (int32_t)((mbmax > 1) ? (field->length / mbmax) : field->length);
@@ -863,14 +863,14 @@ mysql_error(session->dbh));
     case MYSQL_VAR_STRING_TYPE: {
       // case MYSQL_DATETIME_TYPE:
       MY_CHARSET_INFO cs;
-      unsigned int mbmax = 1;
+      uint32_t mbmax = 1;
       int32_t char_len;
 
       hb_itemPutC(temp, "C");
 
       mysql_get_character_set_info(session->dbh, &cs);
       if (cs.mbmaxlen > 0) {
-        mbmax = (unsigned int)cs.mbmaxlen;
+        mbmax = (uint32_t)cs.mbmaxlen;
       }
 
       char_len = (int32_t)((mbmax > 1) ? (field->length / mbmax) : field->length);

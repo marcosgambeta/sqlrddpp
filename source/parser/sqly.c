@@ -266,7 +266,7 @@ typedef short int yytype_int16;
 #include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #define YYSIZE_T size_t
 #else
-#define YYSIZE_T unsigned int
+#define YYSIZE_T uint32_t
 #endif
 #endif
 
@@ -444,7 +444,7 @@ union yyalloc {
 #define YYUNDEFTOK 2
 #define YYMAXUTOK 314
 
-#define YYTRANSLATE(YYX) ((unsigned int)(YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
+#define YYTRANSLATE(YYX) ((uint32_t)(YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
 /* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
 static const yytype_uint8 yytranslate[] = {

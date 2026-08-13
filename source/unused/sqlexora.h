@@ -151,27 +151,27 @@ typedef struct _SQL_CHAR_STRUCT
 
 typedef struct tagDATE_STRUCTORA
 {
-  unsigned int year;
-  unsigned int month;
-  unsigned int day;
+  uint32_t year;
+  uint32_t month;
+  uint32_t day;
 } DATE_STRUCTORA, SQL_DATE_STRUCTORA;
 
 typedef struct tagTIME_STRUCTORA
 {
-  unsigned int hour;
-  unsigned int minute;
-  unsigned int second;
+  uint32_t hour;
+  uint32_t minute;
+  uint32_t second;
 } TIME_STRUCTORA;
 
 typedef struct tagTIMESTAMP_STRUCTORA
 {
-  unsigned int year;
-  unsigned int month;
-  unsigned int day;
-  unsigned int hour;
-  unsigned int minute;
-  unsigned int second;
-  unsigned int fraction;
+  uint32_t year;
+  uint32_t month;
+  uint32_t day;
+  uint32_t hour;
+  uint32_t minute;
+  uint32_t second;
+  uint32_t fraction;
 } TIMESTAMP_STRUCORAT, SQL_TIMESTAMP_STRUCTORA;
 
 // typedef DATE_STRUCTORA SQL_DATE_STRUCTORA;
@@ -216,7 +216,7 @@ typedef struct _COLUMNBINDORA
   double asDouble;              // I suppose all ODBC drivers has build in
                                 // convertion from this type to all types
                                 // of numeric variables in SQL
-  unsigned int ColumnSize;      // To make an easy bind
+  uint32_t ColumnSize;      // To make an easy bind
   unsigned short DecimalDigits; // To make an easy bind
   HB_BOOL isNullable;           // Is this column NULLABLE ?
   HB_BOOL isArgumentNull;       // Value to be bound is NULL ?

@@ -604,9 +604,9 @@ HB_ERRCODE SetBindValue2(PHB_ITEM pFieldData, COLUMNBINDORAP BindStructure,
     }
 
     hb_dateDecode(hb_itemGetDL(pFieldData), &iYear, &iMonth, &iDay);
-    BindStructure->asDate.year = (unsigned int)iYear;
-    BindStructure->asDate.month = (unsigned int)iMonth;
-    BindStructure->asDate.day = (unsigned int)iDay;
+    BindStructure->asDate.year = (uint32_t)iYear;
+    BindStructure->asDate.month = (uint32_t)iMonth;
+    BindStructure->asDate.day = (uint32_t)iDay;
     OCI_DateSetDate(BindStructure->asDate1, BindStructure->asDate.year,
                     BindStructure->asDate.month, BindStructure->asDate.day);
     break;
@@ -634,12 +634,12 @@ HB_ERRCODE SetBindValue2(PHB_ITEM pFieldData, COLUMNBINDORAP BindStructure,
       hb_itemGetTDT(pFieldData, &lJulian, &lMilliSec);
       hb_dateDecode(lJulian, &iYear, &iMonth, &iDay);
       hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
-      BindStructure->asTimestamp.year = (unsigned int)iYear;
-      BindStructure->asTimestamp.month = (unsigned int)iMonth;
-      BindStructure->asTimestamp.day = (unsigned int)iDay;
-      BindStructure->asTimestamp.hour = (unsigned int)iHour;
-      BindStructure->asTimestamp.minute = (unsigned int)iMinute;
-      BindStructure->asTimestamp.second = (unsigned int)seconds;
+      BindStructure->asTimestamp.year = (uint32_t)iYear;
+      BindStructure->asTimestamp.month = (uint32_t)iMonth;
+      BindStructure->asTimestamp.day = (uint32_t)iDay;
+      BindStructure->asTimestamp.hour = (uint32_t)iHour;
+      BindStructure->asTimestamp.minute = (uint32_t)iMinute;
+      BindStructure->asTimestamp.second = (uint32_t)seconds;
       BindStructure->asTimestamp.fraction = 0;
       OCI_DateSetDateTime(BindStructure->asDate2, BindStructure->asTimestamp.year,
                           BindStructure->asTimestamp.month, BindStructure->asTimestamp.day,
@@ -848,7 +848,7 @@ static void BindAllIndexStmts(SQLEXORAAREAP thiswa)
   INDEXBINDORAP IndexBind, IndexBindParam;
   COLUMNBINDORAP BindStructure;
   int32_t iCol, iBind, iLoop;
-  unsigned int res = (unsigned int)SQL_ERROR;
+  uint32_t res = (uint32_t)SQL_ERROR;
   char *sSql;
 
   if (thiswa->sqlarea.hOrdCurrent == 0) {
@@ -1195,7 +1195,7 @@ void SetCurrRecordStructureOra(SQLEXORAAREAP thiswa)
     BindStructure->isArgumentNull = HB_FALSE;
     BindStructure->lFieldPosDB = i;
     BindStructure->lFieldPosWA = hb_arrayGetNL(pFieldStruct, SR_FIELD_WAOFFSET);
-    BindStructure->ColumnSize = (unsigned int)hb_itemGetNI(pFieldLen);
+    BindStructure->ColumnSize = (uint32_t)hb_itemGetNI(pFieldLen);
     BindStructure->DecimalDigits = (unsigned short)hb_itemGetNI(pFieldDec);
     BindStructure->colName = QualifyName2(hb_arrayGetC(pFieldStruct, SR_FIELD_NAME), thiswa);
     sprintf(BindStructure->szBindName, ":%s", hb_arrayGetCPtr(pFieldStruct, SR_FIELD_NAME));
@@ -1436,7 +1436,7 @@ HB_ERRCODE getWorkareaParamsOra(SQLEXORAAREAP thiswa)
 static HB_ERRCODE getPreparedRecordList(SQLEXORAAREAP thiswa,
                                         int32_t iMax) // Returns HB_TRUE if any result found
 {
-  unsigned int res;
+  uint32_t res;
   int32_t i, recordListChanged;
   INDEXBINDORAP IndexBind;
   OCI_Statement *hStmt;
@@ -1537,7 +1537,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXORAAREAP thiswa,
 
     if (thiswa->sqlarea.ulhDeleted > 0) {
       char szValue[2];
-      unsigned int uiLen;
+      uint32_t uiLen;
 
       if (OCI_GetString(rs, 2) == SR_NULLPTR) {
         // OCI_StatementFree(thiswa->hStmtSkip);
@@ -1573,7 +1573,7 @@ static HB_ERRCODE getPreparedRecordList(SQLEXORAAREAP thiswa,
 static HB_ERRCODE getRecordList(SQLEXORAAREAP thiswa,
                                 int32_t iMax) // Returns HB_TRUE if any result found
 {
-  unsigned int res;
+  uint32_t res;
   int32_t i, recordListChanged;
   OCI_Resultset *rs;
 
@@ -1616,7 +1616,7 @@ static HB_ERRCODE getRecordList(SQLEXORAAREAP thiswa,
 
     if (thiswa->sqlarea.ulhDeleted > 0) {
       char szValue[2];
-      unsigned int uiLen;
+      uint32_t uiLen;
       if (OCI_GetString(rs, 2) == SR_NULLPTR) {
         OCI_StatementFree(thiswa->hStmt);
         return HB_FAILURE;
@@ -1810,7 +1810,7 @@ HB_BOOL getColumnListOra(SQLEXORAAREAP thiswa)
 
 static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDeleted)
 {
-  unsigned int res;
+  uint32_t res;
 
   HB_ULONG lCurrRecord;
   HB_SIZE lPos;
@@ -1999,7 +1999,7 @@ static HB_ERRCODE updateRecordBuffer(SQLEXORAAREAP thiswa, HB_BOOL bUpdateDelete
     if (thiswa->sqlarea.ulhDeleted > 0) {
       if (((thiswa->recordList[thiswa->recordListPos])) == lCurrRecord) {
         char szValue[2];
-        unsigned int uiLen;
+        uint32_t uiLen;
         if (OCI_GetString(rs, 2) == SR_NULLPTR) {
           OCI_StatementFree(thiswa->hStmtBuffer);
         } else {
@@ -2128,7 +2128,7 @@ HB_ERRCODE prepareRecordListQueryOra(SQLEXORAAREAP thiswa)
 {
   INDEXBINDORAP IndexBind;
 
-  unsigned int res;
+  uint32_t res;
 
   IndexBind = thiswa->IndexBindings[thiswa->sqlarea.hOrdCurrent];
   // culik not needed, we we are in the offset
@@ -2986,7 +2986,7 @@ static HB_ERRCODE sqlExOraAppend(SQLEXORAAREAP thiswa)
 static HB_ERRCODE sqlExOraDeleteRec(SQLEXORAAREAP thiswa)
 {
   HB_BOOL isDeleted;
-  unsigned int res;
+  uint32_t res;
 
   if (SELF_GOCOLD(&thiswa->sqlarea.area) == HB_FAILURE) {
     return HB_FAILURE;
@@ -3358,7 +3358,7 @@ static HB_ERRCODE sqlExOraPutValue(SQLEXORAAREAP thiswa, uint16_t fieldNum, PHB_
 static HB_ERRCODE sqlExOraRecall(SQLEXORAAREAP thiswa)
 {
   HB_BOOL isDeleted;
-  unsigned int res;
+  uint32_t res;
 
   if (SELF_GOCOLD(&thiswa->sqlarea.area) == HB_FAILURE) {
     return HB_FAILURE;
@@ -4313,7 +4313,7 @@ void SQLO_FieldGet(PHB_ITEM pField, PHB_ITEM pItem, int32_t iField, HB_BOOL bQue
    HB_LONG lType;
    HB_LONG lLen, lDec;
    PHB_ITEM pTemp;
-   unsigned int uiLen;
+   uint32_t uiLen;
 
    HB_SYMBOL_UNUSED(bQueryOnly);
    HB_SYMBOL_UNUSED(ulSystemID);

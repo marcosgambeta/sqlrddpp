@@ -67,7 +67,7 @@ typedef struct _ORA_BIND_COLS2
   int32_t iType;
   short sVal;
   double dValue;
-  unsigned int ulValue;
+  uint32_t ulValue;
   char sDate[7];
   HB_LONGLONG iValue;
   HB_LONGLONG lValue;
@@ -83,7 +83,7 @@ typedef struct _ORA_BIND_COLS
   int32_t iType;
   short sVal;
   double dValue;
-  unsigned int ulValue;
+  uint32_t ulValue;
   char sDate[7];
   HB_LONGLONG iValue;
   HB_LONGLONG lValue;
@@ -106,7 +106,7 @@ typedef struct _OCI_ORASESSION
 #else
   ORA_BIND_COLS *pLink;
 #endif
-  unsigned int ubBindNum;
+  uint32_t ubBindNum;
 } OCI_ORASESSION;
 
 #endif

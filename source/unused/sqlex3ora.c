@@ -409,13 +409,13 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int32_t
         }
 
         hb_compStrToNum(datemask, 4, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
-        BindStructure->asTimestamp.year = (unsigned int)lVal;
+        BindStructure->asTimestamp.year = (uint32_t)lVal;
         mask += 4;
         hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
-        BindStructure->asTimestamp.month = (unsigned int)lVal;
+        BindStructure->asTimestamp.month = (uint32_t)lVal;
         mask += 2;
         hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
-        BindStructure->asTimestamp.day = (unsigned int)lVal;
+        BindStructure->asTimestamp.day = (uint32_t)lVal;
         BindStructure->asTimestamp.hour = 0;
         BindStructure->asTimestamp.minute = 0;
         BindStructure->asTimestamp.second = 0;
@@ -439,13 +439,13 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int32_t
         }
 
         hb_compStrToNum(datemask, 4, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
-        BindStructure->asDate.year = (unsigned int)lVal;
+        BindStructure->asDate.year = (uint32_t)lVal;
         mask += 4;
         hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
-        BindStructure->asDate.month = (unsigned int)lVal;
+        BindStructure->asDate.month = (uint32_t)lVal;
         mask += 2;
         hb_compStrToNum(mask, 2, &lVal, &dVal, SR_NULLPTR, SR_NULLPTR);
-        BindStructure->asDate.day = (unsigned int)lVal;
+        BindStructure->asDate.day = (uint32_t)lVal;
 
         break; // TODO: unnecessary break
       }
@@ -472,20 +472,20 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int32_t
       hb_dateDecode(hb_itemGetDL(pKey), &iYear, &iMonth, &iDay);
 
       if (BindStructure->iCType == SQL_C_TYPE_DATE) {
-        BindStructure->asDate.year = (unsigned int)iYear;
-        BindStructure->asDate.month = (unsigned int)iMonth;
-        BindStructure->asDate.day = (unsigned int)iDay;
+        BindStructure->asDate.year = (uint32_t)iYear;
+        BindStructure->asDate.month = (uint32_t)iMonth;
+        BindStructure->asDate.day = (uint32_t)iDay;
       } else if (BindStructure->iCType == SQL_C_TYPE_TIMESTAMP) {
         long lJulian, lMilliSec;
         int32_t seconds, millisec;
         hb_itemGetTDT(pKey, &lJulian, &lMilliSec);
         hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
-        BindStructure->asTimestamp.year = (unsigned int)iYear;
-        BindStructure->asTimestamp.month = (unsigned int)iMonth;
-        BindStructure->asTimestamp.day = (unsigned int)iDay;
-        BindStructure->asTimestamp.hour = (unsigned int)iHour;
-        BindStructure->asTimestamp.minute = (unsigned int)iMinute;
-        BindStructure->asTimestamp.second = (unsigned int)seconds;
+        BindStructure->asTimestamp.year = (uint32_t)iYear;
+        BindStructure->asTimestamp.month = (uint32_t)iMonth;
+        BindStructure->asTimestamp.day = (uint32_t)iDay;
+        BindStructure->asTimestamp.hour = (uint32_t)iHour;
+        BindStructure->asTimestamp.minute = (uint32_t)iMinute;
+        BindStructure->asTimestamp.second = (uint32_t)seconds;
         BindStructure->asTimestamp.fraction = 0;
       } else {
         // To Do: Raise RT error
@@ -665,7 +665,7 @@ HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int32_t queryLevel, uint16_t
 
   if (thiswa->sqlarea.ulhDeleted > 0) {
     char szValue[2];
-    unsigned int uiLen;
+    uint32_t uiLen;
 
     if (OCI_GetString(*rs, 2) == SR_NULLPTR) {
       // OCI_StatementFree(*hStmt);

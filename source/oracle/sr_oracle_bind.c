@@ -75,38 +75,38 @@ static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
 #ifdef __BORLANDC__
-int32_t sqlo_init(int32_t threaded_mode, unsigned int max_db, unsigned int max_cursors);
+int32_t sqlo_init(int32_t threaded_mode, uint32_t max_db, uint32_t max_cursors);
 int32_t sqlo_connect(sqlo_db_handle_t *dbhp, CONST char *cstr);
-int32_t sqlo_server_version(sqlo_db_handle_t dbh, char *bufp, unsigned int buflen);
+int32_t sqlo_server_version(sqlo_db_handle_t dbh, char *bufp, uint32_t buflen);
 int32_t sqlo_finish(sqlo_db_handle_t dbh);
 void sqlo_freeall(void);
 CONST char *sqlo_geterror(sqlo_db_handle_t dbh);
 int32_t sqlo_geterrcode(sqlo_db_handle_t dbh);
-int32_t sqlo_exec(sqlo_db_handle_t dbh, CONST char *stmt, unsigned int *rr);
-int32_t sqlo_executeselect(sqlo_stmt_handle_t sth, unsigned int iterations);
+int32_t sqlo_exec(sqlo_db_handle_t dbh, CONST char *stmt, uint32_t *rr);
+int32_t sqlo_executeselect(sqlo_stmt_handle_t sth, uint32_t iterations);
 int32_t sqlo_open2(sqlo_stmt_handle_t *sthp, sqlo_db_handle_t dbh, CONST char *stmt, int32_t argc,
                CONST char **argv);
 int32_t sqlo_ncols(sqlo_stmt_handle_t sth, int32_t in);
 int32_t sqlo_describecol(sqlo_stmt_handle_t sth, int32_t col, unsigned short *dType, char **name,
                      int32_t *namelen, int32_t *prec, int32_t *scale, int32_t *dbsize, int32_t *nullok);
-int32_t sqlo_fetch(sqlo_stmt_handle_t sth, unsigned int nrows);
+int32_t sqlo_fetch(sqlo_stmt_handle_t sth, uint32_t nrows);
 int32_t sqlo_commit(sqlo_db_handle_t dbh);
 int32_t sqlo_rollback(sqlo_db_handle_t dbh);
 int32_t sqlo_close(sqlo_stmt_handle_t sth);
 CONST char **sqlo_values(sqlo_stmt_handle_t sth, int32_t *num, int32_t dostrip);
-CONST unsigned int *sqlo_value_lens(sqlo_stmt_handle_t sth, int32_t *num);
+CONST uint32_t *sqlo_value_lens(sqlo_stmt_handle_t sth, int32_t *num);
 int32_t sqlo_prepare(sqlo_db_handle_t dbh, CONST char *stmt);
 int32_t sqlo_alloc_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
 int32_t sqlo_bind_by_pos(sqlo_stmt_handle_t sth, int32_t position, int32_t param_type,
-                     CONST void *param_addr, unsigned int param_size, short *ind_addr,
+                     CONST void *param_addr, uint32_t param_size, short *ind_addr,
                      int32_t is_array);
-int32_t sqlo_execute(sqlo_stmt_handle_t sth, unsigned int iterations);
+int32_t sqlo_execute(sqlo_stmt_handle_t sth, uint32_t iterations);
 int32_t sqlo_free_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
-int32_t sqlo_lob_write_buffer(sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
-                          const void *bufp, unsigned int bufl, unsigned int piece);
+int32_t sqlo_lob_write_buffer(sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, uint32_t loblen,
+                          const void *bufp, uint32_t bufl, uint32_t piece);
 int32_t sqlo_bind_ref_cursor(sqlo_stmt_handle_t sth, CONST char *cursor_name, int32_t *sth2p);
 int32_t sqlo_bind_by_name(sqlo_stmt_handle_t sth, CONST char *name, int32_t param_type,
-                      CONST void *param_addr, unsigned int param_size, short *ind_addr,
+                      CONST void *param_addr, uint32_t param_size, short *ind_addr,
                       int32_t is_array);
 #endif
 
@@ -135,9 +135,9 @@ typedef struct _OCI_SESSION
   // bellow for bind vars
   sqlo_stmt_handle_t stmtParam;
   ORA_BIND_COLS *pLink;
-  unsigned int ubBindNum;
+  uint32_t ubBindNum;
   sqlo_stmt_handle_t stmtParamRes;
-  unsigned int uRows;
+  uint32_t uRows;
 } OCI_SESSION;
 
 static uint16_t OCI_initilized = 0;
@@ -678,7 +678,7 @@ HB_FUNC_STATIC(SR_SQLO_LINE)
 {
   GET_OCI_SESSION(session, 1);
   const char **line;
-  const unsigned int *lens;
+  const uint32_t *lens;
   PHB_ITEM ret, temp;
   uint16_t i;
   sqlo_stmt_handle_t stmtParamRes;
@@ -709,7 +709,7 @@ HB_FUNC_STATIC(SR_SQLO_LINEPROCESSED)
 {
   GET_OCI_SESSION(session, 1);
   const char **line;
-  const unsigned int *lens;
+  const uint32_t *lens;
   HB_LONG lIndex;
   PHB_ITEM temp;
   HB_SIZE i, cols;

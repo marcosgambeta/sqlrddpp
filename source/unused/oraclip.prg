@@ -1884,9 +1884,9 @@ typedef struct _OCI_SESSION
   // bellow for bind vars
   sqlo_stmt_handle_t stmtParam;
   ORA_BIND_COLS *pLink;
-  unsigned int ubBindNum;
+  uint32_t ubBindNum;
   sqlo_stmt_handle_t stmtParamRes;
-  unsigned int uRows;
+  uint32_t uRows;
 } OCI_SESSION;
 
 typedef OCI_SESSION * POCI_SESSION;

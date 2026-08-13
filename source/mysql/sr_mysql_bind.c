@@ -161,7 +161,7 @@ static void SR_MysLoadCharsetMap(MYSQL_SESSION *session)
 
 // Bytes per character of the charset of one column, 1 when it cannot be told
 
-static unsigned int SR_MysColMaxLen(MYSQL_SESSION *session, unsigned int uiCharsetNr)
+static uint32_t SR_MysColMaxLen(MYSQL_SESSION *session, uint32_t uiCharsetNr)
 {
   MY_CHARSET_INFO cs;
 
@@ -170,7 +170,7 @@ static unsigned int SR_MysColMaxLen(MYSQL_SESSION *session, unsigned int uiChars
   }
 
   if (uiCharsetNr < SR_MYSQL_MAX_COLLATION && session->csMaxLen[uiCharsetNr] > 0) {
-    return (unsigned int)session->csMaxLen[uiCharsetNr];
+    return (uint32_t)session->csMaxLen[uiCharsetNr];
   }
 
   // Catalog unavailable: the connection charset is all we know, so apply it
@@ -179,7 +179,7 @@ static unsigned int SR_MysColMaxLen(MYSQL_SESSION *session, unsigned int uiChars
   if (session->dbh != SR_NULLPTR) {
     mysql_get_character_set_info(session->dbh, &cs);
     if (cs.mbmaxlen > 1 && uiCharsetNr == cs.number) {
-      return (unsigned int)cs.mbmaxlen;
+      return (uint32_t)cs.mbmaxlen;
     }
   }
 
@@ -790,7 +790,7 @@ HB_FUNC_STATIC(SR_MYSQUERYATTR)
     case MYSQL_STRING_TYPE:
     case MYSQL_VAR_STRING_TYPE: {
       // case MYSQL_DATETIME_TYPE:
-      unsigned int mbmax;
+      uint32_t mbmax;
       int32_t char_len;
 
       // hb_itemPutC(&temp, "C"); (moved below)
@@ -799,7 +799,7 @@ HB_FUNC_STATIC(SR_MYSQUERYATTR)
       // the charset of THIS column (see SR_MysColMaxLen) to get the declared
       // width in characters
 
-      mbmax = SR_MysColMaxLen(session, (unsigned int)field->charsetnr);
+      mbmax = SR_MysColMaxLen(session, (uint32_t)field->charsetnr);
 
       char_len = (int32_t)((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0) {
@@ -958,7 +958,7 @@ mysql_error(session->dbh));
     case MYSQL_STRING_TYPE:
     case MYSQL_VAR_STRING_TYPE: {
       // case MYSQL_DATETIME_TYPE:
-      unsigned int mbmax;
+      uint32_t mbmax;
       int32_t char_len;
 
       hb_itemPutC(temp, "C");
@@ -967,7 +967,7 @@ mysql_error(session->dbh));
       // the charset of THIS column (see SR_MysColMaxLen) to get the declared
       // width in characters
 
-      mbmax = SR_MysColMaxLen(session, (unsigned int)field->charsetnr);
+      mbmax = SR_MysColMaxLen(session, (uint32_t)field->charsetnr);
 
       char_len = (int32_t)((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0) {

@@ -100,7 +100,7 @@ char *QualifyName2(char *szName, SQLEXORAAREAP thiswa)
     case SQLRDD_RDBMS_FIREBR5:
     case SQLRDD_RDBMS_IBMDB2:
     case SQLRDD_RDBMS_ADABAS: {
-      szName[i] = (char)toupper((int32_t)szName[i]);
+      szName[i] = (char)toupper((int32_t)szName[i]); // TODO: fix size
       break;
     }
     case SQLRDD_RDBMS_INGRES:
@@ -108,7 +108,7 @@ char *QualifyName2(char *szName, SQLEXORAAREAP thiswa)
     case SQLRDD_RDBMS_MYSQL:
     case SQLRDD_RDBMS_OTERRO:
     case SQLRDD_RDBMS_INFORM: {
-      szName[i] = (char)tolower((int32_t)szName[i]);
+      szName[i] = (char)tolower((int32_t)szName[i]); // TODO: fix size
       break; // TODO: unnecessary break
     }
     }
@@ -262,7 +262,7 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
     InsertRecord->isBoundNULL = HB_FALSE;
     InsertRecord->lFieldPosDB = i;
     InsertRecord->lFieldPosWA = lFieldPosWA;
-    InsertRecord->ColumnSize = (unsigned int)hb_itemGetNI(pFieldLen);
+    InsertRecord->ColumnSize = (uint32_t)hb_itemGetNI(pFieldLen);
     InsertRecord->DecimalDigits = (unsigned short)hb_itemGetNI(pFieldDec);
     InsertRecord->isArgumentNull = HB_FALSE;
     InsertRecord->isMemo = bIsMemo;
@@ -476,7 +476,7 @@ HB_ERRCODE BindInsertColumnsOra(SQLEXORAAREAP thiswa)
         break;
       }
       }
-      if (InsertRecord->lIndPtr == (unsigned int)SQL_NULL_DATA) {
+      if (InsertRecord->lIndPtr == (uint32_t)SQL_NULL_DATA) {
         OCI_BindSetNull(OCI_GetBind(thiswa->hStmtInsert, iCol));
       }
       InsertRecord->iParNum = iBind;
