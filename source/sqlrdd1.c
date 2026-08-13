@@ -556,7 +556,7 @@ static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   HB_LONG lorder = 0;
   PHB_ITEM pTag, pKeyVal, itemTemp;
   int iLimit, iResult = 0;
-  HB_BYTE len1, len2;
+  uint8_t len1, len2;
   char *valbuf = SR_NULLPTR;
   const char *val1, *val2;
 
@@ -573,7 +573,7 @@ static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
       pKeyVal = hb_itemArrayGet(((SQLAREAP)thiswa)->aBuffer,
                                 hb_arrayGetNL(pTag, SR_AINDEX_INDEX_KEY_CODEBLOCK));
       len1 =
-          (HB_BYTE)hb_strRTrimLen(hb_itemGetCPtr(pKeyVal), hb_itemGetCLen(pKeyVal), HB_FALSE) -
+          (uint8_t)hb_strRTrimLen(hb_itemGetCPtr(pKeyVal), hb_itemGetCLen(pKeyVal), HB_FALSE) -
           15;
       val1 = hb_itemGetCPtr(pKeyVal);
     } else {
@@ -581,7 +581,7 @@ static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
       hb_evalNew(&info, hb_itemArrayGet(pTag, SR_AINDEX_INDEX_KEY_CODEBLOCK));
       pKeyVal = hb_evalLaunch(&info);
       hb_evalRelease(&info);
-      len1 = (HB_BYTE)hb_itemGetCLen(pKeyVal);
+      len1 = (uint8_t)hb_itemGetCLen(pKeyVal);
       val1 = hb_itemGetCPtr(pKeyVal);
     }
     hb_itemRelease(itemTemp);
@@ -597,13 +597,13 @@ static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
   } else if (HB_IS_NUMBER(pKey)) {
     PHB_ITEM pLen = hb_itemPutNL(SR_NULLPTR, (HB_LONG)len1);
     val2 = valbuf = hb_itemStr(pKey, pLen, SR_NULLPTR);
-    len2 = (HB_BYTE)strlen(val2);
+    len2 = (uint8_t)strlen(val2);
     hb_itemRelease(pLen);
   } else if (HB_IS_LOGICAL(pKey)) {
     len2 = 1;
     val2 = hb_itemGetL(pKey) ? "T" : "F";
   } else {
-    len2 = (HB_BYTE)hb_itemGetCLen(pKey);
+    len2 = (uint8_t)hb_itemGetCLen(pKey);
     val2 = hb_itemGetCPtr(pKey);
   }
 
@@ -3371,7 +3371,7 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
 {
   DBFIELDINFO field;
   HB_LONG numFields;
-  HB_BYTE *fieldType;
+  uint8_t *fieldType;
   uint16_t i;
   PHB_ITEM thisfield;
 

@@ -405,7 +405,7 @@ HB_FUNC_STATIC(SR_ALLOCCO)
 
 HB_FUNC_STATIC(SR_DRIVERC)
 {
-  HB_BYTE bBuffer1[1024] = {0};
+  uint8_t bBuffer1[1024] = {0};
   SQLSMALLINT wLen;
 #if defined(HB_OS_WIN_32) || defined(HB_OS_WIN)
   RETCODE ret = SQLDriverConnect(SR_PAR_SQLHDBC(1), GetDesktopWindow(), (SQLCHAR *)hb_parcx(2),
@@ -1211,7 +1211,7 @@ HB_FUNC_STATIC(SR_GETCONNECTOPTION)
                              (SQLINTEGER)sizeof(buffer), (SQLINTEGER *)&lLen));
   hb_storclen((char *)buffer, lLen, 3);
 #else
-  HB_BYTE bBuffer[512] = {0};
+  uint8_t bBuffer[512] = {0};
   RETCODE wResult =
       SQLGetConnectOption(SR_PAR_SQLHDBC(1), SR_PAR_SQLSMALLINT(2), (SQLPOINTER)bBuffer);
   if (wResult == SQL_SUCCESS) {

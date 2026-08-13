@@ -101,7 +101,7 @@ char *SR_QualifyName(char *szName, SQLEXAREAP thiswa)
     case SQLRDD_RDBMS_FIREBR5:
     case SQLRDD_RDBMS_IBMDB2:
     case SQLRDD_RDBMS_ADABAS: {
-      szName[i] = (char)toupper((HB_BYTE)szName[i]);
+      szName[i] = (char)toupper((uint8_t)szName[i]);
       break;
     }
     case SQLRDD_RDBMS_INGRES:
@@ -111,7 +111,7 @@ char *SR_QualifyName(char *szName, SQLEXAREAP thiswa)
     case SQLRDD_RDBMS_OTERRO:
     case SQLRDD_RDBMS_INFORM:
     case SQLRDD_RDBMS_CUBRID: {
-      szName[i] = (char)tolower((HB_BYTE)szName[i]);
+      szName[i] = (char)tolower((uint8_t)szName[i]);
       break; // TODO: unnecessary break
     }
     }

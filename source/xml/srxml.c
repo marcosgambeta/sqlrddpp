@@ -780,7 +780,7 @@ static void mxml_node_read_data(MXML_REFIL *ref, PHB_ITEM pNode, PHB_ITEM doc, i
   }
 
   // trimming unneeded spaces
-  while (iPos > 1 && HB_ISSPACE((HB_BYTE)buf[iPos - 1])) {
+  while (iPos > 1 && HB_ISSPACE((uint8_t)buf[iPos - 1])) {
     iPos--;
   }
 
@@ -1890,7 +1890,7 @@ static MXML_STATUS mxml_refil_setup(MXML_REFIL *ref, MXML_REFIL_FUNC func, char 
   }
 
   ref->refil_func = func;
-  ref->buffer = (HB_BYTE *)buf;
+  ref->buffer = (uint8_t *)buf;
 
   ref->status = MXML_STATUS_OK;
   ref->error = MXML_ERROR_NONE;

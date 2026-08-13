@@ -910,7 +910,7 @@ HB_FUNC(SR_DBQUALIFY)
     case SQLRDD_RDBMS_ADABAS: {
       szOut[0] = '"';
       for (i = 0; i < ulLen; i++) {
-        szOut[i + 1] = (char)toupper((HB_BYTE)pszBuffer[i]);
+        szOut[i + 1] = (char)toupper((uint8_t)pszBuffer[i]);
       }
       szOut[i + 1] = '"';
       break;
@@ -919,7 +919,7 @@ HB_FUNC(SR_DBQUALIFY)
     case SQLRDD_RDBMS_POSTGR: {
       szOut[0] = '"';
       for (i = 0; i < ulLen; i++) {
-        szOut[i + 1] = (char)tolower((HB_BYTE)pszBuffer[i]);
+        szOut[i + 1] = (char)tolower((uint8_t)pszBuffer[i]);
       }
       szOut[i + 1] = '"';
       break;
@@ -927,7 +927,7 @@ HB_FUNC(SR_DBQUALIFY)
     case SQLRDD_RDBMS_MSSQL7: {
       szOut[0] = '[';
       for (i = 0; i < ulLen; i++) {
-        szOut[i + 1] = (HB_BYTE)pszBuffer[i];
+        szOut[i + 1] = (uint8_t)pszBuffer[i];
       }
       szOut[i + 1] = ']';
       break;
@@ -938,14 +938,14 @@ HB_FUNC(SR_DBQUALIFY)
     case SQLRDD_RDBMS_CUBRID: {
       szOut[0] = '`';
       for (i = 0; i < ulLen; i++) {
-        szOut[i + 1] = (char)tolower((HB_BYTE)pszBuffer[i]);
+        szOut[i + 1] = (char)tolower((uint8_t)pszBuffer[i]);
       }
       szOut[i + 1] = '`';
       break;
     }
     case SQLRDD_RDBMS_INFORM: {
       for (i = 0; i < ulLen; i++) {
-        szOut[i] = (char)tolower((HB_BYTE)pszBuffer[i]);
+        szOut[i] = (char)tolower((uint8_t)pszBuffer[i]);
       }
       ulLen -= 2;
       break;
@@ -953,7 +953,7 @@ HB_FUNC(SR_DBQUALIFY)
     default: {
       szOut[0] = '"';
       for (i = 0; i < ulLen; i++) {
-        szOut[i + 1] = (HB_BYTE)pszBuffer[i];
+        szOut[i + 1] = (uint8_t)pszBuffer[i];
       }
       szOut[i + 1] = '"';
     }
