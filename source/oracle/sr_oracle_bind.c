@@ -87,7 +87,7 @@ int32_t sqlo_executeselect(sqlo_stmt_handle_t sth, uint32_t iterations);
 int32_t sqlo_open2(sqlo_stmt_handle_t *sthp, sqlo_db_handle_t dbh, CONST char *stmt, int32_t argc,
                CONST char **argv);
 int32_t sqlo_ncols(sqlo_stmt_handle_t sth, int32_t in);
-int32_t sqlo_describecol(sqlo_stmt_handle_t sth, int32_t col, unsigned short *dType, char **name,
+int32_t sqlo_describecol(sqlo_stmt_handle_t sth, int32_t col, uint16_t *dType, char **name,
                      int32_t *namelen, int32_t *prec, int32_t *scale, int32_t *dbsize, int32_t *nullok);
 int32_t sqlo_fetch(sqlo_stmt_handle_t sth, uint32_t nrows);
 int32_t sqlo_commit(sqlo_db_handle_t dbh);

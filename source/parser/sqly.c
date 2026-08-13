@@ -248,7 +248,7 @@ typedef short int yytype_int8;
 #ifdef YYTYPE_UINT16
 typedef YYTYPE_UINT16 yytype_uint16;
 #else
-typedef unsigned short int yytype_uint16;
+typedef uint16_t yytype_uint16;
 #endif
 
 #ifdef YYTYPE_INT16

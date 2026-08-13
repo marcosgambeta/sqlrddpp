@@ -217,7 +217,7 @@ typedef struct _COLUMNBINDORA
                                 // convertion from this type to all types
                                 // of numeric variables in SQL
   uint32_t ColumnSize;      // To make an easy bind
-  unsigned short DecimalDigits; // To make an easy bind
+  uint16_t DecimalDigits; // To make an easy bind
   HB_BOOL isNullable;           // Is this column NULLABLE ?
   HB_BOOL isArgumentNull;       // Value to be bound is NULL ?
   HB_BOOL isBoundNULL;          // Field was bound as NULL ?

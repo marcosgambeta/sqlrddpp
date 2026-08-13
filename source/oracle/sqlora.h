@@ -587,7 +587,7 @@ int32_t sqlo_run __P((sqlo_db_handle_t dbh, CONST char *stmt, int32_t argc, CONS
 sqlo_stmt_handle_t sqlo_open __P((sqlo_db_handle_t dbh, CONST char *stmt, int32_t argc,
                                   CONST char **argv));
 
-int32_t sqlo_describecol __P((sqlo_stmt_handle_t sth, int32_t col, unsigned short *dType, char **name,
+int32_t sqlo_describecol __P((sqlo_stmt_handle_t sth, int32_t col, uint16_t *dType, char **name,
                           int32_t *namelen, int32_t *prec, int32_t *scale, int32_t *dbsize, int32_t *nullok));
 
 /**
@@ -1316,7 +1316,7 @@ int32_t sqlo_bind_by_pos __P((sqlo_stmt_handle_t sth, int32_t position, int32_t 
  */
 int32_t sqlo_bind_by_pos2 __P((sqlo_stmt_handle_t sth, int32_t position, int32_t param_type,
                            CONST void *param_addr, uint32_t param_size, int16_t *ind_addr,
-                           unsigned short *rcode_addr, uint32_t skip_size));
+                           uint16_t *rcode_addr, uint32_t skip_size));
 
 /**
  * Define a output variable of the select list
@@ -1392,7 +1392,7 @@ int32_t sqlo_define_by_pos __P((sqlo_stmt_handle_t sth, int32_t value_pos, int32
  */
 int32_t sqlo_define_by_pos2 __P((sqlo_stmt_handle_t sth, int32_t value_pos, int32_t value_type,
                              CONST void *value_addr, uint32_t value_size, int16_t *ind_addr,
-                             uint32_t *rlen_addr, unsigned short *rcode_addr,
+                             uint32_t *rlen_addr, uint16_t *rcode_addr,
                              uint32_t skip_size));
 
 /**
@@ -1911,7 +1911,7 @@ char CONST **sql_ocol_names __P((int32_t sth, int32_t *num));
 
 int32_t CONST *sql_ocol_name_lens __P((int32_t sth, int32_t *num));
 
-unsigned short CONST *sql_value_lens __P((int32_t sth, int32_t *num));
+uint16_t CONST *sql_value_lens __P((int32_t sth, int32_t *num));
 
 int32_t sql_ncols __P((int32_t sth, int32_t in));
 

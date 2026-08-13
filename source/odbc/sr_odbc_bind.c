@@ -1451,7 +1451,7 @@ void SR_odbcGetData(SQLHSTMT hStmt, PHB_ITEM pField, PHB_ITEM pItem, HB_BOOL bQu
     break;
   }
   case SQL_SMALLINT: {
-    unsigned short val = 0;
+    uint16_t val = 0;
     if (SQL_SUCCEEDED(res = SQLGetData(hStmt, ui, SQL_C_SHORT, &val, sizeof(val), &iLen))) {
       pItem = hb_itemPutL(pItem, val != 0);
     }

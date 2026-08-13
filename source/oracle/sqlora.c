@@ -776,7 +776,7 @@ static int32_t _bind_by_pos __P((sqlo_stmt_struct_ptr_t stp, uint32_t param_pos,
 
 static int32_t _bind_by_pos2 __P((sqlo_stmt_struct_ptr_t stp, uint32_t param_pos,
                               int32_t param_type, const void *param_addr, uint32_t param_size,
-                              int16_t *ind_addr, unsigned short *rcode_addr,
+                              int16_t *ind_addr, uint16_t *rcode_addr,
                               uint32_t skip_size));
 
 static void _strip_string __P((char *s, uint32_t len));
@@ -2788,7 +2788,7 @@ static inline int32_t DEFUN(
     (stp, param_pos, param_type, param_addr, param_size, ind_addr, rcode_addr, skip_size),
     sqlo_stmt_struct_ptr_t stp AND unsigned param_pos AND int32_t param_type
         AND const void *param_addr AND uint32_t param_size AND int16_t *ind_addr
-            AND unsigned short *rcode_addr AND uint32_t skip_size)
+            AND uint16_t *rcode_addr AND uint32_t skip_size)
 {
   /* register */ OCIBind **bindp_addr;
   sqlo_db_struct_ptr_t dbp;
@@ -5998,7 +5998,7 @@ int32_t DEFUN(sqlo_bind_by_pos,
 int32_t DEFUN(sqlo_bind_by_pos2,
           (sth, param_pos, param_type, param_addr, param_size, ind_addr, rcode_addr, skip_size),
           sqlo_stmt_handle_t sth AND int32_t param_pos AND int32_t param_type AND const void *param_addr
-              AND uint32_t param_size AND int16_t *ind_addr AND unsigned short *rcode_addr
+              AND uint32_t param_size AND int16_t *ind_addr AND uint16_t *rcode_addr
                   AND uint32_t skip_size)
 {
   /* register */ sqlo_stmt_struct_ptr_t stp;
@@ -6051,7 +6051,7 @@ int32_t DEFUN(sqlo_define_by_pos2,
            skip_size),
           sqlo_stmt_handle_t sth AND int32_t value_pos AND int32_t value_type AND const void *value_addr
               AND uint32_t value_size AND int16_t *ind_addr AND uint32_t *rlen_addr
-                  AND unsigned short *rcode_addr AND uint32_t skip_size)
+                  AND uint16_t *rcode_addr AND uint32_t skip_size)
 {
   /* register */ sqlo_stmt_struct_ptr_t stp;
 
@@ -7287,7 +7287,7 @@ int32_t DEFUN(sqlo_autocommit, (dbh), sqlo_db_handle_t dbh)
  *        sqlo_describecol - Added by Marcelo Lombardo, april 2005
  *-------------------------------------------------------------------------*/
 int32_t DEFUN(sqlo_describecol, (sth, col, dType, name, namelen, prec, scale, dbsize, nullok),
-          sqlo_stmt_handle_t sth AND int32_t col AND unsigned short *dType AND char **name
+          sqlo_stmt_handle_t sth AND int32_t col AND uint16_t *dType AND char **name
               AND int32_t *namelen AND int32_t *prec AND int32_t *scale AND int32_t *dbsize AND int32_t *nullok)
 {
   sqlo_stmt_struct_ptr_t stp;
@@ -7309,7 +7309,7 @@ int32_t DEFUN(sqlo_describecol, (sth, col, dType, name, namelen, prec, scale, db
   colp = stp->ocolsv;
   colp += col;
 
-  *dType = (unsigned short)(colp->database_dtype);
+  *dType = (uint16_t)(colp->database_dtype);
   *name = (colp->col_name);
   *namelen = (int32_t)(colp->col_name_size);
   *prec = (int32_t)(colp->prec);
