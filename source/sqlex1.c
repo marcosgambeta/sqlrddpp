@@ -2663,7 +2663,6 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
 {
   int32_t queryLevel;
   uint16_t iIndex;
-  HB_SIZE i;
   HB_ERRCODE retvalue = HB_SUCCESS;
   PHB_ITEM pNewKey = SR_NULLPTR;
   HSTMT hStmt = SR_NULLPTR;
@@ -2735,6 +2734,7 @@ static HB_ERRCODE sqlExSeek(SQLEXAREAP thiswa, HB_BOOL bSoftSeek, PHB_ITEM pKey,
     // PHB_ITEM temp; (using stack instead of heap)
     // HB_ITEM temp;
     int32_t iComp;
+    uint16_t i;
     PHB_ITEM aRecord = hb_itemNew(SR_NULLPTR);
 
     hb_arrayNew(aRecord, hb_arrayLen(thiswa->aBuffer));
