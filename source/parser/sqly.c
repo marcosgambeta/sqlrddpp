@@ -201,11 +201,11 @@ typedef union YYSTYPE {
 /* Line 214 of yacc.c  */
 #line 40 "sql.y"
 
-  int int_val;
+  int32_t int_val;
   double real_val;
   PHB_ITEM item_val;
-  int param;
-  int iOperator;
+  int32_t param;
+  int32_t iOperator;
 
 /* Line 214 of yacc.c  */
 #line 220 ".hbmk/win/mingw/sqly.c"
@@ -220,9 +220,9 @@ typedef union YYSTYPE {
 /* Line 264 of yacc.c  */
 #line 48 "sql.y"
 
-int yyerror(void *stmt, const char *msg);
-int yyparse(void *stmt);
-int yylex(YYSTYPE *yylvaluep, void *s);
+int32_t yyerror(void *stmt, const char *msg);
+int32_t yyparse(void *stmt);
+int32_t yylex(YYSTYPE *yylvaluep, void *s);
 
 /* Line 264 of yacc.c  */
 #line 239 ".hbmk/win/mingw/sqly.c"
@@ -296,10 +296,10 @@ typedef short int yytype_int16;
 #define YYID(n) (n)
 #else
 #if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
-static int YYID(int yyi)
+static int32_t YYID(int32_t yyi)
 #else
-static int YYID(yyi)
-int yyi;
+static int32_t YYID(yyi)
+int32_t yyi;
 #endif
 {
   return yyi;
@@ -890,10 +890,10 @@ static const yytype_uint8 yystos[] = {
 
 /*ARGSUSED*/
 #if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
-static void yy_symbol_value_print(FILE *yyoutput, int yytype, YYSTYPE const *const yyvaluep, void *stmt)
+static void yy_symbol_value_print(FILE *yyoutput, int32_t yytype, YYSTYPE const *const yyvaluep, void *stmt)
 #else
 static void yy_symbol_value_print(yyoutput, yytype, yyvaluep, stmt) FILE *yyoutput;
-int yytype;
+int32_t yytype;
 YYSTYPE const *const yyvaluep;
 void *stmt;
 #endif
@@ -919,10 +919,10 @@ void *stmt;
 `--------------------------------*/
 
 #if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
-static void yy_symbol_print(FILE *yyoutput, int yytype, YYSTYPE const *const yyvaluep, void *stmt)
+static void yy_symbol_print(FILE *yyoutput, int32_t yytype, YYSTYPE const *const yyvaluep, void *stmt)
 #else
 static void yy_symbol_print(yyoutput, yytype, yyvaluep, stmt) FILE *yyoutput;
-int yytype;
+int32_t yytype;
 YYSTYPE const *const yyvaluep;
 void *stmt;
 #endif
@@ -951,7 +951,7 @@ yytype_int16 *yytop;
   YYFPRINTF(stderr, "Stack now");
   for (; yybottom <= yytop; yybottom++)
   {
-    int yybot = *yybottom;
+    int32_t yybot = *yybottom;
     YYFPRINTF(stderr, " %d", yybot);
   }
   YYFPRINTF(stderr, "\n");
@@ -969,15 +969,15 @@ yytype_int16 *yytop;
 `------------------------------------------------*/
 
 #if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
-static void yy_reduce_print(YYSTYPE *yyvsp, int yyrule, void *stmt)
+static void yy_reduce_print(YYSTYPE *yyvsp, int32_t yyrule, void *stmt)
 #else
 static void yy_reduce_print(yyvsp, yyrule, stmt) YYSTYPE *yyvsp;
-int yyrule;
+int32_t yyrule;
 void *stmt;
 #endif
 {
-  int yynrhs = yyr2[yyrule];
-  int yyi;
+  int32_t yynrhs = yyr2[yyrule];
+  int32_t yyi;
   unsigned long int yylno = yyrline[yyrule];
   YYFPRINTF(stderr, "Reducing stack by rule %d (line %lu):\n", yyrule - 1, yylno);
   /* The symbols being reduced.  */
@@ -998,7 +998,7 @@ void *stmt;
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
-int yydebug;
+int32_t yydebug;
 #else /* !YYDEBUG */
 #define YYDPRINTF(Args)
 #define YY_SYMBOL_PRINT(Title, Type, Value, Location)
@@ -1122,25 +1122,25 @@ static YYSIZE_T yytnamerr(char *yyres, const char *yystr)
    copied.  As a special case, return 0 if an ordinary "syntax error"
    message will do.  Return YYSIZE_MAXIMUM if overflow occurs during
    size calculation.  */
-static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
+static YYSIZE_T yysyntax_error(char *yyresult, int32_t yystate, int32_t yychar)
 {
-  int yyn = yypact[yystate];
+  int32_t yyn = yypact[yystate];
 
   if (!(YYPACT_NINF < yyn && yyn <= YYLAST))
     return 0;
   else
   {
-    int yytype = YYTRANSLATE(yychar);
+    int32_t yytype = YYTRANSLATE(yychar);
     YYSIZE_T yysize0 = yytnamerr(0, yytname[yytype]);
     YYSIZE_T yysize = yysize0;
     YYSIZE_T yysize1;
-    int yysize_overflow = 0;
+    int32_t yysize_overflow = 0;
     enum
     {
       YYERROR_VERBOSE_ARGS_MAXIMUM = 5
     };
     char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
-    int yyx;
+    int32_t yyx;
 
 #if 0
       /* This is so xgettext sees the translatable formats that are
@@ -1162,12 +1162,12 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
 
     /* Start YYX at -YYN if negative to avoid negative indexes in
    YYCHECK.  */
-    int yyxbegin = yyn < 0 ? -yyn : 0;
+    int32_t yyxbegin = yyn < 0 ? -yyn : 0;
 
     /* Stay within bounds of both yycheck and yytname.  */
-    int yychecklim = YYLAST - yyn + 1;
-    int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
-    int yycount = 1;
+    int32_t yychecklim = YYLAST - yyn + 1;
+    int32_t yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
+    int32_t yycount = 1;
 
     yyarg[0] = yytname[yytype];
     yyfmt = yystpcpy(yyformat, yyunexpected);
@@ -1204,7 +1204,7 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
          Don't have undefined behavior even if the translation
          produced a string with the wrong number of "%s"s.  */
       char *yyp = yyresult;
-      int yyi = 0;
+      int32_t yyi = 0;
       while ((*yyp = *yyf) != '\0')
       {
         if (*yyp == '%' && yyf[1] == 's' && yyi < yycount)
@@ -1230,10 +1230,10 @@ static YYSIZE_T yysyntax_error(char *yyresult, int yystate, int yychar)
 
 /*ARGSUSED*/
 #if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
-static void yydestruct(const char *yymsg, int yytype, YYSTYPE *yyvaluep, void *stmt)
+static void yydestruct(const char *yymsg, int32_t yytype, YYSTYPE *yyvaluep, void *stmt)
 #else
 static void yydestruct(yymsg, yytype, yyvaluep, stmt) const char *yymsg;
-int yytype;
+int32_t yytype;
 YYSTYPE *yyvaluep;
 void *stmt;
 #endif
@@ -1256,15 +1256,15 @@ void *stmt;
 /* Prevent warnings from -Wmissing-prototypes.  */
 #ifdef YYPARSE_PARAM
 #if defined __STDC__ || defined __cplusplus
-int yyparse(void *YYPARSE_PARAM);
+int32_t yyparse(void *YYPARSE_PARAM);
 #else
-int yyparse();
+int32_t yyparse();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int yyparse(void *stmt);
+int32_t yyparse(void *stmt);
 #else
-int yyparse();
+int32_t yyparse();
 #endif
 #endif /* ! YYPARSE_PARAM */
 
@@ -1274,30 +1274,30 @@ int yyparse();
 
 #ifdef YYPARSE_PARAM
 #if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
-int yyparse(void *YYPARSE_PARAM)
+int32_t yyparse(void *YYPARSE_PARAM)
 #else
-int yyparse(YYPARSE_PARAM) void *YYPARSE_PARAM;
+int32_t yyparse(YYPARSE_PARAM) void *YYPARSE_PARAM;
 #endif
 #else /* ! YYPARSE_PARAM */
 #if (defined __STDC__ || defined __C99__FUNC__ || defined __cplusplus || defined _MSC_VER)
-int yyparse(void *stmt)
+int32_t yyparse(void *stmt)
 #else
-int yyparse(stmt) void *stmt;
+int32_t yyparse(stmt) void *stmt;
 #endif
 #endif
 {
   /* The lookahead symbol.  */
-  int yychar;
+  int32_t yychar;
 
   /* The semantic value of the lookahead symbol.  */
   YYSTYPE yylval;
 
   /* Number of syntax errors so far.  */
-  int yynerrs;
+  int32_t yynerrs;
 
-  int yystate;
+  int32_t yystate;
   /* Number of tokens to shift before error messages enabled.  */
-  int yyerrstatus;
+  int32_t yyerrstatus;
 
   /* The stacks and their tools:
      `yyss': related to states.
@@ -1318,10 +1318,10 @@ int yyparse(stmt) void *stmt;
 
   YYSIZE_T yystacksize;
 
-  int yyn;
-  int yyresult;
+  int32_t yyn;
+  int32_t yyresult;
   /* Lookahead token as an internal (translated) token number.  */
-  int yytoken;
+  int32_t yytoken;
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
@@ -1337,7 +1337,7 @@ int yyparse(stmt) void *stmt;
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
-  int yylen = 0;
+  int32_t yylen = 0;
 
   yytoken = 0;
   yyss = yyssa;
@@ -1796,7 +1796,7 @@ yyreduce:
 #line 300 "sql.y"
   {
     // printf( "Limit %i\n", $2 );
-    (yyval.item_val) = SQLpCodeGenIntArray(SQL_PCODE_SELECT_LIMIT, SQLpCodeGenInt((int)(yyvsp[(2) - (2)].int_val)));
+    (yyval.item_val) = SQLpCodeGenIntArray(SQL_PCODE_SELECT_LIMIT, SQLpCodeGenInt((int32_t)(yyvsp[(2) - (2)].int_val)));
     // ((sql_stmt *) stmt)->pTemp = (PHB_ITEM) $$;
     ;
   }

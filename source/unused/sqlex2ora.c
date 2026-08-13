@@ -83,7 +83,7 @@ static PHB_DYNS s_pSym_Serial1 = SR_NULLPTR; // Pointer to serialization functio
 
 char *QualifyName2(char *szName, SQLEXORAAREAP thiswa)
 {
-  int i, len;
+  int32_t i, len;
 
   len = strlen(szName);
 
@@ -100,7 +100,7 @@ char *QualifyName2(char *szName, SQLEXORAAREAP thiswa)
     case SQLRDD_RDBMS_FIREBR5:
     case SQLRDD_RDBMS_IBMDB2:
     case SQLRDD_RDBMS_ADABAS: {
-      szName[i] = (char)toupper((int)szName[i]);
+      szName[i] = (char)toupper((int32_t)szName[i]);
       break;
     }
     case SQLRDD_RDBMS_INGRES:
@@ -108,7 +108,7 @@ char *QualifyName2(char *szName, SQLEXORAAREAP thiswa)
     case SQLRDD_RDBMS_MYSQL:
     case SQLRDD_RDBMS_OTERRO:
     case SQLRDD_RDBMS_INFORM: {
-      szName[i] = (char)tolower((int)szName[i]);
+      szName[i] = (char)tolower((int32_t)szName[i]);
       break; // TODO: unnecessary break
     }
     }
@@ -126,7 +126,7 @@ static void ResolveSpecialCols(SQLEXORAAREAP thiswa)
   // TO DO: Creating a new Index should reset INSERT Stmt cos it may
   //        create a new field like INDKEY_???
 
-  int i, iIndexes;
+  int32_t i, iIndexes;
   PHB_ITEM pIndex;
   PHB_ITEM pKeyVal;
   PHB_ITEM pIndIt;
@@ -205,7 +205,7 @@ void SetInsertRecordStructureOra(SQLEXORAAREAP thiswa)
 
 void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
 {
-  int iCols, i;
+  int32_t iCols, i;
   PHB_ITEM pFieldStruct, pFieldLen, pFieldDec;
   HB_LONG lFieldPosWA, lType;
   char *colName, *sFields, *sParams, *temp, *temp1;
@@ -240,7 +240,7 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
     bMultiLang = hb_arrayGetL(pFieldStruct, SR_FIELD_MULTILANG);
     bIsMemo = cType == 'M';
 
-    if (i != (int)(thiswa->sqlarea.ulhRecno)) { // RECNO is never included in INSERT column list
+    if (i != (int32_t)(thiswa->sqlarea.ulhRecno)) { // RECNO is never included in INSERT column list
       temp = hb_strdup((const char *)sFields);
       temp1 = hb_strdup((const char *)sParams);
       sprintf(sFields, "%s,%c%s%c", temp, OPEN_QUALIFIER(thiswa), QualifyName2(colName, thiswa),
@@ -257,7 +257,7 @@ void CreateInsertStmtOra(SQLEXORAAREAP thiswa)
 
     hb_xfree(colName);
 
-    InsertRecord->iSQLType = (int)lType;
+    InsertRecord->iSQLType = (int32_t)lType;
     InsertRecord->isNullable = bNullable;
     InsertRecord->isBoundNULL = HB_FALSE;
     InsertRecord->lFieldPosDB = i;
@@ -375,9 +375,9 @@ HB_ERRCODE PrepareInsertStmtOra(SQLEXORAAREAP thiswa)
 
 HB_ERRCODE BindInsertColumnsOra(SQLEXORAAREAP thiswa)
 {
-  int iCol, iCols, iBind;
+  int32_t iCol, iCols, iBind;
   COLUMNBINDORAP InsertRecord;
-  int res = SQL_ERROR;
+  int32_t res = SQL_ERROR;
 
   iCols = hb_arrayLen(thiswa->aFields);
   InsertRecord = thiswa->InsertRecord;
@@ -385,7 +385,7 @@ HB_ERRCODE BindInsertColumnsOra(SQLEXORAAREAP thiswa)
 
   for (iCol = 1; iCol <= iCols; iCol++) {
     if (iCol !=
-        (int)(thiswa->sqlarea.ulhRecno)) { // RECNO is never included in INSERT column list
+        (int32_t)(thiswa->sqlarea.ulhRecno)) { // RECNO is never included in INSERT column list
       iBind++;
       switch (InsertRecord->iCType) {
       case SQL_C_CHAR: {
@@ -497,7 +497,7 @@ HB_ERRCODE BindInsertColumnsOra(SQLEXORAAREAP thiswa)
 
 HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
 {
-  int iCols, i;
+  int32_t iCols, i;
   PHB_ITEM pFieldData, pTemp;
   COLUMNBINDORAP InsertRecord;
 
@@ -513,9 +513,9 @@ HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
 
   for (i = 1; i <= iCols; i++) {
     if ((!bUpdate) || (bUpdate && (thiswa->editMask[i - 1] || thiswa->specialMask[i - 1]))) {
-      if (i == (int)(thiswa->sqlarea.ulhDeleted)) {
+      if (i == (int32_t)(thiswa->sqlarea.ulhDeleted)) {
         SetBindEmptylValue2(InsertRecord); // Writes a ' ' to deleted flag
-      } else if (i != (int)(thiswa->sqlarea
+      } else if (i != (int32_t)(thiswa->sqlarea
                                 .ulhRecno)) { // RECNO is never included in INSERT column list
         // Get item value from Workarea
         pFieldData = hb_arrayGetItemPtr(thiswa->sqlarea.aBuffer, i);
@@ -556,8 +556,8 @@ HB_ERRCODE FeedRecordColsOra(SQLEXORAAREAP thiswa, HB_BOOL bUpdate)
 
 HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
 {
-  int res;
-  int iCols, i;
+  int32_t res;
+  int32_t iCols, i;
   OCI_Resultset *rs;
   COLUMNBINDORAP InsertRecord;
 
@@ -594,7 +594,7 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
 
   switch (thiswa->nSystemID) {
   case SQLRDD_RDBMS_ORACLE: {
-    int res;
+    int32_t res;
     char ident[200] = {0};
     char tablename[100] = {0};
 
@@ -675,8 +675,8 @@ HB_ERRCODE ExecuteInsertStmtOra(SQLEXORAAREAP thiswa)
 
 HB_ERRCODE CreateUpdateStmtOra(SQLEXORAAREAP thiswa)
 {
-  int res;
-  int iCols, i, iBind;
+  int32_t res;
+  int32_t iCols, i, iBind;
   COLUMNBINDORAP CurrRecord;
   PHB_ITEM pColumns;
   char *temp;
@@ -696,7 +696,7 @@ HB_ERRCODE CreateUpdateStmtOra(SQLEXORAAREAP thiswa)
                     __FILE__);
   }
 
-  iCols = (int)hb_arrayLen(thiswa->aFields);
+  iCols = (int32_t)hb_arrayLen(thiswa->aFields);
   CurrRecord = thiswa->CurrRecord;
   iBind = 0;
   thiswa->bIndexTouchedInUpdate = HB_FALSE;
@@ -904,7 +904,7 @@ HB_ERRCODE ExecuteUpdateStmtOra(SQLEXORAAREAP thiswa)
 {
   PHB_ITEM pKey, aRecord;
   HB_SIZE lPos;
-  int res;
+  int32_t res;
 
   // Feed current record to bindings
 

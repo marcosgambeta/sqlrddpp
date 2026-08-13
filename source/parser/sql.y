@@ -38,17 +38,17 @@
 %}
 
 %union {
-    int int_val;
+    int32_t int_val;
     double real_val;
     PHB_ITEM item_val;
-    int param;
-    int iOperator;
+    int32_t param;
+    int32_t iOperator;
 }
 
 %{
-   int yyerror(void * stmt,const char * msg);
-   int yyparse(void * stmt);
-   int yylex(YYSTYPE* yylvaluep, void* s);
+   int32_t yyerror(void * stmt,const char * msg);
+   int32_t yyparse(void * stmt);
+   int32_t yylex(YYSTYPE* yylvaluep, void* s);
 %}
 
 %token ERRORVAL
@@ -299,7 +299,7 @@ opt_limit:
    }
    | LIMIT INTEGERVAL {
       // printf( "Limit %i\n", $2 );
-      $$ = SQLpCodeGenIntArray( SQL_PCODE_SELECT_LIMIT, SQLpCodeGenInt( (int) $2 ) );
+      $$ = SQLpCodeGenIntArray( SQL_PCODE_SELECT_LIMIT, SQLpCodeGenInt( (int32_t) $2 ) );
       // ((sql_stmt *) stmt)->pTemp = (PHB_ITEM) $$;
    }
 ;

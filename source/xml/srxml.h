@@ -158,7 +158,7 @@ typedef struct tag_mxml_refil
   MXML_REFIL_FUNC refil_func;
 
   // ungetc implementation
-  int sparechar;
+  int32_t sparechar;
 
   // data available for callback functions
   union {
@@ -178,8 +178,8 @@ typedef struct tag_mxml_output
   MXML_OUTPUT_FUNC output_func;
 
   // data to implement progress indicators
-  int node_count;
-  int node_done;
+  int32_t node_count;
+  int32_t node_done;
 
   // data available for callback functions
   union {

@@ -154,15 +154,15 @@ static unsigned int closeQuotes[24] =
 typedef struct _SQL_CHAR_STRUCT
 {
   SQLCHAR *value;
-  int size;
-  int size_alloc;
+  int32_t size;
+  int32_t size_alloc;
 } SQL_CHAR_STRUCT;
 
 typedef struct _COLUMNBIND
 {
-  int iParNum;            // Parameter number in binded parameters
-  int iSQLType;           // SQL data type of column
-  int iCType;             // C data type of the argument. It determines
+  int32_t iParNum;            // Parameter number in binded parameters
+  int32_t iSQLType;           // SQL data type of column
+  int32_t iCType;             // C data type of the argument. It determines
                           // the as* member to be used, like xHB iTem API 'type'
   HB_LONG lFieldPosDB;    // Relative field position in aFields
   HB_LONG lFieldPosWA;    // Relative field position in aBuffer. NULL if RECNO or DELETED column
@@ -191,8 +191,8 @@ typedef struct _INDEXBIND
 {
   HB_LONG lFieldPosDB; // Relative field position in aFields
   HB_LONG hIndexOrder; // Index order
-  int iLevel;          // The current column in index
-  int iIndexColumns;   // How many index columns in index
+  int32_t iLevel;          // The current column in index
+  int32_t iIndexColumns;   // How many index columns in index
   HSTMT SkipFwdStmt;   // Index stmt handle for SQL phrase in this level for FWD movment
   HSTMT SkipBwdStmt;   // Index stmt handle for SQL phrase in this level for BWD movment
   HSTMT SeekFwdStmt;   // Index stmt handle for SQL phrase in this level for FWD movment
@@ -251,9 +251,9 @@ typedef struct _SQLEXAREA
   HB_ULONG ulhRecno;   // Recno position in field list
   HB_ULONG ulhDeleted; // Deleted position in field list
 
-  int *uiBufferIndex;    // Field offset in fields array
-  int *uiFieldList;      // Keeps a field list for SELECT statements
-  int iColumnListStatus; // field list status - see sqlprototypes.h
+  int32_t *uiBufferIndex;    // Field offset in fields array
+  int32_t *uiFieldList;      // Keeps a field list for SELECT statements
+  int32_t iColumnListStatus; // field list status - see sqlprototypes.h
 
   LPDBRELINFO lpdbPendingRel; // Pointer to parent rel struct
 
@@ -270,7 +270,7 @@ typedef struct _SQLEXAREA
   HSTMT hStmtNextval;      // Statement handle with prepared phrase to get inserted record
   HSTMT hStmtUpdate;       // Statement handle with prepared phrase to insert a new record
   HDBC hDbc;               // Database connection handle
-  int nSystemID;           // Connected database ID
+  int32_t nSystemID;           // Connected database ID
   HB_ULONG lCurrentRecord; // Should be filled by SR_GetCurrentRecordNum() to be used in SKIP
                            // bindings
   HB_ULONG lUpdatedRecord; // Should be filled by SR_GetCurrentRecordNum() to be used in UPDATE
@@ -281,15 +281,15 @@ typedef struct _SQLEXAREA
   HB_ULONG *lRecordToRetrieve; // To be used with Binded Parameter
   HB_ULONG *recordList;        // record list to skip on
   char *deletedList;           // deleted list relative to record list
-  int recordListPos;           // record list position
-  int recordListSize;          // record list size
-  int recordListDirection;     // SR_LIST_FORWARD or SR_LIST_BACKWARD
-  int iTCCompat;               // Top Connect compatible
+  int32_t recordListPos;           // record list position
+  int32_t recordListSize;          // record list size
+  int32_t recordListDirection;     // SR_LIST_FORWARD or SR_LIST_BACKWARD
+  int32_t iTCCompat;               // Top Connect compatible
 
-  int indexColumns; // current index column list lenght
-  int indexLevel;   // index column list level in current skip sequence
+  int32_t indexColumns; // current index column list lenght
+  int32_t indexLevel;   // index column list level in current skip sequence
 
-  int skipDirection; // 1 - FWD, (-1) - BWD, 0 - none
+  int32_t skipDirection; // 1 - FWD, (-1) - BWD, 0 - none
 
   char *sFields;      // field list string
   char *sSql;         // Last SQL phrase
@@ -340,17 +340,17 @@ typedef SQLEXAREA *LPSQLEXAREA;
 
 // prototypes
 
-// int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact); NOTE: changed to static
-void SR_odbcErrorDiag(HSTMT hStmt, const char *routine, const char *szSql, int line);
+// int32_t SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact); NOTE: changed to static
+void SR_odbcErrorDiag(HSTMT hStmt, const char *routine, const char *szSql, int32_t line);
 void SR_odbcErrorDiagRTE(HSTMT hStmt, const char *routine, const char *szSql, SQLRETURN res,
-                         int line, const char *module);
+                         int32_t line, const char *module);
 // void SR_odbcFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_ISIZ lLenBuff,
 // HB_BOOL bQueryOnly,
 //                   HB_ULONG ulSystemID, HB_BOOL bTranslate); NOTE: changed to static
-char *SR_QuoteTrimEscapeString(char *FromBuffer, HB_ULONG iSize, int idatabase, HB_BOOL bRTrim,
+char *SR_QuoteTrimEscapeString(char *FromBuffer, HB_ULONG iSize, int32_t idatabase, HB_BOOL bRTrim,
                                HB_ULONG *iSizeOut);
 char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
-                    HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo,
+                    HB_BOOL bNullable, int32_t nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo,
                     HB_BOOL *bNullArgument);
 HB_BOOL SR_itemEmpty(PHB_ITEM pItem);
 void SR_commonError(AREAP ThisDb, uint16_t uiGenCode, uint16_t uiSubCode,
@@ -366,7 +366,7 @@ void SR_ReleaseIndexBindExpr(INDEXBINDP IndexBindBase);
 HB_BOOL SR_getColumnList(SQLEXAREAP thiswa);
 void SR_SolveFilters(SQLEXAREAP thiswa, HB_BOOL bWhere);
 void SR_getOrderByExpression(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints);
-void SR_setResultSetLimit(SQLEXAREAP thiswa, int iRows);
+void SR_setResultSetLimit(SQLEXAREAP thiswa, int32_t iRows);
 void SR_SetIndexBindStructure(SQLEXAREAP thiswa);
 void SR_SetInsertRecordStructure(SQLEXAREAP thiswa);
 HB_ULONG SR_GetCurrentRecordNum(SQLEXAREAP thiswa);
@@ -386,10 +386,10 @@ HB_ERRCODE SR_ExecuteUpdateStmt(SQLEXAREAP thiswa);
 
 // SEEK Prototypes
 
-HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLevel);
-HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel);
-void SR_BindSeekStmt(SQLEXAREAP thiswa, int queryLevel);
-HB_ERRCODE SR_getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, uint16_t *iIndex,
+HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int32_t *queryLevel);
+HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int32_t queryLevel);
+void SR_BindSeekStmt(SQLEXAREAP thiswa, int32_t queryLevel);
+HB_ERRCODE SR_getPreparedSeek(SQLEXAREAP thiswa, int32_t queryLevel, uint16_t *iIndex,
                               HSTMT *hStmt);
 
 #endif // ODBCRDD_H

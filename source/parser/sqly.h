@@ -105,11 +105,11 @@ typedef union YYSTYPE {
 /* Line 1676 of yacc.c  */
 #line 40 "sql.y"
 
-  int int_val;
+  int32_t int_val;
   double real_val;
   PHB_ITEM item_val;
-  int param;
-  int iOperator;
+  int32_t param;
+  int32_t iOperator;
 
 /* Line 1676 of yacc.c  */
 #line 121 ".hbmk/win/mingw/sqly.h"

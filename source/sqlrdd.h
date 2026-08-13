@@ -101,9 +101,9 @@ typedef struct _SQLAREA
   HB_ULONG ulhRecno;   // Recno position in field list
   HB_ULONG ulhDeleted; // Deleted position in field list
 
-  int *uiBufferIndex;   // Field offset in fields array
-  int *uiFieldList;     // Keeps a field list for SELECT statements
-  int iFieldListStatus; // field list status - see sqlprototypes.h
+  int32_t *uiBufferIndex;   // Field offset in fields array
+  int32_t *uiFieldList;     // Keeps a field list for SELECT statements
+  int32_t iFieldListStatus; // field list status - see sqlprototypes.h
 
   LPDBRELINFO lpdbPendingRel; // Pointer to parent rel struct
   char editMask[MAX_FIELDS]; // Flags if a column was updated - must be cleared on every GO_COLD

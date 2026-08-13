@@ -77,7 +77,7 @@
 
 static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
-static int s_iConnectionCount = 0;
+static int32_t s_iConnectionCount = 0;
 
 #define LOGFILE "mariadb.log"
 
@@ -86,9 +86,9 @@ static int s_iConnectionCount = 0;
 
 typedef struct _MARIADB_SESSION
 {
-  int status;                   // Execution return value
-  int numcols;                  // Result set columns
-  int ifetch;                   // Fetch position in result set
+  int32_t status;                   // Execution return value
+  int32_t numcols;                  // Result set columns
+  int32_t ifetch;                   // Fetch position in result set
   MYSQL *dbh;                   // Connection handler
   MYSQL_RES *stmt;              // Current statement handler
   HB_ULONGLONG ulAffected_rows; // Number of affected rows
@@ -241,9 +241,9 @@ HB_FUNC_STATIC(SR_MARIADBFETCH)
     hb_retni(SQL_INVALID_HANDLE);
   } else {
     if (session->ifetch >= -1) {
-      int rows;
+      int32_t rows;
       session->ifetch++;
-      rows = (int)(mysql_num_rows(session->stmt) - 1);
+      rows = (int32_t)(mysql_num_rows(session->stmt) - 1);
       hb_retni(session->ifetch > rows ? SQL_NO_DATA_FOUND : SQL_SUCCESS);
     } else {
       hb_retni(SQL_INVALID_HANDLE);
@@ -452,10 +452,10 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
   }
 
   if (session->ifetch >= -1) {
-    int cols;
+    int32_t cols;
     MYSQL_ROW thisrow;
     HB_ULONG *lens;
-    int col;
+    int32_t col;
     // PHB_ITEM temp;
     HB_LONG lIndex;
     PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
@@ -464,7 +464,7 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
     HB_BOOL bTranslate = hb_parl(6);
     PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
-    cols = (int)hb_arrayLen(pFields);
+    cols = (int32_t)hb_arrayLen(pFields);
 
     mysql_data_seek(session->stmt, session->ifetch);
     thisrow = mysql_fetch_row(session->stmt);
@@ -499,7 +499,7 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
 // SR_MARIADBSTATUS(pSession) -> numeric
 HB_FUNC_STATIC(SR_MARIADBSTATUS)
 {
-  int ret;
+  int32_t ret;
   GET_MARIADB_SESSION(session, 1);
 
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -657,7 +657,7 @@ HB_FUNC_STATIC(SR_MARIADBROLLBACK)
 // SR_MARIADBQUERYATTR(pSession) -> numeric/array
 HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
 {
-  int row, rows, type;
+  int32_t row, rows, type;
   PHB_ITEM ret, /*temp,*/ atemp;
   HB_ITEM TempItem = {0};
   MYSQL_FIELD *field;
@@ -694,7 +694,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
       // case MYSQL_DATETIME_TYPE:
       MY_CHARSET_INFO cs;
       unsigned int mbmax = 1;
-      int char_len;
+      int32_t char_len;
 
       // hb_itemPutC(&temp, "C"); (moved below)
 
@@ -703,9 +703,9 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
         mbmax = (unsigned int)cs.mbmaxlen;
       }
 
-      char_len = (int)((mbmax > 1) ? (field->length / mbmax) : field->length);
+      char_len = (int32_t)((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0) {
-        char_len = (int)field->length;
+        char_len = (int32_t)field->length;
       }
 
       hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "C"));
@@ -770,7 +770,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
     case MYSQL_LONG_TYPE: {
       hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
       hb_arraySetForward(atemp, SR_FIELD_LEN,
-                         hb_itemPutNI(&TempItem, HB_MIN(11, (int)field->length)));
+                         hb_itemPutNI(&TempItem, HB_MIN(11, (int32_t)field->length)));
       hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
       hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
       break;
@@ -778,7 +778,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
     case MYSQL_INT24_TYPE: {
       hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
       hb_arraySetForward(atemp, SR_FIELD_LEN,
-                         hb_itemPutNI(&TempItem, HB_MIN(8, (int)field->length)));
+                         hb_itemPutNI(&TempItem, HB_MIN(8, (int32_t)field->length)));
       hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, 0));
       hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
       break;
@@ -788,7 +788,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
     case MYSQL_DOUBLE_TYPE:
     case MYSQL_NEWDECIMAL_TYPE: {
       hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(&TempItem, "N"));
-      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, (int)field->length));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(&TempItem, (int32_t)field->length));
       hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(&TempItem, field->decimals));
       hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(&TempItem, SQL_NUMERIC));
       break;
@@ -817,7 +817,7 @@ HB_FUNC_STATIC(SR_MARIADBQUERYATTR)
 HB_FUNC_STATIC(SR_MARIADBTABLEATTR)
 {
   char attcmm[256] = {0};
-  int row, rows, type;
+  int32_t row, rows, type;
   PHB_ITEM ret, atemp, temp;
   MARIADB_SESSION *session;
 
@@ -864,7 +864,7 @@ mysql_error(session->dbh));
       // case MYSQL_DATETIME_TYPE:
       MY_CHARSET_INFO cs;
       unsigned int mbmax = 1;
-      int char_len;
+      int32_t char_len;
 
       hb_itemPutC(temp, "C");
 
@@ -873,9 +873,9 @@ mysql_error(session->dbh));
         mbmax = (unsigned int)cs.mbmaxlen;
       }
 
-      char_len = (int)((mbmax > 1) ? (field->length / mbmax) : field->length);
+      char_len = (int32_t)((mbmax > 1) ? (field->length / mbmax) : field->length);
       if (char_len <= 0) {
-        char_len = (int)field->length;
+        char_len = (int32_t)field->length;
       }
 
       hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
@@ -945,7 +945,7 @@ mysql_error(session->dbh));
     case MYSQL_LONG_TYPE: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, HB_MIN(11, (int)field->length)));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, HB_MIN(11, (int32_t)field->length)));
       hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
@@ -953,7 +953,7 @@ mysql_error(session->dbh));
     case MYSQL_INT24_TYPE: {
       hb_itemPutC(temp, "N");
       hb_arraySetForward(atemp, SR_FIELD_TYPE, temp);
-      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, HB_MIN(8, (int)field->length)));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, HB_MIN(8, (int32_t)field->length)));
       hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, 0));
       hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;
@@ -962,7 +962,7 @@ mysql_error(session->dbh));
     case MYSQL_DECIMAL_TYPE:
     case MYSQL_DOUBLE_TYPE: {
       hb_arraySetForward(atemp, SR_FIELD_TYPE, hb_itemPutC(temp, "N"));
-      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, (int)field->length));
+      hb_arraySetForward(atemp, SR_FIELD_LEN, hb_itemPutNI(temp, (int32_t)field->length));
       hb_arraySetForward(atemp, SR_FIELD_DEC, hb_itemPutNI(temp, field->decimals));
       hb_arraySetForward(atemp, SR_FIELD_DOMAIN, hb_itemPutNI(temp, SQL_NUMERIC));
       break;

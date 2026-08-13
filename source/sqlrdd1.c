@@ -78,7 +78,7 @@ static void startSQLRDDSymbols(void);
 static HB_BOOL ProcessFields(SQLAREAP ThisDb);
 static HB_BOOL SetFields(SQLAREAP ThisDb);
 static HB_BOOL iTemCompEqual(PHB_ITEM pItem1, PHB_ITEM pItem2);
-static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact);
+static int32_t SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact);
 
 // static PHB_ITEM loadTag(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG * lorder);
 HB_EXTERN_BEGIN
@@ -551,11 +551,11 @@ static HB_ERRCODE sqlGoTop(SQLAREAP thiswa)
 
 //------------------------------------------------------------------------
 
-static int SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
+static int32_t SR_sqlKeyCompare(AREAP thiswa, PHB_ITEM pKey, HB_BOOL fExact)
 {
   HB_LONG lorder = 0;
   PHB_ITEM pTag, pKeyVal, itemTemp;
-  int iLimit, iResult = 0;
+  int32_t iLimit, iResult = 0;
   uint8_t len1, len2;
   char *valbuf = SR_NULLPTR;
   const char *val1, *val2;
@@ -1251,8 +1251,8 @@ static HB_ERRCODE sqlGetValue(SQLAREAP thiswa, uint16_t fieldNum, PHB_ITEM value
   } else {
 #if 0
     if (HB_IS_NIL(itemTemp)) {
-      SR_TraceLog(SR_NULLPTR, "Empty buffer found at position %i, fieldpos %i\n", (int)thiswa->uiBufferIndex[fieldNum - 1],
-        (int) fieldNum);
+      SR_TraceLog(SR_NULLPTR, "Empty buffer found at position %i, fieldpos %i\n", (int32_t)thiswa->uiBufferIndex[fieldNum - 1],
+        (int32_t) fieldNum);
     }
 #endif
 #ifndef HB_CDP_SUPPORT_OFF
@@ -1537,12 +1537,12 @@ static HB_ERRCODE sqlSetFieldExtent(SQLAREAP thiswa, uint16_t uiFieldExtent)
     uiFieldExtent++;
   }
 
-  // thiswa->uiBufferIndex = (int *) hb_xgrab(uiFieldExtent * sizeof(int));
-  // thiswa->uiFieldList = (int *) hb_xgrab(uiFieldExtent * sizeof(int));
-  // memset(thiswa->uiBufferIndex, 0, uiFieldExtent * sizeof(int));
-  // memset(thiswa->uiFieldList,  0, uiFieldExtent * sizeof(int));
-  thiswa->uiBufferIndex = (int *)hb_xgrabz(uiFieldExtent * sizeof(int));
-  thiswa->uiFieldList = (int *)hb_xgrabz(uiFieldExtent * sizeof(int));
+  // thiswa->uiBufferIndex = (int32_t *) hb_xgrab(uiFieldExtent * sizeof(int32_t));
+  // thiswa->uiFieldList = (int32_t *) hb_xgrab(uiFieldExtent * sizeof(int32_t));
+  // memset(thiswa->uiBufferIndex, 0, uiFieldExtent * sizeof(int32_t));
+  // memset(thiswa->uiFieldList,  0, uiFieldExtent * sizeof(int32_t));
+  thiswa->uiBufferIndex = (int32_t *)hb_xgrabz(uiFieldExtent * sizeof(int32_t));
+  thiswa->uiFieldList = (int32_t *)hb_xgrabz(uiFieldExtent * sizeof(int32_t));
   return HB_SUCCESS;
 }
 
@@ -2647,11 +2647,11 @@ PHB_ITEM sr_loadTagDefault(SQLAREAP thiswa, LPDBORDERINFO pInfo, HB_LONG *lorder
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE sqlSetServerSideIndexScope(SQLAREAP thiswa, int nScope, PHB_ITEM scopeValue)
+static HB_ERRCODE sqlSetServerSideIndexScope(SQLAREAP thiswa, int32_t nScope, PHB_ITEM scopeValue)
 {
   PHB_ITEM scopetype;
   PHB_ITEM scopeval;
-  int res;
+  int32_t res;
 
   scopeval = hb_itemNew(scopeValue);
   scopetype = hb_itemPutNI(SR_NULLPTR, nScope);
@@ -3077,7 +3077,7 @@ static HB_ERRCODE sqlSetScope(SQLAREAP thiswa, LPDBORDSCOPEINFO sInfo)
 {
   PHB_ITEM scopetype;
   PHB_ITEM scopeval;
-  int res;
+  int32_t res;
 
   // SR_TraceLog(SR_NULLPTR, "sqlSetScope\n");
 
@@ -3405,7 +3405,7 @@ static HB_BOOL ProcessFields(SQLAREAP thiswa)
     field.uiDec = 0;
     field.uiLen = (uint16_t)hb_arrayGetNI(thisfield, 3);
 
-    thiswa->uiBufferIndex[i - 1] = (int)hb_arrayGetNI(thisfield, 5);
+    thiswa->uiBufferIndex[i - 1] = (int32_t)hb_arrayGetNI(thisfield, 5);
 
     fieldType = (unsigned char *)hb_arrayGetCPtr(thisfield, 2);
 
@@ -3501,7 +3501,7 @@ static HB_BOOL SetFields(SQLAREAP thiswa)
       return HB_FALSE;
     }
 
-    thiswa->uiBufferIndex[i - 1] = (int)hb_arrayGetNI(thisfield, 5);
+    thiswa->uiBufferIndex[i - 1] = (int32_t)hb_arrayGetNI(thisfield, 5);
     hb_itemRelease(thisfield);
   }
   return HB_TRUE;
@@ -3542,7 +3542,7 @@ void SR_commonError(AREAP thiswa, uint16_t uiGenCode, uint16_t uiSubCode,
 // cItem1 > cIten2
 HB_FUNC(SR_ITEMCMP)
 {
-  int ret;
+  int32_t ret;
   const char *val1;
   const char *val2;
 
@@ -3782,7 +3782,7 @@ HB_FUNC(SQLRDD_GETFUNCTABLE)
 
 static void hb_sqlrddRddInit(void *cargo)
 {
-  int usResult;
+  int32_t usResult;
   HB_SYMBOL_UNUSED(cargo);
 
   usResult = hb_rddRegister("SQLRDD", RDT_FULL);

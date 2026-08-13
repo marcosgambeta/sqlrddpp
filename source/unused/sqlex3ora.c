@@ -58,7 +58,7 @@
 
 //------------------------------------------------------------------------
 
-extern HB_ERRCODE FeedSeekStmtOra(SQLEXORAAREAP thiswa, int queryLevel);
+extern HB_ERRCODE FeedSeekStmtOra(SQLEXORAAREAP thiswa, int32_t queryLevel);
 
 //------------------------------------------------------------------------
 
@@ -92,11 +92,11 @@ static void createSeekQueryOra(SQLEXORAAREAP thiswa, HB_BOOL bUseOptimizerHints)
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE getSeekWhereExpressionOra(SQLEXORAAREAP thiswa, int iListType, int queryLevel,
+static HB_ERRCODE getSeekWhereExpressionOra(SQLEXORAAREAP thiswa, int32_t iListType, int32_t queryLevel,
                                             HB_BOOL *bUseOptimizerHints)
 {
   HB_BOOL bWhere = HB_FALSE;
-  int iCol;
+  int32_t iCol;
   INDEXBINDORAP SeekBind;
   COLUMNBINDORAP BindStructure;
   HB_BOOL bDirectionFWD;
@@ -214,7 +214,7 @@ HB_ERRCODE prepareSeekQueryOra(SQLEXORAAREAP thiswa, INDEXBINDORAP SeekBind)
 
 //------------------------------------------------------------------------
 
-HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
+HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int32_t queryLevel)
 {
   PHB_ITEM pColumns, pIndexRef;
   INDEXBINDORAP SeekBind;
@@ -273,11 +273,11 @@ HB_BOOL CreateSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
 
 //------------------------------------------------------------------------
 
-HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *queryLevel)
+HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int32_t *queryLevel)
 {
   INDEXBINDORAP SeekBind;
   COLUMNBINDORAP BindStructure;
-  int i, lenKey, size, iCol;
+  int32_t i, lenKey, size, iCol;
   const char *szKey;
 
   SeekBind = thiswa->IndexBindings[thiswa->sqlarea.hOrdCurrent];
@@ -338,8 +338,8 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
 
       switch (BindStructure->iCType) {
       case SQL_C_CHAR: {
-        int nTrim, i;
-        size = lenKey > (int)(BindStructure->ColumnSize) ? ((int)(BindStructure->ColumnSize))
+        int32_t nTrim, i;
+        size = lenKey > (int32_t)(BindStructure->ColumnSize) ? ((int32_t)(BindStructure->ColumnSize))
                                                          : lenKey;
         nTrim = size;
 
@@ -393,14 +393,14 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
         break;
       }
       case SQL_C_TYPE_TIMESTAMP: {
-        int iPos;
+        int32_t iPos;
         HB_LONG lVal;
         double dVal;
 
         char datemask[9] = "10000101";
         char *mask = datemask;
 
-        size = lenKey > (int)(BindStructure->ColumnSize) ? ((int)(BindStructure->ColumnSize))
+        size = lenKey > (int32_t)(BindStructure->ColumnSize) ? ((int32_t)(BindStructure->ColumnSize))
                                                          : lenKey;
 
         // Must fix partial date seek
@@ -423,14 +423,14 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
         break;
       }
       case SQL_C_TYPE_DATE: {
-        int iPos;
+        int32_t iPos;
         HB_MAXINT lVal;
         double dVal;
 
         char datemask[9] = "10000101";
         char *mask = datemask;
 
-        size = lenKey > (int)(BindStructure->ColumnSize) ? ((int)(BindStructure->ColumnSize))
+        size = lenKey > (int32_t)(BindStructure->ColumnSize) ? ((int32_t)(BindStructure->ColumnSize))
                                                          : lenKey;
 
         // Must fix partial date seek
@@ -466,8 +466,8 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
     BindStructure = GetBindStructOra(thiswa, SeekBind);
 
     if (HB_IS_DATE(pKey) || HB_IS_DATETIME(pKey)) {
-      int iYear, iMonth, iDay;
-      int iHour, iMinute;
+      int32_t iYear, iMonth, iDay;
+      int32_t iHour, iMinute;
 
       hb_dateDecode(hb_itemGetDL(pKey), &iYear, &iMonth, &iDay);
 
@@ -477,7 +477,7 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
         BindStructure->asDate.day = (unsigned int)iDay;
       } else if (BindStructure->iCType == SQL_C_TYPE_TIMESTAMP) {
         long lJulian, lMilliSec;
-        int seconds, millisec;
+        int32_t seconds, millisec;
         hb_itemGetTDT(pKey, &lJulian, &lMilliSec);
         hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
         BindStructure->asTimestamp.year = (unsigned int)iYear;
@@ -515,13 +515,13 @@ HB_ERRCODE FeedSeekKeyToBindingsOra(SQLEXORAAREAP thiswa, PHB_ITEM pKey, int *qu
 
 //------------------------------------------------------------------------
 
-void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
+void BindSeekStmtora(SQLEXORAAREAP thiswa, int32_t queryLevel)
 {
   OCI_Statement *hStmt;
   INDEXBINDORAP SeekBind, SeekBindParam;
   COLUMNBINDORAP BindStructure;
-  int iBind, iLoop;
-  int res = 0;
+  int32_t iBind, iLoop;
+  int32_t res = 0;
   char *sSql;
 
   SeekBind = thiswa->IndexBindings[thiswa->sqlarea.hOrdCurrent];
@@ -627,11 +627,11 @@ void BindSeekStmtora(SQLEXORAAREAP thiswa, int queryLevel)
 
 //------------------------------------------------------------------------
 
-HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, uint16_t *iIndex,
+HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int32_t queryLevel, uint16_t *iIndex,
                               OCI_Statement **hStmt,
                               OCI_Resultset **rs) // Returns HB_TRUE if any result found
 {
-  int res;
+  int32_t res;
   INDEXBINDORAP SeekBind;
   // OCI_Resultset * rs;
 
@@ -692,13 +692,13 @@ HB_ERRCODE getPreparedSeekora(SQLEXORAAREAP thiswa, int queryLevel, uint16_t *iI
   return HB_SUCCESS;
 }
 
-HB_ERRCODE FeedSeekStmtOra(SQLEXORAAREAP thiswa, int queryLevel)
+HB_ERRCODE FeedSeekStmtOra(SQLEXORAAREAP thiswa, int32_t queryLevel)
 {
-  int i;
+  int32_t i;
 
   COLUMNBINDORAP InsertRecord;
   INDEXBINDORAP SeekBind, SeekBindParam;
-  int iLoop;
+  int32_t iLoop;
   char *sSql;
 
   SeekBind = thiswa->IndexBindings[thiswa->sqlarea.hOrdCurrent];

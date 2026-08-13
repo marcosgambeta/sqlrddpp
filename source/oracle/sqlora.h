@@ -311,14 +311,14 @@ enum sqlo_statement_states
 /**
  * A database handle type.
  */
-typedef int sqlo_db_handle_t;
+typedef int32_t sqlo_db_handle_t;
 
 /**
  * A statement handle type.
  * The statement handle stores internally the sqlo_db_handle in the upper
  * 16 bit
  */
-typedef int sqlo_stmt_handle_t;
+typedef int32_t sqlo_stmt_handle_t;
 
 /**
  * Oracle OCI Handle types used by @ref sqlo_get_oci_handle
@@ -440,7 +440,7 @@ __BEGIN_DECLS
  * @par Example:
  * @include examples.c
  */
-int sqlo_init __P((int threaded_mode, unsigned int max_db, unsigned int max_cursors));
+int32_t sqlo_init __P((int32_t threaded_mode, unsigned int max_db, unsigned int max_cursors));
 
 /**
  * Checks if the version is sufficient
@@ -456,7 +456,7 @@ int sqlo_init __P((int threaded_mode, unsigned int max_db, unsigned int max_curs
  * <li>SQLO_MALFORMED_VERSION_STR
  * </ul>
  */
-int sqlo_version __P((CONST char *version_str));
+int32_t sqlo_version __P((CONST char *version_str));
 
 /** @} */
 
@@ -481,7 +481,7 @@ CONST char *sqlo_geterror __P((sqlo_db_handle_t dbh));
  *
  * @return The last error code for this dbh.
  */
-int sqlo_geterrcode __P((sqlo_db_handle_t dbh));
+int32_t sqlo_geterrcode __P((sqlo_db_handle_t dbh));
 
 /** @} */
 
@@ -511,7 +511,7 @@ int sqlo_geterrcode __P((sqlo_db_handle_t dbh));
  * @par Example:
  * @include ex1.c
  */
-int sqlo_exists __P((sqlo_db_handle_t dbh, CONST char *table, CONST char *colname,
+int32_t sqlo_exists __P((sqlo_db_handle_t dbh, CONST char *table, CONST char *colname,
                      CONST char *colval, CONST char *where));
 
 /**
@@ -533,7 +533,7 @@ int sqlo_exists __P((sqlo_db_handle_t dbh, CONST char *table, CONST char *colnam
  * @par Example:
  * @include ex2.c
  */
-int sqlo_count __P((sqlo_db_handle_t dbh, CONST char *table, CONST char *colname,
+int32_t sqlo_count __P((sqlo_db_handle_t dbh, CONST char *table, CONST char *colname,
                     CONST char *colval, CONST char *where));
 
 /**
@@ -556,7 +556,7 @@ int sqlo_count __P((sqlo_db_handle_t dbh, CONST char *table, CONST char *colname
  * @par Example:
  * @include ex3.c
  */
-int sqlo_run __P((sqlo_db_handle_t dbh, CONST char *stmt, int argc, CONST char **argv));
+int32_t sqlo_run __P((sqlo_db_handle_t dbh, CONST char *stmt, int32_t argc, CONST char **argv));
 
 /**
  * Open a new cursor
@@ -584,11 +584,11 @@ int sqlo_run __P((sqlo_db_handle_t dbh, CONST char *stmt, int argc, CONST char *
  *
  * @see sqlo_open2, sqlo_fetch, sqlo_values, sqlo_close
  */
-sqlo_stmt_handle_t sqlo_open __P((sqlo_db_handle_t dbh, CONST char *stmt, int argc,
+sqlo_stmt_handle_t sqlo_open __P((sqlo_db_handle_t dbh, CONST char *stmt, int32_t argc,
                                   CONST char **argv));
 
-int sqlo_describecol __P((sqlo_stmt_handle_t sth, int col, unsigned short *dType, char **name,
-                          int *namelen, int *prec, int *scale, int *dbsize, int *nullok));
+int32_t sqlo_describecol __P((sqlo_stmt_handle_t sth, int32_t col, unsigned short *dType, char **name,
+                          int32_t *namelen, int32_t *prec, int32_t *scale, int32_t *dbsize, int32_t *nullok));
 
 /**
  * Open a new cursor
@@ -623,7 +623,7 @@ int sqlo_describecol __P((sqlo_stmt_handle_t sth, int col, unsigned short *dType
  * @see sqlo_fetch, sqlo_values, sqlo_close
  * @since Version 2.2
  */
-int sqlo_open2 __P((sqlo_stmt_handle_t * sthp, sqlo_db_handle_t dbh, CONST char *stmt, int argc,
+int32_t sqlo_open2 __P((sqlo_stmt_handle_t * sthp, sqlo_db_handle_t dbh, CONST char *stmt, int32_t argc,
                     CONST char **argv));
 
 /**
@@ -647,7 +647,7 @@ int sqlo_open2 __P((sqlo_stmt_handle_t * sthp, sqlo_db_handle_t dbh, CONST char 
  *
  * @see sqlo_open2, sqlo_fetch, sqlo_values, sqlo_close
  */
-int sqlo_reopen __P((sqlo_stmt_handle_t sth, int argc, CONST char **argv));
+int32_t sqlo_reopen __P((sqlo_stmt_handle_t sth, int32_t argc, CONST char **argv));
 
 /**
  * Fetches the data from an open cursor.
@@ -677,7 +677,7 @@ int sqlo_reopen __P((sqlo_stmt_handle_t sth, int argc, CONST char **argv));
  * </ul>
  * @see sqlo_open2, sqlo_values, sqlo_close
  */
-int sqlo_fetch __P((sqlo_stmt_handle_t sth, unsigned int nrows));
+int32_t sqlo_fetch __P((sqlo_stmt_handle_t sth, unsigned int nrows));
 
 /**
  * Get one dataset
@@ -697,7 +697,7 @@ int sqlo_fetch __P((sqlo_stmt_handle_t sth, unsigned int nrows));
  *
  * @see sqlo_fetch, sqlo_value_lens, sqlo_open, sqlo_close.
  */
-CONST char **sqlo_values __P((sqlo_stmt_handle_t sth, int *num, int dostrip));
+CONST char **sqlo_values __P((sqlo_stmt_handle_t sth, int32_t *num, int32_t dostrip));
 
 /**
  * Get the length of the returned values
@@ -713,7 +713,7 @@ CONST char **sqlo_values __P((sqlo_stmt_handle_t sth, int *num, int dostrip));
  *
  * @see sqlo_fetch, sqlo_values, sqlo_open2, sqlo_close.
  */
-CONST unsigned int *sqlo_value_lens __P((sqlo_stmt_handle_t sth, int *num));
+CONST unsigned int *sqlo_value_lens __P((sqlo_stmt_handle_t sth, int32_t *num));
 
 /**
  * Get the length of the returned lobs
@@ -729,7 +729,7 @@ CONST unsigned int *sqlo_value_lens __P((sqlo_stmt_handle_t sth, int *num));
  *
  * @see sqlo_fetch, sqlo_values, sqlo_open2, sqlo_close.
  */
-CONST unsigned long *sqlo_lob_lens __P((sqlo_stmt_handle_t sth, int *num));
+CONST unsigned long *sqlo_lob_lens __P((sqlo_stmt_handle_t sth, int32_t *num));
 
 /**
  * Get the select list columns
@@ -747,7 +747,7 @@ CONST unsigned long *sqlo_lob_lens __P((sqlo_stmt_handle_t sth, int *num));
  *
  * @see sqlo_fetch, sqlo_values, sqlo_open2, sqlo_close, sqlo_ocol_name_lens.
  */
-CONST char **sqlo_ocol_names __P((sqlo_stmt_handle_t sth, int *num));
+CONST char **sqlo_ocol_names __P((sqlo_stmt_handle_t sth, int32_t *num));
 
 /**
  * Get the select list columns
@@ -763,7 +763,7 @@ CONST char **sqlo_ocol_names __P((sqlo_stmt_handle_t sth, int *num));
  * @return SQLO_SUCCESS or <0 on error.
  *
  */
-int sqlo_ocol_names2 __P((sqlo_stmt_handle_t sth, int *num, const char ***ocol_names));
+int32_t sqlo_ocol_names2 __P((sqlo_stmt_handle_t sth, int32_t *num, const char ***ocol_names));
 
 /**
  * Get the select list columns name lengths
@@ -779,7 +779,7 @@ int sqlo_ocol_names2 __P((sqlo_stmt_handle_t sth, int *num, const char ***ocol_n
  *
  * @see sqlo_ocol_names, sqlo_fetch, sqlo_open2, sqlo_close.
  */
-CONST int *sqlo_ocol_name_lens __P((sqlo_stmt_handle_t sth, int *num));
+CONST int32_t *sqlo_ocol_name_lens __P((sqlo_stmt_handle_t sth, int32_t *num));
 
 /**
  * Get the number of bind/select-list variables
@@ -793,7 +793,7 @@ CONST int *sqlo_ocol_name_lens __P((sqlo_stmt_handle_t sth, int *num));
  * <li>SQLO_INVALID_STMT_HANDLE
  * </ul>
  */
-int sqlo_ncols __P((sqlo_stmt_handle_t sth, int in));
+int32_t sqlo_ncols __P((sqlo_stmt_handle_t sth, int32_t in));
 
 /**
  * Fetch the next row from the resultset and return the columns.
@@ -814,7 +814,7 @@ int sqlo_ncols __P((sqlo_stmt_handle_t sth, int in));
  * @par Example:
  * @include ex20.c
  */
-int sqlo_query_result __P((sqlo_stmt_handle_t sth, unsigned int *ncols, char ***values,
+int32_t sqlo_query_result __P((sqlo_stmt_handle_t sth, unsigned int *ncols, char ***values,
                            unsigned int **value_lens, char ***colnames,
                            unsigned int **colname_lens));
 
@@ -840,7 +840,7 @@ CONST char *sqlo_command __P((sqlo_stmt_handle_t sth));
  * @see sqlo_open.
  *
  */
-int sqlo_close __P((sqlo_stmt_handle_t sth));
+int32_t sqlo_close __P((sqlo_stmt_handle_t sth));
 
 /**
  * Execute a simple sql statement
@@ -858,7 +858,7 @@ int sqlo_close __P((sqlo_stmt_handle_t sth));
  *
  * @see sqlo_run
  */
-int sqlo_exec __P((sqlo_db_handle_t dbh, CONST char *stmt, unsigned int *rr));
+int32_t sqlo_exec __P((sqlo_db_handle_t dbh, CONST char *stmt, unsigned int *rr));
 
 /**
  * Test if a cursor is open
@@ -872,7 +872,7 @@ int sqlo_exec __P((sqlo_db_handle_t dbh, CONST char *stmt, unsigned int *rr));
  * </ul>
  * @see sqlo_open2
  */
-int sqlo_isopen __P((sqlo_stmt_handle_t sth));
+int32_t sqlo_isopen __P((sqlo_stmt_handle_t sth));
 
 /**
  * Return the number of processed rows by this statement
@@ -886,7 +886,7 @@ int sqlo_isopen __P((sqlo_stmt_handle_t sth));
  * </ul>
  *
  */
-int sqlo_prows __P((sqlo_stmt_handle_t sth));
+int32_t sqlo_prows __P((sqlo_stmt_handle_t sth));
 
 /** @} */
 
@@ -912,7 +912,7 @@ int sqlo_prows __P((sqlo_stmt_handle_t sth));
  * @include examples.c
  * @see sqlo_finish, sqlo_server_attach, sqlo_session_begin
  */
-int sqlo_connect __P((sqlo_db_handle_t * dbhp, CONST char *cstr));
+int32_t sqlo_connect __P((sqlo_db_handle_t * dbhp, CONST char *cstr));
 
 /**
  * Finish the session
@@ -929,7 +929,7 @@ int sqlo_connect __P((sqlo_db_handle_t * dbhp, CONST char *cstr));
  *
  * @see sqlo_connect, sqlo_session_end, sqlo_server_detach, sqlo_server_attach
  */
-int sqlo_finish __P((sqlo_db_handle_t dbh));
+int32_t sqlo_finish __P((sqlo_db_handle_t dbh));
 
 /**
  * Split an Oracle connect string
@@ -950,7 +950,7 @@ int sqlo_finish __P((sqlo_db_handle_t dbh));
  * </ul>
  * @since Version 2.2
  */
-int sqlo_split_cstring __P((CONST char *cstr, char *uid, char *pwd, char *tnsname,
+int32_t sqlo_split_cstring __P((CONST char *cstr, char *uid, char *pwd, char *tnsname,
                             unsigned int bufsize));
 
 /**
@@ -972,7 +972,7 @@ int sqlo_split_cstring __P((CONST char *cstr, char *uid, char *pwd, char *tnsnam
  * @see sqlo_session_begin, sqlo_server_detach
  * @since Version 2.2
  */
-int sqlo_server_attach __P((sqlo_db_handle_t * dbhp, CONST char *tnsname));
+int32_t sqlo_server_attach __P((sqlo_db_handle_t * dbhp, CONST char *tnsname));
 
 /**
  * Begin a session
@@ -994,7 +994,7 @@ int sqlo_server_attach __P((sqlo_db_handle_t * dbhp, CONST char *tnsname));
  * @see sqlo_server_attach, sqlo_session_end
  * @since Version 2.2
  */
-int sqlo_session_begin __P((sqlo_db_handle_t dbh, CONST char *username, CONST char *password));
+int32_t sqlo_session_begin __P((sqlo_db_handle_t dbh, CONST char *username, CONST char *password));
 
 /**
  * Detach from server.
@@ -1012,7 +1012,7 @@ int sqlo_session_begin __P((sqlo_db_handle_t dbh, CONST char *username, CONST ch
  * @see sqlo_server_attach
  * @since Version 2.2
  */
-int sqlo_server_detach __P((sqlo_db_handle_t dbh));
+int32_t sqlo_server_detach __P((sqlo_db_handle_t dbh));
 
 /**
  * Free a server connection
@@ -1033,7 +1033,7 @@ int sqlo_server_detach __P((sqlo_db_handle_t dbh));
  *
  * @since Version 2.3
  */
-int sqlo_server_free __P((sqlo_db_handle_t dbh));
+int32_t sqlo_server_free __P((sqlo_db_handle_t dbh));
 
 /**
  * End a session
@@ -1054,7 +1054,7 @@ int sqlo_server_free __P((sqlo_db_handle_t dbh));
  * @see sqlo_session_begin
  * @since Version 2.2
  */
-int sqlo_session_end __P((sqlo_db_handle_t dbh));
+int32_t sqlo_session_end __P((sqlo_db_handle_t dbh));
 
 /**
  * Returns the tnsname
@@ -1090,7 +1090,7 @@ CONST char *sqlo_getdatabase __P((sqlo_db_handle_t dbh));
  * </ul>
  *
  */
-int sqlo_commit __P((sqlo_db_handle_t dbh));
+int32_t sqlo_commit __P((sqlo_db_handle_t dbh));
 
 /**
  * Rollback
@@ -1105,7 +1105,7 @@ int sqlo_commit __P((sqlo_db_handle_t dbh));
  * </ul>
  *
  */
-int sqlo_rollback __P((sqlo_db_handle_t dbh));
+int32_t sqlo_rollback __P((sqlo_db_handle_t dbh));
 
 /**
  * sqlo_set_autocommit
@@ -1128,7 +1128,7 @@ int sqlo_rollback __P((sqlo_db_handle_t dbh));
  * @see sqlo_autocommit
  * @since Version 2.3.2
  */
-int sqlo_set_autocommit __P((sqlo_db_handle_t dbh, int on));
+int32_t sqlo_set_autocommit __P((sqlo_db_handle_t dbh, int32_t on));
 
 /**
  * @def sqlo_autocommit_on
@@ -1170,7 +1170,7 @@ int sqlo_set_autocommit __P((sqlo_db_handle_t dbh, int on));
  * @see sqlo_set_autocommit
  * @since Version 2.3.2
  */
-int sqlo_autocommit __P((sqlo_db_handle_t dbh));
+int32_t sqlo_autocommit __P((sqlo_db_handle_t dbh));
 
 /** @} */
 
@@ -1205,7 +1205,7 @@ int sqlo_autocommit __P((sqlo_db_handle_t dbh));
  *
  * @see sqlo_bind_by_name, sqlo_bind_by_pos, sqlo_define_by_pos, sqlo_open2.
  */
-int sqlo_prepare __P((sqlo_db_handle_t dbh, CONST char *stmt));
+int32_t sqlo_prepare __P((sqlo_db_handle_t dbh, CONST char *stmt));
 
 /**
  * Bind a variable by name
@@ -1234,9 +1234,9 @@ int sqlo_prepare __P((sqlo_db_handle_t dbh, CONST char *stmt));
  *
  * @see sqlo_prepare, sqlo_bind_by_pos, sqlo_define_by_pos
  */
-int sqlo_bind_by_name __P((sqlo_stmt_handle_t sth, CONST char *name, int param_type,
+int32_t sqlo_bind_by_name __P((sqlo_stmt_handle_t sth, CONST char *name, int32_t param_type,
                            CONST void *param_addr, unsigned int param_size, short *ind_addr,
-                           int is_array));
+                           int32_t is_array));
 
 /**
  * Bind a REF CURSOR
@@ -1257,7 +1257,7 @@ int sqlo_bind_by_name __P((sqlo_stmt_handle_t sth, CONST char *name, int param_t
  * Example using bind variables:
  * @include ex18.c
  */
-int sqlo_bind_ref_cursor __P((sqlo_stmt_handle_t sth, CONST char *cursor_name, int *sth2p));
+int32_t sqlo_bind_ref_cursor __P((sqlo_stmt_handle_t sth, CONST char *cursor_name, int32_t *sth2p));
 
 /**
  * Bind a variable by position
@@ -1284,9 +1284,9 @@ int sqlo_bind_ref_cursor __P((sqlo_stmt_handle_t sth, CONST char *cursor_name, i
  * @include ex10.c
  * @see sqlo_prepare, sqlo_bind_by_name, sqlo_define_by_pos
  */
-int sqlo_bind_by_pos __P((sqlo_stmt_handle_t sth, int position, int param_type,
+int32_t sqlo_bind_by_pos __P((sqlo_stmt_handle_t sth, int32_t position, int32_t param_type,
                           CONST void *param_addr, unsigned int param_size, short *ind_addr,
-                          int is_array));
+                          int32_t is_array));
 
 /**
  * Bind a variable by position
@@ -1314,7 +1314,7 @@ int sqlo_bind_by_pos __P((sqlo_stmt_handle_t sth, int position, int param_type,
  * @see sqlo_prepare, sqlo_bind_by_name, sqlo_define_by_pos
  * @since Version 2.2
  */
-int sqlo_bind_by_pos2 __P((sqlo_stmt_handle_t sth, int position, int param_type,
+int32_t sqlo_bind_by_pos2 __P((sqlo_stmt_handle_t sth, int32_t position, int32_t param_type,
                            CONST void *param_addr, unsigned int param_size, short *ind_addr,
                            unsigned short *rcode_addr, unsigned int skip_size));
 
@@ -1352,9 +1352,9 @@ int sqlo_bind_by_pos2 __P((sqlo_stmt_handle_t sth, int position, int param_type,
  *
  * @see sqlo_prepare, sqlo_bind_by_name, sqlo_define_by_pos
  */
-int sqlo_define_by_pos __P((sqlo_stmt_handle_t sth, int value_pos, int value_type,
+int32_t sqlo_define_by_pos __P((sqlo_stmt_handle_t sth, int32_t value_pos, int32_t value_type,
                             CONST void *value_addr, unsigned int value_size, short *ind_addr,
-                            unsigned int *rlen_addr, int is_array));
+                            unsigned int *rlen_addr, int32_t is_array));
 
 /**
  * Define a output variable of the select list
@@ -1390,7 +1390,7 @@ int sqlo_define_by_pos __P((sqlo_stmt_handle_t sth, int value_pos, int value_typ
  * @see sqlo_prepare, sqlo_bind_by_name, sqlo_define_by_pos, sqlo_execute
  * @since Version 2.2
  */
-int sqlo_define_by_pos2 __P((sqlo_stmt_handle_t sth, int value_pos, int value_type,
+int32_t sqlo_define_by_pos2 __P((sqlo_stmt_handle_t sth, int32_t value_pos, int32_t value_type,
                              CONST void *value_addr, unsigned int value_size, short *ind_addr,
                              unsigned int *rlen_addr, unsigned short *rcode_addr,
                              unsigned int skip_size));
@@ -1408,7 +1408,7 @@ int sqlo_define_by_pos2 __P((sqlo_stmt_handle_t sth, int value_pos, int value_ty
  * @par Examples:
  * @include ex19.c
  */
-int sqlo_define_ntable __P((sqlo_stmt_handle_t sth, unsigned int pos, int *sth2p));
+int32_t sqlo_define_ntable __P((sqlo_stmt_handle_t sth, unsigned int pos, int32_t *sth2p));
 
 /**
  * Execute a statement
@@ -1432,8 +1432,8 @@ int sqlo_define_ntable __P((sqlo_stmt_handle_t sth, unsigned int pos, int *sth2p
  *
  * @see sqlo_prepare, sqlo_define_by_pos, sqlo_define_by_pos2, sqlo_bind_by_name
  */
-int sqlo_execute __P((sqlo_stmt_handle_t sth, unsigned int iterations));
-int sqlo_executeselect __P((sqlo_stmt_handle_t sth, unsigned int iterations));
+int32_t sqlo_execute __P((sqlo_stmt_handle_t sth, unsigned int iterations));
+int32_t sqlo_executeselect __P((sqlo_stmt_handle_t sth, unsigned int iterations));
 
 /** @} */
 
@@ -1452,7 +1452,7 @@ int sqlo_executeselect __P((sqlo_stmt_handle_t sth, unsigned int iterations));
  * @return SQLO_SUCCESS or < 0 on error
  * @since Version 2.2
  */
-int sqlo_alloc_lob_desc __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp));
+int32_t sqlo_alloc_lob_desc __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp));
 
 /**
  * Free a lob descriptor
@@ -1468,7 +1468,7 @@ int sqlo_alloc_lob_desc __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp));
  * </ul>
  * @since Version 2.2
  */
-int sqlo_free_lob_desc __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp));
+int32_t sqlo_free_lob_desc __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp));
 
 /**
  * Write lob data from buffer into the lob column
@@ -1496,7 +1496,7 @@ int sqlo_free_lob_desc __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp));
  * @include ex13.c
  * @include ex13b.c
  */
-int sqlo_lob_write_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
+int32_t sqlo_lob_write_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
                                const void *bufp, unsigned int bufl, unsigned int piece));
 
 /**
@@ -1525,7 +1525,7 @@ int sqlo_lob_write_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsi
  * @par Example:
  * @include ex13.c
  */
-int sqlo_lob_append_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
+int32_t sqlo_lob_append_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
                                 unsigned int loblen, void *bufp, unsigned int bufl,
                                 unsigned int piece));
 
@@ -1551,7 +1551,7 @@ int sqlo_lob_append_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
  *
  * @see sqlo_lob_write_buffer
  */
-int sqlo_lob_write_stream __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
+int32_t sqlo_lob_write_stream __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
                                unsigned int filelen, FILE *fp));
 
 /**
@@ -1567,7 +1567,7 @@ int sqlo_lob_write_stream __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
  * <li>SQLO_ERROR
  * </ul>
  */
-int sqlo_lob_get_length __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
+int32_t sqlo_lob_get_length __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
                              unsigned int *loblenp));
 
 /**
@@ -1594,7 +1594,7 @@ int sqlo_lob_get_length __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp,
  * @par Example:
  * @include ex15.c
  */
-int sqlo_lob_read_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
+int32_t sqlo_lob_read_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
                               void *bufp, unsigned int bufl));
 
 /**
@@ -1619,7 +1619,7 @@ int sqlo_lob_read_buffer __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsig
  *
  * @see sqlo_lob_read_buffer
  */
-int sqlo_lob_read_stream __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
+int32_t sqlo_lob_read_stream __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
                               FILE *fp));
 /** @} */
 
@@ -1645,7 +1645,7 @@ int sqlo_lob_read_stream __P((sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsig
  *
  * @see sqlo_oci_handle_types_e
  */
-int sqlo_get_oci_handle __P((int sqloh, void *ocihp, sqlo_oci_handle_types_e type));
+int32_t sqlo_get_oci_handle __P((int32_t sqloh, void *ocihp, sqlo_oci_handle_types_e type));
 
 /**
  * Return the database handle of a statement handle.
@@ -1656,7 +1656,7 @@ int sqlo_get_oci_handle __P((int sqloh, void *ocihp, sqlo_oci_handle_types_e typ
  * <li> < 0 on error
  * </ul>
  */
-int sqlo_get_db_handle __P((sqlo_stmt_handle_t sth));
+int32_t sqlo_get_db_handle __P((sqlo_stmt_handle_t sth));
 
 /**
  * Set OCI blocking mode on/off.
@@ -1684,7 +1684,7 @@ int sqlo_get_db_handle __P((sqlo_stmt_handle_t sth));
  * </ul>
  * @since Version 2.2
  */
-int sqlo_set_blocking __P((sqlo_db_handle_t dbh, unsigned int on));
+int32_t sqlo_set_blocking __P((sqlo_db_handle_t dbh, unsigned int on));
 
 /**
  * Get OCI blocking mode
@@ -1697,7 +1697,7 @@ int sqlo_set_blocking __P((sqlo_db_handle_t dbh, unsigned int on));
  * @return SQLO_SUCCESS or OCI status code.
  * @since Version 2.2
  */
-int sqlo_get_blocking __P((sqlo_db_handle_t dbh, unsigned int *blocking));
+int32_t sqlo_get_blocking __P((sqlo_db_handle_t dbh, unsigned int *blocking));
 
 /**
  * Abort all operations in non-blocking mode
@@ -1719,7 +1719,7 @@ int sqlo_get_blocking __P((sqlo_db_handle_t dbh, unsigned int *blocking));
  * </ul>
  * @since Version 2.2
  */
-int sqlo_break __P((sqlo_db_handle_t dbh));
+int32_t sqlo_break __P((sqlo_db_handle_t dbh));
 
 /**
  * Set the prefetch row attribute for a statement.
@@ -1732,7 +1732,7 @@ int sqlo_break __P((sqlo_db_handle_t dbh));
  * @return SQLO_SUCCESS or < 0 on error
  * @since Version 2.2
  */
-int sqlo_set_prefetch_rows __P((sqlo_stmt_handle_t sth, unsigned int nrows));
+int32_t sqlo_set_prefetch_rows __P((sqlo_stmt_handle_t sth, unsigned int nrows));
 
 /**
  * Get the server version string.
@@ -1750,7 +1750,7 @@ int sqlo_set_prefetch_rows __P((sqlo_stmt_handle_t sth, unsigned int nrows));
  * @return SQLO_SUCCESS or < 0 on error.
  * @since Version 2.2
  */
-int sqlo_server_version __P((sqlo_db_handle_t dbh, char *bufp, unsigned int buflen));
+int32_t sqlo_server_version __P((sqlo_db_handle_t dbh, char *bufp, unsigned int buflen));
 
 /**
  * Get the state of the statement
@@ -1759,7 +1759,7 @@ int sqlo_server_version __P((sqlo_db_handle_t dbh, char *bufp, unsigned int bufl
  * @return The state (see @ref sqlo_statement_states) or \< 0 n error.
  * @since Version 2.2
  */
-int sqlo_get_stmt_state __P((sqlo_stmt_handle_t sth));
+int32_t sqlo_get_stmt_state __P((sqlo_stmt_handle_t sth));
 
 /**
  * Get the sql statement text for the statement handle
@@ -1780,7 +1780,7 @@ CONST char *sqlo_get_stmt __P((sqlo_stmt_handle_t sth));
  * </ul>
  * @since Version 2.2
  */
-int sqlo_get_ocol_dtype __P((sqlo_stmt_handle_t sth, unsigned int pos));
+int32_t sqlo_get_ocol_dtype __P((sqlo_stmt_handle_t sth, unsigned int pos));
 
 /**
  * Switches Oracle trace on/off
@@ -1795,7 +1795,7 @@ int sqlo_get_ocol_dtype __P((sqlo_stmt_handle_t sth, unsigned int pos));
  * <li> < 0 on error
  * </ul>
  */
-int sqlo_trace __P((sqlo_db_handle_t dbh, int on));
+int32_t sqlo_trace __P((sqlo_db_handle_t dbh, int32_t on));
 
 /**
  * Print info about the statement to stdout
@@ -1809,7 +1809,7 @@ int sqlo_trace __P((sqlo_db_handle_t dbh, int on));
  * </ul>
  * @param sth A statement handle
  */
-int sqlo_print __P((sqlo_stmt_handle_t sth));
+int32_t sqlo_print __P((sqlo_stmt_handle_t sth));
 
 /**
  * Register a signal handler for interrupts.
@@ -1822,7 +1822,7 @@ int sqlo_print __P((sqlo_stmt_handle_t sth));
  *
  * @return SQLO_SUCCESS or SQLO_ERROR on error.
  */
-int sqlo_register_int_handler __P((int *handle, sqlo_signal_handler_t signal_handler));
+int32_t sqlo_register_int_handler __P((int32_t *handle, sqlo_signal_handler_t signal_handler));
 
 /**
  * Clear an interrupt handler
@@ -1830,7 +1830,7 @@ int sqlo_register_int_handler __P((int *handle, sqlo_signal_handler_t signal_han
  *
  * @return SQLO_SUCCESS or SQLO_ERROR on error.
  */
-int sqlo_clear_int_handler __P((int handle));
+int32_t sqlo_clear_int_handler __P((int32_t handle));
 
 /**
  * }@
@@ -1842,80 +1842,80 @@ int sqlo_clear_int_handler __P((int handle));
 /*-----------------------------------------------------------------------*/
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-int sql_init __P((void));
+int32_t sql_init __P((void));
 
-int sql_trace __P((int on));
+int32_t sql_trace __P((int32_t on));
 
 CONST char *sql_geterror __P((void));
 
-int sql_geterrcode __P((void));
+int32_t sql_geterrcode __P((void));
 
-int sql_exists __P((CONST char *table, CONST char *field, CONST char *value,
+int32_t sql_exists __P((CONST char *table, CONST char *field, CONST char *value,
                     CONST char *where));
-int sql_run __P((CONST char *stmt, int argc, CONST char **argv));
+int32_t sql_run __P((CONST char *stmt, int32_t argc, CONST char **argv));
 
-int sql_open __P((CONST char *stmt, int argc, CONST char **argv));
+int32_t sql_open __P((CONST char *stmt, int32_t argc, CONST char **argv));
 
-int sql_reopen __P((int sth, int argc, CONST char **argv));
+int32_t sql_reopen __P((int32_t sth, int32_t argc, CONST char **argv));
 
-int sql_fetch __P((int sth));
+int32_t sql_fetch __P((int32_t sth));
 
-CONST char **sql_values __P((int sth, int *num, int dostrip));
+CONST char **sql_values __P((int32_t sth, int32_t *num, int32_t dostrip));
 
-CONST char *sql_command __P((int sth));
+CONST char *sql_command __P((int32_t sth));
 
-int sql_close __P((int sth));
+int32_t sql_close __P((int32_t sth));
 
-int sql_print __P((int sth));
+int32_t sql_print __P((int32_t sth));
 
-int sql_finish __P((void));
+int32_t sql_finish __P((void));
 
 CONST char *sql_getdatabase __P((void));
 
-CONST char **sql_cnam __P((int sth, int in, int *num));
+CONST char **sql_cnam __P((int32_t sth, int32_t in, int32_t *num));
 
-CONST char **sql_sclen __P((int sth, int in, int *num));
+CONST char **sql_sclen __P((int32_t sth, int32_t in, int32_t *num));
 
-int sql_prows __P((int sth));
+int32_t sql_prows __P((int32_t sth));
 
-int sql_connect __P((CONST char *connect_str));
+int32_t sql_connect __P((CONST char *connect_str));
 
-int sql_commit __P((void));
+int32_t sql_commit __P((void));
 
-int sql_rollback __P((void));
+int32_t sql_rollback __P((void));
 
-int sql_count __P((CONST char *table, CONST char *field, CONST char *value, CONST char *where));
+int32_t sql_count __P((CONST char *table, CONST char *field, CONST char *value, CONST char *where));
 
-int sql_exec __P((CONST char *stmt));
+int32_t sql_exec __P((CONST char *stmt));
 
-int sql_setparam __P((int argc, CONST char **argv));
+int32_t sql_setparam __P((int32_t argc, CONST char **argv));
 
-char CONST **sql_getparam __P((int namec, CONST char **name, int *numvalues));
-int sql_isopen __P((int sth));
+char CONST **sql_getparam __P((int32_t namec, CONST char **name, int32_t *numvalues));
+int32_t sql_isopen __P((int32_t sth));
 
-int sql_prepare __P((CONST char *stmt));
+int32_t sql_prepare __P((CONST char *stmt));
 
-int sql_bind_by_name __P((int sth, CONST char *name, int param_type, CONST void *param_addr,
-                          unsigned int param_size, short *ind_addr, int is_array));
+int32_t sql_bind_by_name __P((int32_t sth, CONST char *name, int32_t param_type, CONST void *param_addr,
+                          unsigned int param_size, short *ind_addr, int32_t is_array));
 
-int sql_bind_by_pos __P((int sth, int position, int param_type, CONST void *param_addr,
-                         unsigned int param_size, short *ind_addr, int is_array));
+int32_t sql_bind_by_pos __P((int32_t sth, int32_t position, int32_t param_type, CONST void *param_addr,
+                         unsigned int param_size, short *ind_addr, int32_t is_array));
 
-int sql_define_by_pos __P((int sth, int value_pos, int value_type, CONST void *value_addr,
+int32_t sql_define_by_pos __P((int32_t sth, int32_t value_pos, int32_t value_type, CONST void *value_addr,
                            unsigned int value_size, short *ind_addr, short *rlen_addr,
-                           int is_array));
+                           int32_t is_array));
 
-int sql_execute __P((int sth, int iterations));
+int32_t sql_execute __P((int32_t sth, int32_t iterations));
 
-char CONST **sql_ocol_names __P((int sth, int *num));
+char CONST **sql_ocol_names __P((int32_t sth, int32_t *num));
 
-int CONST *sql_ocol_name_lens __P((int sth, int *num));
+int32_t CONST *sql_ocol_name_lens __P((int32_t sth, int32_t *num));
 
-unsigned short CONST *sql_value_lens __P((int sth, int *num));
+unsigned short CONST *sql_value_lens __P((int32_t sth, int32_t *num));
 
-int sql_ncols __P((int sth, int in));
+int32_t sql_ncols __P((int32_t sth, int32_t in));
 
-int sql_getdbh __P((void));
+int32_t sql_getdbh __P((void));
 
 void sqlo_freeall __P((void));
 

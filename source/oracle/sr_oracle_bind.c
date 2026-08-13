@@ -75,39 +75,39 @@ static PHB_DYNS s_pSym_SR_DESERIALIZE = SR_NULLPTR;
 static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
 #ifdef __BORLANDC__
-int sqlo_init(int threaded_mode, unsigned int max_db, unsigned int max_cursors);
-int sqlo_connect(sqlo_db_handle_t *dbhp, CONST char *cstr);
-int sqlo_server_version(sqlo_db_handle_t dbh, char *bufp, unsigned int buflen);
-int sqlo_finish(sqlo_db_handle_t dbh);
+int32_t sqlo_init(int32_t threaded_mode, unsigned int max_db, unsigned int max_cursors);
+int32_t sqlo_connect(sqlo_db_handle_t *dbhp, CONST char *cstr);
+int32_t sqlo_server_version(sqlo_db_handle_t dbh, char *bufp, unsigned int buflen);
+int32_t sqlo_finish(sqlo_db_handle_t dbh);
 void sqlo_freeall(void);
 CONST char *sqlo_geterror(sqlo_db_handle_t dbh);
-int sqlo_geterrcode(sqlo_db_handle_t dbh);
-int sqlo_exec(sqlo_db_handle_t dbh, CONST char *stmt, unsigned int *rr);
-int sqlo_executeselect(sqlo_stmt_handle_t sth, unsigned int iterations);
-int sqlo_open2(sqlo_stmt_handle_t *sthp, sqlo_db_handle_t dbh, CONST char *stmt, int argc,
+int32_t sqlo_geterrcode(sqlo_db_handle_t dbh);
+int32_t sqlo_exec(sqlo_db_handle_t dbh, CONST char *stmt, unsigned int *rr);
+int32_t sqlo_executeselect(sqlo_stmt_handle_t sth, unsigned int iterations);
+int32_t sqlo_open2(sqlo_stmt_handle_t *sthp, sqlo_db_handle_t dbh, CONST char *stmt, int32_t argc,
                CONST char **argv);
-int sqlo_ncols(sqlo_stmt_handle_t sth, int in);
-int sqlo_describecol(sqlo_stmt_handle_t sth, int col, unsigned short *dType, char **name,
-                     int *namelen, int *prec, int *scale, int *dbsize, int *nullok);
-int sqlo_fetch(sqlo_stmt_handle_t sth, unsigned int nrows);
-int sqlo_commit(sqlo_db_handle_t dbh);
-int sqlo_rollback(sqlo_db_handle_t dbh);
-int sqlo_close(sqlo_stmt_handle_t sth);
-CONST char **sqlo_values(sqlo_stmt_handle_t sth, int *num, int dostrip);
-CONST unsigned int *sqlo_value_lens(sqlo_stmt_handle_t sth, int *num);
-int sqlo_prepare(sqlo_db_handle_t dbh, CONST char *stmt);
-int sqlo_alloc_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
-int sqlo_bind_by_pos(sqlo_stmt_handle_t sth, int position, int param_type,
+int32_t sqlo_ncols(sqlo_stmt_handle_t sth, int32_t in);
+int32_t sqlo_describecol(sqlo_stmt_handle_t sth, int32_t col, unsigned short *dType, char **name,
+                     int32_t *namelen, int32_t *prec, int32_t *scale, int32_t *dbsize, int32_t *nullok);
+int32_t sqlo_fetch(sqlo_stmt_handle_t sth, unsigned int nrows);
+int32_t sqlo_commit(sqlo_db_handle_t dbh);
+int32_t sqlo_rollback(sqlo_db_handle_t dbh);
+int32_t sqlo_close(sqlo_stmt_handle_t sth);
+CONST char **sqlo_values(sqlo_stmt_handle_t sth, int32_t *num, int32_t dostrip);
+CONST unsigned int *sqlo_value_lens(sqlo_stmt_handle_t sth, int32_t *num);
+int32_t sqlo_prepare(sqlo_db_handle_t dbh, CONST char *stmt);
+int32_t sqlo_alloc_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
+int32_t sqlo_bind_by_pos(sqlo_stmt_handle_t sth, int32_t position, int32_t param_type,
                      CONST void *param_addr, unsigned int param_size, short *ind_addr,
-                     int is_array);
-int sqlo_execute(sqlo_stmt_handle_t sth, unsigned int iterations);
-int sqlo_free_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
-int sqlo_lob_write_buffer(sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
+                     int32_t is_array);
+int32_t sqlo_execute(sqlo_stmt_handle_t sth, unsigned int iterations);
+int32_t sqlo_free_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
+int32_t sqlo_lob_write_buffer(sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, unsigned int loblen,
                           const void *bufp, unsigned int bufl, unsigned int piece);
-int sqlo_bind_ref_cursor(sqlo_stmt_handle_t sth, CONST char *cursor_name, int *sth2p);
-int sqlo_bind_by_name(sqlo_stmt_handle_t sth, CONST char *name, int param_type,
+int32_t sqlo_bind_ref_cursor(sqlo_stmt_handle_t sth, CONST char *cursor_name, int32_t *sth2p);
+int32_t sqlo_bind_by_name(sqlo_stmt_handle_t sth, CONST char *name, int32_t param_type,
                       CONST void *param_addr, unsigned int param_size, short *ind_addr,
-                      int is_array);
+                      int32_t is_array);
 #endif
 
 //-----------------------------------------------------------------------------//
@@ -117,20 +117,20 @@ typedef struct _ORA_BIND_COLS
   char *col_name;
   short sVal;
   double dValue;
-  int iType;
+  int32_t iType;
   HB_ULONG ulValue;
   char sDate[7];
-  int iValue;
+  int32_t iValue;
   char sValue[31];
   //    OCIRowId * RowId;
 } ORA_BIND_COLS;
 
 typedef struct _OCI_SESSION
 {
-  int dbh;     // Connection handler
-  int stmt;    // Current statement handler
-  int status;  // Execution return value
-  int numcols; // Result set columns
+  int32_t dbh;     // Connection handler
+  int32_t stmt;    // Current statement handler
+  int32_t status;  // Execution return value
+  int32_t numcols; // Result set columns
   char server_version[128];
   // bellow for bind vars
   sqlo_stmt_handle_t stmtParam;
@@ -301,9 +301,9 @@ HB_FUNC_STATIC(SR_SQLO_NUMCOLS)
 
 //-----------------------------------------------------------------------------//
 
-static int sqlo_sqldtype(uint16_t type)
+static int32_t sqlo_sqldtype(uint16_t type)
 {
-  int isqltype;
+  int32_t isqltype;
 
   switch (type) {
   case SQLOT_CHR:
@@ -378,7 +378,7 @@ HB_FUNC_STATIC(
 {
   GET_OCI_SESSION(session, 1);
   uint16_t dType, ncol;
-  int prec, scale, nullok, namelen, dbsize, type;
+  int32_t prec, scale, nullok, namelen, dbsize, type;
   char *name;
   sqlo_stmt_handle_t stmtParamRes;
 
@@ -751,7 +751,7 @@ HB_FUNC_STATIC(SR_ORACLEWRITEMEMO)
   const char *sRecnoName = hb_parcx(4);
   sqlo_lob_desc_t loblp;
   sqlo_stmt_handle_t sth;
-  int status;
+  int32_t status;
 
   PHB_ITEM pArray = hb_param(5, HB_IT_ARRAY);
 
@@ -801,9 +801,9 @@ HB_FUNC_STATIC(SR_ORACLEWRITEMEMO)
 }
 
 // Oracle Bind utility functions for usage with stored procedures with out parameters
-static void OracleFreeLink(int num_recs, OCI_SESSION *p)
+static void OracleFreeLink(int32_t num_recs, OCI_SESSION *p)
 {
-  int i;
+  int32_t i;
 
   if (p->pLink) {
 
@@ -834,11 +834,11 @@ static void OracleFreeLink(int num_recs, OCI_SESSION *p)
 HB_FUNC(SR_ORACLEINBINDPARAM)
 {
   GET_OCI_SESSION(Stmt, 1);
-  int iParamNum = hb_parni(2);
-  int iParamType = hb_parni(3);
-  int iFieldSize = hb_parni(4);
-  int iPos = iParamNum - 1;
-  int ret = SQL_ERROR;
+  int32_t iParamNum = hb_parni(2);
+  int32_t iParamType = hb_parni(3);
+  int32_t iFieldSize = hb_parni(4);
+  int32_t iPos = iParamNum - 1;
+  int32_t ret = SQL_ERROR;
   HB_BOOL lStmt = HB_ISLOG(7) ? hb_parl(7) : HB_FALSE;
   HB_BOOL isNull = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
 
@@ -887,7 +887,7 @@ HB_FUNC(SR_ORACLEINBINDPARAM)
 #else
       if (HB_ISDATE(6)) {
 #endif
-        int iYear, iMonth, iDay;
+        int32_t iYear, iMonth, iDay;
         PHB_ITEM pFieldData = hb_param(6, HB_IT_DATE);
         hb_dateDecode(hb_itemGetDL(pFieldData), &iYear, &iMonth, &iDay);
         // hb_dateStrPut(Stmt->pLink[iPos].sDate, iYear, iMonth, iDay);
@@ -911,13 +911,13 @@ HB_FUNC(SR_ORACLEINBINDPARAM)
 #else
       if (HB_ISDATETIME(6)) {
 #endif
-        int iYear, iMonth, iDay;
-        int iHour, iMin;
+        int32_t iYear, iMonth, iDay;
+        int32_t iHour, iMin;
 #ifdef __XHARBOUR__
         double dSec;
 #else
-        int mSec;
-        int iSeconds;
+        int32_t mSec;
+        int32_t iSeconds;
 #endif
         PHB_ITEM pFieldData = hb_param(6, HB_IT_DATETIME);
 #ifdef __XHARBOUR__
@@ -985,7 +985,7 @@ HB_FUNC(SR_ORACLEINBINDPARAM)
 HB_FUNC(SR_ORACLEGETBINDDATA)
 {
   GET_OCI_SESSION(p, 1);
-  int iPos;
+  int32_t iPos;
 
   PHB_ITEM p1 = hb_param(2, HB_IT_ANY);
 
@@ -997,14 +997,14 @@ HB_FUNC(SR_ORACLEGETBINDDATA)
     } else if (p->pLink[iPos - 1].iType == 2) {
       hb_retnint(p->pLink[iPos - 1].ulValue);
     } else if (p->pLink[iPos - 1].iType == 8 || p->pLink[iPos - 1].iType == 9) {
-      int century = p->pLink[iPos - 1].sDate[0];
+      int32_t century = p->pLink[iPos - 1].sDate[0];
       if (century >= 100) {
-        int year = (unsigned char)(p->pLink[iPos - 1].sDate[1]);
-        int month;
-        int day;
-        int hour;
-        int min;
-        int sec;
+        int32_t year = (unsigned char)(p->pLink[iPos - 1].sDate[1]);
+        int32_t month;
+        int32_t day;
+        int32_t hour;
+        int32_t min;
+        int32_t sec;
         year = ((century - 100) * 100) + (year - 100);
         month = p->pLink[iPos - 1].sDate[2];
         day = p->pLink[iPos - 1].sDate[3];
@@ -1073,7 +1073,7 @@ HB_FUNC(SR_ORACLEPREPARE)
 HB_FUNC(SR_ORACLEEXECDIR)
 {
   GET_OCI_SESSION(session, 1);
-  int ret = SQL_ERROR;
+  int32_t ret = SQL_ERROR;
   if (session != SR_NULLPTR) {
     ret = sqlo_execute(session->stmtParam, 1);
     session->status = sqlo_close(session->stmtParam);
@@ -1087,7 +1087,7 @@ HB_FUNC_STATIC(SR_ORACLE_PROCCURSOR)
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
   sqlo_stmt_handle_t st2h = SQLO_STH_INIT; // handle of the ref cursor
 
-  int ret = SQL_ERROR;
+  int32_t ret = SQL_ERROR;
 
   const char *stmt = hb_parc(2);
   const char *parc = hb_parc(3);
@@ -1173,7 +1173,7 @@ HB_FUNC_STATIC(SR_ORACLE_CLOSE_FCURSOR) // TODO: not used in the SQLRDD source c
 HB_FUNC_STATIC(SR_ORACLE_BIND_BY_NAME) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
-  int iPos = hb_parni(2);
+  int32_t iPos = hb_parni(2);
   hb_retni(sqlo_bind_by_name(session->stmtParam, ":c1", SQLOT_FLT, &session->pLink[iPos].dValue,
                              sizeof(session->pLink[iPos].dValue), 0, 0));
 }
@@ -1185,7 +1185,7 @@ HB_FUNC_STATIC(SR_ORACLE_BIND_BY_NAME) // TODO: not used in the SQLRDD source co
 HB_FUNC_STATIC(SR_ORACLEEXECDIRCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
-  int ret = SQL_ERROR;
+  int32_t ret = SQL_ERROR;
   if (session != SR_NULLPTR) {
     ret = sqlo_execute(session->stmtParam, 1);
     if (ret == SQLO_SUCCESS) {
@@ -1208,7 +1208,7 @@ HB_FUNC_STATIC(SR_ORACLEEXECDIRCURSOR) // TODO: not used in the SQLRDD source co
 HB_FUNC(SR_ORACLEBINDALLOC)
 {
   GET_OCI_SESSION(session, 1);
-  int iBind;
+  int32_t iBind;
 
   if (session != SR_NULLPTR) {
     iBind = hb_parni(2);
@@ -1228,7 +1228,7 @@ HB_FUNC_STATIC(SR_ORACLE_BINDCURSOR)
   sqlo_stmt_handle_t sth = SQLO_STH_INIT;
   sqlo_stmt_handle_t st2h = SQLO_STH_INIT; // handle of the ref cursor
 
-  int ret = SQL_ERROR;
+  int32_t ret = SQL_ERROR;
 
   const char *stmt = hb_parc(2);
   const char *parc = hb_parc(3);
@@ -1260,7 +1260,7 @@ HB_FUNC_STATIC(SR_ORACLE_BINDCURSOR)
 HB_FUNC_STATIC(SR_ORACLE_EXECCURSOR) // TODO: not used in the SQLRDD source code
 {
   GET_OCI_SESSION(session, 1);
-  int ret = 1;
+  int32_t ret = 1;
   // execute the PL/SQL block
   if (SQLO_SUCCESS != sqlo_execute(session->stmtParam, 1)) {
 

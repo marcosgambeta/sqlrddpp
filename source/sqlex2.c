@@ -84,9 +84,9 @@ static PHB_DYNS s_pSym_Serial1 = SR_NULLPTR; // Pointer to serialization functio
 
 char *SR_QualifyName(char *szName, SQLEXAREAP thiswa)
 {
-  int i, len;
+  int32_t i, len;
 
-  len = (int)strlen(szName);
+  len = (int32_t)strlen(szName);
 
   for (i = 0; i < len; i++) {
     if (szName[i] == '\0') {
@@ -128,12 +128,12 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
   // TO DO: Creating a new Index should reset INSERT Stmt cos it may
   //        create a new field like INDKEY_???
 
-  int i, iIndexes;
+  int32_t i, iIndexes;
   PHB_ITEM pIndex;
   PHB_ITEM pKeyVal;
   PHB_ITEM pIndIt;
   uint16_t uiPos;
-  int iOldArea;
+  int32_t iOldArea;
 
   if (!thiswa->pIndexMgmnt) {
     hb_objSendMsg(thiswa->oWorkArea, "AINDEXMGMNT", 0);
@@ -144,7 +144,7 @@ static void ResolveSpecialCols(SQLEXAREAP thiswa)
   if (iOldArea != thiswa->area.uiArea) {
     hb_rddSelectWorkAreaNumber(thiswa->area.uiArea);
   }
-  iIndexes = (int)hb_arrayLen(thiswa->pIndexMgmnt);
+  iIndexes = (int32_t)hb_arrayLen(thiswa->pIndexMgmnt);
 
   for (i = 1; i <= iIndexes; i++) {
     pIndex = hb_arrayGetItemPtr(thiswa->pIndexMgmnt, i);
@@ -215,7 +215,7 @@ void SR_SetInsertRecordStructure(SQLEXAREAP thiswa)
 
 void SR_CreateInsertStmt(SQLEXAREAP thiswa)
 {
-  int iCols, i;
+  int32_t iCols, i;
   PHB_ITEM pFieldStruct, pFieldLen, pFieldDec;
   HB_LONG lFieldPosWA, lType;
   char *colName, *sFields, *sParams, *temp;
@@ -227,7 +227,7 @@ void SR_CreateInsertStmt(SQLEXAREAP thiswa)
   COLUMNBINDP InsertRecord;
   uint16_t uiPos;
 
-  iCols = (int)hb_arrayLen(thiswa->aFields);
+  iCols = (int32_t)hb_arrayLen(thiswa->aFields);
 
   if (!thiswa->InsertRecord) {
     SR_SetInsertRecordStructure(thiswa);
@@ -254,7 +254,7 @@ void SR_CreateInsertStmt(SQLEXAREAP thiswa)
     }
     bIsMemo = cType == 'M' || bMultiLang;
 
-    if (i != (int)(thiswa->ulhRecno)) { // RECNO is never included in INSERT column list
+    if (i != (int32_t)(thiswa->ulhRecno)) { // RECNO is never included in INSERT column list
       temp = hb_strdup((const char *)sFields);
       sprintf(sFields, "%s,%c%s%c", temp, OPEN_QUALIFIER(thiswa),
               SR_QualifyName(colName, thiswa), CLOSE_QUALIFIER(thiswa));
@@ -266,7 +266,7 @@ void SR_CreateInsertStmt(SQLEXAREAP thiswa)
 
     hb_xfree(colName);
 
-    InsertRecord->iSQLType = (int)lType;
+    InsertRecord->iSQLType = (int32_t)lType;
     InsertRecord->isNullable = bNullable;
     InsertRecord->isBoundNULL = HB_FALSE;
     InsertRecord->lFieldPosDB = i;
@@ -434,16 +434,16 @@ HB_ERRCODE SR_PrepareInsertStmt(SQLEXAREAP thiswa)
 
 HB_ERRCODE SR_BindInsertColumns(SQLEXAREAP thiswa)
 {
-  int iCol, iCols, iBind;
+  int32_t iCol, iCols, iBind;
   COLUMNBINDP InsertRecord;
   SQLRETURN res = SQL_ERROR;
 
-  iCols = (int)hb_arrayLen(thiswa->aFields);
+  iCols = (int32_t)hb_arrayLen(thiswa->aFields);
   InsertRecord = thiswa->InsertRecord;
   iBind = 0;
 
   for (iCol = 1; iCol <= iCols; iCol++) {
-    if (iCol != (int)(thiswa->ulhRecno)) { // RECNO is never included in INSERT column list
+    if (iCol != (int32_t)(thiswa->ulhRecno)) { // RECNO is never included in INSERT column list
       iBind++;
       switch (InsertRecord->iCType) {
       case SQL_C_CHAR: {
@@ -528,11 +528,11 @@ HB_ERRCODE SR_BindInsertColumns(SQLEXAREAP thiswa)
 
 HB_ERRCODE SR_FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
 {
-  int iCols, i;
+  int32_t iCols, i;
   PHB_ITEM pFieldData, pTemp;
   COLUMNBINDP InsertRecord;
 
-  iCols = (int)hb_arrayLen(thiswa->aFields);
+  iCols = (int32_t)hb_arrayLen(thiswa->aFields);
 
   if (bUpdate) {
     InsertRecord = thiswa->CurrRecord;
@@ -548,10 +548,10 @@ HB_ERRCODE SR_FeedRecordCols(SQLEXAREAP thiswa, HB_BOOL bUpdate)
 
   for (i = 1; i <= iCols; i++) {
     if ((!bUpdate) || (bUpdate && (thiswa->editMask[i - 1] || thiswa->specialMask[i - 1]))) {
-      if (i == (int)(thiswa->ulhDeleted)) {
+      if (i == (int32_t)(thiswa->ulhDeleted)) {
         SR_SetBindEmptylValue(InsertRecord); // Writes a ' ' to deleted flag
       } else if (i !=
-                 (int)(thiswa->ulhRecno)) { // RECNO is never included in INSERT column list
+                 (int32_t)(thiswa->ulhRecno)) { // RECNO is never included in INSERT column list
         // Get item value from Workarea
         pFieldData = hb_arrayGetItemPtr(thiswa->aBuffer, i);
 
@@ -735,7 +735,7 @@ HB_ERRCODE SR_ExecuteInsertStmt(SQLEXAREAP thiswa)
 HB_ERRCODE SR_CreateUpdateStmt(SQLEXAREAP thiswa)
 {
   SQLRETURN res;
-  int iCols, i, iBind;
+  int32_t iCols, i, iBind;
   COLUMNBINDP CurrRecord;
   PHB_ITEM pColumns;
   char *temp;
@@ -753,7 +753,7 @@ HB_ERRCODE SR_CreateUpdateStmt(SQLEXAREAP thiswa)
                         __FILE__);
   }
 
-  iCols = (int)hb_arrayLen(thiswa->aFields);
+  iCols = (int32_t)hb_arrayLen(thiswa->aFields);
   CurrRecord = thiswa->CurrRecord;
   iBind = 0;
   thiswa->bIndexTouchedInUpdate = HB_FALSE;
@@ -881,7 +881,7 @@ HB_ERRCODE SR_CreateUpdateStmt(SQLEXAREAP thiswa)
     // Check if any updated column is included in current index column list
     pColumns = hb_arrayGetItemPtr(
         hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent), SR_AINDEX_INDEX_FIELDS);
-    thiswa->indexColumns = (int)hb_arrayLen(pColumns);
+    thiswa->indexColumns = (int32_t)hb_arrayLen(pColumns);
 
     for (i = 1; i <= thiswa->indexColumns; i++) {
       if (thiswa->editMask[hb_arrayGetNL(hb_arrayGetItemPtr(pColumns, i), 2) - 1]) {

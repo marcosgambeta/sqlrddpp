@@ -70,12 +70,12 @@ static PHB_DYNS s_pSym_SR_FROMJSON = SR_NULLPTR;
 
 typedef struct _PSQL_SESSION
 {
-  int status;        // Execution return value
-  int numcols;       // Result set columns
-  int ifetch;        // Fetch position in result set
+  int32_t status;        // Execution return value
+  int32_t numcols;       // Result set columns
+  int32_t ifetch;        // Fetch position in result set
   PGconn *dbh;       // Connection handler
   PGresult *stmt;    // Current statement handler
-  int iAffectedRows; // Number of affected rows by command
+  int32_t iAffectedRows; // Number of affected rows by command
 } PSQL_SESSION;
 
 // culik 11/9/2010 variavel para setar o comportamento do postgresql
@@ -154,7 +154,7 @@ HB_FUNC_STATIC(SR_PGSSTATUS2)
     return;
   }
 
-  hb_retni((int)PQstatus(session->dbh));
+  hb_retni((int32_t)PQstatus(session->dbh));
 }
 
 //----------------------------------------------------------------------------//
@@ -162,7 +162,7 @@ HB_FUNC_STATIC(SR_PGSSTATUS2)
 // SR_PGSResultStatus(ResultSet) => nStatus
 HB_FUNC_STATIC(SR_PGSRESULTSTATUS)
 {
-  int ret;
+  int32_t ret;
   PGresult *res = (PGresult *)hb_itemGetPtr(hb_param(1, HB_IT_POINTER));
 
   if (res == SR_NULLPTR) {
@@ -170,7 +170,7 @@ HB_FUNC_STATIC(SR_PGSRESULTSTATUS)
     return;
   }
 
-  ret = (int)PQresultStatus(res);
+  ret = (int32_t)PQresultStatus(res);
 
   switch (ret) {
   case PGRES_EMPTY_QUERY: {
@@ -209,7 +209,7 @@ HB_FUNC_STATIC(SR_PGSEXEC)
 {
   // SR_TraceLog(SR_NULLPTR, "PGSExec : %s\n", hb_parc(2));
   GET_PGSQL_SESSION(session, 1);
-  int ret;
+  int32_t ret;
 
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
     hb_retptr(SR_NULLPTR);
@@ -230,11 +230,11 @@ HB_FUNC_STATIC(SR_PGSEXEC)
 
   session->ifetch = -1;
   session->numcols = PQnfields(session->stmt);
-  ret = (int)PQresultStatus(session->stmt);
+  ret = (int32_t)PQresultStatus(session->stmt);
 
   switch (ret) {
   case PGRES_COMMAND_OK: {
-    session->iAffectedRows = (int)atoi(PQcmdTuples(session->stmt));
+    session->iAffectedRows = (int32_t)atoi(PQcmdTuples(session->stmt));
     break;
   }
   default: {
@@ -248,7 +248,7 @@ HB_FUNC_STATIC(SR_PGSEXEC)
 // SR_PGSFetch(ResultSet) => nStatus
 HB_FUNC_STATIC(SR_PGSFETCH)
 {
-  int iTpl;
+  int32_t iTpl;
   GET_PGSQL_SESSION(session, 1);
 
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
@@ -267,7 +267,7 @@ HB_FUNC_STATIC(SR_PGSFETCH)
       if (session->ifetch > iTpl) {
         hb_retni(SQL_NO_DATA_FOUND);
       } else {
-        session->iAffectedRows = (int)iTpl;
+        session->iAffectedRows = (int32_t)iTpl;
         hb_retni(SQL_SUCCESS);
       }
     } else {
@@ -415,7 +415,7 @@ HB_FUNC_STATIC(SR_PGSTRANSSTATUS)
     return;
   }
 
-  hb_retni((int)PQtransactionStatus(session->dbh));
+  hb_retni((int32_t)PQtransactionStatus(session->dbh));
 }
 
 //----------------------------------------------------------------------------//
@@ -423,7 +423,7 @@ HB_FUNC_STATIC(SR_PGSTRANSSTATUS)
 // SR_PGSQueryAttr(ResultSet) => aStruct
 HB_FUNC_STATIC(SR_PGSQUERYATTR)
 {
-  int row, rows, type;
+  int32_t row, rows, type;
   PHB_ITEM ret, atemp /*, temp*/;
   HB_ITEM temp = {0};
   HB_LONG typmod;
@@ -455,7 +455,7 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
     hb_arraySetNL(atemp, SR_FIELD_ENUM, row + 1);
 
     // Data type, len, dec
-    type = (int)PQftype(session->stmt, row);
+    type = (int32_t)PQftype(session->stmt, row);
     typmod = PQfmod(session->stmt, row);
 
     // nullable = PQgetisnull(session->stmt, row,PQfnumber(session->stmt, PQfname(session->stmt,
@@ -487,7 +487,7 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
     case TIMETZOID: {
       // case TIMESTAMPOID:
       // case TIMESTAMPTZOID:
-      int fieldLen;
+      int32_t fieldLen;
 
       // moved below
       // hb_itemPutC(temp, "C");
@@ -496,7 +496,7 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
       if (typmod >= 4) {
         fieldLen = typmod - 4;
       } else {
-        fieldLen = (int)PQfsize(session->stmt, row);
+        fieldLen = (int32_t)PQfsize(session->stmt, row);
         if (fieldLen <= 0) {
           fieldLen = 254;
         }
@@ -625,7 +625,7 @@ HB_FUNC_STATIC(SR_PGSQUERYATTR)
 HB_FUNC_STATIC(SR_PGSTABLEATTR)
 {
   char attcmm[512];
-  int row, rows;
+  int32_t row, rows;
   PHB_ITEM ret, atemp /*, temp*/;
   HB_ITEM temp = {0};
   PGresult *stmtTemp;
@@ -667,7 +667,7 @@ HB_FUNC_STATIC(SR_PGSTABLEATTR)
   for (row = 0; row < rows; row++) {
     long typmod;
     long nullable;
-    int type;
+    int32_t type;
 
     // Column name
     hb_arrayNew(atemp, 11);

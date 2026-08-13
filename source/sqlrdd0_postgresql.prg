@@ -2189,7 +2189,7 @@ HB_FUNC(SR_SETSQL2008NEWTYPES)
 
 HB_FUNC(SR_SETPGSOLDBEHAVIOR)
 {
-  int iOld = s_iOldPgsBehavior;
+  int32_t iOld = s_iOldPgsBehavior;
   if (HB_ISLOG(1)) {
     s_iOldPgsBehavior = hb_parl(1);
   }
@@ -2204,7 +2204,7 @@ HB_BOOL HB_EXPORT sr_fShortasNum(void)
 
 HB_FUNC(SR_SETFIREBIRDUSESHORTASNUM)
 {
-  int iOld = s_fShortasNum;
+  int32_t iOld = s_fShortasNum;
   if (HB_ISLOG(1)) {
     s_fShortasNum = hb_parl(1);
   }

@@ -107,11 +107,11 @@ static void createSeekQuery(SQLEXAREAP thiswa, HB_BOOL bUseOptimizerHints)
 
 //------------------------------------------------------------------------
 
-static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int queryLevel,
+static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int32_t iListType, int32_t queryLevel,
                                          HB_BOOL *bUseOptimizerHints)
 {
   HB_BOOL bWhere = HB_FALSE;
-  int iCol;
+  int32_t iCol;
   INDEXBINDP SeekBind;
   COLUMNBINDP BindStructure;
   HB_BOOL bDirectionFWD;
@@ -185,12 +185,12 @@ static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int q
 }
 
 #if 0
-static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int iListType, int queryLevel, HB_BOOL * bUseOptimizerHints)
+static HB_ERRCODE getSeekWhereExpression(SQLEXAREAP thiswa, int32_t iListType, int32_t queryLevel, HB_BOOL * bUseOptimizerHints)
 {
    SqlExLog("getSeekWhereExpression()", 3);
 
    HB_BOOL bWhere = HB_FALSE;
-   int iCol;
+   int32_t iCol;
    INDEXBINDP SeekBind;
    COLUMNBINDP BindStructure;
    HB_BOOL bDirectionFWD;
@@ -302,7 +302,7 @@ HB_ERRCODE prepareSeekQuery(SQLEXAREAP thiswa, INDEXBINDP SeekBind)
 
 //------------------------------------------------------------------------
 
-HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
+HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int32_t queryLevel)
 {
   PHB_ITEM pColumns, pIndexRef;
   INDEXBINDP SeekBind;
@@ -328,7 +328,7 @@ HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 
     pIndexRef = hb_arrayGetItemPtr(thiswa->aOrders, (HB_ULONG)thiswa->hOrdCurrent);
     pColumns = hb_arrayGetItemPtr(pIndexRef, SR_AINDEX_INDEX_FIELDS);
-    thiswa->indexColumns = (int)hb_arrayLen(pColumns);
+    thiswa->indexColumns = (int32_t)hb_arrayLen(pColumns);
 
     // Free the statements we are about to recreate
 
@@ -360,11 +360,11 @@ HB_BOOL SR_CreateSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 
 //------------------------------------------------------------------------
 
-HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *queryLevel)
+HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int32_t *queryLevel)
 {
   INDEXBINDP SeekBind;
   COLUMNBINDP BindStructure;
-  int i, lenKey, size, iCol;
+  int32_t i, lenKey, size, iCol;
   const char *szKey;
 
   SeekBind = thiswa->IndexBindings[thiswa->hOrdCurrent];
@@ -414,7 +414,7 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
   if (HB_IS_STRING(pKey)) {
     // parse Key string and split it in index fields
 
-    lenKey = (int)hb_itemGetCLen(pKey);
+    lenKey = (int32_t)hb_itemGetCLen(pKey);
     szKey = hb_itemGetCPtr(pKey);
     *queryLevel = thiswa->indexColumns;
 
@@ -424,8 +424,8 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
 
       switch (BindStructure->iCType) {
       case SQL_C_CHAR: {
-        int nTrim, index;
-        size = lenKey > (int)(BindStructure->ColumnSize) ? ((int)(BindStructure->ColumnSize))
+        int32_t nTrim, index;
+        size = lenKey > (int32_t)(BindStructure->ColumnSize) ? ((int32_t)(BindStructure->ColumnSize))
                                                          : lenKey;
         nTrim = size;
 
@@ -473,14 +473,14 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
         break;
       }
       case SQL_C_TYPE_TIMESTAMP: {
-        int iPos;
+        int32_t iPos;
         HB_MAXINT lVal;
         double dVal;
 
         char datemask[9] = "10000101";
         char *mask = datemask;
         // DebugBreak();
-        size = lenKey > (int)(BindStructure->ColumnSize) ? ((int)(BindStructure->ColumnSize))
+        size = lenKey > (int32_t)(BindStructure->ColumnSize) ? ((int32_t)(BindStructure->ColumnSize))
                                                          : lenKey;
 
         // Must fix partial date seek
@@ -503,14 +503,14 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
         break;
       }
       case SQL_C_TYPE_DATE: {
-        int iPos;
+        int32_t iPos;
         HB_MAXINT lVal;
         double dVal;
 
         char datemask[9] = "10000101";
         char *mask = datemask;
 
-        size = lenKey > (int)(BindStructure->ColumnSize) ? ((int)(BindStructure->ColumnSize))
+        size = lenKey > (int32_t)(BindStructure->ColumnSize) ? ((int32_t)(BindStructure->ColumnSize))
                                                          : lenKey;
 
         // Must fix partial date seek
@@ -552,8 +552,8 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
       }
       BindStructure->asNumeric = (SQLDOUBLE)hb_itemGetND(pKey);
     } else if (HB_IS_DATE(pKey) || HB_IS_DATETIME(pKey)) {
-      int iYear, iMonth, iDay;
-      int iHour, iMinute;
+      int32_t iYear, iMonth, iDay;
+      int32_t iHour, iMinute;
 
       hb_dateDecode(hb_itemGetDL(pKey), &iYear, &iMonth, &iDay);
 
@@ -567,7 +567,7 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
         hb_timeDecode(pKey->item.asDate.time, &iHour, &iMinute, &seconds);
 #else
         long lJulian, lMilliSec;
-        int seconds, millisec;
+        int32_t seconds, millisec;
         hb_itemGetTDT(pKey, &lJulian, &lMilliSec);
         hb_timeDecode(lMilliSec, &iHour, &iMinute, &seconds, &millisec);
 #endif
@@ -596,12 +596,12 @@ HB_ERRCODE SR_FeedSeekKeyToBindings(SQLEXAREAP thiswa, PHB_ITEM pKey, int *query
 
 //------------------------------------------------------------------------
 
-void SR_BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
+void SR_BindSeekStmt(SQLEXAREAP thiswa, int32_t queryLevel)
 {
   HSTMT hStmt;
   INDEXBINDP SeekBind, SeekBindParam;
   COLUMNBINDP BindStructure;
-  int iBind, iLoop;
+  int32_t iBind, iLoop;
   SQLRETURN res = SQL_ERROR;
   char *sSql;
 
@@ -688,7 +688,7 @@ void SR_BindSeekStmt(SQLEXAREAP thiswa, int queryLevel)
 
 //------------------------------------------------------------------------
 
-HB_ERRCODE SR_getPreparedSeek(SQLEXAREAP thiswa, int queryLevel, uint16_t *iIndex,
+HB_ERRCODE SR_getPreparedSeek(SQLEXAREAP thiswa, int32_t queryLevel, uint16_t *iIndex,
                               HSTMT *hStmt) // Returns HB_TRUE if any result found
 {
   SQLRETURN res;

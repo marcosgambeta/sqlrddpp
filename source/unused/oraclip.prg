@@ -1859,27 +1859,27 @@ RETURN NIL
 #include <hbapi.h>
 #include <hbapiitm.h>
 
-typedef int sqlo_stmt_handle_t;
+typedef int32_t sqlo_stmt_handle_t;
 
 typedef struct _ORA_BIND_COLS
 {
   char *col_name;
   short sVal;
   double dValue;
-  int iType;
+  int32_t iType;
   ULONG ulValue;
   char sDate[7];
-  int iValue;
+  int32_t iValue;
   char sValue[31];
   // OCIRowId *RowId;
 } ORA_BIND_COLS;
 
 typedef struct _OCI_SESSION
 {
-  int dbh;                      // Connection handler
-  int stmt;                     // Current statement handler
-  int status;                   // Execution return value
-  int numcols;                  // Result set columns
+  int32_t dbh;                      // Connection handler
+  int32_t stmt;                     // Current statement handler
+  int32_t status;                   // Execution return value
+  int32_t numcols;                  // Result set columns
   char server_version[128];
   // bellow for bind vars
   sqlo_stmt_handle_t stmtParam;

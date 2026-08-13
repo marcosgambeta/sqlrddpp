@@ -64,7 +64,7 @@ typedef struct _ORA_BIND_COLS2
 {
   char *col_name;
   char *bindname;
-  int iType;
+  int32_t iType;
   short sVal;
   double dValue;
   unsigned int ulValue;
@@ -72,7 +72,7 @@ typedef struct _ORA_BIND_COLS2
   HB_LONGLONG iValue;
   HB_LONGLONG lValue;
   OCI_Date *date;
-  int iFieldSize;
+  int32_t iFieldSize;
 } ORA_BIND_COLS2;
 
 #else
@@ -80,7 +80,7 @@ typedef struct _ORA_BIND_COLS
 {
   char *col_name;
   char *bindname;
-  int iType;
+  int32_t iType;
   short sVal;
   double dValue;
   unsigned int ulValue;
@@ -88,7 +88,7 @@ typedef struct _ORA_BIND_COLS
   HB_LONGLONG iValue;
   HB_LONGLONG lValue;
   OCI_Date *date;
-  int iFieldSize;
+  int32_t iFieldSize;
 } ORA_BIND_COLS;
 #endif
 
@@ -98,8 +98,8 @@ typedef struct _OCI_ORASESSION
   OCI_Statement *stmt;
   OCI_Statement *stmtParamRes;
   OCI_Resultset *rs;
-  int iStatus; // Execution return value
-  int numcols; // Result set columns
+  int32_t iStatus; // Execution return value
+  int32_t numcols; // Result set columns
   char server_version[1024];
 #ifdef SQLORA2
   ORA_BIND_COLS2 *pLink;

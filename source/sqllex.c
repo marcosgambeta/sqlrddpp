@@ -59,14 +59,14 @@
 
 // Protypes
 
-int sqlyylex(YYSTYPE *yylvaluep, void *s);
+int32_t sqlyylex(YYSTYPE *yylvaluep, void *s);
 
 // Lexical Analyzer
 
-int sql_yylex(YYSTYPE *yylvaluep, void *s)
+int32_t sql_yylex(YYSTYPE *yylvaluep, void *s)
 {
 
-  int token = sqlyylex(yylvaluep, s);
+  int32_t token = sqlyylex(yylvaluep, s);
 
 #ifdef DEBUG_YYLEX
   printf("yylex: token %d\n", token);
@@ -75,7 +75,7 @@ int sql_yylex(YYSTYPE *yylvaluep, void *s)
   return token;
 }
 
-int sqlyylex(YYSTYPE *lvalp, void *s)
+int32_t sqlyylex(YYSTYPE *lvalp, void *s)
 {
 
   char szDate[9];
@@ -103,7 +103,7 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
   if ((*queryPtr == '-' && ((*(queryPtr + 1)) >= '0' && (*(queryPtr + 1)) <= '9')) ||
       (*queryPtr == '.' && ((*(queryPtr + 1)) >= '0' && (*(queryPtr + 1)) <= '9')) ||
       (*queryPtr >= '0' && *queryPtr <= '9')) {
-    int minus = 0;
+    int32_t minus = 0;
     while (*queryPtr == '-') {
       minus = !minus;
       if (++queryPtr == queryEnd) {
@@ -130,7 +130,7 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
 
     if (queryPtr == queryEnd || (*queryPtr != '.' && *queryPtr != 'E' && *queryPtr != 'e')) {
       // Integer
-      int n;
+      int32_t n;
       if (sscanf(stmt->queryPtr, " %d%n", &lvalp->int_val, &n) != 1) {
         stmt->errMsg = SQL_PARSER_ERROR_NUMBER_INTEGER;
         return ERRORVAL;
@@ -143,7 +143,7 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
       return INTEGERVAL;
     } else {
       // Real value
-      int n;
+      int32_t n;
       if (sscanf(stmt->queryPtr, " %lf%n", &lvalp->real_val, &n) != 1) {
         stmt->errMsg = SQL_PARSER_ERROR_NUMBER_FLOAT;
         return ERRORVAL;
@@ -163,7 +163,7 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
 
     char quoteChar = *queryPtr++;
     char c;
-    // int stringLen = 0;
+    // int32_t stringLen = 0;
     while (queryPtr < queryEnd) {
       c = *queryPtr++;
       if (c == '\\') {
@@ -744,7 +744,7 @@ int sqlyylex(YYSTYPE *lvalp, void *s)
   return *stmt->queryPtr++;
 }
 
-int sql_yyerror(void *stmt, const char *msg)
+int32_t sql_yyerror(void *stmt, const char *msg)
 {
 #ifdef YYDEBUG
   printf("Parse Error %p  %s\n", stmt, msg);

@@ -60,8 +60,8 @@
 
 // Prototypes
 
-int SqlParse(sql_stmt *stmt, const char *query, int queryLen);
-int sql_yyparse(void *stmt);
+int32_t SqlParse(sql_stmt *stmt, const char *query, int32_t queryLen);
+int32_t sql_yyparse(void *stmt);
 
 // PRG Level Functions
 
@@ -91,7 +91,7 @@ HB_FUNC(SR_SQLPARSE) // SqlParse(cCommand, @nError, @nErrorPos)
         hb_itemPutNI((PHB_ITEM)hb_param(2, HB_IT_ANY), stmt->errMsg);
       }
       if (HB_ISBYREF(3)) {
-        hb_itemPutNI((PHB_ITEM)hb_param(3, HB_IT_ANY), (int)(stmt->queryPtr - sqlIniPos));
+        hb_itemPutNI((PHB_ITEM)hb_param(3, HB_IT_ANY), (int32_t)(stmt->queryPtr - sqlIniPos));
       }
     }
     hb_itemRelease(hb_itemReturnForward(stmt->pArray));
@@ -101,7 +101,7 @@ HB_FUNC(SR_SQLPARSE) // SqlParse(cCommand, @nError, @nErrorPos)
 
 // Parser Entry Point
 
-int SqlParse(sql_stmt *stmt, const char *query, int queryLen)
+int32_t SqlParse(sql_stmt *stmt, const char *query, int32_t queryLen)
 {
   if (!query) {
     stmt->errMsg = SQL_PARSER_ERROR_PARSE;
@@ -109,7 +109,7 @@ int SqlParse(sql_stmt *stmt, const char *query, int queryLen)
     return 0;
   }
   if (!queryLen) {
-    queryLen = (int)strlen(query) + 1;
+    queryLen = (int32_t)strlen(query) + 1;
   }
 
   stmt->query = query;
@@ -130,7 +130,7 @@ int SqlParse(sql_stmt *stmt, const char *query, int queryLen)
 
 // pCode Generation and handling
 
-PHB_ITEM SQLpCodeGenInt(int code)
+PHB_ITEM SQLpCodeGenInt(int32_t code)
 {
   PHB_ITEM pArray;
 
@@ -140,7 +140,7 @@ PHB_ITEM SQLpCodeGenInt(int code)
   return pArray;
 }
 
-PHB_ITEM SQLpCodeGenIntItem(int code, PHB_ITEM value)
+PHB_ITEM SQLpCodeGenIntItem(int32_t code, PHB_ITEM value)
 {
   PHB_ITEM pArray;
 
@@ -152,7 +152,7 @@ PHB_ITEM SQLpCodeGenIntItem(int code, PHB_ITEM value)
   return pArray;
 }
 
-PHB_ITEM SQLpCodeGenItemInt(PHB_ITEM value, int code)
+PHB_ITEM SQLpCodeGenItemInt(PHB_ITEM value, int32_t code)
 {
   PHB_ITEM pArray;
 
@@ -164,7 +164,7 @@ PHB_ITEM SQLpCodeGenItemInt(PHB_ITEM value, int code)
   return pArray;
 }
 
-PHB_ITEM SQLpCodeGenIntItem2(int code, PHB_ITEM value, int code2, PHB_ITEM value2)
+PHB_ITEM SQLpCodeGenIntItem2(int32_t code, PHB_ITEM value, int32_t code2, PHB_ITEM value2)
 {
   PHB_ITEM pArray;
 
@@ -208,7 +208,7 @@ PHB_ITEM SQLpCodeGenArrayItem(PHB_ITEM pArray, PHB_ITEM value)
   return pArray;
 }
 
-PHB_ITEM SQLpCodeGenArrayInt(PHB_ITEM pArray, int code)
+PHB_ITEM SQLpCodeGenArrayInt(PHB_ITEM pArray, int32_t code)
 {
   PHB_ITEM pItem = hb_itemPutNILen(SR_NULLPTR, code, 6);
 
@@ -218,7 +218,7 @@ PHB_ITEM SQLpCodeGenArrayInt(PHB_ITEM pArray, int code)
   return pArray;
 }
 
-PHB_ITEM SQLpCodeGenArrayIntInt(PHB_ITEM pArray, int code, int code2)
+PHB_ITEM SQLpCodeGenArrayIntInt(PHB_ITEM pArray, int32_t code, int32_t code2)
 {
   PHB_ITEM pItem;
 
@@ -231,7 +231,7 @@ PHB_ITEM SQLpCodeGenArrayIntInt(PHB_ITEM pArray, int code, int code2)
   return pArray;
 }
 
-PHB_ITEM SQLpCodeGenIntArray(int code, PHB_ITEM pArray)
+PHB_ITEM SQLpCodeGenIntArray(int32_t code, PHB_ITEM pArray)
 {
   PHB_ITEM pItem;
 
@@ -251,8 +251,8 @@ HB_FUNC(SR_STRTOHEX)
   const char *cStr;
   char *c;
   uint16_t iNum;
-  int i, len;
-  int iCipher;
+  int32_t i, len;
+  int32_t iCipher;
 
   if (!HB_ISCHAR(1)) {
     hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_STRTOHEX", 1, hb_param(1, HB_IT_ANY));
@@ -260,17 +260,17 @@ HB_FUNC(SR_STRTOHEX)
   }
 
   cStr = hb_parc(1);
-  len = (int)hb_parclen(1);
+  len = (int32_t)hb_parclen(1);
   outbuff = (char *)hb_xgrab((len * 2) + 1);
   c = outbuff;
 
   for (i = 0; i < len; i++) {
 
-    iNum = (int)cStr[i];
+    iNum = (int32_t)cStr[i];
     c[0] = '0';
     c[1] = '0';
 
-    iCipher = (int)(iNum % 16);
+    iCipher = (int32_t)(iNum % 16);
 
     if (iCipher < 10) {
       c[1] = '0' + (char)iCipher;
@@ -294,14 +294,14 @@ HB_FUNC(SR_STRTOHEX)
   hb_xfree(outbuff);
 }
 
-char *sr_Hex2Str(const char *cStr, int len, int *lenOut)
+char *sr_Hex2Str(const char *cStr, int32_t len, int32_t *lenOut)
 {
   char *outbuff;
   char c;
-  int i, nalloc;
-  int iCipher, iNum;
+  int32_t i, nalloc;
+  int32_t iCipher, iNum;
 
-  nalloc = (int)(len / 2);
+  nalloc = (int32_t)(len / 2);
   outbuff = (char *)hb_xgrab(nalloc + 1);
 
   for (i = 0; i < nalloc; i++) {
@@ -352,14 +352,14 @@ char *sr_Hex2Str(const char *cStr, int len, int *lenOut)
 HB_FUNC(SR_HEXTOSTR)
 {
   char *outbuff;
-  int nalloc;
+  int32_t nalloc;
 
   if (!HB_ISCHAR(1)) {
     hb_errRT_BASE_SubstR(EG_ARG, 3012, SR_NULLPTR, "SR_HEXTOSTR", 1, hb_param(1, HB_IT_ANY));
     return;
   }
 
-  outbuff = sr_Hex2Str(hb_parc(1), (int)hb_parclen(1), &nalloc);
+  outbuff = sr_Hex2Str(hb_parc(1), (int32_t)hb_parclen(1), &nalloc);
   hb_retclen_buffer(outbuff, nalloc);
 }
 
@@ -538,7 +538,7 @@ HB_FUNC(SR_ESCAPESTRING)
 {
   const char *FromBuffer;
   HB_SIZE iSize;
-  int idatabase;
+  int32_t idatabase;
   char *ToBuffer;
 
   iSize = hb_parclen(1);
@@ -599,7 +599,7 @@ HB_FUNC(SR_ESCAPESTRING)
   }
 }
 
-char *SR_QuoteTrimEscapeString(const char *FromBuffer, HB_SIZE iSize, int idatabase,
+char *SR_QuoteTrimEscapeString(const char *FromBuffer, HB_SIZE iSize, int32_t idatabase,
                                HB_BOOL bRTrim, HB_SIZE *iSizeOut) // TODO: static ?
 {
   char *ToBuffer;
@@ -668,7 +668,7 @@ HB_FUNC(SR_ESCAPENUM)
   char *ToBuffer;
   char SciNot[5] = {'\0', '\0', '\0', '\0', '\0'};
   HB_SIZE iSize, iPos;
-  int iDecPos;
+  int32_t iDecPos;
   HB_BOOL bInteger = HB_TRUE;
   HB_SIZE len, dec;
   double dMultpl;
@@ -698,14 +698,14 @@ HB_FUNC(SR_ESCAPENUM)
   for (iPos = 0; iPos < iSize; iPos++) {
     if (FromBuffer[iPos] == ',') {
       ToBuffer[iPos] = '.';
-      iDecPos = (int)iPos;
+      iDecPos = (int32_t)iPos;
     } else {
       ToBuffer[iPos] = FromBuffer[iPos];
     }
 
     if (ToBuffer[iPos] == '.') {
       bInteger = HB_FALSE;
-      iDecPos = (int)iPos;
+      iDecPos = (int32_t)iPos;
     }
 
     if (ToBuffer[iPos] == 'E' && (iPos + 2) <= iSize) { // 1928773.3663E+003
@@ -761,19 +761,19 @@ HB_FUNC(SR_ESCAPENUM)
 #else
     HB_LONG lValue;
 #endif
-    int iOverflow;
+    int32_t iOverflow;
     lValue = hb_strValInt(ToBuffer, &iOverflow);
 
     if (!iOverflow) {
       double dValue = (double)lValue;
-      hb_retnlen(dValue, (int)len, (int)dec);
+      hb_retnlen(dValue, (int32_t)len, (int32_t)dec);
     } else {
       double dValue = hb_strVal(ToBuffer, iSize);
-      hb_retnlen(dValue, (int)len, (int)dec);
+      hb_retnlen(dValue, (int32_t)len, (int32_t)dec);
     }
   } else {
     double dValue = hb_strVal(ToBuffer, iSize);
-    hb_retnlen(dValue, (int)len, (int)dec);
+    hb_retnlen(dValue, (int32_t)len, (int32_t)dec);
   }
   hb_xfree(ToBuffer);
 }
@@ -783,7 +783,7 @@ PHB_ITEM sr_escapeNumber(char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pR
   char *ToBuffer;
   char SciNot[5] = {'\0', '\0', '\0', '\0', '\0'};
   HB_SIZE iSize, iPos;
-  int iDecPos;
+  int32_t iDecPos;
   HB_BOOL bInteger = HB_TRUE;
   double dMultpl;
 
@@ -801,14 +801,14 @@ PHB_ITEM sr_escapeNumber(char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pR
   for (iPos = 0; iPos < iSize; iPos++) {
     if (FromBuffer[iPos] == ',') {
       ToBuffer[iPos] = '.';
-      iDecPos = (int)iPos;
+      iDecPos = (int32_t)iPos;
     } else {
       ToBuffer[iPos] = FromBuffer[iPos];
     }
 
     if (ToBuffer[iPos] == '.') {
       bInteger = HB_FALSE;
-      iDecPos = (int)iPos;
+      iDecPos = (int32_t)iPos;
     }
 
     if (ToBuffer[iPos] == 'E' && (iPos + 2) <= iSize) { // 1928773.3663E+003
@@ -864,19 +864,19 @@ PHB_ITEM sr_escapeNumber(char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pR
 #else
     HB_LONG lValue;
 #endif
-    int iOverflow;
+    int32_t iOverflow;
     lValue = hb_strValInt(ToBuffer, &iOverflow);
 
     if (!iOverflow) {
       double dValue = (double)lValue;
-      hb_itemPutNLen(pRet, dValue, (int)len, (int)dec);
+      hb_itemPutNLen(pRet, dValue, (int32_t)len, (int32_t)dec);
     } else {
       double dValue = hb_strVal(ToBuffer, iSize);
-      hb_itemPutNLen(pRet, dValue, (int)len, (int)dec);
+      hb_itemPutNLen(pRet, dValue, (int32_t)len, (int32_t)dec);
     }
   } else {
     double dValue = hb_strVal(ToBuffer, iSize);
-    hb_itemPutNLen(pRet, dValue, (int)len, (int)dec);
+    hb_itemPutNLen(pRet, dValue, (int32_t)len, (int32_t)dec);
   }
   hb_xfree(ToBuffer);
   return pRet;
@@ -885,7 +885,7 @@ PHB_ITEM sr_escapeNumber(char *FromBuffer, HB_SIZE len, HB_SIZE dec, PHB_ITEM pR
 HB_FUNC(SR_DBQUALIFY)
 {
   PHB_ITEM pText = hb_param(1, HB_IT_STRING);
-  int ulDb = hb_parni(2);
+  int32_t ulDb = hb_parni(2);
 
   if (pText) {
     char *szOut;
@@ -1065,12 +1065,12 @@ HB_BOOL SR_itemEmpty(PHB_ITEM pItem)
 //-----------------------------------------------------------------------------//
 
 char *SR_quotedNull(PHB_ITEM pFieldData, PHB_ITEM pFieldLen, PHB_ITEM pFieldDec,
-                    HB_BOOL bNullable, int nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo,
+                    HB_BOOL bNullable, int32_t nSystemID, HB_BOOL bTCCompat, HB_BOOL bMemo,
                     HB_BOOL *bNullArgument) // TODO: not used
 {
   char *sValue, sDate[9];
   HB_SIZE iSizeOut;
-  int iTrim, iPos, iSize;
+  int32_t iTrim, iPos, iSize;
   sValue = SR_NULLPTR;
 
   *bNullArgument = HB_FALSE;

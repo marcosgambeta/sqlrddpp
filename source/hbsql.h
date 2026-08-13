@@ -60,12 +60,12 @@
 
 typedef struct sql_stmt_s
 {
-  int command;
-  int numParam;
-  int errMsg;
-  int where;
+  int32_t command;
+  int32_t numParam;
+  int32_t errMsg;
+  int32_t where;
   const char *query;
-  int queryLen;
+  int32_t queryLen;
   const char *queryPtr;
   const char *errPtr;
   PHB_ITEM pArray;
@@ -74,13 +74,13 @@ typedef struct sql_stmt_s
 
 // Prototypes
 
-PHB_ITEM SQLpCodeGenInt(int code);
-PHB_ITEM SQLpCodeGenItemInt(PHB_ITEM value, int code);
-PHB_ITEM SQLpCodeGenIntItem(int code, PHB_ITEM value);
-PHB_ITEM SQLpCodeGenIntItem2(int code, PHB_ITEM value, int code2, PHB_ITEM value2);
-PHB_ITEM SQLpCodeGenIntArray(int code, PHB_ITEM pArray);
-PHB_ITEM SQLpCodeGenArrayIntInt(PHB_ITEM pArray, int code, int code2);
-PHB_ITEM SQLpCodeGenArrayInt(PHB_ITEM pArray, int code);
+PHB_ITEM SQLpCodeGenInt(int32_t code);
+PHB_ITEM SQLpCodeGenItemInt(PHB_ITEM value, int32_t code);
+PHB_ITEM SQLpCodeGenIntItem(int32_t code, PHB_ITEM value);
+PHB_ITEM SQLpCodeGenIntItem2(int32_t code, PHB_ITEM value, int32_t code2, PHB_ITEM value2);
+PHB_ITEM SQLpCodeGenIntArray(int32_t code, PHB_ITEM pArray);
+PHB_ITEM SQLpCodeGenArrayIntInt(PHB_ITEM pArray, int32_t code, int32_t code2);
+PHB_ITEM SQLpCodeGenArrayInt(PHB_ITEM pArray, int32_t code);
 PHB_ITEM SQLpCodeGenArrayJoin(PHB_ITEM pArray1, PHB_ITEM pArray2);
 
 #endif // SQL_PARSER_INCLUDED

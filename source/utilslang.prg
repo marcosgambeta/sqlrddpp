@@ -339,10 +339,10 @@ RETURN s_nMessages
 
 #include "compat.h"
 
-static int s_iMsgCount = 0;
-static int s_iBaseLang = 0;
-static int s_iSecondLang = 0;
-static int s_iRootLang = 0;
+static int32_t s_iMsgCount = 0;
+static int32_t s_iBaseLang = 0;
+static int32_t s_iSecondLang = 0;
+static int32_t s_iRootLang = 0;
 
 PHB_ITEM HB_EXPORT sr_getBaseLang(PHB_ITEM pLangItm)
 {
@@ -369,7 +369,7 @@ HB_FUNC_STATIC(SR_SETMSGCOUNT)
 
 HB_FUNC(SR_SETBASELANG)
 {
-  int iLang = hb_parni(1);
+  int32_t iLang = hb_parni(1);
 
   hb_retni(s_iBaseLang);
 
@@ -380,7 +380,7 @@ HB_FUNC(SR_SETBASELANG)
 
 HB_FUNC(SR_SETSECONDLANG)
 {
-  int iLang = hb_parni(1);
+  int32_t iLang = hb_parni(1);
 
   hb_retni(s_iSecondLang);
 
@@ -391,7 +391,7 @@ HB_FUNC(SR_SETSECONDLANG)
 
 HB_FUNC(SR_SETROOTLANG)
 {
-  int iLang = hb_parni(1);
+  int32_t iLang = hb_parni(1);
 
   hb_retni(s_iRootLang);
 
