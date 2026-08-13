@@ -1235,7 +1235,7 @@ int32_t sqlo_prepare __P((sqlo_db_handle_t dbh, CONST char *stmt));
  * @see sqlo_prepare, sqlo_bind_by_pos, sqlo_define_by_pos
  */
 int32_t sqlo_bind_by_name __P((sqlo_stmt_handle_t sth, CONST char *name, int32_t param_type,
-                           CONST void *param_addr, uint32_t param_size, short *ind_addr,
+                           CONST void *param_addr, uint32_t param_size, int16_t *ind_addr,
                            int32_t is_array));
 
 /**
@@ -1285,7 +1285,7 @@ int32_t sqlo_bind_ref_cursor __P((sqlo_stmt_handle_t sth, CONST char *cursor_nam
  * @see sqlo_prepare, sqlo_bind_by_name, sqlo_define_by_pos
  */
 int32_t sqlo_bind_by_pos __P((sqlo_stmt_handle_t sth, int32_t position, int32_t param_type,
-                          CONST void *param_addr, uint32_t param_size, short *ind_addr,
+                          CONST void *param_addr, uint32_t param_size, int16_t *ind_addr,
                           int32_t is_array));
 
 /**
@@ -1315,7 +1315,7 @@ int32_t sqlo_bind_by_pos __P((sqlo_stmt_handle_t sth, int32_t position, int32_t 
  * @since Version 2.2
  */
 int32_t sqlo_bind_by_pos2 __P((sqlo_stmt_handle_t sth, int32_t position, int32_t param_type,
-                           CONST void *param_addr, uint32_t param_size, short *ind_addr,
+                           CONST void *param_addr, uint32_t param_size, int16_t *ind_addr,
                            unsigned short *rcode_addr, uint32_t skip_size));
 
 /**
@@ -1353,7 +1353,7 @@ int32_t sqlo_bind_by_pos2 __P((sqlo_stmt_handle_t sth, int32_t position, int32_t
  * @see sqlo_prepare, sqlo_bind_by_name, sqlo_define_by_pos
  */
 int32_t sqlo_define_by_pos __P((sqlo_stmt_handle_t sth, int32_t value_pos, int32_t value_type,
-                            CONST void *value_addr, uint32_t value_size, short *ind_addr,
+                            CONST void *value_addr, uint32_t value_size, int16_t *ind_addr,
                             uint32_t *rlen_addr, int32_t is_array));
 
 /**
@@ -1391,7 +1391,7 @@ int32_t sqlo_define_by_pos __P((sqlo_stmt_handle_t sth, int32_t value_pos, int32
  * @since Version 2.2
  */
 int32_t sqlo_define_by_pos2 __P((sqlo_stmt_handle_t sth, int32_t value_pos, int32_t value_type,
-                             CONST void *value_addr, uint32_t value_size, short *ind_addr,
+                             CONST void *value_addr, uint32_t value_size, int16_t *ind_addr,
                              uint32_t *rlen_addr, unsigned short *rcode_addr,
                              uint32_t skip_size));
 
@@ -1896,13 +1896,13 @@ int32_t sql_isopen __P((int32_t sth));
 int32_t sql_prepare __P((CONST char *stmt));
 
 int32_t sql_bind_by_name __P((int32_t sth, CONST char *name, int32_t param_type, CONST void *param_addr,
-                          uint32_t param_size, short *ind_addr, int32_t is_array));
+                          uint32_t param_size, int16_t *ind_addr, int32_t is_array));
 
 int32_t sql_bind_by_pos __P((int32_t sth, int32_t position, int32_t param_type, CONST void *param_addr,
-                         uint32_t param_size, short *ind_addr, int32_t is_array));
+                         uint32_t param_size, int16_t *ind_addr, int32_t is_array));
 
 int32_t sql_define_by_pos __P((int32_t sth, int32_t value_pos, int32_t value_type, CONST void *value_addr,
-                           uint32_t value_size, short *ind_addr, short *rlen_addr,
+                           uint32_t value_size, int16_t *ind_addr, int16_t *rlen_addr,
                            int32_t is_array));
 
 int32_t sql_execute __P((int32_t sth, int32_t iterations));

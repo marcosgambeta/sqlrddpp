@@ -98,7 +98,7 @@ CONST uint32_t *sqlo_value_lens(sqlo_stmt_handle_t sth, int32_t *num);
 int32_t sqlo_prepare(sqlo_db_handle_t dbh, CONST char *stmt);
 int32_t sqlo_alloc_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
 int32_t sqlo_bind_by_pos(sqlo_stmt_handle_t sth, int32_t position, int32_t param_type,
-                     CONST void *param_addr, uint32_t param_size, short *ind_addr,
+                     CONST void *param_addr, uint32_t param_size, int16_t *ind_addr,
                      int32_t is_array);
 int32_t sqlo_execute(sqlo_stmt_handle_t sth, uint32_t iterations);
 int32_t sqlo_free_lob_desc(sqlo_db_handle_t dbh, sqlo_lob_desc_t *loblpp);
@@ -106,7 +106,7 @@ int32_t sqlo_lob_write_buffer(sqlo_db_handle_t dbh, sqlo_lob_desc_t loblp, uint3
                           const void *bufp, uint32_t bufl, uint32_t piece);
 int32_t sqlo_bind_ref_cursor(sqlo_stmt_handle_t sth, CONST char *cursor_name, int32_t *sth2p);
 int32_t sqlo_bind_by_name(sqlo_stmt_handle_t sth, CONST char *name, int32_t param_type,
-                      CONST void *param_addr, uint32_t param_size, short *ind_addr,
+                      CONST void *param_addr, uint32_t param_size, int16_t *ind_addr,
                       int32_t is_array);
 #endif
 
@@ -115,7 +115,7 @@ int32_t sqlo_bind_by_name(sqlo_stmt_handle_t sth, CONST char *name, int32_t para
 typedef struct _ORA_BIND_COLS
 {
   char *col_name;
-  short sVal;
+  int16_t sVal;
   double dValue;
   int32_t iType;
   HB_ULONG ulValue;

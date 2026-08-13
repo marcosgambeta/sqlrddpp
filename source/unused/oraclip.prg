@@ -1864,7 +1864,7 @@ typedef int32_t sqlo_stmt_handle_t;
 typedef struct _ORA_BIND_COLS
 {
   char *col_name;
-  short sVal;
+  int16_t sVal;
   double dValue;
   int32_t iType;
   ULONG ulValue;

@@ -65,7 +65,7 @@ typedef struct _ORA_BIND_COLS2
   char *col_name;
   char *bindname;
   int32_t iType;
-  short sVal;
+  int16_t sVal;
   double dValue;
   uint32_t ulValue;
   char sDate[7];
@@ -81,7 +81,7 @@ typedef struct _ORA_BIND_COLS
   char *col_name;
   char *bindname;
   int32_t iType;
-  short sVal;
+  int16_t sVal;
   double dValue;
   uint32_t ulValue;
   char sDate[7];

@@ -502,7 +502,7 @@ typedef struct _sqlo_stmt_struct
   ub4 num_bindpv;   /**< The number of used entries in bindpv[]. */
   ub4 bindpv_size;  /**< The current capacity of size of bindpv[] and indp[]. */
   ub2 stype;        /**< The OCI Statement type (see oci.h). */
-  short *indpv;     /**< Indicator variable vector for input bind variables. */
+  int16_t *indpv;     /**< Indicator variable vector for input bind variables. */
 
   /* OUTPUT */
   sqlo_col_struct_t *ocolsv;      /**< The output columns of the select list. */
@@ -514,7 +514,7 @@ typedef struct _sqlo_stmt_struct
   char **outv;                    /**< The output columns as a vector.
                                        See @ref sqlo_values. */
   ub4 *outv_size;                 /**< The current size of an outv[i] element   */
-  short *oindv;                   /**< The indicator array for output variables */
+  int16_t *oindv;                   /**< The indicator array for output variables */
   ub4 *rlenv;                     /**< The allocated buffer size to the column */
   char **ocol_namev;              /**< Output column names.
                                        The actual number of filled entries is num_defnpv. */
@@ -771,12 +771,12 @@ static int32_t _save_oci_status __P((sqlo_db_struct_ptr_t dbp, const char *actio
 static int32_t _bind_argv __P((sqlo_stmt_struct_ptr_t stp, uint32_t argc, const char **argv));
 
 static int32_t _bind_by_pos __P((sqlo_stmt_struct_ptr_t stp, uint32_t param_pos, int32_t param_type,
-                             const void *param_addr, uint32_t param_size, short *ind_addr,
+                             const void *param_addr, uint32_t param_size, int16_t *ind_addr,
                              int32_t is_array));
 
 static int32_t _bind_by_pos2 __P((sqlo_stmt_struct_ptr_t stp, uint32_t param_pos,
                               int32_t param_type, const void *param_addr, uint32_t param_size,
-                              short *ind_addr, unsigned short *rcode_addr,
+                              int16_t *ind_addr, unsigned short *rcode_addr,
                               uint32_t skip_size));
 
 static void _strip_string __P((char *s, uint32_t len));
@@ -815,11 +815,11 @@ static void _db_release __P((sqlo_db_struct_ptr_t dbp));
 
 static int32_t _define_by_pos __P((sqlo_stmt_struct_ptr_t stp, uint32_t value_pos,
                                int32_t value_type, const void *value_addr, uint32_t value_size,
-                               short *ind_addr, ub4 *rlen_addr, ub2 *rcode_addr, int32_t is_array));
+                               int16_t *ind_addr, ub4 *rlen_addr, ub2 *rcode_addr, int32_t is_array));
 
 static int32_t _define_by_pos2 __P((sqlo_stmt_struct_ptr_t stp, uint32_t value_pos,
                                 int32_t value_type, const void *value_addr, uint32_t value_size,
-                                short *ind_addr, ub4 *rlen_addr, ub2 *rcode_addr,
+                                int16_t *ind_addr, ub4 *rlen_addr, ub2 *rcode_addr,
                                 uint32_t skip_size));
 
 static int32_t _calc_obuf_size __P((uint32_t *bufsizep, uint32_t data_type, int32_t prec,
@@ -1879,7 +1879,7 @@ static int32_t DEFUN(_alloc_bindp, (stp, size), sqlo_stmt_struct_ptr_t stp AND u
                        stp->sth, size););
 
       stp->bindpv = (OCIBind **)hb_xgrabDebug(__LINE__, sizeof(OCIBind *) * size);
-      stp->indpv = (short *)hb_xgrabDebug(__LINE__, sizeof(short) * size);
+      stp->indpv = (int16_t *)hb_xgrabDebug(__LINE__, sizeof(int16_t) * size);
     } else {
 
       TRACE(4, fprintf(_get_trace_fp(dbp), "_alloc_bindpv: realloc sth: %u to %u elements\n",
@@ -1887,7 +1887,7 @@ static int32_t DEFUN(_alloc_bindp, (stp, size), sqlo_stmt_struct_ptr_t stp AND u
 
       stp->bindpv =
           (OCIBind **)hb_xreallocDebug(__LINE__, stp->bindpv, sizeof(OCIBind *) * size);
-      stp->indpv = (short *)hb_xreallocDebug(__LINE__, stp->indpv, sizeof(short) * size);
+      stp->indpv = (int16_t *)hb_xreallocDebug(__LINE__, stp->indpv, sizeof(int16_t) * size);
     }
 
     /* init the new elements */
@@ -1895,7 +1895,7 @@ static int32_t DEFUN(_alloc_bindp, (stp, size), sqlo_stmt_struct_ptr_t stp AND u
     assert(num_new > 0);
 
     memset(&stp->bindpv[stp->bindpv_size], 0, num_new * sizeof(OCIBind *));
-    memset(&stp->indpv[stp->bindpv_size], 0, num_new * sizeof(short));
+    memset(&stp->indpv[stp->bindpv_size], 0, num_new * sizeof(int16_t));
     /* set the new size */
     stp->bindpv_size = size;
   }
@@ -1986,7 +1986,7 @@ static int32_t DEFUN(_alloc_definep, (stp, size), sqlo_stmt_struct_ptr_t stp AND
           (sqlo_col_struct_t *)hb_xgrabDebug(__LINE__, sizeof(sqlo_col_struct_t) * size);
       stp->outv = (char **)hb_xgrabDebug(__LINE__, sizeof(char *) * size);
       stp->outv_size = (ub4 *)hb_xgrabDebug(__LINE__, sizeof(ub4) * size);
-      stp->oindv = (short *)hb_xgrabDebug(__LINE__, sizeof(short) * size);
+      stp->oindv = (int16_t *)hb_xgrabDebug(__LINE__, sizeof(int16_t) * size);
       stp->rlenv = (ub4 *)hb_xgrabDebug(__LINE__, sizeof(ub4) * size);
       stp->ocol_namev = (char **)hb_xgrabDebug(__LINE__, sizeof(char *) * size);
       stp->ocol_namev_size = (uint32_t *)hb_xgrabDebug(__LINE__, sizeof(ub4) * size);
@@ -2000,7 +2000,7 @@ static int32_t DEFUN(_alloc_definep, (stp, size), sqlo_stmt_struct_ptr_t stp AND
                                                           sizeof(sqlo_col_struct_t) * size);
       stp->outv = (char **)hb_xreallocDebug(__LINE__, stp->outv, sizeof(char *) * size);
       stp->outv_size = (ub4 *)hb_xreallocDebug(__LINE__, stp->outv_size, sizeof(ub4) * size);
-      stp->oindv = (short *)hb_xreallocDebug(__LINE__, stp->oindv, sizeof(short) * size);
+      stp->oindv = (int16_t *)hb_xreallocDebug(__LINE__, stp->oindv, sizeof(int16_t) * size);
       stp->rlenv = (ub4 *)hb_xreallocDebug(__LINE__, stp->rlenv, sizeof(ub4) * size);
       stp->ocol_namev =
           (char **)hb_xreallocDebug(__LINE__, stp->ocol_namev, sizeof(char *) * size);
@@ -2017,7 +2017,7 @@ static int32_t DEFUN(_alloc_definep, (stp, size), sqlo_stmt_struct_ptr_t stp AND
     memset(&stp->ocolsv[stp->defnpv_size], 0, sizeof(sqlo_col_struct_t) * num_new);
     memset(&stp->outv[stp->defnpv_size], 0, sizeof(char *) * num_new);
     memset(&stp->outv_size[stp->defnpv_size], 0, sizeof(ub4) * num_new);
-    memset(&stp->oindv[stp->defnpv_size], 0, sizeof(short) * num_new);
+    memset(&stp->oindv[stp->defnpv_size], 0, sizeof(int16_t) * num_new);
     memset(&stp->rlenv[stp->defnpv_size], 0, sizeof(ub4) * num_new);
     memset(&stp->ocol_namev_size[stp->defnpv_size], 0, sizeof(ub4) * num_new);
 
@@ -2721,7 +2721,7 @@ static inline int32_t DEFUN(_get_errcode, (dbp), sqlo_db_struct_ptr_t dbp)
 static inline int32_t DEFUN(
     _bind_by_pos, (stp, param_pos, param_type, param_addr, param_size, ind_addr, is_array),
     sqlo_stmt_struct_ptr_t stp AND uint32_t param_pos AND int32_t param_type AND const void
-        *param_addr AND uint32_t param_size AND short *ind_addr AND int32_t is_array)
+        *param_addr AND uint32_t param_size AND int16_t *ind_addr AND int32_t is_array)
 {
   sqlo_db_struct_ptr_t dbp;
   /* register */ OCIBind **bindp_addr;
@@ -2753,7 +2753,7 @@ static inline int32_t DEFUN(
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_bind_by_pos. Cannot bind", SR_NULLPTR);
     if (is_array) {
       dbp->status = OCIBindArrayOfStruct(*bindp_addr, dbp->errhp, param_size,
-                                         ind_addr ? sizeof(short) : 0, 0, 0);
+                                         ind_addr ? sizeof(int16_t) : 0, 0, 0);
 
       CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_bind_by_pos. BindArrayOfStruct", "");
     }
@@ -2787,7 +2787,7 @@ static inline int32_t DEFUN(
     _bind_by_pos2,
     (stp, param_pos, param_type, param_addr, param_size, ind_addr, rcode_addr, skip_size),
     sqlo_stmt_struct_ptr_t stp AND unsigned param_pos AND int32_t param_type
-        AND const void *param_addr AND uint32_t param_size AND short *ind_addr
+        AND const void *param_addr AND uint32_t param_size AND int16_t *ind_addr
             AND unsigned short *rcode_addr AND uint32_t skip_size)
 {
   /* register */ OCIBind **bindp_addr;
@@ -2853,7 +2853,7 @@ static inline int32_t DEFUN(_define_by_pos2,
                          rlen_addr, rcode_addr, skip_size),
                         sqlo_stmt_struct_ptr_t stp AND uint32_t value_pos AND int32_t value_type
                             AND const void *value_addr AND uint32_t value_size
-                                AND short *ind_addr AND ub4 *rlen_addr AND ub2 *rcode_addr
+                                AND int16_t *ind_addr AND ub4 *rlen_addr AND ub2 *rcode_addr
                                     AND uint32_t skip_size)
 {
   sqlo_db_struct_ptr_t dbp;
@@ -2921,7 +2921,7 @@ static inline int32_t DEFUN(_define_by_pos,
                          rlen_addr, rcode_addr, is_array),
                         sqlo_stmt_struct_ptr_t stp AND uint32_t value_pos AND int32_t value_type
                             AND const void *value_addr AND uint32_t value_size
-                                AND short *ind_addr AND ub4 *rlen_addr AND ub2 *rcode_addr
+                                AND int16_t *ind_addr AND ub4 *rlen_addr AND ub2 *rcode_addr
                                     AND int32_t is_array)
 {
   sqlo_db_struct_ptr_t dbp;
@@ -2952,8 +2952,8 @@ static inline int32_t DEFUN(_define_by_pos,
 
     if (is_array) {
       dbp->status = OCIDefineArrayOfStruct(
-          stp->defnpv[value_pos - 1], stp->dbp->errhp, value_size, ind_addr ? sizeof(short) : 0,
-          rlen_addr ? sizeof(int32_t) : 0, rcode_addr ? sizeof(short) : 0);
+          stp->defnpv[value_pos - 1], stp->dbp->errhp, value_size, ind_addr ? sizeof(int16_t) : 0,
+          rlen_addr ? sizeof(int32_t) : 0, rcode_addr ? sizeof(int16_t) : 0);
       CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_by_pos BindArrayOfStruct", "");
     }
 
@@ -2988,7 +2988,7 @@ static int32_t DEFUN(_bind_argv, (stp, argc, argv),
   /* register */ uint32_t arg_idx;
   /* register */ const char **arg;
   uint32_t size;
-  /* register */ short *ind_ptr;
+  /* register */ int16_t *ind_ptr;
 
   assert(stp->dbp != SR_NULLPTR);
   dbp = stp->dbp;
@@ -3575,7 +3575,7 @@ static int32_t DEFUN(_define_ocol_by_pos, (stp, colp, pos),
       // col_idx, stp->outv_size[col_idx], buffer_size, stp->rlenv[col_idx]);
 
       dbp->status = _define_by_pos(stp, pos, SQLT_STR, stp->outv[col_idx],
-                                   stp->outv_size[col_idx], (short *)&stp->oindv[col_idx],
+                                   stp->outv_size[col_idx], (int16_t *)&stp->oindv[col_idx],
                                    (ub4 *)&stp->outv_size[col_idx], SR_NULLPTR, 0);
       stp->outv_size[col_idx] = stp->outv_size[col_idx] - 1;
 
@@ -3593,7 +3593,7 @@ static int32_t DEFUN(_define_ocol_by_pos, (stp, colp, pos),
       }
 
       dbp->status = _define_by_pos(stp, pos, SQLOT_CLOB, &(colp->loblp), 0,
-                                   (short *)&stp->oindv[col_idx], 0, SR_NULLPTR, 0);
+                                   (int16_t *)&stp->oindv[col_idx], 0, SR_NULLPTR, 0);
     }
     CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "_define_ocol_by_pos", "_define_by_pos");
   }
@@ -5821,7 +5821,7 @@ int32_t DEFUN(sqlo_prepare, (dbh, stmt), sqlo_db_handle_t dbh AND const char *st
 int32_t DEFUN(sqlo_bind_by_name,
           (sth, param_name, param_type, param_addr, param_size, ind_addr, is_array),
           sqlo_stmt_handle_t sth AND const char *param_name AND int32_t param_type AND const void
-              *param_addr AND uint32_t param_size AND short *ind_addr AND int32_t is_array)
+              *param_addr AND uint32_t param_size AND int16_t *ind_addr AND int32_t is_array)
 {
   /* register */ sqlo_stmt_struct_ptr_t stp;
   /* register */ OCIBind **bindp_addr;
@@ -5864,7 +5864,7 @@ int32_t DEFUN(sqlo_bind_by_name,
       /* In case of arrays, we setup the skip parameters. */
       if (is_array) {
         dbp->status = OCIBindArrayOfStruct(*bindp_addr, dbp->errhp, param_size,
-                                           ind_addr ? sizeof(short) : 0, 0, 0);
+                                           ind_addr ? sizeof(int16_t) : 0, 0, 0);
         CHECK_OCI_STATUS_RETURN(dbp, dbp->status, "sqlo_bind_by_name. BindArrayOfStruct",
                                 param_name);
       }
@@ -5978,7 +5978,7 @@ int32_t DEFUN(sqlo_define_ntable, (sth, pos, sth2p),
 int32_t DEFUN(sqlo_bind_by_pos,
           (sth, param_pos, param_type, param_addr, param_size, ind_addr, is_array),
           sqlo_stmt_handle_t sth AND int32_t param_pos AND int32_t param_type AND const void *param_addr
-              AND uint32_t param_size AND short *ind_addr AND int32_t is_array)
+              AND uint32_t param_size AND int16_t *ind_addr AND int32_t is_array)
 {
   /* register */ sqlo_stmt_struct_ptr_t stp;
 
@@ -5998,7 +5998,7 @@ int32_t DEFUN(sqlo_bind_by_pos,
 int32_t DEFUN(sqlo_bind_by_pos2,
           (sth, param_pos, param_type, param_addr, param_size, ind_addr, rcode_addr, skip_size),
           sqlo_stmt_handle_t sth AND int32_t param_pos AND int32_t param_type AND const void *param_addr
-              AND uint32_t param_size AND short *ind_addr AND unsigned short *rcode_addr
+              AND uint32_t param_size AND int16_t *ind_addr AND unsigned short *rcode_addr
                   AND uint32_t skip_size)
 {
   /* register */ sqlo_stmt_struct_ptr_t stp;
@@ -6021,7 +6021,7 @@ int32_t DEFUN(sqlo_bind_by_pos2,
 int32_t DEFUN(sqlo_define_by_pos,
           (sth, value_pos, value_type, value_addr, value_size, ind_addr, rlen_addr, is_array),
           sqlo_stmt_handle_t sth AND int32_t value_pos AND int32_t value_type AND const void *value_addr
-              AND uint32_t value_size AND short *ind_addr AND uint32_t *rlen_addr
+              AND uint32_t value_size AND int16_t *ind_addr AND uint32_t *rlen_addr
                   AND int32_t is_array)
 {
   /* register */ sqlo_stmt_struct_ptr_t stp;
@@ -6050,7 +6050,7 @@ int32_t DEFUN(sqlo_define_by_pos2,
           (sth, value_pos, value_type, value_addr, value_size, ind_addr, rlen_addr, rcode_addr,
            skip_size),
           sqlo_stmt_handle_t sth AND int32_t value_pos AND int32_t value_type AND const void *value_addr
-              AND uint32_t value_size AND short *ind_addr AND uint32_t *rlen_addr
+              AND uint32_t value_size AND int16_t *ind_addr AND uint32_t *rlen_addr
                   AND unsigned short *rcode_addr AND uint32_t skip_size)
 {
   /* register */ sqlo_stmt_struct_ptr_t stp;
@@ -7115,7 +7115,7 @@ static void DEFUN(_terminate_ocols, (stp, do_strip_string),
   /* register */ char **outpp;
   /* register */ uint32_t col_idx;
   /* register */ ub4 *lenp;
-  /* register */ short *indp;
+  /* register */ int16_t *indp;
 
   colp = stp->ocolsv;
   assert(colp != SR_NULLPTR);

@@ -254,7 +254,7 @@ typedef unsigned short int yytype_uint16;
 #ifdef YYTYPE_INT16
 typedef YYTYPE_INT16 yytype_int16;
 #else
-typedef short int yytype_int16;
+typedef int16_t yytype_int16;
 #endif
 
 #ifndef YYSIZE_T
