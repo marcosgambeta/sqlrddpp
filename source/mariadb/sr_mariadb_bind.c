@@ -106,8 +106,8 @@ HB_FUNC_STATIC(SR_MARIADBCONNECT)
   const char *szUser = hb_parc(2);
   const char *szPass = hb_parc(3);
   const char *szDb = hb_parc(4);
-  HB_UINT uiPort = HB_ISNUM(5) ? hb_parnl(5) : MYSQL_PORT;
-  HB_UINT uiTimeout = HB_ISNUM(7) ? hb_parnl(7) : 3600;
+  uint32_t uiPort = HB_ISNUM(5) ? hb_parnl(5) : MYSQL_PORT;
+  uint32_t uiTimeout = HB_ISNUM(7) ? hb_parnl(7) : 3600;
   HB_BOOL lCompress = HB_ISLOG(8) ? hb_parl(8) : HB_FALSE;
   mysql_library_init(0, SR_NULLPTR, SR_NULLPTR);
   //    memset(session, 0, sizeof(MARIADB_SESSION));
@@ -517,7 +517,7 @@ HB_FUNC_STATIC(SR_MARIADBSTATUS)
 // SR_MARIADBRESULTSTATUS(pSession) -> numeric
 HB_FUNC_STATIC(SR_MARIADBRESULTSTATUS)
 {
-  HB_UINT ret;
+  uint32_t ret;
   GET_MARIADB_SESSION(session, 1);
 
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR) {
@@ -525,7 +525,7 @@ HB_FUNC_STATIC(SR_MARIADBRESULTSTATUS)
     return;
   }
 
-  ret = (HB_UINT)mysql_errno(session->dbh);
+  ret = (uint32_t)mysql_errno(session->dbh);
 
   switch (ret) {
   case MYSQL_OK: {
@@ -537,7 +537,7 @@ HB_FUNC_STATIC(SR_MARIADBRESULTSTATUS)
   case CR_SERVER_GONE_ERROR:
   case CR_SERVER_LOST:
   case ER_NO_DB_ERROR: {
-    ret = (HB_UINT)SQL_ERROR;
+    ret = (uint32_t)SQL_ERROR;
     break;
   }
   }
