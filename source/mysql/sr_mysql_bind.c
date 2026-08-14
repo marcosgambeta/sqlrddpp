@@ -536,8 +536,7 @@ static void MSQLFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer, HB_SIZE
 HB_FUNC_STATIC(SR_MYSLINEPROCESSED)
 {
   GET_MYSQL_SESSION(session, 1);
-  int32_t col, cols;
-  PHB_ITEM temp;
+  //PHB_ITEM temp; (using stack instead of heap)
   MYSQL_ROW thisrow;
   HB_ULONG *lens;
   HB_LONG lIndex;
@@ -559,28 +558,30 @@ HB_FUNC_STATIC(SR_MYSLINEPROCESSED)
     hb_retni(SQL_INVALID_HANDLE);
   } else {
     if (session->ifetch >= -1) {
-      cols = (int32_t)hb_arrayLen(pFields);
+      size_t cols = hb_arrayLen(pFields);
+      size_t col;
 
       mysql_data_seek(session->stmt, session->ifetch);
       thisrow = mysql_fetch_row(session->stmt);
       lens = (HB_ULONG *)mysql_fetch_lengths(session->stmt);
 
       for (col = 0; col < cols; col++) {
-        temp = hb_itemNew(SR_NULLPTR);
+        //temp = hb_itemNew(SR_NULLPTR);
+        HB_ITEM temp = {0};
         lIndex = hb_arrayGetNL(hb_arrayGetItemPtr(pFields, col + 1), SR_FIELD_ENUM);
 
         if (lIndex != 0) {
           if (thisrow[lIndex - 1]) {
-            MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), temp,
+            MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), &temp,
                          (char *)thisrow[lIndex - 1], lens[lIndex - 1], bQueryOnly, ulSystemID,
                          bTranslate);
           } else {
-            MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), temp, "", 0, bQueryOnly,
+            MSQLFieldGet(hb_arrayGetItemPtr(pFields, col + 1), &temp, "", 0, bQueryOnly,
                          ulSystemID, bTranslate);
           }
         }
-        hb_arraySetForward(pRet, col + 1, temp);
-        hb_itemRelease(temp);
+        hb_arraySetForward(pRet, col + 1, &temp);
+        //hb_itemRelease(temp);
       }
       hb_retni(SQL_SUCCESS);
     } else {
