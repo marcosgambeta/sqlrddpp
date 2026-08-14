@@ -1189,7 +1189,6 @@ static void sr_FBFieldGet(PHB_ITEM pField, PHB_ITEM pItem, char *bBuffer,
 HB_FUNC_STATIC(SR_FBLINEPROCESSED)
 {
   GET_FB_SESSION(session, 1);
-  int32_t icol, cols;
   int32_t dtype, i;
   char data[MSG_BUFFER_LEN] = {0}, *p;
   char date_s[25] = {0};
@@ -1217,7 +1216,8 @@ HB_FUNC_STATIC(SR_FBLINEPROCESSED)
   HB_SIZE lLen, lDec;
 
   if (session != SR_NULLPTR) {
-    cols = (int32_t)hb_arrayLen(pFields);
+    size_t icol;
+    const size_t cols = hb_arrayLen(pFields);
 
     for (icol = 1; icol <= cols; icol++) {
       //        HB_LONG lType;
