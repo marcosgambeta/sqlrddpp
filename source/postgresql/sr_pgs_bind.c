@@ -1027,20 +1027,21 @@ HB_FUNC_STATIC(SR_PGSLINEPROCESSED)
 {
   GET_PGSQL_SESSION(session, 1);
   // PHB_ITEM temp;
-  uint16_t i;
   char *col;
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
   // HB_BOOL bQueryOnly = hb_parl(4); (not used)
   // HB_ULONG ulSystemID = hb_parnl(5); (not used)
   HB_BOOL bTranslate = hb_parl(6);
   PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
-  HB_LONG lIndex, cols;
+  HB_LONG lIndex;
+  size_t cols;
+  size_t i;
 
   if (session == SR_NULLPTR || session->dbh == SR_NULLPTR || session->stmt == SR_NULLPTR) {
     return;
   }
 
-  cols = (HB_LONG)hb_arrayLen(pFields);
+  cols = hb_arrayLen(pFields);
 
   for (i = 0; i < cols; i++) {
     // temp = hb_itemNew(SR_NULLPTR); (using stack instead of heap)
