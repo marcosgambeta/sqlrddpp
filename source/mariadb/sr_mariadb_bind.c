@@ -452,10 +452,10 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
   }
 
   if (session->ifetch >= -1) {
-    int32_t cols;
+    size_t cols;
     MYSQL_ROW thisrow;
     HB_ULONG *lens;
-    int32_t col;
+    size_t col;
     // PHB_ITEM temp;
     HB_LONG lIndex;
     PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
@@ -464,7 +464,7 @@ HB_FUNC_STATIC(SR_MARIADBLINEPROCESSED)
     HB_BOOL bTranslate = hb_parl(6);
     PHB_ITEM pRet = hb_param(7, HB_IT_ARRAY);
 
-    cols = (int32_t)hb_arrayLen(pFields);
+    cols = hb_arrayLen(pFields);
 
     mysql_data_seek(session->stmt, session->ifetch);
     thisrow = mysql_fetch_row(session->stmt);
