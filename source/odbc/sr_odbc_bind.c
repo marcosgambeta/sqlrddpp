@@ -778,7 +778,7 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
   // RETCODE wResult;
   // int32_t iReallocs;
   // PHB_ITEM temp;
-  int32_t i, cols;
+  size_t i, cols;
   PHB_ITEM pFields = hb_param(3, HB_IT_ARRAY);
   HB_BOOL bQueryOnly = hb_parl(4);
   HB_ULONG ulSystemID = hb_parnl(5);
@@ -790,7 +790,7 @@ HB_FUNC_STATIC(SR_ODBCLINEPROCESSED)
                          hb_paramError(2), hb_paramError(3));
   }
 
-  cols = (int32_t)hb_arrayLen(pFields);
+  cols = hb_arrayLen(pFields);
 
   if (cols <= 0) {
     hb_errRT_BASE_SubstR(EG_ARG, 1111, SR_NULLPTR, "SR_ODBCLINEPROCESSED", 3, hb_paramError(1),
